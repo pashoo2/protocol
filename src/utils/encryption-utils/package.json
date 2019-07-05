@@ -1,0 +1,4 @@
+{
+  "main": "encryption-utils.ts",
+  "types": "encryption-utils.ts"
+}
