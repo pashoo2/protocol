@@ -3,7 +3,7 @@ import { TTypedArrays, TMainDataTypes } from 'types/main.types';
 type isTypedArrayData = any;
 
 export const isTypedArray = (data: isTypedArrayData): data is TTypedArrays =>
-  ArrayBuffer.isView(data);
+  data instanceof ArrayBuffer || ArrayBuffer.isView(data);
 
 type TStringifyData = TMainDataTypes;
 

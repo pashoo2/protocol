@@ -57,7 +57,7 @@ export const encryptToString = async (
   data: TCRYPTO_UTIL_ENCRYPT_DATA_TYPES
 ): Promise<string | Error> => {
   const encryptedData = await encryptToTypedArray(key, data);
-
+  debugger;
   if (encryptedData instanceof Error) {
     return encryptedData;
   }

@@ -3,6 +3,7 @@ import {
   generateKeyPair,
   exportKeyPairAsString,
   importKeyPairFromString,
+  encryptToString,
 } from 'utils/encryption-utils';
 import logo from './logo.svg';
 import './App.css';
@@ -23,7 +24,13 @@ const test = async () => {
       exportedKeyPairString
     );
 
-    console.log(importedKeyPair);
+    if (importedKeyPair instanceof Error) {
+      throw importedKeyPair;
+    }
+
+    const encryptedString = await encryptToString(importedKeyPair, { a: 'b' });
+
+    console.log(encryptedString);
   }
 };
 test();

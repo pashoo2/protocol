@@ -87,7 +87,7 @@ export const importKeyPairFromString = (
 ): Promise<TCRYPTO_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE> | Error => {
   try {
     const keyPairObject = JSON.parse(keyPairString);
-    debugger;
+
     return importKeyPair(keyPairObject);
   } catch (err) {
     return err;
