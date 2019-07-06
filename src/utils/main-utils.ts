@@ -2,9 +2,8 @@ import { TTypedArrays, TMainDataTypes } from 'types/main.types';
 
 type isTypedArrayData = any;
 
-export const isTypedArray = (data: isTypedArrayData): data is TTypedArrays => {
-  return typeof data === 'object' && data instanceof Float32Array;
-};
+export const isTypedArray = (data: isTypedArrayData): data is TTypedArrays =>
+  ArrayBuffer.isView(data);
 
 type TStringifyData = TMainDataTypes;
 
@@ -29,7 +28,9 @@ export const stryngify = (data: TStringifyData): string | Error => {
 
 const textEncoder = new TextEncoder();
 
-export const strToTypedArray = (data: TMainDataTypes): Uint8Array | Error => {
+export const stringToTypedArray = (
+  data: TMainDataTypes
+): Uint8Array | Error => {
   const strData = stryngify(data);
 
   if (strData instanceof Error) {
@@ -37,6 +38,20 @@ export const strToTypedArray = (data: TMainDataTypes): Uint8Array | Error => {
   }
 
   return textEncoder.encode(strData);
+};
+
+const textDecoder = new TextDecoder();
+
+export const typedArrayToString = (
+  data: TTypedArrays | string
+): string | Error => {
+  if (typeof data === 'string') {
+    return data;
+  }
+  if (!isTypedArray(data)) {
+    return new Error('The data is not a typed array');
+  }
+  return textDecoder.decode(data, { stream: false });
 };
 
 type TConvertedToTypedArrayData = TStringifyData | TTypedArrays;
@@ -47,5 +62,5 @@ export const convertToTypedArray = (
   if (isTypedArray(data)) {
     return data;
   }
-  return strToTypedArray(data);
+  return stringToTypedArray(data);
 };

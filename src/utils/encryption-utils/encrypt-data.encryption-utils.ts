@@ -9,7 +9,7 @@ import {
   TCRYPTO_UTIL_ENCRYPT_KEY_TYPES,
 } from './crypto-utils.types';
 import { getKeyOfType } from './keys.encryption-utils';
-import { convertToTypedArray } from 'utils/main-utils';
+import { convertToTypedArray, typedArrayToString } from 'utils/main-utils';
 
 export const encryptNative = (
   // crypto key using for data encryption
@@ -26,7 +26,7 @@ export const encryptNative = (
   return cryptoModule.encrypt(CRYPTO_UTIL_KEY_DESC, key, data);
 };
 
-export const encrypt = async (
+export const encryptToTypedArray = async (
   // crypto key using for data encryption
   // a public key of the user in the current implementation
   key: TCRYPTO_UTIL_ENCRYPT_KEY_TYPES,
@@ -48,4 +48,18 @@ export const encrypt = async (
     k as CryptoKey,
     d as TCRYPTO_UTIL_ENCRYPT_DATA_TYPES_NATIVE
   );
+};
+
+export const encryptToString = async (
+  // crypto key using for data encryption
+  // a public key of the user in the current implementation
+  key: TCRYPTO_UTIL_ENCRYPT_KEY_TYPES,
+  data: TCRYPTO_UTIL_ENCRYPT_DATA_TYPES
+): Promise<string | Error> => {
+  const encryptedData = await encryptToTypedArray(key, data);
+
+  if (encryptedData instanceof Error) {
+    return encryptedData;
+  }
+  return typedArrayToString(encryptedData);
 };

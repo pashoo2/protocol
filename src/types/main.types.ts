@@ -11,4 +11,6 @@ export type TTypedArrays =
   | DataView
   | ArrayBuffer;
 
+export type TArrayBufferView = TTypedArrays;
+
 export type TMainDataTypes = object | number | string;
