@@ -13,7 +13,7 @@ export const CRYPTO_UTIL_PRIVATE_KEY_USAGE = 'decrypt';
 
 export const CRYPTO_UTIL_ENCRYPTION_KEY_TYPE = 'public';
 
-export const CRYPTO_UTIL_DECRIPTION_KEY_TYPE = 'public';
+export const CRYPTO_UTIL_DECRIPTION_KEY_TYPE = 'private';
 
 export const CRYPTO_UTIL_KEYPAIR_USAGES = [
   CRYPTO_UTIL_PUBLIC_KEY_USAGE,

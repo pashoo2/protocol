@@ -1,4 +1,14 @@
 import { TTypedArrays, TMainDataTypes } from 'types/main.types';
+import { decode, encode } from 'base64-arraybuffer';
+
+export const arrayBufferFromTypedArray = (
+  typedArray: TTypedArrays
+): ArrayBuffer | Error => {
+  if (ArrayBuffer.isView(typedArray)) {
+    return typedArray.buffer;
+  }
+  return new Error('The data given is not a typed array');
+};
 
 type isTypedArrayData = any;
 
@@ -26,21 +36,17 @@ export const stryngify = (data: TStringifyData): string | Error => {
   return new Error('Unknown data type');
 };
 
-const textEncoder = new TextEncoder();
-
 export const stringToTypedArray = (
   data: TMainDataTypes
-): Uint8Array | Error => {
+): ArrayBuffer | Error => {
   const strData = stryngify(data);
 
   if (strData instanceof Error) {
     return strData;
   }
 
-  return textEncoder.encode(strData);
+  return decode(strData);
 };
-
-const textDecoder = new TextDecoder();
 
 export const typedArrayToString = (
   data: TTypedArrays | string
@@ -51,7 +57,14 @@ export const typedArrayToString = (
   if (!isTypedArray(data)) {
     return new Error('The data is not a typed array');
   }
-  return textDecoder.decode(data, { stream: false });
+
+  const dataAsArrayBuffer = arrayBufferFromTypedArray(data);
+
+  if (dataAsArrayBuffer instanceof Error) {
+    return dataAsArrayBuffer;
+  }
+
+  return encode(dataAsArrayBuffer);
 };
 
 type TConvertedToTypedArrayData = TStringifyData | TTypedArrays;

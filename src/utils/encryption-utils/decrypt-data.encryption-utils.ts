@@ -15,10 +15,10 @@ import {
 } from './crypto-utils.types';
 import { getKeyOfType } from './keys.encryption-utils';
 
-export const decryptNative = (
+export const decryptNative = async (
   key: CryptoKey,
   data: TCRYPTO_UTIL_DECRYPT_DATA_TYPES_NATIVE
-): PromiseLike<ArrayBuffer> | Error => {
+): Promise<ArrayBuffer | Error> => {
   if (key.type !== CRYPTO_UTIL_DECRIPTION_KEY_TYPE) {
     return new Error(
       `The type of the key ${key.type} may not be used for data decryption`
@@ -27,7 +27,14 @@ export const decryptNative = (
   if (!isTypedArray(data)) {
     return new Error('The data type is not supported');
   }
-  return cryptoModule.decrypt(CRYPTO_UTIL_KEY_DESC, key, data);
+  try {
+    const res = await cryptoModule.decrypt(CRYPTO_UTIL_KEY_DESC, key, data);
+
+    return res;
+  } catch (err) {
+    debugger;
+    return err;
+  }
 };
 
 export const decryptDataFromString = async (
