@@ -28,11 +28,17 @@ const test = async () => {
       throw importedKeyPair;
     }
 
-    const encryptedString = await encryptToString(exportedKeyPairString, {
-      a: 'b',
-    });
+    const encryptedStringByExported = await encryptToString(
+      exportedKeyPairString,
+      '123'
+    );
+    const encryptedStringByImported = await encryptToString(
+      importedKeyPair,
+      '123'
+    );
 
-    console.log(encryptedString);
+    console.log(encryptedStringByExported);
+    console.log(encryptedStringByImported);
   }
 };
 test();

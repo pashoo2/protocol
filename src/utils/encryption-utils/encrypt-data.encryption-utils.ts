@@ -19,7 +19,7 @@ export const encryptNative = (
 ): PromiseLike<ArrayBuffer> | Error => {
   if (key.type !== CRYPTO_UTIL_ENCRYPTION_KEY_TYPE) {
     return new Error(
-      `The type of the key ${key.type} is not used for data encryption`
+      `The type of the key ${key.type} may not be used for data encryption`
     );
   }
 
