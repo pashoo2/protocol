@@ -9,8 +9,19 @@ import {
   decryptFromString,
   encryptToTypedArray,
 } from 'utils/encryption-utils';
+import { decode, encode } from 'base64-arraybuffer';
 import logo from './logo.svg';
 import './App.css';
+
+function arrayBufferToBase64(buffer: ArrayBuffer) {
+  var binary = '';
+  var bytes = new Uint8Array(buffer);
+  var len = bytes.byteLength;
+  for (var i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return window.btoa(binary);
+}
 
 const test = async () => {
   const kPair = await generateKeyPair();
@@ -18,58 +29,53 @@ const test = async () => {
   if (kPair instanceof Error) {
     console.error(kPair);
   } else {
-    console.log('export key pair', kPair);
-    const dataToChiper = '123';
-    const textEncoder = new TextEncoder();
-    const encryptedData = await encryptNative(
-      kPair.publicKey,
-      textEncoder.encode(dataToChiper)
+    // console.log('export key pair', kPair);
+    // const dataToChiper = '245';
+    // const encryptedData = await encryptNative(
+    //   kPair.publicKey,
+    //   decode(btoa(dataToChiper))
+    // );
+    // if (encryptedData instanceof Error) {
+    //   console.error(encryptedData);
+    // } else {
+    //   const decryptedData = await decryptNative(
+    //     kPair.privateKey,
+    //     decode(encode(encryptedData))
+    //   );
+
+    //   if (decryptedData instanceof Error) {
+    //     console.error(decryptedData);
+    //   } else {
+    //     console.log('decrypted', atob(encode(decryptedData)));
+    //   }
+    // }
+    const exportedKeyPairString = await exportKeyPairAsString(kPair);
+    console.log(exportedKeyPairString);
+    const importedKeyPair = await importKeyPairFromString(
+      exportedKeyPairString
     );
-    debugger;
-    if (encryptedData instanceof Error) {
-      console.error(encryptedData);
-    } else {
-      const textDecoder = new TextDecoder(textEncoder.encoding);
-      const decryptedData = await decryptNative(
-        kPair.privateKey,
-        textEncoder.encode(textDecoder.decode(encryptedData))
+    if (importedKeyPair instanceof Error) {
+      throw importedKeyPair;
+    }
+    const encryptedStringByExported = await encryptToString(
+      importedKeyPair,
+      'this is a long long text'
+    );
+    const encryptedStringByImported = await encryptToTypedArray(
+      exportedKeyPairString,
+      'this is a long long text'
+    );
+    console.log('encryptedStringByExported', encryptedStringByExported);
+    console.log('encryptedStringByImported', encryptedStringByImported);
+    if (!(encryptedStringByExported instanceof Error)) {
+      const decrypted = await decryptFromString(
+        importedKeyPair,
+        encryptedStringByExported
       );
-      debugger;
-      if (decryptedData instanceof Error) {
-        console.error(decryptedData);
-      } else {
-        console.log('decrypted', textDecoder.decode(decryptedData));
+      if (!(decrypted instanceof Error)) {
+        console.log('decrypted', decrypted);
       }
     }
-    // TODO:
-    // const exportedKeyPairString = await exportKeyPairAsString(kPair);
-    // console.log(exportedKeyPairString);
-    // const importedKeyPair = await importKeyPairFromString(
-    //   exportedKeyPairString
-    // );
-    // if (importedKeyPair instanceof Error) {
-    //   throw importedKeyPair;
-    // }
-    // const encryptedStringByExported = await encryptToString(
-    //   kPair.publicKey,
-    //   '123'
-    // );
-    // debugger;
-    // const encryptedStringByImported = await encryptToTypedArray(
-    //   kPair.publicKey,
-    //   '123'
-    // );
-    // console.log('encryptedStringByExported', encryptedStringByExported);
-    // console.log('encryptedStringByImported', encryptedStringByImported);
-    // if (!(encryptedStringByExported instanceof Error)) {
-    //   const textEncoder = new TextEncoder();
-    //   const decrypted = await decryptNative(
-    //     kPair.privateKey,
-    //     textEncoder.encode(encryptedStringByExported)
-    //   );
-    //   debugger;
-    //   console.log('decrypted', decrypted);
-    // }
   }
 };
 test();
