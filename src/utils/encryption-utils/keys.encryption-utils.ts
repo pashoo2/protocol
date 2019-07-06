@@ -6,6 +6,8 @@ import {
   CRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT,
   CRYPTO_UTIL_KEY_DESC,
   CRYPTO_UTIL_KEYS_EXTRACTABLE,
+  CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME,
+  CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME,
 } from './crypto-utils.const';
 import { cryptoModule } from './main.crypto-utils.const';
 import {
@@ -43,8 +45,8 @@ export const exportKeyPair = async (
   const publicKey = await exportKey(keyPair.publicKey);
 
   return {
-    privateKey,
-    publicKey,
+    [CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]: publicKey,
+    [CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]: privateKey,
   };
 };
 
@@ -77,8 +79,12 @@ export const importKeyPair = async (
   keyPair: TCRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE
 ): Promise<TCRYPTO_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE> => {
   return {
-    publicKey: await importPublicKey(keyPair.publicKey),
-    privateKey: await importPrivateKey(keyPair.privateKey),
+    [CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]: await importPublicKey(
+      keyPair[CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]
+    ),
+    [CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]: await importPrivateKey(
+      keyPair[CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]
+    ),
   };
 };
 
@@ -113,6 +119,13 @@ export const importPrivateKeyFromString = (
   key: string
 ): PromiseLike<CryptoKey> | Error => importKeyFromString(key, false);
 
+export const checkIfStringIsKeyPair = (keyString: string): boolean => {
+  return (
+    keyString.includes(CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME) &&
+    keyString.includes(CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME)
+  );
+};
+
 const KEY_NOT_FOUND_ERROR_MESSAGE = 'A key of the required type was not found';
 
 export const getKeyOfType = async (
@@ -120,12 +133,21 @@ export const getKeyOfType = async (
   type: KeyType
 ): Promise<CryptoKey | Error> => {
   if (typeof key === 'string') {
-    const keyFromString = await importKeyFromString(key, type === 'public');
+    if (checkIfStringIsKeyPair(key)) {
+      const keyPair = await importKeyPairFromString(key);
 
-    if (keyFromString instanceof Error) {
-      return keyFromString;
+      if (keyPair instanceof Error) {
+        return keyPair;
+      }
+      return getKeyOfType(keyPair, type);
+    } else {
+      const keyFromString = await importKeyFromString(key, type === 'public');
+
+      if (keyFromString instanceof Error) {
+        return keyFromString;
+      }
+      return getKeyOfType(keyFromString, type);
     }
-    return getKeyOfType(keyFromString, type);
   }
   if (key instanceof CryptoKey) {
     return key.type === type ? key : new Error(KEY_NOT_FOUND_ERROR_MESSAGE);

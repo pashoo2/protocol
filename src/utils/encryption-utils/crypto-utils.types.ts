@@ -1,15 +1,19 @@
 import { TTypedArrays } from 'types/main.types';
+import {
+  CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME,
+  CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME,
+} from './crypto-utils.const';
 
 export type TCRYPTO_UTIL_KEY_EXPORT_FORMAT_TYPE = object;
 
 export type TCRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE = {
-  publicKey: object;
-  privateKey: object;
+  [CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]: object;
+  [CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]: object;
 };
 
 export type TCRYPTO_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE = {
-  publicKey: CryptoKey;
-  privateKey: CryptoKey;
+  [CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]: CryptoKey;
+  [CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]: CryptoKey;
 };
 
 export type TCRYPTO_UTIL_ENCRYPT_DATA_TYPES_NATIVE = TTypedArrays;

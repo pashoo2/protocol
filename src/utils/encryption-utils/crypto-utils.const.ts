@@ -26,9 +26,6 @@ export const CRYPTO_UTIL_GENERATE_KEYPAIR_OPTIONS = {
 
 export const CRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT = 'jwk';
 
-export type TCRYPTO_UTIL_KEY_EXPORT_FORMAT_TYPE = object;
+export const CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME = 'publicKey';
 
-export type TCRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE = {
-  public: object;
-  private: object;
-};
+export const CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME = 'privateKey';

@@ -28,7 +28,9 @@ const test = async () => {
       throw importedKeyPair;
     }
 
-    const encryptedString = await encryptToString(importedKeyPair, { a: 'b' });
+    const encryptedString = await encryptToString(exportedKeyPairString, {
+      a: 'b',
+    });
 
     console.log(encryptedString);
   }
