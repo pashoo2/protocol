@@ -22,7 +22,7 @@ export const CRYPTO_UTIL_KEYPAIR_USAGES = [
 
 export const CRYPTO_UTIL_GENERATE_KEYPAIR_OPTIONS = {
   ...CRYPTO_UTIL_KEY_DESC,
-  modulusLength: 4096,
+  modulusLength: 3072,
   publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
 };
 
