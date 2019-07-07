@@ -1,3 +1,4 @@
+import { isCryptoKeyPair } from 'utils/encryption-keys-utils';
 import {
   CRYPTO_UTIL_GENERATE_KEYPAIR_OPTIONS,
   CRYPTO_UTIL_KEYPAIR_USAGES,
@@ -42,7 +43,7 @@ export const exportKeyPair = async (
   keyPair: CryptoKeyPair
 ): Promise<TCRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE | Error> => {
   try {
-    if (keyPair instanceof CryptoKeyPair) {
+    if (isCryptoKeyPair(keyPair)) {
       // do it in parallel
       const [privateKey, publicKey] = await Promise.all([
         exportKey(keyPair.privateKey),

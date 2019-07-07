@@ -16,6 +16,7 @@ import {
   TDATA_SIGN_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE,
   TDATA_SIGN_UTIL_SIGN_KEY_TYPES,
 } from './data-sign-utils.types';
+import { isCryptoKeyPair } from 'utils/encryption-keys-utils';
 
 export const generateKeyPair = (): PromiseLike<CryptoKeyPair> =>
   cryptoModule.generateKey(
@@ -40,7 +41,7 @@ export const exportKey = async (
 export const exportPublicKey = async (
   keyPair: CryptoKeyPair
 ): Promise<TDATA_SIGN_UTIL_KEY_EXPORT_FORMAT_TYPE | Error> => {
-  if (keyPair instanceof CryptoKeyPair) {
+  if (isCryptoKeyPair(keyPair)) {
     return exportKey(keyPair.publicKey);
   }
   return new Error('Argument must be a CryptoKeyPair');
@@ -65,7 +66,7 @@ export const exportKeyPair = async (
   keyPair: CryptoKeyPair
 ): Promise<TDATA_SIGN_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE | Error> => {
   try {
-    if (keyPair instanceof CryptoKeyPair) {
+    if (isCryptoKeyPair(keyPair)) {
       // do it in parallel
       const [privateKey, publicKey] = await Promise.all([
         exportKey(keyPair.privateKey),

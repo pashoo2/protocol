@@ -7,7 +7,7 @@ const testDataSigning = async () => {
     console.error(keyPair);
     return;
   }
-  console.log(keyPair);
+  console.log('keyPair', keyPair);
 
   const exportedKeyPair = await exportKeyPairAsString(keyPair);
 
@@ -15,5 +15,7 @@ const testDataSigning = async () => {
     console.error(exportedKeyPair);
     return;
   }
+  debugger;
+  console.log('exportedKeyPair', exportedKeyPair);
 };
 testDataSigning();
