@@ -1,5 +1,5 @@
 import { TTypedArrays, TMainDataTypes } from 'types/main.types';
-import { stryngify, TStringifyData } from './main-utils';
+import { stringify, TStringifyData } from './main-utils';
 import {
   encodeArrayBufferToUTF8,
   decodeStringUTF8ToArrayBuffer,
@@ -25,7 +25,7 @@ export const isTypedArray = (data: isTypedArrayData): data is TTypedArrays =>
 export const stringToTypedArray = (
   data: TMainDataTypes
 ): ArrayBuffer | Error => {
-  const strData = stryngify(data);
+  const strData = stringify(data);
 
   if (strData instanceof Error) {
     return strData;

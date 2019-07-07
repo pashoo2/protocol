@@ -3,7 +3,9 @@ import {
   exportKeyPairAsString,
   importKeyPairFromString,
   signToString,
+  verifyFromString,
 } from 'utils/data-sign-utils';
+import { calculateHash } from 'utils/hash-calculation-utils';
 
 const testDataSigning = async () => {
   const keyPair = await generateKeyPair();
@@ -44,7 +46,8 @@ const testDataSigning = async () => {
     exportedKeyPairByImported === exportedKeyPair
   );
 
-  const signString = await signToString(keyPairImported.privateKey, { d: 1 });
+  const data = { d: 1 };
+  const signString = await signToString(keyPairImported.privateKey, data);
 
   if (signString instanceof Error) {
     console.error(signString);
@@ -53,9 +56,17 @@ const testDataSigning = async () => {
 
   console.log('signString', signString);
 
-  const signStringTwice = await signToString(keyPairImported.privateKey, {
-    d: 1,
-  });
+  const dataTwice = await calculateHash('2222');
+
+  if (dataTwice instanceof Error) {
+    console.error(dataTwice);
+    return dataTwice;
+  }
+
+  const signStringTwice = await signToString(
+    keyPairImported.privateKey,
+    dataTwice
+  );
 
   if (signStringTwice instanceof Error) {
     console.error(signStringTwice);
@@ -63,5 +74,25 @@ const testDataSigning = async () => {
   }
 
   console.log('signStringTwice', signStringTwice);
+
+  const isValid = await verifyFromString(keyPairImported, data, signString);
+
+  if (isValid instanceof Error) {
+    console.error(isValid);
+    return isValid;
+  }
+  console.log('isValid', isValid);
+
+  const isValidTwice = await verifyFromString(
+    keyPairImported,
+    dataTwice,
+    signStringTwice
+  );
+
+  if (isValidTwice instanceof Error) {
+    console.error(isValidTwice);
+    return isValidTwice;
+  }
+  console.log('isValidTwice', isValidTwice);
 };
 testDataSigning();

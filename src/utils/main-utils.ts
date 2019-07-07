@@ -1,8 +1,9 @@
+import sortKeys from 'sort-keys';
 import { TMainDataTypes } from 'types/main.types';
 
 export type TStringifyData = TMainDataTypes;
 
-export const stryngify = (data: TStringifyData): string | Error => {
+export const stringify = (data: TStringifyData): string | Error => {
   const dataType = typeof data;
 
   if (dataType === 'string') {
@@ -13,7 +14,11 @@ export const stryngify = (data: TStringifyData): string | Error => {
   }
   if (dataType === 'object') {
     try {
-      return JSON.stringify(data);
+      // it's necessary to sort a keys of the object to give
+      // the same strings for all objects with the same keys
+      return JSON.stringify(
+        sortKeys(data as { [key: string]: unknown }, { deep: true })
+      );
     } catch (err) {
       return err;
     }

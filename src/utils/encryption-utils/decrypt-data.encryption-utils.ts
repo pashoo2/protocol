@@ -14,6 +14,7 @@ import {
   TCRYPTO_UTIL_DECRYPT_KEY_TYPES,
 } from './crypto-utils.types';
 import { getKeyOfType } from './keys.encryption-utils';
+import { stringify } from 'utils/main-utils';
 
 export const decryptNative = async (
   key: CryptoKey,
@@ -38,7 +39,7 @@ export const decryptNative = async (
 
 export const decryptDataFromString = async (
   key: TCRYPTO_UTIL_DECRYPT_KEY_TYPES,
-  data: TCRYPTO_UTIL_DECRYPT_DATA_TYPES
+  data: TCRYPTO_UTIL_DECRYPT_DATA_TYPES | object
 ): Promise<ArrayBuffer | Error> => {
   const k = await getKeyOfType(key, CRYPTO_UTIL_DECRIPTION_KEY_TYPE);
 
@@ -46,14 +47,25 @@ export const decryptDataFromString = async (
     return k;
   }
 
-  const d = typeof data
-    ? stringToTypedArray(data)
-    : (data as TCRYPTO_UTIL_DECRYPT_DATA_TYPES_NATIVE);
+  let d;
 
+  if (isTypedArray(data)) {
+    d = data;
+  } else if (typeof data === 'object' && !(data instanceof Error)) {
+    d = stringify(data);
+
+    if (d instanceof Error) {
+      return d;
+    }
+    d = stringToTypedArray(d);
+  } else if (typeof data === 'string') {
+    d = stringToTypedArray(data);
+  } else {
+    return new Error('Unsupported data type');
+  }
   if (d instanceof Error) {
     return d;
   }
-
   return decryptNative(k, d);
 };
 

@@ -1,4 +1,4 @@
-import { TStringifyData, stryngify } from 'utils/main-utils';
+import { TStringifyData, stringify } from 'utils/main-utils';
 import {
   decodeStringUTF8ToArrayBuffer,
   encodeArrayBufferToUTF8,
@@ -28,7 +28,7 @@ export const calculateHashNative = async (
 export const calculateHash = async (
   data: TStringifyData
 ): Promise<string | Error> => {
-  const dataAsString = stryngify(data);
+  const dataAsString = stringify(data);
 
   if (dataAsString instanceof Error) {
     return dataAsString;

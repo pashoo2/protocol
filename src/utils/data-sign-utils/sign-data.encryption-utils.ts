@@ -66,11 +66,11 @@ export const signToString = async (
   key: TDATA_SIGN_UTIL_SIGN_KEY_TYPES,
   data: TDATA_SIGN_UTIL_SIGN_DATA_TYPES
 ): Promise<string | Error> => {
-  const encryptedData = await signToTypedArray(key, data);
+  const signedHashData = await signToTypedArray(key, data);
 
-  if (encryptedData instanceof Error) {
-    return encryptedData;
+  if (signedHashData instanceof Error) {
+    return signedHashData;
   }
 
-  return typedArrayToString(encryptedData);
+  return typedArrayToString(signedHashData);
 };
