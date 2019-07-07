@@ -1,6 +1,6 @@
 import { cryptoModule } from './main.data-sign-utils.const';
 import {
-  DATA_SIGN_CRYPTO_UTIL_KEY_DESC,
+  DATA_SIGN_CRYPTO_UTIL_DATA_SIGN_AND_VERIFY_PARAMS,
   DATA_SIGN_CRYPTO_UTIL_SIGN_KEY_TYPE,
 } from './data-sign-utils.const';
 import {
@@ -24,8 +24,8 @@ export const signNative = async (
     );
   }
   try {
-    const res = await cryptoModule.encrypt(
-      { ...DATA_SIGN_CRYPTO_UTIL_KEY_DESC },
+    const res = await cryptoModule.sign(
+      { ...DATA_SIGN_CRYPTO_UTIL_DATA_SIGN_AND_VERIFY_PARAMS },
       key,
       data
     );
@@ -36,7 +36,7 @@ export const signNative = async (
   }
 };
 
-export const encryptToTypedArray = async (
+export const signToTypedArray = async (
   // crypto key using for data encryption
   // a public key of the user in the current implementation
   key: TDATA_SIGN_UTIL_SIGN_KEY_TYPES,
@@ -60,13 +60,13 @@ export const encryptToTypedArray = async (
   );
 };
 
-export const encryptToString = async (
+export const signToString = async (
   // crypto key using for data encryption
   // a public key of the user in the current implementation
   key: TDATA_SIGN_UTIL_SIGN_KEY_TYPES,
   data: TDATA_SIGN_UTIL_SIGN_DATA_TYPES
 ): Promise<string | Error> => {
-  const encryptedData = await encryptToTypedArray(key, data);
+  const encryptedData = await signToTypedArray(key, data);
 
   if (encryptedData instanceof Error) {
     return encryptedData;
