@@ -79,9 +79,23 @@ const test = async () => {
     //   }
     // }
     /** HASH CALCULATION */
-    const hashStr = await calculateHash({ d: 1 });
-    debugger;
-    console.log(hashStr);
+    // const hashStrOnce = await calculateHash({ d: 1 });
+    // const hashStrTwice = await calculateHash({ d: 1 });
+    // console.log(hashStrOnce);
+    // console.log(hashStrTwice);
+    // if (hashStrTwice !== hashStrOnce) {
+    //   console.error(new Error('Hash of the same data does not matching'));
+    // }
+    /** HASH CALCULATION STRING */
+    // const stringData =
+    //   '"1233465)()09850MNLKADFNDSLKJGN%$%^$^#&#^@&*^)(&$#^&%*#%"';
+    // const hashStrThird = await calculateHash(stringData);
+    // const hashStrFourth = await calculateHash(stringData);
+    // console.log(hashStrThird);
+    // console.log(hashStrFourth);
+    // if (hashStrThird !== hashStrFourth) {
+    //   console.error(new Error('Hash of the same data does not matching'));
+    // }
   }
 };
 test();
