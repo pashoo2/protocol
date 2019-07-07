@@ -1,9 +1,9 @@
 export const CRYPTO_UTIL_KEYS_EXTRACTABLE = true;
 
-export const CRYPTO_UTIL_KEY_ALGORYTHM = 'RSA-OAEP';
+export const CRYPTO_UTIL_KEY_ALGORITHM = 'RSA-OAEP';
 
 export const CRYPTO_UTIL_KEY_DESC = {
-  name: CRYPTO_UTIL_KEY_ALGORYTHM,
+  name: CRYPTO_UTIL_KEY_ALGORITHM,
   hash: { name: 'SHA-256' },
 };
 

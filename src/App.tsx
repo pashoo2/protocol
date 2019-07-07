@@ -24,7 +24,7 @@ function arrayBufferToBase64(buffer: ArrayBuffer) {
   return window.btoa(binary);
 }
 
-const test = async () => {
+const testEncryption = async () => {
   const kPair = await generateKeyPair();
 
   if (kPair instanceof Error) {
@@ -51,33 +51,33 @@ const test = async () => {
     //   }
     //
     /** THE SECOND USE-CASE */
-    const exportedKeyPairString = await exportKeyPairAsString(kPair);
-    console.log(exportedKeyPairString);
-    const importedKeyPair = await importKeyPairFromString(
-      exportedKeyPairString
-    );
-    if (importedKeyPair instanceof Error) {
-      throw importedKeyPair;
-    }
-    const encryptedStringByExported = await encryptToString(
-      importedKeyPair,
-      'this is a long long text'
-    );
-    const encryptedStringByImported = await encryptToTypedArray(
-      exportedKeyPairString,
-      'this is a long long text'
-    );
-    console.log('encryptedStringByExported', encryptedStringByExported);
-    console.log('encryptedStringByImported', encryptedStringByImported);
-    if (!(encryptedStringByExported instanceof Error)) {
-      const decrypted = await decryptFromString(
-        importedKeyPair,
-        encryptedStringByExported
-      );
-      if (!(decrypted instanceof Error)) {
-        console.log('decrypted', decrypted);
-      }
-    }
+    // const exportedKeyPairString = await exportKeyPairAsString(kPair);
+    // console.log(exportedKeyPairString);
+    // const importedKeyPair = await importKeyPairFromString(
+    //   exportedKeyPairString
+    // );
+    // if (importedKeyPair instanceof Error) {
+    //   throw importedKeyPair;
+    // }
+    // const encryptedStringByExported = await encryptToString(
+    //   importedKeyPair,
+    //   'this is a long long text'
+    // );
+    // const encryptedStringByImported = await encryptToTypedArray(
+    //   exportedKeyPairString,
+    //   'this is a long long text'
+    // );
+    // console.log('encryptedStringByExported', encryptedStringByExported);
+    // console.log('encryptedStringByImported', encryptedStringByImported);
+    // if (!(encryptedStringByExported instanceof Error)) {
+    //   const decrypted = await decryptFromString(
+    //     importedKeyPair,
+    //     encryptedStringByExported
+    //   );
+    //   if (!(decrypted instanceof Error)) {
+    //     console.log('decrypted', decrypted);
+    //   }
+    // }
     /** HASH CALCULATION */
     // const hashStrOnce = await calculateHash({ d: 1 });
     // const hashStrTwice = await calculateHash({ d: 1 });
@@ -98,7 +98,7 @@ const test = async () => {
     // }
   }
 };
-test();
+// testEncryption();
 
 const App: React.FC = () => {
   return (

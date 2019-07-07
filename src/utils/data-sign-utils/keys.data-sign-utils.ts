@@ -1,46 +1,69 @@
 import {
-  CRYPTO_UTIL_GENERATE_KEYPAIR_OPTIONS,
-  CRYPTO_UTIL_KEYPAIR_USAGES,
-  CRYPTO_UTIL_PUBLIC_KEY_USAGE,
-  CRYPTO_UTIL_PRIVATE_KEY_USAGE,
-  CRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT,
-  CRYPTO_UTIL_KEY_DESC,
-  CRYPTO_UTIL_KEYS_EXTRACTABLE,
-  CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME,
-  CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME,
-} from './crypto-utils.const';
-import { cryptoModule } from './main.crypto-utils.const';
+  DATA_SIGN_CRYPTO_UTIL_GENERATE_KEYPAIR_OPTIONS,
+  DATA_SIGN_CRYPTO_UTIL_KEYPAIR_USAGES,
+  DATA_SIGN_CRYPTO_UTIL_PUBLIC_KEY_USAGE,
+  DATA_SIGN_CRYPTO_UTIL_PRIVATE_KEY_USAGE,
+  DATA_SIGN_CRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT,
+  DATA_SIGN_CRYPTO_UTIL_KEY_DESC,
+  DATA_SIGN_CRYPTO_UTIL_KEYS_EXTRACTABLE,
+  DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME,
+  DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME,
+} from './data-sign-utils.const';
+import { cryptoModule } from './main.data-sign-utils.const';
 import {
-  TCRYPTO_UTIL_KEY_EXPORT_FORMAT_TYPE,
-  TCRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE,
-  TCRYPTO_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE,
-  TCRYPTO_UTIL_ENCRYPT_KEY_TYPES,
-} from './crypto-utils.types';
+  TDATA_SIGN_UTIL_KEY_EXPORT_FORMAT_TYPE,
+  TDATA_SIGN_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE,
+  TDATA_SIGN_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE,
+  TDATA_SIGN_UTIL_SIGN_KEY_TYPES,
+} from './data-sign-utils.types';
 
 export const generateKeyPair = (): PromiseLike<CryptoKeyPair> =>
   cryptoModule.generateKey(
-    CRYPTO_UTIL_GENERATE_KEYPAIR_OPTIONS,
-    CRYPTO_UTIL_KEYS_EXTRACTABLE,
-    CRYPTO_UTIL_KEYPAIR_USAGES
+    DATA_SIGN_CRYPTO_UTIL_GENERATE_KEYPAIR_OPTIONS,
+    DATA_SIGN_CRYPTO_UTIL_KEYS_EXTRACTABLE,
+    DATA_SIGN_CRYPTO_UTIL_KEYPAIR_USAGES
   );
 
-export const exportKey = (
+export const exportKey = async (
   key: CryptoKey
-): PromiseLike<TCRYPTO_UTIL_KEY_EXPORT_FORMAT_TYPE> => {
-  return cryptoModule.exportKey(CRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT, key);
+): Promise<TDATA_SIGN_UTIL_KEY_EXPORT_FORMAT_TYPE | Error> => {
+  try {
+    return cryptoModule.exportKey(
+      DATA_SIGN_CRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT,
+      key
+    );
+  } catch (err) {
+    return err;
+  }
 };
 
-export const exportPublicKey = async (keyPair: CryptoKeyPair) => {
-  return exportKey(keyPair.publicKey);
+export const exportPublicKey = async (
+  keyPair: CryptoKeyPair
+): Promise<TDATA_SIGN_UTIL_KEY_EXPORT_FORMAT_TYPE | Error> => {
+  if (keyPair instanceof CryptoKeyPair) {
+    return exportKey(keyPair.publicKey);
+  }
+  return new Error('Argument must be a CryptoKeyPair');
 };
 
-export const exportPublicKeyAsString = async (keyPair: CryptoKeyPair) => {
-  return JSON.stringify(exportPublicKey(keyPair));
+export const exportPublicKeyAsString = async (
+  keyPair: CryptoKeyPair
+): Promise<Error | string> => {
+  try {
+    const keyPublicExported = await exportPublicKey(keyPair);
+
+    if (keyPublicExported instanceof Error) {
+      return keyPublicExported;
+    }
+    return JSON.stringify(keyPublicExported);
+  } catch (err) {
+    return err;
+  }
 };
 
 export const exportKeyPair = async (
   keyPair: CryptoKeyPair
-): Promise<TCRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE | Error> => {
+): Promise<TDATA_SIGN_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE | Error> => {
   try {
     if (keyPair instanceof CryptoKeyPair) {
       // do it in parallel
@@ -56,8 +79,8 @@ export const exportKeyPair = async (
         return publicKey;
       }
       return {
-        [CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]: publicKey,
-        [CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]: privateKey,
+        [DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]: publicKey,
+        [DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]: privateKey,
       };
     }
     return new Error('Argument given must be a CryptoKeyPair');
@@ -68,8 +91,17 @@ export const exportKeyPair = async (
 
 export const exportKeyPairAsString = async (
   keyPair: CryptoKeyPair
-): Promise<string> => {
-  return JSON.stringify(await exportKeyPair(keyPair));
+): Promise<string | Error> => {
+  try {
+    const res = await exportKeyPair(keyPair);
+
+    if (res instanceof Error) {
+      return res;
+    }
+    return JSON.stringify(res);
+  } catch (err) {
+    return err;
+  }
 };
 
 export const importKey = (
@@ -77,11 +109,15 @@ export const importKey = (
   isPublic: boolean = true
 ): PromiseLike<CryptoKey> => {
   return cryptoModule.importKey(
-    CRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT,
+    DATA_SIGN_CRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT,
     key,
-    CRYPTO_UTIL_KEY_DESC,
-    CRYPTO_UTIL_KEYS_EXTRACTABLE,
-    [isPublic ? CRYPTO_UTIL_PUBLIC_KEY_USAGE : CRYPTO_UTIL_PRIVATE_KEY_USAGE]
+    DATA_SIGN_CRYPTO_UTIL_KEY_DESC,
+    DATA_SIGN_CRYPTO_UTIL_KEYS_EXTRACTABLE,
+    [
+      isPublic
+        ? DATA_SIGN_CRYPTO_UTIL_PUBLIC_KEY_USAGE
+        : DATA_SIGN_CRYPTO_UTIL_PRIVATE_KEY_USAGE,
+    ]
   );
 };
 
@@ -92,21 +128,21 @@ export const importPrivateKey = (key: object): PromiseLike<CryptoKey> =>
   importKey(key, false);
 
 export const importKeyPair = async (
-  keyPair: TCRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE
-): Promise<TCRYPTO_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE> => {
+  keyPair: TDATA_SIGN_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE
+): Promise<TDATA_SIGN_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE> => {
   return {
-    [CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]: await importPublicKey(
-      keyPair[CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]
+    [DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]: await importPublicKey(
+      keyPair[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]
     ),
-    [CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]: await importPrivateKey(
-      keyPair[CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]
+    [DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]: await importPrivateKey(
+      keyPair[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]
     ),
   };
 };
 
 export const importKeyPairFromString = (
   keyPairString: string
-): Promise<TCRYPTO_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE> | Error => {
+): Promise<TDATA_SIGN_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE> | Error => {
   try {
     const keyPairObject = JSON.parse(keyPairString);
 
@@ -137,15 +173,15 @@ export const importPrivateKeyFromString = (
 
 export const checkIfStringIsKeyPair = (keyString: string): boolean => {
   return (
-    keyString.includes(CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME) &&
-    keyString.includes(CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME)
+    keyString.includes(DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME) &&
+    keyString.includes(DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME)
   );
 };
 
 const KEY_NOT_FOUND_ERROR_MESSAGE = 'A key of the required type was not found';
 
 export const getKeyOfType = async (
-  key: TCRYPTO_UTIL_ENCRYPT_KEY_TYPES,
+  key: TDATA_SIGN_UTIL_SIGN_KEY_TYPES,
   type: KeyType
 ): Promise<CryptoKey | Error> => {
   if (typeof key === 'string') {
