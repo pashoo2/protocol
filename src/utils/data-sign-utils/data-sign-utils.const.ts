@@ -9,9 +9,9 @@ export const DATA_SIGN_CRYPTO_UTIL_KEY_DESC = {
   namedCurve: 'P-256',
 };
 
-export const DATA_SIGN_CRYPTO_UTIL_PUBLIC_KEY_USAGE = 'sign';
+export const DATA_SIGN_CRYPTO_UTIL_PUBLIC_KEY_USAGE = 'verify';
 
-export const DATA_SIGN_CRYPTO_UTIL_PRIVATE_KEY_USAGE = 'verify';
+export const DATA_SIGN_CRYPTO_UTIL_PRIVATE_KEY_USAGE = 'sign';
 
 export const DATA_SIGN_CRYPTO_UTIL_VERIFY_KEY_TYPE = 'public';
 

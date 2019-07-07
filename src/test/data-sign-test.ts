@@ -1,4 +1,8 @@
-import { generateKeyPair, exportKeyPairAsString } from 'utils/data-sign-utils';
+import {
+  generateKeyPair,
+  exportKeyPairAsString,
+  importKeyPairFromString,
+} from 'utils/data-sign-utils';
 
 const testDataSigning = async () => {
   const keyPair = await generateKeyPair();
@@ -15,7 +19,15 @@ const testDataSigning = async () => {
     console.error(exportedKeyPair);
     return;
   }
-  debugger;
   console.log('exportedKeyPair', exportedKeyPair);
+
+  const keyPairImported = await importKeyPairFromString(exportedKeyPair);
+
+  if (keyPairImported instanceof Error) {
+    console.error(keyPairImported);
+    return keyPairImported;
+  }
+  console.log('keyPairImported', keyPairImported);
+  debugger;
 };
 testDataSigning();

@@ -32,7 +32,6 @@ export const decryptNative = async (
 
     return res;
   } catch (err) {
-    debugger;
     return err;
   }
 };

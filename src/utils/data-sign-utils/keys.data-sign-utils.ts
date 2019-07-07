@@ -124,7 +124,6 @@ export const importKey = async (
     if (typeof key !== 'object') {
       return new Error('Unsupported argument type');
     }
-
     const res = await cryptoModule.importKey(
       DATA_SIGN_CRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT,
       key,
