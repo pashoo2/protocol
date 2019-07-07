@@ -2,7 +2,7 @@ import {
   isTypedArray,
   stringToTypedArray,
   typedArrayToString,
-} from 'utils/main-utils';
+} from 'utils/typed-array-utils';
 import { cryptoModule } from './main.crypto-utils.const';
 import {
   CRYPTO_UTIL_DECRIPTION_KEY_TYPE,

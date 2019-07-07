@@ -9,7 +9,10 @@ import {
   TCRYPTO_UTIL_ENCRYPT_KEY_TYPES,
 } from './crypto-utils.types';
 import { getKeyOfType, exportKey } from './keys.encryption-utils';
-import { convertToTypedArray, typedArrayToString } from 'utils/main-utils';
+import {
+  convertToTypedArray,
+  typedArrayToString,
+} from 'utils/typed-array-utils';
 
 export const encryptNative = async (
   // crypto key using for data encryption
