@@ -1,8 +1,8 @@
 import { TTypedArrays, TMainDataTypes } from 'types/main.types';
 import { stryngify, TStringifyData } from './main-utils';
 import {
-  encodeArrayBufferToBase64,
-  decodeStringBase64ToArrayBuffer,
+  encodeArrayBufferToUTF8,
+  decodeStringUTF8ToArrayBuffer,
 } from 'utils/string-encoding-utils';
 
 export const arrayBufferFromTypedArray = (
@@ -30,7 +30,7 @@ export const stringToTypedArray = (
   if (strData instanceof Error) {
     return strData;
   }
-  return decodeStringBase64ToArrayBuffer(strData);
+  return decodeStringUTF8ToArrayBuffer(strData);
 };
 
 export const typedArrayToString = (
@@ -49,7 +49,7 @@ export const typedArrayToString = (
     return dataAsArrayBuffer;
   }
 
-  return encodeArrayBufferToBase64(dataAsArrayBuffer);
+  return encodeArrayBufferToUTF8(dataAsArrayBuffer);
 };
 
 type TConvertedToTypedArrayData = TStringifyData | TTypedArrays;

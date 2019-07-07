@@ -9,6 +9,7 @@ import {
   decryptFromString,
   encryptToTypedArray,
 } from 'utils/encryption-utils';
+import { calculateHash } from 'utils/hash-calculation-utils';
 import { decode, encode } from 'base64-arraybuffer';
 import logo from './logo.svg';
 import './App.css';
@@ -29,6 +30,7 @@ const test = async () => {
   if (kPair instanceof Error) {
     console.error(kPair);
   } else {
+    /** THE FIRST USE-CASE */
     // console.log('export key pair', kPair);
     // const dataToChiper = '245';
     // const encryptedData = await encryptNative(
@@ -42,40 +44,44 @@ const test = async () => {
     //     kPair.privateKey,
     //     decode(encode(encryptedData))
     //   );
-
     //   if (decryptedData instanceof Error) {
     //     console.error(decryptedData);
     //   } else {
     //     console.log('decrypted', atob(encode(decryptedData)));
     //   }
+    //
+    /** THE SECOND USE-CASE */
+    // const exportedKeyPairString = await exportKeyPairAsString(kPair);
+    // console.log(exportedKeyPairString);
+    // const importedKeyPair = await importKeyPairFromString(
+    //   exportedKeyPairString
+    // );
+    // if (importedKeyPair instanceof Error) {
+    //   throw importedKeyPair;
     // }
-    const exportedKeyPairString = await exportKeyPairAsString(kPair);
-    console.log(exportedKeyPairString);
-    const importedKeyPair = await importKeyPairFromString(
-      exportedKeyPairString
-    );
-    if (importedKeyPair instanceof Error) {
-      throw importedKeyPair;
-    }
-    const encryptedStringByExported = await encryptToString(
-      importedKeyPair,
-      'this is a long long text'
-    );
-    const encryptedStringByImported = await encryptToTypedArray(
-      exportedKeyPairString,
-      'this is a long long text'
-    );
-    console.log('encryptedStringByExported', encryptedStringByExported);
-    console.log('encryptedStringByImported', encryptedStringByImported);
-    if (!(encryptedStringByExported instanceof Error)) {
-      const decrypted = await decryptFromString(
-        importedKeyPair,
-        encryptedStringByExported
-      );
-      if (!(decrypted instanceof Error)) {
-        console.log('decrypted', decrypted);
-      }
-    }
+    // const encryptedStringByExported = await encryptToString(
+    //   importedKeyPair,
+    //   'this is a long long text'
+    // );
+    // const encryptedStringByImported = await encryptToTypedArray(
+    //   exportedKeyPairString,
+    //   'this is a long long text'
+    // );
+    // console.log('encryptedStringByExported', encryptedStringByExported);
+    // console.log('encryptedStringByImported', encryptedStringByImported);
+    // if (!(encryptedStringByExported instanceof Error)) {
+    //   const decrypted = await decryptFromString(
+    //     importedKeyPair,
+    //     encryptedStringByExported
+    //   );
+    //   if (!(decrypted instanceof Error)) {
+    //     console.log('decrypted', decrypted);
+    //   }
+    // }
+    /** HASH CALCULATION */
+    const hashStr = await calculateHash({ d: 1 });
+    debugger;
+    console.log(hashStr);
   }
 };
 test();

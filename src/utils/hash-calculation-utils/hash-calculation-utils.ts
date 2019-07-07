@@ -1,7 +1,7 @@
 import { TStringifyData, stryngify } from 'utils/main-utils';
 import {
-  decodeStringBase64ToArrayBuffer,
-  encodeArrayBufferToBase64,
+  decodeStringUTF8ToArrayBuffer,
+  encodeArrayBufferToUTF8,
 } from 'utils/string-encoding-utils';
 import { TTypedArrays } from 'types/main.types';
 import { HASH_CALCULATION_UTILS_DEFAULT_HASH_ALHORITHM } from './hash-calculation-utils.const';
@@ -34,7 +34,7 @@ export const calculateHash = async (
     return dataAsString;
   }
 
-  const dataAsArrayBuffer = decodeStringBase64ToArrayBuffer(dataAsString);
+  const dataAsArrayBuffer = decodeStringUTF8ToArrayBuffer(dataAsString);
 
   if (dataAsArrayBuffer instanceof Error) {
     return dataAsArrayBuffer;
@@ -46,5 +46,5 @@ export const calculateHash = async (
     return hashArrayBuffer;
   }
 
-  return encodeArrayBufferToBase64(hashArrayBuffer);
+  return encodeArrayBufferToUTF8(hashArrayBuffer);
 };
