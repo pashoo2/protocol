@@ -18,6 +18,16 @@ import {
   TCRYPTO_UTIL_ENCRYPT_KEY_TYPES,
 } from './crypto-utils.types';
 
+export const isCryptoKeyPairImported = (
+  key: any
+): key is TCRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE => {
+  return (
+    typeof key === 'object' &&
+    !!key[CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME] &&
+    !!key[CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]
+  );
+};
+
 export const generateKeyPair = (): PromiseLike<CryptoKeyPair> =>
   cryptoModule.generateKey(
     CRYPTO_UTIL_GENERATE_KEYPAIR_OPTIONS,
@@ -94,24 +104,41 @@ export const importPrivateKey = (key: object): PromiseLike<CryptoKey> =>
 
 export const importKeyPair = async (
   keyPair: TCRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE
-): Promise<TCRYPTO_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE> => {
-  return {
-    [CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]: await importPublicKey(
-      keyPair[CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]
-    ),
-    [CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]: await importPrivateKey(
-      keyPair[CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]
-    ),
-  };
+): Promise<TCRYPTO_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE | Error> => {
+  try {
+    if (isCryptoKeyPairImported(keyPair)) {
+      const [publicKey, privateKey] = await Promise.all([
+        importPublicKey(keyPair[CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]),
+        importPrivateKey(keyPair[CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]),
+      ]).catch(err => [err, err]);
+
+      if (publicKey instanceof Error) {
+        return publicKey;
+      }
+      if (privateKey instanceof Error) {
+        return privateKey;
+      }
+      return {
+        [CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]: publicKey,
+        [CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]: privateKey,
+      };
+    }
+    return new Error('The argument must be an instance of CryptoKeyPair');
+  } catch (err) {
+    return err;
+  }
 };
 
 export const importKeyPairFromString = (
   keyPairString: string
-): Promise<TCRYPTO_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE> | Error => {
+): Promise<TCRYPTO_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE | Error> | Error => {
   try {
-    const keyPairObject = JSON.parse(keyPairString);
+    if (typeof keyPairString === 'string') {
+      const keyPairObject = JSON.parse(keyPairString);
 
-    return importKeyPair(keyPairObject);
+      return importKeyPair(keyPairObject);
+    }
+    return new Error('A key pair must be a string');
   } catch (err) {
     return err;
   }

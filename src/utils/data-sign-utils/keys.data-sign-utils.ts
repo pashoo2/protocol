@@ -15,8 +15,19 @@ import {
   TDATA_SIGN_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE,
   TDATA_SIGN_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE,
   TDATA_SIGN_UTIL_SIGN_KEY_TYPES,
+  TCRYPTO_UTIL_IMPORT_KEY_TYPES,
 } from './data-sign-utils.types';
 import { isCryptoKeyPair } from 'utils/encryption-keys-utils';
+
+export const isCryptoKeyPairImported = (
+  key: any
+): key is TDATA_SIGN_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE => {
+  return (
+    typeof key === 'object' &&
+    !!key[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME] &&
+    !!key[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]
+  );
+};
 
 export const generateKeyPair = (): PromiseLike<CryptoKeyPair> =>
   cryptoModule.generateKey(
@@ -105,49 +116,86 @@ export const exportKeyPairAsString = async (
   }
 };
 
-export const importKey = (
-  key: object,
+export const importKey = async (
+  key: TCRYPTO_UTIL_IMPORT_KEY_TYPES,
   isPublic: boolean = true
-): PromiseLike<CryptoKey> => {
-  return cryptoModule.importKey(
-    DATA_SIGN_CRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT,
-    key,
-    DATA_SIGN_CRYPTO_UTIL_KEY_DESC,
-    DATA_SIGN_CRYPTO_UTIL_KEYS_EXTRACTABLE,
-    [
-      isPublic
-        ? DATA_SIGN_CRYPTO_UTIL_PUBLIC_KEY_USAGE
-        : DATA_SIGN_CRYPTO_UTIL_PRIVATE_KEY_USAGE,
-    ]
-  );
+): Promise<CryptoKey | Error> => {
+  try {
+    if (typeof key !== 'object') {
+      return new Error('Unsupported argument type');
+    }
+
+    const res = await cryptoModule.importKey(
+      DATA_SIGN_CRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT,
+      key,
+      DATA_SIGN_CRYPTO_UTIL_KEY_DESC,
+      DATA_SIGN_CRYPTO_UTIL_KEYS_EXTRACTABLE,
+      [
+        isPublic
+          ? DATA_SIGN_CRYPTO_UTIL_PUBLIC_KEY_USAGE
+          : DATA_SIGN_CRYPTO_UTIL_PRIVATE_KEY_USAGE,
+      ]
+    );
+
+    if (!(res instanceof CryptoKey)) {
+      return new Error("Can't import the key");
+    }
+    return res;
+  } catch (err) {
+    return err;
+  }
 };
 
-export const importPublicKey = (key: object): PromiseLike<CryptoKey> =>
-  importKey(key, true);
+export const importPublicKey = (
+  key: TCRYPTO_UTIL_IMPORT_KEY_TYPES
+): PromiseLike<CryptoKey | Error> => importKey(key, true);
 
-export const importPrivateKey = (key: object): PromiseLike<CryptoKey> =>
-  importKey(key, false);
+export const importPrivateKey = (
+  key: TCRYPTO_UTIL_IMPORT_KEY_TYPES
+): PromiseLike<CryptoKey | Error> => importKey(key, false);
 
 export const importKeyPair = async (
   keyPair: TDATA_SIGN_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE
-): Promise<TDATA_SIGN_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE> => {
-  return {
-    [DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]: await importPublicKey(
-      keyPair[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]
-    ),
-    [DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]: await importPrivateKey(
-      keyPair[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]
-    ),
-  };
+): Promise<TDATA_SIGN_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE | Error> => {
+  try {
+    if (isCryptoKeyPairImported(keyPair)) {
+      const [publicKey, privateKey] = await Promise.all([
+        importPublicKey(keyPair[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]),
+        importPrivateKey(
+          keyPair[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]
+        ),
+      ]).catch(err => [err, err]);
+
+      if (publicKey instanceof Error) {
+        return publicKey;
+      }
+      if (privateKey instanceof Error) {
+        return privateKey;
+      }
+      return {
+        [DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]: publicKey,
+        [DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]: privateKey,
+      };
+    }
+    return new Error('The argument must be an instance of CryptoKeyPair');
+  } catch (err) {
+    return err;
+  }
 };
 
 export const importKeyPairFromString = (
   keyPairString: string
-): Promise<TDATA_SIGN_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE> | Error => {
+): Promise<TDATA_SIGN_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE | Error> | Error => {
   try {
-    const keyPairObject = JSON.parse(keyPairString);
+    if (typeof keyPairString === 'string') {
+      const keyPairObject = JSON.parse(keyPairString);
 
-    return importKeyPair(keyPairObject);
+      if (isCryptoKeyPairImported(keyPairObject)) {
+        return importKeyPair(keyPairObject);
+      }
+      return new Error('There is a wrong format for the imported key pair');
+    }
+    return new Error('The key must be a string');
   } catch (err) {
     return err;
   }
@@ -156,9 +204,15 @@ export const importKeyPairFromString = (
 export const importKeyFromString = (
   keyString: string,
   isPublic: boolean = true
-): PromiseLike<CryptoKey> | Error => {
+): PromiseLike<CryptoKey | Error> | Error => {
   try {
-    return importKey(JSON.parse(keyString), isPublic);
+    if (typeof keyString !== 'string') {
+      return new Error('The key must be a string');
+    }
+
+    const parsedKey = JSON.parse(keyString);
+
+    return importKey(parsedKey, isPublic);
   } catch (err) {
     return err;
   }
@@ -166,11 +220,11 @@ export const importKeyFromString = (
 
 export const importPublicKeyFromString = (
   key: string
-): PromiseLike<CryptoKey> | Error => importKeyFromString(key, true);
+): PromiseLike<CryptoKey | Error> | Error => importKeyFromString(key, true);
 
 export const importPrivateKeyFromString = (
   key: string
-): PromiseLike<CryptoKey> | Error => importKeyFromString(key, false);
+): PromiseLike<CryptoKey | Error> | Error => importKeyFromString(key, false);
 
 export const checkIfStringIsKeyPair = (keyString: string): boolean => {
   return (
