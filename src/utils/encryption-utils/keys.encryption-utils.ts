@@ -37,8 +37,19 @@ export const generateKeyPair = (): PromiseLike<CryptoKeyPair> =>
 
 export const exportKey = (
   key: CryptoKey
-): PromiseLike<TCRYPTO_UTIL_KEY_EXPORT_FORMAT_TYPE> => {
-  return cryptoModule.exportKey(CRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT, key);
+): PromiseLike<TCRYPTO_UTIL_KEY_EXPORT_FORMAT_TYPE | Error> => {
+  try {
+    return cryptoModule.exportKey(CRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT, key);
+  } catch (err) {
+    console.error(err);
+    return err;
+  }
+};
+
+export const exportKeyAsString = async (
+  key: CryptoKey
+): Promise<Error | string> => {
+  return JSON.stringify(await exportKey(key));
 };
 
 export const exportPublicKey = async (keyPair: CryptoKeyPair) => {
@@ -46,7 +57,12 @@ export const exportPublicKey = async (keyPair: CryptoKeyPair) => {
 };
 
 export const exportPublicKeyAsString = async (keyPair: CryptoKeyPair) => {
-  return JSON.stringify(exportPublicKey(keyPair));
+  const publicKey = await exportPublicKey(keyPair);
+
+  if (publicKey instanceof Error) {
+    return publicKey;
+  }
+  return JSON.stringify(publicKey);
 };
 
 export const exportKeyPair = async (
