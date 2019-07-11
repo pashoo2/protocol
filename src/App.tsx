@@ -13,7 +13,8 @@ import { calculateHash } from 'utils/hash-calculation-utils';
 import { decode, encode } from 'base64-arraybuffer';
 import logo from './logo.svg';
 import './App.css';
-import 'test/data-sign-test';
+// import 'test/data-sign-test';
+import 'test/password-key';
 
 function arrayBufferToBase64(buffer: ArrayBuffer) {
   var binary = '';
