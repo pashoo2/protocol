@@ -4,19 +4,7 @@ import {
   CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME,
 } from './crypto-utils.const';
 
-export type TCRYPTO_UTIL_IMPORT_KEY_TYPES =
-  | JsonWebKey
-  | Int8Array
-  | Int16Array
-  | Int32Array
-  | Uint8Array
-  | Uint16Array
-  | Uint32Array
-  | Uint8ClampedArray
-  | Float32Array
-  | Float64Array
-  | DataView
-  | ArrayBuffer;
+export type TCRYPTO_UTIL_IMPORT_KEY_TYPES = TTypedArrays | ArrayBuffer;
 
 export type TCRYPTO_UTIL_KEY_EXPORT_FORMAT_TYPE = object;
 
