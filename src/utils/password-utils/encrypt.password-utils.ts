@@ -25,7 +25,7 @@ export const encryptDataToArrayBuffer = async (
   }
 
   const iv = generateInitializationVectorNativeArrayBuffer();
-  debugger;
+
   if (iv instanceof Error) {
     return iv;
   }
@@ -35,11 +35,10 @@ export const encryptDataToArrayBuffer = async (
     iv,
   });
 
-  debugger;
   if (dataEncrypted instanceof Error) {
     return dataEncrypted;
   }
-  debugger;
+
   return concatDataWithInitializationVector({
     data: dataEncrypted,
     iv,

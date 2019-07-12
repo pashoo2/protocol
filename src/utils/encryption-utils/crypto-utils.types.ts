@@ -57,3 +57,12 @@ export type TCRYPTO_UTILS_DATA_WITH_INITIALIZATION_VECTOR = {
   iv: ArrayBuffer;
   data: ArrayBuffer;
 };
+
+export type TCRYPTO_UTILS_DECRYPT_DATA_KEY_CONFIG =
+  | string
+  | RsaOaepParams
+  | AesCtrParams
+  | AesCbcParams
+  | AesCmacParams
+  | AesGcmParams
+  | AesCfbParams;

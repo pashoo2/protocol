@@ -68,3 +68,8 @@ export const PASSWORD_ENCRYPTION_UTILS_ENCRYPTION_PARAMS = {
   name: 'AES-GCM',
   iv: null,
 };
+
+export const PASSWORD_ENCRYPTION_UTILS_DECRYPTION_PARAMS = {
+  name: 'AES-GCM',
+  iv: null,
+};
