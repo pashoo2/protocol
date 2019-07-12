@@ -4,6 +4,10 @@ import {
   decryptDataFromString,
 } from 'utils/encryption-utils/encryption-utils';
 import { PASSWORD_ENCRYPTION_UTILS_DECRYPTION_PARAMS } from './password-utils.const';
+import {
+  decodeStringUTF8ToArrayBuffer,
+  encodeArrayBufferToUTF8,
+} from 'utils/string-encoding-utils';
 
 export const decryptDataWithKeyNative = async (
   key: string,
@@ -16,7 +20,7 @@ export const decryptDataWithKeyNative = async (
   }
 
   const dataWithIvStructure = getInitializationVectorFromData(dataWithIv);
-
+  debugger;
   if (dataWithIvStructure instanceof Error) {
     return dataWithIvStructure;
   }
@@ -27,4 +31,26 @@ export const decryptDataWithKeyNative = async (
     ...PASSWORD_ENCRYPTION_UTILS_DECRYPTION_PARAMS,
     iv,
   });
+};
+
+export const decryptDataWithKey = async (
+  key: string,
+  dataWithIv: string
+): Promise<string | Error> => {
+  const dataWithIvArrayBuffer = decodeStringUTF8ToArrayBuffer(dataWithIv);
+
+  if (dataWithIvArrayBuffer instanceof Error) {
+    return dataWithIvArrayBuffer;
+  }
+
+  const decryptedArrayBuffer = await decryptDataWithKeyNative(
+    key,
+    dataWithIvArrayBuffer
+  );
+
+  if (decryptedArrayBuffer instanceof Error) {
+    return decryptedArrayBuffer;
+  }
+
+  return encodeArrayBufferToUTF8(decryptedArrayBuffer);
 };
