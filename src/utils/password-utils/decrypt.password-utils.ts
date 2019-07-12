@@ -1,4 +1,7 @@
-import { importPasswordKeyFromString } from './derive-key.password-utils';
+import {
+  importPasswordKeyFromString,
+  generatePasswordKeyByPasswordString,
+} from './derive-key.password-utils';
 import {
   getInitializationVectorFromData,
   decryptDataFromString,
@@ -10,11 +13,16 @@ import {
 } from 'utils/string-encoding-utils';
 
 export const decryptDataWithKeyNative = async (
-  key: string,
+  key: string | CryptoKey,
   dataWithIv: ArrayBuffer
 ): Promise<ArrayBuffer | Error> => {
-  const cryptoKey = await importPasswordKeyFromString(key);
+  let cryptoKey;
 
+  if (key instanceof CryptoKey) {
+    cryptoKey = key;
+  } else {
+    cryptoKey = await importPasswordKeyFromString(key);
+  }
   if (cryptoKey instanceof Error) {
     return cryptoKey;
   }
@@ -34,7 +42,7 @@ export const decryptDataWithKeyNative = async (
 };
 
 export const decryptDataWithKey = async (
-  key: string,
+  key: string | CryptoKey,
   dataWithIv: string
 ): Promise<string | Error> => {
   const dataWithIvArrayBuffer = decodeStringUTF8ToArrayBuffer(dataWithIv);
@@ -53,4 +61,18 @@ export const decryptDataWithKey = async (
   }
 
   return encodeArrayBufferToUTF8(decryptedArrayBuffer);
+};
+
+export const decryptDataByPassword = async (
+  password: string,
+  dataWithIv: string
+): Promise<string | Error> => {
+  const key = await generatePasswordKeyByPasswordString(password);
+
+  if (key instanceof Error) {
+    console.error(key);
+    return key;
+  }
+
+  return decryptDataWithKey(key, dataWithIv);
 };

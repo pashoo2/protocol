@@ -12,14 +12,22 @@ import {
   TCRYPTO_UTIL_ENCRYPT_DATA_TYPES,
 } from 'utils/encryption-utils/crypto-utils.types';
 import { encodeArrayBufferToUTF8 } from 'utils/string-encoding-utils';
-import { importPasswordKeyFromString } from './derive-key.password-utils';
+import {
+  importPasswordKeyFromString,
+  generatePasswordKeyByPasswordString,
+} from './derive-key.password-utils';
 
 export const encryptDataToArrayBuffer = async (
-  key: string,
+  key: string | CryptoKey,
   data: TCRYPTO_UTIL_ENCRYPT_DATA_TYPES
 ): Promise<Error | ArrayBuffer> => {
-  const cryptoKey = await importPasswordKeyFromString(key);
+  let cryptoKey;
 
+  if (key instanceof CryptoKey) {
+    cryptoKey = key;
+  } else {
+    cryptoKey = await importPasswordKeyFromString(key);
+  }
   if (cryptoKey instanceof Error) {
     return cryptoKey;
   }
@@ -46,7 +54,7 @@ export const encryptDataToArrayBuffer = async (
 };
 
 export const encryptDataToString = async (
-  key: string,
+  key: string | CryptoKey,
   data: TCRYPTO_UTIL_ENCRYPT_DATA_TYPES
 ): Promise<Error | string> => {
   const encrypted = await encryptDataToArrayBuffer(key, data);
@@ -55,4 +63,18 @@ export const encryptDataToString = async (
     return encrypted;
   }
   return encodeArrayBufferToUTF8(encrypted);
+};
+
+export const encryptDataWithPassword = async (
+  password: string,
+  data: TCRYPTO_UTIL_ENCRYPT_DATA_TYPES
+): Promise<Error | string> => {
+  const key = await generatePasswordKeyByPasswordString(password);
+
+  if (key instanceof Error) {
+    console.error(key);
+    return key;
+  }
+
+  return encryptDataToString(key, data);
 };
