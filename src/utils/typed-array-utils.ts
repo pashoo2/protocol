@@ -62,3 +62,40 @@ export const convertToTypedArray = (
   }
   return stringToTypedArray(data);
 };
+
+export const concatArrayBuffers = (
+  ...typedArrays: ArrayBuffer[]
+): ArrayBuffer | Error => {
+  const arrayResulted = new Uint8Array();
+  const count = typedArrays.length;
+  let idx = 0;
+  let arrayBuffer = null;
+  let currentLength = 0;
+  let newTypedArray;
+
+  try {
+    for (; idx < count; idx += 1) {
+      arrayBuffer = typedArrays[idx];
+      newTypedArray = new Uint8Array(arrayBuffer);
+      arrayResulted.set(newTypedArray, currentLength);
+      currentLength += newTypedArray.byteLength;
+    }
+  } catch (err) {
+    return err;
+  }
+  return arrayBufferFromTypedArray(arrayResulted);
+};
+
+export const getBytesFromArrayBuffer = (
+  typedArray: ArrayBuffer,
+  from: number,
+  to?: number
+): ArrayBuffer | Error => {
+  try {
+    const arrayResulted = new Uint8Array(typedArray);
+
+    return arrayBufferFromTypedArray(arrayResulted.subarray(from, to));
+  } catch (err) {
+    return err;
+  }
+};

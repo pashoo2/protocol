@@ -43,3 +43,17 @@ export type TCRYPTO_UTIL_DECRYPT_KEY_TYPES =
 export type TCRYPTO_UTIL_DECRYPT_DATA_TYPES_NATIVE = TTypedArrays;
 
 export type TCRYPTO_UTIL_DECRYPT_DATA_TYPES = string | TTypedArrays;
+
+export type TCRYPTO_UTILS_ENCRYPT_DATA_KEY_CONFIG =
+  | string
+  | RsaOaepParams
+  | AesCtrParams
+  | AesCbcParams
+  | AesCmacParams
+  | AesGcmParams
+  | AesCfbParams;
+
+export type TCRYPTO_UTILS_DATA_WITH_INITIALIZATION_VECTOR = {
+  iv: ArrayBuffer;
+  data: ArrayBuffer;
+};

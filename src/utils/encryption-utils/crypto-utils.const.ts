@@ -31,3 +31,5 @@ export const CRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT = 'jwk';
 export const CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME = 'publicKey';
 
 export const CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME = 'privateKey';
+
+export const INITIALIZATION_VECTOR_DEFAULT_LENGTH = 12;
