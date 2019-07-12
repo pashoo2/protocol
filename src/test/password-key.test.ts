@@ -7,7 +7,10 @@ import {
   encryptDataToArrayBuffer,
   encryptDataToString,
 } from 'utils/password-utils/encrypt.password-utils';
-import { decryptDataWithKeyNative } from 'utils/password-utils/decrypt.password-utils';
+import {
+  decryptDataWithKeyNative,
+  decryptDataWithKey,
+} from 'utils/password-utils/decrypt.password-utils';
 
 const testKeyGeneration = async () => {
   /**
@@ -62,8 +65,15 @@ const testKeyGeneration = async () => {
     return chipher;
   }
   console.log('chipher', chipher);
-  decryptDataWithKeyNative;
-  return passwordString;
+  const decrypted = await decryptDataWithKey(passwordKey, chipher);
+
+  if (decrypted instanceof Error) {
+    console.error(decrypted);
+    return decrypted;
+  }
+  console.log('decrypted', decrypted);
+  console.log('is valid', decrypted === data);
+  return decrypted;
 };
 
 testKeyGeneration();

@@ -26,6 +26,7 @@ export const decryptNative = async (
     return new Error('The data type is not supported');
   }
   try {
+    debugger;
     const res = await cryptoModule.decrypt(decryptKeyParams, key, data);
 
     return res;
@@ -69,7 +70,7 @@ export const decryptDataFromString = async (
   if (d instanceof Error) {
     return d;
   }
-  return decryptNative(k, d);
+  return decryptNative(k, d, decryptKeyParams);
 };
 
 export const decryptFromString = async (
@@ -77,7 +78,11 @@ export const decryptFromString = async (
   data: TCRYPTO_UTIL_DECRYPT_DATA_TYPES,
   decryptKeyParams?: TCRYPTO_UTILS_DECRYPT_DATA_KEY_CONFIG
 ): Promise<string | Error> => {
-  const decryptedData = await decryptDataFromString(key, data);
+  const decryptedData = await decryptDataFromString(
+    key,
+    data,
+    decryptKeyParams
+  );
 
   if (decryptedData instanceof Error) {
     return decryptedData;

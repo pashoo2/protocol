@@ -113,7 +113,7 @@ export const getBytesFromArrayBuffer = (
   try {
     const arrayResulted = new Uint8Array(typedArray);
 
-    return arrayBufferFromTypedArray(arrayResulted.subarray(from, to));
+    return arrayBufferFromTypedArray(arrayResulted.slice(from, to));
   } catch (err) {
     return err;
   }

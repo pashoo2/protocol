@@ -63,13 +63,13 @@ export const getInitializationVectorFromData = (
 ): TCRYPTO_UTILS_DATA_WITH_INITIALIZATION_VECTOR | Error => {
   try {
     const iv = getBytesFromArrayBuffer(arrayBuffer, 0, ivLengthBytes);
-
+    debugger;
     if (iv instanceof Error) {
       return iv;
     }
 
-    const data = getBytesFromArrayBuffer(arrayBuffer, ivLengthBytes + 1);
-
+    const data = getBytesFromArrayBuffer(arrayBuffer, ivLengthBytes);
+    debugger;
     if (data instanceof Error) {
       return data;
     }
@@ -91,7 +91,6 @@ export const getInitializationVectorFromDataString = (
   if (dataArrayBuffer instanceof Error) {
     return dataArrayBuffer;
   }
-
   return getInitializationVectorFromData(dataArrayBuffer, ivLengthBytes);
 };
 
