@@ -6,10 +6,12 @@ import {
 import {
   encryptDataToArrayBuffer,
   encryptDataToString,
+  encryptDataWithPassword,
 } from 'utils/password-utils/encrypt.password-utils';
 import {
   decryptDataWithKeyNative,
   decryptDataWithKey,
+  decryptDataByPassword,
 } from 'utils/password-utils/decrypt.password-utils';
 
 const testKeyGeneration = async () => {
@@ -73,7 +75,24 @@ const testKeyGeneration = async () => {
   }
   console.log('decrypted', decrypted);
   console.log('is valid', decrypted === data);
-  return decrypted;
+
+  const dataTest = 'test string fo password';
+  const pwd = 'pwd_test';
+  const encrypted = await encryptDataWithPassword(pwd, dataTest);
+
+  if (encrypted instanceof Error) {
+    console.error(encrypted);
+    return encrypted;
+  }
+
+  const decryptedPwd = await decryptDataByPassword(pwd, encrypted);
+
+  if (decryptedPwd instanceof Error) {
+    console.error(decryptedPwd);
+    return decryptedPwd;
+  }
+  console.log('decryptedPwd', decryptedPwd);
+  console.log('is valid', decryptedPwd === dataTest);
 };
 
 testKeyGeneration();
