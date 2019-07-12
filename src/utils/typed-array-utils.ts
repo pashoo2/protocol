@@ -63,10 +63,29 @@ export const convertToTypedArray = (
   return stringToTypedArray(data);
 };
 
+export const getOverallLength = (
+  ...typedArrays: ArrayBuffer[]
+): number | Error => {
+  try {
+    return typedArrays.reduce(
+      (allLength, typedArray) => (allLength += typedArray.byteLength),
+      0
+    );
+  } catch (err) {
+    return err;
+  }
+};
+
 export const concatArrayBuffers = (
   ...typedArrays: ArrayBuffer[]
 ): ArrayBuffer | Error => {
-  const arrayResulted = new Uint8Array();
+  const len = getOverallLength(...typedArrays);
+
+  if (len instanceof Error) {
+    return len;
+  }
+
+  const arrayResulted = new Uint8Array(len);
   const count = typedArrays.length;
   let idx = 0;
   let arrayBuffer = null;

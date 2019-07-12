@@ -89,11 +89,6 @@ export const encryptNative = async (
   //an optional params for the encryption method
   cryptoKeyConfig: TCRYPTO_UTILS_ENCRYPT_DATA_KEY_CONFIG = CRYPTO_UTIL_KEY_DESC
 ): Promise<ArrayBuffer | Error> => {
-  if (key.type !== CRYPTO_UTIL_ENCRYPTION_KEY_TYPE) {
-    return new Error(
-      `The type of the key ${key.type} may not be used for data encryption`
-    );
-  }
   try {
     const res = await cryptoModule.encrypt(cryptoKeyConfig, key, data);
 
@@ -111,8 +106,13 @@ export const encryptToTypedArray = async (
   //an optional params for the encryption method
   cryptoKeyConfig?: TCRYPTO_UTILS_ENCRYPT_DATA_KEY_CONFIG
 ): Promise<ArrayBuffer | Error> => {
-  const k = await getKeyOfType(key, CRYPTO_UTIL_ENCRYPTION_KEY_TYPE);
+  let k;
 
+  if (key instanceof CryptoKey) {
+    k = key;
+  } else {
+    k = await getKeyOfType(key, CRYPTO_UTIL_ENCRYPTION_KEY_TYPE);
+  }
   if (k instanceof Error) {
     return k;
   }
