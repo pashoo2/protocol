@@ -20,8 +20,21 @@ import {
 } from 'utils/password-utils/derive-key.password-utils';
 import { TPASSWORD_ENCRYPTION_KEY_IMPORT_NATIVE_SUPPORTED_TYPES } from 'utils/password-utils/password-utils.types';
 import { exportKeyAsString } from 'utils/encryption-utils/encryption-utils';
+import { decryptDataWithKey } from 'utils/password-utils/decrypt.password-utils';
 
-class SecretStorage {
+export class SecretStorage {
+  private static error(err: string | Error): Error {
+    let errorInstance: Error;
+
+    if (err instanceof Error) {
+      errorInstance = err;
+    } else {
+      errorInstance = new Error(String(err));
+    }
+    console.error('SecretStorage', errorInstance);
+    return errorInstance;
+  }
+
   private static KEY_IN_SESSION_STORAGE = 'uk';
 
   private k?: CryptoKey;
@@ -32,16 +45,22 @@ class SecretStorage {
     typeof SECRET_STORAGE_PROVIDERS_NAME
   >;
 
-  private configuration?: TSecretStoreConfiguration;
-
   public status: ownValueOf<typeof SECRET_STORAGE_STATUS> =
     SECRET_STORAGE_STATUS.STOPPED;
 
   public errorOccurred?: Error;
 
-  constructor(configuration: TSecretStoreConfiguration) {
-    this.configuration = configuration;
+  /**
+   * returns true if connected succesfully to
+   * a storage and have a vaild crypto key
+   */
+  public isRunning() {
+    const { status } = this;
+
+    return status === SECRET_STORAGE_STATUS.RUNNING;
   }
+
+  constructor(private configuration: TSecretStoreConfiguration) {}
 
   private clearError() {
     this.errorOccurred = undefined;
@@ -60,10 +79,9 @@ class SecretStorage {
     this.status = status;
   }
 
-  private setErrorStatus(err: Error) {
+  private setErrorStatus(err: Error | string) {
     if (err) {
-      console.error('SecretStorage::error', err);
-      this.errorOccurred = err;
+      this.errorOccurred = SecretStorage.error(err);
     }
     this.setStatus(SECRET_STORAGE_STATUS.ERROR);
   }
@@ -269,4 +287,59 @@ class SecretStorage {
     }
     return this.connect();
   }
+
+  async getWithStorageProvider(key: string): Promise<string | Error> {
+    const { storageProvider } = this;
+
+    if (!storageProvider) {
+      return new Error('There is no connection with a storage provider');
+    }
+
+    const value = await storageProvider.get(key);
+
+    if (value instanceof Error) {
+      return SecretStorage.error(value);
+    }
+    if (typeof value !== 'string' || !value.length) {
+      return SecretStorage.error(
+        'There is a wrong value type returned by the storage provider'
+      );
+    }
+    return value;
+  }
+
+  async decryptValue(value: string): Promise<string | Error> {
+    const { k } = this;
+
+    if (!(k instanceof CryptoKey)) {
+      return SecretStorage.error(
+        'There is no a valid key to decrypt the value'
+      );
+    }
+
+    const decryptedValue = await decryptDataWithKey(k, value);
+
+    if (decryptedValue instanceof Error) {
+      return SecretStorage.error(decryptedValue);
+    }
+    if (typeof decryptedValue !== 'string' || !decryptedValue.length) {
+      return SecretStorage.error('A wrong value decrypted');
+    }
+    return decryptedValue;
+  }
+
+  get = async (key: string): Promise<string | Error> => {
+    const { isRunning } = this;
+
+    if (!isRunning) {
+      return new Error('There is no connection with storage or not authorized');
+    }
+
+    const stringEncrypted = await this.getWithStorageProvider(key);
+
+    if (stringEncrypted instanceof Error) {
+      return SecretStorage.error(stringEncrypted);
+    }
+    return this.decryptValue(stringEncrypted);
+  };
 }
