@@ -61,7 +61,12 @@ export class SecretStorage {
     return status === SECRET_STORAGE_STATUS.RUNNING;
   }
 
-  constructor(private configuration: TSecretStoreConfiguration) {}
+  /**
+   * @param {object} configuration
+   * @param {strig} [SECRET_STORAGE_PROVIDERS_NAME.LOCAL_STORAGE] configuration.storageProviderName
+   * - provider name use to store a secret data
+   */
+  constructor(private configuration: Partial<TSecretStoreConfiguration>) {}
 
   private clearError() {
     this.errorOccurred = undefined;
@@ -87,7 +92,9 @@ export class SecretStorage {
     this.setStatus(SECRET_STORAGE_STATUS.ERROR);
   }
 
-  private setStorageProviderName(storageProviderName: string): boolean {
+  private setStorageProviderName(
+    storageProviderName: string = SECRET_STORAGE_PROVIDERS_NAME.LOCAL_STORAGE
+  ): boolean {
     if (SECRET_STORAGE_PROVIDERS_NAMES.includes(storageProviderName)) {
       this.storageProviderName = storageProviderName;
       return true;
@@ -111,10 +118,7 @@ export class SecretStorage {
     if (configuration) {
       const { storageProviderName } = configuration;
 
-      if (
-        storageProviderName &&
-        this.setStorageProviderName(storageProviderName)
-      ) {
+      if (this.setStorageProviderName(storageProviderName)) {
         const storageProviderConstructor =
           SECRET_STORAGE_PROVIDERS[storageProviderName];
 
