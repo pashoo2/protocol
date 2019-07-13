@@ -1,10 +1,9 @@
 import EEmitter from 'events';
-import TypedEmitter from 'typed-emitter';
+import './events';
+import {
+  TypedEventEmitter,
+  TEventsList,
+} from './event-emitter-class-base.types';
 
-export class EventEmitter<IEvents> {
-  events: TypedEmitter<IEvents>;
-
-  constructor() {
-    this.events = (new EEmitter() as unknown) as TypedEmitter<IEvents>;
-  }
-}
+export class EventEmitter<IEvents extends TEventsList> extends EEmitter
+  implements TypedEventEmitter<IEvents> {}

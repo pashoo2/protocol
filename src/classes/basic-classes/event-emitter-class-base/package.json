@@ -2,7 +2,6 @@
   "main": "event-emitter-class-base.ts",
   "types": "event-emitter-class-base.ts",
   "dependencies": {
-    "events": "^3.0.0",
-    "typed-emitter": "^0.1.0"
+    "events": "^3.0.0"
   }
 }
