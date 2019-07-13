@@ -22,6 +22,25 @@ const secretStorageTest = async () => {
     return connectionResult;
   }
   console.log('is new instance connected', connectionResult);
+
+  const testValue = 'testy value for the secret storage';
+  const testValueKey = 'test_value';
+  const setTestValueResult = await secretStorage.set(testValueKey, testValue);
+
+  if (setTestValueResult instanceof Error) {
+    console.error(setTestValueResult);
+    return setTestValueResult;
+  }
+  console.log('setTestValueResult', setTestValueResult);
+
+  const getTestValueResult = await secretStorageNewInstance.get(testValueKey);
+
+  if (getTestValueResult instanceof Error) {
+    console.error(getTestValueResult);
+    return getTestValueResult;
+  }
+  console.log('getTestValueResult', getTestValueResult);
+  console.log('is valid', testValue === getTestValueResult);
 };
 
 secretStorageTest();
