@@ -61,7 +61,6 @@ const testKeyGeneration = async () => {
   const data = 'test_string';
   const chipher = await encryptDataToString(passwordKey, data);
 
-  debugger;
   if (chipher instanceof Error) {
     console.error(chipher);
     return chipher;

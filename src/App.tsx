@@ -14,7 +14,8 @@ import { decode, encode } from 'base64-arraybuffer';
 import logo from './logo.svg';
 import './App.css';
 // import 'test/data-sign-test';
-import 'test/password-key.test';
+// import 'test/password-key.test';
+import 'test/secret-storage.test';
 
 function arrayBufferToBase64(buffer: ArrayBuffer) {
   var binary = '';

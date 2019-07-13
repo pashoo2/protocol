@@ -26,7 +26,6 @@ export const decryptNative = async (
     return new Error('The data type is not supported');
   }
   try {
-    debugger;
     const res = await cryptoModule.decrypt(decryptKeyParams, key, data);
 
     return res;

@@ -28,7 +28,7 @@ export const decryptDataWithKeyNative = async (
   }
 
   const dataWithIvStructure = getInitializationVectorFromData(dataWithIv);
-  debugger;
+
   if (dataWithIvStructure instanceof Error) {
     return dataWithIvStructure;
   }

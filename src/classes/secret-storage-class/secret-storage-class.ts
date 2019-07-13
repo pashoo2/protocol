@@ -94,7 +94,7 @@ export class SecretStorage {
    * @param {strig} [SECRET_STORAGE_PROVIDERS_NAME.LOCAL_STORAGE] configuration.storageProviderName
    * - provider name use to store a secret data
    */
-  constructor(private configuration: Partial<TSecretStoreConfiguration>) {}
+  constructor(private configuration: Partial<TSecretStoreConfiguration> = {}) {}
 
   private clearError() {
     this.errorOccurred = undefined;
@@ -291,7 +291,7 @@ export class SecretStorage {
       return new Error("Can't convert the key to exported format");
     }
 
-    const result = this.setEncryptonKeyAuthInStorage(keyString);
+    const result = await this.setEncryptonKeyAuthInStorage(keyString);
 
     if (result instanceof Error) {
       return new Error("Can't save the key in storage");
@@ -338,18 +338,18 @@ export class SecretStorage {
     this.clearState();
     this.setStatus(SECRET_STORAGE_STATUS.CONNECTING);
 
-    const isKeyExists = await this.importCryptoKey();
-
-    if (isKeyExists instanceof Error) {
-      this.setErrorStatus(isKeyExists);
-      return isKeyExists;
-    }
-
     const resultRunAuthProvider = await this.runAuthStorageProvider();
 
     if (resultRunAuthProvider instanceof Error) {
       this.setErrorStatus(resultRunAuthProvider);
       return resultRunAuthProvider;
+    }
+
+    const isKeyExists = await this.importCryptoKey();
+
+    if (isKeyExists instanceof Error) {
+      this.setErrorStatus(isKeyExists);
+      return isKeyExists;
     }
 
     const isStorageProviderStarted = await this.runStorageProvider();
@@ -379,6 +379,13 @@ export class SecretStorage {
     if (cryptoKey instanceof Error) {
       this.setErrorStatus(cryptoKey);
       return cryptoKey;
+    }
+
+    const resultRunAuthProvider = await this.runAuthStorageProvider();
+
+    if (resultRunAuthProvider instanceof Error) {
+      this.setErrorStatus(resultRunAuthProvider);
+      return resultRunAuthProvider;
     }
 
     const setKeyResult = await this.setEncryptionKey(cryptoKey);
