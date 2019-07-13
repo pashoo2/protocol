@@ -1,0 +1,4 @@
+{
+  "main": "secret-storage-class.ts",
+  "types": "secret-storage-class.ts"
+}
