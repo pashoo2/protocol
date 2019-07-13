@@ -1,11 +1,15 @@
 import { StorageProvider } from '../../secret-storage-class.types';
 
 export class SecretStorageProviderLocalStorage implements StorageProvider {
-  public set(key: string, value: string) {
-    return Promise.resolve(true);
+  public async connect() {
+    return true;
   }
 
-  public get(key: string) {
-    return Promise.resolve(key);
+  public async set(key: string, value: string) {
+    return true;
+  }
+
+  public async get(key: string) {
+    return key;
   }
 }

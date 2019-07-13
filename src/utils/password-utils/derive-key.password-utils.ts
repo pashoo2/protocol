@@ -104,6 +104,25 @@ export const exportPasswordKey = (
   }
 };
 
+export const exportPasswordKeyAsString = async (
+  passwordKey: CryptoKey
+): Promise<string | Error> => {
+  try {
+    const cryptoKey = await cryptoModule.exportKey(
+      PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_EXPORT_FORMAT,
+      passwordKey
+    );
+
+    if (cryptoKey instanceof Error) {
+      return cryptoKey;
+    }
+    return JSON.stringify(cryptoKey);
+  } catch (err) {
+    console.error(err);
+    return err;
+  }
+};
+
 export const generatePasswordKeyInExportFormat = async (
   passwordString: string
 ): Promise<

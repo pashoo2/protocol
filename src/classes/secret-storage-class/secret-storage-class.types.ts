@@ -1,4 +1,5 @@
 export abstract class StorageProvider {
+  public abstract connect(): Promise<boolean | Error>;
   public abstract set(key: string, value: string): Promise<boolean | Error>;
   public abstract get(key: string): Promise<string | Error>;
 }
@@ -16,4 +17,8 @@ export interface ILocalStorageProviderTable {
 
 export type TSecretStoreConfiguration = {
   storageProviderName: string;
+};
+
+export type TSecretStoreCredentials = {
+  password: string;
 };
