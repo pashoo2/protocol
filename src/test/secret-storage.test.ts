@@ -12,6 +12,16 @@ const secretStorageTest = async () => {
     return isAuthorized;
   }
   console.log('isAuthorized', isAuthorized);
+
+  const secretStorageNewInstance = new SecretStorage();
+  //should connect because authoirized before and credentials are stored
+  const connectionResult = await secretStorageNewInstance.connect();
+
+  if (connectionResult instanceof Error) {
+    console.error(connectionResult);
+    return connectionResult;
+  }
+  console.log('is new instance connected', connectionResult);
 };
 
 secretStorageTest();

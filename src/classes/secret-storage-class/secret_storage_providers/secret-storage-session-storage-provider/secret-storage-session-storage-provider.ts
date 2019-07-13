@@ -40,7 +40,7 @@ export class SecretStorageProvideSessionStorage implements StorageProvider {
         return new Error('There is no storage connected');
       }
 
-      const item = localStorage.getItem(key);
+      const item = sessionStorage.getItem(key);
 
       if (typeof item !== 'string') {
         return new Error('There is no value');

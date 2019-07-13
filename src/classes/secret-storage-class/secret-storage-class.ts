@@ -249,10 +249,12 @@ export class SecretStorage {
         return new Error('There is no an auth storage running');
       }
 
-      const kFromStorage = authStorageProvider.get(KEY_IN_SESSION_STORAGE);
+      const kFromStorage = await authStorageProvider.get(
+        KEY_IN_SESSION_STORAGE
+      );
 
       if (typeof kFromStorage !== 'string') {
-        return new Error('There is no a valid key in the storage');
+        return new Error('There is no a valid user secret key was stored');
       }
 
       const cryptoKeyImported = await importPasswordKeyFromString(kFromStorage);
