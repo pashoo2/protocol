@@ -19,7 +19,6 @@ import {
   generatePasswordKeyByPasswordString,
 } from 'utils/password-utils/derive-key.password-utils';
 import { TPASSWORD_ENCRYPTION_KEY_IMPORT_NATIVE_SUPPORTED_TYPES } from 'utils/password-utils/password-utils.types';
-import { exportKeyAsString } from 'utils/encryption-utils/encryption-utils';
 import { decryptDataWithKey } from 'utils/password-utils/decrypt.password-utils';
 import { encryptDataToString } from 'utils/password-utils/encrypt.password-utils';
 
@@ -36,11 +35,40 @@ export class SecretStorage {
     return errorInstance;
   }
 
-  private static KEY_IN_SESSION_STORAGE = 'uk';
+  private static checkIsStorageProviderInstance(
+    storageProviderInstance: any
+  ): Error | boolean {
+    if (
+      !storageProviderInstance ||
+      typeof storageProviderInstance !== 'object'
+    ) {
+      return new Error('Storage provider must be an object');
+    }
+
+    const { connect, get, set } = storageProviderInstance;
+
+    if (
+      typeof connect !== 'function' ||
+      typeof get !== 'function' ||
+      typeof set !== 'function'
+    ) {
+      return new Error(
+        'The instance has a wrong implemntation of a StorageProvider interface'
+      );
+    }
+    return true;
+  }
+
+  private static AuthStorageProvider: IStorageProvider =
+    SECRET_STORAGE_PROVIDERS[SECRET_STORAGE_PROVIDERS_NAME.SESSION_STORAGE];
+
+  private static KEY_IN_AUTH_STORAGE = '__SecretStorage__uk';
 
   private k?: CryptoKey;
 
   private storageProvider?: TInstanceofStorageProvider;
+
+  private authStorageProvider?: TInstanceofStorageProvider;
 
   private storageProviderName?: ownValueOf<
     typeof SECRET_STORAGE_PROVIDERS_NAME
@@ -106,10 +134,58 @@ export class SecretStorage {
     StorageProviderConstructor: IStorageProvider
   ): TInstanceofStorageProvider | Error {
     try {
-      return new StorageProviderConstructor();
+      const storageProvider = new StorageProviderConstructor();
+      const checkResult = SecretStorage.checkIsStorageProviderInstance(
+        storageProvider
+      );
+
+      if (checkResult instanceof Error) {
+        return checkResult;
+      }
+      return storageProvider;
     } catch (err) {
       return err;
     }
+  }
+
+  private async runAuthStorageProvider(): Promise<boolean | Error> {
+    const { authStorageProvider: runningAuthStorageProvider } = this;
+    const checkIsRunning = SecretStorage.checkIsStorageProviderInstance(
+      runningAuthStorageProvider
+    );
+
+    /**
+     * if running already
+     */
+    if (checkIsRunning === true) {
+      return true;
+    }
+
+    const { AuthStorageProvider } = SecretStorage;
+
+    if (!AuthStorageProvider) {
+      return new Error('There is no provider for the auth storage is defined');
+    }
+
+    const authStorageProvider = await this.createInstanceOfStorageProvider(
+      AuthStorageProvider
+    );
+
+    if (authStorageProvider instanceof Error) {
+      return authStorageProvider;
+    }
+
+    const connectResult = await authStorageProvider.connect();
+    if (connectResult instanceof Error) {
+      return connectResult;
+    }
+    if (connectResult !== true) {
+      return new Error(
+        'There is a wrong result was returned by auth storage provider'
+      );
+    }
+    this.authStorageProvider = authStorageProvider;
+    return true;
   }
 
   private async runStorageProvider(): Promise<Error | boolean> {
@@ -119,8 +195,13 @@ export class SecretStorage {
       const { storageProviderName } = configuration;
 
       if (this.setStorageProviderName(storageProviderName)) {
+        const { storageProviderName: storageProviderChosenName } = this;
+
+        if (!storageProviderChosenName) {
+          return new Error('There is no storage provider was choosed');
+        }
         const storageProviderConstructor =
-          SECRET_STORAGE_PROVIDERS[storageProviderName];
+          SECRET_STORAGE_PROVIDERS[storageProviderChosenName];
 
         if (storageProviderConstructor) {
           const storageProvider = this.createInstanceOfStorageProvider(
@@ -144,22 +225,31 @@ export class SecretStorage {
     throw new Error('There is no storage provider was defined');
   }
 
-  setEncryptonKeyInStorage(key: string): boolean | Error {
+  async setEncryptonKeyAuthInStorage(key: string): Promise<boolean | Error> {
     try {
-      const { KEY_IN_SESSION_STORAGE } = SecretStorage;
+      const { KEY_IN_AUTH_STORAGE: KEY_IN_SESSION_STORAGE } = SecretStorage;
+      const { authStorageProvider } = this;
 
-      sessionStorage.setItem(KEY_IN_SESSION_STORAGE, key);
-      return true;
+      if (!authStorageProvider) {
+        return new Error('There is no an auth storage running');
+      }
+      return authStorageProvider.set(KEY_IN_SESSION_STORAGE, key);
     } catch (err) {
       this.setErrorStatus(err);
       return err;
     }
   }
 
-  async readEncryptionKeyFomSessionStorage(): Promise<CryptoKey | Error> {
+  async readEncryptionKeyFomAuthStorage(): Promise<CryptoKey | Error> {
     try {
-      const { KEY_IN_SESSION_STORAGE } = SecretStorage;
-      const kFromStorage = sessionStorage.getItem(KEY_IN_SESSION_STORAGE);
+      const { KEY_IN_AUTH_STORAGE: KEY_IN_SESSION_STORAGE } = SecretStorage;
+      const { authStorageProvider } = this;
+
+      if (!authStorageProvider) {
+        return new Error('There is no an auth storage running');
+      }
+
+      const kFromStorage = authStorageProvider.get(KEY_IN_SESSION_STORAGE);
 
       if (typeof kFromStorage !== 'string') {
         return new Error('There is no a valid key in the storage');
@@ -201,7 +291,7 @@ export class SecretStorage {
       return new Error("Can't convert the key to exported format");
     }
 
-    const result = this.setEncryptonKeyInStorage(keyString);
+    const result = this.setEncryptonKeyAuthInStorage(keyString);
 
     if (result instanceof Error) {
       return new Error("Can't save the key in storage");
@@ -218,7 +308,7 @@ export class SecretStorage {
       return true;
     }
 
-    const importedCryptoKey = await this.readEncryptionKeyFomSessionStorage();
+    const importedCryptoKey = await this.readEncryptionKeyFomAuthStorage();
 
     if (importedCryptoKey instanceof Error) {
       this.setErrorStatus(importedCryptoKey);
@@ -253,6 +343,13 @@ export class SecretStorage {
     if (isKeyExists instanceof Error) {
       this.setErrorStatus(isKeyExists);
       return isKeyExists;
+    }
+
+    const resultRunAuthProvider = await this.runAuthStorageProvider();
+
+    if (resultRunAuthProvider instanceof Error) {
+      this.setErrorStatus(resultRunAuthProvider);
+      return resultRunAuthProvider;
     }
 
     const isStorageProviderStarted = await this.runStorageProvider();
