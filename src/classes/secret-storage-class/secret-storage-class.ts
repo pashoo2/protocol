@@ -21,6 +21,7 @@ import {
 import { TPASSWORD_ENCRYPTION_KEY_IMPORT_NATIVE_SUPPORTED_TYPES } from 'utils/password-utils/password-utils.types';
 import { exportKeyAsString } from 'utils/encryption-utils/encryption-utils';
 import { decryptDataWithKey } from 'utils/password-utils/decrypt.password-utils';
+import { encryptDataToString } from 'utils/password-utils/encrypt.password-utils';
 
 export class SecretStorage {
   private static error(err: string | Error): Error {
@@ -342,4 +343,73 @@ export class SecretStorage {
     }
     return this.decryptValue(stringEncrypted);
   };
+
+  async setWithStorageProvider(
+    key: string,
+    value: string
+  ): Promise<boolean | Error> {
+    const { storageProvider } = this;
+
+    if (!storageProvider) {
+      return new Error(
+        'There is no an active connection with storage provider'
+      );
+    }
+
+    const result = await storageProvider.set(key, value);
+
+    if (result instanceof Error) {
+      return result;
+    }
+    if (result !== true) {
+      return new Error(
+        'A wrong result on set the value into the storage provider'
+      );
+    }
+    return true;
+  }
+
+  async encryptValue(value: string): Promise<string | Error> {
+    const { k } = this;
+
+    if (!(k instanceof CryptoKey)) {
+      return new Error('There is no key to encrypt the value');
+    }
+
+    const encryptedValue = await encryptDataToString(k, value);
+
+    if (encryptedValue instanceof Error) {
+      return encryptedValue;
+    }
+    if (typeof encryptedValue !== 'string' || !encryptedValue.length) {
+      return new Error('A wrong encryption result for the value');
+    }
+    return encryptedValue;
+  }
+
+  async set(key: string, value: string): Promise<boolean | Error> {
+    const { isRunning } = this;
+
+    if (!isRunning) {
+      return SecretStorage.error(
+        'The instance of SecretStorage is not connected to the storage provider or there is no an encryption key'
+      );
+    }
+
+    const encryptedValue = await this.encryptValue(value);
+
+    if (encryptedValue instanceof Error) {
+      return SecretStorage.error(encryptedValue);
+    }
+
+    const storeValueResult = await this.setWithStorageProvider(
+      key,
+      encryptedValue
+    );
+
+    if (storeValueResult instanceof Error) {
+      return SecretStorage.error(storeValueResult);
+    }
+    return storeValueResult;
+  }
 }
