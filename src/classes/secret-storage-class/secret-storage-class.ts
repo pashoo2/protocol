@@ -21,20 +21,14 @@ import {
 import { TPASSWORD_ENCRYPTION_KEY_IMPORT_NATIVE_SUPPORTED_TYPES } from 'utils/password-utils/password-utils.types';
 import { decryptDataWithKey } from 'utils/password-utils/decrypt.password-utils';
 import { encryptDataToString } from 'utils/password-utils/encrypt.password-utils';
+import { getStatusClass } from 'classes/basic-classes/status-class-base/status-class-base';
 
-export class SecretStorage {
-  private static error(err: string | Error): Error {
-    let errorInstance: Error;
-
-    if (err instanceof Error) {
-      errorInstance = err;
-    } else {
-      errorInstance = new Error(String(err));
-    }
-    console.error('SecretStorage', errorInstance);
-    return errorInstance;
+export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
+  {
+    errorStatus: SECRET_STORAGE_STATUS.ERROR,
+    instanceName: 'SecretStorage',
   }
-
+) {
   private static checkIsStorageProviderInstance(
     storageProviderInstance: any
   ): Error | boolean {
@@ -74,11 +68,6 @@ export class SecretStorage {
     typeof SECRET_STORAGE_PROVIDERS_NAME
   >;
 
-  public status: ownValueOf<typeof SECRET_STORAGE_STATUS> =
-    SECRET_STORAGE_STATUS.STOPPED;
-
-  public errorOccurred?: Error;
-
   /**
    * returns true if connected succesfully to
    * a storage and have a vaild crypto key
@@ -94,30 +83,8 @@ export class SecretStorage {
    * @param {strig} [SECRET_STORAGE_PROVIDERS_NAME.LOCAL_STORAGE] configuration.storageProviderName
    * - provider name use to store a secret data
    */
-  constructor(private configuration: Partial<TSecretStoreConfiguration> = {}) {}
-
-  private clearError() {
-    this.errorOccurred = undefined;
-  }
-
-  private clearStatus() {
-    this.status = SECRET_STORAGE_STATUS.STOPPED;
-  }
-
-  private clearState() {
-    this.clearStatus();
-    this.clearError();
-  }
-
-  private setStatus(status: ownValueOf<typeof SECRET_STORAGE_STATUS>) {
-    this.status = status;
-  }
-
-  private setErrorStatus(err: Error | string) {
-    if (err) {
-      this.errorOccurred = SecretStorage.error(err);
-    }
-    this.setStatus(SECRET_STORAGE_STATUS.ERROR);
+  constructor(private configuration: Partial<TSecretStoreConfiguration> = {}) {
+    super();
   }
 
   private setStorageProviderName(

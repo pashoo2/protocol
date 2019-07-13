@@ -17,7 +17,7 @@ export const SECRET_STORAGE_PROVIDERS_NAMES = Object.values(
 );
 
 export const SECRET_STORAGE_STATUS = {
-  STOPPED: 'STOPPED',
+  STOPPED: undefined,
   RUNNING: 'RUNNING',
   CONNECTING: 'CONNECTING',
   ERROR: 'ERROR',
