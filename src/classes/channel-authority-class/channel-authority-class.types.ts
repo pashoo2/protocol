@@ -17,7 +17,7 @@ export abstract class ChannelAuthorityConnection {
    * reuquest for just a one channel member description
    * null - if the member requested is not a member of the channel
    */
-  public abstract getChannelMemberDescription(): Promise<
+  public abstract getChannelMember(): Promise<
     IChannelMemberDescription | null | Error
   >;
 }
