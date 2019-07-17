@@ -1,4 +1,7 @@
-import { isClientSideError } from '../http-request-class-base-utils';
+import {
+  isClientSideError,
+  getNetworkError,
+} from '../http-request-class-base-utils';
 
 export class HttpResponseError extends Error {
   public code?: number;
@@ -34,20 +37,38 @@ export class HttpResponseError extends Error {
       return message;
     }
     try {
+      const { statusText } = response;
       const message = await response.text();
 
-      // cached error message
-      this.message = String(message);
-      return message;
+      this.message = statusText;
+      if (message) {
+        // cached error message
+        this.message = String(message);
+        return message;
+      }
+      return statusText;
     } catch (err) {
       console.error(`HttpResponseError::setErrorMessage::fail`, err);
       return err;
     }
   }
 
+  mergeWithNetworkError(): boolean {
+    const { response } = this;
+    const networkError = getNetworkError(response);
+
+    if (networkError instanceof Error) {
+      Object.assign(this, networkError);
+      return true;
+    }
+    return false;
+  }
+
   processResponse() {
     this.setResponseCode();
     this.setIsClientSideError();
-    this.errorMessage();
+    if (!this.mergeWithNetworkError()) {
+      this.errorMessage();
+    }
   }
 }

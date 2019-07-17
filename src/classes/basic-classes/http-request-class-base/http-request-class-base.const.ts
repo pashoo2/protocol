@@ -12,6 +12,10 @@ export const HTTP_REQUEST_CONTENT_TYPE = {
   PLAIN: 'text/plain; charset=utf-8',
 };
 
+export const HTTP_REQUEST_CONTENT_TYPES_KNOWN = Object.values(
+  HTTP_REQUEST_CONTENT_TYPE
+);
+
 export const HTTP_REQUEST_MODE = {
   CORS: 'cors',
   CORS_FORCE_PREFLIGHT: 'cors-with-forced-preflight',
