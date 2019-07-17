@@ -2,9 +2,10 @@ import { HttpResponseError } from './http-request-class-base-response-error';
 import { THttpResponseResult } from '../http-request-class-base.types';
 import {
   isSucceedResponse,
-  getContentType,
+  getContentTypeRAW,
 } from '../http-request-class-base-utils';
 import { HTTP_REQUEST_CONTENT_TYPE } from '../http-request-class-base.const';
+import { MimeTypeClass } from 'classes/basic-classes/mime-types-class-base/mime-types-class-base';
 
 export class HttpRequestResponseProcessor {
   constructor(protected response: Response) {}
@@ -36,7 +37,39 @@ export class HttpRequestResponseProcessor {
       } else {
       }
 
-      return new Error("Can't parse the content");
+      return new Error("Can't process the response as FormData");
+    } catch (err) {
+      return this.logError(err);
+    }
+  }
+
+  protected async processAsBlob(): Promise<Error | object> {
+    const { response } = this;
+
+    try {
+      const result = await response.blob();
+
+      return result;
+    } catch (err) {
+      return this.logError(err);
+    }
+  }
+
+  protected async processAsFile(
+    mimeType?: string | null,
+    extension?: string | null
+  ): Promise<Error | object> {
+    const { response } = this;
+
+    try {
+      const result = await response.blob();
+
+      if (result instanceof Blob) {
+        return new File([result], extension || 'unknown', {
+          type: mimeType || undefined,
+        });
+      }
+      return new Error("Can't process the response as a file");
     } catch (err) {
       return this.logError(err);
     }
@@ -48,7 +81,10 @@ export class HttpRequestResponseProcessor {
     try {
       const result = await response.json();
 
-      return result;
+      if (result && typeof result === 'object') {
+        return result;
+      }
+      return new Error("Can't process the response as json");
     } catch (err) {
       return this.logError(err);
     }
@@ -56,17 +92,27 @@ export class HttpRequestResponseProcessor {
 
   protected async processResponse(): Promise<Error | THttpResponseResult> {
     const { response } = this;
-    const contentType = getContentType(response);
-    let result;
+    const contentType = getContentTypeRAW(response);
 
-    switch (contentType) {
-      case HTTP_REQUEST_CONTENT_TYPE.JSON:
+    if (contentType) {
+      const mimeType = new MimeTypeClass(contentType);
+
+      if (mimeType.isBlob) {
+        return this.processAsBlob();
+      }
+      if (mimeType.isJSON) {
         return this.processAsJSON();
-      case HTTP_REQUEST_CONTENT_TYPE.MULTIPART:
-        return this.processAsFormData();
-      default:
+      }
+      if (mimeType.isText) {
         return this.processAsText();
+      }
+      if (mimeType.isFile) {
+        return this.processAsFile(contentType, mimeType.extension);
+      }
+      return new Error('There is unknown mime-type of the response content');
     }
+
+    return new Error('There is no "Content-Type" in the response headers');
   }
 
   public async getResult(): Promise<

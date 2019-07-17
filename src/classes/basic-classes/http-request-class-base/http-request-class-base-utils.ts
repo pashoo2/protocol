@@ -49,6 +49,19 @@ export const getContentType = (
   return undefined;
 };
 
+export const getContentTypeRAW = (response: Response): void | string => {
+  const { headers } = response;
+
+  if (headers) {
+    const contentType = headers.get(HTTP_REQUEST_HEADERS_NAMES.CONTENT_TYPE);
+
+    if (typeof contentType === 'string') {
+      return contentType;
+    }
+  }
+  return undefined;
+};
+
 export const getNetworkError = (response: Response): Error | void => {
   if (typeof (response as any).error === 'function') {
     const networkError = (response as any).error();
