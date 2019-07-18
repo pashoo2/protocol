@@ -9,9 +9,20 @@ import { HttpRequestResponseProcessor } from './http-request-class-base-subclass
 import { HttpResponseError } from './http-request-class-base-subclasses/http-request-class-base-response-error';
 
 export class HttpRequest extends HttpRequestBodyProcessor {
+  protected baseUrl?: string;
+  protected queryStringParams?: string;
+
   constructor(protected options: IHttpRequestOptions) {
     super(options);
   }
+
+  setBaseUrl(baseUrl: string): void {
+    if (typeof baseUrl === 'string') {
+      this.baseUrl = baseUrl;
+    }
+  }
+
+  setQueryStringParams(params): void {}
 
   getRequestHeaders(): HeadersInit {
     const { options } = this;
@@ -63,3 +74,5 @@ export class HttpRequest extends HttpRequestBodyProcessor {
     }
   };
 }
+
+export default HttpRequest;

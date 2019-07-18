@@ -7,6 +7,23 @@ import {
 } from './http-request-class-base.const';
 import { ownValueOf } from 'types/helper.types';
 
+/**
+ * allowed types for a query string params
+ * it will be convertod to a string
+ */
+export type TQueryStringAllowedParamValue = string | number | string[];
+
+/**
+ * will be resolved as a string like
+ * &paramName=paramValue....&paramNameN=paramValueN
+ * paramValueN may be an array = [paramNItem1....paramNItemN]
+ */
+export type TQueryStringParamsObject = {
+  [paramName: string]: TQueryStringAllowedParamValue;
+};
+
+export type TQueryStringParams = string | TQueryStringParamsObject;
+
 export type THttpRequestUrl = string;
 
 export type THttpRequestMethod = ownValueOf<typeof HTTP_REQUEST_METHOD>;

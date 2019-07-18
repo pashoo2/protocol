@@ -1,3 +1,4 @@
 {
-  "main": "api-request-class-base.ts"
+  "main": "http-request-class-base.ts",
+  "types": "http-request-class-base.ts"
 }
