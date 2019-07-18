@@ -1,12 +1,12 @@
 import { TUesrIdentity, IUserDescription } from 'types/users.types';
 import { HttpRequest } from 'classes/basic-classes/http-request-class-base/http-request-class-base';
 import {
-  ICentralAuthorityConnection,
+  CentralAuthorityConnection,
   ICentralAuthorityConnectionOptions,
 } from '../../central-authority-class.types';
 
 export class CentralAuthorityConnectionServerAPI
-  implements ICentralAuthorityConnection {
+  implements CentralAuthorityConnection {
   constructor(protected options: ICentralAuthorityConnectionOptions) {}
 
   public async getUsersDescription(
@@ -16,7 +16,8 @@ export class CentralAuthorityConnectionServerAPI
     const { getUsersDescriptionsRequestOptions, serverUrl } = options;
     const request = new HttpRequest(getUsersDescriptionsRequestOptions);
 
-    HttpRequest.setBaseUrl(serverUrl);
-    HttpRequest.addQueryStringParams();
+    request.setBaseUrl(serverUrl);
+    request.setQueryStringParams(users);
+    return request.send();
   }
 }

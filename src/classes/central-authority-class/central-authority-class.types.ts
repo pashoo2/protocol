@@ -7,7 +7,7 @@ export interface ICentralAuthorityConnectionOptions {
 }
 
 export abstract class CentralAuthorityConnection {
-  constructor(protected options: ICentralAuthorityConnectionOptions) {}
+  constructor(options: ICentralAuthorityConnectionOptions) {}
   /**
    * request the users descriptions by the user identities
    */
