@@ -8,6 +8,7 @@ import { ownValueOf } from 'types/helper.types';
 import {
   TQueryStringParamsObject,
   TQueryStringAllowedParamValue,
+  TQueryStringParams,
 } from './http-request-class-base.types';
 import { concatStrings } from 'utils/string-utilities';
 
@@ -146,7 +147,7 @@ export const queryStringFromObject = (
 };
 
 export const resolveQueryStringParams = (
-  ...params: (TQueryStringAllowedParamValue | TQueryStringParamsObject)[]
+  ...params: TQueryStringParams[]
 ): string => {
   const paramsCount = params.length;
   let idx = 0;

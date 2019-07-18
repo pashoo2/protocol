@@ -22,7 +22,9 @@ export type TQueryStringParamsObject = {
   [paramName: string]: TQueryStringAllowedParamValue;
 };
 
-export type TQueryStringParams = string | TQueryStringParamsObject;
+export type TQueryStringParams =
+  | TQueryStringAllowedParamValue
+  | TQueryStringParamsObject;
 
 export type THttpRequestUrl = string;
 
