@@ -11,12 +11,14 @@ export interface IStorageProvider {
 
 export type TInstanceofStorageProvider = InstanceType<IStorageProvider>;
 
+export type TSecretStorageProviderName = string;
+
 export interface ILocalStorageProviderTable {
   [providerName: string]: IStorageProvider;
 }
 
 export type TSecretStoreConfiguration = {
-  storageProviderName: string;
+  storageProviderName?: string;
 };
 
 export type TSecretStoreCredentials = {

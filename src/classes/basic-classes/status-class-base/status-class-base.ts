@@ -38,10 +38,14 @@ export const getStatusClass = <TStatus extends object>({
       this.status = status;
     }
 
-    protected setErrorStatus(err: Error | string) {
+    protected setErrorStatus(err: Error | string): Error {
       if (err) {
-        this.errorOccurred = StatusClassBase.error(err);
+        const errorOccurred = StatusClassBase.error(err);
+
+        this.errorOccurred = errorOccurred;
+        return errorOccurred;
       }
       this.setStatus(errorStatus);
+      return new Error('Unknown error');
     }
   };
