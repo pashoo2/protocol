@@ -242,11 +242,17 @@ export class SafeStorage<
         ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG
       >),
     ] as TSafeStorageStoredDataType<ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG>;
+    const writeDumpResult = this.writeDump(tableOverallData);
 
-    return this.writeDump(tableOverallData);
+    if (writeDumpResult instanceof Error) {
+      return writeDumpResult as Error;
+    }
+    this.tableData = tableOverallData;
+    this.appendData = [];
+    return true;
   }
 
-  async dumpDataKeyValueStorage(): Promise<Error | true> {
+  async dumpDataKeyValueStorage(): Promise<Error | boolean> {
     const tableOverallDataDump = await this.loadOverallTable();
     const { appendData } = this;
 
@@ -263,8 +269,14 @@ export class SafeStorage<
         ESAFE_STORAGE_STORAGE_TYPE.KEY_VALUE
       >),
     };
+    const writeDumpResult = this.writeDump(tableOverallData);
 
-    return this.writeDump(tableOverallData);
+    if (writeDumpResult instanceof Error) {
+      return writeDumpResult as Error;
+    }
+    this.tableData = tableOverallData;
+    this.appendData = [];
+    return true;
   }
 
   dumpData = async (): Promise<Error | boolean> => {
@@ -288,9 +300,9 @@ export class SafeStorage<
     }
     if (resultWritingDump === true) {
       this.setStatus(ESAFE_STORAGE_PROVIDER_STATUS.CONNECTED_TO_STORAGE);
-      // reload all the data from storage
+      // TODO - ??reload all the data from storage
       // to guarantee the data persistance
-      return this.reloadData();
+      return true;
     }
     return this.setErrorStatus(
       'An unknown error has occurred while writing the dump of the data to the SecretStorage'
