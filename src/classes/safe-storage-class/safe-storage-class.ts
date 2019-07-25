@@ -15,6 +15,7 @@ import {
   SAFE_STORAGE_STORAGE_NAME_COMMON_PREFIX,
   ESAFE_STORAGE_STORAGE_TYPE,
   ESAFE_STORAGE_RETURN_TYPE,
+  SAFE_STORAGE_MAX_ITEMS_APPEND_LOG,
 } from './safe-storage-class.const';
 import { getStatusClass } from 'classes/basic-classes/status-class-base/status-class-base';
 
@@ -52,7 +53,32 @@ export class SafeStorage<
     ESAFE_STORAGE_STORAGE_TYPE
   > = [] as TSafeStorageStoredDataType<ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG>;
 
+  /**
+   *
+   * this is data which will be merged with the data from storage
+   * and then will be write to the storage
+   * @protected
+   * @type {TSafeStorageStoredDataType<
+   *     ESAFE_STORAGE_STORAGE_TYPE
+   *   >}
+   * @memberof SafeStorage
+   */
   protected appendData: TSafeStorageStoredDataType<
+    ESAFE_STORAGE_STORAGE_TYPE
+  > = [] as TSafeStorageStoredDataType<ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG>;
+
+  /**
+   *
+   * here a data will be placed if any dumping of appendData is in progress,
+   * on a dumping will be ended up, data
+   * from this property will be merged with the appendData property
+   * @protected
+   * @type {TSafeStorageStoredDataType<
+   *     ESAFE_STORAGE_STORAGE_TYPE
+   *   >}
+   * @memberof SafeStorage
+   */
+  protected appendDataTemp: TSafeStorageStoredDataType<
     ESAFE_STORAGE_STORAGE_TYPE
   > = [] as TSafeStorageStoredDataType<ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG>;
 
@@ -77,6 +103,12 @@ export class SafeStorage<
       storageProviderName:
         storageDumpProvider || SAFE_STORAGE_DUMP_PROVIDER_DEFAULT,
     };
+  }
+
+  get isDupmingInProgress(): boolean {
+    const { status } = this;
+
+    return status === ESAFE_STORAGE_PROVIDER_STATUS.WRITING_DUMP;
   }
 
   checkOptionsAreValid(options: ISafeStorageOptions): Error | true {
@@ -163,7 +195,7 @@ export class SafeStorage<
     }
   }
 
-  async reloadData(): Promise<boolean | Error> {
+  async reloadOverallTableData(): Promise<boolean | Error> {
     const tableData = await this.loadOverallTable();
 
     if (tableData instanceof Error) {
@@ -246,10 +278,16 @@ export class SafeStorage<
     const writeDumpResult = this.writeDump(tableOverallData);
 
     if (writeDumpResult instanceof Error) {
+      this.appendData = [
+        ...(appendData as TSafeStorageStoredDataTypeAppendLog),
+        ...(this.appendDataTemp as TSafeStorageStoredDataTypeAppendLog),
+      ];
+      this.appendDataTemp = [];
       return writeDumpResult as Error;
     }
     this.tableData = tableOverallData;
-    this.appendData = [];
+    this.appendData = this.appendDataTemp;
+    this.appendDataTemp = [];
     return true;
   }
 
@@ -273,17 +311,23 @@ export class SafeStorage<
     const writeDumpResult = this.writeDump(tableOverallData);
 
     if (writeDumpResult instanceof Error) {
+      this.appendData = [
+        ...(appendData as TSafeStorageStoredDataTypeAppendLog),
+        ...(this.appendDataTemp as TSafeStorageStoredDataTypeAppendLog),
+      ];
+      this.appendDataTemp = [];
       return writeDumpResult as Error;
     }
     this.tableData = tableOverallData;
-    this.appendData = [];
+    this.appendData = this.appendDataTemp;
+    this.appendDataTemp = [];
     return true;
   }
 
   dumpData = async (): Promise<Error | boolean> => {
     const { storageType, appendData, status } = this;
 
-    if (status === ESAFE_STORAGE_PROVIDER_STATUS.WRITING_DUMP) {
+    if (this.isDupmingInProgress) {
       // if already writing a dump
       return true;
     }
@@ -309,6 +353,17 @@ export class SafeStorage<
       'An unknown error has occurred while writing the dump of the data to the SecretStorage'
     );
   };
+
+  checkIfAppendLogOverflow() {
+    const { appendData } = this;
+
+    if (
+      appendData instanceof Array &&
+      appendData.length > SAFE_STORAGE_MAX_ITEMS_APPEND_LOG
+    ) {
+      this.dumpData();
+    }
+  }
 
   createSecretStorageInstance(): Error | SecretStorage {
     const { secretStorageOptions } = this;
@@ -356,7 +411,7 @@ export class SafeStorage<
       return this.setErrorStatus(connectionToSecretStorageResult);
     }
 
-    const preloadDataResult = await this.reloadData();
+    const preloadDataResult = await this.reloadOverallTableData();
 
     if (preloadDataResult instanceof Error) {
       return preloadDataResult;
@@ -384,7 +439,7 @@ export class SafeStorage<
     );
   }
 
-  getDataAppendLogStorage<D extends TSafeStorageDataTypesAvail>(
+  getDataFromAppendLogStorage<D extends TSafeStorageDataTypesAvail>(
     key: TSafeStorageKeyType
   ): Error | null | undefined | D {
     const { tableData } = this;
@@ -405,7 +460,7 @@ export class SafeStorage<
       | D;
   }
 
-  getDataKeyValueStorage<D extends TSafeStorageDataTypesAvail>(
+  getDataFromKeyValueStorage<D extends TSafeStorageDataTypesAvail>(
     key: TSafeStorageKeyType
   ): Error | null | undefined | D {
     const { tableData } = this;
@@ -432,10 +487,10 @@ export class SafeStorage<
     const { storageType } = this;
 
     if (storageType === ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG) {
-      return this.getDataAppendLogStorage<D>(key);
+      return this.getDataFromAppendLogStorage<D>(key);
     }
     if (storageType === ESAFE_STORAGE_STORAGE_TYPE.KEY_VALUE) {
-      return this.getDataKeyValueStorage<D>(key);
+      return this.getDataFromKeyValueStorage<D>(key);
     }
     const err = new Error('An unknown storage type');
 
@@ -452,7 +507,7 @@ export class SafeStorage<
     }
   }
 
-  async setDataAppendLogStorage(
+  async setDataInAppendLogStorage(
     data: TSafeStorageDataTypesAvail | undefined | null,
     key?: TSafeStorageKeyType
   ): Promise<Error | boolean> {
@@ -465,21 +520,22 @@ export class SafeStorage<
       return err;
     }
 
-    const { appendData, tableData } = this;
+    const { appendData, appendDataTemp, tableData } = this;
+    const tempStorage = this.isDupmingInProgress ? appendDataTemp : appendData;
 
     if (!key) {
+      (tempStorage as TSafeStorageStoredDataTypeAppendLog).push(data || null);
       (tableData as TSafeStorageStoredDataTypeAppendLog).push(data || null);
-      (appendData as TSafeStorageStoredDataTypeAppendLog).push(data || null);
     } else {
-      (tableData as TSafeStorageStoredDataTypeAppendLog)[key as number] =
+      (tempStorage as TSafeStorageStoredDataTypeAppendLog)[key as number] =
         data || null;
-      (appendData as TSafeStorageStoredDataTypeAppendLog)[key as number] =
+      (tableData as TSafeStorageStoredDataTypeAppendLog)[key as number] =
         data || null;
     }
     return true;
   }
 
-  async setDataKeyValueStorage(
+  async setDataInKeyValueStorage(
     data: TSafeStorageDataTypesAvail | undefined | null,
     key?: TSafeStorageKeyType
   ): Promise<Error | boolean> {
@@ -492,11 +548,12 @@ export class SafeStorage<
       return err;
     }
 
-    const { appendData, tableData } = this;
+    const { appendData, appendDataTemp, tableData } = this;
+    const tempStorage = this.isDupmingInProgress ? appendDataTemp : appendData;
 
     (tableData as TSafeStorageStoredDataTypeKeyValue)[key as string] =
       data || null;
-    (appendData as TSafeStorageStoredDataTypeKeyValue)[key as string] =
+    (tempStorage as TSafeStorageStoredDataTypeKeyValue)[key as string] =
       data || null;
     return true;
   }
@@ -512,11 +569,12 @@ export class SafeStorage<
     if (dataSafeResult instanceof Error) {
       return dataSafeResult;
     }
+    this.checkIfAppendLogOverflow();
     if (storageType === ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG) {
-      return this.setDataAppendLogStorage(data, key);
+      return this.setDataInAppendLogStorage(data, key);
     }
     if (storageType === ESAFE_STORAGE_STORAGE_TYPE.KEY_VALUE) {
-      return this.setDataKeyValueStorage(data, key);
+      return this.setDataInKeyValueStorage(data, key);
     }
     const err = new Error('An unknown storage type');
 
