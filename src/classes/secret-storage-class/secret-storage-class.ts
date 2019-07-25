@@ -366,7 +366,9 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
     return this.connect();
   }
 
-  async getWithStorageProvider(key: string): Promise<string | Error> {
+  async getWithStorageProvider(
+    key: string
+  ): Promise<string | Error | undefined> {
     const { storageProvider } = this;
 
     if (!storageProvider) {
@@ -377,6 +379,9 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
 
     if (value instanceof Error) {
       return SecretStorage.error(value);
+    }
+    if (value === undefined) {
+      return value;
     }
     if (typeof value !== 'string' || !value.length) {
       return SecretStorage.error(
@@ -406,7 +411,7 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
     return decryptedValue;
   }
 
-  get = async (key: string): Promise<string | Error> => {
+  get = async (key: string): Promise<string | Error | undefined> => {
     const { isRunning } = this;
 
     if (!isRunning) {
@@ -415,6 +420,9 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
 
     const stringEncrypted = await this.getWithStorageProvider(key);
 
+    if (stringEncrypted === undefined) {
+      return stringEncrypted;
+    }
     if (stringEncrypted instanceof Error) {
       return SecretStorage.error(stringEncrypted);
     }

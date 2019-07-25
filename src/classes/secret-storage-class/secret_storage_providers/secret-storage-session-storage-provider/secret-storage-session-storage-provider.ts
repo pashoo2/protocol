@@ -32,7 +32,7 @@ export class SecretStorageProvideSessionStorage implements StorageProvider {
     }
   }
 
-  public async get(key: string): Promise<Error | string> {
+  public async get(key: string): Promise<Error | string | undefined> {
     try {
       const { sessionStorage } = this;
 
@@ -43,7 +43,7 @@ export class SecretStorageProvideSessionStorage implements StorageProvider {
       const item = sessionStorage.getItem(key);
 
       if (typeof item !== 'string') {
-        return new Error('There is no value');
+        return undefined;
       }
       return item;
     } catch (err) {

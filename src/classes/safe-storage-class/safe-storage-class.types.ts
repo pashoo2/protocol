@@ -24,10 +24,10 @@ export type TSafeStorageStoredDataType<
   : TSafeStorageStoredDataTypeKeyValue;
 
 export interface ISafeStorageOptions {
-  dumpIntervalMs?: number; // how often a dump of a data must be saved in secret storage
   name: string; // a unique name for the storage
-  storageDumpProvider?: TSafeStorageProviderName; // name for the provider where the dumps will be stored
   credentials: TSecretStoreCredentials; // credentials for access to the secret storage
+  dumpIntervalMs?: number; // how often a dump of a data must be saved in secret storage
+  storageDumpProvider?: TSafeStorageProviderName; // name for the provider where the dumps will be stored
   storageType?: ESAFE_STORAGE_STORAGE_TYPE; // storage data type
 }
 

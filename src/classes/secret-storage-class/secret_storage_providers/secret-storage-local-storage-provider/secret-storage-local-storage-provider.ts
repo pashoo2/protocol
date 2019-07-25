@@ -30,7 +30,7 @@ export class SecretStorageProviderLocalStorage implements StorageProvider {
     }
   }
 
-  public async get(key: string): Promise<Error | string> {
+  public async get(key: string): Promise<Error | string | undefined> {
     try {
       const { localStorage } = this;
 
@@ -41,7 +41,7 @@ export class SecretStorageProviderLocalStorage implements StorageProvider {
       const item = localStorage.getItem(key);
 
       if (typeof item !== 'string') {
-        return new Error('There is no value');
+        return undefined;
       }
       return item;
     } catch (err) {

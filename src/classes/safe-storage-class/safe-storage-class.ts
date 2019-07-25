@@ -5,7 +5,6 @@ import {
   TSafeStorageStoredDataTypeAppendLog,
   TSafeStorageDataTypesAvail,
   TSafeStorageKeyType,
-  TSafeStorageDataType,
 } from './safe-storage-class.types';
 import { DEFAULT_INTERVAL_MS } from 'classes/basic-classes/queue-manager-class-base/queue-manager-class-base.const';
 import { SecretStorage } from 'classes/secret-storage-class/secret-storage-class';
@@ -14,8 +13,11 @@ import {
   ESAFE_STORAGE_PROVIDER_STATUS,
   SAFE_STORAGE_STORAGE_NAME_COMMON_PREFIX,
   ESAFE_STORAGE_STORAGE_TYPE,
-  ESAFE_STORAGE_RETURN_TYPE,
   SAFE_STORAGE_MAX_ITEMS_APPEND_LOG,
+  SAFE_STORAGE_KEY_VALUE_INITIAL_VALUE,
+  SAFE_STORAGE_APPEND_LOG_INITIAL_VALUE,
+  SAFE_STORAGE_APPEND_LOG_APPEND_DATA_INITIAL_VALUE,
+  SAFE_STORAGE_KEY_VALUE_APPEND_DATA_INITIAL_VALUE,
 } from './safe-storage-class.const';
 import { getStatusClass } from 'classes/basic-classes/status-class-base/status-class-base';
 
@@ -111,6 +113,64 @@ export class SafeStorage<
     return status === ESAFE_STORAGE_PROVIDER_STATUS.WRITING_DUMP;
   }
 
+  /**
+   * connect to the secret storage
+   * and preload a data dumped
+   * from it
+   * @returns {boolean | Error} - true on success, false if connecting is
+   * already in progress, Error if an error has occurred
+   */
+  async connect(): Promise<boolean | Error> {
+    const { status, options } = this;
+
+    if (status !== ESAFE_STORAGE_PROVIDER_STATUS.CONNECTING_TO_STORAGE) {
+      const { credentials } = options as ISafeStorageOptions;
+      const connectionToTheSecretStorage = this.createSecretStorageInstance();
+
+      if (connectionToTheSecretStorage instanceof Error) {
+        return connectionToTheSecretStorage;
+      }
+      this.setStatus(ESAFE_STORAGE_PROVIDER_STATUS.CONNECTING_TO_STORAGE);
+
+      const connectionToSecretStorageResult = await connectionToTheSecretStorage.authorize(
+        credentials
+      );
+
+      if (connectionToSecretStorageResult instanceof Error) {
+        return this.setErrorStatus(connectionToSecretStorageResult);
+      }
+
+      const preloadDataResult = await this.reloadOverallTableData();
+
+      if (preloadDataResult instanceof Error) {
+        return preloadDataResult;
+      }
+      this.setStatus(ESAFE_STORAGE_PROVIDER_STATUS.CONNECTED_TO_STORAGE);
+      return this.startInterval();
+    }
+    return false;
+  }
+
+  async disconnect(): Promise<Error | true> {
+    const { dumpIntervalRunning } = this;
+
+    if (typeof dumpIntervalRunning === 'number') {
+      clearInterval(dumpIntervalRunning);
+    }
+
+    let idx = 0;
+    while ((idx += 1) < 3) {
+      const resultDumping = await this.dumpData();
+
+      if (resultDumping === true) {
+        return true;
+      }
+    }
+    return this.setErrorStatus(
+      "Can't dump the table's data before disconnected"
+    );
+  }
+
   checkOptionsAreValid(options: ISafeStorageOptions): Error | true {
     const { name, credentials } = options;
     const { checkIfNameIsExists } = SafeStorage;
@@ -159,7 +219,9 @@ export class SafeStorage<
     return true;
   }
 
-  async loadOverallTable(): Promise<TSafeStorageStoredDataType<TYPE> | Error> {
+  async loadOverallTable(): Promise<
+    TSafeStorageStoredDataType<TYPE> | undefined | Error
+  > {
     const { storageName, secretStorageConnection } = this;
     const data = await (secretStorageConnection as SecretStorage).get(
       storageName
@@ -168,6 +230,9 @@ export class SafeStorage<
     if (data instanceof Error) {
       return this.setErrorStatus(data);
     }
+    if (data == null) {
+      return undefined;
+    }
     try {
       return JSON.parse(data) as TSafeStorageStoredDataType<TYPE>;
     } catch (err) {
@@ -175,21 +240,23 @@ export class SafeStorage<
     }
   }
 
-  setTableData(tableData: TSafeStorageStoredDataType<TYPE>) {
+  setTableData(tableData?: TSafeStorageStoredDataType<TYPE>) {
     const { storageType } = this;
 
     if (storageType === ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG) {
-      this.tableData = tableData as TSafeStorageStoredDataType<
+      this.tableData = (tableData ||
+        SAFE_STORAGE_APPEND_LOG_INITIAL_VALUE) as TSafeStorageStoredDataType<
         ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG
       >;
-      this.appendData = [] as TSafeStorageStoredDataType<
+      this.appendData = SAFE_STORAGE_APPEND_LOG_APPEND_DATA_INITIAL_VALUE as TSafeStorageStoredDataType<
         ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG
       >;
     } else {
-      this.tableData = tableData as TSafeStorageStoredDataType<
+      this.tableData = (tableData ||
+        SAFE_STORAGE_KEY_VALUE_INITIAL_VALUE) as TSafeStorageStoredDataType<
         ESAFE_STORAGE_STORAGE_TYPE.KEY_VALUE
       >;
-      this.appendData = {} as TSafeStorageStoredDataType<
+      this.appendData = SAFE_STORAGE_KEY_VALUE_APPEND_DATA_INITIAL_VALUE as TSafeStorageStoredDataType<
         ESAFE_STORAGE_STORAGE_TYPE.KEY_VALUE
       >;
     }
@@ -203,6 +270,31 @@ export class SafeStorage<
     }
     this.setTableData(tableData);
     return true;
+  }
+
+  createSecretStorageInstance(): Error | SecretStorage {
+    const { secretStorageOptions } = this;
+    try {
+      const connectionToTheSecretStorage = new SecretStorage(
+        secretStorageOptions
+      );
+
+      this.secretStorageConnection = connectionToTheSecretStorage;
+      return connectionToTheSecretStorage;
+    } catch (err) {
+      return this.setErrorStatus(err);
+    }
+  }
+
+  startInterval(): boolean | Error {
+    const { dumpIntervalMs } = this;
+
+    try {
+      this.dumpIntervalRunning = setInterval(this.dumpData, dumpIntervalMs);
+      return true;
+    } catch (err) {
+      return this.setErrorStatus(err);
+    }
   }
 
   checkIfEmptyData(
@@ -311,16 +403,20 @@ export class SafeStorage<
     const writeDumpResult = this.writeDump(tableOverallData);
 
     if (writeDumpResult instanceof Error) {
-      this.appendData = [
-        ...(appendData as TSafeStorageStoredDataTypeAppendLog),
-        ...(this.appendDataTemp as TSafeStorageStoredDataTypeAppendLog),
-      ];
-      this.appendDataTemp = [];
+      this.appendData = {
+        ...(appendData as TSafeStorageStoredDataType<
+          ESAFE_STORAGE_STORAGE_TYPE.KEY_VALUE
+        >),
+        ...(this.appendDataTemp as TSafeStorageStoredDataType<
+          ESAFE_STORAGE_STORAGE_TYPE.KEY_VALUE
+        >),
+      };
+      this.appendDataTemp = {};
       return writeDumpResult as Error;
     }
     this.tableData = tableOverallData;
     this.appendData = this.appendDataTemp;
-    this.appendDataTemp = [];
+    this.appendDataTemp = {};
     return true;
   }
 
@@ -363,80 +459,6 @@ export class SafeStorage<
     ) {
       this.dumpData();
     }
-  }
-
-  createSecretStorageInstance(): Error | SecretStorage {
-    const { secretStorageOptions } = this;
-    try {
-      const connectionToTheSecretStorage = new SecretStorage(
-        secretStorageOptions
-      );
-
-      this.secretStorageConnection = connectionToTheSecretStorage;
-      return connectionToTheSecretStorage;
-    } catch (err) {
-      return this.setErrorStatus(err);
-    }
-  }
-
-  startInterval(): boolean | Error {
-    const { dumpIntervalMs } = this;
-
-    try {
-      this.dumpIntervalRunning = setInterval(this.dumpData, dumpIntervalMs);
-      return true;
-    } catch (err) {
-      return this.setErrorStatus(err);
-    }
-  }
-
-  /**
-   * connect to the secret storage
-   * and preload a data dumped
-   * from it
-   */
-  async connect(): Promise<boolean | Error> {
-    const { credentials } = this.options as ISafeStorageOptions;
-    const connectionToTheSecretStorage = this.createSecretStorageInstance();
-
-    if (connectionToTheSecretStorage instanceof Error) {
-      return connectionToTheSecretStorage;
-    }
-
-    const connectionToSecretStorageResult = await connectionToTheSecretStorage.authorize(
-      credentials
-    );
-
-    if (connectionToSecretStorageResult instanceof Error) {
-      return this.setErrorStatus(connectionToSecretStorageResult);
-    }
-
-    const preloadDataResult = await this.reloadOverallTableData();
-
-    if (preloadDataResult instanceof Error) {
-      return preloadDataResult;
-    }
-    return this.startInterval();
-  }
-
-  async disconnect(): Promise<Error | true> {
-    const { dumpIntervalRunning } = this;
-
-    if (typeof dumpIntervalRunning === 'number') {
-      clearInterval(dumpIntervalRunning);
-    }
-
-    let idx = 0;
-    while ((idx += 1) < 3) {
-      const resultDumping = await this.dumpData();
-
-      if (resultDumping === true) {
-        return true;
-      }
-    }
-    return this.setErrorStatus(
-      "Can't dump the table's data before disconnected"
-    );
   }
 
   getDataFromAppendLogStorage<D extends TSafeStorageDataTypesAvail>(

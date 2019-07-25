@@ -1,7 +1,7 @@
 export abstract class StorageProvider {
   public abstract connect(): Promise<boolean | Error>;
   public abstract set(key: string, value: string): Promise<boolean | Error>;
-  public abstract get(key: string): Promise<string | Error>;
+  public abstract get(key: string): Promise<string | undefined | Error>;
 }
 
 export type TStorageProvider = typeof StorageProvider;
