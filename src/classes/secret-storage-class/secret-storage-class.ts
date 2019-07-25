@@ -489,7 +489,6 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
 
     const escapedValue = encodeURIComponent(value);
     const encryptedValue = await this.encryptValue(escapedValue);
-    debugger;
     if (encryptedValue instanceof Error) {
       return SecretStorage.error(encryptedValue);
     }

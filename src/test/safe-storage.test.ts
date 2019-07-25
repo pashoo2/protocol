@@ -22,7 +22,6 @@ export const runTestAppendLogStorage = async () => {
 
   const pushDataResult = await safeStorageAppendLog.set({ hello: new Date() });
 
-  debugger;
   if (pushDataResult instanceof Error) {
     return pushDataResult;
   }
@@ -53,7 +52,6 @@ export const runTestKeyValueStorage = async () => {
     `${new Date()}`
   );
 
-  debugger;
   if (pushDataResult instanceof Error) {
     return pushDataResult;
   }
