@@ -25,6 +25,15 @@ export const runTestAppendLogStorage = async () => {
   if (pushDataResult instanceof Error) {
     return pushDataResult;
   }
+
+  const pushNewDataResult = await safeStorageAppendLog.set({
+    newHello: new Date(),
+  });
+
+  if (pushNewDataResult instanceof Error) {
+    return pushNewDataResult;
+  }
+
   console.log('data was pushed in append log storage');
 };
 
@@ -55,9 +64,19 @@ export const runTestKeyValueStorage = async () => {
   if (pushDataResult instanceof Error) {
     return pushDataResult;
   }
-  console.log('data was pushed in append log storage');
+
+  const pushNewDataResult = await safeStorage.set(
+    { hello: new Date() },
+    `${new Date()}|||new`
+  );
+
+  if (pushNewDataResult instanceof Error) {
+    return pushNewDataResult;
+  }
+  console.log('data was pushed in key value storage');
 };
 
 export const runTest = async () => {
-  await Promise.all([runTestAppendLogStorage(), runTestKeyValueStorage()]);
+  await runTestAppendLogStorage();
+  // await Promise.all([runTestAppendLogStorage(), runTestKeyValueStorage()]);
 };

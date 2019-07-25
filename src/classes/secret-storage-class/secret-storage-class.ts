@@ -432,7 +432,7 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
     if (decryptResult instanceof Error) {
       return decryptResult;
     }
-    return decodeURIComponent(decryptResult);
+    return decryptResult;
   };
 
   async setWithStorageProvider(
@@ -486,9 +486,8 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
         'The instance of SecretStorage is not connected to the storage provider or there is no an encryption key'
       );
     }
-
-    const escapedValue = encodeURIComponent(value);
-    const encryptedValue = await this.encryptValue(escapedValue);
+    //value - must be an escaped sctring
+    const encryptedValue = await this.encryptValue(value);
     if (encryptedValue instanceof Error) {
       return SecretStorage.error(encryptedValue);
     }

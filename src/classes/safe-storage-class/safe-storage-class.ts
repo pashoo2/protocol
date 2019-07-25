@@ -5,6 +5,7 @@ import {
   TSafeStorageStoredDataTypeAppendLog,
   TSafeStorageDataTypesAvail,
   TSafeStorageKeyType,
+  TSafeStorageDataType,
 } from './safe-storage-class.types';
 import { DEFAULT_INTERVAL_MS } from 'classes/basic-classes/queue-manager-class-base/queue-manager-class-base.const';
 import { SecretStorage } from 'classes/secret-storage-class/secret-storage-class';
@@ -140,8 +141,8 @@ export class SafeStorage<
         return this.setErrorStatus(connectionToSecretStorageResult);
       }
 
-      const preloadDataResult = await this.reloadOverallTableData();
-
+      const preloadDataResult = await this.loadOverallTableAndParseEachAppendLog();
+      debugger;
       if (preloadDataResult instanceof Error) {
         return preloadDataResult;
       }
@@ -240,6 +241,41 @@ export class SafeStorage<
     }
   }
 
+  async loadOverallTableAndParseEachAppendLog(): Promise<
+    TSafeStorageStoredDataType<TYPE> | undefined | Error
+  > {
+    const tableAppendlogsArray = await this.loadOverallTable();
+    debugger;
+    if (tableAppendlogsArray instanceof Error) {
+      return tableAppendlogsArray;
+    }
+    if (tableAppendlogsArray == null) {
+      return undefined;
+    }
+    if (tableAppendlogsArray instanceof Array) {
+      const { storageType } = this;
+      const isAppendLogStorage =
+        storageType === ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG;
+
+      return tableAppendlogsArray.reduce(
+        (result, appendLogString) => {
+          try {
+            const stringDecoded = decodeURIComponent(appendLogString);
+            const parsedResult = (JSON.parse(stringDecoded) as unknown) as any;
+
+            return isAppendLogStorage
+              ? [...result, ...parsedResult]
+              : { ...result, ...parsedResult };
+          } catch (err) {
+            console.error(err);
+          }
+          return result;
+        },
+        isAppendLogStorage ? [] : {}
+      );
+    }
+  }
+
   setTableData(tableData?: TSafeStorageStoredDataType<TYPE>) {
     const { storageType } = this;
 
@@ -325,6 +361,7 @@ export class SafeStorage<
       console.error(err);
       return err;
     }
+    debugger;
     return (secretStorageConnection as InstanceType<typeof SecretStorage>).set(
       storageName,
       dataStringified || ''
@@ -339,24 +376,51 @@ export class SafeStorage<
     if (this.checkIfEmptyData(data)) {
       return true;
     }
-
-    const { secretStorageConnection } = this;
     let dataStringified: string;
 
     try {
       dataStringified = JSON.stringify(data);
+      debugger;
     } catch (err) {
       return this.setErrorStatus(err);
     }
     return this.writeOverallTableData(dataStringified);
   }
 
-  async dumpDataAppendLog(): Promise<Error | true> {
+  /**
+   *
+   * @param dataAppendLog
+   * @returns {Error | string | false} - sating -stringified data, falser - no data, Error - an error has occurred
+   */
+  async getStorageStringFromAppendLogData(
+    dataAppendLog: TSafeStorageDataType[] | TSafeStorageStoredDataTypeKeyValue
+  ): Promise<string | false | Error> {
+    if (this.checkIfEmptyData(dataAppendLog)) {
+      return false;
+    }
+    let dataStringified: string;
+
+    try {
+      return encodeURIComponent(JSON.stringify(dataAppendLog));
+    } catch (err) {
+      return this.setErrorStatus(err);
+    }
+  }
+
+  async dumpAllStorageTypes(): Promise<Error | boolean> {
     const tableOverallDataDump = await this.loadOverallTable();
-    const { appendData } = this;
 
     if (tableOverallDataDump instanceof Error) {
       return this.setErrorStatus(tableOverallDataDump);
+    }
+
+    const { appendData } = this;
+    const appendDataString = await this.getStorageStringFromAppendLogData(
+      appendData
+    );
+
+    if (appendDataString instanceof Error) {
+      return this.setErrorStatus(appendDataString);
     }
     if (
       tableOverallDataDump != null &&
@@ -367,11 +431,18 @@ export class SafeStorage<
 
     const tableOverallData = [
       ...(tableOverallDataDump || []),
-      ...(appendData as TSafeStorageStoredDataTypeAppendLog),
+      appendDataString,
     ] as TSafeStorageStoredDataTypeAppendLog;
-    const writeDumpResult = await this.writeDump(tableOverallData);
+
+    return this.writeDump(tableOverallData);
+  }
+
+  async dumpDataAppendLog(): Promise<Error | true> {
+    const writeDumpResult = await this.dumpAllStorageTypes();
 
     if (writeDumpResult instanceof Error) {
+      const { appendData } = this;
+
       this.appendData = [
         ...(appendData as TSafeStorageStoredDataTypeAppendLog),
         ...(this.appendDataTemp as TSafeStorageStoredDataTypeAppendLog),
@@ -379,34 +450,17 @@ export class SafeStorage<
       this.appendDataTemp = [];
       return writeDumpResult as Error;
     }
-    this.tableData = tableOverallData;
     this.appendData = this.appendDataTemp;
     this.appendDataTemp = [];
     return true;
   }
 
   async dumpDataKeyValueStorage(): Promise<Error | boolean> {
-    const tableOverallDataDump = await this.loadOverallTable();
-    const { appendData } = this;
-
-    if (tableOverallDataDump instanceof Error) {
-      return this.setErrorStatus(tableOverallDataDump);
-    }
-    if (
-      tableOverallDataDump != null &&
-      typeof tableOverallDataDump !== 'object'
-    ) {
-      return this.setErrorStatus('A wrong data type was read from storage');
-    }
-    const tableOverallData = {
-      ...(tableOverallDataDump || undefined),
-      ...(appendData as TSafeStorageStoredDataType<
-        ESAFE_STORAGE_STORAGE_TYPE.KEY_VALUE
-      >),
-    };
-    const writeDumpResult = await this.writeDump(tableOverallData);
+    const writeDumpResult = await this.dumpAllStorageTypes();
 
     if (writeDumpResult instanceof Error) {
+      const { appendData } = this;
+
       this.appendData = {
         ...(appendData as TSafeStorageStoredDataType<
           ESAFE_STORAGE_STORAGE_TYPE.KEY_VALUE
@@ -418,7 +472,6 @@ export class SafeStorage<
       this.appendDataTemp = {};
       return writeDumpResult as Error;
     }
-    this.tableData = tableOverallData;
     this.appendData = this.appendDataTemp;
     this.appendDataTemp = {};
     return true;
