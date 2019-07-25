@@ -5,6 +5,7 @@ import {
   TSafeStorageStoredDataTypeAppendLog,
   TSafeStorageDataTypesAvail,
   TSafeStorageKeyType,
+  TSafeStorageDataType,
 } from './safe-storage-class.types';
 import { DEFAULT_INTERVAL_MS } from 'classes/basic-classes/queue-manager-class-base/queue-manager-class-base.const';
 import { SecretStorage } from 'classes/secret-storage-class/secret-storage-class';
@@ -78,7 +79,7 @@ export class SafeStorage<
     };
   }
 
-  checkOptions(options: ISafeStorageOptions): Error | true {
+  checkOptionsAreValid(options: ISafeStorageOptions): Error | true {
     const { name, credentials } = options;
     const { checkIfNameIsExists } = SafeStorage;
 
@@ -101,7 +102,7 @@ export class SafeStorage<
 
   setOptions(options: ISafeStorageOptions): Error | true {
     const { name, dumpIntervalMs, storageType } = options;
-    const checkOptionsResult = this.checkOptions(options);
+    const checkOptionsResult = this.checkOptionsAreValid(options);
     const { addStorageName } = SafeStorage;
     const dumpInterval =
       typeof dumpIntervalMs === 'number' ? dumpIntervalMs : DEFAULT_INTERVAL_MS;
@@ -202,12 +203,14 @@ export class SafeStorage<
     }
     return (secretStorageConnection as InstanceType<typeof SecretStorage>).set(
       storageName,
-      dataStringified
+      dataStringified || ''
     );
   }
 
   async writeDump(
-    data: TSafeStorageStoredDataType<TYPE>
+    data:
+      | TSafeStorageStoredDataTypeAppendLog
+      | TSafeStorageStoredDataTypeKeyValue
   ): Promise<Error | boolean> {
     if (this.checkIfEmptyData(data)) {
       return true;
@@ -238,10 +241,8 @@ export class SafeStorage<
 
     const tableOverallData = [
       ...tableOverallDataDump,
-      ...(appendData as TSafeStorageStoredDataType<
-        ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG
-      >),
-    ] as TSafeStorageStoredDataType<ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG>;
+      ...(appendData as TSafeStorageStoredDataTypeAppendLog),
+    ] as TSafeStorageStoredDataTypeAppendLog;
     const writeDumpResult = this.writeDump(tableOverallData);
 
     if (writeDumpResult instanceof Error) {
@@ -383,32 +384,9 @@ export class SafeStorage<
     );
   }
 
-  castDataToType<D extends string | number | object>(
-    data: string | null | undefined,
-    dataType: ESAFE_STORAGE_RETURN_TYPE = ESAFE_STORAGE_RETURN_TYPE.STRING
-  ): Error | undefined | D {
-    if (data == null) {
-      return undefined;
-    }
-
-    try {
-      switch (dataType) {
-        case ESAFE_STORAGE_RETURN_TYPE.NUMBER:
-          return Number(data) as D;
-        case ESAFE_STORAGE_RETURN_TYPE.OBJECT:
-          return JSON.parse(data);
-        default:
-          return data as D;
-      }
-    } catch (err) {
-      return err;
-    }
-  }
-
   getDataAppendLogStorage<D extends TSafeStorageDataTypesAvail>(
-    key: TSafeStorageKeyType,
-    dataType: ESAFE_STORAGE_RETURN_TYPE = ESAFE_STORAGE_RETURN_TYPE.STRING
-  ): Error | undefined | D {
+    key: TSafeStorageKeyType
+  ): Error | null | undefined | D {
     const { tableData } = this;
     const keyType = typeof key;
 
@@ -420,16 +398,16 @@ export class SafeStorage<
       console.error(err);
       return err;
     }
-    return this.castDataToType(
-      (tableData as TSafeStorageStoredDataTypeAppendLog)[key as number],
-      dataType
-    );
+    return (tableData as TSafeStorageStoredDataTypeAppendLog)[key as number] as
+      | Error
+      | null
+      | undefined
+      | D;
   }
 
   getDataKeyValueStorage<D extends TSafeStorageDataTypesAvail>(
-    key: TSafeStorageKeyType,
-    dataType: ESAFE_STORAGE_RETURN_TYPE = ESAFE_STORAGE_RETURN_TYPE.STRING
-  ): Error | undefined | D {
+    key: TSafeStorageKeyType
+  ): Error | null | undefined | D {
     const { tableData } = this;
     const keyType = typeof key;
 
@@ -441,23 +419,23 @@ export class SafeStorage<
       console.error(err);
       return err;
     }
-    return this.castDataToType(
-      (tableData as TSafeStorageStoredDataTypeKeyValue)[key as string],
-      dataType
-    );
+    return (tableData as TSafeStorageStoredDataTypeKeyValue)[key as string] as
+      | Error
+      | null
+      | undefined
+      | D;
   }
 
   get<D extends TSafeStorageDataTypesAvail>(
-    key: TSafeStorageKeyType,
-    dataType: ESAFE_STORAGE_RETURN_TYPE = ESAFE_STORAGE_RETURN_TYPE.STRING
-  ): Error | undefined | D {
+    key: TSafeStorageKeyType
+  ): Error | undefined | null | D {
     const { storageType } = this;
 
     if (storageType === ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG) {
-      return this.getDataAppendLogStorage<D>(key, dataType);
+      return this.getDataAppendLogStorage<D>(key);
     }
     if (storageType === ESAFE_STORAGE_STORAGE_TYPE.KEY_VALUE) {
-      return this.getDataKeyValueStorage<D>(key, dataType);
+      return this.getDataKeyValueStorage<D>(key);
     }
     const err = new Error('An unknown storage type');
 
