@@ -1,11 +1,39 @@
 import { SafeStorage } from 'classes/safe-storage-class';
 import { ESAFE_STORAGE_STORAGE_TYPE } from 'classes/safe-storage-class/safe-storage-class.const';
 
-export const runTest = async () => {
-  const safeStorage = new SafeStorage({
+export const runTestAppendLogStorage = async () => {
+  const safeStorageAppendLog = new SafeStorage({
     name: 'testStorage',
     credentials: {
       password: 'test_password',
+    },
+    storageType: ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG,
+  });
+
+  console.dir(safeStorageAppendLog);
+
+  const connectionResult = await safeStorageAppendLog.connect();
+
+  if (connectionResult instanceof Error) {
+    console.error(connectionResult);
+    return connectionResult;
+  }
+  console.dir(safeStorageAppendLog);
+
+  const pushDataResult = await safeStorageAppendLog.set({ hello: new Date() });
+
+  debugger;
+  if (pushDataResult instanceof Error) {
+    return pushDataResult;
+  }
+  console.log('data was pushed in append log storage');
+};
+
+export const runTestKeyValueStorage = async () => {
+  const safeStorage = new SafeStorage({
+    name: 'testStorageKeyValue',
+    credentials: {
+      password: 'test_password_KV',
     },
     storageType: ESAFE_STORAGE_STORAGE_TYPE.KEY_VALUE,
   });
@@ -19,4 +47,19 @@ export const runTest = async () => {
     return connectionResult;
   }
   console.dir(safeStorage);
+
+  const pushDataResult = await safeStorage.set(
+    { hello: new Date() },
+    `${new Date()}`
+  );
+
+  debugger;
+  if (pushDataResult instanceof Error) {
+    return pushDataResult;
+  }
+  console.log('data was pushed in append log storage');
+};
+
+export const runTest = async () => {
+  await Promise.all([runTestAppendLogStorage(), runTestKeyValueStorage()]);
 };

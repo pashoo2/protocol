@@ -227,6 +227,7 @@ export class SafeStorage<
       storageName
     );
 
+    debugger;
     if (data instanceof Error) {
       return this.setErrorStatus(data);
     }
@@ -325,6 +326,7 @@ export class SafeStorage<
       console.error(err);
       return err;
     }
+    debugger;
     return (secretStorageConnection as InstanceType<typeof SecretStorage>).set(
       storageName,
       dataStringified || ''
@@ -348,7 +350,7 @@ export class SafeStorage<
     } catch (err) {
       return this.setErrorStatus(err);
     }
-
+    debugger;
     return this.writeOverallTableData(dataStringified);
   }
 
@@ -359,15 +361,20 @@ export class SafeStorage<
     if (tableOverallDataDump instanceof Error) {
       return this.setErrorStatus(tableOverallDataDump);
     }
-    if (!(tableOverallDataDump instanceof Array)) {
+    if (
+      tableOverallDataDump != null &&
+      !(tableOverallDataDump instanceof Array)
+    ) {
       return this.setErrorStatus('A wrong data type was read from storage');
     }
 
+    debugger;
     const tableOverallData = [
-      ...tableOverallDataDump,
+      ...(tableOverallDataDump || []),
       ...(appendData as TSafeStorageStoredDataTypeAppendLog),
     ] as TSafeStorageStoredDataTypeAppendLog;
-    const writeDumpResult = this.writeDump(tableOverallData);
+    debugger;
+    const writeDumpResult = await this.writeDump(tableOverallData);
 
     if (writeDumpResult instanceof Error) {
       this.appendData = [
@@ -375,11 +382,13 @@ export class SafeStorage<
         ...(this.appendDataTemp as TSafeStorageStoredDataTypeAppendLog),
       ];
       this.appendDataTemp = [];
+      debugger;
       return writeDumpResult as Error;
     }
     this.tableData = tableOverallData;
     this.appendData = this.appendDataTemp;
     this.appendDataTemp = [];
+    debugger;
     return true;
   }
 
@@ -390,17 +399,21 @@ export class SafeStorage<
     if (tableOverallDataDump instanceof Error) {
       return this.setErrorStatus(tableOverallDataDump);
     }
-    if (!(tableOverallDataDump instanceof Array)) {
+    if (
+      tableOverallDataDump != null &&
+      typeof tableOverallDataDump !== 'object'
+    ) {
       return this.setErrorStatus('A wrong data type was read from storage');
     }
-
+    debugger;
     const tableOverallData = {
-      ...tableOverallDataDump,
+      ...(tableOverallDataDump || undefined),
       ...(appendData as TSafeStorageStoredDataType<
         ESAFE_STORAGE_STORAGE_TYPE.KEY_VALUE
       >),
     };
-    const writeDumpResult = this.writeDump(tableOverallData);
+    debugger;
+    const writeDumpResult = await this.writeDump(tableOverallData);
 
     if (writeDumpResult instanceof Error) {
       this.appendData = {
@@ -412,11 +425,13 @@ export class SafeStorage<
         >),
       };
       this.appendDataTemp = {};
+      debugger;
       return writeDumpResult as Error;
     }
     this.tableData = tableOverallData;
     this.appendData = this.appendDataTemp;
     this.appendDataTemp = {};
+    debugger;
     return true;
   }
 
@@ -439,6 +454,7 @@ export class SafeStorage<
     } else {
       resultWritingDump = await this.dumpDataAppendLog();
     }
+    debugger;
     if (resultWritingDump === true) {
       this.setStatus(ESAFE_STORAGE_PROVIDER_STATUS.CONNECTED_TO_STORAGE);
       // TODO - ??reload all the data from storage
@@ -457,6 +473,7 @@ export class SafeStorage<
       appendData instanceof Array &&
       appendData.length > SAFE_STORAGE_MAX_ITEMS_APPEND_LOG
     ) {
+      debugger;
       this.dumpData();
     }
   }
@@ -529,6 +546,12 @@ export class SafeStorage<
     }
   }
 
+  stringifyData(
+    data: TSafeStorageDataTypesAvail | undefined | null
+  ): string | null | undefined {
+    return data != null ? JSON.parse(JSON.stringify(data)) : undefined;
+  }
+
   async setDataInAppendLogStorage(
     data: TSafeStorageDataTypesAvail | undefined | null,
     key?: TSafeStorageKeyType
@@ -544,15 +567,22 @@ export class SafeStorage<
 
     const { appendData, appendDataTemp, tableData } = this;
     const tempStorage = this.isDupmingInProgress ? appendDataTemp : appendData;
+    const stringifiedData = this.stringifyData(data);
 
     if (!key) {
-      (tempStorage as TSafeStorageStoredDataTypeAppendLog).push(data || null);
-      (tableData as TSafeStorageStoredDataTypeAppendLog).push(data || null);
+      (tempStorage as TSafeStorageStoredDataTypeAppendLog).push(
+        stringifiedData || null
+      );
+      (tableData as TSafeStorageStoredDataTypeAppendLog).push(
+        stringifiedData || null
+      );
+      debugger;
     } else {
       (tempStorage as TSafeStorageStoredDataTypeAppendLog)[key as number] =
-        data || null;
+        stringifiedData || null;
       (tableData as TSafeStorageStoredDataTypeAppendLog)[key as number] =
-        data || null;
+        stringifiedData || null;
+      debugger;
     }
     return true;
   }
@@ -572,11 +602,13 @@ export class SafeStorage<
 
     const { appendData, appendDataTemp, tableData } = this;
     const tempStorage = this.isDupmingInProgress ? appendDataTemp : appendData;
+    const stringifiedData = this.stringifyData(data);
 
     (tableData as TSafeStorageStoredDataTypeKeyValue)[key as string] =
-      data || null;
+      stringifiedData || null;
     (tempStorage as TSafeStorageStoredDataTypeKeyValue)[key as string] =
-      data || null;
+      stringifiedData || null;
+    debugger;
     return true;
   }
 
@@ -587,7 +619,7 @@ export class SafeStorage<
     const { storageType } = this;
 
     const dataSafeResult = this.checkDataIsSafetyForSave(data);
-
+    debugger;
     if (dataSafeResult instanceof Error) {
       return dataSafeResult;
     }
@@ -598,6 +630,7 @@ export class SafeStorage<
     if (storageType === ESAFE_STORAGE_STORAGE_TYPE.KEY_VALUE) {
       return this.setDataInKeyValueStorage(data, key);
     }
+
     const err = new Error('An unknown storage type');
 
     console.error(err);

@@ -426,7 +426,13 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
     if (stringEncrypted instanceof Error) {
       return SecretStorage.error(stringEncrypted);
     }
-    return this.decryptValue(stringEncrypted);
+
+    const decryptResult = await this.decryptValue(stringEncrypted);
+
+    if (decryptResult instanceof Error) {
+      return decryptResult;
+    }
+    return decodeURIComponent(decryptResult);
   };
 
   async setWithStorageProvider(
@@ -481,8 +487,9 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
       );
     }
 
-    const encryptedValue = await this.encryptValue(value);
-
+    const escapedValue = encodeURIComponent(value);
+    const encryptedValue = await this.encryptValue(escapedValue);
+    debugger;
     if (encryptedValue instanceof Error) {
       return SecretStorage.error(encryptedValue);
     }
