@@ -77,6 +77,6 @@ export const runTestKeyValueStorage = async () => {
 };
 
 export const runTest = async () => {
-  await runTestAppendLogStorage();
+  await runTestKeyValueStorage();
   // await Promise.all([runTestAppendLogStorage(), runTestKeyValueStorage()]);
 };

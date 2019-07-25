@@ -96,6 +96,21 @@ export class SafeStorage<
       throw setOptionsResult;
     }
     this.setStatus(ESAFE_STORAGE_PROVIDER_STATUS.NEW);
+    if (options.storageType === ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG) {
+      this.appendData = [] as TSafeStorageStoredDataType<
+        ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG
+      >;
+      this.appendDataTemp = [] as TSafeStorageStoredDataType<
+        ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG
+      >;
+    } else {
+      this.appendData = {} as TSafeStorageStoredDataType<
+        ESAFE_STORAGE_STORAGE_TYPE.KEY_VALUE
+      >;
+      this.appendDataTemp = {} as TSafeStorageStoredDataType<
+        ESAFE_STORAGE_STORAGE_TYPE.KEY_VALUE
+      >;
+    }
   }
 
   get secretStorageOptions() {
@@ -142,7 +157,6 @@ export class SafeStorage<
       }
 
       const preloadDataResult = await this.loadOverallTableAndParseEachAppendLog();
-      debugger;
       if (preloadDataResult instanceof Error) {
         return preloadDataResult;
       }
@@ -245,7 +259,6 @@ export class SafeStorage<
     TSafeStorageStoredDataType<TYPE> | undefined | Error
   > {
     const tableAppendlogsArray = await this.loadOverallTable();
-    debugger;
     if (tableAppendlogsArray instanceof Error) {
       return tableAppendlogsArray;
     }
@@ -361,7 +374,6 @@ export class SafeStorage<
       console.error(err);
       return err;
     }
-    debugger;
     return (secretStorageConnection as InstanceType<typeof SecretStorage>).set(
       storageName,
       dataStringified || ''
@@ -380,7 +392,6 @@ export class SafeStorage<
 
     try {
       dataStringified = JSON.stringify(data);
-      debugger;
     } catch (err) {
       return this.setErrorStatus(err);
     }
