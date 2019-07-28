@@ -324,6 +324,36 @@ export class SafeStorage<
     }
   }
 
+  /**
+   * parse a data stringified
+   * before save it to the storage
+   * and read from the secret storage
+   * as a string.
+   * @param {string | Error | undefined} data
+   */
+  parseDataFromStorage<D>(
+    data: string | undefined | Error
+  ): Error | D | undefined {
+    if (data instanceof Error) {
+      return this.setErrorStatus(data);
+    }
+    if (data == null) {
+      return undefined;
+    }
+    try {
+      return JSON.parse(decodeURIComponent(data)) as D | undefined;
+    } catch (err) {
+      return err as Error;
+    }
+  }
+
+  /**
+   * load a data from the key
+   * named as storage name param
+   * of the secret storage connected
+   * to and return this data
+   * @param {string} storageName
+   */
   async loadDataFromTable<D>(
     storageName: string
   ): Promise<D | undefined | Error> {
@@ -338,21 +368,21 @@ export class SafeStorage<
       );
 
       setPreviousStatus();
-      if (data instanceof Error) {
-        return this.setErrorStatus(data);
+
+      const parsedDate = this.parseDataFromStorage(data);
+
+      if (parsedDate instanceof Error) {
+        return this.setErrorStatus(parsedDate) as Error;
       }
-      if (data == null) {
-        return undefined;
-      }
-      try {
-        return JSON.parse(data) as D | undefined;
-      } catch (err) {
-        return this.setErrorStatus(err) as Error;
-      }
+      return parsedDate as D | undefined;
     }
     return new Error(`The storage is too busy`);
   }
 
+  /**
+   * load data from append log key
+   * of the secret storage connected to
+   */
   loadDataFromStorageAppendLog(): Promise<
     TSafeStorageStorageAppendLogDataType | undefined | Error
   > {
@@ -363,6 +393,14 @@ export class SafeStorage<
     );
   }
 
+  /**
+   * load data from the append log key
+   * of the secret storage connected to
+   * parse it as an array of data append
+   * and return in a type of the storage:
+   * 1) array for an APPEND LOG type storage
+   * 2) object for an KEY VALUE type storage
+   */
   async loadAndParseDataFromAppendLogStorage(): Promise<
     TSafeStorageStoredDataType<TYPE> | undefined | Error
   > {
@@ -380,29 +418,28 @@ export class SafeStorage<
         storageType === ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG;
 
       return tableAppendlogsArray.reduce(
-        (result, appendLogString) => {
-          try {
-            const stringDecoded = decodeURIComponent(appendLogString);
-            const parsedResult = (JSON.parse(stringDecoded) as unknown) as
-              | TSafeStorageStoredDataTypeAppendLog
-              | TSafeStorageStoredDataTypeKeyValue;
-
-            return (isAppendLogStorage
-              ? [
-                  ...(result as TSafeStorageStoredDataTypeAppendLog),
-                  ...(parsedResult as TSafeStorageStoredDataTypeAppendLog),
-                ]
-              : {
-                  ...(result as TSafeStorageStoredDataTypeKeyValue),
-                  ...(parsedResult as TSafeStorageStoredDataTypeKeyValue),
-                }) as TSafeStorageStoredDataType<TYPE>;
-          } catch (err) {
-            console.error(err);
+        (result: TSafeStorageStoredDataType<TYPE> | Error, appendLogString) => {
+          if (result instanceof Error) {
+            return result;
           }
-          return result;
+
+          const parsedResult = this.parseDataFromStorage(appendLogString);
+
+          if (parsedResult instanceof Error) {
+            return this.setErrorStatus(parsedResult);
+          }
+          return (isAppendLogStorage
+            ? [
+                ...(result as TSafeStorageStoredDataTypeAppendLog),
+                ...(parsedResult as TSafeStorageStoredDataTypeAppendLog),
+              ]
+            : {
+                ...(result as TSafeStorageStoredDataTypeKeyValue),
+                ...(parsedResult as TSafeStorageStoredDataTypeKeyValue),
+              }) as TSafeStorageStoredDataType<TYPE>;
         },
         (isAppendLogStorage ? [] : {}) as TSafeStorageStoredDataType<TYPE>
-      );
+      ) as TSafeStorageStoredDataType<TYPE> | Error;
     }
   }
 
@@ -451,6 +488,13 @@ export class SafeStorage<
         }) as TSafeStorageStoredDataType<TYPE>;
   }
 
+  /**
+   * save a data to the secret storage
+   * to the key with name
+   * storageName
+   * @param {string} storageName
+   * @param {string | null | undefined} dataStringified
+   */
   async saveDataToStorage(
     storageName: string,
     dataStringified?: string | null
@@ -492,7 +536,8 @@ export class SafeStorage<
   }
 
   /**
-   *
+   * stringify data for the
+   * storage
    * @param dataAppendLog
    * @returns {Error | string | false} - sating -stringified data, falser - no data, Error - an error has occurred
    */
