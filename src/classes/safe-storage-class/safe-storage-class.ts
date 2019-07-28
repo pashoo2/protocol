@@ -603,7 +603,7 @@ export class SafeStorage<
   ): Promise<boolean | Error> {
     const { storageName } = this;
     let dataStringified;
-
+    debugger;
     if (data && typeof data === 'object') {
       dataStringified = await this.stringifyDataForStorage(data);
     } else if (data) {
@@ -628,7 +628,7 @@ export class SafeStorage<
   ): Promise<Error | boolean> {
     const { storageNameAppendLog } = this;
     let dataStringified;
-
+    debugger;
     if (data && data instanceof Array) {
       dataStringified = await this.stringifyDataForStorage(data);
     } else if (data) {
