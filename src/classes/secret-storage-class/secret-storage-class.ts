@@ -405,7 +405,7 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
     if (decryptedValue instanceof Error) {
       return SecretStorage.error(decryptedValue);
     }
-    if (typeof decryptedValue !== 'string' || !decryptedValue.length) {
+    if (typeof decryptedValue !== 'string') {
       return SecretStorage.error('A wrong value decrypted');
     }
     return decryptedValue;
@@ -426,13 +426,12 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
     if (stringEncrypted instanceof Error) {
       return SecretStorage.error(stringEncrypted);
     }
-
     const decryptResult = await this.decryptValue(stringEncrypted);
 
     if (decryptResult instanceof Error) {
       return decryptResult;
     }
-    return decryptResult;
+    return decryptResult || undefined;
   };
 
   async setWithStorageProvider(

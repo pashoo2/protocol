@@ -1,5 +1,4 @@
 import EEmitter from 'events';
-import './events';
 import {
   TypedEventEmitter,
   TEventsList,

@@ -54,10 +54,10 @@ export const getStatusClass = <TStatus extends object>({
      * @returns {Function} - function to set the previous status value
      */
     protected setStatus(status: ownValueOf<TStatus>): () => void {
-      const { storageStatusEmitter, status: prevStatus } = this;
+      const { statusEmitter, status: prevStatus } = this;
 
       this.status = status;
-      storageStatusEmitter.emit(STATUS_CLASS_STATUS_CHANGE_EVENT, status);
+      statusEmitter.emit(STATUS_CLASS_STATUS_CHANGE_EVENT, status);
       return () => {
         this.status = prevStatus;
       };
