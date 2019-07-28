@@ -379,12 +379,10 @@ export class SafeStorage<
     try {
       return JSON.parse(data) as (D | undefined);
     } catch (err) {
-      debugger;
       if (
         !isDecodedString &&
         err.message.includes(SAFE_STORAGE_PARSE_DATA_ERROR_TRY_TO_DECODE)
       ) {
-        debugger;
         return this.parseDataFromStorage(decodeURIComponent(data), true);
       }
       return err as Error;
@@ -417,11 +415,9 @@ export class SafeStorage<
       typeof dataToAppend === 'string'
         ? this.parseDataFromStorage(dataToAppend)
         : dataToAppend;
-    debugger;
     const dataCastedToStorageType = this.castDataToStorageType(dataObj as
       | Error
       | TSafeStorageStoredDataType<TYPE>);
-    debugger;
     if (dataCastedToStorageType instanceof Error) {
       return this.setErrorStatus(dataCastedToStorageType);
     }
@@ -494,7 +490,6 @@ export class SafeStorage<
     TSafeStorageStoredDataType<TYPE> | undefined | Error
   > {
     const tableAppendlogsArray = await this.loadDataFromStorageAppendLog();
-    debugger;
     if (tableAppendlogsArray instanceof Error) {
       return tableAppendlogsArray;
     }
@@ -531,7 +526,6 @@ export class SafeStorage<
     const storageMainTableData = this.castDataToStorageType(
       await this.loadDataFromMainStorage()
     );
-    debugger;
     if (storageMainTableData instanceof Error) {
       return this.setErrorStatus(storageMainTableData);
     }
@@ -539,7 +533,6 @@ export class SafeStorage<
     const storageDataFromAppendLogTable = this.castDataToStorageType(
       await this.loadAndParseDataFromAppendLogStorage()
     );
-    debugger;
     if (storageDataFromAppendLogTable instanceof Error) {
       return this.setErrorStatus(storageDataFromAppendLogTable);
     }
@@ -626,7 +619,6 @@ export class SafeStorage<
   ): Promise<boolean | Error> {
     const { storageName } = this;
     let dataStringified;
-    debugger;
     if (data && typeof data === 'object') {
       dataStringified = await this.stringifyDataForStorage(data);
     } else if (data && typeof data === 'string') {
@@ -653,7 +645,6 @@ export class SafeStorage<
   ): Promise<Error | boolean> {
     const { storageNameAppendLog } = this;
     let dataStringified;
-    debugger;
     if (data && data instanceof Array) {
       dataStringified = await this.stringifyDataForStorage(data);
     } else if (data && typeof data === 'string') {
@@ -682,7 +673,6 @@ export class SafeStorage<
      * merge it
      */
     const overallData = await this.loadOverallData();
-    debugger;
     if (overallData instanceof Error) {
       return this.setErrorStatus(overallData);
     }
@@ -695,7 +685,6 @@ export class SafeStorage<
     const resultSaveDataToMainStorage = await this.writeOverallDataToMainTable(
       overallData
     );
-    debugger;
     if (resultSaveDataToMainStorage instanceof Error) {
       this.setErrorStatus(resultSaveDataToMainStorage);
       // if an error is occurred while writing
@@ -707,7 +696,6 @@ export class SafeStorage<
     }
 
     const resultClearStorageAppendLogData = await this.clearAppendLogData();
-    debugger;
     if (resultClearStorageAppendLogData instanceof Error) {
       // if an error occurred while clearing the
       // storage append log table
@@ -715,7 +703,6 @@ export class SafeStorage<
       // result
       return this.setErrorStatus(resultClearStorageAppendLogData);
     }
-    debugger;
     return overallData;
   }
 
@@ -801,14 +788,12 @@ export class SafeStorage<
 
   async dumpAllStorageTypes(): Promise<Error | boolean> {
     const tableOverallDataDump = await this.loadDataFromStorageAppendLog();
-    debugger;
     if (tableOverallDataDump instanceof Error) {
       return this.setErrorStatus(tableOverallDataDump);
     }
 
     const { appendData } = this;
     const appendDataString = await this.stringifyDataForStorage(appendData);
-    debugger;
     if (appendDataString instanceof Error) {
       return this.setErrorStatus(appendDataString);
     }
@@ -823,7 +808,6 @@ export class SafeStorage<
       ...(tableOverallDataDump || []),
       appendDataString,
     ] as TSafeStorageStoredDataTypeAppendLog;
-    debugger;
     return this.writeDump(tableOverallData);
   }
 
