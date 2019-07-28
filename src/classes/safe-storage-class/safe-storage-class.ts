@@ -163,47 +163,23 @@ export class SafeStorage<
       if (connectionToSecretStorageResult instanceof Error) {
         return this.setErrorStatus(connectionToSecretStorageResult);
       }
+      this.setStatus(ESAFE_STORAGE_PROVIDER_STATUS.CONNECTED_TO_STORAGE);
 
       const preloadDataResult = await this.reloadOverallTableData();
 
       if (preloadDataResult instanceof Error) {
         return preloadDataResult;
       }
+
+      const startIntervalResult = this.startInterval();
+
+      if (startIntervalResult instanceof Error) {
+        return this.setErrorStatus(startIntervalResult);
+      }
       this.setStatus(ESAFE_STORAGE_PROVIDER_STATUS.CONNECTED_TO_STORAGE);
-      return this.startInterval();
+      return true;
     }
     return false;
-  }
-
-  async reloadOverallTableData(): Promise<boolean | Error> {
-    const tableData = await this.loadOverallTable();
-
-    if (tableData instanceof Error) {
-      return this.setErrorStatus(tableData);
-    }
-    this.setTableData(tableData);
-    return true;
-  }
-
-  async disconnect(): Promise<Error | true> {
-    const { dumpIntervalRunning } = this;
-
-    if (typeof dumpIntervalRunning === 'number') {
-      clearInterval(dumpIntervalRunning);
-    }
-
-    let idx = 0;
-    while ((idx += 1) < 3) {
-      const resultDumping = await this.dumpData();
-
-      if (resultDumping === true) {
-        this.setStatus(ESAFE_STORAGE_PROVIDER_STATUS.DISCONNECTED);
-        return true;
-      }
-    }
-    return this.setErrorStatus(
-      "Can't dump the table's data before disconnected"
-    );
   }
 
   checkOptionsAreValid(options: ISafeStorageOptions): Error | true {
@@ -259,6 +235,46 @@ export class SafeStorage<
   }
 
   /**
+   * load all the data from the secret storage
+   * and put all the data to the memory table
+   */
+  async reloadOverallTableData(): Promise<boolean | Error> {
+    // load data from the storage
+    // and it's append log
+    const tableData = await this.loadOverallTable();
+
+    if (tableData instanceof Error) {
+      return this.setErrorStatus(tableData);
+    }
+    // set all data to the memory table
+    this.setTableData(tableData);
+    return true;
+  }
+
+  /**
+   * disconnect from the secret storage
+   * and dump the data before it
+   */
+  async disconnect(): Promise<Error | true> {
+    const { dumpIntervalRunning } = this;
+
+    if (typeof dumpIntervalRunning === 'number') {
+      clearInterval(dumpIntervalRunning);
+    }
+
+    // dump the data before disconnection
+    const resultDumping = await this.dumpData();
+
+    if (resultDumping === true) {
+      this.setStatus(ESAFE_STORAGE_PROVIDER_STATUS.DISCONNECTED);
+      return true;
+    }
+    return this.setErrorStatus(
+      "Can't dump the table's data before disconnected"
+    );
+  }
+
+  /**
    * @returns {boolean} - returns true if the storage is freed
    * false - on timeout
    */
@@ -304,12 +320,18 @@ export class SafeStorage<
     );
   }
 
+  /**
+   * check if the data given
+   * is conformed to the
+   * storage type and
+   * return an Error if it's
+   * not conformed or data in
+   * storage type
+   * @param data
+   */
   castDataToStorageType(
     data?: Error | null | TSafeStorageStoredDataType<TYPE>
-  ):
-    | TSafeStorageStoredDataTypeKeyValue
-    | TSafeStorageStoredDataTypeAppendLog
-    | Error {
+  ): TSafeStorageStoredDataType<TYPE> | Error {
     if (data instanceof Error) {
       return data;
     }
@@ -318,9 +340,13 @@ export class SafeStorage<
 
     switch (storageType) {
       case ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG:
-        return this.castDataToAppendLogType();
+        return this.castDataToAppendLogType() as TSafeStorageStoredDataType<
+          TYPE
+        >;
       default:
-        return this.castDataToKeyValueType();
+        return this.castDataToKeyValueType() as TSafeStorageStoredDataType<
+          TYPE
+        >;
     }
   }
 
@@ -346,6 +372,48 @@ export class SafeStorage<
       return err as Error;
     }
   }
+
+  /**
+   * merge the data and cast it to the
+   * storage type
+   * returns the merged data
+   * casted to the storage type
+   * @memberof SafeStorage
+   * @param { object | array } result
+   * @param { string | object | array }
+   * @returns { object | array | Error }
+   */
+  mergeData = (
+    result: TSafeStorageStoredDataType<TYPE> | Error,
+    dataToAppend: string | TSafeStorageStoredDataType<TYPE>
+  ): TSafeStorageStoredDataType<TYPE> | Error => {
+    const { storageType } = this;
+    const isAppendLogStorage =
+      storageType === ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG;
+
+    if (result instanceof Error) {
+      return result;
+    }
+
+    const dataCastedToStorageType = this.castDataToStorageType(
+      typeof dataToAppend === 'string'
+        ? this.parseDataFromStorage(dataToAppend)
+        : dataToAppend
+    );
+    debugger;
+    if (dataCastedToStorageType instanceof Error) {
+      return this.setErrorStatus(dataCastedToStorageType);
+    }
+    return (isAppendLogStorage
+      ? [
+          ...(result as TSafeStorageStoredDataTypeAppendLog),
+          ...(dataCastedToStorageType as TSafeStorageStoredDataTypeAppendLog),
+        ]
+      : {
+          ...(result as TSafeStorageStoredDataTypeKeyValue),
+          ...(dataCastedToStorageType as TSafeStorageStoredDataTypeKeyValue),
+        }) as TSafeStorageStoredDataType<TYPE>;
+  };
 
   /**
    * load a data from the key
@@ -405,7 +473,7 @@ export class SafeStorage<
     TSafeStorageStoredDataType<TYPE> | undefined | Error
   > {
     const tableAppendlogsArray = await this.loadDataFromStorageAppendLog();
-
+    debugger;
     if (tableAppendlogsArray instanceof Error) {
       return tableAppendlogsArray;
     }
@@ -413,32 +481,11 @@ export class SafeStorage<
       return undefined;
     }
     if (tableAppendlogsArray instanceof Array) {
-      const { storageType } = this;
-      const isAppendLogStorage =
-        storageType === ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG;
-
       return tableAppendlogsArray.reduce(
-        (result: TSafeStorageStoredDataType<TYPE> | Error, appendLogString) => {
-          if (result instanceof Error) {
-            return result;
-          }
-
-          const parsedResult = this.parseDataFromStorage(appendLogString);
-
-          if (parsedResult instanceof Error) {
-            return this.setErrorStatus(parsedResult);
-          }
-          return (isAppendLogStorage
-            ? [
-                ...(result as TSafeStorageStoredDataTypeAppendLog),
-                ...(parsedResult as TSafeStorageStoredDataTypeAppendLog),
-              ]
-            : {
-                ...(result as TSafeStorageStoredDataTypeKeyValue),
-                ...(parsedResult as TSafeStorageStoredDataTypeKeyValue),
-              }) as TSafeStorageStoredDataType<TYPE>;
-        },
-        (isAppendLogStorage ? [] : {}) as TSafeStorageStoredDataType<TYPE>
+        this.mergeData,
+        this.castDataToStorageType(undefined) as TSafeStorageStoredDataType<
+          TYPE
+        >
       ) as TSafeStorageStoredDataType<TYPE> | Error;
     }
   }
@@ -474,18 +521,10 @@ export class SafeStorage<
     if (storageDataFromAppendLogTable instanceof Error) {
       return this.setErrorStatus(storageDataFromAppendLogTable);
     }
-
-    const { storageType } = this;
-
-    return (storageType === ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG
-      ? [
-          ...(storageMainTableData as TSafeStorageStoredDataTypeAppendLog),
-          ...(storageDataFromAppendLogTable as TSafeStorageStoredDataTypeAppendLog),
-        ]
-      : {
-          ...(storageMainTableData as TSafeStorageStoredDataTypeKeyValue),
-          ...(storageDataFromAppendLogTable as TSafeStorageStoredDataTypeKeyValue),
-        }) as TSafeStorageStoredDataType<TYPE>;
+    return this.mergeData(
+      storageMainTableData as TSafeStorageStoredDataType<TYPE>,
+      storageDataFromAppendLogTable as TSafeStorageStoredDataType<TYPE>
+    );
   }
 
   /**
@@ -555,7 +594,7 @@ export class SafeStorage<
     }
   }
 
-  async storeOverallDataToMainTable(
+  async writeOverallDataToMainTable(
     data?:
       | string
       | null
@@ -567,11 +606,40 @@ export class SafeStorage<
 
     if (data && typeof data === 'object') {
       dataStringified = await this.stringifyDataForStorage(data);
+    } else if (data) {
+      return new Error(
+        'Only an object data can be write to the main table key of the secret storage'
+      );
     }
     if (dataStringified instanceof Error) {
       return dataStringified;
     }
     return this.saveDataToStorage(storageName, dataStringified);
+  }
+
+  /**
+   * write the data to the secret storage's
+   * key used as append log data for the
+   * main storage key
+   * @param [string[]] [undefined] data
+   */
+  async writeDataToStorageAppengLog(
+    data?: string | null | TSafeStorageStorageAppendLogDataType
+  ): Promise<Error | boolean> {
+    const { storageNameAppendLog } = this;
+    let dataStringified;
+
+    if (data && data instanceof Array) {
+      dataStringified = await this.stringifyDataForStorage(data);
+    } else if (data) {
+      return new Error(
+        'Only an array data can be write to the append log key of the secret storage'
+      );
+    }
+    if (dataStringified instanceof Error) {
+      return dataStringified;
+    }
+    return this.saveDataToStorage(storageNameAppendLog, dataStringified);
   }
 
   async clearAppendLogData(): Promise<boolean | Error> {
@@ -597,7 +665,7 @@ export class SafeStorage<
       append log storage to the main storage
       table
     */
-    const resultSaveDataToMainStorage = await this.storeOverallDataToMainTable(
+    const resultSaveDataToMainStorage = await this.writeOverallDataToMainTable(
       overallData
     );
     debugger;
@@ -686,14 +754,6 @@ export class SafeStorage<
     return false;
   }
 
-  writeTableDataToStorageAppengLog(
-    dataStringified: string | null
-  ): Promise<Error | boolean> {
-    const { storageNameAppendLog } = this;
-
-    return this.saveDataToStorage(storageNameAppendLog, dataStringified);
-  }
-
   async writeDump(
     data:
       | TSafeStorageStoredDataTypeAppendLog
@@ -709,7 +769,7 @@ export class SafeStorage<
     } catch (err) {
       return this.setErrorStatus(err);
     }
-    return this.writeTableDataToStorageAppengLog(dataStringified);
+    return this.writeDataToStorageAppengLog(dataStringified);
   }
 
   async dumpAllStorageTypes(): Promise<Error | boolean> {
@@ -736,7 +796,7 @@ export class SafeStorage<
       ...(tableOverallDataDump || []),
       appendDataString,
     ] as TSafeStorageStoredDataTypeAppendLog;
-
+    debugger;
     return this.writeDump(tableOverallData);
   }
 
@@ -780,6 +840,19 @@ export class SafeStorage<
     return true;
   }
 
+  /**
+   * write the data from the append log
+   * in-memory table to the secret storage
+   * append log table. On error merge data
+   * from in-memory append log and
+   * in-memory temporary append log data,
+   * then clear the in-memory append log data.
+   * On success clear the in-memory
+   * append log data table and copy data
+   * from the temporary append log
+   * to the in-memory append log. And
+   * clear in-memory temporary append log
+   */
   dumpData = async (): Promise<Error | boolean> => {
     const { storageType, appendData, status } = this;
 
@@ -812,6 +885,12 @@ export class SafeStorage<
     );
   };
 
+  /**
+   * check if too much data in the in-memory
+   * append log storage
+   * If it is, write a data from it
+   * to the secret storage
+   */
   checkIfMemoryAppendLogOverflow() {
     const { appendData } = this;
 
@@ -865,6 +944,11 @@ export class SafeStorage<
       | D;
   }
 
+  /**
+   * get data for the key specified
+   * from the in-memory table
+   * @param key
+   */
   get<D extends TSafeStorageDataTypesAvail>(
     key: TSafeStorageKeyType
   ): Error | undefined | null | D {
@@ -882,6 +966,12 @@ export class SafeStorage<
     return err;
   }
 
+  /**
+   * try to stringify the data
+   * and return true if all is
+   * ok or an Error otherwise
+   * @param data
+   */
   checkDataIsSafetyForSave(data: any): boolean | Error {
     try {
       JSON.stringify(data);
@@ -891,7 +981,14 @@ export class SafeStorage<
     }
   }
 
-  encodeData(
+  /**
+   * encode the data to the JSON
+   * format, e.g. Date type
+   * will be normalized to
+   * a stringified date in ISO
+   * @param data
+   */
+  normilizeData(
     data: TSafeStorageDataTypesAvail | undefined | null
   ): string | null | undefined {
     return data != null ? JSON.parse(JSON.stringify(data)) : undefined;
@@ -912,7 +1009,7 @@ export class SafeStorage<
 
     const { appendData, appendDataTemp, tableData } = this;
     const tempStorage = this.isStorageBusy ? appendDataTemp : appendData;
-    const stringifiedData = this.encodeData(data);
+    const stringifiedData = this.normilizeData(data);
 
     if (!key) {
       (tempStorage as TSafeStorageStoredDataTypeAppendLog).push(
@@ -930,6 +1027,15 @@ export class SafeStorage<
     return true;
   }
 
+  /**
+   *
+   * @param data
+   * @param [numbder] key [undefined] - index where
+   * put the data given.
+   * If it's not specified
+   * then set the data given
+   * by the last index
+   */
   async setDataInKeyValueStorage(
     data: TSafeStorageDataTypesAvail | undefined | null,
     key?: TSafeStorageKeyType
@@ -945,7 +1051,7 @@ export class SafeStorage<
 
     const { appendData, appendDataTemp, tableData } = this;
     const tempStorage = this.isStorageBusy ? appendDataTemp : appendData;
-    const stringifiedData = this.encodeData(data);
+    const stringifiedData = this.normilizeData(data);
 
     (tableData as TSafeStorageStoredDataTypeKeyValue)[key as string] =
       stringifiedData || null;
@@ -954,6 +1060,19 @@ export class SafeStorage<
     return true;
   }
 
+  /**
+   * set data in the in-memory
+   * table and in-memory append log
+   * table or in-memory temporary
+   * append-log table
+   * if any operations on append log
+   * in-memory table is active.
+   * Also the data set into
+   * the in-memory overall data
+   * table for the key specified
+   * @param data
+   * @param key
+   */
   async set(
     data: TSafeStorageDataTypesAvail | undefined | null,
     key?: TSafeStorageKeyType
@@ -978,11 +1097,29 @@ export class SafeStorage<
     return err;
   }
 
+  /**
+   * remove a data by fot a key specified
+   */
   async remove(key: TSafeStorageKeyType) {
+    if (!key) {
+      return new Error('A key must be specified to remove a data from it');
+    }
     return this.set(null, key);
   }
 
+  /**
+   * clear the data in the storage
+   */
   async clear(): Promise<Error | boolean> {
-    return this.writeTableDataToStorageAppengLog(null);
+    this.appendData = this.castDataToStorageType() as TSafeStorageStoredDataType<
+      TYPE
+    >;
+    this.appendDataTemp = this.castDataToStorageType() as TSafeStorageStoredDataType<
+      TYPE
+    >;
+    this.tableData = this.castDataToStorageType() as TSafeStorageStoredDataType<
+      TYPE
+    >;
+    return this.writeDataToStorageAppengLog(null);
   }
 }
