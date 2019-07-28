@@ -425,7 +425,7 @@ export class SafeStorage<
     const storageMainTableData = this.castDataToStorageType(
       await this.loadDataFromMainStorage()
     );
-
+    debugger;
     if (storageMainTableData instanceof Error) {
       return this.setErrorStatus(storageMainTableData);
     }
@@ -433,7 +433,7 @@ export class SafeStorage<
     const storageDataFromAppendLogTable = this.castDataToStorageType(
       await this.loadAndParseDataFromAppendLogStorage()
     );
-
+    debugger;
     if (storageDataFromAppendLogTable instanceof Error) {
       return this.setErrorStatus(storageDataFromAppendLogTable);
     }
@@ -536,25 +536,46 @@ export class SafeStorage<
   }
 
   async loadOverallTable(): Promise<TSafeStorageStoredDataType<TYPE> | Error> {
+    /**
+     * read data from the main storage table
+     * and storage append log table
+     * merge it
+     */
     const overallData = await this.loadOverallData();
-
+    debugger;
     if (overallData instanceof Error) {
       return this.setErrorStatus(overallData);
     }
 
+    /*
+      save data from the main storage and 
+      append log storage to the main storage
+      table
+    */
     const resultSaveDataToMainStorage = await this.storeOverallDataToMainTable(
       overallData
     );
-
+    debugger;
     if (resultSaveDataToMainStorage instanceof Error) {
-      return this.setErrorStatus(resultSaveDataToMainStorage);
+      this.setErrorStatus(resultSaveDataToMainStorage);
+      // if an error is occurred while writing
+      // an overall data on the main storage
+      // set an error and return overall data
+      // without clearing the storage append
+      // log table
+      return overallData;
     }
 
     const resultClearStorageAppendLogData = await this.clearAppendLogData();
-
+    debugger;
     if (resultClearStorageAppendLogData instanceof Error) {
+      // if an error occurred while clearing the
+      // storage append log table
+      // return an error occurred as the
+      // result
       return this.setErrorStatus(resultClearStorageAppendLogData);
     }
+    debugger;
     return overallData;
   }
 
