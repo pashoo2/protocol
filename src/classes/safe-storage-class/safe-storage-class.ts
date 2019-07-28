@@ -6,6 +6,7 @@ import {
   TSafeStorageDataTypesAvail,
   TSafeStorageKeyType,
   TSafeStorageDataType,
+  TSafeStorageStorageAppendLogDataType,
 } from './safe-storage-class.types';
 import { DEFAULT_INTERVAL_MS } from 'classes/basic-classes/queue-manager-class-base/queue-manager-class-base.const';
 import { SecretStorage } from 'classes/secret-storage-class/secret-storage-class';
@@ -19,6 +20,8 @@ import {
   SAFE_STORAGE_APPEND_LOG_INITIAL_VALUE,
   SAFE_STORAGE_APPEND_LOG_APPEND_DATA_INITIAL_VALUE,
   SAFE_STORAGE_KEY_VALUE_APPEND_DATA_INITIAL_VALUE,
+  SAFE_STORAGE_STORAGE_APPEND_LOG_COMMON_POSTFIX,
+  SAFE_STORAGE_ATTEMPTS_TO_SAVE_DATA_TO_STORAGE,
 } from './safe-storage-class.const';
 import { getStatusClass } from 'classes/basic-classes/status-class-base/status-class-base';
 
@@ -43,6 +46,8 @@ export class SafeStorage<
   }
 
   protected storageName: string = '';
+
+  protected storageNameAppendLog: string = '';
 
   protected options?: ISafeStorageOptions;
 
@@ -157,6 +162,7 @@ export class SafeStorage<
       }
 
       const preloadDataResult = await this.loadOverallTableAndParseEachAppendLog();
+
       if (preloadDataResult instanceof Error) {
         return preloadDataResult;
       }
@@ -229,15 +235,67 @@ export class SafeStorage<
       storageType: storageTypeResolved,
     };
     this.storageType = storageTypeResolved;
-    this.storageName = `${SAFE_STORAGE_STORAGE_NAME_COMMON_PREFIX}${name}`;
+
+    const storageName = `${SAFE_STORAGE_STORAGE_NAME_COMMON_PREFIX}${name}`;
+
+    this.storageName = storageName;
+    this.storageNameAppendLog = `${storageName}${SAFE_STORAGE_STORAGE_APPEND_LOG_COMMON_POSTFIX}`;
     this.dumpIntervalMs = dumpInterval;
     return true;
   }
 
-  async loadOverallTable(): Promise<
-    TSafeStorageStoredDataType<TYPE> | undefined | Error
-  > {
-    const { storageName, secretStorageConnection } = this;
+  castDataToAppendLogType(
+    data?: null | TSafeStorageStoredDataType<TYPE>
+  ): TSafeStorageStoredDataTypeAppendLog | Error {
+    if (data == null) {
+      return [] as TSafeStorageStoredDataTypeAppendLog;
+    }
+    if (data instanceof Array) {
+      return data as TSafeStorageStoredDataTypeAppendLog;
+    }
+    return new Error(
+      `There is a wrong data type ${typeof data} for the append log storage`
+    );
+  }
+
+  castDataToKeyValueType(
+    data?: null | TSafeStorageStoredDataType<TYPE>
+  ): TSafeStorageStoredDataTypeKeyValue | Error {
+    if (data == null) {
+      return {} as TSafeStorageStoredDataTypeKeyValue;
+    }
+    if (!(data instanceof Array) && typeof data === 'object') {
+      return data as TSafeStorageStoredDataTypeKeyValue;
+    }
+    return new Error(
+      `There is a wrong data type ${typeof data} for a key value storage`
+    );
+  }
+
+  castDataToStorageType(
+    data?: Error | null | TSafeStorageStoredDataType<TYPE>
+  ):
+    | TSafeStorageStoredDataTypeKeyValue
+    | TSafeStorageStoredDataTypeAppendLog
+    | Error {
+    if (data instanceof Error) {
+      return data;
+    }
+
+    const { storageType } = this;
+
+    switch (storageType) {
+      case ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG:
+        return this.castDataToAppendLogType();
+      default:
+        return this.castDataToKeyValueType();
+    }
+  }
+
+  async loadDataFromTable<D>(
+    storageName: string
+  ): Promise<D | undefined | Error> {
+    const { secretStorageConnection } = this;
     const data = await (secretStorageConnection as SecretStorage).get(
       storageName
     );
@@ -249,16 +307,27 @@ export class SafeStorage<
       return undefined;
     }
     try {
-      return JSON.parse(data) as TSafeStorageStoredDataType<TYPE>;
+      return JSON.parse(data) as D | undefined;
     } catch (err) {
-      return this.setErrorStatus(err);
+      return this.setErrorStatus(err) as Error;
     }
   }
 
-  async loadOverallTableAndParseEachAppendLog(): Promise<
+  loadDataFromAppendLog(): Promise<
+    TSafeStorageStorageAppendLogDataType | undefined | Error
+  > {
+    const { storageNameAppendLog } = this;
+
+    return this.loadDataFromTable<TSafeStorageStorageAppendLogDataType>(
+      storageNameAppendLog
+    );
+  }
+
+  async loadAndParseDataFromAppendLogStorage(): Promise<
     TSafeStorageStoredDataType<TYPE> | undefined | Error
   > {
-    const tableAppendlogsArray = await this.loadOverallTable();
+    const tableAppendlogsArray = await this.loadDataFromAppendLog();
+
     if (tableAppendlogsArray instanceof Error) {
       return tableAppendlogsArray;
     }
@@ -274,19 +343,170 @@ export class SafeStorage<
         (result, appendLogString) => {
           try {
             const stringDecoded = decodeURIComponent(appendLogString);
-            const parsedResult = (JSON.parse(stringDecoded) as unknown) as any;
+            const parsedResult = (JSON.parse(stringDecoded) as unknown) as
+              | TSafeStorageStoredDataTypeAppendLog
+              | TSafeStorageStoredDataTypeKeyValue;
 
-            return isAppendLogStorage
-              ? [...result, ...parsedResult]
-              : { ...result, ...parsedResult };
+            return (isAppendLogStorage
+              ? [
+                  ...(result as TSafeStorageStoredDataTypeAppendLog),
+                  ...(parsedResult as TSafeStorageStoredDataTypeAppendLog),
+                ]
+              : {
+                  ...(result as TSafeStorageStoredDataTypeKeyValue),
+                  ...(parsedResult as TSafeStorageStoredDataTypeKeyValue),
+                }) as TSafeStorageStoredDataType<TYPE>;
           } catch (err) {
             console.error(err);
           }
           return result;
         },
-        isAppendLogStorage ? [] : {}
+        (isAppendLogStorage ? [] : {}) as TSafeStorageStoredDataType<TYPE>
       );
     }
+  }
+
+  loadDataFromMainStorage(): Promise<
+    TSafeStorageStoredDataType<TYPE> | undefined | Error
+  > {
+    const { storageName } = this;
+
+    return this.loadDataFromTable<TSafeStorageStoredDataType<TYPE>>(
+      storageName
+    );
+  }
+
+  /**
+   * loads a data from the main storage
+   * and the append log
+   * and merge it
+   */
+  async loadOverallData(): Promise<TSafeStorageStoredDataType<TYPE> | Error> {
+    const storageMainTableData = this.castDataToStorageType(
+      await this.loadDataFromMainStorage()
+    );
+
+    if (storageMainTableData instanceof Error) {
+      return this.setErrorStatus(storageMainTableData);
+    }
+
+    const storageDataFromAppendLogTable = this.castDataToStorageType(
+      await this.loadAndParseDataFromAppendLogStorage()
+    );
+
+    if (storageDataFromAppendLogTable instanceof Error) {
+      return this.setErrorStatus(storageDataFromAppendLogTable);
+    }
+
+    const { storageType } = this;
+
+    return (storageType === ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG
+      ? [
+          ...(storageMainTableData as TSafeStorageStoredDataTypeAppendLog),
+          ...(storageDataFromAppendLogTable as TSafeStorageStoredDataTypeAppendLog),
+        ]
+      : {
+          ...(storageMainTableData as TSafeStorageStoredDataTypeKeyValue),
+          ...(storageDataFromAppendLogTable as TSafeStorageStoredDataTypeKeyValue),
+        }) as TSafeStorageStoredDataType<TYPE>;
+  }
+
+  async saveDataToStorage(
+    storageName: string,
+    dataStringified?: string | null
+  ): Promise<boolean | Error> {
+    const { secretStorageConnection } = this;
+
+    if (dataStringified !== null && typeof dataStringified !== 'string') {
+      const err = new Error(
+        `The table overall data must be null or string, but ${typeof dataStringified} was given`
+      );
+
+      console.error(err);
+      return err;
+    }
+
+    let attempt = 0;
+    while ((attempt += 1) < SAFE_STORAGE_ATTEMPTS_TO_SAVE_DATA_TO_STORAGE) {
+      if (
+        !(
+          (secretStorageConnection as InstanceType<typeof SecretStorage>).set(
+            storageName,
+            dataStringified || ''
+          ) instanceof Error
+        )
+      ) {
+        return true;
+      }
+    }
+    return new Error(`Can't save the data to the storage ${storageName}`);
+  }
+
+  /**
+   *
+   * @param dataAppendLog
+   * @returns {Error | string | false} - sating -stringified data, falser - no data, Error - an error has occurred
+   */
+  async stringifyDataForStorage(
+    dataAppendLog: TSafeStorageDataType[] | TSafeStorageStoredDataTypeKeyValue
+  ): Promise<string | null | Error> {
+    if (this.checkIfEmptyData(dataAppendLog)) {
+      return null;
+    }
+
+    try {
+      return encodeURIComponent(JSON.stringify(dataAppendLog));
+    } catch (err) {
+      return this.setErrorStatus(err);
+    }
+  }
+
+  async storeOverallDataToMainTable(
+    data?:
+      | string
+      | null
+      | TSafeStorageDataType[]
+      | TSafeStorageStoredDataTypeKeyValue
+  ): Promise<boolean | Error> {
+    const { storageName } = this;
+    let dataStringified;
+
+    if (data && typeof data === 'object') {
+      dataStringified = await this.stringifyDataForStorage(data);
+    }
+    if (dataStringified instanceof Error) {
+      return dataStringified;
+    }
+    return this.saveDataToStorage(storageName, dataStringified);
+  }
+
+  async clearAppendLogData(): Promise<boolean | Error> {
+    const { storageName } = this;
+
+    return this.saveDataToStorage(storageName, null);
+  }
+
+  async loadOverallTable(): Promise<TSafeStorageStoredDataType<TYPE> | Error> {
+    const overallData = await this.loadOverallData();
+
+    if (overallData instanceof Error) {
+      return this.setErrorStatus(overallData);
+    }
+
+    const resultSaveDataToMainStorage = await this.storeOverallDataToMainTable(
+      overallData
+    );
+
+    if (resultSaveDataToMainStorage instanceof Error) {
+      return this.setErrorStatus(resultSaveDataToMainStorage);
+    }
+
+    const resultClearStorageAppendLogData = await this.clearAppendLogData();
+
+    if (resultClearStorageAppendLogData instanceof Error) {
+      return this.setErrorStatus(resultClearStorageAppendLogData);
+    }
+    return overallData;
   }
 
   setTableData(tableData?: TSafeStorageStoredDataType<TYPE>) {
@@ -361,23 +581,12 @@ export class SafeStorage<
     return false;
   }
 
-  async writeOverallTableData(
+  writeTableDataToStorageAppengLog(
     dataStringified: string | null
   ): Promise<Error | boolean> {
-    const { secretStorageConnection, storageName } = this;
+    const { storageNameAppendLog } = this;
 
-    if (dataStringified !== null && typeof dataStringified !== 'string') {
-      const err = new Error(
-        `The table overall data must be null or string, but ${typeof dataStringified} was given`
-      );
-
-      console.error(err);
-      return err;
-    }
-    return (secretStorageConnection as InstanceType<typeof SecretStorage>).set(
-      storageName,
-      dataStringified || ''
-    );
+    return this.saveDataToStorage(storageNameAppendLog, dataStringified);
   }
 
   async writeDump(
@@ -395,27 +604,7 @@ export class SafeStorage<
     } catch (err) {
       return this.setErrorStatus(err);
     }
-    return this.writeOverallTableData(dataStringified);
-  }
-
-  /**
-   *
-   * @param dataAppendLog
-   * @returns {Error | string | false} - sating -stringified data, falser - no data, Error - an error has occurred
-   */
-  async getStorageStringFromAppendLogData(
-    dataAppendLog: TSafeStorageDataType[] | TSafeStorageStoredDataTypeKeyValue
-  ): Promise<string | false | Error> {
-    if (this.checkIfEmptyData(dataAppendLog)) {
-      return false;
-    }
-    let dataStringified: string;
-
-    try {
-      return encodeURIComponent(JSON.stringify(dataAppendLog));
-    } catch (err) {
-      return this.setErrorStatus(err);
-    }
+    return this.writeTableDataToStorageAppengLog(dataStringified);
   }
 
   async dumpAllStorageTypes(): Promise<Error | boolean> {
@@ -426,9 +615,7 @@ export class SafeStorage<
     }
 
     const { appendData } = this;
-    const appendDataString = await this.getStorageStringFromAppendLogData(
-      appendData
-    );
+    const appendDataString = await this.stringifyDataForStorage(appendData);
 
     if (appendDataString instanceof Error) {
       return this.setErrorStatus(appendDataString);
@@ -597,7 +784,7 @@ export class SafeStorage<
     }
   }
 
-  stringifyData(
+  encodeData(
     data: TSafeStorageDataTypesAvail | undefined | null
   ): string | null | undefined {
     return data != null ? JSON.parse(JSON.stringify(data)) : undefined;
@@ -618,7 +805,7 @@ export class SafeStorage<
 
     const { appendData, appendDataTemp, tableData } = this;
     const tempStorage = this.isDupmingInProgress ? appendDataTemp : appendData;
-    const stringifiedData = this.stringifyData(data);
+    const stringifiedData = this.encodeData(data);
 
     if (!key) {
       (tempStorage as TSafeStorageStoredDataTypeAppendLog).push(
@@ -651,7 +838,7 @@ export class SafeStorage<
 
     const { appendData, appendDataTemp, tableData } = this;
     const tempStorage = this.isDupmingInProgress ? appendDataTemp : appendData;
-    const stringifiedData = this.stringifyData(data);
+    const stringifiedData = this.encodeData(data);
 
     (tableData as TSafeStorageStoredDataTypeKeyValue)[key as string] =
       stringifiedData || null;
@@ -689,6 +876,6 @@ export class SafeStorage<
   }
 
   async clear(): Promise<Error | boolean> {
-    return this.writeOverallTableData(null);
+    return this.writeTableDataToStorageAppengLog(null);
   }
 }

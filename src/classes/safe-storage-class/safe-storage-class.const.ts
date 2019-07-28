@@ -1,5 +1,11 @@
 import { SECRET_STORAGE_PROVIDERS_NAME } from 'classes/secret-storage-class/secret-storage-class.const';
 
+export const SAFE_STORAGE_STORAGE_NAME_COMMON_PREFIX = '__safe_storage__';
+
+export const SAFE_STORAGE_STORAGE_APPEND_LOG_COMMON_POSTFIX = '__append_log';
+
+export const SAFE_STORAGE_ATTEMPTS_TO_SAVE_DATA_TO_STORAGE = 4;
+
 export const SAFE_STORAGE_DEFAULT_DUMP_INTERVAL_MS = 1000;
 
 export const SAFE_STORAGE_MAX_ITEMS_APPEND_LOG = 200;
@@ -16,8 +22,6 @@ export enum ESAFE_STORAGE_PROVIDER_STATUS {
   WRITING_DUMP = 'WRITING_DUMP',
   ERROR = 'ERROR',
 }
-
-export const SAFE_STORAGE_STORAGE_NAME_COMMON_PREFIX = '__safe_storage__';
 
 export enum ESAFE_STORAGE_RETURN_TYPE {
   STRING = 'STRING',
