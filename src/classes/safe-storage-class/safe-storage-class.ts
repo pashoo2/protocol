@@ -23,7 +23,10 @@ import {
   SAFE_STORAGE_STORAGE_APPEND_LOG_COMMON_POSTFIX,
   SAFE_STORAGE_ATTEMPTS_TO_SAVE_DATA_TO_STORAGE,
 } from './safe-storage-class.const';
-import { getStatusClass } from 'classes/basic-classes/status-class-base/status-class-base';
+import {
+  getStatusClass,
+  STATUS_EVENT,
+} from 'classes/basic-classes/status-class-base/status-class-base';
 
 export class SafeStorage<
   TYPE extends ESAFE_STORAGE_STORAGE_TYPE
@@ -128,10 +131,10 @@ export class SafeStorage<
     };
   }
 
-  get isDupmingInProgress(): boolean {
+  get isStorageBusy(): boolean {
     const { status } = this;
 
-    return status === ESAFE_STORAGE_PROVIDER_STATUS.WRITING_DUMP;
+    return status === ESAFE_STORAGE_PROVIDER_STATUS.WORKING_WITH_STORAGE;
   }
 
   /**
@@ -161,7 +164,7 @@ export class SafeStorage<
         return this.setErrorStatus(connectionToSecretStorageResult);
       }
 
-      const preloadDataResult = await this.loadOverallTableAndParseEachAppendLog();
+      const preloadDataResult = await this.reloadOverallTableData();
 
       if (preloadDataResult instanceof Error) {
         return preloadDataResult;
@@ -170,6 +173,16 @@ export class SafeStorage<
       return this.startInterval();
     }
     return false;
+  }
+
+  async reloadOverallTableData(): Promise<boolean | Error> {
+    const tableData = await this.loadOverallTable();
+
+    if (tableData instanceof Error) {
+      return this.setErrorStatus(tableData);
+    }
+    this.setTableData(tableData);
+    return true;
   }
 
   async disconnect(): Promise<Error | true> {
@@ -184,6 +197,7 @@ export class SafeStorage<
       const resultDumping = await this.dumpData();
 
       if (resultDumping === true) {
+        this.setStatus(ESAFE_STORAGE_PROVIDER_STATUS.DISCONNECTED);
         return true;
       }
     }
@@ -244,6 +258,24 @@ export class SafeStorage<
     return true;
   }
 
+  /**
+   * @returns {boolean} - returns true if the storage is freed
+   * false - on timeout
+   */
+  waitingStorageFreed(): Promise<boolean | undefined> {
+    return new Promise(res => {
+      const timeout = setTimeout(res);
+      const { statusEmitter } = this;
+
+      statusEmitter.once(STATUS_EVENT, () => {
+        if (!this.isStorageBusy) {
+          clearTimeout(timeout);
+          res(true);
+        }
+      });
+    });
+  }
+
   castDataToAppendLogType(
     data?: null | TSafeStorageStoredDataType<TYPE>
   ): TSafeStorageStoredDataTypeAppendLog | Error {
@@ -296,24 +328,32 @@ export class SafeStorage<
     storageName: string
   ): Promise<D | undefined | Error> {
     const { secretStorageConnection } = this;
-    const data = await (secretStorageConnection as SecretStorage).get(
-      storageName
-    );
 
-    if (data instanceof Error) {
-      return this.setErrorStatus(data);
+    if (await this.waitingStorageFreed()) {
+      const setPreviousStatus = this.setStatus(
+        ESAFE_STORAGE_PROVIDER_STATUS.WORKING_WITH_STORAGE
+      );
+      const data = await (secretStorageConnection as SecretStorage).get(
+        storageName
+      );
+
+      setPreviousStatus();
+      if (data instanceof Error) {
+        return this.setErrorStatus(data);
+      }
+      if (data == null) {
+        return undefined;
+      }
+      try {
+        return JSON.parse(data) as D | undefined;
+      } catch (err) {
+        return this.setErrorStatus(err) as Error;
+      }
     }
-    if (data == null) {
-      return undefined;
-    }
-    try {
-      return JSON.parse(data) as D | undefined;
-    } catch (err) {
-      return this.setErrorStatus(err) as Error;
-    }
+    return new Error(`The storage is too busy`);
   }
 
-  loadDataFromAppendLog(): Promise<
+  loadDataFromStorageAppendLog(): Promise<
     TSafeStorageStorageAppendLogDataType | undefined | Error
   > {
     const { storageNameAppendLog } = this;
@@ -326,7 +366,7 @@ export class SafeStorage<
   async loadAndParseDataFromAppendLogStorage(): Promise<
     TSafeStorageStoredDataType<TYPE> | undefined | Error
   > {
-    const tableAppendlogsArray = await this.loadDataFromAppendLog();
+    const tableAppendlogsArray = await this.loadDataFromStorageAppendLog();
 
     if (tableAppendlogsArray instanceof Error) {
       return tableAppendlogsArray;
@@ -415,7 +455,7 @@ export class SafeStorage<
     storageName: string,
     dataStringified?: string | null
   ): Promise<boolean | Error> {
-    const { secretStorageConnection } = this;
+    const { secretStorageConnection, status } = this;
 
     if (dataStringified !== null && typeof dataStringified !== 'string') {
       const err = new Error(
@@ -427,19 +467,28 @@ export class SafeStorage<
     }
 
     let attempt = 0;
-    while ((attempt += 1) < SAFE_STORAGE_ATTEMPTS_TO_SAVE_DATA_TO_STORAGE) {
-      if (
-        !(
-          (secretStorageConnection as InstanceType<typeof SecretStorage>).set(
-            storageName,
-            dataStringified || ''
-          ) instanceof Error
-        )
-      ) {
-        return true;
+
+    if (await this.waitingStorageFreed()) {
+      const setPrevStatus = this.setStatus(
+        ESAFE_STORAGE_PROVIDER_STATUS.WORKING_WITH_STORAGE
+      );
+
+      while ((attempt += 1) < SAFE_STORAGE_ATTEMPTS_TO_SAVE_DATA_TO_STORAGE) {
+        if (
+          !(
+            (secretStorageConnection as InstanceType<typeof SecretStorage>).set(
+              storageName,
+              dataStringified || ''
+            ) instanceof Error
+          )
+        ) {
+          return true;
+        }
       }
+      setPrevStatus();
+      return new Error(`Can't save the data to the storage ${storageName}`);
     }
-    return new Error(`Can't save the data to the storage ${storageName}`);
+    return new Error(`The storage is too busy`);
   }
 
   /**
@@ -481,9 +530,9 @@ export class SafeStorage<
   }
 
   async clearAppendLogData(): Promise<boolean | Error> {
-    const { storageName } = this;
+    const { storageNameAppendLog } = this;
 
-    return this.saveDataToStorage(storageName, null);
+    return this.saveDataToStorage(storageNameAppendLog, null);
   }
 
   async loadOverallTable(): Promise<TSafeStorageStoredDataType<TYPE> | Error> {
@@ -529,16 +578,6 @@ export class SafeStorage<
         ESAFE_STORAGE_STORAGE_TYPE.KEY_VALUE
       >;
     }
-  }
-
-  async reloadOverallTableData(): Promise<boolean | Error> {
-    const tableData = await this.loadOverallTable();
-
-    if (tableData instanceof Error) {
-      return this.setErrorStatus(tableData);
-    }
-    this.setTableData(tableData);
-    return true;
   }
 
   createSecretStorageInstance(): Error | SecretStorage {
@@ -678,15 +717,17 @@ export class SafeStorage<
   dumpData = async (): Promise<Error | boolean> => {
     const { storageType, appendData, status } = this;
 
-    if (this.isDupmingInProgress) {
+    if (this.isStorageBusy) {
       // if already writing a dump
       return true;
     }
     if (this.checkIfEmptyData(appendData)) {
       return true;
     }
-    this.setStatus(ESAFE_STORAGE_PROVIDER_STATUS.WRITING_DUMP);
 
+    const setPreviousStatus = this.setStatus(
+      ESAFE_STORAGE_PROVIDER_STATUS.WORKING_WITH_STORAGE
+    );
     let resultWritingDump;
 
     if (storageType === ESAFE_STORAGE_STORAGE_TYPE.KEY_VALUE) {
@@ -695,7 +736,7 @@ export class SafeStorage<
       resultWritingDump = await this.dumpDataAppendLog();
     }
     if (resultWritingDump === true) {
-      this.setStatus(ESAFE_STORAGE_PROVIDER_STATUS.CONNECTED_TO_STORAGE);
+      setPreviousStatus();
       // TODO - ??reload all the data from storage
       // to guarantee the data persistance
       return true;
@@ -705,7 +746,7 @@ export class SafeStorage<
     );
   };
 
-  checkIfAppendLogOverflow() {
+  checkIfMemoryAppendLogOverflow() {
     const { appendData } = this;
 
     if (
@@ -804,7 +845,7 @@ export class SafeStorage<
     }
 
     const { appendData, appendDataTemp, tableData } = this;
-    const tempStorage = this.isDupmingInProgress ? appendDataTemp : appendData;
+    const tempStorage = this.isStorageBusy ? appendDataTemp : appendData;
     const stringifiedData = this.encodeData(data);
 
     if (!key) {
@@ -837,7 +878,7 @@ export class SafeStorage<
     }
 
     const { appendData, appendDataTemp, tableData } = this;
-    const tempStorage = this.isDupmingInProgress ? appendDataTemp : appendData;
+    const tempStorage = this.isStorageBusy ? appendDataTemp : appendData;
     const stringifiedData = this.encodeData(data);
 
     (tableData as TSafeStorageStoredDataTypeKeyValue)[key as string] =
@@ -857,7 +898,7 @@ export class SafeStorage<
     if (dataSafeResult instanceof Error) {
       return dataSafeResult;
     }
-    this.checkIfAppendLogOverflow();
+    this.checkIfMemoryAppendLogOverflow();
     if (storageType === ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG) {
       return this.setDataInAppendLogStorage(data, key);
     }

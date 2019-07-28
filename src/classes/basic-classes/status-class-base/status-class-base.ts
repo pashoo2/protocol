@@ -1,5 +1,9 @@
 import { ownValueOf } from 'types/helper.types';
 import { TStatusClassBaseOptions } from './status-class-base.types';
+import { EventEmitter } from '../event-emitter-class-base/event-emitter-class-base';
+import { STATUS_CLASS_STATUS_CHANGE_EVENT } from './status-class-base.const';
+
+export const STATUS_EVENT = STATUS_CLASS_STATUS_CHANGE_EVENT;
 
 export const getStatusClass = <TStatus extends object>({
   errorStatus,
@@ -21,6 +25,16 @@ export const getStatusClass = <TStatus extends object>({
 
     public errorOccurred?: Error;
 
+    /**
+     * emit an events described in
+     * TSafeStorageEvents
+     * @public
+     * @memberof StatusClassBase
+     */
+    public statusEmitter = new EventEmitter<{
+      [STATUS_CLASS_STATUS_CHANGE_EVENT]: TStatus;
+    }>();
+
     protected clearError() {
       this.errorOccurred = undefined;
     }
@@ -34,8 +48,19 @@ export const getStatusClass = <TStatus extends object>({
       this.clearError();
     }
 
-    protected setStatus(status: ownValueOf<TStatus>) {
+    /**
+     *
+     * @param status
+     * @returns {Function} - function to set the previous status value
+     */
+    protected setStatus(status: ownValueOf<TStatus>): () => void {
+      const { storageStatusEmitter, status: prevStatus } = this;
+
       this.status = status;
+      storageStatusEmitter.emit(STATUS_CLASS_STATUS_CHANGE_EVENT, status);
+      return () => {
+        this.status = prevStatus;
+      };
     }
 
     protected setErrorStatus(err: Error | string): Error {

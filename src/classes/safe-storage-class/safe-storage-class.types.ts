@@ -3,9 +3,14 @@ import {
   TSecretStoreConfiguration,
   TSecretStorageProviderName,
 } from 'classes/secret-storage-class/secret-storage-class.types';
-import { ESAFE_STORAGE_STORAGE_TYPE } from './safe-storage-class.const';
+import {
+  ESAFE_STORAGE_STORAGE_TYPE,
+  ESAFE_STORAGE_PROVIDER_STATUS,
+} from './safe-storage-class.const';
 
 export type TSafeStorageProviderName = TSecretStorageProviderName;
+
+export type TSafeStorageStorageAppendLogDataType = string[];
 
 export type TSafeStorageKeyType = string | number;
 
@@ -32,3 +37,7 @@ export interface ISafeStorageOptions {
 }
 
 export type TSafeStorageDataTypesAvail = string | number | object;
+
+export type TSafeStorageEvents = {
+  status: ESAFE_STORAGE_PROVIDER_STATUS;
+};
