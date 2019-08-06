@@ -57,6 +57,21 @@ export const exportKey = async (
   }
 };
 
+export const exportKeyAsString = async (
+  key: CryptoKey
+): Promise<string | Error> => {
+  const keyExported = await exportKey(key);
+
+  if (keyExported instanceof Error) {
+    return keyExported;
+  }
+  try {
+    return JSON.stringify(keyExported);
+  } catch (err) {
+    return err;
+  }
+};
+
 export const exportPublicKey = async (
   keyPair: CryptoKeyPair
 ): Promise<TDATA_SIGN_UTIL_KEY_EXPORT_FORMAT_TYPE | Error> => {
@@ -275,6 +290,13 @@ export const getKeyOfType = async (
   return new Error('There is an unsupported type of the key given');
 };
 
+/**
+ * import an encryption key from a
+ * supported format of an exported key
+ * and returns a crypto key in native
+ * format
+ * @param {} key
+ */
 export const importEncryptionKey = async (
   key: TEncryptionKeyStoreFormatType
 ): Promise<CryptoKey | Error> => {
@@ -290,4 +312,21 @@ export const importEncryptionKey = async (
     }
   }
   return new Error('There is an unknown key format');
+};
+
+/**
+ * import an encryption key from a
+ * supported format of an exported key
+ * and returns a crypto key as a string
+ * @param {} key
+ */
+export const convertAndExportKeyAsString = async (
+  key: TEncryptionKeyStoreFormatType
+): Promise<string | Error> => {
+  const cryptoKeyImported = await importEncryptionKey(key);
+
+  if (cryptoKeyImported instanceof Error) {
+    return cryptoKeyImported;
+  }
+  return exportKeyAsString(cryptoKeyImported);
 };
