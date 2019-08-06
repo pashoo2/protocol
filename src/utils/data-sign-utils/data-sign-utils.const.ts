@@ -36,3 +36,6 @@ export const DATA_SIGN_CRYPTO_UTIL_DATA_SIGN_AND_VERIFY_PARAMS = {
   name: DATA_SIGN_CRYPTO_UTIL_KEY_ALGORITHM,
   hash: { name: DATA_SIGN_CRYPTO_UTIL_HASH_ALGORITHM },
 };
+
+export const KEY_NOT_FOUND_ERROR_MESSAGE =
+  'A key of the required type was not found';

@@ -8,6 +8,7 @@ import {
   DATA_SIGN_CRYPTO_UTIL_KEYS_EXTRACTABLE,
   DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME,
   DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME,
+  KEY_NOT_FOUND_ERROR_MESSAGE,
 } from './data-sign-utils.const';
 import { cryptoModule } from './main.data-sign-utils.const';
 import {
@@ -17,7 +18,14 @@ import {
   TDATA_SIGN_UTIL_SIGN_KEY_TYPES,
   TCRYPTO_UTIL_IMPORT_KEY_TYPES,
 } from './data-sign-utils.types';
-import { isCryptoKeyPair } from 'utils/encryption-keys-utils';
+import {
+  isCryptoKeyPair,
+  isJWK,
+  getJWK,
+  getJWKOrBool,
+} from 'utils/encryption-keys-utils/encryption-keys-utils';
+import { TEncryptionKeyStoreFormatType } from 'types/encryption-keys.types';
+import { isTypedArray } from 'utils/typed-array-utils';
 
 export const isCryptoKeyPairImported = (
   key: any
@@ -232,8 +240,6 @@ export const checkIfStringIsKeyPair = (keyString: string): boolean => {
   );
 };
 
-const KEY_NOT_FOUND_ERROR_MESSAGE = 'A key of the required type was not found';
-
 export const getKeyOfType = async (
   key: TDATA_SIGN_UTIL_SIGN_KEY_TYPES,
   type: KeyType
@@ -267,4 +273,21 @@ export const getKeyOfType = async (
     return keyResulted || new Error(KEY_NOT_FOUND_ERROR_MESSAGE);
   }
   return new Error('There is an unsupported type of the key given');
+};
+
+export const importEncryptionKey = async (
+  key: TEncryptionKeyStoreFormatType
+): Promise<CryptoKey | Error> => {
+  if (isTypedArray(key)) {
+    return importKey(key);
+  } else {
+    const jwk = getJWKOrBool(key);
+
+    if (typeof jwk === 'object') {
+      return importKey(jwk);
+    } else if (typeof key === 'string') {
+      return importKeyFromString(key);
+    }
+  }
+  return new Error('There is an unknown key format');
 };

@@ -1,4 +1,4 @@
-import { isCryptoKeyPair } from 'utils/encryption-keys-utils';
+import { isCryptoKeyPair } from 'utils/encryption-keys-utils/encryption-keys-utils';
 import {
   CRYPTO_UTIL_GENERATE_KEYPAIR_OPTIONS,
   CRYPTO_UTIL_KEYPAIR_USAGES,

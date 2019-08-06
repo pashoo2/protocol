@@ -23,3 +23,11 @@ export interface ICentralAuthorityConnection {
 export type TInstanceOfCentralAuthorityConnection = InstanceType<
   ICentralAuthorityConnection
 >;
+
+export type TCentralAuthorityUserMainCredentials = {
+  userId: string;
+  publicKey: string;
+  privateKey: string;
+  signPublicKey: string;
+  signPrivateKey: string;
+};
