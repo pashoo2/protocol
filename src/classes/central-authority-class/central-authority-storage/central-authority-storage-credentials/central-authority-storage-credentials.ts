@@ -2,6 +2,7 @@ import { SecretStorage } from 'classes/secret-storage-class';
 import { getStatusClass } from 'classes/basic-classes/status-class-base/status-class-base';
 import { TCentralAuthorityCredentialsStorageCredentials } from './central-authority-storage-credentials.types';
 import { CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS } from './central-authority-storage-credentials.const';
+import { TCentralAuthorityUserMainCredentials } from 'classes/central-authority-class/central-authority-class.types';
 
 /**
  *
@@ -85,4 +86,21 @@ export class CentralAuthorityCredentialsStorage extends getStatusClass<
     this.setStatus(CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS.CONNECTED);
     return true;
   }
+
+  validateUserCredentials(c: any): c is TCentralAuthorityUserMainCredentials {
+    if (typeof c === 'object') {
+    }
+  }
+
+  setUserCredentialsToTheCache() {}
+
+  async getUserCredentialsFromTheCache() {}
+
+  async readUserCredentialsFromStorage() {}
+
+  async getUserCredentials(): Promise<
+    Error | TCentralAuthorityUserMainCredentials
+  > {}
+
+  async setUserCredentials() {}
 }
