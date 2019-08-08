@@ -95,8 +95,17 @@ export const exportKeyPair = async (
 
 export const exportKeyPairAsString = async (
   keyPair: CryptoKeyPair
-): Promise<string> => {
-  return JSON.stringify(await exportKeyPair(keyPair));
+): Promise<string | Error> => {
+  const exportedKeyPair = await exportKeyPair(keyPair);
+
+  if (exportedKeyPair instanceof Error) {
+    return exportedKeyPair;
+  }
+  try {
+    return JSON.stringify(exportedKeyPair);
+  } catch (err) {
+    return err;
+  }
 };
 
 export const importKey = (

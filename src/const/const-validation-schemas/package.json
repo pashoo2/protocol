@@ -1,0 +1,4 @@
+{
+  "main": "const-validation-schemas.ts",
+  "types": "const-validation-schemas.ts"
+}
