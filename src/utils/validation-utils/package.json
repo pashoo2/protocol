@@ -1,6 +1,3 @@
 {
-  "main": "validation-utils.ts",
-  "dependencies": {
-    "ajv": "^6.10.2"
-  }
+  "main": "validation-utils.ts"
 }

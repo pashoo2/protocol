@@ -87,10 +87,10 @@ export class CentralAuthorityCredentialsStorage extends getStatusClass<
     return true;
   }
 
-  validateUserCredentials(c: any): c is TCentralAuthorityUserMainCredentials {
-    if (typeof c === 'object') {
-    }
-  }
+  // validateUserCredentials(c: any): c is TCentralAuthorityUserMainCredentials {
+  //   if (typeof c === 'object') {
+  //   }
+  // }
 
   setUserCredentialsToTheCache() {}
 
@@ -98,9 +98,9 @@ export class CentralAuthorityCredentialsStorage extends getStatusClass<
 
   async readUserCredentialsFromStorage() {}
 
-  async getUserCredentials(): Promise<
-    Error | TCentralAuthorityUserMainCredentials
-  > {}
+  // async getUserCredentials(): Promise<
+  //   Error | TCentralAuthorityUserMainCredentials
+  // > {}
 
   async setUserCredentials() {}
 }
