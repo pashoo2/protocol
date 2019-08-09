@@ -4,6 +4,8 @@ import {
   ENCRYPTIONS_KEYS_UTILS_JWK_FORMAT_OBJECT_KEYS,
 } from './encryption-keys-utils.const';
 
+export const isCryptoKey = (v: any): v is CryptoKey => v instanceof CryptoKey;
+
 export const isCryptoKeyPair = (key: any): key is CryptoKeyPair => {
   return (
     typeof key === 'object' &&

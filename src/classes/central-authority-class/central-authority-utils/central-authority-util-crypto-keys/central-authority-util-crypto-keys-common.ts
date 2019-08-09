@@ -1,4 +1,7 @@
-import { isCryptoKeyPair } from 'utils/encryption-keys-utils/encryption-keys-utils';
+import {
+  isCryptoKeyPair,
+  isCryptoKey,
+} from 'utils/encryption-keys-utils/encryption-keys-utils';
 import {
   TCACryptoKeyPairs,
   TCACryptoPubilicKeys,
@@ -18,6 +21,17 @@ export const checkIsCryptoKeyPairs = (
     typeof keyPairs === 'object' &&
     isCryptoKeyPair(keyPairs[CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME]) &&
     isCryptoKeyPair(keyPairs[CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME])
+  );
+};
+
+export const checkIsPublicKeys = (
+  keysPublic: any
+): keysPublic is TCACryptoPubilicKeys => {
+  return (
+    keysPublic &&
+    typeof keysPublic === 'object' &&
+    isCryptoKey(keysPublic[CA_CRYPTO_KEY_PAIRS_ENCRYPTION_PUBLIC_KEY_NAME]) &&
+    isCryptoKey(keysPublic[CA_CRYPTO_KEY_PAIRS_SIGN_PUBLIC_KEY_NAME])
   );
 };
 

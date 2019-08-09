@@ -1,13 +1,14 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { runTestKeys } from 'test/central-authority.test/central-authority.test';
 // import 'test/data-sign-test';
 // import 'test/password-key.test';
 // import 'test/secret-storage.test';
 // import { runTest } from 'test/safe-storage.test';
-import { runTest } from 'test/valiation-utils.test';
+//import { runTest } from 'test/valiation-utils.test';
 
-runTest();
+runTestKeys();
 
 const App: React.FC = () => {
   return (
