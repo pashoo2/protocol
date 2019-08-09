@@ -1,11 +1,25 @@
-import { exportKeyPairAsString as exportKeyPairDataEncryptAsString } from 'utils/encryption-utils';
-import { exportKeyPairAsString as exportKeyPairDataSignAsString } from 'utils/data-sign-utils';
-import { TCACryptoKeyPairs } from '../../central-authority-class-types/central-authority-class-types';
+import {
+  exportKeyPairAsString as exportKeyPairDataEncryptAsString,
+  exportKeyAsString as exportPublicKeyDataEncryptAsString,
+} from 'utils/encryption-utils';
+import {
+  exportKeyPairAsString as exportKeyPairDataSignAsString,
+  exportKeyAsString as exportPublicKeyDataSignAsString,
+} from 'utils/data-sign-utils';
+import {
+  TCACryptoKeyPairs,
+  TCACryptoPubilicKeys,
+} from '../../central-authority-class-types/central-authority-class-types';
 import {
   CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME,
   CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME,
+  CA_CRYPTO_KEY_PAIRS_ENCRYPTION_PUBLIC_KEY_NAME,
+  CA_CRYPTO_KEY_PAIRS_SIGN_PUBLIC_KEY_NAME,
 } from './central-authority-util-crypto-keys.const';
-import { checkIsCryptoKeyPairs } from './central-authority-util-crypto-keys-common';
+import {
+  checkIsCryptoKeyPairs,
+  getPublicKeysFromCryptoKeyPairs,
+} from './central-authority-util-crypto-keys-common';
 
 /**
  * export two key pairs
@@ -40,6 +54,51 @@ export const exportKeyPairsAsString = async (
     return JSON.stringify({
       [CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME]: encryptionKeyPairString,
       [CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME]: signDataKeyPairString,
+    });
+  } catch (err) {
+    return err;
+  }
+};
+
+/**
+ * export a public keys only
+ * from a keyPairs as a string
+ * @param {object} keyPairs
+ * @returns {string | Error}
+ */
+export const exportPublicKeysAsString = async (
+  keyPairs: TCACryptoKeyPairs
+): Promise<string | Error> => {
+  const publicKeys = getPublicKeysFromCryptoKeyPairs(keyPairs);
+
+  if (publicKeys instanceof Error) {
+    return publicKeys;
+  }
+  const {
+    [CA_CRYPTO_KEY_PAIRS_ENCRYPTION_PUBLIC_KEY_NAME]: encryptionPublicKey,
+    [CA_CRYPTO_KEY_PAIRS_SIGN_PUBLIC_KEY_NAME]: signPublicKey,
+  } = publicKeys as TCACryptoPubilicKeys;
+
+  const [
+    encryptionPublicKeyExported,
+    signPublicKeyExported,
+  ] = await Promise.all([
+    exportPublicKeyDataEncryptAsString(encryptionPublicKey),
+    exportPublicKeyDataSignAsString(signPublicKey),
+  ]);
+
+  if (encryptionPublicKeyExported instanceof Error) {
+    console.error('export of the encryptionPublicKey was failed');
+    return encryptionPublicKeyExported;
+  }
+  if (signPublicKeyExported instanceof Error) {
+    console.error('export of the signPublicKeyExported was failed');
+    return signPublicKeyExported;
+  }
+  try {
+    return JSON.stringify({
+      [CA_CRYPTO_KEY_PAIRS_ENCRYPTION_PUBLIC_KEY_NAME]: encryptionPublicKeyExported,
+      [CA_CRYPTO_KEY_PAIRS_SIGN_PUBLIC_KEY_NAME]: signPublicKeyExported,
     });
   } catch (err) {
     return err;
