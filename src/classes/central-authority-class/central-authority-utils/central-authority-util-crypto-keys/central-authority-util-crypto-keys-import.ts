@@ -24,6 +24,8 @@ import {
   checkIsCryptoKeyPairs,
 } from './central-authority-util-crypto-keys-common';
 
+import LZString from 'lz-string';
+
 /**
  * import an exported key pair
  * and returs it a crypto key pair
@@ -43,7 +45,9 @@ export const importKeyPairsFromString = async (
   let parsedKeyPairsObject;
 
   try {
-    parsedKeyPairsObject = JSON.parse(keyPairsString);
+    parsedKeyPairsObject = JSON.parse(
+      LZString.decompressFromUTF16(keyPairsString)
+    );
   } catch (err) {
     return err;
   }

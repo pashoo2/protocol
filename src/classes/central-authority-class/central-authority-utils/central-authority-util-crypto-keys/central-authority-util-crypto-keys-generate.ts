@@ -6,6 +6,7 @@ import {
   CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME,
   CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME,
 } from './central-authority-util-crypto-keys.const';
+import { checkIsCryptoKeyPairs } from './central-authority-util-crypto-keys-common';
 
 /**
  * generate a key pair, used for data encryption
@@ -54,8 +55,14 @@ export const generateKeyPairs = async (): Promise<
   if (signDataKeyPair instanceof Error) {
     return signDataKeyPair;
   }
-  return {
+
+  const keyPairs = {
     [CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME]: encryptionKeyPair,
     [CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME]: signDataKeyPair,
   };
+
+  if (checkIsCryptoKeyPairs(keyPairs)) {
+    return keyPairs;
+  }
+  return new Error('Failed to generate a valid key pairs');
 };

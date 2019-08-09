@@ -58,7 +58,7 @@ export const getJWK = (
 
   const isJWKValid = isJWK(keyObject, isReturnError);
 
-  if (isJWKValid == true) {
+  if (isJWKValid === true) {
     return keyObject as JsonWebKey;
   }
   return isJWKValid instanceof Error

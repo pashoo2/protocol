@@ -1,3 +1,4 @@
+import LZString from 'lz-string';
 import {
   exportKeyPairAsString as exportKeyPairDataEncryptAsString,
   exportKeyAsString as exportPublicKeyDataEncryptAsString,
@@ -51,10 +52,12 @@ export const exportKeyPairsAsString = async (
     return signDataKeyPairString;
   }
   try {
-    return JSON.stringify({
-      [CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME]: encryptionKeyPairString,
-      [CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME]: signDataKeyPairString,
-    });
+    return LZString.compressToUTF16(
+      JSON.stringify({
+        [CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME]: encryptionKeyPairString,
+        [CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME]: signDataKeyPairString,
+      })
+    );
   } catch (err) {
     return err;
   }
