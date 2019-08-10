@@ -12,6 +12,11 @@ import {
   CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_USER_ID_KEY_NAME,
   CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_KEY_CRYPTO_CREDENTIALS_EXPORTED_AS_STRING_MIN_LENGTH,
 } from './central-authority-storage-credentials.const';
+import { validateUserIdentity } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-user/central-authority-validators-user';
+import {
+  TCentralAuthorityUserIdentity,
+  TCACryptoKeyPairs,
+} from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 
 /**
  * validate is a given value has
@@ -44,7 +49,7 @@ export const checkIsValidCryptoCredentials = (
     );
     return false;
   }
-  if (typeof userIdentity !== 'string') {
+  if (validateUserIdentity(userIdentity)) {
     console.error(
       'There is a wrong format of the crypto credentials value, case the user identity value have a wrong type'
     );
@@ -162,4 +167,26 @@ export const exportCryptoCredentialsToString = async (
     console.error(err);
     return new Error('Failed to stringify the crypto credentials');
   }
+};
+
+export const getUserCredentialsByUserIdentityAndCryptoKeys = (
+  userIdentity: TCentralAuthorityUserIdentity,
+  cryptoKeyPairs: TCACryptoKeyPairs
+): Error | TCentralAuthorityUserCryptoCredentials => {
+  if (!validateUserIdentity(userIdentity)) {
+    return new Error('The user identity has a wrong format');
+  }
+  if (!checkIsCryptoKeyPairs(cryptoKeyPairs)) {
+    return new Error('The crypto key pairs has a wrong format');
+  }
+
+  const cryptoCredentials = {
+    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_USER_ID_KEY_NAME]: userIdentity,
+    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeyPairs,
+  };
+
+  if (!checkIsValidCryptoCredentials(cryptoCredentials)) {
+    return new Error('Failed to create a valid crypto credentials');
+  }
+  return cryptoCredentials;
 };

@@ -1,6 +1,8 @@
 import { IUserDescription, TUesrIdentity } from 'types/users.types';
 import { IHttpRequestOptions } from 'classes/basic-classes/http-request-class-base/http-request-class-base.types';
 
+export type TCentralAuthorityUserIdentity = 'string';
+
 export interface ICentralAuthorityConnectionOptions {
   serverUrl: string;
   getUsersDescriptionsRequestOptions: IHttpRequestOptions;

@@ -7,11 +7,20 @@ import {
 import {
   CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS,
   CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_KEY_CRYPTO_CREDENTIALS,
+  CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_USER_ID_KEY_NAME,
+  CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME,
 } from './central-authority-storage-credentials.const';
 import {
   checkIsValidCryptoCredentials,
   exportCryptoCredentialsToString,
+  getUserCredentialsByUserIdentityAndCryptoKeys,
 } from './central-authority-storage-credentials.utils';
+import {
+  TCentralAuthorityUserIdentity,
+  TCACryptoKeyPairs,
+} from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
+import { validateUserIdentity } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-user/central-authority-validators-user';
+import { checkIsCryptoKeyPairs } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
 
 /**
  *
@@ -113,6 +122,10 @@ export class CentralAuthorityCredentialsStorage extends getStatusClass<
     this.userCryptoCredentialsCached = userCryptoCredentials;
   }
 
+  unsetUserCredentialsToTheCache(): void {
+    this.userCryptoCredentialsCached = undefined;
+  }
+
   async setToStorage(key: string, value: any): Promise<Error | boolean> {
     const { secretStorageConnection, isConnectedToTheSecretStorage } = this;
 
@@ -122,7 +135,7 @@ export class CentralAuthorityCredentialsStorage extends getStatusClass<
     return new Error('There is no active connecion to the secret storage');
   }
 
-  async setUserCredentialsToStorage(
+  async setCryptoCredentialsToStorage(
     userCryptoCredentials: TCentralAuthorityUserCryptoCredentials
   ): Promise<Error | boolean> {
     const { isConnectedToTheSecretStorage } = this;
@@ -144,9 +157,62 @@ export class CentralAuthorityCredentialsStorage extends getStatusClass<
     );
   }
 
-  getCredentialsCached() {}
+  unsetCryptoCredentialsToStorage(): Promise<Error | boolean> {
+    return this.setToStorage(
+      CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_KEY_CRYPTO_CREDENTIALS,
+      null
+    );
+  }
+
+  getCredentialsCached(): TCentralAuthorityUserCryptoCredentials | Error {
+    const { userCryptoCredentialsCached } = this;
+
+    if (checkIsValidCryptoCredentials(userCryptoCredentialsCached)) {
+      return userCryptoCredentialsCached;
+    }
+    return new Error('There is no a crypto credetials cached');
+  }
 
   async getCredentialsFromStorage() {}
 
-  async setUserCredentials() {}
+  async setUserCredentials(
+    userIdentity: TCentralAuthorityUserIdentity,
+    cryptoKeyPairs: TCACryptoKeyPairs
+  ): Promise<Error | boolean> {
+    const cryptoCredentials = getUserCredentialsByUserIdentityAndCryptoKeys(
+      userIdentity,
+      cryptoKeyPairs
+    );
+
+    if (cryptoCredentials instanceof Error) {
+      console.error(cryptoCredentials);
+      return new Error(
+        'Failed to create a valid crypro credentials from the given crypto keys and the user identity'
+      );
+    }
+
+    const setCredentialsInCacheResult = this.setUserCredentialsToTheCache(
+      cryptoCredentials
+    );
+
+    if (setCredentialsInCacheResult instanceof Error) {
+      this.unsetUserCredentialsToTheCache();
+      console.error(setCredentialsInCacheResult);
+      return new Error('Failed to set the crypto credentials in the cahce');
+    }
+
+    const resultSetCryptoCredentialsToStorage = await this.setCryptoCredentialsToStorage(
+      cryptoCredentials
+    );
+
+    if (resultSetCryptoCredentialsToStorage instanceof Error) {
+      this.unsetUserCredentialsToTheCache();
+      if ((await this.unsetCryptoCredentialsToStorage()) instanceof Error) {
+        console.error('Failed to unset a crypto credentials in the storage');
+      }
+      console.error(resultSetCryptoCredentialsToStorage);
+      return new Error('Failed to set the crypto credentials in the storage');
+    }
+    return true;
+  }
 }
