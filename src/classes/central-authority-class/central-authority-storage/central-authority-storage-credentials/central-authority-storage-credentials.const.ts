@@ -1,3 +1,5 @@
+import { MIN_JWK_STRING_LENGTH } from 'utils/encryption-keys-utils/encryption-keys-utils.const';
+
 export const CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS = {
   NEW: 'NEW',
   CONNECTING: 'CONNECTING', // connecting to the secret storage
@@ -17,4 +19,14 @@ export const CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_KEYS_PREFIX = '____CASC';
  * 4) data sign private key - this key is used by the key owner to sign a data
  * 5) user id - the global unique identity of the user in the network
  */
-export const CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_KEY_MAIN_CREDENTIALS = `${CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_KEYS_PREFIX}_MAIN_CREDENTIALS`;
+export const CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_KEY_CRYPTO_CREDENTIALS = `${CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_KEYS_PREFIX}_CRYPTO_CREDENTIALS`;
+
+/**
+ * the minimum length for a crypto credentials exported as a string
+ */
+export const CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_KEY_CRYPTO_CREDENTIALS_EXPORTED_AS_STRING_MIN_LENGTH = MIN_JWK_STRING_LENGTH;
+
+export const CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_USER_ID_KEY_NAME = 'userId';
+
+export const CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME =
+  'cryptoKeys';

@@ -3,7 +3,7 @@ import { HttpRequest } from 'classes/basic-classes/http-request-class-base/http-
 import {
   CentralAuthorityConnection,
   ICentralAuthorityConnectionOptions,
-} from '../../central-authority-class.types';
+} from '../../central-authority-class-types/central-authority-class-types-common';
 
 export class CentralAuthorityConnectionServerAPI
   implements CentralAuthorityConnection {

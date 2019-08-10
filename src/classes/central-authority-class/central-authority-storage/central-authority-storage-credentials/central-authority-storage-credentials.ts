@@ -1,8 +1,17 @@
 import { SecretStorage } from 'classes/secret-storage-class';
 import { getStatusClass } from 'classes/basic-classes/status-class-base/status-class-base';
-import { TCentralAuthorityCredentialsStorageCredentials } from './central-authority-storage-credentials.types';
-import { CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS } from './central-authority-storage-credentials.const';
-import { TCentralAuthorityUserMainCredentials } from 'classes/central-authority-class/central-authority-class.types';
+import {
+  TCentralAuthorityCredentialsStorageAuthCredentials,
+  TCentralAuthorityUserCryptoCredentials,
+} from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types-crypto-credentials';
+import {
+  CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS,
+  CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_KEY_CRYPTO_CREDENTIALS,
+} from './central-authority-storage-credentials.const';
+import {
+  checkIsValidCryptoCredentials,
+  exportCryptoCredentialsToString,
+} from './central-authority-storage-credentials.utils';
 
 /**
  *
@@ -23,6 +32,14 @@ export class CentralAuthorityCredentialsStorage extends getStatusClass<
 }) {
   protected secretStorageConnection?: SecretStorage;
 
+  protected userCryptoCredentialsCached?: TCentralAuthorityUserCryptoCredentials;
+
+  get isConnectedToTheSecretStorage() {
+    const { status } = this;
+
+    return status === CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS.CONNECTED;
+  }
+
   createSecretStorageInstance() {
     this.secretStorageConnection = new SecretStorage();
   }
@@ -32,7 +49,7 @@ export class CentralAuthorityCredentialsStorage extends getStatusClass<
    * @param {object} credentials
    */
   authorizeWithCredentials(
-    credentials: TCentralAuthorityCredentialsStorageCredentials
+    credentials: TCentralAuthorityCredentialsStorageAuthCredentials
   ): Promise<Error | boolean> | Error {
     const { secretStorageConnection } = this;
     const { password } = credentials;
@@ -60,7 +77,7 @@ export class CentralAuthorityCredentialsStorage extends getStatusClass<
   }
 
   connectToTheStorage(
-    credentials?: TCentralAuthorityCredentialsStorageCredentials
+    credentials?: TCentralAuthorityCredentialsStorageAuthCredentials
   ): Promise<boolean | Error> | Error {
     if (credentials) {
       return this.authorizeWithCredentials(credentials);
@@ -69,7 +86,7 @@ export class CentralAuthorityCredentialsStorage extends getStatusClass<
   }
 
   async connect(
-    credentials?: TCentralAuthorityCredentialsStorageCredentials
+    credentials?: TCentralAuthorityCredentialsStorageAuthCredentials
   ): Promise<boolean | Error> {
     this.setStatus(CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS.CONNECTING);
     this.createSecretStorageInstance();
@@ -87,20 +104,49 @@ export class CentralAuthorityCredentialsStorage extends getStatusClass<
     return true;
   }
 
-  // validateUserCredentials(c: any): c is TCentralAuthorityUserMainCredentials {
-  //   if (typeof c === 'object') {
-  //   }
-  // }
+  setUserCredentialsToTheCache(
+    userCryptoCredentials: TCentralAuthorityUserCryptoCredentials
+  ): undefined | Error {
+    if (!checkIsValidCryptoCredentials(userCryptoCredentials)) {
+      return new Error('The given value is not a valid crypto credentials');
+    }
+    this.userCryptoCredentialsCached = userCryptoCredentials;
+  }
 
-  setUserCredentialsToTheCache() {}
+  async setToStorage(key: string, value: any): Promise<Error | boolean> {
+    const { secretStorageConnection, isConnectedToTheSecretStorage } = this;
 
-  async getUserCredentialsFromTheCache() {}
+    if (isConnectedToTheSecretStorage && secretStorageConnection) {
+      return secretStorageConnection.set(key, value);
+    }
+    return new Error('There is no active connecion to the secret storage');
+  }
 
-  async readUserCredentialsFromStorage() {}
+  async setUserCredentialsToStorage(
+    userCryptoCredentials: TCentralAuthorityUserCryptoCredentials
+  ): Promise<Error | boolean> {
+    const { isConnectedToTheSecretStorage } = this;
 
-  // async getUserCredentials(): Promise<
-  //   Error | TCentralAuthorityUserMainCredentials
-  // > {}
+    if (!isConnectedToTheSecretStorage) {
+      return new Error('There is no active connecion to the secret storage');
+    }
+
+    const exportedUserCryptoCredentials = await exportCryptoCredentialsToString(
+      userCryptoCredentials
+    );
+
+    if (exportedUserCryptoCredentials instanceof Error) {
+      return exportedUserCryptoCredentials;
+    }
+    return this.setToStorage(
+      CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_KEY_CRYPTO_CREDENTIALS,
+      exportedUserCryptoCredentials
+    );
+  }
+
+  getCredentialsCached() {}
+
+  async getCredentialsFromStorage() {}
 
   async setUserCredentials() {}
 }

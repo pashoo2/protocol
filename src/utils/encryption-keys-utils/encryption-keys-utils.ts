@@ -6,12 +6,16 @@ import {
 
 export const isCryptoKey = (v: any): v is CryptoKey => v instanceof CryptoKey;
 
-export const isCryptoKeyPair = (key: any): key is CryptoKeyPair => {
+export const isCryptoKeyPair = (keyPair: any): keyPair is CryptoKeyPair => {
   return (
-    typeof key === 'object' &&
-    key.publicKey instanceof CryptoKey &&
-    key.privateKey instanceof CryptoKey
+    typeof keyPair === 'object' &&
+    keyPair.publicKey instanceof CryptoKey &&
+    keyPair.privateKey instanceof CryptoKey
   );
+};
+
+export const isCryptoKeyPairExportedAsString = (keyPair: any): boolean => {
+  return typeof keyPair === 'string' && keyPair.length >= MIN_JWK_STRING_LENGTH;
 };
 
 export const isJWK = (

@@ -1,10 +1,12 @@
 import {
   isCryptoKeyPair,
   isCryptoKey,
+  isCryptoKeyPairExportedAsString,
 } from 'utils/encryption-keys-utils/encryption-keys-utils';
 import {
   TCACryptoKeyPairs,
   TCACryptoPubilicKeys,
+  TCACryptoKeyPairsExported,
 } from '../../central-authority-class-types/central-authority-class-types';
 import {
   CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME,
@@ -13,6 +15,13 @@ import {
   CA_CRYPTO_KEY_PAIRS_ENCRYPTION_PUBLIC_KEY_NAME,
 } from './central-authority-util-crypto-keys.const';
 
+/**
+ * check is a given value
+ * have a key pairs in a
+ * raw format
+ * @param keyPairs
+ * @returns {boolean}
+ */
 export const checkIsCryptoKeyPairs = (
   keyPairs: any
 ): keyPairs is TCACryptoKeyPairs => {
@@ -33,6 +42,36 @@ export const checkIsCryptoKeyPairs = (
     return true;
   }
   console.error('A wrong format of the keyPairs');
+  return false;
+};
+
+/**
+ * check is a given value
+ * have a key pairs in an
+ * exported format
+ * @param keyPairs
+ * @returns {boolean}
+ */
+export const checkIsCryptoKeyPairsExported = (
+  keyPairs: any
+): keyPairs is TCACryptoKeyPairsExported => {
+  if (keyPairs && typeof keyPairs === 'object') {
+    const {
+      [CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME]: encryptionKeyPairExported,
+      [CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME]: signKeyPairExported,
+    } = keyPairs;
+
+    if (!isCryptoKeyPairExportedAsString(encryptionKeyPairExported)) {
+      console.error('Encryption key pair exported is not valid');
+      return false;
+    }
+    if (!isCryptoKeyPairExportedAsString(signKeyPairExported)) {
+      console.error('Data sign key pair exported is not valid');
+      return false;
+    }
+    return true;
+  }
+  console.error('A wrong format of the keyPairs exported');
   return false;
 };
 

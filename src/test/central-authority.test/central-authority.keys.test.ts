@@ -1,5 +1,5 @@
 import { signToString, verifyFromString } from 'utils/data-sign-utils';
-import { generateKeyPairs } from 'classes/central-authority-class/central-authority-utils/central-authority-util-crypto-keys/central-authority-util-crypto-keys-generate';
+import { generateKeyPairs } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys-generate';
 import {
   getPublicKeysFromCryptoKeyPairs,
   checkIsCryptoKeyPairs,
@@ -9,7 +9,7 @@ import {
   CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME,
   CA_CRYPTO_KEY_PAIRS_ENCRYPTION_PUBLIC_KEY_NAME,
   CA_CRYPTO_KEY_PAIRS_SIGN_PUBLIC_KEY_NAME,
-} from 'classes/central-authority-class/central-authority-utils/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
+} from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
 import {
   encryptNative,
   decryptNative,
