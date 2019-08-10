@@ -5,7 +5,8 @@ import {
 import {
   checkIsCryptoKeyPairs,
   exportKeyPairsAsString,
-  checkIsCryptoKeyPairsExported,
+  importKeyPairsFromString,
+  checkIsCryptoKeyPairsExportedAsString,
 } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
 import {
   CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME,
@@ -95,13 +96,13 @@ export const checkIsValidCryptoCredentialsExportedFormat = (
     );
     return false;
   }
-  if (typeof userIdentity !== 'string') {
+  if (!validateUserIdentity(userIdentity)) {
     console.error(
       'There is a wrong format of the crypto credentials value, case the user identity value have a wrong type'
     );
     return false;
   }
-  if (!checkIsCryptoKeyPairsExported(cryptoKeys)) {
+  if (!checkIsCryptoKeyPairsExportedAsString(cryptoKeys)) {
     console.error(
       'There is a wrong format of the crypto credentials value, case the crypto keys value have a wrong type'
     );
@@ -111,7 +112,7 @@ export const checkIsValidCryptoCredentialsExportedFormat = (
 };
 
 export const checkExportedCryptoCredentialsToString = (
-  cryptoCredentialsExportedAsString: string
+  cryptoCredentialsExportedAsString: any
 ): boolean => {
   return (
     typeof cryptoCredentialsExportedAsString === 'string' &&
@@ -167,6 +168,63 @@ export const exportCryptoCredentialsToString = async (
     console.error(err);
     return new Error('Failed to stringify the crypto credentials');
   }
+};
+
+export const importCryptoCredentialsFromExportedFromat = async (
+  cryptoCredentialsExported: any
+): Promise<Error | TCentralAuthorityUserCryptoCredentials> => {
+  if (!checkIsValidCryptoCredentialsExportedFormat(cryptoCredentialsExported)) {
+    return new Error('The crypto credentials exported have a wrong format');
+  }
+
+  const {
+    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeysExported,
+    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_USER_ID_KEY_NAME]: userIdentityExported,
+  } = cryptoCredentialsExported;
+  const cryptoKeysImported = await importKeyPairsFromString(cryptoKeysExported);
+
+  if (cryptoKeysImported instanceof Error) {
+    console.error(cryptoKeysImported);
+    return new Error(
+      'Failed to import a crypto key pairs from the given string'
+    );
+  }
+
+  const cryptoCredentials = {
+    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeysImported,
+    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_USER_ID_KEY_NAME]: userIdentityExported,
+  };
+
+  if (!checkIsValidCryptoCredentials(cryptoCredentials)) {
+    return new Error(
+      'Failed to return the crypto credentials imorted in the valid format'
+    );
+  }
+  return cryptoCredentials;
+};
+
+export const importCryptoCredentialsFromAString = async (
+  cryptoCredentialsString: any
+): Promise<Error | TCentralAuthorityUserCryptoCredentials> => {
+  const typeCryptoCredentials = typeof cryptoCredentialsString;
+
+  if (typeCryptoCredentials !== 'string') {
+    return new Error(
+      `The cryptoCredentials value have the wrong type::${typeCryptoCredentials}::`
+    );
+  }
+  if (!checkExportedCryptoCredentialsToString(cryptoCredentialsString)) {
+    return new Error('The cryptoCredentials value have a wrong format');
+  }
+
+  let cryptoCredentialsExported;
+  try {
+    cryptoCredentialsExported = JSON.parse(cryptoCredentialsString);
+  } catch (err) {
+    console.error(err);
+    return new Error('Failed to parse the given crypto credentials string');
+  }
+  return importCryptoCredentialsFromExportedFromat(cryptoCredentialsExported);
 };
 
 export const getUserCredentialsByUserIdentityAndCryptoKeys = (

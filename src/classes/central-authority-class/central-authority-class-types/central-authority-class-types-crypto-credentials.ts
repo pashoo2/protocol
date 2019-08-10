@@ -15,7 +15,7 @@ export type TCentralAuthorityUserCryptoCredentials = {
 
 export type TCentralAuthorityUserCryptoCredentialsExported = {
   [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_USER_ID_KEY_NAME]: TCentralAuthorityUserIdentity;
-  [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: TCACryptoKeyPairsExported;
+  [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: string;
 };
 
 export type TCentralAuthorityCredentialsStorageAuthCredentials = {

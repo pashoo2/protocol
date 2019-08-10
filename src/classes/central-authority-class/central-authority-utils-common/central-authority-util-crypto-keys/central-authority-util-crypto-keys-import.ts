@@ -22,6 +22,7 @@ import { caValidateCryptoKeyPairExportedObject } from '../../central-authority-v
 import {
   checkIsPublicKeys,
   checkIsCryptoKeyPairs,
+  checkIsCryptoKeyPairsExportedAsString,
 } from './central-authority-util-crypto-keys-common';
 
 import LZString from 'lz-string';
@@ -35,10 +36,7 @@ import LZString from 'lz-string';
 export const importKeyPairsFromString = async (
   keyPairsString: string
 ): Promise<TCACryptoKeyPairs | Error> => {
-  if (
-    typeof keyPairsString !== 'string' ||
-    keyPairsString.length < CA_CRYPTO_KEY_PAIRS_STRINGIFIED_MIN_LENGTH
-  ) {
+  if (!checkIsCryptoKeyPairsExportedAsString(keyPairsString)) {
     return new Error('This is a wrong type of exported crypto keys');
   }
 

@@ -14,6 +14,8 @@ import {
   checkIsValidCryptoCredentials,
   exportCryptoCredentialsToString,
   getUserCredentialsByUserIdentityAndCryptoKeys,
+  checkExportedCryptoCredentialsToString,
+  importCryptoCredentialsFromAString,
 } from './central-authority-storage-credentials.utils';
 import {
   TCentralAuthorityUserIdentity,
@@ -113,7 +115,7 @@ export class CentralAuthorityCredentialsStorage extends getStatusClass<
     return true;
   }
 
-  setUserCredentialsToTheCache(
+  setUserCredentialsToCache(
     userCryptoCredentials: TCentralAuthorityUserCryptoCredentials
   ): undefined | Error {
     if (!checkIsValidCryptoCredentials(userCryptoCredentials)) {
@@ -122,7 +124,7 @@ export class CentralAuthorityCredentialsStorage extends getStatusClass<
     this.userCryptoCredentialsCached = userCryptoCredentials;
   }
 
-  unsetUserCredentialsToTheCache(): void {
+  unsetUserCredentialsInCache(): void {
     this.userCryptoCredentialsCached = undefined;
   }
 
@@ -131,6 +133,15 @@ export class CentralAuthorityCredentialsStorage extends getStatusClass<
 
     if (isConnectedToTheSecretStorage && secretStorageConnection) {
       return secretStorageConnection.set(key, value);
+    }
+    return new Error('There is no active connecion to the secret storage');
+  }
+
+  async readFromStorage(key: string): Promise<Error | string | undefined> {
+    const { secretStorageConnection, isConnectedToTheSecretStorage } = this;
+
+    if (isConnectedToTheSecretStorage && secretStorageConnection) {
+      return secretStorageConnection.get(key);
     }
     return new Error('There is no active connecion to the secret storage');
   }
@@ -164,7 +175,10 @@ export class CentralAuthorityCredentialsStorage extends getStatusClass<
     );
   }
 
-  getCredentialsCached(): TCentralAuthorityUserCryptoCredentials | Error {
+  getCredentialsCached():
+    | TCentralAuthorityUserCryptoCredentials
+    | Error
+    | undefined {
     const { userCryptoCredentialsCached } = this;
 
     if (checkIsValidCryptoCredentials(userCryptoCredentialsCached)) {
@@ -173,7 +187,72 @@ export class CentralAuthorityCredentialsStorage extends getStatusClass<
     return new Error('There is no a crypto credetials cached');
   }
 
-  async getCredentialsFromStorage() {}
+  async readCryptoCredentialsFromStorage(): Promise<
+    TCentralAuthorityUserCryptoCredentials | Error | null
+  > {
+    const cryptoCredentials = await this.readFromStorage(
+      CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_KEY_CRYPTO_CREDENTIALS
+    );
+
+    if (cryptoCredentials instanceof Error) {
+      console.error(cryptoCredentials);
+      return new Error('Failed to read the credentials from the storage');
+    }
+    if (!cryptoCredentials) {
+      console.warn('There is no crypto credentials stored');
+      return null;
+    }
+
+    const importedCryptoKey = await importCryptoCredentialsFromAString(
+      cryptoCredentials
+    );
+
+    if (importedCryptoKey instanceof Error) {
+      console.error(importedCryptoKey);
+      return new Error(
+        'Failed to import a crypto credentials value from the string stored'
+      );
+    }
+
+    const resultSetInCache = this.setUserCredentialsToCache(importedCryptoKey);
+
+    if (resultSetInCache instanceof Error) {
+      console.error(resultSetInCache);
+      this.unsetUserCredentialsInCache();
+      return new Error(
+        'Failed to set the crypto credentials value in the cache'
+      );
+    }
+    return importedCryptoKey;
+  }
+
+  async getCredentials(): Promise<
+    TCentralAuthorityUserCryptoCredentials | Error | null
+  > {
+    const cachedCryptoCredentials = this.getCredentialsCached();
+
+    if (cachedCryptoCredentials instanceof Error) {
+      console.error(cachedCryptoCredentials);
+      console.error('Failed to read a cached value of a crypto credentials');
+    }
+    if (cachedCryptoCredentials) {
+      return cachedCryptoCredentials;
+    }
+
+    const storedCryptoCredentials = await this.readCryptoCredentialsFromStorage();
+
+    if (storedCryptoCredentials instanceof Error) {
+      console.error(storedCryptoCredentials);
+      return new Error(
+        'Failed to read a crypto credentials value from the storage'
+      );
+    }
+    if (!storedCryptoCredentials) {
+      console.warn('A crypto credentials value is absent');
+      return null;
+    }
+    return storedCryptoCredentials;
+  }
 
   async setUserCredentials(
     userIdentity: TCentralAuthorityUserIdentity,
@@ -191,12 +270,12 @@ export class CentralAuthorityCredentialsStorage extends getStatusClass<
       );
     }
 
-    const setCredentialsInCacheResult = this.setUserCredentialsToTheCache(
+    const setCredentialsInCacheResult = this.setUserCredentialsToCache(
       cryptoCredentials
     );
 
     if (setCredentialsInCacheResult instanceof Error) {
-      this.unsetUserCredentialsToTheCache();
+      this.unsetUserCredentialsInCache();
       console.error(setCredentialsInCacheResult);
       return new Error('Failed to set the crypto credentials in the cahce');
     }
@@ -206,7 +285,7 @@ export class CentralAuthorityCredentialsStorage extends getStatusClass<
     );
 
     if (resultSetCryptoCredentialsToStorage instanceof Error) {
-      this.unsetUserCredentialsToTheCache();
+      this.unsetUserCredentialsInCache();
       if ((await this.unsetCryptoCredentialsToStorage()) instanceof Error) {
         console.error('Failed to unset a crypto credentials in the storage');
       }

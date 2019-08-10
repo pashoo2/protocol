@@ -13,7 +13,15 @@ import {
   CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME,
   CA_CRYPTO_KEY_PAIRS_SIGN_PUBLIC_KEY_NAME,
   CA_CRYPTO_KEY_PAIRS_ENCRYPTION_PUBLIC_KEY_NAME,
+  CA_CRYPTO_KEY_PAIRS_STRINGIFIED_MIN_LENGTH,
 } from './central-authority-util-crypto-keys.const';
+
+export const checkIsCryptoKeyPairsExportedAsString = (v: any): boolean => {
+  return (
+    typeof v === 'string' &&
+    v.length >= CA_CRYPTO_KEY_PAIRS_STRINGIFIED_MIN_LENGTH
+  );
+};
 
 /**
  * check is a given value
