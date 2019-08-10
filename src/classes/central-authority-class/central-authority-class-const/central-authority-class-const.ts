@@ -1,1 +1,1 @@
-export * from './central-authority-class-const-user';
+export * from './central-authority-class-const-auth-credentials';
