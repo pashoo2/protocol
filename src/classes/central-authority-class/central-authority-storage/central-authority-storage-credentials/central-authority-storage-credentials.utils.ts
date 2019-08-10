@@ -13,7 +13,7 @@ import {
   CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_USER_ID_KEY_NAME,
   CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_KEY_CRYPTO_CREDENTIALS_EXPORTED_AS_STRING_MIN_LENGTH,
 } from './central-authority-storage-credentials.const';
-import { validateUserIdentity } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-user/central-authority-validators-user';
+import { validateUserIdentity } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-auth-credentials/central-authority-validators-auth-credentials';
 import {
   TCentralAuthorityUserIdentity,
   TCACryptoKeyPairs,
