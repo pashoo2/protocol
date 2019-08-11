@@ -9,6 +9,7 @@ export const CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS = {
   CONNECTION_FAILED: 'CONNECTION FAILED', // connection to the secret storage was failed by any reason
   ERROR: 'ERROR', // any error caused by a method execution
   PENDING: 'PENDING', // pending for any async operation and can't do any other operation till the current operation not ended up
+  DISCONNECTED: 'disconnected', // disconnected from the storage and a state was cleared
 };
 
 export const CENTRAL_AUTHORITY_STORAGE_PROVIDER_NAME =

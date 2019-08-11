@@ -6,6 +6,7 @@ import {
   CA_AUTH_CREDENTIALS_USER_PASSWORD_PROP_NAME,
 } from 'classes/central-authority-class/central-authority-class-const/central-authority-class-const';
 import { generateUUID } from 'utils/identity-utils/identity-utils';
+import { CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME } from 'classes/central-authority-class/central-authority-storage/central-authority-storage-credentials/central-authority-storage-credentials.const';
 
 export const runTestsCredentialsStorage = async () => {
   const cryptoKeyPairsGenerated = await generateKeyPairs();
@@ -63,5 +64,107 @@ export const runTestsCredentialsStorage = async () => {
     console.error('Failed to set the credentials');
     return;
   }
+
+  const credentialsCached = await cryptoCredentialsStorage.getCredentials();
+
+  if (credentialsCached instanceof Error) {
+    console.error(credentialsCached);
+    console.error('Failed to read a credentials stored');
+    return;
+  }
+  if (credentialsCached === null) {
+    console.error('The credentials stored are absent in the storage and cache');
+    return;
+  }
+
+  const {
+    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeyPairsStored,
+  } = credentialsCached;
+  const resultTestCredentialsStored = await runTestForKeyPairs(
+    cryptoKeyPairsStored
+  );
+
+  if (resultTestCredentialsStored !== true) {
+    console.warn(
+      'Failed tests for credentials storage keys read from stored values'
+    );
+    return;
+  }
+
+  const resultCryptoCredentialsStorageDisconnect = await cryptoCredentialsStorage.disconnect();
+
+  if (resultCryptoCredentialsStorageDisconnect instanceof Error) {
+    console.error(resultCryptoCredentialsStorageDisconnect);
+    console.error(
+      'Failed to disconnect the first instance of the resultCryptoCredentialsStorageDisconnect'
+    );
+    return;
+  }
+
+  const credentialsReadFromStorageDisconnected = await cryptoCredentialsStorage.getCredentials();
+
+  if (!(credentialsReadFromStorageDisconnected instanceof Error)) {
+    console.error('Any read from the disconnected storage must cause an error');
+    return;
+  }
+
+  const resultSetCredentialsReadFromStorageDisconnected = await cryptoCredentialsStorage.setCredentials(
+    cryptoKeyPairsGenerated
+  );
+
+  if (!(resultSetCredentialsReadFromStorageDisconnected instanceof Error)) {
+    console.error(
+      'Any write from the disconnected storage must cause an error'
+    );
+    return;
+  }
+  /**
+   * create a new instance
+   * to check if it works
+   * and can to read a stored
+   * piveousely crypto credentials.
+   * Connect with the credentials
+   * exactly same as used
+   * for the first connection
+   */
+
+  const cryptoCredentialsStorageSecondInstance = new CentralAuthorityCredentialsStorage();
+  const connectionResultSecondInstance = await cryptoCredentialsStorageSecondInstance.connect(
+    storageAuthCredentials
+  );
+
+  if (connectionResultSecondInstance instanceof Error) {
+    console.error(
+      'Failed to connect to the secret storage with the second instance'
+    );
+    return;
+  }
+
+  const credentialsReadFromStorage = await cryptoCredentialsStorageSecondInstance.getCredentials();
+
+  if (credentialsReadFromStorage instanceof Error) {
+    console.error(credentials);
+    console.error('Failed to read a credentials read from the second instance');
+    return;
+  }
+  if (credentialsReadFromStorage === null) {
+    console.error('The credentials read by second instance must not be empty');
+    return;
+  }
+
+  const {
+    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeyPairsStoredByTheFirstInstance,
+  } = credentialsReadFromStorage;
+  const resultTestCredentialsStoredByTheFirstInstance = await runTestForKeyPairs(
+    cryptoKeyPairsStoredByTheFirstInstance
+  );
+
+  if (resultTestCredentialsStoredByTheFirstInstance !== true) {
+    console.warn(
+      'Failed tests for credentials storage keys read from stored values'
+    );
+    return;
+  }
   console.warn('Succeed in the crypto credentials storage tests');
+  return true;
 };

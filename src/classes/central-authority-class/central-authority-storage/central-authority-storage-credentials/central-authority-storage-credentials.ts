@@ -183,11 +183,25 @@ export class CentralAuthorityCredentialsStorage
     return true;
   }
 
+  protected reset() {
+    this.__userIdentity = undefined;
+    this.__userIdentityHash = undefined;
+    this.secretStorageConnection = undefined;
+  }
+
   public async disconnect(): Promise<boolean | Error> {
     const { isConnectedToStorage, secretStorageConnection } = this;
 
     if (isConnectedToStorage && secretStorageConnection) {
-      secretStorageConnection.disconnect();
+      const disconnectFromStorageResult = await secretStorageConnection.disconnect();
+
+      if (disconnectFromStorageResult instanceof Error) {
+        console.error(disconnectFromStorageResult);
+        return new Error('Failed to disconnect from the storage');
+      }
+      this.reset();
+      this.setStatus(CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS.DISCONNECTED);
+      return true;
     }
     return new Error('Not connected to the storage');
   }
@@ -324,6 +338,11 @@ export class CentralAuthorityCredentialsStorage
   public async getCredentials(): Promise<
     TCentralAuthorityUserCryptoCredentials | Error | null
   > {
+    const { isConnectedToStorage } = this;
+
+    if (!isConnectedToStorage) {
+      return new Error('There is no an active connection to the storage');
+    }
     const cachedCryptoCredentials = this.getCredentialsCached();
 
     if (cachedCryptoCredentials instanceof Error) {
@@ -346,14 +365,29 @@ export class CentralAuthorityCredentialsStorage
       console.warn('A crypto credentials value is absent');
       return null;
     }
+
+    const setToCacheResult = this.setUserCredentialsToCache(
+      storedCryptoCredentials
+    );
+
+    if (setToCacheResult instanceof Error) {
+      console.error(setToCacheResult);
+      this.unsetUserCredentialsInCache();
+      console.error(
+        'Failed to set the crypto credentials read from the storage in the cache'
+      );
+    }
     return storedCryptoCredentials;
   }
 
   public async setCredentials(
     cryptoKeyPairs: TCACryptoKeyPairs
   ): Promise<Error | boolean> {
-    const { userIdentity } = this;
+    const { userIdentity, isConnectedToStorage } = this;
 
+    if (!isConnectedToStorage) {
+      return new Error('There is no an active connection to the storage');
+    }
     if (!userIdentity) {
       return new Error('A user identity value was not set');
     }
