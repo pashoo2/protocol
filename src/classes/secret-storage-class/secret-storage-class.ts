@@ -334,6 +334,14 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
     return true;
   }
 
+  reset() {
+    this.clearError();
+    this.clearStatus();
+    this.clearState();
+    this.k = undefined;
+    this.authStorageProvider = undefined;
+  }
+
   async storageProviderDisconnect(): Promise<boolean | Error> {
     const { authStorageProvider } = this;
 
@@ -349,8 +357,7 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
       console.error(resultDisconnectFromStorageProvider);
       return new Error('Failed to disconnect from the storage provider');
     }
-    this.clearState();
-    this.k = undefined;
+    this.reset();
     this.setStatus(SECRET_STORAGE_STATUS.STOPPED);
     return true;
   }
