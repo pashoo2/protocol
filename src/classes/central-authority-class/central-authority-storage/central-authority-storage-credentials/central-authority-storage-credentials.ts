@@ -1,3 +1,9 @@
+/**
+ * This is storage of the current
+ * user crypto keys for signing
+ * and encryptopn a data
+ */
+
 import { SecretStorage } from 'classes/secret-storage-class';
 import { getStatusClass } from 'classes/basic-classes/status-class-base/status-class-base';
 import {
