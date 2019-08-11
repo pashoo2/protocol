@@ -18,7 +18,7 @@ import {
   PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_EXPORT_FORMAT,
   PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_IMPORT_FORMAT,
 } from './password-utils.const';
-import { decodeStringUTF8ToArrayBuffer } from 'utils/string-encoding-utils';
+import { decodeDOMStringToArrayBuffer } from 'utils/string-encoding-utils';
 
 const cryptoModule = window.crypto.subtle;
 
@@ -73,7 +73,7 @@ export const getDeriviationNative = async (
 export const generatePasswordKeyByPasswordString = async (
   passwordString: string
 ): Promise<CryptoKey | Error> => {
-  const passwordArrayBuffer = decodeStringUTF8ToArrayBuffer(passwordString);
+  const passwordArrayBuffer = decodeDOMStringToArrayBuffer(passwordString);
 
   if (passwordArrayBuffer instanceof Error) {
     return passwordArrayBuffer;

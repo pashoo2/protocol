@@ -23,7 +23,6 @@ import {
   SAFE_STORAGE_STORAGE_APPEND_LOG_COMMON_POSTFIX,
   SAFE_STORAGE_ATTEMPTS_TO_SAVE_DATA_TO_STORAGE,
   SAFE_STORAGE_DEFAULT_STORAGE_BUSY_TIMEOUT_MS,
-  SAFE_STORAGE_PARSE_DATA_ERROR_TRY_TO_DECODE,
 } from './safe-storage-class.const';
 import {
   getStatusClass,
@@ -367,8 +366,7 @@ export class SafeStorage<
    * @param {string | Error | undefined} data
    */
   parseDataFromStorage<D>(
-    data: string | undefined | Error,
-    isDecodedString: boolean = false
+    data: string | undefined | Error
   ): Error | D | undefined {
     if (data instanceof Error) {
       return this.setErrorStatus(data);
@@ -379,12 +377,6 @@ export class SafeStorage<
     try {
       return JSON.parse(data) as (D | undefined);
     } catch (err) {
-      if (
-        !isDecodedString &&
-        err.message.includes(SAFE_STORAGE_PARSE_DATA_ERROR_TRY_TO_DECODE)
-      ) {
-        return this.parseDataFromStorage(decodeURIComponent(data), true);
-      }
       return err as Error;
     }
   }
@@ -604,7 +596,7 @@ export class SafeStorage<
     }
 
     try {
-      return encodeURIComponent(JSON.stringify(dataAppendLog));
+      return JSON.stringify(dataAppendLog);
     } catch (err) {
       return this.setErrorStatus(err);
     }

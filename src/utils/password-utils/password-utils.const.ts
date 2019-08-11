@@ -1,4 +1,4 @@
-import { decodeStringUTF8ToArrayBuffer } from 'utils/string-encoding-utils';
+import { decodeDOMStringToArrayBuffer } from 'utils/string-encoding-utils';
 import { TTypedArrays } from 'types/main.types';
 
 export const PASSWORD_ENCRYPTION_UTILS_KEY_GENERATION_KEY_IMPORTED_FORMAT =
@@ -29,7 +29,7 @@ export const SALT_DEFAULT_STRING = encodeURIComponent(`
     Rb9OLjMdhgsSCfZW0h7P
 `);
 
-export const SALT_DEFAULT_ARRAY_BUFFER = decodeStringUTF8ToArrayBuffer(
+export const SALT_DEFAULT_ARRAY_BUFFER = decodeDOMStringToArrayBuffer(
   SALT_DEFAULT_STRING
 ) as TTypedArrays;
 

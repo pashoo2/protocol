@@ -7,6 +7,7 @@ import {
   exportKeyPairsAsString,
   importKeyPairsFromString,
   checkIsCryptoKeyPairsExportedAsString,
+  checkIsCryptoKeyPairsExported,
 } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
 import {
   CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME,
@@ -50,7 +51,7 @@ export const checkIsValidCryptoCredentials = (
     );
     return false;
   }
-  if (validateUserIdentity(userIdentity)) {
+  if (!validateUserIdentity(userIdentity)) {
     console.error(
       'There is a wrong format of the crypto credentials value, case the user identity value have a wrong type'
     );
@@ -104,7 +105,7 @@ export const checkIsValidCryptoCredentialsExportedFormat = (
   }
   if (!checkIsCryptoKeyPairsExportedAsString(cryptoKeys)) {
     console.error(
-      'There is a wrong format of the crypto credentials value, case the crypto keys value have a wrong type'
+      'There is a wrong format of the crypto credentials value, case the crypto keys exported as a string value have a wrong type'
     );
     return false;
   }
@@ -137,12 +138,9 @@ export const exportCryptoCredentialsToString = async (
   if (exportedCryptoKeys instanceof Error) {
     return exportedCryptoKeys;
   }
-  if (typeof exportedCryptoKeys !== 'string') {
-    return new Error('The exported crypto keys have a wrong fromat');
-  }
 
   const cryptoCredentialsExported = {
-    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeys,
+    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: exportedCryptoKeys,
     [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_USER_ID_KEY_NAME]: userIdentity,
   };
 

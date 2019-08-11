@@ -271,6 +271,9 @@ export class CentralAuthorityCredentialsStorage
     | undefined {
     const { userCryptoCredentialsCached } = this;
 
+    if (!userCryptoCredentialsCached) {
+      return undefined;
+    }
     if (checkIsValidCryptoCredentials(userCryptoCredentialsCached)) {
       return userCryptoCredentialsCached;
     }

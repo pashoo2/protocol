@@ -8,8 +8,8 @@ import {
 } from 'utils/encryption-utils/encryption-utils';
 import { PASSWORD_ENCRYPTION_UTILS_DECRYPTION_PARAMS } from './password-utils.const';
 import {
-  decodeStringUTF8ToArrayBuffer,
-  encodeArrayBufferToUTF8,
+  decodeDOMStringToArrayBuffer,
+  encodeArrayBufferToDOMString,
 } from 'utils/string-encoding-utils';
 
 export const decryptDataWithKeyNative = async (
@@ -45,7 +45,7 @@ export const decryptDataWithKey = async (
   key: string | CryptoKey,
   dataWithIv: string
 ): Promise<string | Error> => {
-  const dataWithIvArrayBuffer = decodeStringUTF8ToArrayBuffer(dataWithIv);
+  const dataWithIvArrayBuffer = decodeDOMStringToArrayBuffer(dataWithIv);
 
   if (dataWithIvArrayBuffer instanceof Error) {
     return dataWithIvArrayBuffer;
@@ -60,7 +60,7 @@ export const decryptDataWithKey = async (
     return decryptedArrayBuffer;
   }
 
-  return encodeArrayBufferToUTF8(decryptedArrayBuffer);
+  return encodeArrayBufferToDOMString(decryptedArrayBuffer);
 };
 
 export const decryptDataByPassword = async (

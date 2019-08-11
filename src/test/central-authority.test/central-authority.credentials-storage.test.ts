@@ -10,6 +10,12 @@ import { generateUUID } from 'utils/identity-utils/identity-utils';
 export const runTestsCredentialsStorage = async () => {
   const cryptoKeyPairsGenerated = await generateKeyPairs();
 
+  if (cryptoKeyPairsGenerated instanceof Error) {
+    console.error(cryptoKeyPairsGenerated);
+    console.error('Failed to generate a new key pairs');
+    return;
+  }
+
   console.warn('Run tests for credentials storage keys generated');
   const result = await runTestForKeyPairs(cryptoKeyPairsGenerated);
 
@@ -18,7 +24,7 @@ export const runTestsCredentialsStorage = async () => {
     return;
   }
 
-  const cryptoCredentials = new CentralAuthorityCredentialsStorage();
+  const cryptoCredentialsStorage = new CentralAuthorityCredentialsStorage();
   const storageAuthCredentials = {
     [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: generateUUID(),
     [CA_AUTH_CREDENTIALS_USER_PASSWORD_PROP_NAME]: 'password',
@@ -27,12 +33,34 @@ export const runTestsCredentialsStorage = async () => {
   console.warn(
     'Success result in the tests for credentials storage keys generated'
   );
-  const connectionResult = await cryptoCredentials.connect(
+  const connectionResult = await cryptoCredentialsStorage.connect(
     storageAuthCredentials
   );
 
   if (connectionResult instanceof Error) {
     console.error('Failed to connect to the secret storage');
+    return;
+  }
+
+  const credentials = await cryptoCredentialsStorage.getCredentials();
+
+  if (credentials instanceof Error) {
+    console.error(credentials);
+    console.error('Failed to reade a credentials read from the new instance');
+    return;
+  }
+  if (credentials !== null) {
+    console.error('The credentials read from the new instance must be null');
+    return;
+  }
+
+  const credentialsSetResult = await cryptoCredentialsStorage.setCredentials(
+    cryptoKeyPairsGenerated
+  );
+
+  if (credentialsSetResult instanceof Error) {
+    console.error(credentialsSetResult);
+    console.error('Failed to set the credentials');
     return;
   }
   console.warn('Succeed in the crypto credentials storage tests');

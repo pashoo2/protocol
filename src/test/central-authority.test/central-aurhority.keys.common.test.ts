@@ -1,5 +1,4 @@
 import { signToString, verifyFromString } from 'utils/data-sign-utils';
-import { generateKeyPairs } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys-generate';
 import {
   getPublicKeysFromCryptoKeyPairs,
   checkIsCryptoKeyPairs,
@@ -14,11 +13,14 @@ import {
   encryptNative,
   decryptNative,
 } from 'utils/encryption-utils/encryption-utils';
-import { decode, encode } from 'base64-arraybuffer';
 import {
   TCACryptoKeyPairs,
   TCACryptoPubilicKeys,
 } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
+import {
+  stringToTypedArray,
+  typedArrayToString,
+} from 'utils/typed-array-utils';
 
 export const runTestEncryptData = async (
   keyPairs: TCACryptoKeyPairs
@@ -27,9 +29,17 @@ export const runTestEncryptData = async (
   const {
     [CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME]: encryptionKeyPair,
   } = keyPairs;
+  const dataToEncodeTypeedArray = stringToTypedArray(dataToEncode);
+
+  if (dataToEncodeTypeedArray instanceof Error) {
+    console.error(dataToEncodeTypeedArray);
+    console.error('Failed to convert data to typed array');
+    return;
+  }
+
   const encryptedData = await encryptNative(
     encryptionKeyPair.publicKey,
-    decode(btoa(dataToEncode))
+    dataToEncodeTypeedArray
   );
 
   if (encryptedData instanceof Error) {
@@ -40,7 +50,7 @@ export const runTestEncryptData = async (
 
   const decryptedData = await decryptNative(
     encryptionKeyPair.privateKey,
-    decode(encode(encryptedData))
+    encryptedData
   );
 
   if (decryptedData instanceof Error) {
@@ -49,7 +59,14 @@ export const runTestEncryptData = async (
     return;
   }
 
-  const decryptedString = atob(encode(decryptedData));
+  const decryptedString = typedArrayToString(decryptedData);
+
+  if (decryptedString instanceof Error) {
+    console.error(decryptedString);
+    console.error(
+      'Failed to convert a string decrypted as array buffer to a DOMString'
+    );
+  }
 
   if (decryptedString !== dataToEncode) {
     console.error(

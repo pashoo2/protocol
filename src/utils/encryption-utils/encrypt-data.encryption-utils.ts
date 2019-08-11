@@ -19,7 +19,7 @@ import {
   concatArrayBuffers,
   getBytesFromArrayBuffer,
 } from 'utils/typed-array-utils';
-import { decodeStringUTF8ToArrayBuffer } from 'utils/string-encoding-utils';
+import { decodeDOMStringToArrayBuffer } from 'utils/string-encoding-utils';
 
 /**
  * return a random vector, used e.g. for aes-gcm
@@ -86,7 +86,7 @@ export const getInitializationVectorFromDataString = (
   data: string,
   ivLengthBytes?: number
 ): TCRYPTO_UTILS_DATA_WITH_INITIALIZATION_VECTOR | Error => {
-  const dataArrayBuffer = decodeStringUTF8ToArrayBuffer(data);
+  const dataArrayBuffer = decodeDOMStringToArrayBuffer(data);
 
   if (dataArrayBuffer instanceof Error) {
     return dataArrayBuffer;

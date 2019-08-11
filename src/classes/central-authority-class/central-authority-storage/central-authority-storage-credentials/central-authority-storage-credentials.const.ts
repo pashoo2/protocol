@@ -1,5 +1,6 @@
 import { MIN_JWK_STRING_LENGTH } from 'utils/encryption-keys-utils/encryption-keys-utils.const';
 import { SECRET_STORAGE_PROVIDERS_NAME } from 'classes/secret-storage-class/secret-storage-class.const';
+import { CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME } from 'classes/central-authority-class/central-authority-class-const/central-authority-class-const';
 
 export const CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS = {
   NEW: 'NEW',
@@ -30,7 +31,7 @@ export const CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_KEY_CRYPTO_CREDENTIALS = `${C
  */
 export const CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_KEY_CRYPTO_CREDENTIALS_EXPORTED_AS_STRING_MIN_LENGTH = MIN_JWK_STRING_LENGTH;
 
-export const CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_USER_ID_KEY_NAME = 'userId';
+export const CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_USER_ID_KEY_NAME = CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME;
 
 export const CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME =
   'cryptoKeys';

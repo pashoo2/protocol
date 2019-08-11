@@ -11,7 +11,7 @@ import {
   TCRYPTO_UTIL_ENCRYPT_KEY_TYPES,
   TCRYPTO_UTIL_ENCRYPT_DATA_TYPES,
 } from 'utils/encryption-utils/crypto-utils.types';
-import { encodeArrayBufferToUTF8 } from 'utils/string-encoding-utils';
+import { encodeArrayBufferToDOMString } from 'utils/string-encoding-utils';
 import {
   importPasswordKeyFromString,
   generatePasswordKeyByPasswordString,
@@ -62,7 +62,7 @@ export const encryptDataToString = async (
   if (encrypted instanceof Error) {
     return encrypted;
   }
-  return encodeArrayBufferToUTF8(encrypted);
+  return encodeArrayBufferToDOMString(encrypted);
 };
 
 export const encryptDataWithPassword = async (

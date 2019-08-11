@@ -9,7 +9,6 @@ import {
   encryptToTypedArray,
 } from 'utils/encryption-utils';
 import { calculateHash } from 'utils/hash-calculation-utils';
-import { decode, encode } from 'base64-arraybuffer';
 
 function arrayBufferToBase64(buffer: ArrayBuffer) {
   var binary = '';

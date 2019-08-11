@@ -1,6 +1,6 @@
 import { SecretStorage } from 'classes/secret-storage-class';
 
-const secretStorageTest = async () => {
+export const runTest = async () => {
   const secretStorage = new SecretStorage();
   const password = '494949494';
   const isAuthorized = await secretStorage.authorize({
@@ -42,5 +42,3 @@ const secretStorageTest = async () => {
   console.log('getTestValueResult', getTestValueResult);
   console.log('is valid', testValue === getTestValueResult);
 };
-
-secretStorageTest();
