@@ -24,8 +24,7 @@ import {
   checkIsCryptoKeyPairs,
   checkIsCryptoKeyPairsExportedAsString,
 } from './central-authority-util-crypto-keys-common';
-
-import LZString from 'lz-string';
+import { decompressString } from 'utils/data-compression-utils/data-compression-utils-strings';
 
 /**
  * import an exported key pair
@@ -42,10 +41,15 @@ export const importKeyPairsFromString = async (
 
   let parsedKeyPairsObject;
 
+  const decompressedValue = decompressString(keyPairsString);
+
+  if (decompressedValue instanceof Error) {
+    console.error(decompressedValue);
+    return new Error('Failed to decompress key pairs');
+  }
+
   try {
-    parsedKeyPairsObject = JSON.parse(
-      LZString.decompressFromUTF16(keyPairsString)
-    );
+    parsedKeyPairsObject = JSON.parse(decompressedValue);
   } catch (err) {
     return err;
   }

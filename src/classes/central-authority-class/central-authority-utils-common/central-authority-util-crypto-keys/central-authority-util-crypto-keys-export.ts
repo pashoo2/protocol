@@ -1,4 +1,3 @@
-import LZString from 'lz-string';
 import {
   exportKeyPairAsString as exportKeyPairDataEncryptAsString,
   exportKeyAsString as exportPublicKeyDataEncryptAsString,
@@ -21,6 +20,7 @@ import {
   checkIsCryptoKeyPairs,
   getPublicKeysFromCryptoKeyPairs,
 } from './central-authority-util-crypto-keys-common';
+import { compressString } from 'utils/data-compression-utils/data-compression-utils-strings';
 
 /**
  * export two key pairs
@@ -52,7 +52,7 @@ export const exportKeyPairsAsString = async (
     return signDataKeyPairString;
   }
   try {
-    return LZString.compressToUTF16(
+    return compressString(
       JSON.stringify({
         [CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME]: encryptionKeyPairString,
         [CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME]: signDataKeyPairString,
