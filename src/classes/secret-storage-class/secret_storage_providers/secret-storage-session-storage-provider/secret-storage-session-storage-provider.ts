@@ -18,6 +18,10 @@ export class SecretStorageProvideSessionStorage implements StorageProvider {
     }
   }
 
+  public async disconnect(): Promise<true | Error> {
+    return true;
+  }
+
   public async set(key: string, value: string): Promise<Error | true> {
     try {
       const { sessionStorage } = this;

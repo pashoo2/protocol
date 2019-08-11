@@ -334,6 +334,27 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
     return true;
   }
 
+  async storageProviderDisconnect(): Promise<boolean | Error> {
+    const { authStorageProvider } = this;
+
+    if (authStorageProvider) {
+      return authStorageProvider.disconnect();
+    }
+    return new Error('There is no Auth storage provider defined');
+  }
+  async disconnect(): Promise<boolean | Error> {
+    const resultDisconnectFromStorageProvider = await this.storageProviderDisconnect();
+
+    if (resultDisconnectFromStorageProvider instanceof Error) {
+      console.error(resultDisconnectFromStorageProvider);
+      return new Error('Failed to disconnect from the storage provider');
+    }
+    this.clearState();
+    this.k = undefined;
+    this.setStatus(SECRET_STORAGE_STATUS.STOPPED);
+    return true;
+  }
+
   async authorize(
     credentials: TSecretStoreCredentials
   ): Promise<boolean | Error> {

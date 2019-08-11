@@ -4,6 +4,11 @@ import {
   CA_AUTH_CREDENTIALS_USER_PASSWORD_PROP_NAME,
   CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME,
 } from '../central-authority-class-const/central-authority-class-const-auth-credentials';
+import { TCACryptoKeyPairs } from './central-authority-class-types-crypto-keys';
+import {
+  TCentralAuthorityUserCryptoCredentials,
+  TCentralAuthorityCredentialsStorageAuthCredentials,
+} from './central-authority-class-types-crypto-credentials';
 
 export type TCentralAuthorityUserIdentity = string;
 
@@ -11,6 +16,17 @@ export type TCentralAuthorityAuthCredentials = {
   [CA_AUTH_CREDENTIALS_USER_PASSWORD_PROP_NAME]: string;
   [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: TCentralAuthorityUserIdentity;
 };
+
+export interface ICentralAuthorityStorageCryptoCredentials {
+  connect(
+    credentials?: TCentralAuthorityCredentialsStorageAuthCredentials
+  ): Promise<boolean | Error>;
+  setCredentials(cryptoKeyPairs: TCACryptoKeyPairs): Promise<Error | boolean>;
+  getCredentials(): Promise<
+    TCentralAuthorityUserCryptoCredentials | Error | null
+  >;
+  disconnect(): Promise<boolean | Error>;
+}
 
 export interface ICentralAuthorityConnectionOptions {
   serverUrl: string;

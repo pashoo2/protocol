@@ -18,6 +18,7 @@ import {
 import {
   TCentralAuthorityUserIdentity,
   TCACryptoKeyPairs,
+  ICentralAuthorityStorageCryptoCredentials,
 } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 import {
   validateUserIdentity,
@@ -40,13 +41,13 @@ import { calculateHash } from 'utils/hash-calculation-utils/hash-calculation-uti
  * @class CentralAuthorityCredentialsStorage
  * @extends {StatusClassBase<typeof CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS>}
  */
-export class CentralAuthorityCredentialsStorage extends getStatusClass<
-  typeof CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS
->({
-  errorStatus: CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS.ERROR,
-  initialStatus: CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS.NEW,
-  instanceName: 'CentralAuthorityCredentialsStorage',
-}) {
+export class CentralAuthorityCredentialsStorage
+  extends getStatusClass<typeof CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS>({
+    errorStatus: CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS.ERROR,
+    initialStatus: CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS.NEW,
+    instanceName: 'CentralAuthorityCredentialsStorage',
+  })
+  implements ICentralAuthorityStorageCryptoCredentials {
   protected __userIdentity?: TCentralAuthorityUserIdentity;
 
   protected __userIdentityHash?: string;
@@ -76,7 +77,7 @@ export class CentralAuthorityCredentialsStorage extends getStatusClass<
     return `${CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_KEY_CRYPTO_CREDENTIALS}__${userIdentityHash}`;
   }
 
-  protected get isConnectedToTheSecretStorage(): boolean {
+  protected get isConnectedToStorage(): boolean {
     const { status } = this;
 
     return status === CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS.CONNECTED;
@@ -182,6 +183,15 @@ export class CentralAuthorityCredentialsStorage extends getStatusClass<
     return true;
   }
 
+  public async disconnect(): Promise<boolean | Error> {
+    const { isConnectedToStorage, secretStorageConnection } = this;
+
+    if (isConnectedToStorage && secretStorageConnection) {
+      secretStorageConnection.disconnect();
+    }
+    return new Error('Not connected to the storage');
+  }
+
   protected setUserCredentialsToCache(
     userCryptoCredentials: TCentralAuthorityUserCryptoCredentials
   ): undefined | Error {
@@ -199,7 +209,10 @@ export class CentralAuthorityCredentialsStorage extends getStatusClass<
     key: string,
     value: any
   ): Promise<Error | boolean> {
-    const { secretStorageConnection, isConnectedToTheSecretStorage } = this;
+    const {
+      secretStorageConnection,
+      isConnectedToStorage: isConnectedToTheSecretStorage,
+    } = this;
 
     if (isConnectedToTheSecretStorage && secretStorageConnection) {
       return secretStorageConnection.set(key, value);
@@ -210,7 +223,10 @@ export class CentralAuthorityCredentialsStorage extends getStatusClass<
   protected async readFromStorage(
     key: string
   ): Promise<Error | string | undefined> {
-    const { secretStorageConnection, isConnectedToTheSecretStorage } = this;
+    const {
+      secretStorageConnection,
+      isConnectedToStorage: isConnectedToTheSecretStorage,
+    } = this;
 
     if (isConnectedToTheSecretStorage && secretStorageConnection) {
       return secretStorageConnection.get(key);
@@ -222,7 +238,7 @@ export class CentralAuthorityCredentialsStorage extends getStatusClass<
     userCryptoCredentials: TCentralAuthorityUserCryptoCredentials
   ): Promise<Error | boolean> {
     const {
-      isConnectedToTheSecretStorage,
+      isConnectedToStorage: isConnectedToTheSecretStorage,
       secretStorageCredentialsValueKey,
     } = this;
 
@@ -330,7 +346,7 @@ export class CentralAuthorityCredentialsStorage extends getStatusClass<
     return storedCryptoCredentials;
   }
 
-  public async setUserCredentials(
+  public async setCredentials(
     cryptoKeyPairs: TCACryptoKeyPairs
   ): Promise<Error | boolean> {
     const { userIdentity } = this;
