@@ -11,13 +11,16 @@ import {
   TCentralAuthorityUserIdentity,
   TCentralAuthorityAuthCredentials,
 } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
+import { UTILS_DATA_COMPRESSION_COMPRESSION_RATIO_MAX } from 'utils/data-compression-utils/data-compression-utils.const';
 
 export const validateUserIdentity = (
   v: any
 ): v is TCentralAuthorityUserIdentity => {
   return (
     typeof v === CA_USER_IDENTITY_TYPE &&
-    v.length >= CA_USER_IDENTITY_MIN_LENGTH &&
+    v.length >=
+      CA_USER_IDENTITY_MIN_LENGTH /
+        UTILS_DATA_COMPRESSION_COMPRESSION_RATIO_MAX &&
     v.length <= CA_USER_IDENTITY_MAX_LENGTH
   );
 };
@@ -27,7 +30,8 @@ export const validatePassword = (
 ): v is TCentralAuthorityUserIdentity => {
   return (
     typeof v === CA_USER_PASSWORD_TYPE &&
-    v.length >= CA_USER_PASSWORD_MIN_LENGTH
+    v.length >=
+      CA_USER_PASSWORD_MIN_LENGTH / UTILS_DATA_COMPRESSION_COMPRESSION_RATIO_MAX
   );
 };
 

@@ -1,3 +1,5 @@
+import { UTILS_DATA_COMPRESSION_COMPRESSION_RATIO_MAX } from 'utils/data-compression-utils/data-compression-utils.const';
+
 export const CA_USER_IDENTITY_TYPE = 'string';
 
 export const CA_USER_IDENTITY_UNIQUE_IDENTIFIER_MIN_LENGTH = 36;

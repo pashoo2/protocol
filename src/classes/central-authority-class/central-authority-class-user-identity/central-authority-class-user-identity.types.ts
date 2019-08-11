@@ -1,6 +1,6 @@
 import { TCentralAuthorityUserIdentity } from '../central-authority-class-types/central-authority-class-types';
 import {
-  CA_USER_IDENTITY_AUTH_PROVIDER_URI_PROP_NAME,
+  CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME,
   CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME,
 } from './central-authority-class-user-identity.const';
 
@@ -13,9 +13,13 @@ import {
  * @interface ICAUserUniqueIdentifierDescription
  */
 
+export type TCAuthProviderIdentifier = string;
+
+export type TCAuthProviderUserIdentifier = string;
+
 export interface ICAUserIdentityDescription {
-  [CA_USER_IDENTITY_AUTH_PROVIDER_URI_PROP_NAME]: string;
-  [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]: string;
+  [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: TCAuthProviderIdentifier;
+  [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]: TCAuthProviderUserIdentifier;
 }
 
 export interface ICAUserUniqueIdentifierDescription
