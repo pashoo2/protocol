@@ -5,6 +5,7 @@ import {
   CA_USER_PASSWORD_TYPE,
   CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME,
   CA_AUTH_CREDENTIALS_USER_PASSWORD_PROP_NAME,
+  CA_USER_IDENTITY_MAX_LENGTH,
 } from 'classes/central-authority-class/central-authority-class-const/central-authority-class-const';
 import {
   TCentralAuthorityUserIdentity,
@@ -16,7 +17,8 @@ export const validateUserIdentity = (
 ): v is TCentralAuthorityUserIdentity => {
   return (
     typeof v === CA_USER_IDENTITY_TYPE &&
-    v.length >= CA_USER_IDENTITY_MIN_LENGTH
+    v.length >= CA_USER_IDENTITY_MIN_LENGTH &&
+    v.length <= CA_USER_IDENTITY_MAX_LENGTH
   );
 };
 

@@ -1,4 +1,5 @@
 import { MIN_JWK_STRING_LENGTH } from 'utils/encryption-keys-utils/encryption-keys-utils.const';
+import { SECRET_STORAGE_PROVIDERS_NAME } from 'classes/secret-storage-class/secret-storage-class.const';
 
 export const CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS = {
   NEW: 'NEW',
@@ -8,6 +9,9 @@ export const CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS = {
   ERROR: 'ERROR', // any error caused by a method execution
   PENDING: 'PENDING', // pending for any async operation and can't do any other operation till the current operation not ended up
 };
+
+export const CENTRAL_AUTHORITY_STORAGE_PROVIDER_NAME =
+  SECRET_STORAGE_PROVIDERS_NAME.LOCAL_STORAGE;
 
 export const CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_KEYS_PREFIX = '____CASC';
 

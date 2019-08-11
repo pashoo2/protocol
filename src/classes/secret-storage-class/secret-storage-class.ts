@@ -83,7 +83,9 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
    * @param {strig} [SECRET_STORAGE_PROVIDERS_NAME.LOCAL_STORAGE] configuration.storageProviderName
    * - provider name use to store a secret data
    */
-  constructor(private configuration: Partial<TSecretStoreConfiguration> = {}) {
+  constructor(
+    protected configuration: Partial<TSecretStoreConfiguration> = {}
+  ) {
     super();
   }
 
@@ -155,7 +157,7 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
     return true;
   }
 
-  private async runStorageProvider(): Promise<Error | boolean> {
+  protected async runStorageProvider(): Promise<Error | boolean> {
     const { configuration } = this;
 
     if (configuration) {
@@ -188,8 +190,9 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
           return true;
         }
       }
+      throw new Error('Failed to set the name of the storage provider');
     }
-    throw new Error('There is no storage provider was defined');
+    throw new Error('There is no storage provider configuration was defined');
   }
 
   async setEncryptonKeyAuthInStorage(key: string): Promise<boolean | Error> {
