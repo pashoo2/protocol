@@ -1,4 +1,4 @@
-export const CONST_VALIDATION_SCHEMAS_CREDENTIALS_MAIN_CA = {
+export const CONST_VALIDATION_SCHEMES_CREDENTIALS_MAIN_CA = {
   type: 'object',
   additionalProperties: false,
   required: [
