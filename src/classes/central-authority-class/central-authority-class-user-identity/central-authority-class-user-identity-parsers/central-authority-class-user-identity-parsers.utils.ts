@@ -16,7 +16,10 @@ import {
   CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME,
   CA_USER_IDENTIT_VERSION_PROP_NAME,
 } from '../central-authority-class-user-identity.const';
-import { validateUserIdentityDescriptionVersion } from '../central-authority-class-user-identity-validators/central-authority-class-user-identity-validators.utils';
+import {
+  validateUserIdentityDescriptionVersion,
+  validateIdentityDescriptionVersion,
+} from '../central-authority-class-user-identity-validators/central-authority-class-user-identity-validators.utils';
 
 export function getIdentifierVersionByIdentityString(
   identityString: TCentralAuthorityUserIdentity
@@ -33,10 +36,7 @@ export function getIdentifierVersionByIdentityString(
 export const getParserFunctionByVersion = (
   version: string
 ): IParser | Error => {
-  if (
-    typeof version === 'string' &&
-    version.length === CA_USER_IDENTITY_PARSER_VERSION_CHARACTERS_COUNT
-  ) {
+  if (validateIdentityDescriptionVersion(version)) {
     const parser = CA_USER_IDENTITY_PARSER_TO_VERSION[version];
 
     if (parser) {
@@ -47,7 +47,20 @@ export const getParserFunctionByVersion = (
   return new Error('The version has a wrong type or format');
 };
 
-export const runParserForIdentity = (
+export const getUserIdentityDescription = (
+  userIdentity: TCAuthProviderUserIdentifier,
+  authProviderIdentity: TCAuthProviderIdentifier
+): ICAUserIdentityDescription | Error => {
+  const description = {
+    [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: authProviderIdentity,
+    [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]: userIdentity,
+  };
+
+  // TODO -check the user identity description
+  return description;
+};
+
+export const parseIdentity = (
   identityString: TCentralAuthorityUserIdentity
 ): ICAUserUniqueIdentifierDescription | Error => {
   const version = getIdentifierVersionByIdentityString(identityString);
@@ -88,17 +101,4 @@ export const runParserForIdentity = (
     return validationResult;
   }
   return resultedUserIdentityDescription;
-};
-
-export const getUserIdentityDescription = (
-  userIdentity: TCAuthProviderUserIdentifier,
-  authProviderIdentity: TCAuthProviderIdentifier
-): ICAUserIdentityDescription | Error => {
-  const description = {
-    [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: authProviderIdentity,
-    [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]: userIdentity,
-  };
-
-  // TODO -check the user identity description
-  return description;
 };

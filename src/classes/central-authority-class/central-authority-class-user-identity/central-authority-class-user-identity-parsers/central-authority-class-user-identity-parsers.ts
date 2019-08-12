@@ -1,5 +1,5 @@
-export {
-  CAUserIdentityParserV1,
-} from './central-authority-class-user-identity-parsers-parser-v1';
+export * from './central-authority-class-user-identity-parsers.const';
+
+export * from './central-authority-class-user-identity-parsers.types';
 
 export * from './central-authority-class-user-identity-parsers.utils';
