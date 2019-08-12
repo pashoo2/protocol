@@ -1,13 +1,13 @@
 import {
   ICAUserUniqueIdentifierDescription,
-  ICAIdentity,
+  ICAIdentityCommon,
 } from './central-authority-class-user-identity.types';
 import { TCentralAuthorityUserIdentity } from '../central-authority-class-types/central-authority-class-types';
 import { validateUserIdentity } from '../central-authority-validators/central-authority-validators-auth-credentials/central-authority-validators-auth-credentials';
 import { parseIdentity } from './central-authority-class-user-identity-parsers/central-authority-class-user-identity-parsers';
 import { serializeIdentity } from './central-authority-class-user-identity-formatters/central-authority-class-user-identity-formatters';
 
-export class CentralAuthorityIdentity implements ICAIdentity {
+export class CentralAuthorityIdentity implements ICAIdentityCommon {
   protected _userIdentitySerialized?: Error | TCentralAuthorityUserIdentity;
 
   protected _userIdentityParsed?: Error | ICAUserUniqueIdentifierDescription;
@@ -44,9 +44,12 @@ export class CentralAuthorityIdentity implements ICAIdentity {
     return _userIdentitySerialized;
   }
 
-  public toString(): TCentralAuthorityUserIdentity | Error {
+  public toString(): TCentralAuthorityUserIdentity {
     const { identityDescritptionSerialized } = this;
 
+    if (identityDescritptionSerialized instanceof Error) {
+      return '';
+    }
     return identityDescritptionSerialized;
   }
 
