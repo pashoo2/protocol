@@ -23,7 +23,7 @@ export const getSerializerForIdentityVersion = (
   );
 };
 
-export const serializeUserIdentity = (
+export const serializeIdentity = (
   identity: ICAUserUniqueIdentifierDescription
 ): TCentralAuthorityUserIdentity | Error => {
   const validationResult = validateUserIdentityDescription(identity);

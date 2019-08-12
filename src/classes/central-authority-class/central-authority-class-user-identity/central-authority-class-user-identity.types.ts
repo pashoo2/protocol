@@ -29,8 +29,9 @@ export interface ICAUserUniqueIdentifierDescription
 }
 
 export interface ICAIdentityCommon {
-  userIdentity: ICAUserUniqueIdentifierDescription;
-  toString: TCentralAuthorityUserIdentity | Error;
+  identityDescription: ICAUserUniqueIdentifierDescription | Error;
+  identityDescritptionSerialized: TCentralAuthorityUserIdentity | Error;
+  toString: () => TCentralAuthorityUserIdentity | Error;
 }
 
 export interface ICAIdentity extends ICAIdentityCommon {
