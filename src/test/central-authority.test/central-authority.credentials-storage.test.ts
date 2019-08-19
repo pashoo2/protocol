@@ -1,12 +1,12 @@
 import { generateKeyPairs } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
 import { runTestForKeyPairs } from './central-aurhority.keys.common.test';
-import { CentralAuthorityCredentialsStorage } from 'classes/central-authority-class/central-authority-storage/central-authority-storage-credentials-current-user/central-authority-storage-credentials';
 import {
   CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME,
   CA_AUTH_CREDENTIALS_USER_PASSWORD_PROP_NAME,
 } from 'classes/central-authority-class/central-authority-class-const/central-authority-class-const';
 import { generateUUID } from 'utils/identity-utils/identity-utils';
-import { CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME } from 'classes/central-authority-class/central-authority-storage/central-authority-storage-credentials-current-user/central-authority-storage-credentials.const';
+import { CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME } from 'classes/central-authority-class/central-authority-storage/central-authority-storage-credentials/central-authority-storage-credentials.const';
+import { CentralAuthorityCredentialsStorage } from 'classes/central-authority-class/central-authority-storage/central-authority-storage-credentials/central-authority-storage-credentials';
 
 export const runTestsCredentialsStorage = async () => {
   const cryptoKeyPairsGenerated = await generateKeyPairs();

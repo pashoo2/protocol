@@ -2,7 +2,7 @@ import { TCentralAuthorityUserIdentity } from '../central-authority-class-types/
 import {
   CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME,
   CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME,
-  CA_USER_IDENTIT_VERSION_PROP_NAME,
+  CA_USER_IDENTITY_VERSION_PROP_NAME,
 } from './central-authority-class-user-identity.const';
 
 /**
@@ -25,7 +25,11 @@ export interface ICAUserIdentityDescription {
 
 export interface ICAUserUniqueIdentifierDescription
   extends ICAUserIdentityDescription {
-  [CA_USER_IDENTIT_VERSION_PROP_NAME]: string;
+  [CA_USER_IDENTITY_VERSION_PROP_NAME]: string;
+}
+
+export interface ICAUserUniqueIdentifierDescriptionWithOptionalVersion {
+  [CA_USER_IDENTITY_VERSION_PROP_NAME]?: string;
 }
 
 export interface ICAIdentityCommon {

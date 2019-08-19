@@ -1,11 +1,16 @@
 import {
   ICAUserUniqueIdentifierDescription,
   ICAIdentityCommon,
+  ICAUserUniqueIdentifierDescriptionWithOptionalVersion,
 } from './central-authority-class-user-identity.types';
 import { TCentralAuthorityUserIdentity } from '../central-authority-class-types/central-authority-class-types';
 import { validateUserIdentity } from '../central-authority-validators/central-authority-validators-auth-credentials/central-authority-validators-auth-credentials';
 import { parseIdentity } from './central-authority-class-user-identity-parsers/central-authority-class-user-identity-parsers';
 import { serializeIdentity } from './central-authority-class-user-identity-formatters/central-authority-class-user-identity-formatters';
+import {
+  CA_USER_IDENTITY_VERSION_PROP_NAME,
+  CA_USER_IDENTITY_VERSION_CURRENT,
+} from './central-authority-class-user-identity.const';
 
 export class CentralAuthorityIdentity implements ICAIdentityCommon {
   protected _userIdentitySerialized?: Error | TCentralAuthorityUserIdentity;
@@ -15,13 +20,38 @@ export class CentralAuthorityIdentity implements ICAIdentityCommon {
   constructor(
     protected _userIdentity:
       | TCentralAuthorityUserIdentity
-      | ICAUserUniqueIdentifierDescription
+      | ICAUserUniqueIdentifierDescriptionWithOptionalVersion
   ) {
     if (validateUserIdentity(_userIdentity)) {
       this.parseUserIdentity(_userIdentity);
     } else {
-      this.serializeUserIdentityDescription(_userIdentity);
+      const userIdentityDescription = this.extendDescriptionWithVersion(
+        _userIdentity
+      );
+
+      this.serializeUserIdentityDescription(userIdentityDescription);
     }
+  }
+
+  protected extendDescriptionWithVersion(
+    _userIdentityDescription: ICAUserUniqueIdentifierDescriptionWithOptionalVersion
+  ): ICAUserUniqueIdentifierDescription {
+    const {
+      [CA_USER_IDENTITY_VERSION_PROP_NAME]: version,
+    } = _userIdentityDescription;
+
+    if (!version) {
+      // extend the description with the
+      // current version
+      const result = {
+        ..._userIdentityDescription,
+        [CA_USER_IDENTITY_VERSION_PROP_NAME]: CA_USER_IDENTITY_VERSION_CURRENT,
+      };
+
+      this._userIdentity = result;
+      return result as ICAUserUniqueIdentifierDescription;
+    }
+    return _userIdentityDescription as ICAUserUniqueIdentifierDescription;
   }
 
   public get identityDescription(): ICAUserUniqueIdentifierDescription | Error {
@@ -80,7 +110,7 @@ export class CentralAuthorityIdentity implements ICAIdentityCommon {
   ) {
     if (userIdentityDescription) {
       const serializedDescription = serializeIdentity(userIdentityDescription);
-
+      debugger;
       if (serializedDescription instanceof Error) {
         this._userIdentityParsed = new Error(
           'Failed to serialize the user identity description'

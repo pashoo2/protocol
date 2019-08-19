@@ -16,13 +16,22 @@ import { UTILS_DATA_COMPRESSION_COMPRESSION_RATIO_MAX } from 'utils/data-compres
 export const validateUserIdentity = (
   v: any
 ): v is TCentralAuthorityUserIdentity => {
-  return (
-    typeof v === CA_USER_IDENTITY_TYPE &&
-    v.length >=
-      CA_USER_IDENTITY_MIN_LENGTH /
-        UTILS_DATA_COMPRESSION_COMPRESSION_RATIO_MAX &&
-    v.length <= CA_USER_IDENTITY_MAX_LENGTH
-  );
+  if (typeof v !== CA_USER_IDENTITY_TYPE) {
+    console.error('There is a wrong type of the user identity');
+    return false;
+  }
+  if (
+    v.length <
+    CA_USER_IDENTITY_MIN_LENGTH / UTILS_DATA_COMPRESSION_COMPRESSION_RATIO_MAX
+  ) {
+    console.error('There is a too small length of the user identity');
+    return false;
+  }
+  if (v.length > CA_USER_IDENTITY_MAX_LENGTH) {
+    console.error('There is a too big length of the user identity');
+    return false;
+  }
+  return true;
 };
 
 export const validatePassword = (

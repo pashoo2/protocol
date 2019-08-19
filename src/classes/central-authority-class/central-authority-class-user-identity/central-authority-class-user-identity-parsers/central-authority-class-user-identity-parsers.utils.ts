@@ -1,9 +1,6 @@
 import { TCentralAuthorityUserIdentity } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 import { validateUserIdentity } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-auth-credentials/central-authority-validators-auth-credentials';
-import {
-  CA_USER_IDENTITY_PARSER_VERSION_CHARACTERS_COUNT,
-  CA_USER_IDENTITY_PARSER_TO_VERSION,
-} from './central-authority-class-user-identity-parsers.const';
+import { CA_USER_IDENTITY_PARSER_TO_VERSION } from './central-authority-class-user-identity-parsers.const';
 import { IParser } from './central-authority-class-user-identity-parsers.types';
 import {
   ICAUserIdentityDescription,
@@ -14,7 +11,8 @@ import {
 import {
   CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME,
   CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME,
-  CA_USER_IDENTIT_VERSION_PROP_NAME,
+  CA_USER_IDENTITY_VERSION_PROP_NAME,
+  CA_USER_IDENTITY_VERSION_CHARACTERS_COUNT,
 } from '../central-authority-class-user-identity.const';
 import {
   validateUserIdentityDescriptionVersion,
@@ -25,10 +23,7 @@ export function getIdentifierVersionByIdentityString(
   identityString: TCentralAuthorityUserIdentity
 ): Error | string {
   if (validateUserIdentity(identityString)) {
-    return identityString.slice(
-      0,
-      CA_USER_IDENTITY_PARSER_VERSION_CHARACTERS_COUNT
-    );
+    return identityString.slice(0, CA_USER_IDENTITY_VERSION_CHARACTERS_COUNT);
   }
   return new Error('The user identity is not valid');
 }
@@ -90,7 +85,7 @@ export const parseIdentity = (
 
   const resultedUserIdentityDescription: ICAUserUniqueIdentifierDescription = {
     ...parsedIdentity,
-    [CA_USER_IDENTIT_VERSION_PROP_NAME]: version,
+    [CA_USER_IDENTITY_VERSION_PROP_NAME]: version,
   };
   const validationResult = validateUserIdentityDescriptionVersion(
     version,

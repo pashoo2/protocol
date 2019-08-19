@@ -3,7 +3,7 @@ import {
   validateUserIdentityDescriptionVersion,
   validateUserIdentityDescription,
 } from '../central-authority-class-user-identity-validators/central-authority-class-user-identity-validators';
-import { CA_USER_IDENTIT_VERSION_PROP_NAME } from '../central-authority-class-user-identity.const';
+import { CA_USER_IDENTITY_VERSION_PROP_NAME } from '../central-authority-class-user-identity.const';
 import { CA_USER_IDENTITY_FORMATTERS_BY_VERSION } from './central-authority-class-user-identity-formatters.const';
 import { ICAUserUniqueIdentifierDescription } from '../central-authority-class-user-identity.types';
 import { TCentralAuthorityUserIdentity } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
@@ -32,7 +32,7 @@ export const serializeIdentity = (
     return new Error('The user identity description have a wrong format');
   }
 
-  const { [CA_USER_IDENTIT_VERSION_PROP_NAME]: version } = identity;
+  const { [CA_USER_IDENTITY_VERSION_PROP_NAME]: version } = identity;
   const serializerFunction = getSerializerForIdentityVersion(version);
 
   if (serializerFunction instanceof Error) {
@@ -49,10 +49,11 @@ export const serializeIdentity = (
       `Failed serialization for the user identity description version ${version}`
     );
   }
-  if (validateUserIdentity(serializeResult)) {
+  if (!validateUserIdentity(serializeResult)) {
     return new Error(
       `Failed serialization to the right format for the user identity description version ${version}`
     );
   }
+  debugger;
   return serializeResult;
 };

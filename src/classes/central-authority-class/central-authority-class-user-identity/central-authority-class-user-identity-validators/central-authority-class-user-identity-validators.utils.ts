@@ -1,7 +1,7 @@
 import { CA_USER_IDENTITY_VALIDATORS_BY_VERSION } from './central-authority-class-user-identity-validators.const';
 import { IUserIdentityDescriptionValidator } from './central-authority-class-user-identity-validators.types';
 import {
-  CA_USER_IDENTIT_VERSION_PROP_NAME,
+  CA_USER_IDENTITY_VERSION_PROP_NAME,
   CA_USER_IDENTITY_VERSION_CHARACTERS_COUNT,
 } from '../central-authority-class-user-identity.const';
 
@@ -53,7 +53,7 @@ export const validateUserIdentityDescription = (
 ): boolean | Error => {
   if (userIdetnityDescription && typeof userIdetnityDescription === 'object') {
     const {
-      [CA_USER_IDENTIT_VERSION_PROP_NAME]: version,
+      [CA_USER_IDENTITY_VERSION_PROP_NAME]: version,
     } = userIdetnityDescription;
 
     if (!version) {
