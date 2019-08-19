@@ -1,5 +1,5 @@
 import {
-  dataValidatorUtilURI,
+  dataValidatorUtilURL,
   dataValidatorUtilUUIDV4,
 } from 'utils/data-validators-utils/data-validators-utils';
 import {
@@ -24,7 +24,7 @@ export default (v: any): v is ICAUserUniqueIdentifierDescription => {
     ) {
       return false;
     }
-    if (!dataValidatorUtilURI(authProviderURI)) {
+    if (!dataValidatorUtilURL(authProviderURI)) {
       console.warn(
         `The auth provider's uri ${authProviderURI} have a wrong format`
       );

@@ -10,6 +10,11 @@ export const CONST_VALIDATION_SCHEMES_URI = {
   maxLength: CONST_VALUES_RESTRICTIONS_COMMON_URI_MAX_LENGTH,
 };
 
+export const CONST_VALIDATION_SCHEMES_URL = {
+  type: 'string',
+  format: 'url',
+};
+
 export const CONST_VALIDATION_SCHEMES_UUID_V4 = {
   type: 'string',
   format: 'uuid',

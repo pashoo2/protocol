@@ -23,7 +23,6 @@ export function getIdentifierVersionByIdentityString(
   identityString: TCentralAuthorityUserIdentity
 ): Error | string {
   if (validateUserIdentity(identityString)) {
-    debugger;
     return identityString.slice(0, CA_USER_IDENTITY_VERSION_CHARACTERS_COUNT);
   }
   return new Error('The user identity is not valid');
@@ -74,7 +73,6 @@ export const parseIdentity = (
 
   const versionStringLength = version.length;
   const identityStringWithoutVersion = identityString.slice(
-    0,
     versionStringLength
   );
   const parsedIdentity = parser(identityStringWithoutVersion);
