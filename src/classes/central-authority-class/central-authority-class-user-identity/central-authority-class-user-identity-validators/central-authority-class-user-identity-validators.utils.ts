@@ -8,10 +8,17 @@ import {
 export const validateIdentityDescriptionVersion = (
   version: any
 ): version is string => {
-  return (
-    typeof version === 'string' &&
-    version.length === CA_USER_IDENTITY_VERSION_CHARACTERS_COUNT
-  );
+  if (typeof version !== 'string') {
+    console.error('An identity description version must be a string');
+    return false;
+  }
+  if (version.length !== CA_USER_IDENTITY_VERSION_CHARACTERS_COUNT) {
+    console.error(
+      `An identity description version length must be a ${CA_USER_IDENTITY_VERSION_CHARACTERS_COUNT} characters`
+    );
+    return false;
+  }
+  return true;
 };
 
 export const getValidatorByIdentityVersion = (

@@ -28,7 +28,8 @@ export interface ICAUserUniqueIdentifierDescription
   [CA_USER_IDENTITY_VERSION_PROP_NAME]: string;
 }
 
-export interface ICAUserUniqueIdentifierDescriptionWithOptionalVersion {
+export interface ICAUserUniqueIdentifierDescriptionWithOptionalVersion
+  extends ICAUserIdentityDescription {
   [CA_USER_IDENTITY_VERSION_PROP_NAME]?: string;
 }
 

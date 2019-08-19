@@ -4,7 +4,7 @@ import {
   ICAUserUniqueIdentifierDescriptionWithOptionalVersion,
 } from './central-authority-class-user-identity.types';
 import { TCentralAuthorityUserIdentity } from '../central-authority-class-types/central-authority-class-types';
-import { validateUserIdentity } from '../central-authority-validators/central-authority-validators-auth-credentials/central-authority-validators-auth-credentials';
+import { validateUserIdentitySilent } from '../central-authority-validators/central-authority-validators-auth-credentials/central-authority-validators-auth-credentials';
 import { parseIdentity } from './central-authority-class-user-identity-parsers/central-authority-class-user-identity-parsers';
 import { serializeIdentity } from './central-authority-class-user-identity-formatters/central-authority-class-user-identity-formatters';
 import {
@@ -22,7 +22,7 @@ export class CentralAuthorityIdentity implements ICAIdentityCommon {
       | TCentralAuthorityUserIdentity
       | ICAUserUniqueIdentifierDescriptionWithOptionalVersion
   ) {
-    if (validateUserIdentity(_userIdentity)) {
+    if (validateUserIdentitySilent(_userIdentity)) {
       this.parseUserIdentity(_userIdentity);
     } else {
       const userIdentityDescription = this.extendDescriptionWithVersion(
@@ -110,7 +110,7 @@ export class CentralAuthorityIdentity implements ICAIdentityCommon {
   ) {
     if (userIdentityDescription) {
       const serializedDescription = serializeIdentity(userIdentityDescription);
-      debugger;
+
       if (serializedDescription instanceof Error) {
         this._userIdentityParsed = new Error(
           'Failed to serialize the user identity description'
