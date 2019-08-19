@@ -113,5 +113,25 @@ export const runTestCAIdentity = async () => {
     );
     return;
   }
+
+  const testIdentityDescriptionWithWrongGUID = {
+    [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: 'https://google.com',
+    [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]:
+      '76d55caf-fc4a-41a9-8844-19877dcb19a#',
+  };
+  const identityValueFromWrongGUID = new CentralAuthorityIdentity(
+    testIdentityDescriptionWithWrongGUID
+  );
+
+  if (
+    validateUserIdentityInstance(
+      identityValueFromWrongGUID,
+      testIdentityDescriptionWithWrongGUID
+    )
+  ) {
+    console.error('Wrong guid value does not recognized');
+    return;
+  }
+  debugger;
   console.warn('The user identity description test is succesfull');
 };

@@ -32,7 +32,7 @@ export default (v: any): v is ICAUserUniqueIdentifierDescription => {
     }
     if (!dataValidatorUtilUUIDV4(userUniqueIdentifier)) {
       console.warn(
-        `The auth provider's uri ${authProviderURI} have a wrong format`
+        `The user unique identifier ${userUniqueIdentifier} have a format different from the UUIDv4`
       );
       return false;
     }
