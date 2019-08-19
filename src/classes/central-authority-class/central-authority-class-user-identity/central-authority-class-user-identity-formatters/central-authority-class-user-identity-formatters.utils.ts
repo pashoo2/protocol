@@ -3,7 +3,10 @@ import {
   validateUserIdentityDescriptionVersion,
   validateUserIdentityDescription,
 } from '../central-authority-class-user-identity-validators/central-authority-class-user-identity-validators';
-import { CA_USER_IDENTITY_VERSION_PROP_NAME } from '../central-authority-class-user-identity.const';
+import {
+  CA_USER_IDENTITY_VERSION_PROP_NAME,
+  CA_USER_IDENTITY_PARSER_VERSIONS_SUPPORTED,
+} from '../central-authority-class-user-identity.const';
 import { CA_USER_IDENTITY_FORMATTERS_BY_VERSION } from './central-authority-class-user-identity-formatters.const';
 import { ICAUserUniqueIdentifierDescription } from '../central-authority-class-user-identity.types';
 import { TCentralAuthorityUserIdentity } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
@@ -33,6 +36,11 @@ export const serializeIdentity = (
   }
 
   const { [CA_USER_IDENTITY_VERSION_PROP_NAME]: version } = identity;
+
+  if (!CA_USER_IDENTITY_PARSER_VERSIONS_SUPPORTED.includes(version)) {
+    return new Error(`The version of the user identity given is not supported`);
+  }
+
   const serializerFunction = getSerializerForIdentityVersion(version);
 
   if (serializerFunction instanceof Error) {

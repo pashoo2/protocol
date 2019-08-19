@@ -13,6 +13,7 @@ import {
   CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME,
   CA_USER_IDENTITY_VERSION_PROP_NAME,
   CA_USER_IDENTITY_VERSION_CHARACTERS_COUNT,
+  CA_USER_IDENTITY_PARSER_VERSIONS_SUPPORTED,
 } from '../central-authority-class-user-identity.const';
 import {
   validateUserIdentityDescriptionVersion,
@@ -32,6 +33,9 @@ export const getParserFunctionByVersion = (
   version: string
 ): IParser | Error => {
   if (validateIdentityDescriptionVersion(version)) {
+    if (!CA_USER_IDENTITY_PARSER_VERSIONS_SUPPORTED.includes(version)) {
+      return new Error(`The version ${version} is not supported`);
+    }
     const parser = CA_USER_IDENTITY_PARSER_TO_VERSION[version];
 
     if (parser) {
@@ -68,6 +72,7 @@ export const parseIdentity = (
   const parser = getParserFunctionByVersion(version);
 
   if (parser instanceof Error) {
+    console.error(parser);
     return new Error("Can't define a parser function by identity string");
   }
 

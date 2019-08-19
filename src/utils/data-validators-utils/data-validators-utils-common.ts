@@ -10,7 +10,9 @@ export const dataValidatorUtilURI = (v: any): boolean => {
 };
 
 export const dataValidatorUtilURL = (v: any): boolean => {
-  return validateBySchema(CONST_VALIDATION_SCHEMES_URI, v);
+  const result = validateBySchema(CONST_VALIDATION_SCHEMES_URL, v);
+
+  return result;
 };
 
 export const dataValidatorUtilUUIDV4 = (v: any): boolean => {

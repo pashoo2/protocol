@@ -3,6 +3,7 @@ import { IUserIdentityDescriptionValidator } from './central-authority-class-use
 import {
   CA_USER_IDENTITY_VERSION_PROP_NAME,
   CA_USER_IDENTITY_VERSION_CHARACTERS_COUNT,
+  CA_USER_IDENTITY_PARSER_VERSIONS_SUPPORTED,
 } from '../central-authority-class-user-identity.const';
 
 export const validateIdentityDescriptionVersion = (
@@ -16,6 +17,10 @@ export const validateIdentityDescriptionVersion = (
     console.error(
       `An identity description version length must be a ${CA_USER_IDENTITY_VERSION_CHARACTERS_COUNT} characters`
     );
+    return false;
+  }
+  if (!CA_USER_IDENTITY_PARSER_VERSIONS_SUPPORTED.includes(version)) {
+    console.error(`The version ${version} is not supported`);
     return false;
   }
   return true;

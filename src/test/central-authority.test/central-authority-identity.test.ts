@@ -129,9 +129,110 @@ export const runTestCAIdentity = async () => {
       testIdentityDescriptionWithWrongGUID
     )
   ) {
-    console.error('Wrong guid value does not recognized');
+    console.error(
+      'Wrong guid value does not recognized in the identifier description'
+    );
     return;
   }
-  debugger;
+
+  const testIdentityDescriptionWithWrongURL = {
+    [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: 'google.com',
+    [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]:
+      '76d55caf-fc4a-41a9-8844-19877dcb19ad',
+  };
+  const identityValueFromWrongURL = new CentralAuthorityIdentity(
+    testIdentityDescriptionWithWrongURL
+  );
+
+  if (
+    validateUserIdentityInstance(
+      identityValueFromWrongURL,
+      testIdentityDescriptionWithWrongURL
+    )
+  ) {
+    console.error(
+      'Wrong url value does not recognized in the identifier description'
+    );
+    return;
+  }
+
+  const testIdentityStringnWithWrongURL =
+    '01htt://googlecom76d55caf-fc4a-41a9-8844-19877dcb19ad';
+  const identityValueFromStringWrongURL = new CentralAuthorityIdentity(
+    testIdentityStringnWithWrongURL
+  );
+
+  if (
+    validateUserIdentityInstance(identityValueFromStringWrongURL, {
+      [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: 'htt://googlecom',
+      [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]:
+        '76d55caf-fc4a-41a9-8844-19877dcb19ad',
+    })
+  ) {
+    console.error(
+      'Wrong url value does not recognized in the identifier string'
+    );
+    return;
+  }
+
+  const testIdentityStringnWithWrongUUID =
+    '01https://google.com76d55caf-fc4a-41a9-8*44-19877dcb19ad';
+  const identityValueFromStringWrongUUID = new CentralAuthorityIdentity(
+    testIdentityStringnWithWrongUUID
+  );
+
+  if (
+    validateUserIdentityInstance(identityValueFromStringWrongUUID, {
+      [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]:
+        'https://google.com',
+      [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]:
+        '76d55caf-fc4a-41a9-8*44-19877dcb19ad',
+    })
+  ) {
+    console.error(
+      'Wrong UUID value does not recognized in the identifier string'
+    );
+    return;
+  }
+
+  const testIdentityStringnWithWrongVersionUnsupported =
+    '11https://google.com76d55caf-fc4a-41a9-8144-19877dcb19ad';
+  const identityValueFromStringWrongVersionUnsupported = new CentralAuthorityIdentity(
+    testIdentityStringnWithWrongVersionUnsupported
+  );
+  const testIdentityDescriptionWithVersionUnsupported = {
+    [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: 'https://google.com',
+    [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]:
+      '76d55caf-fc4a-41a9-8144-19877dcb19ad',
+    [CA_USER_IDENTITY_VERSION_PROP_NAME]: '11',
+  };
+
+  if (
+    validateUserIdentityInstance(
+      identityValueFromStringWrongVersionUnsupported,
+      testIdentityDescriptionWithVersionUnsupported
+    )
+  ) {
+    console.error(
+      `The version unsupported 11 does not recognized in the identifier string`
+    );
+    return;
+  }
+
+  const identityValueFromIdentityDescriptionWrongVersionUnsupported = new CentralAuthorityIdentity(
+    testIdentityDescriptionWithVersionUnsupported
+  );
+
+  if (
+    validateUserIdentityInstance(
+      identityValueFromIdentityDescriptionWrongVersionUnsupported,
+      testIdentityDescriptionWithVersionUnsupported
+    )
+  ) {
+    console.error(
+      `The version unsupported 11 does not recognized in the identifier string`
+    );
+    return;
+  }
   console.warn('The user identity description test is succesfull');
 };
