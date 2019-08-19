@@ -54,6 +54,5 @@ export const serializeIdentity = (
       `Failed serialization to the right format for the user identity description version ${version}`
     );
   }
-  debugger;
   return serializeResult;
 };

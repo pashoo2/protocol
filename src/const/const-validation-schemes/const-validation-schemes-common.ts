@@ -6,7 +6,7 @@ import {
 
 export const CONST_VALIDATION_SCHEMES_URI = {
   type: 'string',
-  format: 'uri-reference',
+  format: 'uri',
   maxLength: CONST_VALUES_RESTRICTIONS_COMMON_URI_MAX_LENGTH,
 };
 
