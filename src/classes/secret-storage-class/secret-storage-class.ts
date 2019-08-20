@@ -145,6 +145,7 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
     }
 
     const connectResult = await authStorageProvider.connect();
+
     if (connectResult instanceof Error) {
       return connectResult;
     }
@@ -334,7 +335,7 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
     return true;
   }
 
-  reset() {
+  protected reset() {
     this.clearError();
     this.clearStatus();
     this.clearState();
@@ -350,7 +351,8 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
     }
     return new Error('There is no Auth storage provider defined');
   }
-  async disconnect(): Promise<boolean | Error> {
+
+  public async disconnect(): Promise<boolean | Error> {
     const resultDisconnectFromStorageProvider = await this.storageProviderDisconnect();
 
     if (resultDisconnectFromStorageProvider instanceof Error) {
@@ -362,7 +364,7 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
     return true;
   }
 
-  async authorize(
+  public async authorize(
     credentials: TSecretStoreCredentials
   ): Promise<boolean | Error> {
     const { password } = credentials;

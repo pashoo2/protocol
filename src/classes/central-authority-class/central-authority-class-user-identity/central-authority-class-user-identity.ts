@@ -78,7 +78,7 @@ export class CentralAuthorityIdentity implements ICAIdentityCommon {
   /**
    * uniquely identifies the user
    */
-  public get userIdentifier(): string | Error {
+  public get id(): string | Error {
     const { identityDescription } = this;
 
     if (identityDescription instanceof Error) {

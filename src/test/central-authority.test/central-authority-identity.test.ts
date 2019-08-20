@@ -115,12 +115,12 @@ export const runTestCAIdentity = async () => {
   }
 
   const {
-    userIdentifier,
+    id: userIdentifier,
   } = identityFromIdentityString as CentralAuthorityIdentity;
 
   if (userIdentifier instanceof Error || typeof userIdentifier !== 'string') {
     console.error(
-      'The userIdentifier prop must not be an error for a valid identity'
+      'The user identifier (id) prop must not be an error for a valid identity'
     );
     return;
   }
@@ -188,11 +188,11 @@ export const runTestCAIdentity = async () => {
   if (
     !(
       (identityValueFromStringWrongURL as CentralAuthorityIdentity)
-        .userIdentifier instanceof Error
+        .id instanceof Error
     )
   ) {
     console.error(
-      'The userIdentifier prop must be an error for a wrong authority url'
+      'The user identifier (id) prop must be an error for a wrong authority url'
     );
     return;
   }
@@ -219,7 +219,7 @@ export const runTestCAIdentity = async () => {
   if (
     !(
       (identityValueFromStringWrongUUID as CentralAuthorityIdentity)
-        .userIdentifier instanceof Error
+        .id instanceof Error
     )
   ) {
     console.error('The userIdentifier prop must be an error for a wrong uuid');
@@ -268,11 +268,11 @@ export const runTestCAIdentity = async () => {
   if (
     !(
       (identityValueFromIdentityDescriptionWrongVersionUnsupported as CentralAuthorityIdentity)
-        .userIdentifier instanceof Error
+        .id instanceof Error
     )
   ) {
     console.error(
-      'The userIdentifier prop must be an error for unsupported identity version'
+      'The user identifier (id) prop must be an error for unsupported identity version'
     );
     return;
   }

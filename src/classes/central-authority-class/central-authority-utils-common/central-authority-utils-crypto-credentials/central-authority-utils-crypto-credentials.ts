@@ -7,14 +7,13 @@ import {
   exportKeyPairsAsString,
   importKeyPairsFromString,
   checkIsCryptoKeyPairsExportedAsString,
-  checkIsCryptoKeyPairsExported,
 } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
-import {
-  CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME,
-  CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_USER_ID_KEY_NAME,
-  CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_KEY_CRYPTO_CREDENTIALS_EXPORTED_AS_STRING_MIN_LENGTH,
-} from './central-authority-storage-credentials.const';
 import { validateUserIdentity } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-auth-credentials/central-authority-validators-auth-credentials';
+import {
+  CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME,
+  CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME,
+  CA_CREDENTIALS_KEY_CRYPTO_CREDENTIALS_EXPORTED_AS_STRING_MIN_LENGTH,
+} from 'classes/central-authority-class/central-authority-class-const/central-authority-class-const';
 import {
   TCentralAuthorityUserIdentity,
   TCACryptoKeyPairs,
@@ -35,8 +34,8 @@ export const checkIsValidCryptoCredentials = (
   }
 
   const {
-    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeys,
-    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_USER_ID_KEY_NAME]: userIdentity,
+    [CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeys,
+    [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: userIdentity,
   } = cryptoCredentials;
 
   if (!cryptoKeys) {
@@ -81,8 +80,8 @@ export const checkIsValidCryptoCredentialsExportedFormat = (
   }
 
   const {
-    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeys,
-    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_USER_ID_KEY_NAME]: userIdentity,
+    [CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeys,
+    [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: userIdentity,
   } = cryptoCredentials;
 
   if (!cryptoKeys) {
@@ -118,7 +117,7 @@ export const checkExportedCryptoCredentialsToString = (
   return (
     typeof cryptoCredentialsExportedAsString === 'string' &&
     cryptoCredentialsExportedAsString.length >
-      CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_KEY_CRYPTO_CREDENTIALS_EXPORTED_AS_STRING_MIN_LENGTH
+      CA_CREDENTIALS_KEY_CRYPTO_CREDENTIALS_EXPORTED_AS_STRING_MIN_LENGTH
   );
 };
 
@@ -130,8 +129,8 @@ export const exportCryptoCredentialsToString = async (
   }
 
   const {
-    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeys,
-    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_USER_ID_KEY_NAME]: userIdentity,
+    [CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeys,
+    [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: userIdentity,
   } = userCryptoCredentials;
   const exportedCryptoKeys = await exportKeyPairsAsString(cryptoKeys);
 
@@ -140,8 +139,8 @@ export const exportCryptoCredentialsToString = async (
   }
 
   const cryptoCredentialsExported = {
-    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: exportedCryptoKeys,
-    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_USER_ID_KEY_NAME]: userIdentity,
+    [CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: exportedCryptoKeys,
+    [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: userIdentity,
   };
 
   if (!checkIsValidCryptoCredentialsExportedFormat(cryptoCredentialsExported)) {
@@ -176,8 +175,8 @@ export const importCryptoCredentialsFromExportedFromat = async (
   }
 
   const {
-    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeysExported,
-    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_USER_ID_KEY_NAME]: userIdentityExported,
+    [CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeysExported,
+    [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: userIdentityExported,
   } = cryptoCredentialsExported;
   const cryptoKeysImported = await importKeyPairsFromString(cryptoKeysExported);
 
@@ -189,8 +188,8 @@ export const importCryptoCredentialsFromExportedFromat = async (
   }
 
   const cryptoCredentials = {
-    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeysImported,
-    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_USER_ID_KEY_NAME]: userIdentityExported,
+    [CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeysImported,
+    [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: userIdentityExported,
   };
 
   if (!checkIsValidCryptoCredentials(cryptoCredentials)) {
@@ -237,8 +236,8 @@ export const getUserCredentialsByUserIdentityAndCryptoKeys = (
   }
 
   const cryptoCredentials = {
-    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_USER_ID_KEY_NAME]: userIdentity,
-    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeyPairs,
+    [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: userIdentity,
+    [CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeyPairs,
   };
 
   if (!checkIsValidCryptoCredentials(cryptoCredentials)) {

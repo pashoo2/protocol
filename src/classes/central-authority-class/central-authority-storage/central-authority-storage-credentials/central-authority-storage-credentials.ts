@@ -11,17 +11,6 @@ import {
   TCentralAuthorityUserCryptoCredentials,
 } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types-crypto-credentials';
 import {
-  CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS,
-  CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_KEY_CRYPTO_CREDENTIALS,
-  CENTRAL_AUTHORITY_STORAGE_PROVIDER_NAME,
-} from './central-authority-storage-credentials.const';
-import {
-  checkIsValidCryptoCredentials,
-  exportCryptoCredentialsToString,
-  getUserCredentialsByUserIdentityAndCryptoKeys,
-  importCryptoCredentialsFromAString,
-} from './central-authority-storage-credentials.utils';
-import {
   TCentralAuthorityUserIdentity,
   TCACryptoKeyPairs,
   ICentralAuthorityStorageCryptoCredentials,
@@ -34,6 +23,17 @@ import {
   CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME,
   CA_AUTH_CREDENTIALS_USER_PASSWORD_PROP_NAME,
 } from 'classes/central-authority-class/central-authority-class-const/central-authority-class-const';
+import {
+  checkIsValidCryptoCredentials,
+  exportCryptoCredentialsToString,
+  getUserCredentialsByUserIdentityAndCryptoKeys,
+  importCryptoCredentialsFromAString,
+} from 'classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials';
+import {
+  CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS,
+  CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_KEY_CRYPTO_CREDENTIALS,
+  CENTRAL_AUTHORITY_STORAGE_PROVIDER_NAME,
+} from './central-authority-storage-credentials.const';
 import { TSecretStoreConfiguration } from 'classes/secret-storage-class/secret-storage-class.types';
 import { calculateHash } from 'utils/hash-calculation-utils/hash-calculation-utils';
 
