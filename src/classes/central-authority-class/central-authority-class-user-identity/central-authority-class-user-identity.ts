@@ -11,6 +11,7 @@ import {
   CA_USER_IDENTITY_VERSION_PROP_NAME,
   CA_USER_IDENTITY_VERSION_CURRENT,
 } from './central-authority-class-user-identity.const';
+import { compressString } from 'utils/data-compression-utils/data-compression-utils';
 
 export class CentralAuthorityIdentity implements ICAIdentityCommon {
   protected _userIdentitySerialized?: Error | TCentralAuthorityUserIdentity;
@@ -72,6 +73,21 @@ export class CentralAuthorityIdentity implements ICAIdentityCommon {
       return new Error('Failed to serialize the user identity');
     }
     return _userIdentitySerialized;
+  }
+
+  /**
+   * uniquely identifies the user
+   */
+  public get userIdentifier(): string | Error {
+    const { identityDescription } = this;
+
+    if (identityDescription instanceof Error) {
+      return identityDescription;
+    }
+
+    const { authorityProviderURI, userUniqueIdentifier } = identityDescription;
+
+    return `${authorityProviderURI}${userUniqueIdentifier}`;
   }
 
   public toString(): TCentralAuthorityUserIdentity {

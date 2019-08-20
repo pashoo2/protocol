@@ -114,6 +114,17 @@ export const runTestCAIdentity = async () => {
     return;
   }
 
+  const {
+    userIdentifier,
+  } = identityFromIdentityString as CentralAuthorityIdentity;
+
+  if (userIdentifier instanceof Error || typeof userIdentifier !== 'string') {
+    console.error(
+      'The userIdentifier prop must not be an error for a valid identity'
+    );
+    return;
+  }
+
   const testIdentityDescriptionWithWrongGUID = {
     [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: 'https://google.com',
     [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]:
@@ -174,6 +185,17 @@ export const runTestCAIdentity = async () => {
     );
     return;
   }
+  if (
+    !(
+      (identityValueFromStringWrongURL as CentralAuthorityIdentity)
+        .userIdentifier instanceof Error
+    )
+  ) {
+    console.error(
+      'The userIdentifier prop must be an error for a wrong authority url'
+    );
+    return;
+  }
 
   const testIdentityStringnWithWrongUUID =
     '01https://google.com76d55caf-fc4a-41a9-8*44-19877dcb19ad';
@@ -192,6 +214,15 @@ export const runTestCAIdentity = async () => {
     console.error(
       'Wrong UUID value does not recognized in the identifier string'
     );
+    return;
+  }
+  if (
+    !(
+      (identityValueFromStringWrongUUID as CentralAuthorityIdentity)
+        .userIdentifier instanceof Error
+    )
+  ) {
+    console.error('The userIdentifier prop must be an error for a wrong uuid');
     return;
   }
 
@@ -231,6 +262,17 @@ export const runTestCAIdentity = async () => {
   ) {
     console.error(
       `The version unsupported 11 does not recognized in the identifier string`
+    );
+    return;
+  }
+  if (
+    !(
+      (identityValueFromIdentityDescriptionWrongVersionUnsupported as CentralAuthorityIdentity)
+        .userIdentifier instanceof Error
+    )
+  ) {
+    console.error(
+      'The userIdentifier prop must be an error for unsupported identity version'
     );
     return;
   }

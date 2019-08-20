@@ -37,4 +37,6 @@ export interface ICAIdentityCommon {
   identityDescription: ICAUserUniqueIdentifierDescription | Error;
   identityDescritptionSerialized: TCentralAuthorityUserIdentity | Error;
   toString: () => TCentralAuthorityUserIdentity;
+  // returns a unique string, may be used as a unique identifier in overall system
+  userIdentifier: string | Error;
 }
