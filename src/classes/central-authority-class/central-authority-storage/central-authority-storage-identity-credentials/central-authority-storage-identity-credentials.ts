@@ -126,6 +126,8 @@ export class CentralAuthorityIdentityCredentialsStorage
       console.error(err);
       return new Error('Failed to  store the credentials');
     }
+    // TODO implement the set method
+    return true;
   }
 }
 
