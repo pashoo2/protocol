@@ -129,6 +129,12 @@ export class CentralAuthorityIdentityCredentialsStorage
     // TODO implement the set method
     return true;
   }
+
+  async getCredentials(
+    identity: TCentralAuthorityUserIdentity
+  ): Promise<TCACryptoKeyPairs | Error | null> {
+    return null;
+  }
 }
 
 // TODO - add class for key - value data caching

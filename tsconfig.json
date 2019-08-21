@@ -16,7 +16,8 @@
     "noEmit": true,
     "jsx": "preserve",
     "baseUrl": "./src",
-    "typeRoots": ["types", "**/types", "**/node_modules/types"]
+    "typeRoots": ["types", "**/types", "**/node_modules/types"],
+    "experimentalDecorators": true
   },
   "include": ["src"],
   "exclude": ["node_modules", "**/*.spec.ts", "**/*.js"]

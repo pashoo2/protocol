@@ -1,5 +1,5 @@
 export interface IDataCachingDecoratorDecoratedFunction<T, V> {
-  (key: T, ...otherArguments: any[]): V;
+  (key: T): Promise<V>;
 }
 
 export interface IDataCachingDecoratorCachedValue<V> {

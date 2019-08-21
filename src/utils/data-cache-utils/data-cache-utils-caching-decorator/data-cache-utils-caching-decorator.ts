@@ -44,16 +44,16 @@ export const dataCachingUtilsCachingDecorator = <T, V, I extends object>(
       );
     }
 
-    function cachingWrapper(this: I, key: T, ...otherArguments: any[]): V {
+    async function cachingWrapper(this: I, key: T): Promise<V> {
       const cachedValueForKey = cache.get(key);
 
       // check if the value of the
       // key was cached
-      if (cachedValueForKey) {
+      if (cachedValueForKey != null) {
         return cachedValueForKey.value;
       }
 
-      const resultedValue = methodOrigin.apply(this, [key, ...otherArguments]);
+      const resultedValue = await methodOrigin.call(this, key);
 
       if (resultedValue != null) {
         const theMinimalRaitingValue =
@@ -90,6 +90,7 @@ export const dataCachingUtilsCachingDecorator = <T, V, I extends object>(
               }
             }
           }
+
           // cache the key value
           cache.set(key, {
             rating: keyRaiting,
