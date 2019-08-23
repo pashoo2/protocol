@@ -3,6 +3,7 @@ import {
   IDataCachingDecoratorCachedValue,
 } from './data-cache-utils-caching-decorator.types';
 import { commonUtilsArrayOrderByDec } from 'utils/common-utils/common-utils';
+import { DATA_CACHING_DECORATOR_DEFAULT_CACHE_CAPACITY } from './data-cache-utils-caching-decorator.const';
 
 /**
  * decorator for a method, will be wrapped for
@@ -13,7 +14,7 @@ import { commonUtilsArrayOrderByDec } from 'utils/common-utils/common-utils';
  * of a cached values
  */
 export const dataCachingUtilsCachingDecorator = <T, V, I extends object>(
-  cachedValuesCount: number
+  cacheItemsCapacity: number = DATA_CACHING_DECORATOR_DEFAULT_CACHE_CAPACITY
 ) => {
   /**
    *
@@ -36,7 +37,7 @@ export const dataCachingUtilsCachingDecorator = <T, V, I extends object>(
     const keysRaiting = new Map<T, number>();
     let keysHighestRatings: number[] = [];
     const cache = new Map<T, IDataCachingDecoratorCachedValue<V>>();
-    const cachedValuesCountLastIndex = cachedValuesCount - 1;
+    const cachedValuesCountLastIndex = cacheItemsCapacity - 1;
 
     if (typeof methodOrigin !== 'function') {
       throw new Error(

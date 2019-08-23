@@ -73,10 +73,14 @@ export class SecretStorage
    * returns true if connected succesfully to
    * a storage and have a vaild crypto key
    */
-  public isRunning() {
+  protected isRunning() {
     const { status } = this;
 
     return status === SECRET_STORAGE_STATUS.RUNNING;
+  }
+
+  public get isActive() {
+    return !!this.isRunning();
   }
 
   /**

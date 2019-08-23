@@ -18,6 +18,8 @@ export class CentralAuthorityIdentity implements ICAIdentityCommon {
 
   protected _userIdentityParsed?: Error | ICAUserUniqueIdentifierDescription;
 
+  public isValid?: boolean;
+
   constructor(
     protected _userIdentity:
       | TCentralAuthorityUserIdentity
@@ -112,6 +114,10 @@ export class CentralAuthorityIdentity implements ICAIdentityCommon {
       } else {
         this._userIdentityParsed = parsedUserIdentity;
         this._userIdentitySerialized = userIdentity;
+        if (this.isValid !== false) {
+          this.isValid = true;
+        }
+        return;
       }
     } else {
       const err = new Error('The user identity serialized is not defined');
@@ -119,6 +125,7 @@ export class CentralAuthorityIdentity implements ICAIdentityCommon {
       this._userIdentityParsed = err;
       this._userIdentitySerialized = err;
     }
+    this.isValid = false;
   }
 
   protected serializeUserIdentityDescription(
@@ -135,6 +142,9 @@ export class CentralAuthorityIdentity implements ICAIdentityCommon {
       } else {
         this._userIdentityParsed = userIdentityDescription;
         this._userIdentitySerialized = serializedDescription;
+        if (this.isValid !== false) {
+          this.isValid = true;
+        }
       }
     } else {
       const err = new Error('The user identifier description is not defined');
@@ -142,6 +152,7 @@ export class CentralAuthorityIdentity implements ICAIdentityCommon {
       this._userIdentitySerialized = err;
       this._userIdentityParsed = err;
     }
+    this.isValid = false;
   }
 }
 

@@ -55,11 +55,20 @@ export interface ICAIdentityCredentialsDescriptionStored {
  * @interface ICAIdentityCredentialsStorage
  */
 export interface ICAIdentityCredentialsStorage {
+  // is the instance is connected
+  // to the storage and active
+  isActive: boolean;
+  // connect to the storage with the credentials
+  // to decrypt a values stored
   connect(credentials: TSecretStoreCredentials): Promise<boolean | Error>;
+  // disconnect from the storage
   disconnect(): Promise<boolean | Error>;
+  // read credentials from the storage
   getCredentials(
     identity: TCentralAuthorityUserIdentity
   ): Promise<TCACryptoKeyPairs | Error | null>;
+  // store credentials for the identity
+  // in the storage
   setCredentials(
     identity: TCentralAuthorityUserIdentity,
     cryptoCredentials: TCACryptoKeyPairs

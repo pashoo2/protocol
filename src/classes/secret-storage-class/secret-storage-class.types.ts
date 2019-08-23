@@ -1,15 +1,13 @@
 export interface ISecretStorage {
+  // returns true if connected succesfully to
+  // a storage and have a vaild crypto key
+  isActive: boolean;
   // authorize and connect to the storage
   authorize(credentials: TSecretStoreCredentials): Promise<boolean | Error>;
   // disconnect from the storage
   disconnect(): Promise<boolean | Error>;
   set(key: string, value: string): Promise<boolean | Error>;
   get(key: string): Promise<string | undefined | Error>;
-  /**
-   * returns true if connected succesfully to
-   * a storage and have a vaild crypto key
-   */
-  isRunning(): boolean; //
 }
 
 export abstract class StorageProvider {

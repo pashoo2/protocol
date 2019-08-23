@@ -18,6 +18,7 @@ import {
   TCentralAuthorityUserIdentity,
   TCACryptoKeyPairs,
 } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
+import CentralAuthorityIdentity from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
 
 /**
  * validate is a given value has
@@ -244,4 +245,72 @@ export const getUserCredentialsByUserIdentityAndCryptoKeys = (
     return new Error('Failed to create a valid crypto credentials');
   }
   return cryptoCredentials;
+};
+
+export const getExportedCryptoCredentials = async (
+  identity: TCentralAuthorityUserIdentity,
+  cryptoCredentials: TCACryptoKeyPairs
+): Promise<Error | string> => {
+  try {
+    // parse the identity
+    const caIdentity = new CentralAuthorityIdentity(identity);
+    const { isValid } = caIdentity;
+
+    if (!isValid) {
+      return new Error('The identity is not valid or have an unknown format');
+    }
+    if (!checkIsValidCryptoCredentials(cryptoCredentials)) {
+      return new Error(
+        'The credentials are not valid or have an unknown format'
+      );
+    }
+
+    const caUserCryptoCredentials = getUserCredentialsByUserIdentityAndCryptoKeys(
+      identity,
+      cryptoCredentials
+    );
+
+    if (caUserCryptoCredentials instanceof Error) {
+      console.error(caUserCryptoCredentials);
+      return new Error('Failed to get User crypto credentials');
+    }
+    return exportCryptoCredentialsToString(caUserCryptoCredentials);
+  } catch (err) {
+    console.error(err);
+    return new Error('Failed to process the credentials or identity');
+  }
+};
+
+export const getExportedCryptoCredentialsByCAIdentity = async (
+  caIdentity: CentralAuthorityIdentity,
+  cryptoCredentials: TCACryptoKeyPairs
+): Promise<Error | string> => {
+  try {
+    // parse the identity
+    const { isValid } = caIdentity;
+
+    if (!isValid) {
+      return new Error('The identity is not valid or have an unknown format');
+    }
+    if (!checkIsValidCryptoCredentials(cryptoCredentials)) {
+      return new Error(
+        'The credentials are not valid or have an unknown format'
+      );
+    }
+
+    const identity = caIdentity.toString();
+    const caUserCryptoCredentials = getUserCredentialsByUserIdentityAndCryptoKeys(
+      identity,
+      cryptoCredentials
+    );
+
+    if (caUserCryptoCredentials instanceof Error) {
+      console.error(caUserCryptoCredentials);
+      return new Error('Failed to get User crypto credentials');
+    }
+    return exportCryptoCredentialsToString(caUserCryptoCredentials);
+  } catch (err) {
+    console.error(err);
+    return new Error('Failed to process the credentials or identity');
+  }
 };

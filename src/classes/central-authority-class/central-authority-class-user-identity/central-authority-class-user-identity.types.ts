@@ -39,4 +39,5 @@ export interface ICAIdentityCommon {
   toString: () => TCentralAuthorityUserIdentity;
   // returns a unique string, may be used as a unique identifier in overall system
   id: string | Error;
+  isValid?: boolean;
 }
