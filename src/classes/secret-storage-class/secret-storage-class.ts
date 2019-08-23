@@ -316,7 +316,7 @@ export class SecretStorage
     return result === true;
   }
 
-  protected async connect(): Promise<boolean | Error> {
+  public async connect(): Promise<boolean | Error> {
     this.clearState();
     this.setStatus(SECRET_STORAGE_STATUS.CONNECTING);
 

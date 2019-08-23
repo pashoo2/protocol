@@ -2,6 +2,7 @@ export interface ISecretStorage {
   // returns true if connected succesfully to
   // a storage and have a vaild crypto key
   isActive: boolean;
+  connect(): Promise<boolean | Error>;
   // authorize and connect to the storage
   authorize(credentials: TSecretStoreCredentials): Promise<boolean | Error>;
   // disconnect from the storage

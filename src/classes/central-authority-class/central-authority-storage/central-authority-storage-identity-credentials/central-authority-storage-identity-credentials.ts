@@ -18,9 +18,6 @@ import {
 } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 import CentralAuthorityIdentity from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
 import {
-  checkIsValidCryptoCredentials,
-  exportCryptoCredentialsToString,
-  getExportedCryptoCredentials,
   getExportedCryptoCredentialsByCAIdentity,
   importCryptoCredentialsFromExportedFromat,
   replaceCryptoCredentialsIdentity,
@@ -70,7 +67,7 @@ export class CentralAuthorityIdentityCredentialsStorage
    * @param storageCredentials
    */
   public async connect(
-    storageCredentials: TSecretStoreCredentials
+    storageCredentials?: TSecretStoreCredentials
   ): Promise<boolean | Error> {
     const connection = this.createConnectionToSecretStorage();
 
@@ -82,7 +79,13 @@ export class CentralAuthorityIdentityCredentialsStorage
     }
     this.setStatus(CA_IDENTITY_CREDENTIALS_STORAGE_STATUS.CONNECTING);
 
-    const connectionResult = await connection.authorize(storageCredentials);
+    let connectionResult;
+
+    if (storageCredentials) {
+      connectionResult = await connection.authorize(storageCredentials);
+    } else {
+      connectionResult = await connection.connect();
+    }
 
     if (connectionResult instanceof Error) {
       console.error(connectionResult);

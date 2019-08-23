@@ -1,7 +1,8 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { runTestCachingDecorator } from 'test/common-utils.test/common-utils.test';
+import { runCACredentialsIdentityStorageTest } from 'test/central-authority.test/central-authority-storage-identity-credentials.test';
+// import { runTestCachingDecorator } from 'test/common-utils.test/common-utils.test';
 // import { runTestCAIdentity } from 'test/central-authority.test/central-authority.test';
 // import {
 //   runTestKeys,
@@ -16,8 +17,9 @@ import { runTestCachingDecorator } from 'test/common-utils.test/common-utils.tes
 // runTest();
 // runTestsCredentialsStorage();
 // runTestCAIdentity();
+// runTestCachingDecorator();
 
-runTestCachingDecorator();
+runCACredentialsIdentityStorageTest();
 
 const App: React.FC = () => {
   return (
