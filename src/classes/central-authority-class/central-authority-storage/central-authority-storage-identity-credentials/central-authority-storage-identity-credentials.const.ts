@@ -1,4 +1,5 @@
 import { TSecretStoreConfiguration } from 'classes/secret-storage-class/secret-storage-class.types';
+import { SECRET_STORAGE_PROVIDERS_NAME } from 'classes/secret-storage-class/secret-storage-class.const';
 
 export const CA_IDENTITY_CREDENTIALS_STORAGE_NAME =
   'CA_IDENTITY_CREDENTIALS_STORAGE';
@@ -18,7 +19,7 @@ export const CA_IDENTITY_CREDENTIALS_STORAGE_STATUS = {
 };
 
 export const CA_IDENTITY_CREDENTIALS_STORAGE_CONFIGURATION: TSecretStoreConfiguration = {
-  storageProviderName: `__${CA_IDENTITY_CREDENTIALS_STORAGE_FULL_NAME}_STORAGE`,
+  storageProviderName: SECRET_STORAGE_PROVIDERS_NAME.LOCAL_STORAGE,
 };
 
 export const CA_IDENTITY_CREDENTIALS_STORAGE_READ_CACHE_CAPACITY = 300;

@@ -4,6 +4,7 @@ import {
   CA_IDENTITY_CREDENTIALS_STORAGE_CONFIGURATION,
   CA_IDENTITY_CREDENTIALS_STORAGE_READ_CACHE_CAPACITY,
   CA_IDENTITY_CREDENTIALS_STORAGE_READ_RAW_CACHE_CAPACITY,
+  CA_IDENTITY_CREDENTIALS_STORAGE_FULL_NAME,
 } from './central-authority-storage-identity-credentials.const';
 import { ICAIdentityCredentialsStorage } from './central-authority-identity-storage.types';
 import { SecretStorage } from 'classes/secret-storage-class/secret-storage-class';
@@ -131,6 +132,10 @@ export class CentralAuthorityIdentityCredentialsStorage
     return true;
   }
 
+  protected getKeyNameWithPrefix(key: string): string {
+    return `__CA_IDENTITY_CREDENTIALS_STORAGE_FULL_NAME___${key}`;
+  }
+
   @caching(CA_IDENTITY_CREDENTIALS_STORAGE_READ_RAW_CACHE_CAPACITY)
   protected async getCredentialsRaw(
     id: string
@@ -219,7 +224,10 @@ export class CentralAuthorityIdentityCredentialsStorage
       // connected to
       const { secretStorageConnection } = this;
 
-      return secretStorageConnection!!.set(id, cryptoCredentialsExported);
+      return secretStorageConnection!!.set(
+        this.getKeyNameWithPrefix(id),
+        cryptoCredentialsExported
+      );
     } catch (err) {
       console.error(err);
       return new Error('Failed to store the credentials');
@@ -249,7 +257,9 @@ export class CentralAuthorityIdentityCredentialsStorage
         return new Error('Failed to parse the identity and get id');
       }
 
-      const caCryptoCredentials = await this.getCredentialsRaw(id);
+      const caCryptoCredentials = await this.getCredentialsRaw(
+        this.getKeyNameWithPrefix(id)
+      );
 
       if (caCryptoCredentials instanceof Error) {
         console.error(caCryptoCredentials);
@@ -293,9 +303,5 @@ export class CentralAuthorityIdentityCredentialsStorage
         'Failed to read a credentials for identity from the storage'
       );
     }
-
-    return null;
   }
 }
-
-// TODO - add class for key - value data caching
