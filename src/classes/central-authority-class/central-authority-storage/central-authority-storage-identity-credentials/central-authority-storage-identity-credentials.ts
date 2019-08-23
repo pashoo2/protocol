@@ -45,10 +45,10 @@ export class CentralAuthorityIdentityCredentialsStorage
   /**
    * connect to the SecretStorage with
    * the user's credentials
-   * @param credentials
+   * @param storageCredentials
    */
   async connect(
-    credentials: TSecretStoreCredentials
+    storageCredentials: TSecretStoreCredentials
   ): Promise<boolean | Error> {
     const connection = this.createConnectionToSecretStorage();
 
@@ -60,7 +60,7 @@ export class CentralAuthorityIdentityCredentialsStorage
     }
     this.setStatus(CA_IDENTITY_CREDENTIALS_STORAGE_STATUS.CONNECTING);
 
-    const connectionResult = await connection.authorize(credentials);
+    const connectionResult = await connection.authorize(storageCredentials);
 
     if (connectionResult instanceof Error) {
       console.error(connectionResult);

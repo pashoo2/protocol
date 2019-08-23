@@ -4,6 +4,7 @@ import {
   TStorageProvider,
   IStorageProvider,
   TSecretStoreCredentials,
+  ISecretStorage,
 } from './secret-storage-class.types';
 import {
   SECRET_STORAGE_PROVIDERS,
@@ -23,12 +24,12 @@ import { decryptDataWithKey } from 'utils/password-utils/decrypt.password-utils'
 import { encryptDataToString } from 'utils/password-utils/encrypt.password-utils';
 import { getStatusClass } from 'classes/basic-classes/status-class-base/status-class-base';
 
-export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
-  {
+export class SecretStorage
+  extends getStatusClass<typeof SECRET_STORAGE_STATUS>({
     errorStatus: SECRET_STORAGE_STATUS.ERROR,
     instanceName: 'SecretStorage',
-  }
-) {
+  })
+  implements ISecretStorage {
   private static checkIsStorageProviderInstance(
     storageProviderInstance: any
   ): Error | boolean {
@@ -196,7 +197,9 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
     throw new Error('There is no storage provider configuration was defined');
   }
 
-  async setEncryptonKeyAuthInStorage(key: string): Promise<boolean | Error> {
+  protected async setEncryptonKeyAuthInStorage(
+    key: string
+  ): Promise<boolean | Error> {
     try {
       const { KEY_IN_AUTH_STORAGE: KEY_IN_SESSION_STORAGE } = SecretStorage;
       const { authStorageProvider } = this;
@@ -211,7 +214,9 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
     }
   }
 
-  async readEncryptionKeyFomAuthStorage(): Promise<CryptoKey | Error> {
+  protected async readEncryptionKeyFomAuthStorage(): Promise<
+    CryptoKey | Error
+  > {
     try {
       const { KEY_IN_AUTH_STORAGE: KEY_IN_SESSION_STORAGE } = SecretStorage;
       const { authStorageProvider } = this;
@@ -240,7 +245,7 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
     }
   }
 
-  async setEncryptionKey(
+  protected async setEncryptionKey(
     key: TPASSWORD_ENCRYPTION_KEY_IMPORT_NATIVE_SUPPORTED_TYPES | CryptoKey
   ): Promise<boolean | Error> {
     let k;
@@ -273,7 +278,7 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
     return true;
   }
 
-  async importCryptoKey(): Promise<boolean | Error> {
+  protected async importCryptoKey(): Promise<boolean | Error> {
     const { k: cryptoKey } = this;
 
     // check if already imported
@@ -301,13 +306,13 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
    * check if a crypto key is already exists
    * in session storage or a cached in memory
    */
-  async checkIsAuthorized(): Promise<boolean> {
+  protected async checkIsAuthorized(): Promise<boolean> {
     const result = await this.importCryptoKey();
 
     return result === true;
   }
 
-  async connect(): Promise<boolean | Error> {
+  protected async connect(): Promise<boolean | Error> {
     this.clearState();
     this.setStatus(SECRET_STORAGE_STATUS.CONNECTING);
 
@@ -343,7 +348,7 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
     this.authStorageProvider = undefined;
   }
 
-  async storageProviderDisconnect(): Promise<boolean | Error> {
+  protected async storageProviderDisconnect(): Promise<boolean | Error> {
     const { authStorageProvider } = this;
 
     if (authStorageProvider) {
@@ -399,7 +404,7 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
     return this.connect();
   }
 
-  async getWithStorageProvider(
+  protected async getWithStorageProvider(
     key: string
   ): Promise<string | Error | undefined> {
     const { storageProvider } = this;
@@ -424,7 +429,7 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
     return value;
   }
 
-  async decryptValue(value: string): Promise<string | Error> {
+  protected async decryptValue(value: string): Promise<string | Error> {
     const { k } = this;
 
     if (!(k instanceof CryptoKey)) {
@@ -444,7 +449,7 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
     return decryptedValue;
   }
 
-  get = async (key: string): Promise<string | Error | undefined> => {
+  public get = async (key: string): Promise<string | Error | undefined> => {
     const { isRunning } = this;
 
     if (!isRunning) {
@@ -467,7 +472,7 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
     return decryptResult || undefined;
   };
 
-  async setWithStorageProvider(
+  protected async setWithStorageProvider(
     key: string,
     value: string
   ): Promise<boolean | Error> {
@@ -492,7 +497,7 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
     return true;
   }
 
-  async encryptValue(value: string): Promise<string | Error> {
+  protected async encryptValue(value: string): Promise<string | Error> {
     const { k } = this;
 
     if (!(k instanceof CryptoKey)) {
@@ -510,7 +515,7 @@ export class SecretStorage extends getStatusClass<typeof SECRET_STORAGE_STATUS>(
     return encryptedValue;
   }
 
-  async set(key: string, value: string): Promise<boolean | Error> {
+  public async set(key: string, value: string): Promise<boolean | Error> {
     const { isRunning } = this;
 
     if (!isRunning) {
