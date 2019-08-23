@@ -56,7 +56,7 @@ export const dataCachingUtilsCachingDecorator = <T, V, I extends object>(
 
       const resultedValue = await methodOrigin.call(this, key);
 
-      if (resultedValue != null) {
+      if (!(resultedValue instanceof Error) && resultedValue != null) {
         const theMinimalRaitingValue =
           keysHighestRatings[cachedValuesCountLastIndex];
         // increase the key raiting on each read of the key
@@ -99,7 +99,6 @@ export const dataCachingUtilsCachingDecorator = <T, V, I extends object>(
           });
         }
       }
-
       return resultedValue;
     }
 

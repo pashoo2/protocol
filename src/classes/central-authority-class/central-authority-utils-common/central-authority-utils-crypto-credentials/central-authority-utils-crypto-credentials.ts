@@ -249,7 +249,7 @@ export const getUserCredentialsByUserIdentityAndCryptoKeys = (
 
 export const getExportedCryptoCredentials = async (
   identity: TCentralAuthorityUserIdentity,
-  cryptoCredentials: TCACryptoKeyPairs
+  cryptoCredentialsKeyPairs: TCACryptoKeyPairs
 ): Promise<Error | string> => {
   try {
     // parse the identity
@@ -259,7 +259,7 @@ export const getExportedCryptoCredentials = async (
     if (!isValid) {
       return new Error('The identity is not valid or have an unknown format');
     }
-    if (!checkIsValidCryptoCredentials(cryptoCredentials)) {
+    if (!checkIsValidCryptoCredentials(cryptoCredentialsKeyPairs)) {
       return new Error(
         'The credentials are not valid or have an unknown format'
       );
@@ -267,7 +267,7 @@ export const getExportedCryptoCredentials = async (
 
     const caUserCryptoCredentials = getUserCredentialsByUserIdentityAndCryptoKeys(
       identity,
-      cryptoCredentials
+      cryptoCredentialsKeyPairs
     );
 
     if (caUserCryptoCredentials instanceof Error) {
@@ -283,34 +283,26 @@ export const getExportedCryptoCredentials = async (
 
 export const getExportedCryptoCredentialsByCAIdentity = async (
   caIdentity: CentralAuthorityIdentity,
-  cryptoCredentials: TCACryptoKeyPairs
+  cryptoCredentialsKeyPairs: TCACryptoKeyPairs
 ): Promise<Error | string> => {
-  try {
-    // parse the identity
-    const { isValid } = caIdentity;
-
-    if (!isValid) {
-      return new Error('The identity is not valid or have an unknown format');
-    }
-    if (!checkIsValidCryptoCredentials(cryptoCredentials)) {
-      return new Error(
-        'The credentials are not valid or have an unknown format'
-      );
-    }
-
-    const identity = caIdentity.toString();
-    const caUserCryptoCredentials = getUserCredentialsByUserIdentityAndCryptoKeys(
-      identity,
-      cryptoCredentials
+  if (typeof caIdentity === 'object') {
+    return getExportedCryptoCredentials(
+      String(caIdentity), // conver it to identity
+      cryptoCredentialsKeyPairs
     );
-
-    if (caUserCryptoCredentials instanceof Error) {
-      console.error(caUserCryptoCredentials);
-      return new Error('Failed to get User crypto credentials');
-    }
-    return exportCryptoCredentialsToString(caUserCryptoCredentials);
-  } catch (err) {
-    console.error(err);
-    return new Error('Failed to process the credentials or identity');
   }
+  return new Error('The identity has a wrong format');
+};
+
+export const replaceCryptoCredentialsIdentity = (
+  cryptoCredentials: TCentralAuthorityUserCryptoCredentials,
+  identity: TCentralAuthorityUserIdentity
+): Error | TCentralAuthorityUserCryptoCredentials => {
+  if (checkIsValidCryptoCredentials(cryptoCredentials)) {
+    return {
+      ...cryptoCredentials,
+      [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: identity,
+    };
+  }
+  return new Error('The crypto credentials have a wrong format');
 };

@@ -1,6 +1,7 @@
 import {
   TCentralAuthorityUserIdentity,
   TCACryptoKeyPairs,
+  TCentralAuthorityUserCryptoCredentials,
 } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 import { ownValueOf } from 'types/helper.types';
 import { TSecretStoreCredentials } from 'classes/secret-storage-class/secret-storage-class.types';
@@ -66,7 +67,7 @@ export interface ICAIdentityCredentialsStorage {
   // read credentials from the storage
   getCredentials(
     identity: TCentralAuthorityUserIdentity
-  ): Promise<TCACryptoKeyPairs | Error | null>;
+  ): Promise<TCentralAuthorityUserCryptoCredentials | Error | null>;
   // store credentials for the identity
   // in the storage
   setCredentials(
