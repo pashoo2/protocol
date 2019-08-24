@@ -1,0 +1,7 @@
+{
+    "main": "central-authority-connection-firebase.ts",
+    "types": "central-authority-connection-firebase.ts",
+    "dependencies": {
+        "firebase": "6.3.5"
+    }
+}
