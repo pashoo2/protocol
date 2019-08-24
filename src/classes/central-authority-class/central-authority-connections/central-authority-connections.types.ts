@@ -1,5 +1,10 @@
-import { TCentralAuthorityUserCryptoCredentials } from '../central-authority-class-types/central-authority-class-types';
+import { TCentralAuthorityUserCryptoCredentials, ICentralAuthorityUserProfile, ICentralAuthorityUserAuthCredentials } from '../central-authority-class-types/central-authority-class-types';
 import { ICAConnectionConfigurationFirebase } from './central-authority-connection-firebase/central-authority-connection-firebase.types.configuration';
+
+export interface ICAConnectionUserSignedInResult {
+    cryptoCredentials: TCentralAuthorityUserCryptoCredentials,
+    profile: ICentralAuthorityUserProfile,
+}
 
 /**
  * credentials used to sign up
@@ -7,9 +12,7 @@ import { ICAConnectionConfigurationFirebase } from './central-authority-connecti
  * @export
  * @interface ICAConnectionSignUpCredentials
  */
-export interface ICAConnectionSignUpCredentials {
-    login: string,
-    password: string,
+export interface ICAConnectionSignUpCredentials extends ICentralAuthorityUserAuthCredentials {
     cryptoCredentials: TCentralAuthorityUserCryptoCredentials,
 }
 
@@ -36,7 +39,7 @@ export interface ICAConnection {
      * server
      * @param credentialsSignUp 
      */
-    signUp(credentialsSignUp: ICAConnectionSignUpCredentials): Promise<TCentralAuthorityUserCryptoCredentials | Error>,
+    signUp(credentialsSignUp: ICAConnectionSignUpCredentials): Promise<ICAConnectionUserSignedInResult | Error>,
     /**
      * sign in the user
      * on the remote server

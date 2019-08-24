@@ -13,5 +13,19 @@ export const runTestCAConnectionFirebase = async () => {
         return;
     }
 
+    // TOOD - validator for an auth credentials
+    // password must be a 6 characters at least
+    const authCredentials = {
+        login: 'akulich.p@gmail.com',
+        password: '123456',
+    }
+    const authorizeResult = connectionFirebase.singUpWithAuthCredentials(authCredentials);
+    
+    if (authorizeResult instanceof Error) {
+        console.error(authorizeResult);
+        console.error('Failed to sign up to the firebase app');
+        return;
+    }
+
     console.warn('CA connection firebase test succeed');
 }

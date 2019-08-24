@@ -12,10 +12,19 @@ import {
 
 export type TCentralAuthorityUserIdentity = string;
 
+export interface ICentralAuthorityUserAuthCredentials {
+  login: string,
+  password: string,
+}
+
 export type TCentralAuthorityAuthCredentials = {
   [CA_AUTH_CREDENTIALS_USER_PASSWORD_PROP_NAME]: string;
   [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: TCentralAuthorityUserIdentity;
 };
+
+export interface ICentralAuthorityUserProfile {
+  name: string;
+}
 
 export interface ICentralAuthorityStorageCryptoCredentials {
   connect(
