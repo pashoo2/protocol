@@ -22,8 +22,16 @@ import {
   getExportedCryptoCredentialsByCAIdentity,
   importCryptoCredentialsFromExportedFromat,
   replaceCryptoCredentialsIdentity,
+  importCryptoCredentialsFromAString,
+  getUserIdentityByCryptoCredentials,
+  getCryptoKeyPairsByCryptoCredentials,
 } from 'classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials';
 import { dataCachingUtilsCachingDecorator as caching } from 'utils/data-cache-utils/data-cache-utils';
+import {
+  checkExportedCryptoCredentialsToString,
+  checkIsValidCryptoCredentialsExportedFormat,
+  checkIsValidCryptoCredentials,
+} from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
 
 /**
  * this is the storage for the user
@@ -167,9 +175,9 @@ export class CentralAuthorityIdentityCredentialsStorage
     return undefined;
   }
 
-  public setCredentials = async (
+  protected setCredentialsByIdentity = async (
     identity: TCentralAuthorityUserIdentity,
-    cryptoCredentials: TCACryptoKeyPairs
+    cryptoKeyPairs: TCACryptoKeyPairs
   ): Promise<boolean | Error> => {
     const { isActive } = this;
 
@@ -181,7 +189,7 @@ export class CentralAuthorityIdentityCredentialsStorage
       const caIdentity = new CentralAuthorityIdentity(identity);
       const cryptoCredentialsExported = await getExportedCryptoCredentialsByCAIdentity(
         caIdentity,
-        cryptoCredentials
+        cryptoKeyPairs
       );
 
       if (cryptoCredentialsExported instanceof Error) {
@@ -234,6 +242,75 @@ export class CentralAuthorityIdentityCredentialsStorage
     }
     return true;
   };
+
+  protected async setCredentialsByCACryptoCredentials(
+    caCryptoCredentials: TCentralAuthorityUserCryptoCredentials
+  ): Promise<boolean | Error> {
+    const identity = getUserIdentityByCryptoCredentials(caCryptoCredentials);
+
+    if (identity instanceof Error) {
+      console.error(identity);
+      return new Error(
+        'The user identity is not valid or have an unknown format'
+      );
+    }
+
+    const cryptoKeyPairs = getCryptoKeyPairsByCryptoCredentials(
+      caCryptoCredentials
+    );
+
+    if (cryptoKeyPairs instanceof Error) {
+      console.error(cryptoKeyPairs);
+      return new Error(
+        'The crypto key pairs are not valid or have an unknown format'
+      );
+    }
+
+    return this.setCredentialsByIdentity(
+      identity,
+      cryptoKeyPairs
+    );
+  }
+
+  protected async setCredentialsByCACryptoCredentialsExportedToString(
+    caCryptoCredentialsExportedToString: string
+  ): Promise<boolean | Error> {
+    const cryptoCredentials = await importCryptoCredentialsFromAString(
+      caCryptoCredentialsExportedToString
+    );
+
+    if (cryptoCredentials instanceof Error) {
+      console.error(cryptoCredentials);
+      return new Error('Failed to import crypto credentials from the string');
+    }
+    return this.setCredentialsByCACryptoCredentials(cryptoCredentials);
+  }
+
+  public async setCredentials(...args: any[]): Promise<boolean | Error> {
+    const argsLenght = args.length;
+
+    if (argsLenght === 2) {
+      return this.setCredentials(...args);
+    } else if (argsLenght === 1) {
+      const caCryptoCredentials = args[0];
+      const caCryptoCredentialsValueType = typeof caCryptoCredentials;
+
+      if (
+        caCryptoCredentialsValueType === 'string' &&
+        checkExportedCryptoCredentialsToString(caCryptoCredentials)
+      ) {
+        return this.setCredentialsByCACryptoCredentialsExportedToString(
+          caCryptoCredentials
+        );
+      } else if (
+        caCryptoCredentialsValueType === 'object' &&
+        checkIsValidCryptoCredentials(caCryptoCredentials)
+      ) {
+        return this.setCredentialsByCACryptoCredentials(caCryptoCredentials);
+      }
+    }
+    return new Error('An unknown arguments');
+  }
 
   @caching(CA_IDENTITY_CREDENTIALS_STORAGE_READ_CACHE_CAPACITY)
   public async getCredentials(

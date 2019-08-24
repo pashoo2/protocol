@@ -2,6 +2,7 @@ import {
   TCentralAuthorityUserIdentity,
   TCACryptoKeyPairs,
   TCentralAuthorityUserCryptoCredentials,
+  TCentralAuthorityUserCryptoCredentialsExported,
 } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 import { ownValueOf } from 'types/helper.types';
 import { TSecretStoreCredentials } from 'classes/secret-storage-class/secret-storage-class.types';
@@ -73,5 +74,18 @@ export interface ICAIdentityCredentialsStorage {
   setCredentials(
     identity: TCentralAuthorityUserIdentity,
     cryptoCredentials: TCACryptoKeyPairs
+  ): Promise<boolean | Error>;
+  // Store the crypto credentials.
+  // It will be parsed to
+  // identity and key pairs
+  setCredentials(
+    cryptoCredentials: TCentralAuthorityUserCryptoCredentials
+  ): Promise<boolean | Error>;
+  // store the crypto credentials
+  // exported to a string.
+  // It will be parsed to
+  // identity and key pairs
+  setCredentials(
+    cryptoCredentialsExportedAsString: string
   ): Promise<boolean | Error>;
 }
