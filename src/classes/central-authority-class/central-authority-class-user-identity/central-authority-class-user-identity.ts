@@ -101,10 +101,15 @@ export class CentralAuthorityIdentity implements ICAIdentityCommon {
     return identityDescritptionSerialized;
   }
 
+  protected setIdentityIsValid() {
+    if (this.isValid !== false) {
+      this.isValid = true;
+    }
+  }
+
   protected parseUserIdentity(userIdentity: TCentralAuthorityUserIdentity) {
     if (userIdentity) {
       const parsedUserIdentity = parseIdentity(userIdentity);
-
       if (parsedUserIdentity instanceof Error) {
         console.error(parsedUserIdentity);
         this._userIdentityParsed = parsedUserIdentity;
@@ -114,9 +119,7 @@ export class CentralAuthorityIdentity implements ICAIdentityCommon {
       } else {
         this._userIdentityParsed = parsedUserIdentity;
         this._userIdentitySerialized = userIdentity;
-        if (this.isValid !== false) {
-          this.isValid = true;
-        }
+        this.setIdentityIsValid();
         return;
       }
     } else {
@@ -142,9 +145,8 @@ export class CentralAuthorityIdentity implements ICAIdentityCommon {
       } else {
         this._userIdentityParsed = userIdentityDescription;
         this._userIdentitySerialized = serializedDescription;
-        if (this.isValid !== false) {
-          this.isValid = true;
-        }
+        this.setIdentityIsValid();
+        return;
       }
     } else {
       const err = new Error('The user identifier description is not defined');

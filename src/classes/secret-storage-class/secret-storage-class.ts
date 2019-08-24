@@ -468,6 +468,7 @@ export class SecretStorage
     if (stringEncrypted instanceof Error) {
       return SecretStorage.error(stringEncrypted);
     }
+
     const decryptResult = await this.decryptValue(stringEncrypted);
 
     if (decryptResult instanceof Error) {
@@ -521,7 +522,7 @@ export class SecretStorage
 
   public async set(key: string, value: string): Promise<boolean | Error> {
     const { isRunning } = this;
-
+    
     if (!isRunning) {
       return SecretStorage.error(
         'The instance of SecretStorage is not connected to the storage provider or there is no an encryption key'
@@ -529,15 +530,16 @@ export class SecretStorage
     }
     //value - must be an escaped sctring
     const encryptedValue = await this.encryptValue(value);
+    
     if (encryptedValue instanceof Error) {
       return SecretStorage.error(encryptedValue);
     }
-
+    
     const storeValueResult = await this.setWithStorageProvider(
       key,
       encryptedValue
     );
-
+    
     if (storeValueResult instanceof Error) {
       return SecretStorage.error(storeValueResult);
     }

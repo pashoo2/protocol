@@ -29,7 +29,6 @@ import {
 import { dataCachingUtilsCachingDecorator as caching } from 'utils/data-cache-utils/data-cache-utils';
 import {
   checkExportedCryptoCredentialsToString,
-  checkIsValidCryptoCredentialsExportedFormat,
   checkIsValidCryptoCredentials,
 } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
 
@@ -153,11 +152,12 @@ export class CentralAuthorityIdentityCredentialsStorage
     if (!isActive) {
       return new Error('The storage is not active');
     }
-
     try {
       const { secretStorageConnection } = this;
-      const caCryptoCredentials = await secretStorageConnection!!.get(id);
-
+      const caCryptoCredentials = await secretStorageConnection!!.get(
+        this.getKeyNameWithPrefix(id)
+      );
+      debugger
       if (caCryptoCredentials instanceof Error) {
         console.error(caCryptoCredentials);
         return new Error('Failed to read credentials from the storage');
@@ -180,7 +180,7 @@ export class CentralAuthorityIdentityCredentialsStorage
     cryptoKeyPairs: TCACryptoKeyPairs
   ): Promise<boolean | Error> => {
     const { isActive } = this;
-
+    
     if (!isActive) {
       return new Error('The storage is not active');
     }
@@ -290,7 +290,7 @@ export class CentralAuthorityIdentityCredentialsStorage
     const argsLenght = args.length;
 
     if (argsLenght === 2) {
-      return this.setCredentials(...args);
+      return this.setCredentialsByIdentity(args[0], args[1]);
     } else if (argsLenght === 1) {
       const caCryptoCredentials = args[0];
       const caCryptoCredentialsValueType = typeof caCryptoCredentials;
@@ -321,7 +321,6 @@ export class CentralAuthorityIdentityCredentialsStorage
     if (!isActive) {
       return new Error('The storage is not active');
     }
-
     try {
       // parse the identity
       const caIdentity = new CentralAuthorityIdentity(identity);
@@ -334,9 +333,7 @@ export class CentralAuthorityIdentityCredentialsStorage
         return new Error('Failed to parse the identity and get id');
       }
 
-      const caCryptoCredentials = await this.getCredentialsRaw(
-        this.getKeyNameWithPrefix(id)
-      );
+      const caCryptoCredentials = await this.getCredentialsRaw(id);
 
       if (caCryptoCredentials instanceof Error) {
         console.error(caCryptoCredentials);
@@ -346,9 +343,10 @@ export class CentralAuthorityIdentityCredentialsStorage
         return null;
       }
 
-      const importedCryptoCredentials = await importCryptoCredentialsFromExportedFromat(
+      const importedCryptoCredentials = await importCryptoCredentialsFromAString(
         caCryptoCredentials
       );
+      debugger
 
       if (importedCryptoCredentials instanceof Error) {
         console.error(importedCryptoCredentials);

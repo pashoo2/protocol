@@ -24,7 +24,6 @@ import {
   CA_AUTH_CREDENTIALS_USER_PASSWORD_PROP_NAME,
 } from 'classes/central-authority-class/central-authority-class-const/central-authority-class-const';
 import {
-  checkIsValidCryptoCredentials,
   exportCryptoCredentialsToString,
   getUserCredentialsByUserIdentityAndCryptoKeys,
   importCryptoCredentialsFromAString,
@@ -36,6 +35,7 @@ import {
 } from './central-authority-storage-credentials.const';
 import { TSecretStoreConfiguration } from 'classes/secret-storage-class/secret-storage-class.types';
 import { calculateHash } from 'utils/hash-calculation-utils/hash-calculation-utils';
+import { checkIsValidCryptoCredentials } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
 
 /**
  *
