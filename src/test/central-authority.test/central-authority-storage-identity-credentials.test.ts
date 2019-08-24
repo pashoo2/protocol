@@ -20,13 +20,6 @@ const runCACredentialsIdentityStorageTestForCredentials = async (
     testIdentityDescription
   );
   const identityTest = caIdentityValueTest.toString();
-    
-  if (!identityTest) {
-    console.error(identityTest);
-    console.error('Failed to generate test identity string');
-    return;
-  }
-
   const testKeyPairs = await generateKeyPairs();
 
   if (testKeyPairs instanceof Error) {
@@ -143,6 +136,36 @@ export const runCACredentialsIdentityStorageTest = async () => {
     console.error('Test for the first credentials was failed');
     return;
   }
+
+  const testIdentityDescriptionTwo = {
+    [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: 'https://google1.com',
+    [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]: generateUUID(),
+  };
+  const resultTwo = await runCACredentialsIdentityStorageTestForCredentials(
+    storageInstance,
+    testIdentityDescriptionTwo
+  );
+
+  if (resultTwo !== true) {
+    console.error('Test for the second credentials was failed');
+    return;
+  }
+
+  console.warn('Test for a wrong identity valie started');
+  const testIdentityDescriptionWrongFormat = {
+    [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: '',
+    [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]: generateUUID(),
+  };
+  const resultMustBeFailed = await runCACredentialsIdentityStorageTestForCredentials(
+    storageInstance,
+    testIdentityDescriptionWrongFormat
+  );
+
+  if (resultMustBeFailed) {
+    console.error('Test for a wrong identity valie must failed');
+    return;
+  }
+  console.warn('Test for a wrong identity value succeed');
 
   const storageDisconnectResult = await storageInstance.disconnect();
 
