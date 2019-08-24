@@ -236,7 +236,7 @@ export const getCryptoKeyPairsByCryptoCredentials = (
     [CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeyPairs,
   } = cryptoCredentials;
 
-  if (checkIsValidCryptoCredentials(cryptoKeyPairs)) {
+  if (checkIsCryptoKeyPairs(cryptoKeyPairs)) {
     return cryptoKeyPairs;
   }
   return new Error('The crypto key pairs are not valid');

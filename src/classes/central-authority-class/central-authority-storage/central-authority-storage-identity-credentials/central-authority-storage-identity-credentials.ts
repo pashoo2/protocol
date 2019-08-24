@@ -157,7 +157,7 @@ export class CentralAuthorityIdentityCredentialsStorage
       const caCryptoCredentials = await secretStorageConnection!!.get(
         this.getKeyNameWithPrefix(id)
       );
-      debugger
+
       if (caCryptoCredentials instanceof Error) {
         console.error(caCryptoCredentials);
         return new Error('Failed to read credentials from the storage');
@@ -247,25 +247,25 @@ export class CentralAuthorityIdentityCredentialsStorage
     caCryptoCredentials: TCentralAuthorityUserCryptoCredentials
   ): Promise<boolean | Error> {
     const identity = getUserIdentityByCryptoCredentials(caCryptoCredentials);
-
+    
     if (identity instanceof Error) {
       console.error(identity);
       return new Error(
         'The user identity is not valid or have an unknown format'
       );
     }
-
+    
     const cryptoKeyPairs = getCryptoKeyPairsByCryptoCredentials(
       caCryptoCredentials
     );
-
+    
     if (cryptoKeyPairs instanceof Error) {
       console.error(cryptoKeyPairs);
       return new Error(
         'The crypto key pairs are not valid or have an unknown format'
       );
     }
-
+    
     return this.setCredentialsByIdentity(
       identity,
       cryptoKeyPairs
@@ -293,19 +293,12 @@ export class CentralAuthorityIdentityCredentialsStorage
       return this.setCredentialsByIdentity(args[0], args[1]);
     } else if (argsLenght === 1) {
       const caCryptoCredentials = args[0];
-      const caCryptoCredentialsValueType = typeof caCryptoCredentials;
 
-      if (
-        caCryptoCredentialsValueType === 'string' &&
-        checkExportedCryptoCredentialsToString(caCryptoCredentials)
-      ) {
+      if (checkExportedCryptoCredentialsToString(caCryptoCredentials)) {
         return this.setCredentialsByCACryptoCredentialsExportedToString(
           caCryptoCredentials
         );
-      } else if (
-        caCryptoCredentialsValueType === 'object' &&
-        checkIsValidCryptoCredentials(caCryptoCredentials)
-      ) {
+      } else if (checkIsValidCryptoCredentials(caCryptoCredentials)) {
         return this.setCredentialsByCACryptoCredentials(caCryptoCredentials);
       }
     }
@@ -313,14 +306,9 @@ export class CentralAuthorityIdentityCredentialsStorage
   }
 
   @caching(CA_IDENTITY_CREDENTIALS_STORAGE_READ_CACHE_CAPACITY)
-  public async getCredentials(
+  protected async getCredentialsCached(
     identity: TCentralAuthorityUserIdentity
   ): Promise<TCentralAuthorityUserCryptoCredentials | Error | null> {
-    const { isActive } = this;
-
-    if (!isActive) {
-      return new Error('The storage is not active');
-    }
     try {
       // parse the identity
       const caIdentity = new CentralAuthorityIdentity(identity);
@@ -346,7 +334,6 @@ export class CentralAuthorityIdentityCredentialsStorage
       const importedCryptoCredentials = await importCryptoCredentialsFromAString(
         caCryptoCredentials
       );
-      debugger
 
       if (importedCryptoCredentials instanceof Error) {
         console.error(importedCryptoCredentials);
@@ -378,5 +365,16 @@ export class CentralAuthorityIdentityCredentialsStorage
         'Failed to read a credentials for identity from the storage'
       );
     }
+  }
+
+  public async getCredentials(
+    identity: TCentralAuthorityUserIdentity
+  ): Promise<TCentralAuthorityUserCryptoCredentials | Error | null> {
+    const { isActive } = this;
+
+    if (!isActive) {
+      return new Error('The storage is not active');
+    }
+    return this.getCredentialsCached(identity);
   }
 }
