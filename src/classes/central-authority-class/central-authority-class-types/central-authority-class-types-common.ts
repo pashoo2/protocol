@@ -13,8 +13,8 @@ import {
 export type TCentralAuthorityUserIdentity = string;
 
 export interface ICentralAuthorityUserAuthCredentials {
-  login: string,
-  password: string,
+  login: string;
+  password: string;
 }
 
 export type TCentralAuthorityAuthCredentials = {
@@ -23,7 +23,10 @@ export type TCentralAuthorityAuthCredentials = {
 };
 
 export interface ICentralAuthorityUserProfile {
-  name: string;
+  name?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  photoURL?: string | null;
 }
 
 export interface ICentralAuthorityStorageCryptoCredentials {
