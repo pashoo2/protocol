@@ -221,7 +221,8 @@ export class CAConnectionWithFirebase {
     return true;
   }
 
-  protected async setProfileData(
+  // TODO - test it and change to private method
+  public async setProfileData(
     profile: Partial<ICentralAuthorityUserProfile>
   ): Promise<Error | ICentralAuthorityUserProfile> {
     if (isEmptyObject(profile)) {

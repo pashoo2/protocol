@@ -1,7 +1,10 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { runTestCAConnectionFirebase } from 'test/central-authority.test/central-authority-connection.test/central-authority-connection.test';
+import {
+  runTestCAConnectionFirebase,
+  runTestProfileValidation,
+} from 'test/central-authority.test/central-authority-connection.test/central-authority-connection.test';
 // import { runCACredentialsIdentityStorageTest } from 'test/central-authority.test/central-authority-storage-identity-credentials.test';
 // import { runTestCachingDecorator } from 'test/common-utils.test/common-utils.test';
 // import { runTestCAIdentity } from 'test/central-authority.test/central-authority.test';
@@ -20,7 +23,9 @@ import { runTestCAConnectionFirebase } from 'test/central-authority.test/central
 // runTestCAIdentity();
 // runTestCachingDecorator();
 // runCACredentialsIdentityStorageTest();
-runTestCAConnectionFirebase();
+
+runTestProfileValidation();
+// TODO runTestCAConnectionFirebase();
 
 const App: React.FC = () => {
   return (
