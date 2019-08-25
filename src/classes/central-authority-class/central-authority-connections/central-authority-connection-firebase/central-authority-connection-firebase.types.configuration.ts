@@ -6,3 +6,8 @@ export interface ICAConnectionConfigurationFirebase {
   storageBucket: string;
   messagingSenderId: string;
 }
+
+export interface ICAConnectionFirebaseUserProfile {
+  displayName: string | null;
+  photoURL: string | null;
+}
