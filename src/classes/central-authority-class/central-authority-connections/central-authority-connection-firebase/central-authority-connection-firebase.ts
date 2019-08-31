@@ -17,6 +17,7 @@ import {
 } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 import { isEmptyObject } from 'utils/common-utils/common-utils-objects';
 import { validateUserProfileData } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-user/central-authority-validators-user';
+import { dataValidatorUtilEmail } from 'utils/data-validators-utils/data-validators-utils';
 
 // TODO export class CAConnectionWithFirebase implements ICAConnection {
 export class CAConnectionWithFirebase {
@@ -65,6 +66,14 @@ export class CAConnectionWithFirebase {
     this.isAuthorizedWithCredentials = isAuthorized;
   }
 
+  protected checkIfConnected(): boolean | Error {
+    const { isConnected } = this;
+
+    return !isConnected
+      ? new Error('There is no active connection with the Firebase')
+      : true;
+  }
+
   public async connect(
     configuration: ICAConnectionConfigurationFirebase
   ): Promise<boolean | Error> {
@@ -102,9 +111,7 @@ export class CAConnectionWithFirebase {
       signUpResult = await firebase
         .auth()
         .createUserWithEmailAndPassword(login, password);
-      debugger;
     } catch (err) {
-      debugger;
       console.error(err);
       return new Error(
         'Failed to sign up to the Firebase with the given credentials'
@@ -123,9 +130,7 @@ export class CAConnectionWithFirebase {
       signInResult = await firebase
         .auth()
         .signInWithEmailAndPassword(login, password);
-      debugger;
     } catch (err) {
-      debugger;
       console.error(err);
       return new Error(
         'Failed to sign up to the Firebase with the given credentials'
@@ -137,10 +142,10 @@ export class CAConnectionWithFirebase {
   protected async getUserProfileData(): Promise<
     Error | ICentralAuthorityUserProfile
   > {
-    const { isConnected } = this;
+    const isConnected = this.checkIfConnected();
 
-    if (!isConnected) {
-      return new Error('Not connected to the remote server');
+    if (isConnected instanceof Error) {
+      return isConnected;
     }
 
     const { currentUser: currentUserData } = this;
@@ -151,7 +156,7 @@ export class CAConnectionWithFirebase {
     }
 
     const { displayName, photoURL, phoneNumber, email } = currentUserData;
-    debugger;
+
     return {
       name: displayName || null,
       email: email || null,
@@ -163,11 +168,10 @@ export class CAConnectionWithFirebase {
   protected async returnOnAuthorizedResult(): Promise<
     ICentralAuthorityUserProfile | Error
   > {
-    debugger;
     return this.getUserProfileData();
   }
 
-  protected mapAppProfileToFirebaseProfile(
+  protected mapAppProfileToFirebaseProfileWithoutEmail(
     profile: Partial<ICentralAuthorityUserProfile>
   ): ICAConnectionFirebaseUserProfile {
     return {
@@ -176,32 +180,22 @@ export class CAConnectionWithFirebase {
     };
   }
 
-  protected async setProfileDataWithFirebase(
-    profile: Partial<ICentralAuthorityUserProfile>
-  ): Promise<Error | boolean> {
-    const { isConnected, currentUser } = this;
+  protected async setProfileDataEmail(email: string): Promise<Error | boolean> {
+    const checkIsConnectedResult = this.checkIfConnected();
 
-    if (!isConnected) {
-      return new Error('There is no active connection to the remote server');
+    if (checkIsConnectedResult instanceof Error) {
+      return checkIsConnectedResult;
     }
+    if (!dataValidatorUtilEmail(email)) {
+      return new Error('The email is not valid');
+    }
+
+    const { currentUser } = this;
+
     if (!currentUser) {
-      return new Error('There is no current user profile');
+      return new Error('Failed to get the user profile data');
     }
-
-    const profileMappedForFirebase = this.mapAppProfileToFirebaseProfile(
-      profile
-    );
-
-    try {
-      await currentUser.updateProfile(profileMappedForFirebase);
-    } catch (err) {
-      console.error(err);
-      return new Error('Failed to set the Firebase profile data');
-    }
-
-    const { email } = profile;
-
-    if (email && typeof email === 'string' && currentUser.email !== email) {
+    if (currentUser.email !== email) {
       try {
         await currentUser.updateEmail(email);
       } catch (err) {
@@ -210,12 +204,53 @@ export class CAConnectionWithFirebase {
       }
 
       const sendEmailVerificationResult = await this.handleAuthEmailNotVerified();
-
+      debugger;
       if (sendEmailVerificationResult instanceof Error) {
         console.error(sendEmailVerificationResult);
         return new Error('Failed to update the email address');
       }
-      return new Error('The email was updated and must be verified');
+      // TODO - if the user was authentificated by OAuth
+      // it is necessary to invoke the reauthentificate method
+      // of the Firebase
+      const logOutResult = await this.signOut();
+
+      if (logOutResult instanceof Error) {
+        console.error(logOutResult);
+        return new Error('Failed to log out');
+      }
+      return true;
+    }
+    return true;
+  }
+
+  /**
+   * At no a phone number can't be updated
+   * @param profileDataPartialWithoutPhoneNumber
+   */
+  protected async setProfileDataWithFirebase(
+    profileDataPartialWithoutPhoneNumber: Partial<ICentralAuthorityUserProfile>
+  ): Promise<Error | boolean> {
+    const isConnected = this.checkIfConnected();
+
+    if (isConnected instanceof Error) {
+      return isConnected;
+    }
+
+    const { currentUser } = this;
+
+    if (!currentUser) {
+      return new Error('There is no current user profile');
+    }
+
+    const profileMappedForFirebaseWithoutEmail = this.mapAppProfileToFirebaseProfileWithoutEmail(
+      profileDataPartialWithoutPhoneNumber
+    );
+
+    try {
+      await currentUser.updateProfile(profileMappedForFirebaseWithoutEmail);
+    } catch (err) {
+      console.error(err);
+      return new Error('Failed to set the Firebase profile data');
     }
     // TODO - what to do with a phone number
     return true;
@@ -237,24 +272,54 @@ export class CAConnectionWithFirebase {
     if (resultUpdateProfile instanceof Error) {
       return resultUpdateProfile;
     }
-    return this.getUserProfileData();
+
+    const updatedProfile = await this.getUserProfileData();
+
+    if (updatedProfile instanceof Error) {
+      console.error(updatedProfile);
+      return new Error('Failed to read the updated profile data');
+    }
+
+    const { email } = profile;
+
+    debugger;
+    if (email) {
+      // if it is necessary to update email value
+      // it will cause that user must authentificate
+      // once again
+      const updateEmailResult = await this.setProfileDataEmail(email);
+
+      if (updateEmailResult instanceof Error) {
+        return updateEmailResult;
+      }
+    }
+    debugger;
+    return {
+      ...updatedProfile,
+      email: email || null,
+    };
   }
 
-  protected async handleAuthEmailNotVerified() {
-    const { isConnected, currentUser } = this;
+  protected async handleAuthEmailNotVerified(): Promise<boolean | Error> {
+    const isConnected = this.checkIfConnected();
 
-    if (!isConnected || !currentUser) {
+    if (isConnected instanceof Error) {
+      return isConnected;
+    }
+
+    const { currentUser } = this;
+
+    if (!currentUser) {
       return new Error('There is no an active connection to the remote server');
     }
 
     try {
       await currentUser.sendEmailVerification();
-      debugger;
-      return new Error('Please, verify the email');
     } catch (err) {
       console.error(err);
       return new Error('Failed to send the email verification link');
     }
+    return true;
   }
 
   protected async handleAuthSuccess(): Promise<
@@ -265,22 +330,30 @@ export class CAConnectionWithFirebase {
     if (isVerifiedAccount) {
       return this.returnOnAuthorizedResult();
     }
-    return this.handleAuthEmailNotVerified();
+
+    const sendVerificationEmailResult = await this.handleAuthEmailNotVerified();
+
+    if (sendVerificationEmailResult instanceof Error) {
+      console.error(sendVerificationEmailResult);
+      return new Error('Failed to send the email verification');
+    }
+    return new Error('Please verify the email address');
   }
 
   public async authorize(
     credentials: ICAConnectionSignInCredentials,
     profile?: Partial<ICentralAuthorityUserProfile>
   ): Promise<ICentralAuthorityUserProfile | Error> {
-    const { isConnected, isAuthorized } = this;
+    const isConnected = this.checkIfConnected();
+
+    if (isConnected instanceof Error) {
+      return isConnected;
+    }
+
+    const { isAuthorized } = this;
 
     if (isAuthorized) {
       return this.handleAuthSuccess();
-    }
-    if (!isConnected) {
-      return this.onAuthorizationFailed(
-        'There is no active connection to the Firebase CA server'
-      );
     }
 
     // try to sign in with the credentials, then try to sign up
@@ -311,6 +384,26 @@ export class CAConnectionWithFirebase {
       return this.setProfileData(profile);
     }
     return authHandleResult;
+  }
+
+  public async signOut(): Promise<boolean | Error> {
+    const isConnected = this.checkIfConnected();
+
+    if (isConnected instanceof Error) {
+      return isConnected;
+    }
+
+    const { app } = this;
+
+    try {
+      await app!!.auth().signOut();
+    } catch (err) {
+      console.error(err);
+      return new Error('Failed to sign out');
+    }
+
+    this.setAuthorizedStatus(false);
+    return true;
   }
 
   //   /**

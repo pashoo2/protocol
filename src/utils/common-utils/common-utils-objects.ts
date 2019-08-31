@@ -3,5 +3,5 @@ export const isNotEmptyObject = (o: any): o is object => {
 };
 
 export const isEmptyObject = (o: any): boolean => {
-  return !isEmptyObject(o);
+  return !isNotEmptyObject(o);
 };

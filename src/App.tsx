@@ -3,7 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import {
   runTestCAConnectionFirebase,
-  runTestProfileValidation,
+  // runTestProfileValidation,
 } from 'test/central-authority.test/central-authority-connection.test/central-authority-connection.test';
 // import { runCACredentialsIdentityStorageTest } from 'test/central-authority.test/central-authority-storage-identity-credentials.test';
 // import { runTestCachingDecorator } from 'test/common-utils.test/common-utils.test';
@@ -24,8 +24,8 @@ import {
 // runTestCachingDecorator();
 // runCACredentialsIdentityStorageTest();
 
-runTestProfileValidation();
-// TODO runTestCAConnectionFirebase();
+// runTestProfileValidation();
+runTestCAConnectionFirebase();
 
 const App: React.FC = () => {
   return (
