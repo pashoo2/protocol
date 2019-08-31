@@ -33,6 +33,11 @@ export interface ICAConnectionSignInCredentials {
 }
 
 export interface ICAConnection {
+  // is connection active
+  isConnected: boolean;
+  // is the user was authorized
+  // (signed in)
+  isAuthorized: boolean;
   // connect to firebase
   connect(
     configuration: ICAConnectionConfigurationFirebase
@@ -57,9 +62,4 @@ export interface ICAConnection {
     profile?: Partial<ICentralAuthorityUserProfile>
   ): Promise<Error | ICAConnectionUserAuthorizedResult>;
   signOut(): Promise<Error | boolean>;
-  // is connection active
-  isConnected: boolean;
-  // is the user was authorized
-  // (signed in)
-  isAuthorized: boolean;
 }

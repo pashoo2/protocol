@@ -20,7 +20,7 @@ import { validateUserProfileData } from 'classes/central-authority-class/central
 import { dataValidatorUtilEmail } from 'utils/data-validators-utils/data-validators-utils';
 
 // TODO export class CAConnectionWithFirebase implements ICAConnection {
-export class CAConnectionWithFirebase {
+export class CAConnectionWithFirebase implements ICAConnection {
   protected app?: firebase.app.App;
 
   protected isAuthorizedWithCredentials: boolean = false;
@@ -101,6 +101,10 @@ export class CAConnectionWithFirebase {
     return err;
   }
 
+  protected async setUserCryptoCredentials() {}
+
+  protected getUserCryptoCredentials() {}
+
   protected async singUpWithAuthCredentials(
     authCredentials: ICentralAuthorityUserAuthCredentials
   ): Promise<boolean | Error> {
@@ -166,9 +170,14 @@ export class CAConnectionWithFirebase {
   }
 
   protected async returnOnAuthorizedResult(): Promise<
-    ICentralAuthorityUserProfile | Error
+    ICAConnectionUserAuthorizedResult | Error
   > {
-    return this.getUserProfileData();
+    const userProfile = this.getUserProfileData();
+
+    if (userProfile instanceof Error) {
+      console.error(userProfile);
+      return new Error('Failed to get profile data');
+    }
   }
 
   protected mapAppProfileToFirebaseProfileWithoutEmail(
@@ -323,7 +332,7 @@ export class CAConnectionWithFirebase {
   }
 
   protected async handleAuthSuccess(): Promise<
-    ICentralAuthorityUserProfile | Error
+    ICAConnectionUserAuthorizedResult | Error
   > {
     const { isVerifiedAccount } = this;
 
@@ -341,9 +350,9 @@ export class CAConnectionWithFirebase {
   }
 
   public async authorize(
-    credentials: ICAConnectionSignInCredentials,
+    credentials: ICAConnectionSignUpCredentials,
     profile?: Partial<ICentralAuthorityUserProfile>
-  ): Promise<ICentralAuthorityUserProfile | Error> {
+  ): Promise<ICAConnectionUserAuthorizedResult | Error> {
     const isConnected = this.checkIfConnected();
 
     if (isConnected instanceof Error) {
@@ -405,33 +414,6 @@ export class CAConnectionWithFirebase {
     this.setAuthorizedStatus(false);
     return true;
   }
-
-  //   /**
-  //    * sign up the user into the
-  //    * central authority remote server.
-  //    * It must return CryptoCredentials
-  //    * stored for the user
-  //    * in the database of the remote
-  //    * server
-  //    * @param credentialsSignUp
-  //    */
-  //   public async signUp(
-  //     credentialsSignUp: ICAConnectionSignUpCredentials
-  //   ): Promise<ICAConnectionUserAuthorizedResult | Error> {}
-
-  //   /**
-  //    * sign in the user
-  //    * on the remote server
-  //    * stored credentials of
-  //    * all the users authorized
-  //    * on it. It must return CryptoCredentials
-  //    * stored previousely for the user on
-  //    * the remote server.
-  //    * @param credentialsSignIn
-  //    */
-  //   public async signIn(
-  //     credentialsSignIn: ICAConnectionSignInCredentials
-  //   ): Promise<ICAConnectionUserAuthorizedResult | Error> {}
 }
 
 export default CAConnectionWithFirebase;
