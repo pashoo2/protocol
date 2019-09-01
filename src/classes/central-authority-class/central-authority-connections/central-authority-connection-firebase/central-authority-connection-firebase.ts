@@ -109,19 +109,18 @@ export class CAConnectionWithFirebase implements ICAConnection {
   protected async singUpWithAuthCredentials(
     authCredentials: ICentralAuthorityUserAuthCredentials
   ): Promise<boolean | Error> {
-    let signUpResult;
     const { login, password } = authCredentials;
 
     try {
-      signUpResult = await firebase
-        .auth()
-        .createUserWithEmailAndPassword(login, password);
+      await firebase.auth().createUserWithEmailAndPassword(login, password);
+      debugger;
     } catch (err) {
       console.error(err);
       return new Error(
         'Failed to sign up to the Firebase with the given credentials'
       );
     }
+    debugger;
     return true;
   }
 
@@ -387,7 +386,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
       const signUpResult = await this.singUpWithAuthCredentials(
         signUpCredentials
       );
-
+      debugger;
       if (signUpResult instanceof Error) {
         // if sign up failed then return
         // error that the authorization
@@ -436,6 +435,33 @@ export class CAConnectionWithFirebase implements ICAConnection {
     }
 
     this.setAuthorizedStatus(false);
+    return true;
+  }
+
+  public async delete(): Promise<Error | boolean> {
+    const isConnected = this.checkIfConnected();
+
+    debugger;
+    if (isConnected instanceof Error) {
+      return isConnected;
+    }
+
+    const { currentUser } = this;
+
+    if (currentUser instanceof Error) {
+      console.error(currentUser);
+      return new Error('Failed to read the current user');
+    }
+    if (currentUser == null) {
+      return new Error('There is no current user');
+    }
+    try {
+      debugger;
+      await currentUser.delete();
+    } catch (err) {
+      console.error(err);
+      return new Error('Failed to delete the user from the authority');
+    }
     return true;
   }
 }

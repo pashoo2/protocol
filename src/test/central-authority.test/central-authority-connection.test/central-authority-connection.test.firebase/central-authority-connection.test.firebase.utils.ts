@@ -61,11 +61,11 @@ export const connectWithFirebase = async () => {
   if (authCredentials instanceof Error) {
     return authCredentials;
   }
-
+  debugger;
   const connectionFirebase = await connectAndAuthorizeInFirebase(
     authCredentials
   );
-
+  debugger;
   if (connectionFirebase instanceof Error) {
     console.error(connectionFirebase);
     return connectionFirebase;
@@ -74,41 +74,17 @@ export const connectWithFirebase = async () => {
   return connectionFirebase;
 };
 
-export const runTestCAConnectionFirebaseChangeEmail = async () => {
-  const connectionFirebase = await connectToFirebase();
+export const deleteTheUserFromCA = async (
+  connectionFirebase: CAConnectionWithFirebase
+): Promise<boolean | Error> => {
+  if (connectionFirebase instanceof CAConnectionWithFirebase) {
+    const deleteResult = await connectionFirebase.delete();
 
-  if (connectionFirebase instanceof Error) {
-    console.error(connectionFirebase);
-    return;
+    if (deleteResult instanceof Error) {
+      console.error(deleteResult);
+      return new Error('Failed to delete the user from the Firebase authority');
+    }
+    return true;
   }
-
-  const userProfileWithEmailTest = {
-    name: 'Paul Test',
-    email: 'akulich2paul@gmail.com',
-  };
-
-  const updateProfileWithEmailResult = await connectionFirebase.setProfileData(
-    userProfileWithEmailTest
-  );
-
-  if (updateProfileWithEmailResult instanceof Error) {
-    console.error('Failed to set the profile (with a email) data');
-    return;
-  }
-  if (updateProfileWithEmailResult.name !== updateProfileWithEmailResult.name) {
-    console.error('Name was not updated in the profile');
-    return;
-  }
-  if (
-    updateProfileWithEmailResult.email !== updateProfileWithEmailResult.email
-  ) {
-    console.error('The email was not updated in the profile');
-    return;
-  }
-  if (connectionFirebase.isAuthorized) {
-    console.error(
-      'isAuthorized connection flag must be false on email value changed'
-    );
-    return;
-  }
+  return new Error('The connection to the firebase is not valid');
 };

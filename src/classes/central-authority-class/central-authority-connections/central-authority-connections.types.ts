@@ -62,4 +62,6 @@ export interface ICAConnection {
     profile?: Partial<ICentralAuthorityUserProfile>
   ): Promise<Error | ICAConnectionUserAuthorizedResult>;
   signOut(): Promise<Error | boolean>;
+  // delete the user data from the central authority
+  delete(): Promise<Error | boolean>;
 }

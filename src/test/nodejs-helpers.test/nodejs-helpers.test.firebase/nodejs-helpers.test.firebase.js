@@ -2,7 +2,6 @@ const admin = require('firebase-admin');
 const serviceKey = require('./firebase.serviceKey.json');
 
 const removeAllUsers = async () => {
-  debugger;
   const initResult = await admin.initializeApp({
     credential: admin.credential.cert(serviceKey),
     databaseURL: 'https://protocol-f251b.firebaseio.com',

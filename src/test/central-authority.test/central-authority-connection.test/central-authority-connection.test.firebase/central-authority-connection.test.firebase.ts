@@ -2,6 +2,7 @@ import { ICentralAuthorityUserProfile } from 'classes/central-authority-class/ce
 import {
   connectToFirebase,
   connectWithFirebase,
+  deleteTheUserFromCA,
 } from './central-authority-connection.test.firebase.utils';
 
 export const runTestCAConnectionFirebaseChangeEmail = async () => {
@@ -68,7 +69,7 @@ export const runTestCAConnectionFirebase = async () => {
 
   if (updateProfileResult instanceof Error) {
     console.error('Failed tp set the profile (without a email) data');
-    return;
+    return deleteTheUserFromCA(connectionFirebase);
   }
 
   if (
@@ -76,10 +77,18 @@ export const runTestCAConnectionFirebase = async () => {
     updateProfileResult.photoURL
   ) {
     console.error('The photo URL was not updated in the profile');
-    return;
+    return deleteTheUserFromCA(connectionFirebase);
   }
   if (userProfileTestWOEmailAndPhoneNumber.name !== updateProfileResult.name) {
     console.error('Name was not updated in the profile');
-    return;
+    return deleteTheUserFromCA(connectionFirebase);
   }
+
+  const deleteTheUserResult = await deleteTheUserFromCA(connectionFirebase);
+
+  if (deleteTheUserResult instanceof Error) {
+    console.error(deleteTheUserResult);
+    return new Error('Failed to delete the user from the Firebase authority');
+  }
+  console.warn('CA connection firebase test success');
 };
