@@ -1,5 +1,8 @@
 import { CAConnectionWithFirebase } from 'classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase';
-import { CA_CONNECTION_FIREBASE_CONFIG } from './central-authority-connection.test.firebase.const';
+import {
+  CA_CONNECTION_FIREBASE_CONFIG,
+  CA_CONNECTION_FIREBASE_CREDENTIALS,
+} from './central-authority-connection.test.firebase.const';
 import { ICentralAuthorityUserProfile } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 import { ICAConnectionSignUpCredentials } from 'classes/central-authority-class/central-authority-connections/central-authority-connections.types';
 import { generateCryptoCredentials } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
@@ -47,6 +50,30 @@ export const connectAndAuthorizeInFirebase = async (
   return connectionFirebase;
 };
 
+/**
+ * connect to firebase with credentials
+ * defined
+ */
+export const connectWithFirebase = async () => {
+  console.warn('CA connection firebase test started');
+  const authCredentials = await CA_CONNECTION_FIREBASE_CREDENTIALS;
+
+  if (authCredentials instanceof Error) {
+    return authCredentials;
+  }
+
+  const connectionFirebase = await connectAndAuthorizeInFirebase(
+    authCredentials
+  );
+
+  if (connectionFirebase instanceof Error) {
+    console.error(connectionFirebase);
+    return connectionFirebase;
+  }
+
+  return connectionFirebase;
+};
+
 export const runTestCAConnectionFirebaseChangeEmail = async () => {
   const connectionFirebase = await connectToFirebase();
 
@@ -88,23 +115,7 @@ export const runTestCAConnectionFirebaseChangeEmail = async () => {
 
 export const runTestCAConnectionFirebase = async () => {
   console.warn('CA connection firebase test started');
-  const cryptoCredentials = await generateCryptoCredentials();
-
-  if (cryptoCredentials instanceof Error) {
-    console.error(cryptoCredentials);
-    return new Error('Failed to generate a crypto credentials for the user');
-  }
-
-  // TOOD - validator for an auth credentials
-  // password must be a 6 characters at least
-  const authCredentials = {
-    login: 'akulich.p@gmail.com',
-    password: '123456',
-    cryptoCredentials,
-  };
-  const connectionFirebase = await connectAndAuthorizeInFirebase(
-    authCredentials
-  );
+  const connectionFirebase = await connectWithFirebase();
 
   if (connectionFirebase instanceof Error) {
     console.error(connectionFirebase);
