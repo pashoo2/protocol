@@ -1,12 +1,20 @@
 import { generateKeyPair as generateKeyPairDataEncryption } from 'utils/encryption-utils';
 import { generateKeyPair as generateKeyPairSignData } from 'utils/data-sign-utils';
 import { isCryptoKeyPair } from 'utils/encryption-keys-utils/encryption-keys-utils';
-import { TCACryptoKeyPairs } from '../../central-authority-class-types/central-authority-class-types';
+import {
+  TCACryptoKeyPairs,
+  TCentralAuthorityUserCryptoCredentials,
+} from '../../central-authority-class-types/central-authority-class-types';
 import {
   CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME,
   CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME,
 } from './central-authority-util-crypto-keys.const';
 import { checkIsCryptoKeyPairs } from './central-authority-util-crypto-keys-common';
+import {
+  CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_USER_ID_KEY_NAME,
+  CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME,
+} from 'classes/central-authority-class/central-authority-storage/central-authority-storage-credentials/central-authority-storage-credentials.const';
+import { generateUUID } from 'utils/identity-utils/identity-utils';
 
 /**
  * generate a key pair, used for data encryption
@@ -65,4 +73,23 @@ export const generateKeyPairs = async (): Promise<
     return keyPairs;
   }
   return new Error('Failed to generate a valid key pairs');
+};
+
+/**
+ * generates a random crypto credentials
+ * or return an Error if failed
+ */
+export const generateCryptoCredentials = async (): Promise<
+  TCentralAuthorityUserCryptoCredentials | Error
+> => {
+  const cryptoKeyPair = await generateKeyPairs();
+
+  if (cryptoKeyPair instanceof Error) {
+    console.error(cryptoKeyPair);
+    return new Error('Failed to generate a valid crypto credentials');
+  }
+  return {
+    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_USER_ID_KEY_NAME]: generateUUID(),
+    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeyPair,
+  };
 };
