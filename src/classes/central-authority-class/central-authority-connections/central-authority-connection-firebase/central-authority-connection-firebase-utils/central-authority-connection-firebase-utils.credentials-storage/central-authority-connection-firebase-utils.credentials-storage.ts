@@ -4,20 +4,212 @@ import { checkIsValidCryptoCredentials } from 'classes/central-authority-class/c
 import { getUserIdentityByCryptoCredentials } from 'classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials';
 import {
   CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_KEY_PREFIX,
-  CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_USERID_PROP_NAME,
+  CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_FIREBASE_USER_ID_PROPERTY,
 } from './central-authority-connection-firebase-utils.credentials-storage.const';
 import { validateUserIdentity } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-auth-credentials/central-authority-validators-auth-credentials';
 import { ICAConnectionFirestoreUtilsCredentialsStrorageCredentialsSaveStructure } from './central-authority-connection-firebase-utils.credentials-storage.types';
 
 export class ICAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionWithFirebaseUtilDatabase {
+  protected app?: firebase.app.App;
+
   protected getCredentialsKeyByUserId(userId: string): string {
     return `${CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_KEY_PREFIX}_${userId}`;
   }
+
+  protected checkIsConnected(): boolean | Error {
+    const isConnectedToDatabase = super.checkIsConnected();
+
+    if (isConnectedToDatabase instanceof Error) {
+      return isConnectedToDatabase;
+    }
+
+    const { app } = this;
+
+    if (!app) {
+      return new Error('There is no app connection');
+    }
+    return true;
+  }
+
+  protected get firebaseUserData(): firebase.User | null | Error {
+    const isConnected = this.checkIsConnected();
+
+    if (isConnected instanceof Error) {
+      return isConnected;
+    }
+
+    const { app } = this;
+
+    try {
+      return app!!.auth().currentUser;
+    } catch (err) {
+      console.error(err);
+      return new Error('Failed to get the user id for firebase');
+    }
+  }
+
+  protected get firebaseUserId(): string | Error {
+    const { firebaseUserData: userData } = this;
+
+    if (userData instanceof Error) {
+      console.error(userData);
+      return new Error('Failed to read the user data from a firebase');
+    }
+    if (userData == null) {
+      return new Error('There is no user data');
+    }
+    try {
+      return userData.uid;
+    } catch (err) {
+      console.error(err);
+      return new Error('Failed to get the user id for firebase');
+    }
+  }
+
+  protected checkIsAuthorized(): boolean | Error {
+    const isConnectedToDatabase = this.checkIsConnected();
+
+    if (isConnectedToDatabase instanceof Error) {
+      return isConnectedToDatabase;
+    }
+
+    const { firebaseUserId } = this;
+
+    if (firebaseUserId instanceof Error) {
+      console.error(firebaseUserId);
+      return new Error('The user is not authorized');
+    }
+    return true;
+  }
+
+  constructor(app: firebase.app.App) {
+    super();
+    if (!app) {
+      throw new Error(
+        'The Firebase app instance must be provided for credentials storage'
+      );
+    }
+  }
+
+  protected checkStoredCredentialsFormat(
+    storedCredentialsValue: any
+  ): storedCredentialsValue is ICAConnectionFirestoreUtilsCredentialsStrorageCredentialsSaveStructure {
+    if (storedCredentialsValue instanceof Error) {
+      console.error(storedCredentialsValue);
+      return false;
+    }
+    if (storedCredentialsValue && typeof storedCredentialsValue === 'object') {
+      const {
+        credentials,
+        [CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_FIREBASE_USER_ID_PROPERTY]: firebaseId,
+      } = storedCredentialsValue;
+
+      if (typeof firebaseId === 'string') {
+        if (checkIsValidCryptoCredentials(credentials)) {
+          return true;
+        }
+        console.error(
+          'Credentials not exists or is invalid in the stored credentials'
+        );
+      } else {
+        console.error(
+          'Firebase user id is not valid in the stored credentials'
+        );
+      }
+    }
+    return false;
+  }
+
+  protected getCredentialsByValueStored(
+    storedCredentialsValue: any
+  ): TCentralAuthorityUserCryptoCredentials | null | Error {
+    if (storedCredentialsValue == null) {
+      return null;
+    }
+    if (!this.checkStoredCredentialsFormat(storedCredentialsValue)) {
+      return new Error('the value stored have an unknown format');
+    }
+    return storedCredentialsValue.credentials;
+  }
+
+  // check if there is a credentials for the current user is exists
+  // and return it if exists
+  public async getCredentialsForTheCurrentUser(): Promise<
+    Error | null | TCentralAuthorityUserCryptoCredentials
+  > {
+    const isAuthorizedResult = this.checkIsAuthorized();
+
+    if (isAuthorizedResult instanceof Error) {
+      console.error(isAuthorizedResult);
+      return new Error('The user is not authorized');
+    }
+
+    const { firebaseUserId } = this;
+
+    if (firebaseUserId instanceof Error) {
+      console.error(firebaseUserId);
+      return new Error('Failed to get user id of the firebase user');
+    }
+
+    const { database } = this;
+
+    if (!database) {
+      return new Error('There is no connection to the database server');
+    }
+
+    try {
+      const snapshot = await database
+        .ref()
+        .orderByKey()
+        .orderByChild(
+          CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_FIREBASE_USER_ID_PROPERTY
+        )
+        .equalTo(firebaseUserId)
+        .once('value');
+
+      if (snapshot.exists()) {
+        const valueStored = snapshot.val();
+
+        return this.getCredentialsByValueStored(valueStored);
+      }
+    } catch (err) {
+      console.error(err);
+      return new Error('Failed to read the user data from the database');
+    }
+    return null;
+  }
+
+  // store the credentials value
+  // for the current user
   public async setUserCredentials(
     credentials: TCentralAuthorityUserCryptoCredentials
   ): Promise<Error | boolean> {
+    const isAuthorizedResult = this.checkIsAuthorized();
+
+    if (isAuthorizedResult instanceof Error) {
+      console.error(isAuthorizedResult);
+      return new Error('The user is not authorized');
+    }
     if (!checkIsValidCryptoCredentials(credentials)) {
       return new Error('The credentials value is not valid');
+    }
+
+    const { firebaseUserId } = this;
+
+    if (firebaseUserId instanceof Error) {
+      console.error(firebaseUserId);
+      return new Error('Failed to get user id of the firebase user');
+    }
+
+    // check if a credentials value is
+    // already exists for the user
+    const credentialsForTheCurrentUser = await this.getCredentialsForTheCurrentUser();
+
+    if (
+      credentialsForTheCurrentUser != null &&
+      !(credentialsForTheCurrentUser instanceof Error)
+    ) {
+      return true;
     }
 
     const userId = getUserIdentityByCryptoCredentials(credentials);
@@ -30,8 +222,8 @@ export class ICAConnectionFirestoreUtilsCredentialsStrorage extends CAConnection
     const storeResult = this.setValue<
       ICAConnectionFirestoreUtilsCredentialsStrorageCredentialsSaveStructure
     >(this.getCredentialsKeyByUserId(userId), {
-      [CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_USERID_PROP_NAME]: userId,
       credentials,
+      [CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_FIREBASE_USER_ID_PROPERTY]: firebaseUserId,
     });
 
     if (storeResult instanceof Error) {
@@ -52,23 +244,6 @@ export class ICAConnectionFirestoreUtilsCredentialsStrorage extends CAConnection
       ICAConnectionFirestoreUtilsCredentialsStrorageCredentialsSaveStructure
     >(userId);
 
-    if (storedCredentialsValue instanceof Error) {
-      console.error(storedCredentialsValue);
-      return new Error(
-        'Failed to read a crypto credentials for the user identity'
-      );
-    }
-    if (storedCredentialsValue == null) {
-      return null;
-    }
-
-    const { credentials: credentialsForTheUser } = storedCredentialsValue;
-
-    if (!checkIsValidCryptoCredentials(credentialsForTheUser)) {
-      return new Error(
-        'The crypto credentials value read from the storage is not valid'
-      );
-    }
-    return credentialsForTheUser;
+    return this.getCredentialsByValueStored(storedCredentialsValue);
   }
 }

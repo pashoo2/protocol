@@ -64,8 +64,34 @@ export class CAConnectionWithFirebaseUtilDatabase {
 
     const database = firebase.database();
 
+    try {
+      await database.goOnline();
+    } catch (err) {
+      console.error(err);
+      return new Error('Failed to connect to the databse server');
+    }
+
     this.setDatabaseInstance(database);
     this.setWasConnectedStatus(true);
+    return true;
+  }
+
+  public async disconnect(): Promise<boolean | Error> {
+    const isConnected = this.checkIsConnected();
+
+    if (isConnected instanceof Error) {
+      return isConnected;
+    }
+
+    const { database } = this;
+
+    try {
+      await database!!.goOffline();
+    } catch (err) {
+      console.error(err);
+      return new Error('Failed to disconnect from the firebase server');
+    }
+    this.setWasConnectedStatus(false);
     return true;
   }
 
