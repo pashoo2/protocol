@@ -33,7 +33,7 @@ export const runTestFirebaseConnectionDatabase = async () => {
     );
     return;
   }
-  debugger;
+
   const randomUUID = generateUUID();
   const testKey = `${CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_KEY_PREFIX}${randomUUID}`;
   const testData = {
@@ -48,9 +48,9 @@ export const runTestFirebaseConnectionDatabase = async () => {
     console.error(setValueResult);
     return setValueResult;
   }
-  debugger;
+
   const readValueResult = await databaseConnectionToFirebase.getValue(testKey);
-  debugger;
+
   if (readValueResult instanceof Error) {
     console.error(readValueResult);
     console.error('Failed to read a data from the database');

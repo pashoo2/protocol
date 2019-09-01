@@ -56,6 +56,10 @@ export class CAConnectionWithFirebase implements ICAConnection {
     return isVerifiedAccount;
   }
 
+  public getApp(): void | firebase.app.App {
+    return this.app;
+  }
+
   protected setConnectedStatus(isConnected: false | firebase.app.App) {
     this.isConnected = !!isConnected;
     if (isConnected) {

@@ -8,8 +8,11 @@ import {
 } from './central-authority-connection-firebase-utils.credentials-storage.const';
 import { validateUserIdentity } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-auth-credentials/central-authority-validators-auth-credentials';
 import { ICAConnectionFirestoreUtilsCredentialsStrorageCredentialsSaveStructure } from './central-authority-connection-firebase-utils.credentials-storage.types';
+import CAConnectionWithFirebase from '../../central-authority-connection-firebase';
 
-export class ICAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionWithFirebaseUtilDatabase {
+export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionWithFirebaseUtilDatabase {
+  protected connectionToFirebase?: CAConnectionWithFirebase;
+
   protected app?: firebase.app.App;
 
   protected getCredentialsKeyByUserId(userId: string): string {
@@ -23,8 +26,18 @@ export class ICAConnectionFirestoreUtilsCredentialsStrorage extends CAConnection
       return isConnectedToDatabase;
     }
 
-    const { app } = this;
+    const { app, connectionToFirebase } = this;
 
+    if (!connectionToFirebase) {
+      return new Error(
+        'There is no instance implements a connection to the Firebase application'
+      );
+    }
+    if (!connectionToFirebase.isConnected) {
+      return new Error(
+        'There is no active connection to the firebase appliction'
+      );
+    }
     if (!app) {
       return new Error('There is no app connection');
     }
@@ -73,8 +86,13 @@ export class ICAConnectionFirestoreUtilsCredentialsStrorage extends CAConnection
       return isConnectedToDatabase;
     }
 
-    const { firebaseUserId } = this;
+    const { firebaseUserId, connectionToFirebase } = this;
 
+    if (!connectionToFirebase || !connectionToFirebase.isAuthorized) {
+      return new Error(
+        'The user is not authorized in the Firebase application'
+      );
+    }
     if (firebaseUserId instanceof Error) {
       console.error(firebaseUserId);
       return new Error('The user is not authorized');
@@ -82,13 +100,32 @@ export class ICAConnectionFirestoreUtilsCredentialsStrorage extends CAConnection
     return true;
   }
 
-  constructor(app: firebase.app.App) {
+  constructor(connectionToFirebase: CAConnectionWithFirebase) {
     super();
+
+    this.setUpConnection(connectionToFirebase);
+  }
+
+  protected setUpConnection(connectionToFirebase: CAConnectionWithFirebase) {
+    if (
+      typeof connectionToFirebase !== 'object' ||
+      !(connectionToFirebase instanceof CAConnectionWithFirebase)
+    ) {
+      throw new Error('There is no instance of CAConnectionWithFirebase');
+    }
+    if (!connectionToFirebase.isAuthorized) {
+      throw new Error('The user must be authorized in firebase');
+    }
+    this.connectionToFirebase = connectionToFirebase;
+
+    const app = connectionToFirebase.getApp();
+
     if (!app) {
       throw new Error(
-        'The Firebase app instance must be provided for credentials storage'
+        'There is no insatnce which implements a connection to the Firebase app'
       );
     }
+    this.app = app;
   }
 
   protected checkStoredCredentialsFormat(
