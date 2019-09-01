@@ -18,6 +18,7 @@ import {
 import { isEmptyObject } from 'utils/common-utils/common-utils-objects';
 import { validateUserProfileData } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-user/central-authority-validators-user';
 import { dataValidatorUtilEmail } from 'utils/data-validators-utils/data-validators-utils';
+import { checkIsValidCryptoCredentials } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
 
 // TODO export class CAConnectionWithFirebase implements ICAConnection {
 export class CAConnectionWithFirebase implements ICAConnection {
@@ -169,15 +170,19 @@ export class CAConnectionWithFirebase implements ICAConnection {
     };
   }
 
-  protected async returnOnAuthorizedResult(): Promise<
-    ICAConnectionUserAuthorizedResult | Error
-  > {
-    const userProfile = this.getUserProfileData();
+  protected async returnOnAuthorizedResult(
+    cryptoCredentials: TCentralAuthorityUserCryptoCredentials
+  ): Promise<ICAConnectionUserAuthorizedResult | Error> {
+    const userProfile = await this.getUserProfileData();
 
     if (userProfile instanceof Error) {
       console.error(userProfile);
       return new Error('Failed to get profile data');
     }
+    return {
+      cryptoCredentials,
+      profile: userProfile,
+    };
   }
 
   protected mapAppProfileToFirebaseProfileWithoutEmail(
@@ -213,7 +218,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
       }
 
       const sendEmailVerificationResult = await this.handleAuthEmailNotVerified();
-      debugger;
+
       if (sendEmailVerificationResult instanceof Error) {
         console.error(sendEmailVerificationResult);
         return new Error('Failed to update the email address');
@@ -291,7 +296,6 @@ export class CAConnectionWithFirebase implements ICAConnection {
 
     const { email } = profile;
 
-    debugger;
     if (email) {
       // if it is necessary to update email value
       // it will cause that user must authentificate
@@ -302,7 +306,6 @@ export class CAConnectionWithFirebase implements ICAConnection {
         return updateEmailResult;
       }
     }
-    debugger;
     return {
       ...updatedProfile,
       email: email || null,
@@ -331,13 +334,13 @@ export class CAConnectionWithFirebase implements ICAConnection {
     return true;
   }
 
-  protected async handleAuthSuccess(): Promise<
-    ICAConnectionUserAuthorizedResult | Error
-  > {
+  protected async handleAuthSuccess(
+    cryptoCredentials: TCentralAuthorityUserCryptoCredentials
+  ): Promise<ICAConnectionUserAuthorizedResult | Error> {
     const { isVerifiedAccount } = this;
 
     if (isVerifiedAccount) {
-      return this.returnOnAuthorizedResult();
+      return this.returnOnAuthorizedResult(cryptoCredentials);
     }
 
     const sendVerificationEmailResult = await this.handleAuthEmailNotVerified();
@@ -350,7 +353,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
   }
 
   public async authorize(
-    credentials: ICAConnectionSignUpCredentials,
+    signUpCredentials: ICAConnectionSignUpCredentials,
     profile?: Partial<ICentralAuthorityUserProfile>
   ): Promise<ICAConnectionUserAuthorizedResult | Error> {
     const isConnected = this.checkIfConnected();
@@ -359,20 +362,31 @@ export class CAConnectionWithFirebase implements ICAConnection {
       return isConnected;
     }
 
+    const { cryptoCredentials } = signUpCredentials;
+
+    if (!checkIsValidCryptoCredentials(cryptoCredentials)) {
+      return new Error('The crypto credentials value is not valid');
+    }
+
     const { isAuthorized } = this;
 
     if (isAuthorized) {
-      return this.handleAuthSuccess();
+      // TODO - verify the crypto credentials
+      return this.handleAuthSuccess(cryptoCredentials);
     }
 
     // try to sign in with the credentials, then try to sign up
-    const signInResult = await this.singInWithAuthCredentials(credentials);
+    const signInResult = await this.singInWithAuthCredentials(
+      signUpCredentials
+    );
 
     if (signInResult instanceof Error) {
       // if failed to sign in with the
       // credentials, then try to
       // sign up
-      const signUpResult = await this.singUpWithAuthCredentials(credentials);
+      const signUpResult = await this.singUpWithAuthCredentials(
+        signUpCredentials
+      );
 
       if (signUpResult instanceof Error) {
         // if sign up failed then return
@@ -384,13 +398,23 @@ export class CAConnectionWithFirebase implements ICAConnection {
       }
     }
 
-    const authHandleResult = await this.handleAuthSuccess();
+    const authHandleResult = await this.handleAuthSuccess(cryptoCredentials);
 
     if (authHandleResult instanceof Error) {
       return authHandleResult;
     }
     if (profile && isEmptyObject(profile)) {
-      return this.setProfileData(profile);
+      const setProfileResult = await this.setProfileData(profile);
+
+      if (setProfileResult instanceof Error) {
+        console.error(setProfileResult);
+        return new Error('Failed to set the profile data');
+      }
+      return {
+        profile: setProfileResult,
+        // TODO it is necessry to set this credentials in the database
+        cryptoCredentials: signUpCredentials.cryptoCredentials,
+      };
     }
     return authHandleResult;
   }
