@@ -61,11 +61,11 @@ export const connectWithFirebase = async () => {
   if (authCredentials instanceof Error) {
     return authCredentials;
   }
-  debugger;
+
   const connectionFirebase = await connectAndAuthorizeInFirebase(
     authCredentials
   );
-  debugger;
+
   if (connectionFirebase instanceof Error) {
     console.error(connectionFirebase);
     return connectionFirebase;

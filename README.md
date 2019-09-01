@@ -42,3 +42,11 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+## FIREBASE CENTRAL AUTHORITY - RELATIME DATABASE
+
+**Must be set rules as**
+
+`{ /* Visit https://firebase.google.com/docs/database/security to learn more about security rules. */ "rules": { ".read": true, ".write": true, "credentials": { ".read": true, ".write": "!data.exists()" } } }`
+
+instead of "credentials" must be a value of the constant "CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_KEY_PREFIX"

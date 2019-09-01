@@ -63,16 +63,13 @@ export class CAConnectionWithFirebaseUtilDatabase {
     }
 
     const database = firebase.database();
-    debugger;
+
     try {
       await database.goOnline();
-      debugger;
     } catch (err) {
       console.error(err);
       return new Error('Failed to connect to the databse server');
     }
-
-    debugger;
     this.setDatabaseInstance(database);
     this.setWasConnectedStatus(true);
     return true;
