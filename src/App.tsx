@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 
 import { runTestFirebaseConnectionDatabase } from 'test/central-authority.test/central-authority-connection.test/central-authority-connection.test.firebase/central-authority-connection.test.firebase.database';
+import { runTestFirebaseCredentialsStorage } from 'test/central-authority.test/central-authority-connection.test/central-authority-connection.test.firebase/central-authority-connection.test.firebase.credentials-storage';
 // import { runTestCAConnectionFirebase } from 'test/central-authority.test/central-authority-connection.test/central-authority-connection.test';
 // import { runCACredentialsIdentityStorageTest } from 'test/central-authority.test/central-authority-storage-identity-credentials.test';
 // import { runTestCachingDecorator } from 'test/common-utils.test/common-utils.test';
@@ -25,7 +26,8 @@ import { runTestFirebaseConnectionDatabase } from 'test/central-authority.test/c
 
 // runTestProfileValidation();
 // runTestCAConnectionFirebase();
-runTestFirebaseConnectionDatabase();
+// runTestFirebaseConnectionDatabase();
+runTestFirebaseCredentialsStorage();
 
 const App: React.FC = () => {
   return (

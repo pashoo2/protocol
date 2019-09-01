@@ -7,7 +7,7 @@ export const runTestFirebaseConnectionDatabase = async () => {
   console.warn('runTestFirebaseConnectionDatabase::start');
 
   const firebaseConnection = await connectWithFirebase();
-  debugger;
+
   if (firebaseConnection instanceof Error) {
     console.error(firebaseConnection);
     return new Error('Failed to connect with firebase');

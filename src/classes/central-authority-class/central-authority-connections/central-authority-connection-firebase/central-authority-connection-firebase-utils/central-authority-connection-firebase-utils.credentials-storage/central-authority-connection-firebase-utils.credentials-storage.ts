@@ -196,14 +196,13 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
 
     try {
       const snapshot = await database
-        .ref()
-        .orderByKey()
+        .ref(CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_KEY_PREFIX)
         .orderByChild(
           CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_FIREBASE_USER_ID_PROPERTY
         )
         .equalTo(firebaseUserId)
         .once('value');
-
+      debugger; // TODO - next
       if (snapshot.exists()) {
         const valueStored = snapshot.val();
 
@@ -232,7 +231,7 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
     }
 
     const { firebaseUserId } = this;
-
+    debugger;
     if (firebaseUserId instanceof Error) {
       console.error(firebaseUserId);
       return new Error('Failed to get user id of the firebase user');
@@ -241,7 +240,7 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
     // check if a credentials value is
     // already exists for the user
     const credentialsForTheCurrentUser = await this.getCredentialsForTheCurrentUser();
-
+    debugger;
     if (
       credentialsForTheCurrentUser != null &&
       !(credentialsForTheCurrentUser instanceof Error)
@@ -249,20 +248,21 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
       return true;
     }
 
+    debugger;
     const userId = getUserIdentityByCryptoCredentials(credentials);
 
     if (userId instanceof Error) {
       console.error(userId);
       return new Error("Failed to get a user's identity from the credentials");
     }
-
+    debugger;
     const storeResult = this.setValue<
       ICAConnectionFirestoreUtilsCredentialsStrorageCredentialsSaveStructure
     >(this.getCredentialsKeyByUserId(userId), {
       credentials,
       [CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_FIREBASE_USER_ID_PROPERTY]: firebaseUserId,
     });
-
+    debugger;
     if (storeResult instanceof Error) {
       console.error(storeResult);
       return new Error('Failed to store the credentials in the database');
