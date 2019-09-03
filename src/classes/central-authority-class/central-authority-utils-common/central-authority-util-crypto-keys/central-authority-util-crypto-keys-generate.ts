@@ -15,6 +15,14 @@ import {
   CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME,
 } from 'classes/central-authority-class/central-authority-storage/central-authority-storage-credentials/central-authority-storage-credentials.const';
 import { generateUUID } from 'utils/identity-utils/identity-utils';
+import {
+  ICAUserUniqueIdentifierMetadata,
+  ICAUserUniqueIdentifierDescriptionWithOptionalVersion,
+} from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types';
+import { checkIsValidUserIdentityMetadata } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-class-user-identity-validators';
+import { dataValidatorUtilUUIDV4 } from 'utils/data-validators-utils/data-validators-utils';
+import { CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
+import CentralAuthorityIdentity from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
 
 /**
  * generate a key pair, used for data encryption
@@ -90,6 +98,56 @@ export const generateCryptoCredentials = async (): Promise<
   }
   return {
     [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_USER_ID_KEY_NAME]: generateUUID(),
+    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeyPair,
+  };
+};
+
+/**
+ * generates a random crypto credentials
+ * or return an Error if failed
+ */
+export const generateCryptoCredentialsWithUserIdentity = async (
+  identityMetadata: ICAUserUniqueIdentifierMetadata
+): Promise<TCentralAuthorityUserCryptoCredentials | Error> => {
+  const validationIdentityMetadataResult = checkIsValidUserIdentityMetadata(
+    identityMetadata
+  );
+
+  if (validationIdentityMetadataResult instanceof Error) {
+    console.error(validationIdentityMetadataResult);
+    return new Error('The identity metadata is not valid');
+  }
+
+  const userUUID = generateUUID();
+  const userUniqueIdentityDescription: ICAUserUniqueIdentifierDescriptionWithOptionalVersion = {
+    ...identityMetadata,
+    [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]: userUUID,
+  };
+  const userUniqueIdentityInstance = new CentralAuthorityIdentity(
+    userUniqueIdentityDescription
+  );
+
+  if (!userUniqueIdentityInstance.isValid) {
+    return new Error('Failed to generate a valid user unique identity');
+  }
+
+  const userUniqueId = userUniqueIdentityInstance.toString();
+
+  if (!userUniqueId) {
+    return new Error(
+      'Failed to get stringified version of the user unique identity generated'
+    );
+  }
+
+  const cryptoKeyPair = await generateKeyPairs();
+
+  if (cryptoKeyPair instanceof Error) {
+    console.error(cryptoKeyPair);
+    return new Error('Failed to generate a valid crypto credentials');
+  }
+
+  return {
+    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_USER_ID_KEY_NAME]: userUniqueId,
     [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeyPair,
   };
 };

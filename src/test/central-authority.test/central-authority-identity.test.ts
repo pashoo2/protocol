@@ -11,6 +11,8 @@ import {
   ICAUserUniqueIdentifierDescription,
   ICAUserUniqueIdentifierDescriptionWithOptionalVersion,
 } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types';
+import { generateCryptoCredentialsWithUserIdentity } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
+import { CA_CONNECTION_FIREBASE_CONFIG } from './central-authority-connection.test/central-authority-connection.test.firebase/central-authority-connection.test.firebase.const';
 
 const validateIdentityDescription = (
   identityDescription: ICAUserUniqueIdentifierDescription | Error,
@@ -277,4 +279,12 @@ export const runTestCAIdentity = async () => {
     return;
   }
   console.warn('The user identity description test is succesfull');
+};
+
+export const runTestCAIdentityWithAuthorityProviderGenerator = async () => {
+  const cryptoCredentials = await generateCryptoCredentialsWithUserIdentity({
+    authorityProviderURI: CA_CONNECTION_FIREBASE_CONFIG.databaseURL,
+  });
+
+  return cryptoCredentials;
 };

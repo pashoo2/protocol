@@ -33,6 +33,11 @@ export interface ICAUserUniqueIdentifierDescriptionWithOptionalVersion
   [CA_USER_IDENTITY_VERSION_PROP_NAME]?: string;
 }
 
+export interface ICAUserUniqueIdentifierMetadata {
+  [CA_USER_IDENTITY_VERSION_PROP_NAME]?: string;
+  [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: TCAuthProviderIdentifier;
+}
+
 export interface ICAIdentityCommon {
   identityDescription: ICAUserUniqueIdentifierDescription | Error;
   identityDescritptionSerialized: TCentralAuthorityUserIdentity | Error;

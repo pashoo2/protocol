@@ -5,6 +5,9 @@ import {
   CA_USER_IDENTITY_VERSION_CHARACTERS_COUNT,
   CA_USER_IDENTITY_PARSER_VERSIONS_SUPPORTED,
 } from '../central-authority-class-user-identity.const';
+import { ICAUserUniqueIdentifierMetadata } from '../central-authority-class-user-identity.types';
+import { CONST_VALIDATION_SCHEMES_URL } from 'const/const-validation-schemes/const-validation-schemes-common';
+import { dataValidatorUtilURL } from 'utils/data-validators-utils/data-validators-utils';
 
 export const validateIdentityDescriptionVersion = (
   version: any
@@ -84,4 +87,28 @@ export const validateUserIdentityDescription = (
     );
   }
   return new Error('There is a wrong format of the user identity description');
+};
+
+export const checkIsValidUserIdentityMetadata = (
+  identityMetadata: ICAUserUniqueIdentifierMetadata
+): boolean | Error => {
+  if (typeof identityMetadata !== 'object') {
+    return new Error('Identity metadata must be an object');
+  }
+  if (identityMetadata instanceof Error) {
+    return identityMetadata;
+  }
+  if (!identityMetadata) {
+    return new Error('Identity metadata must not be empty');
+  }
+
+  const { version, authorityProviderURI } = identityMetadata;
+
+  if (version && !validateIdentityDescriptionVersion(version)) {
+    return new Error('Version in Identity metadata have a wrong format');
+  }
+  if (!dataValidatorUtilURL(authorityProviderURI)) {
+    return new Error('The URL of an authority provider is not valid');
+  }
+  return true;
 };
