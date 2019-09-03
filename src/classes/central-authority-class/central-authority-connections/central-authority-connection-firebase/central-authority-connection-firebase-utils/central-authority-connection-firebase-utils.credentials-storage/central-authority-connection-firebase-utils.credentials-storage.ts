@@ -309,7 +309,7 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
     }
 
     const userId = getUserIdentityByCryptoCredentials(credentials);
-
+    debugger;
     if (userId instanceof Error) {
       console.error(userId);
       return new Error("Failed to get a user's identity from the credentials");
@@ -324,9 +324,11 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
       return new Error('Failed to export the crypto credentials value');
     }
 
+    const keyForValue = this.getCredentialsKeyByUserId(userId);
+    debugger;
     const storeResult = await this.setValue<
       ICAConnectionFirestoreUtilsCredentialsStrorageCredentialsSaveStructure
-    >(this.getCredentialsKeyByUserId(userId), {
+    >(keyForValue, {
       credentials: exportedCryptoCredentials,
       [CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_FIREBASE_USER_ID_PROPERTY]: firebaseUserId,
     });
@@ -345,9 +347,10 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
       return new Error('The user identity is not valid');
     }
 
+    const keyForValue = this.getCredentialsKeyByUserId(userId);
     const storedCredentialsValue = await this.getValue<
       ICAConnectionFirestoreUtilsCredentialsStrorageCredentialsSaveStructure
-    >(userId);
+    >(keyForValue);
 
     return this.getCredentialsByValueStored(storedCredentialsValue);
   }
