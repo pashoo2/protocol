@@ -16,5 +16,5 @@ export interface ICAConnectionFirestoreUtilsCredentialsStrorage {
 
 export interface ICAConnectionFirestoreUtilsCredentialsStrorageCredentialsSaveStructure {
   [CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_FIREBASE_USER_ID_PROPERTY]: string;
-  credentials: TCentralAuthorityUserCryptoCredentials;
+  credentials: string;
 }

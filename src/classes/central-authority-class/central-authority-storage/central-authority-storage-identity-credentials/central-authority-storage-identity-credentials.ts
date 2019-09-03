@@ -28,7 +28,7 @@ import {
 } from 'classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials';
 import { dataCachingUtilsCachingDecorator as caching } from 'utils/data-cache-utils/data-cache-utils';
 import {
-  checkExportedCryptoCredentialsToString,
+  checkIsValidExportedCryptoCredentialsToString,
   checkIsValidCryptoCredentials,
 } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
 
@@ -180,7 +180,7 @@ export class CentralAuthorityIdentityCredentialsStorage
     cryptoKeyPairs: TCACryptoKeyPairs
   ): Promise<boolean | Error> => {
     const { isActive } = this;
-    
+
     if (!isActive) {
       return new Error('The storage is not active');
     }
@@ -247,29 +247,26 @@ export class CentralAuthorityIdentityCredentialsStorage
     caCryptoCredentials: TCentralAuthorityUserCryptoCredentials
   ): Promise<boolean | Error> {
     const identity = getUserIdentityByCryptoCredentials(caCryptoCredentials);
-    
+
     if (identity instanceof Error) {
       console.error(identity);
       return new Error(
         'The user identity is not valid or have an unknown format'
       );
     }
-    
+
     const cryptoKeyPairs = getCryptoKeyPairsByCryptoCredentials(
       caCryptoCredentials
     );
-    
+
     if (cryptoKeyPairs instanceof Error) {
       console.error(cryptoKeyPairs);
       return new Error(
         'The crypto key pairs are not valid or have an unknown format'
       );
     }
-    
-    return this.setCredentialsByIdentity(
-      identity,
-      cryptoKeyPairs
-    );
+
+    return this.setCredentialsByIdentity(identity, cryptoKeyPairs);
   }
 
   protected async setCredentialsByCACryptoCredentialsExportedToString(
@@ -294,7 +291,7 @@ export class CentralAuthorityIdentityCredentialsStorage
     } else if (argsLenght === 1) {
       const caCryptoCredentials = args[0];
 
-      if (checkExportedCryptoCredentialsToString(caCryptoCredentials)) {
+      if (checkIsValidExportedCryptoCredentialsToString(caCryptoCredentials)) {
         return this.setCredentialsByCACryptoCredentialsExportedToString(
           caCryptoCredentials
         );

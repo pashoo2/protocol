@@ -20,7 +20,7 @@ import CentralAuthorityIdentity from 'classes/central-authority-class/central-au
 import {
   checkIsValidCryptoCredentials,
   checkIsValidCryptoCredentialsExportedFormat,
-  checkExportedCryptoCredentialsToString,
+  checkIsValidExportedCryptoCredentialsToString,
 } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
 
 export const exportCryptoCredentialsToString = async (
@@ -56,7 +56,9 @@ export const exportCryptoCredentialsToString = async (
     );
 
     if (
-      !checkExportedCryptoCredentialsToString(exportedCryptoCredentialsAsString)
+      !checkIsValidExportedCryptoCredentialsToString(
+        exportedCryptoCredentialsAsString
+      )
     ) {
       return new Error(
         'Failed cause the crypto credentials exported as a sting have a wrong format'
@@ -112,7 +114,7 @@ export const importCryptoCredentialsFromAString = async (
       `The cryptoCredentials value have the wrong type::${typeCryptoCredentials}::`
     );
   }
-  if (!checkExportedCryptoCredentialsToString(cryptoCredentialsString)) {
+  if (!checkIsValidExportedCryptoCredentialsToString(cryptoCredentialsString)) {
     return new Error('The cryptoCredentials value have a wrong format');
   }
 

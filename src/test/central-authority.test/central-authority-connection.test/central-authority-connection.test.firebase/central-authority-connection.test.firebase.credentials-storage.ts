@@ -40,7 +40,7 @@ export const runTestFirebaseCredentialsStorage = async () => {
     console.error('Failed to generate crypto credentials');
     return;
   }
-  debugger;
+
   const setCredentialsResult = await credetntialsStoreConnectionToFirebase.setUserCredentials(
     credentials
   );
@@ -50,6 +50,5 @@ export const runTestFirebaseCredentialsStorage = async () => {
     console.error('Failed to set credentials');
     return;
   }
-  debugger;
   console.warn('runTestFirebaseCredentialsStorage::success');
 };

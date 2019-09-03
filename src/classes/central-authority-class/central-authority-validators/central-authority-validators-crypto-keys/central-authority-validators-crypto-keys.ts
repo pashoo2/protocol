@@ -110,7 +110,7 @@ export const checkIsValidCryptoCredentialsExportedFormat = (
   return true;
 };
 
-export const checkExportedCryptoCredentialsToString = (
+export const checkIsValidExportedCryptoCredentialsToString = (
   cryptoCredentialsExportedAsString: any
 ): boolean => {
   return (
