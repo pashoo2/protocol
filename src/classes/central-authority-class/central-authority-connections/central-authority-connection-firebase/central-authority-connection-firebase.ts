@@ -24,6 +24,7 @@ import { checkIsValidCryptoCredentials } from 'classes/central-authority-class/c
 import { generateCryptoCredentialsWithUserIdentity } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
 import CentralAuthorityIdentity from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
 import { CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
+import { CAConnectionFirestoreUtilsCredentialsStrorage } from './central-authority-connection-firebase-utils/central-authority-connection-firebase-utils.credentials-storage/central-authority-connection-firebase-utils.credentials-storage';
 
 // TODO export class CAConnectionWithFirebase implements ICAConnection {
 export class CAConnectionWithFirebase implements ICAConnection {
@@ -32,6 +33,10 @@ export class CAConnectionWithFirebase implements ICAConnection {
   protected configuration?: ICAConnectionConfigurationFirebase;
 
   protected isAuthorizedWithCredentials: boolean = false;
+
+  protected valueofCredentialsSignUpOnAuthorizedSuccess?: ICAConnectionUserAuthorizedResult;
+
+  protected connectionWithCredentialsStorage?: CAConnectionFirestoreUtilsCredentialsStrorage;
 
   protected get currentUser(): firebase.User | null {
     const { isConnected, app } = this;
@@ -54,13 +59,17 @@ export class CAConnectionWithFirebase implements ICAConnection {
   public isConnected: boolean = false;
 
   public get isAuthorized(): boolean {
-    const { isConnected, isVerifiedAccount } = this;
+    const {
+      isConnected,
+      isVerifiedAccount,
+      valueofCredentialsSignUpOnAuthorizedSuccess: credentialsAuthorizedSuccess,
+    } = this;
 
     if (!isConnected) {
       return false;
     }
     // according to the https://firebase.google.com/docs/auth/web/manage-users
-    return isVerifiedAccount;
+    return isVerifiedAccount && !!credentialsAuthorizedSuccess;
   }
 
   protected get databaseURL(): Error | string {
@@ -98,11 +107,44 @@ export class CAConnectionWithFirebase implements ICAConnection {
   }
 
   protected checkIfConnected(): boolean | Error {
-    const { isConnected } = this;
+    const { isConnected, connectionWithCredentialsStorage } = this;
 
+    if (
+      !connectionWithCredentialsStorage ||
+      !connectionWithCredentialsStorage.isConnected
+    ) {
+      return false;
+    }
     return !isConnected
       ? new Error('There is no active connection with the Firebase')
       : true;
+  }
+
+  protected setConnectionWithCredentialsStorage(
+    connectionWithCredentialsStorage: CAConnectionFirestoreUtilsCredentialsStrorage
+  ) {
+    this.connectionWithCredentialsStorage = connectionWithCredentialsStorage;
+  }
+
+  protected async startConnectionWithCreedntialsStorage(): Promise<
+    boolean | Error
+  > {
+    const connectionWithCredentialsStorage = new CAConnectionFirestoreUtilsCredentialsStrorage(
+      this
+    );
+    const storageConnectionResult = await connectionWithCredentialsStorage.connect();
+
+    if (storageConnectionResult instanceof Error) {
+      console.error(storageConnectionResult);
+      return new Error('Failed connect to the Firebase credentials storage');
+    }
+    if (!connectionWithCredentialsStorage.isConnected) {
+      return new Error(
+        'Connection to the Firebase credentials storage was not succeed'
+      );
+    }
+    this.setConnectionWithCredentialsStorage(connectionWithCredentialsStorage);
+    return true;
   }
 
   public async connect(
@@ -436,9 +478,56 @@ export class CAConnectionWithFirebase implements ICAConnection {
     return cryptoCredentials;
   }
 
+  protected async readCryptoCredentialsForTheUserFromDatabase(): Promise<
+    Error | TCentralAuthorityUserCryptoCredentials | null
+  > {
+    const { isConnected } = this;
+
+    if (!isConnected) {
+      return new Error(
+        'There is no active connection to the Firebase auth provider'
+      );
+    }
+
+    const { connectionWithCredentialsStorage } = this;
+    const credentialsForTheCurrentUser = connectionWithCredentialsStorage!!.getCredentialsForTheCurrentUser();
+
+    if (credentialsForTheCurrentUser instanceof Error) {
+      console.error(credentialsForTheCurrentUser);
+      return new Error('Failed to read credentials of the current user');
+    }
+    return credentialsForTheCurrentUser;
+  }
+
+  protected async setCryptoCredentialsForTheUserToDatabase(): Promise<
+    Error | TCentralAuthorityUserCryptoCredentials | null
+  > {
+    const { isConnected } = this;
+
+    if (!isConnected) {
+      return new Error(
+        'There is no active connection to the Firebase auth provider'
+      );
+    }
+
+    const { connectionWithCredentialsStorage } = this;
+    // TODO
+    const credentialsForTheCurrentUser = connectionWithCredentialsStorage!!.setUserCredentials();
+  }
+
   protected async validateAndGetCryptoCredentials(
     signUpCredentials: ICAConnectionSignUpCredentials
   ): Promise<Error | TCentralAuthorityUserCryptoCredentials> {
+    // check if a crypto credentials is already exists for the user
+    const credentialsStoredForTheUser = await this.readCryptoCredentialsForTheUserFromDatabase();
+
+    if (credentialsStoredForTheUser instanceof Error) {
+      console.error(credentialsStoredForTheUser);
+    }
+    if (credentialsStoredForTheUser) {
+      return credentialsStoredForTheUser;
+    }
+
     const { cryptoCredentials } = signUpCredentials;
 
     if (!cryptoCredentials) {
@@ -459,18 +548,10 @@ export class CAConnectionWithFirebase implements ICAConnection {
       return isConnected;
     }
 
-    const cryptoCredentials = await this.validateAndGetCryptoCredentials(
-      signUpCredentials
-    );
-
-    if (cryptoCredentials instanceof Error) {
-      return cryptoCredentials;
-    }
-
     const { isAuthorized } = this;
 
     if (isAuthorized) {
-      return this.handleAuthSuccess(cryptoCredentials);
+      return this.valueofCredentialsSignUpOnAuthorizedSuccess!!;
     }
 
     // try to sign in with the credentials, then try to sign up
@@ -496,7 +577,15 @@ export class CAConnectionWithFirebase implements ICAConnection {
       }
     }
 
-    const authHandleResult = await this.handleAuthSuccess(cryptoCredentials);
+    const cryptoCredentials = await this.validateAndGetCryptoCredentials(
+      signUpCredentials
+    );
+
+    if (cryptoCredentials instanceof Error) {
+      return cryptoCredentials;
+    }
+
+    let authHandleResult = await this.handleAuthSuccess(cryptoCredentials);
 
     if (authHandleResult instanceof Error) {
       return authHandleResult;
@@ -508,12 +597,13 @@ export class CAConnectionWithFirebase implements ICAConnection {
         console.error(setProfileResult);
         return new Error('Failed to set the profile data');
       }
-      return {
+      authHandleResult = {
         profile: setProfileResult,
         // TODO it is necessry to set this credentials in the database
         cryptoCredentials: cryptoCredentials,
       };
     }
+    this.valueofCredentialsSignUpOnAuthorizedSuccess = authHandleResult;
     return authHandleResult;
   }
 
@@ -534,6 +624,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
     }
 
     this.setAuthorizedStatus(false);
+    this.valueofCredentialsSignUpOnAuthorizedSuccess = undefined;
     return true;
   }
 
@@ -562,6 +653,45 @@ export class CAConnectionWithFirebase implements ICAConnection {
       return new Error('Failed to delete the user from the authority');
     }
     return true;
+  }
+
+  protected async disconnectCredentialsStorage(): Promise<Error | boolean> {
+    const { connectionWithCredentialsStorage } = this;
+
+    if (
+      connectionWithCredentialsStorage &&
+      connectionWithCredentialsStorage.isConnected
+    ) {
+      const res = await connectionWithCredentialsStorage.disconnect();
+
+      if (res instanceof Error) {
+        console.error(res);
+        return new Error(
+          'Failed to disconnect from the Firebase credentials storage'
+        );
+      }
+    }
+    this.connectionWithCredentialsStorage = undefined;
+    return true;
+  }
+
+  public async disconnect() {
+    const disconnectFromStorageResult = await this.disconnectCredentialsStorage();
+
+    if (disconnectFromStorageResult instanceof Error) {
+      return disconnectFromStorageResult;
+    }
+
+    const { app } = this;
+
+    if (app) {
+      try {
+        await app.delete();
+      } catch (err) {
+        console.error(err);
+        return new Error('Failed to disconnect from the Firebase app');
+      }
+    }
   }
 }
 
