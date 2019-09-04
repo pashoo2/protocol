@@ -5,7 +5,10 @@ import './App.css';
 import { runTestFirebaseConnectionDatabase } from 'test/central-authority.test/central-authority-connection.test/central-authority-connection.test.firebase/central-authority-connection.test.firebase.database';
 import { runTestFirebaseCredentialsStorage } from 'test/central-authority.test/central-authority-connection.test/central-authority-connection.test.firebase/central-authority-connection.test.firebase.credentials-storage';
 import { runTestCAIdentityWithAuthorityProviderGenerator } from 'test/central-authority.test/central-authority.test';
-// import { runTestCAConnectionFirebase } from 'test/central-authority.test/central-authority-connection.test/central-authority-connection.test';
+import {
+  runTestCAConnectionFirebase,
+  runTestCAConnectionFirebaseCryptoCredentialsGenerateByFirebaseAuthProvider,
+} from 'test/central-authority.test/central-authority-connection.test/central-authority-connection.test';
 // import { runCACredentialsIdentityStorageTest } from 'test/central-authority.test/central-authority-storage-identity-credentials.test';
 // import { runTestCachingDecorator } from 'test/common-utils.test/common-utils.test';
 // import { runTestCAIdentity } from 'test/central-authority.test/central-authority.test';
@@ -29,7 +32,8 @@ import { runTestCAIdentityWithAuthorityProviderGenerator } from 'test/central-au
 // runTestCAConnectionFirebase();
 // runTestFirebaseConnectionDatabase();
 // runTestFirebaseCredentialsStorage();
-runTestCAIdentityWithAuthorityProviderGenerator();
+// runTestCAIdentityWithAuthorityProviderGenerator();
+runTestCAConnectionFirebaseCryptoCredentialsGenerateByFirebaseAuthProvider();
 
 const App: React.FC = () => {
   return (

@@ -3,7 +3,6 @@ import 'firebase/auth';
 import {
   ICAConnection,
   ICAConnectionSignUpCredentials,
-  ICAConnectionSignInCredentials,
   ICAConnectionUserAuthorizedResult,
 } from '../central-authority-connections.types';
 import {
@@ -23,7 +22,6 @@ import {
 } from 'utils/data-validators-utils/data-validators-utils';
 import { checkIsValidCryptoCredentials } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
 import { generateCryptoCredentialsWithUserIdentity } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
-import { getUserIdentityByCryptoCredentials } from 'classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials';
 import CentralAuthorityIdentity from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
 import { CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
 
@@ -472,7 +470,6 @@ export class CAConnectionWithFirebase implements ICAConnection {
     const { isAuthorized } = this;
 
     if (isAuthorized) {
-      // TODO - verify the crypto credentials
       return this.handleAuthSuccess(cryptoCredentials);
     }
 
@@ -556,6 +553,8 @@ export class CAConnectionWithFirebase implements ICAConnection {
     if (currentUser == null) {
       return new Error('There is no current user');
     }
+
+    //TODO - delete credentials from the database
     try {
       await currentUser.delete();
     } catch (err) {

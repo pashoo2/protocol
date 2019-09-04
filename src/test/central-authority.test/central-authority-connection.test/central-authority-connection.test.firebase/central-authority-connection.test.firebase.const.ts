@@ -10,6 +10,11 @@ export const CA_CONNECTION_FIREBASE_CONFIG = {
   appId: '1:275196342406:web:40b79d671c50af57',
 };
 
+export const CA_CONNECTION_FIREBASE_USER_CREDENTIALS = {
+  login: 'akulich.p@gmail.com',
+  password: '123456',
+};
+
 export const CA_CONNECTION_FIREBASE_CREDENTIALS = (async () => {
   const cryptoCredentials = await generateCryptoCredentials();
 
@@ -19,8 +24,7 @@ export const CA_CONNECTION_FIREBASE_CREDENTIALS = (async () => {
   }
 
   return {
-    login: 'akulich.p@gmail.com',
-    password: '123456',
+    ...CA_CONNECTION_FIREBASE_USER_CREDENTIALS,
     cryptoCredentials,
   };
 })();
