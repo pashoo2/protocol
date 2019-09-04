@@ -1,4 +1,7 @@
-import { TCentralAuthorityUserIdentity } from '../central-authority-class-types/central-authority-class-types';
+import {
+  TCentralAuthorityUserIdentity,
+  TCentralAuthorityUserCryptoCredentials,
+} from '../central-authority-class-types/central-authority-class-types';
 import {
   CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME,
   CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME,
@@ -38,7 +41,7 @@ export interface ICAUserUniqueIdentifierMetadata {
   [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: TCAuthProviderIdentifier;
 }
 
-export interface ICAIdentityCommon {
+export interface ICAIdentityCommonInstance {
   identityDescription: ICAUserUniqueIdentifierDescription | Error;
   identityDescritptionSerialized: TCentralAuthorityUserIdentity | Error;
   toString: () => TCentralAuthorityUserIdentity;

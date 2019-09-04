@@ -16,7 +16,7 @@ import {
   TCentralAuthorityUserIdentity,
   TCACryptoKeyPairs,
 } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
-import CentralAuthorityIdentity from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
+import { CentralAuthorityIdentity } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
 import {
   checkIsValidCryptoCredentials,
   checkIsValidCryptoCredentialsExportedFormat,

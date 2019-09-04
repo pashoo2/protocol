@@ -13,6 +13,8 @@ import {
 } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types';
 import { generateCryptoCredentialsWithUserIdentity } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
 import { CA_CONNECTION_FIREBASE_CONFIG } from './central-authority-connection.test/central-authority-connection.test.firebase/central-authority-connection.test.firebase.const';
+import { checkIsValidCryptoCredentials } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
+import { getUserIdentityByCryptoCredentials } from 'classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials';
 
 const validateIdentityDescription = (
   identityDescription: ICAUserUniqueIdentifierDescription | Error,
@@ -282,9 +284,53 @@ export const runTestCAIdentity = async () => {
 };
 
 export const runTestCAIdentityWithAuthorityProviderGenerator = async () => {
+  console.warn('runTestCAIdentityWithAuthorityProviderGenerator:started');
+
   const cryptoCredentials = await generateCryptoCredentialsWithUserIdentity({
     authorityProviderURI: CA_CONNECTION_FIREBASE_CONFIG.databaseURL,
   });
 
-  return cryptoCredentials;
+  if (!checkIsValidCryptoCredentials(cryptoCredentials)) {
+    console.error('The crypto credentials generated is not valid');
+    return;
+  }
+
+  const userIdentityByCryptoCredentials = getUserIdentityByCryptoCredentials(
+    cryptoCredentials
+  );
+  const caUserIdentity = new CentralAuthorityIdentity(cryptoCredentials);
+
+  if (!caUserIdentity.isValid) {
+    console.error('User identity generated is not valid');
+    return;
+  }
+
+  const stringifiedIdentity = caUserIdentity.toString();
+
+  if (stringifiedIdentity === '') {
+    console.error(stringifiedIdentity);
+    console.error('Failed to parse the identity');
+    return;
+  }
+  if (stringifiedIdentity !== userIdentityByCryptoCredentials) {
+    console.error('Parsed identity is not valid');
+    return;
+  }
+
+  const identityDescriptionParsed = caUserIdentity.identityDescription;
+
+  if (identityDescriptionParsed instanceof Error) {
+    console.error(identityDescriptionParsed);
+    console.error('Failed to get description by identity string');
+    return;
+  }
+  if (
+    identityDescriptionParsed[
+      CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME
+    ] !== CA_CONNECTION_FIREBASE_CONFIG.databaseURL
+  ) {
+    console.error('Wrong authority provider url got from the identity string');
+    return;
+  }
+  console.warn('runTestCAIdentityWithAuthorityProviderGenerator:success');
 };

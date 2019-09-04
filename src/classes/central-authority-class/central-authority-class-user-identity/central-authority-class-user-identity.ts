@@ -1,9 +1,12 @@
 import {
   ICAUserUniqueIdentifierDescription,
-  ICAIdentityCommon,
   ICAUserUniqueIdentifierDescriptionWithOptionalVersion,
+  ICAIdentityCommonInstance,
 } from './central-authority-class-user-identity.types';
-import { TCentralAuthorityUserIdentity } from '../central-authority-class-types/central-authority-class-types';
+import {
+  TCentralAuthorityUserIdentity,
+  TCentralAuthorityUserCryptoCredentials,
+} from '../central-authority-class-types/central-authority-class-types';
 import { validateUserIdentitySilent } from '../central-authority-validators/central-authority-validators-auth-credentials/central-authority-validators-auth-credentials';
 import { parseIdentity } from './central-authority-class-user-identity-parsers/central-authority-class-user-identity-parsers';
 import { serializeIdentity } from './central-authority-class-user-identity-formatters/central-authority-class-user-identity-formatters';
@@ -11,9 +14,8 @@ import {
   CA_USER_IDENTITY_VERSION_PROP_NAME,
   CA_USER_IDENTITY_VERSION_CURRENT,
 } from './central-authority-class-user-identity.const';
-import { compressString } from 'utils/data-compression-utils/data-compression-utils';
-
-export class CentralAuthorityIdentity implements ICAIdentityCommon {
+import { CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME } from '../central-authority-class-const/central-authority-class-const';
+export class CentralAuthorityIdentity implements ICAIdentityCommonInstance {
   protected _userIdentitySerialized?: Error | TCentralAuthorityUserIdentity;
 
   protected _userIdentityParsed?: Error | ICAUserUniqueIdentifierDescription;
@@ -22,14 +24,27 @@ export class CentralAuthorityIdentity implements ICAIdentityCommon {
 
   constructor(
     protected _userIdentity:
+      | TCentralAuthorityUserCryptoCredentials
       | TCentralAuthorityUserIdentity
       | ICAUserUniqueIdentifierDescriptionWithOptionalVersion
   ) {
-    if (validateUserIdentitySilent(_userIdentity)) {
-      this.parseUserIdentity(_userIdentity);
+    let identity = _userIdentity;
+
+    if (_userIdentity && typeof _userIdentity === 'object') {
+      //check may be it is a ctrypto credentials object
+      const identityVal = ((_userIdentity as unknown) as any)[
+        CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME
+      ];
+
+      if (typeof identityVal === 'string') {
+        identity = identityVal;
+      }
+    }
+    if (validateUserIdentitySilent(identity)) {
+      this.parseUserIdentity(identity);
     } else {
       const userIdentityDescription = this.extendDescriptionWithVersion(
-        _userIdentity
+        identity as ICAUserUniqueIdentifierDescriptionWithOptionalVersion
       );
 
       this.serializeUserIdentityDescription(userIdentityDescription);
