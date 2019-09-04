@@ -18,7 +18,7 @@ export interface ICAConnectionUserAuthorizedResult {
  */
 export interface ICAConnectionSignUpCredentials
   extends ICentralAuthorityUserAuthCredentials {
-  cryptoCredentials: TCentralAuthorityUserCryptoCredentials;
+  cryptoCredentials?: TCentralAuthorityUserCryptoCredentials;
 }
 
 /**

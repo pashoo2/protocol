@@ -17,12 +17,21 @@ import {
 } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 import { isEmptyObject } from 'utils/common-utils/common-utils-objects';
 import { validateUserProfileData } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-user/central-authority-validators-user';
-import { dataValidatorUtilEmail } from 'utils/data-validators-utils/data-validators-utils';
+import {
+  dataValidatorUtilEmail,
+  dataValidatorUtilURL,
+} from 'utils/data-validators-utils/data-validators-utils';
 import { checkIsValidCryptoCredentials } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
+import { generateCryptoCredentialsWithUserIdentity } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
+import { getUserIdentityByCryptoCredentials } from 'classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials';
+import CentralAuthorityIdentity from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
+import { CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
 
 // TODO export class CAConnectionWithFirebase implements ICAConnection {
 export class CAConnectionWithFirebase implements ICAConnection {
   protected app?: firebase.app.App;
+
+  protected configuration?: ICAConnectionConfigurationFirebase;
 
   protected isAuthorizedWithCredentials: boolean = false;
 
@@ -56,6 +65,25 @@ export class CAConnectionWithFirebase implements ICAConnection {
     return isVerifiedAccount;
   }
 
+  protected get databaseURL(): Error | string {
+    const { configuration } = this;
+
+    if (!configuration) {
+      return new Error(
+        'There is no url specified for the Firebase authority provided'
+      );
+    }
+
+    const { databaseURL } = configuration;
+
+    if (dataValidatorUtilURL(databaseURL)) {
+      return databaseURL;
+    }
+    return new Error(
+      'An invalid URL provided for the Firebase authority provider'
+    );
+  }
+
   public getApp(): void | firebase.app.App {
     return this.app;
   }
@@ -85,6 +113,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
     let app;
     try {
       app = await firebase.initializeApp(configuration);
+      this.configuration = configuration;
     } catch (err) {
       console.error(err);
       this.setConnectedStatus(false);
@@ -353,6 +382,75 @@ export class CAConnectionWithFirebase implements ICAConnection {
     return new Error('Please verify the email address');
   }
 
+  protected async generateNewCryptoCredentialsForConfigurationProvided(): Promise<
+    Error | TCentralAuthorityUserCryptoCredentials
+  > {
+    const { databaseURL } = this;
+
+    if (databaseURL instanceof Error) {
+      return databaseURL;
+    }
+
+    const cryptoCredentials = await generateCryptoCredentialsWithUserIdentity({
+      authorityProviderURI: databaseURL,
+    });
+
+    if (cryptoCredentials instanceof Error) {
+      console.error(cryptoCredentials);
+      return new Error('Failed to generate a new crypto credentials');
+    }
+    return cryptoCredentials;
+  }
+
+  protected checkUserIdentityIsValidForConfigurationProvided(
+    cryptoCredentials: TCentralAuthorityUserCryptoCredentials
+  ): Error | TCentralAuthorityUserCryptoCredentials {
+    const { databaseURL } = this;
+
+    if (databaseURL instanceof Error) {
+      return databaseURL;
+    }
+    if (!checkIsValidCryptoCredentials(cryptoCredentials)) {
+      return new Error('The crypto credentials value is not valid');
+    }
+
+    const caUserIdentity = new CentralAuthorityIdentity(cryptoCredentials);
+
+    if (!caUserIdentity.isValid) {
+      return new Error('User identity generated is not valid');
+    }
+
+    const { identityDescription: identityDescriptionParsed } = caUserIdentity;
+
+    if (identityDescriptionParsed instanceof Error) {
+      console.error(identityDescriptionParsed);
+      return new Error('Failed to get description by identity string');
+    }
+    if (
+      identityDescriptionParsed[
+        CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME
+      ] !== databaseURL
+    ) {
+      return new Error(
+        'Wrong authority provider url got from the identity string'
+      );
+    }
+    return cryptoCredentials;
+  }
+
+  protected async validateAndGetCryptoCredentials(
+    signUpCredentials: ICAConnectionSignUpCredentials
+  ): Promise<Error | TCentralAuthorityUserCryptoCredentials> {
+    const { cryptoCredentials } = signUpCredentials;
+
+    if (!cryptoCredentials) {
+      return this.generateNewCryptoCredentialsForConfigurationProvided();
+    }
+    return this.checkUserIdentityIsValidForConfigurationProvided(
+      cryptoCredentials
+    );
+  }
+
   public async authorize(
     signUpCredentials: ICAConnectionSignUpCredentials,
     profile?: Partial<ICentralAuthorityUserProfile>
@@ -363,10 +461,12 @@ export class CAConnectionWithFirebase implements ICAConnection {
       return isConnected;
     }
 
-    const { cryptoCredentials } = signUpCredentials;
+    const cryptoCredentials = await this.validateAndGetCryptoCredentials(
+      signUpCredentials
+    );
 
-    if (!checkIsValidCryptoCredentials(cryptoCredentials)) {
-      return new Error('The crypto credentials value is not valid');
+    if (cryptoCredentials instanceof Error) {
+      return cryptoCredentials;
     }
 
     const { isAuthorized } = this;
@@ -414,7 +514,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
       return {
         profile: setProfileResult,
         // TODO it is necessry to set this credentials in the database
-        cryptoCredentials: signUpCredentials.cryptoCredentials,
+        cryptoCredentials: cryptoCredentials,
       };
     }
     return authHandleResult;
