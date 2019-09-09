@@ -25,6 +25,8 @@ import { generateCryptoCredentialsWithUserIdentity } from 'classes/central-autho
 import CentralAuthorityIdentity from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
 import { CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
 import { CAConnectionFirestoreUtilsCredentialsStrorage } from './central-authority-connection-firebase-utils/central-authority-connection-firebase-utils.credentials-storage/central-authority-connection-firebase-utils.credentials-storage';
+import { CA_CONNECTION_FIREBASE_CREDENTIALS_GENERATION_MAX_ATTEMPTS } from './central-authority-connection-firebase.const/central-authority-connection-firebase.const.restrictions';
+import { validatePassword } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-auth-credentials/central-authority-validators-auth-credentials';
 
 // TODO export class CAConnectionWithFirebase implements ICAConnection {
 export class CAConnectionWithFirebase implements ICAConnection {
@@ -120,13 +122,46 @@ export class CAConnectionWithFirebase implements ICAConnection {
       : true;
   }
 
+  protected checkSignUpCredentials(
+    signUpCredentials: ICAConnectionSignUpCredentials
+  ): boolean | Error {
+    if (!signUpCredentials) {
+      return new Error('Sign up credentials must be provided');
+    }
+    if (typeof signUpCredentials !== 'object') {
+      return new Error('Sign up credentials must be an object');
+    }
+
+    const {
+      cryptoCredentials: credentialsGiven,
+      login,
+      password,
+    } = signUpCredentials;
+
+    if (
+      credentialsGiven &&
+      !this.checkUserIdentityIsValidForConfigurationProvided(credentialsGiven)
+    ) {
+      return new Error(
+        'Credentials given is not valid for the Firebase auth provider'
+      );
+    }
+    if (!dataValidatorUtilEmail(login)) {
+      return new Error('The login is not valid');
+    }
+    if (!validatePassword(password)) {
+      return new Error('The password provided is not valid');
+    }
+    return true;
+  }
+
   protected setConnectionWithCredentialsStorage(
     connectionWithCredentialsStorage: CAConnectionFirestoreUtilsCredentialsStrorage
   ) {
     this.connectionWithCredentialsStorage = connectionWithCredentialsStorage;
   }
 
-  protected async startConnectionWithCreedntialsStorage(): Promise<
+  protected async startConnectionWithCredentialsStorage(): Promise<
     boolean | Error
   > {
     const connectionWithCredentialsStorage = new CAConnectionFirestoreUtilsCredentialsStrorage(
@@ -174,10 +209,6 @@ export class CAConnectionWithFirebase implements ICAConnection {
     console.error('Authorization failed on remote Firebase server');
     return err;
   }
-
-  protected async setUserCryptoCredentials() {}
-
-  protected getUserCryptoCredentials() {}
 
   protected async singUpWithAuthCredentials(
     authCredentials: ICentralAuthorityUserAuthCredentials
@@ -481,7 +512,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
   protected async readCryptoCredentialsForTheUserFromDatabase(): Promise<
     Error | TCentralAuthorityUserCryptoCredentials | null
   > {
-    const { isConnected } = this;
+    const isConnected = this.checkIfConnected();
 
     if (!isConnected) {
       return new Error(
@@ -490,7 +521,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
     }
 
     const { connectionWithCredentialsStorage } = this;
-    const credentialsForTheCurrentUser = connectionWithCredentialsStorage!!.getCredentialsForTheCurrentUser();
+    const credentialsForTheCurrentUser = await connectionWithCredentialsStorage!!.getCredentialsForTheCurrentUser();
 
     if (credentialsForTheCurrentUser instanceof Error) {
       console.error(credentialsForTheCurrentUser);
@@ -499,45 +530,140 @@ export class CAConnectionWithFirebase implements ICAConnection {
     return credentialsForTheCurrentUser;
   }
 
-  protected async setCryptoCredentialsForTheUserToDatabase(): Promise<
-    Error | TCentralAuthorityUserCryptoCredentials | null
-  > {
-    const { isConnected } = this;
+  protected async setCryptoCredentialsForTheUserToDatabase(
+    cryptoCredentials: TCentralAuthorityUserCryptoCredentials
+  ): Promise<Error | TCentralAuthorityUserCryptoCredentials> {
+    const isConnected = this.checkIfConnected();
+    const { connectionWithCredentialsStorage } = this;
 
     if (!isConnected) {
       return new Error(
         'There is no active connection to the Firebase auth provider'
       );
     }
-
-    const { connectionWithCredentialsStorage } = this;
-    // TODO
-    const credentialsForTheCurrentUser = connectionWithCredentialsStorage!!.setUserCredentials();
-  }
-
-  protected async validateAndGetCryptoCredentials(
-    signUpCredentials: ICAConnectionSignUpCredentials
-  ): Promise<Error | TCentralAuthorityUserCryptoCredentials> {
-    // check if a crypto credentials is already exists for the user
-    const credentialsStoredForTheUser = await this.readCryptoCredentialsForTheUserFromDatabase();
-
-    if (credentialsStoredForTheUser instanceof Error) {
-      console.error(credentialsStoredForTheUser);
-    }
-    if (credentialsStoredForTheUser) {
-      return credentialsStoredForTheUser;
-    }
-
-    const { cryptoCredentials } = signUpCredentials;
-
-    if (!cryptoCredentials) {
-      return this.generateNewCryptoCredentialsForConfigurationProvided();
-    }
-    return this.checkUserIdentityIsValidForConfigurationProvided(
+    const setCredentialsResult = await connectionWithCredentialsStorage!!.setUserCredentials(
       cryptoCredentials
     );
+
+    if (setCredentialsResult instanceof Error) {
+      return setCredentialsResult;
+    }
+    return cryptoCredentials;
   }
 
+  protected async generateAndSetCredentialsForTheCurrentUser(
+    signUpCredentials: ICAConnectionSignUpCredentials
+  ): Promise<Error | TCentralAuthorityUserCryptoCredentials> {
+    let attempt = 0;
+    let cryptoCredentials:
+      | TCentralAuthorityUserCryptoCredentials
+      | Error = new Error(
+      'Failed to generate and set a crypto credentials for the user because of unknown reason'
+    );
+    let isSuccess: boolean = false;
+    const credentialsProvidedCheckResult = this.checkSignUpCredentials(
+      signUpCredentials
+    );
+
+    if (credentialsProvidedCheckResult instanceof Error) {
+      console.error(credentialsProvidedCheckResult);
+      return credentialsProvidedCheckResult;
+    }
+
+    const { cryptoCredentials: credentialsGiven } = signUpCredentials;
+
+    // try a multiple times cause may be
+    // a network errors or user id
+    // is already exists in the database
+    while (
+      attempt < CA_CONNECTION_FIREBASE_CREDENTIALS_GENERATION_MAX_ATTEMPTS ||
+      isSuccess
+    ) {
+      cryptoCredentials = credentialsGiven
+        ? // if credentials were provided use it
+          credentialsGiven
+        : // if the credentials not provided, generate a new one
+          await this.generateNewCryptoCredentialsForConfigurationProvided();
+
+      if (cryptoCredentials instanceof Error) {
+        // fialed to generate a new crypto credentials
+        console.error(cryptoCredentials);
+      } else {
+        const setCredentialsResult = await this.setCryptoCredentialsForTheUserToDatabase(
+          cryptoCredentials
+        );
+
+        if (setCredentialsResult instanceof Error) {
+          console.error(setCredentialsResult);
+          cryptoCredentials = new Error(
+            'Failed to store credentials for the user in the database'
+          );
+        } else {
+          cryptoCredentials = setCredentialsResult;
+          isSuccess = true;
+          break;
+        }
+      }
+    }
+    return cryptoCredentials;
+  }
+
+  protected async createOrReturnExistingCredentialsForUser(
+    signUpCredentials: ICAConnectionSignUpCredentials
+  ): Promise<Error | TCentralAuthorityUserCryptoCredentials> {
+    const credentialsExistingForTheCurrentUser = await this.readCryptoCredentialsForTheUserFromDatabase();
+
+    if (credentialsExistingForTheCurrentUser instanceof Error) {
+      console.error(credentialsExistingForTheCurrentUser);
+      return new Error(
+        'Failed to read credentials for the user from the Firebase database'
+      );
+    }
+    if (credentialsExistingForTheCurrentUser) {
+      return credentialsExistingForTheCurrentUser;
+    }
+
+    const newCredentialsGenerated = await this.generateAndSetCredentialsForTheCurrentUser(
+      signUpCredentials
+    );
+
+    if (newCredentialsGenerated instanceof Error) {
+      console.error(newCredentialsGenerated);
+      return new Error(
+        'Failed to generate or set a crypto credentials for the user'
+      );
+    }
+    return newCredentialsGenerated;
+  }
+
+  protected async signUp(
+    signUpCredentials: ICAConnectionSignUpCredentials
+  ): Promise<Error | boolean> {
+    // if failed to sign in with the
+    // credentials, then try to
+    // sign up
+    const signUpResult = await this.singUpWithAuthCredentials(
+      signUpCredentials
+    );
+
+    if (signUpResult instanceof Error) {
+      // if sign up failed then return
+      // error that the authorization
+      // failed
+      return this.onAuthorizationFailed(
+        'Failed to authorize on Firebase remote server with the credentials'
+      );
+    }
+    return true;
+  }
+
+  /**
+   * @param {ICAConnectionSignUpCredentials} signUpCredentials
+   * @param signUpCredentials.login - there must be an email to authorize with a Firebase account
+   * @param signUpCredentials.password - password used for encrypt a sensitive data and authorize
+   * in the Firebase account
+   * @param profile - if provided then the user profile will be set in firebase
+   */
   public async authorize(
     signUpCredentials: ICAConnectionSignUpCredentials,
     profile?: Partial<ICentralAuthorityUserProfile>
@@ -554,48 +680,62 @@ export class CAConnectionWithFirebase implements ICAConnection {
       return this.valueofCredentialsSignUpOnAuthorizedSuccess!!;
     }
 
+    const checkSignUpCredentialsResult = this.checkSignUpCredentials(
+      signUpCredentials
+    );
+
+    if (checkSignUpCredentialsResult instanceof Error) {
+      console.error(checkSignUpCredentialsResult);
+      return this.onAuthorizationFailed(checkSignUpCredentialsResult);
+    }
+
     // try to sign in with the credentials, then try to sign up
     const signInResult = await this.singInWithAuthCredentials(
       signUpCredentials
     );
 
     if (signInResult instanceof Error) {
-      // if failed to sign in with the
-      // credentials, then try to
-      // sign up
-      const signUpResult = await this.singUpWithAuthCredentials(
-        signUpCredentials
-      );
+      console.warn('Failed to sign in with the credentials given');
+
+      // if failed to sign in with the credentials
+      // try to sign up
+      const signUpResult = await this.signUp(signUpCredentials);
 
       if (signUpResult instanceof Error) {
-        // if sign up failed then return
-        // error that the authorization
-        // failed
-        return this.onAuthorizationFailed(
-          'Failed to authorize on Firebase remote server with the credentials'
-        );
+        console.error(signUpResult);
+        return this.onAuthorizationFailed('The user was failed to sign up');
       }
     }
 
-    const cryptoCredentials = await this.validateAndGetCryptoCredentials(
+    const connectWithStorageResult = await this.startConnectionWithCredentialsStorage();
+
+    if (connectWithStorageResult instanceof Error) {
+      console.error(connectWithStorageResult);
+      return new Error('Failed to connect to the credentials storage');
+    }
+
+    const cryptoCredentials = await this.createOrReturnExistingCredentialsForUser(
       signUpCredentials
     );
 
     if (cryptoCredentials instanceof Error) {
-      return cryptoCredentials;
+      console.error(cryptoCredentials);
+      return this.onAuthorizationFailed(
+        'Failed to get a crypto credentials valid for the user'
+      );
     }
 
     let authHandleResult = await this.handleAuthSuccess(cryptoCredentials);
 
     if (authHandleResult instanceof Error) {
-      return authHandleResult;
+      return this.onAuthorizationFailed(authHandleResult);
     }
-    if (profile && isEmptyObject(profile)) {
+    if (profile && !isEmptyObject(profile)) {
       const setProfileResult = await this.setProfileData(profile);
 
       if (setProfileResult instanceof Error) {
         console.error(setProfileResult);
-        return new Error('Failed to set the profile data');
+        return this.onAuthorizationFailed('Failed to set the profile data');
       }
       authHandleResult = {
         profile: setProfileResult,
@@ -605,54 +745,6 @@ export class CAConnectionWithFirebase implements ICAConnection {
     }
     this.valueofCredentialsSignUpOnAuthorizedSuccess = authHandleResult;
     return authHandleResult;
-  }
-
-  public async signOut(): Promise<boolean | Error> {
-    const isConnected = this.checkIfConnected();
-
-    if (isConnected instanceof Error) {
-      return isConnected;
-    }
-
-    const { app } = this;
-
-    try {
-      await app!!.auth().signOut();
-    } catch (err) {
-      console.error(err);
-      return new Error('Failed to sign out');
-    }
-
-    this.setAuthorizedStatus(false);
-    this.valueofCredentialsSignUpOnAuthorizedSuccess = undefined;
-    return true;
-  }
-
-  public async delete(): Promise<Error | boolean> {
-    const isConnected = this.checkIfConnected();
-
-    if (isConnected instanceof Error) {
-      return isConnected;
-    }
-
-    const { currentUser } = this;
-
-    if (currentUser instanceof Error) {
-      console.error(currentUser);
-      return new Error('Failed to read the current user');
-    }
-    if (currentUser == null) {
-      return new Error('There is no current user');
-    }
-
-    //TODO - delete credentials from the database
-    try {
-      await currentUser.delete();
-    } catch (err) {
-      console.error(err);
-      return new Error('Failed to delete the user from the authority');
-    }
-    return true;
   }
 
   protected async disconnectCredentialsStorage(): Promise<Error | boolean> {
@@ -675,6 +767,35 @@ export class CAConnectionWithFirebase implements ICAConnection {
     return true;
   }
 
+  public async signOut(): Promise<boolean | Error> {
+    const isConnected = this.checkIfConnected();
+
+    if (isConnected instanceof Error) {
+      return isConnected;
+    }
+
+    // disconnect the strage cause it's necessary
+    // that the user was authorized
+    const disconnectFromStorageResult = await this.disconnectCredentialsStorage();
+
+    if (disconnectFromStorageResult instanceof Error) {
+      return disconnectFromStorageResult;
+    }
+
+    const { app } = this;
+
+    try {
+      await app!!.auth().signOut();
+    } catch (err) {
+      console.error(err);
+      return new Error('Failed to sign out');
+    }
+
+    this.setAuthorizedStatus(false);
+    this.valueofCredentialsSignUpOnAuthorizedSuccess = undefined;
+    return true;
+  }
+
   public async disconnect() {
     const disconnectFromStorageResult = await this.disconnectCredentialsStorage();
 
@@ -686,12 +807,50 @@ export class CAConnectionWithFirebase implements ICAConnection {
 
     if (app) {
       try {
+        // disconect from the application
         await app.delete();
       } catch (err) {
         console.error(err);
         return new Error('Failed to disconnect from the Firebase app');
       }
     }
+    return new Error('There is no active Firebase App instance to close');
+  }
+
+  public async delete(): Promise<Error | boolean> {
+    const isConnected = this.checkIfConnected();
+
+    if (isConnected instanceof Error) {
+      return isConnected;
+    }
+
+    const { currentUser } = this;
+
+    if (currentUser instanceof Error) {
+      console.error(currentUser);
+      return new Error('Failed to read the current user');
+    }
+    if (currentUser == null) {
+      return new Error('There is no current user');
+    }
+
+    try {
+      await currentUser.delete(); // or maybe deleteWithCompletion method
+    } catch (err) {
+      console.error(err);
+      return new Error('Failed to delete the user from the authority');
+    }
+
+    // disconnect from firebase
+    // cause the connection is neccessary
+    // that the user is authorized
+    const disconnectResult = await this.disconnect();
+
+    if (disconnectResult instanceof Error) {
+      console.error(disconnectResult);
+      return new Error('Failed to disconnect from the Firebase auth provider');
+    }
+    return true;
   }
 }
 

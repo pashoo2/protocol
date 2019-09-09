@@ -324,8 +324,20 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
       return new Error('Failed to export the crypto credentials value');
     }
 
+    //check if the user id is not exists in the database
+    const credentialsForTheUserId = await this.getUserCredentials(userId);
+
+    if (
+      credentialsForTheUserId != null &&
+      !(credentialsForTheUserId instanceof Error)
+    ) {
+      return new Error(
+        'A crypto credentials is already exists for the user id'
+      );
+    }
+
     const keyForValue = this.getCredentialsKeyByUserId(userId);
-    debugger;
+
     const storeResult = await this.setValue<
       ICAConnectionFirestoreUtilsCredentialsStrorageCredentialsSaveStructure
     >(keyForValue, {
@@ -353,5 +365,25 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
     >(keyForValue);
 
     return this.getCredentialsByValueStored(storedCredentialsValue);
+  }
+
+  public async disconnect(): Promise<Error | boolean> {
+    const isConnected = this.checkIsConnected();
+
+    if (!isConnected) {
+      return true;
+    }
+    const { database } = this;
+
+    if (!database) {
+      return new Error('There is no active database connection');
+    }
+    try {
+      await database.goOffline();
+    } catch (err) {
+      console.error();
+      return new Error('Failed to disconnect from the databases');
+    }
+    return true;
   }
 }

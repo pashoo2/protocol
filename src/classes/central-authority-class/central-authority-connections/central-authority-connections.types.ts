@@ -52,13 +52,19 @@ export interface ICAConnection {
    * If the profile value is present then
    * it will set a values from it
    * on the remote authority.
-   * @param {ICAConnectionSignUpCredentials} credentials
+   * @param {ICAConnectionSignUpCredentials} signUpCredentials
+   * @param signUpCredentials.login - login used to authorize with the auth provider
+   * @param signUpCredentials.password - password used for encrypt a sensitive data and authorize
+   * on the auth provider
+   * @param signUpCredentials.cryptoCredentials [undefined] - if provided, then the value
+   * will be set if there is no credentials value stored for the user
+   * it will be save in the credentials storage.
    * @param {Partial<ICentralAuthorityUserProfile>} [profile]
    * @returns {(Promise<Error | ICAConnectionUserAuthorizedResult>)}
    * @memberof ICAConnection
    */
   authorize(
-    credentials: ICAConnectionSignUpCredentials,
+    signUpCredentials: ICAConnectionSignUpCredentials,
     profile?: Partial<ICentralAuthorityUserProfile>
   ): Promise<Error | ICAConnectionUserAuthorizedResult>;
   signOut(): Promise<Error | boolean>;
