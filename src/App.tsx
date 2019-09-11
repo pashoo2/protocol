@@ -9,6 +9,7 @@ import {
   runTestCAConnectionFirebase,
   runTestCAConnectionFirebaseCryptoCredentialsGenerateByFirebaseAuthProvider,
 } from 'test/central-authority.test/central-authority-connection.test/central-authority-connection.test';
+import { runTestErrorExtended } from 'test/error-extended-class-test';
 // import { runCACredentialsIdentityStorageTest } from 'test/central-authority.test/central-authority-storage-identity-credentials.test';
 // import { runTestCachingDecorator } from 'test/common-utils.test/common-utils.test';
 // import { runTestCAIdentity } from 'test/central-authority.test/central-authority.test';
@@ -33,7 +34,8 @@ import {
 // runTestFirebaseConnectionDatabase();
 // runTestFirebaseCredentialsStorage();
 // runTestCAIdentityWithAuthorityProviderGenerator();
-runTestCAConnectionFirebaseCryptoCredentialsGenerateByFirebaseAuthProvider();
+// runTestCAConnectionFirebaseCryptoCredentialsGenerateByFirebaseAuthProvider();
+runTestErrorExtended();
 
 const App: React.FC = () => {
   return (
