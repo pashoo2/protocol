@@ -53,7 +53,7 @@ export const runTestCAConnectionFirebaseChangeEmail = async () => {
 export const runTestCAConnectionFirebase = async () => {
   console.warn('CA connection firebase test started');
   const connectionFirebase = await connectWithFirebase();
-
+  debugger;
   if (connectionFirebase instanceof Error) {
     console.error(connectionFirebase);
     return;

@@ -38,7 +38,7 @@ export const connectAndAuthorizeInFirebase = async (
   }
 
   const authorizeResult = await connectionFirebase.authorize(authCredentials);
-
+  debugger;
   if (authorizeResult instanceof Error) {
     return new Error('Failed to sign up to the firebase app');
   }
@@ -56,7 +56,7 @@ export const connectAndAuthorizeInFirebase = async (
  */
 export const connectWithFirebase = async () => {
   console.warn('CA connection firebase test started');
-  const authCredentials = await CA_CONNECTION_FIREBASE_CREDENTIALS;
+  const authCredentials = CA_CONNECTION_FIREBASE_CREDENTIALS;
 
   if (authCredentials instanceof Error) {
     return authCredentials;

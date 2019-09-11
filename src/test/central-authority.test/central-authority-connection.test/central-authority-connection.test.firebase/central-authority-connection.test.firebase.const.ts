@@ -15,16 +15,4 @@ export const CA_CONNECTION_FIREBASE_USER_CREDENTIALS = {
   password: '123456',
 };
 
-export const CA_CONNECTION_FIREBASE_CREDENTIALS = (async () => {
-  const cryptoCredentials = await generateCryptoCredentials();
-
-  if (cryptoCredentials instanceof Error) {
-    console.error(cryptoCredentials);
-    return new Error('Failed to generate a crypto credentials for the user');
-  }
-
-  return {
-    ...CA_CONNECTION_FIREBASE_USER_CREDENTIALS,
-    cryptoCredentials,
-  };
-})();
+export const CA_CONNECTION_FIREBASE_CREDENTIALS = CA_CONNECTION_FIREBASE_USER_CREDENTIALS;

@@ -30,12 +30,12 @@ import { runTestErrorExtended } from 'test/error-extended-class-test';
 // runCACredentialsIdentityStorageTest();
 
 // runTestProfileValidation();
-// runTestCAConnectionFirebase();
+runTestCAConnectionFirebase();
 // runTestFirebaseConnectionDatabase();
 // runTestFirebaseCredentialsStorage();
 // runTestCAIdentityWithAuthorityProviderGenerator();
 // runTestCAConnectionFirebaseCryptoCredentialsGenerateByFirebaseAuthProvider();
-runTestErrorExtended();
+// runTestErrorExtended();
 
 const App: React.FC = () => {
   return (

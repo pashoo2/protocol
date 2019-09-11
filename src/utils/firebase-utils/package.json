@@ -1,0 +1,5 @@
+{
+  "main": "firebase-utils.ts",
+  "types": "firebase-utils.ts",
+  "dependencies": {}
+}

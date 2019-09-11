@@ -47,6 +47,10 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 
 **Must be set rules as**
 
-`{ /* Visit https://firebase.google.com/docs/database/security to learn more about security rules. */ "rules": { ".read": true, ".write": true, "credentials": { ".read": true, ".write": "!data.exists()" } } }`
+`{ /* Visit https://firebase.google.com/docs/database/security to learn more about security rules. */ "rules": { ".read": true, ".write": true, "credentials": { ".read": true, ".write": "!data.exists()", ".indexOn": "firebase_user_id" } } }`
 
 instead of "credentials" must be a value of the constant "CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_KEY_PREFIX"
+
+!!It is necessary to set the configuration, to prevent data filtration
+on the client:
+".indexOn": "firebase_user_id"

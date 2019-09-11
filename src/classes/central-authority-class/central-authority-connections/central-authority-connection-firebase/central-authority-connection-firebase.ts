@@ -62,18 +62,27 @@ export class CAConnectionWithFirebase implements ICAConnection {
 
   public isConnected: boolean = false;
 
-  public get isAuthorized(): boolean {
-    const {
-      isConnected,
-      isVerifiedAccount,
-      valueofCredentialsSignUpOnAuthorizedSuccess: credentialsAuthorizedSuccess,
-    } = this;
+  public get isUserSignedIn(): boolean {
+    const { isConnected, isVerifiedAccount } = this;
 
     if (!isConnected) {
       return false;
     }
     // according to the https://firebase.google.com/docs/auth/web/manage-users
-    return isVerifiedAccount && !!credentialsAuthorizedSuccess;
+    return isVerifiedAccount;
+  }
+
+  public get isAuthorized(): boolean {
+    const {
+      isUserSignedIn,
+      valueofCredentialsSignUpOnAuthorizedSuccess: credentialsAuthorizedSuccess,
+    } = this;
+
+    if (!isUserSignedIn) {
+      return false;
+    }
+    // according to the https://firebase.google.com/docs/auth/web/manage-users
+    return !!credentialsAuthorizedSuccess;
   }
 
   protected get databaseURL(): Error | string {
@@ -127,6 +136,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
   protected checkSignUpCredentials(
     signUpCredentials: ICAConnectionSignUpCredentials
   ): boolean | Error {
+    debugger;
     if (!signUpCredentials) {
       return new Error('Sign up credentials must be provided');
     }
@@ -140,13 +150,17 @@ export class CAConnectionWithFirebase implements ICAConnection {
       password,
     } = signUpCredentials;
 
-    if (
-      credentialsGiven &&
-      !this.checkUserIdentityIsValidForConfigurationProvided(credentialsGiven)
-    ) {
-      return new Error(
-        'Credentials given is not valid for the Firebase auth provider'
+    if (credentialsGiven) {
+      const resultCheckCredentialsGiven = this.checkUserIdentityIsValidForConfigurationProvided(
+        credentialsGiven
       );
+      debugger;
+      if (resultCheckCredentialsGiven instanceof Error) {
+        console.error(resultCheckCredentialsGiven);
+        return new Error(
+          'Credentials given is not valid for the Firebase auth provider'
+        );
+      }
     }
     if (!dataValidatorUtilEmail(login)) {
       return new Error('The login is not valid');
@@ -493,7 +507,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
     const caUserIdentity = new CentralAuthorityIdentity(cryptoCredentials);
 
     if (!caUserIdentity.isValid) {
-      return new Error('User identity generated is not valid');
+      return new Error('User identity is not valid');
     }
 
     const { identityDescription: identityDescriptionParsed } = caUserIdentity;
@@ -546,10 +560,13 @@ export class CAConnectionWithFirebase implements ICAConnection {
         'There is no active connection to the Firebase auth provider'
       );
     }
-    const setCredentialsResult = await connectionWithCredentialsStorage!!.setUserCredentials(
+    // set the new generated credentials forcely
+    // and rewrite the existing
+    // cause it is not valid
+    const setCredentialsResult = await connectionWithCredentialsStorage!!.setUserCredentialsForce(
       cryptoCredentials
     );
-
+    debugger;
     if (setCredentialsResult instanceof Error) {
       return setCredentialsResult;
     }
@@ -566,6 +583,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
       'Failed to generate and set a crypto credentials for the user because of unknown reason'
     );
     let isSuccess: boolean = false;
+    debugger;
     const credentialsProvidedCheckResult = this.checkSignUpCredentials(
       signUpCredentials
     );
@@ -589,7 +607,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
           credentialsGiven
         : // if the credentials not provided, generate a new one
           await this.generateNewCryptoCredentialsForConfigurationProvided();
-
+      debugger;
       if (cryptoCredentials instanceof Error) {
         // fialed to generate a new crypto credentials
         console.error(cryptoCredentials);
@@ -597,7 +615,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
         const setCredentialsResult = await this.setCryptoCredentialsForTheUserToDatabase(
           cryptoCredentials
         );
-
+        debugger;
         if (setCredentialsResult instanceof Error) {
           console.error(setCredentialsResult);
           cryptoCredentials = new Error(
@@ -625,13 +643,26 @@ export class CAConnectionWithFirebase implements ICAConnection {
       );
     }
     if (credentialsExistingForTheCurrentUser) {
-      return credentialsExistingForTheCurrentUser;
+      const credentialsValidationResult = this.checkUserIdentityIsValidForConfigurationProvided(
+        credentialsExistingForTheCurrentUser
+      );
+
+      debugger;
+      if (credentialsValidationResult instanceof Error) {
+        console.error(credentialsValidationResult);
+        console.error('The credentials stored for the user is not valid');
+      } else {
+        // if the credentials read from the
+        // Firebase storage is valid
+        // for the currebt configuration
+        return credentialsExistingForTheCurrentUser;
+      }
     }
 
     const newCredentialsGenerated = await this.generateAndSetCredentialsForTheCurrentUser(
       signUpCredentials
     );
-
+    debugger;
     if (newCredentialsGenerated instanceof Error) {
       console.error(newCredentialsGenerated);
       return new Error(
@@ -684,11 +715,11 @@ export class CAConnectionWithFirebase implements ICAConnection {
     if (isAuthorized) {
       return this.valueofCredentialsSignUpOnAuthorizedSuccess!!;
     }
-
+    debugger;
     const checkSignUpCredentialsResult = this.checkSignUpCredentials(
       signUpCredentials
     );
-
+    debugger;
     if (checkSignUpCredentialsResult instanceof Error) {
       console.error(checkSignUpCredentialsResult);
       return this.onAuthorizationFailed(checkSignUpCredentialsResult);
@@ -698,7 +729,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
     const signInResult = await this.singInWithAuthCredentials(
       signUpCredentials
     );
-
+    debugger;
     if (signInResult instanceof Error) {
       console.warn('Failed to sign in with the credentials given');
 
@@ -707,13 +738,14 @@ export class CAConnectionWithFirebase implements ICAConnection {
       const signUpResult = await this.signUp(signUpCredentials);
 
       if (signUpResult instanceof Error) {
+        debugger;
         console.error(signUpResult);
         return this.onAuthorizationFailed('The user was failed to sign up');
       }
     }
-
+    debugger;
     const connectWithStorageResult = await this.startConnectionWithCredentialsStorage();
-
+    debugger;
     if (connectWithStorageResult instanceof Error) {
       console.error(connectWithStorageResult);
       return new Error('Failed to connect to the credentials storage');
