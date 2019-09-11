@@ -27,6 +27,8 @@ import { CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME } from 'classes/cen
 import { CAConnectionFirestoreUtilsCredentialsStrorage } from './central-authority-connection-firebase-utils/central-authority-connection-firebase-utils.credentials-storage/central-authority-connection-firebase-utils.credentials-storage';
 import { CA_CONNECTION_FIREBASE_CREDENTIALS_GENERATION_MAX_ATTEMPTS } from './central-authority-connection-firebase.const/central-authority-connection-firebase.const.restrictions';
 import { validatePassword } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-auth-credentials/central-authority-validators-auth-credentials';
+import ErrorExtendedBaseClass from 'classes/basic-classes/error-extended-class-base/error-extended-class-base';
+import { CA_CONNECTION_ERROR_ACCOUNT_NOT_VERIFIED_CODE } from '../central-authority-connections-const/central-authority-connections-const';
 
 // TODO export class CAConnectionWithFirebase implements ICAConnection {
 export class CAConnectionWithFirebase implements ICAConnection {
@@ -450,7 +452,10 @@ export class CAConnectionWithFirebase implements ICAConnection {
       console.error(sendVerificationEmailResult);
       return new Error('Failed to send the email verification');
     }
-    return new Error('Please verify the email address');
+    return new ErrorExtendedBaseClass(
+      'Please verify the email address',
+      CA_CONNECTION_ERROR_ACCOUNT_NOT_VERIFIED_CODE
+    );
   }
 
   protected async generateNewCryptoCredentialsForConfigurationProvided(): Promise<
