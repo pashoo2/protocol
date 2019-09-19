@@ -6,6 +6,8 @@ import {
 import { ICentralAuthorityUserProfile } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 import { ICAConnectionSignUpCredentials } from 'classes/central-authority-class/central-authority-connections/central-authority-connections.types';
 import { generateCryptoCredentials } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
+import ErrorExtendedBaseClass from 'classes/basic-classes/error-extended-class-base/error-extended-class-base';
+import { CA_CONNECTION_ERROR_ACCOUNT_NOT_VERIFIED_CODE } from 'classes/central-authority-class/central-authority-connections/central-authority-connections-const/central-authority-connections-const';
 
 export const connectToFirebase = async (): Promise<
   Error | CAConnectionWithFirebase
@@ -27,18 +29,20 @@ export const connectToFirebase = async (): Promise<
   return connectionFirebase;
 };
 
-export const connectAndAuthorizeInFirebase = async (
-  authCredentials: ICAConnectionSignUpCredentials
-): Promise<CAConnectionWithFirebase | Error> => {
-  const connectionFirebase = await connectToFirebase();
-
-  if (connectionFirebase instanceof Error) {
-    console.error(connectionFirebase);
-    return connectionFirebase;
-  }
-
+export const aurhorizeWithCredentials = async (
+  authCredentials: ICAConnectionSignUpCredentials,
+  connectionFirebase: CAConnectionWithFirebase
+): Promise<Error | CAConnectionWithFirebase> => {
   const authorizeResult = await connectionFirebase.authorize(authCredentials);
   debugger;
+  if (
+    authorizeResult instanceof ErrorExtendedBaseClass &&
+    authorizeResult.code === CA_CONNECTION_ERROR_ACCOUNT_NOT_VERIFIED_CODE
+  ) {
+    debugger;
+    alert('Please, veriy your email');
+    return aurhorizeWithCredentials(authCredentials, connectionFirebase);
+  }
   if (authorizeResult instanceof Error) {
     return new Error('Failed to sign up to the firebase app');
   }
@@ -50,13 +54,26 @@ export const connectAndAuthorizeInFirebase = async (
   return connectionFirebase;
 };
 
+export const connectAndAuthorizeInFirebase = async (
+  authCredentials: ICAConnectionSignUpCredentials
+): Promise<CAConnectionWithFirebase | Error> => {
+  const connectionFirebase = await connectToFirebase();
+
+  if (connectionFirebase instanceof Error) {
+    console.error(connectionFirebase);
+    return connectionFirebase;
+  }
+  return aurhorizeWithCredentials(authCredentials, connectionFirebase);
+};
+
 /**
  * connect to firebase with credentials
  * defined
  */
-export const connectWithFirebase = async () => {
+export const connectWithFirebase = async (
+  authCredentials = CA_CONNECTION_FIREBASE_CREDENTIALS
+) => {
   console.warn('CA connection firebase test started');
-  const authCredentials = CA_CONNECTION_FIREBASE_CREDENTIALS;
 
   if (authCredentials instanceof Error) {
     return authCredentials;

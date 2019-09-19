@@ -23,7 +23,6 @@ export const runTestCAConnectionFirebaseChangeEmail = async () => {
     name: 'Paul Test',
     email: 'sofer@mail-desk.net',
   };
-
   const updateProfileWithEmailResult = await connectionFirebase.setProfileData(
     userProfileWithEmailTest
   );

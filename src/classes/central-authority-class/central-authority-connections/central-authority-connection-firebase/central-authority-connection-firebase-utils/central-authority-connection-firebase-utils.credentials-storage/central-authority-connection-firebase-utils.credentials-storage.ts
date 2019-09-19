@@ -27,9 +27,9 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
   protected app?: firebase.app.App;
 
   protected getCredentialsKeyByUserId(userId: string): string {
-    return encodeForFirebaseKey(
-      `${CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_KEY_PREFIX}_${userId}`
-    );
+    return `${CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_KEY_PREFIX}${encodeForFirebaseKey(
+      userId
+    )}`;
   }
 
   protected checkIsConnected(): boolean | Error {
@@ -259,7 +259,7 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
     if (!database) {
       return new Error('There is no connection to the database server');
     }
-
+    debugger;
     try {
       const snapshot = await database
         .ref(CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_KEY_PREFIX)
@@ -268,10 +268,10 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
         )
         .equalTo(firebaseUserId)
         .once('value');
-
+      debugger;
       if (snapshot.exists()) {
         const valueStored = snapshot.val();
-
+        debugger;
         return this.filterCredentialsValues(valueStored);
       }
     } catch (err) {
@@ -343,7 +343,7 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
     // before to set a new one
 
     const keyForValue = this.getCredentialsKeyByUserId(userId);
-
+    debugger;
     const storeResult = await this.setValue<
       ICAConnectionFirestoreUtilsCredentialsStrorageCredentialsSaveStructure
     >(keyForValue, {

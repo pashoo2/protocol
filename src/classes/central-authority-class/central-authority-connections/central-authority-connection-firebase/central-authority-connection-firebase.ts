@@ -461,14 +461,21 @@ export class CAConnectionWithFirebase implements ICAConnection {
     return true;
   }
 
-  protected async handleAuthSuccess(
-    cryptoCredentials: TCentralAuthorityUserCryptoCredentials
-  ): Promise<ICAConnectionUserAuthorizedResult | Error> {
+  /**
+   * check if an account of the user
+   * was verified or not.
+   * If it wasn't, then send an email
+   * to verify it.
+   * @protected
+   * @returns {(Promise<boolean | Error>)}
+   * @memberof CAConnectionWithFirebase
+   */
+  protected async chekIfVerifiedAccount(): Promise<boolean | Error> {
     const { isVerifiedAccount } = this;
 
     // if the account was validated by email
     if (isVerifiedAccount) {
-      return this.returnOnAuthorizedResult(cryptoCredentials);
+      return true;
     }
 
     // if the account was not validated by email
@@ -648,7 +655,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
     signUpCredentials: ICAConnectionSignUpCredentials
   ): Promise<Error | TCentralAuthorityUserCryptoCredentials> {
     const credentialsExistingForTheCurrentUser = await this.readCryptoCredentialsForTheUserFromDatabase();
-
+    debugger;
     if (credentialsExistingForTheCurrentUser instanceof Error) {
       // if something was going wrong when reading
       // a credentials for the current user
@@ -662,6 +669,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
         'Failed to read credentials for the user from the Firebase database'
       );
     }
+    debugger;
     if (credentialsExistingForTheCurrentUser) {
       const credentialsValidationResult = this.checkUserIdentityIsValidForConfigurationProvided(
         credentialsExistingForTheCurrentUser
@@ -682,6 +690,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
           CA_CONNECTION_ERROR_ACCOUNT_CAN_NOT_BE_USED_ANYMORE
         );
       } else {
+        debugger;
         // if the credentials read from the
         // Firebase storage is valid
         // for the current configuration return it
@@ -691,7 +700,8 @@ export class CAConnectionWithFirebase implements ICAConnection {
 
     // generate a new credentials for the user and
     // set it in the storage. If a credentials was
-    // provided into signUpCredentials and valid, it will be used.
+    // provided into signUpCredentials and valid, it will be used
+    // instead of generating a new one.
     const newCredentialsGenerated = await this.generateAndSetCredentialsForTheCurrentUser(
       signUpCredentials
     );
@@ -770,12 +780,18 @@ export class CAConnectionWithFirebase implements ICAConnection {
         // if failed to sign in with the credentials
         // try to sign up
         const signUpResult = await this.signUp(signUpCredentials);
-
+        debugger;
         if (signUpResult instanceof Error) {
           debugger;
           console.error(signUpResult);
           return this.onAuthorizationFailed('The user was failed to sign up');
         }
+      }
+      const isVerifiedResult = await this.chekIfVerifiedAccount();
+
+      if (isVerifiedResult instanceof Error) {
+        console.error('The account must be verified');
+        return isVerifiedResult;
       }
       debugger;
       const connectWithStorageResult = await this.startConnectionWithCredentialsStorage();
@@ -799,7 +815,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
         return this.onAuthorizationFailed(cryptoCredentials);
       }
 
-      authHandleResult = await this.handleAuthSuccess(cryptoCredentials);
+      authHandleResult = await this.returnOnAuthorizedResult(cryptoCredentials);
     }
 
     if (authHandleResult instanceof Error) {

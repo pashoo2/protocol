@@ -30,8 +30,8 @@ import { runTestErrorExtended } from 'test/error-extended-class-test';
 // runCACredentialsIdentityStorageTest();
 
 // runTestProfileValidation();
-runTestCAConnectionFirebase();
-// runTestFirebaseConnectionDatabase();
+// runTestCAConnectionFirebase();
+runTestFirebaseConnectionDatabase();
 // runTestFirebaseCredentialsStorage();
 // runTestCAIdentityWithAuthorityProviderGenerator();
 // runTestCAConnectionFirebaseCryptoCredentialsGenerateByFirebaseAuthProvider();
