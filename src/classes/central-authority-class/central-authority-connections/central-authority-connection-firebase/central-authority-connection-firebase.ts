@@ -28,7 +28,10 @@ import { CAConnectionFirestoreUtilsCredentialsStrorage } from './central-authori
 import { CA_CONNECTION_FIREBASE_CREDENTIALS_GENERATION_MAX_ATTEMPTS } from './central-authority-connection-firebase.const/central-authority-connection-firebase.const.restrictions';
 import { validatePassword } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-auth-credentials/central-authority-validators-auth-credentials';
 import ErrorExtendedBaseClass from 'classes/basic-classes/error-extended-class-base/error-extended-class-base';
-import { CA_CONNECTION_ERROR_ACCOUNT_NOT_VERIFIED_CODE } from '../central-authority-connections-const/central-authority-connections-const';
+import {
+  CA_CONNECTION_ERROR_ACCOUNT_NOT_VERIFIED_CODE,
+  CA_CONNECTION_ERROR_ACCOUNT_CAN_NOT_BE_USED_ANYMORE,
+} from '../central-authority-connections-const/central-authority-connections-const';
 
 // TODO export class CAConnectionWithFirebase implements ICAConnection {
 export class CAConnectionWithFirebase implements ICAConnection {
@@ -242,6 +245,13 @@ export class CAConnectionWithFirebase implements ICAConnection {
     return true;
   }
 
+  /**
+   * sign in under the login
+   * provided by the user
+   * @param authCredentials
+   * @param {string} authCredentials.login
+   * @param {string} authCredentials.password
+   */
   protected async singInWithAuthCredentials(
     authCredentials: ICentralAuthorityUserAuthCredentials
   ): Promise<boolean | Error> {
@@ -456,10 +466,13 @@ export class CAConnectionWithFirebase implements ICAConnection {
   ): Promise<ICAConnectionUserAuthorizedResult | Error> {
     const { isVerifiedAccount } = this;
 
+    // if the account was validated by email
     if (isVerifiedAccount) {
       return this.returnOnAuthorizedResult(cryptoCredentials);
     }
 
+    // if the account was not validated by email
+    // send the verification email
     const sendVerificationEmailResult = await this.handleAuthEmailNotVerified();
 
     if (sendVerificationEmailResult instanceof Error) {
@@ -563,7 +576,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
     // set the new generated credentials forcely
     // and rewrite the existing
     // cause it is not valid
-    const setCredentialsResult = await connectionWithCredentialsStorage!!.setUserCredentialsForce(
+    const setCredentialsResult = await connectionWithCredentialsStorage!!.setUserCredentials(
       cryptoCredentials
     );
     debugger;
@@ -592,7 +605,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
       console.error(credentialsProvidedCheckResult);
       return credentialsProvidedCheckResult;
     }
-
+    debugger;
     const { cryptoCredentials: credentialsGiven } = signUpCredentials;
 
     // try a multiple times cause may be
@@ -603,9 +616,9 @@ export class CAConnectionWithFirebase implements ICAConnection {
       isSuccess
     ) {
       cryptoCredentials = credentialsGiven
-        ? // if credentials were provided use it
+        ? // if a credentials provided, then use it
           credentialsGiven
-        : // if the credentials not provided, generate a new one
+        : // if a credentials not provided, generate a new one
           await this.generateNewCryptoCredentialsForConfigurationProvided();
       debugger;
       if (cryptoCredentials instanceof Error) {
@@ -637,6 +650,13 @@ export class CAConnectionWithFirebase implements ICAConnection {
     const credentialsExistingForTheCurrentUser = await this.readCryptoCredentialsForTheUserFromDatabase();
 
     if (credentialsExistingForTheCurrentUser instanceof Error) {
+      // if something was going wrong when reading
+      // a credentials for the current user
+      // return an Error, because if ignore
+      // and set a new credentials in storage
+      // the data may become inconsistent, cause
+      // credentials is already exists in the database
+      // but an error has occurred once for a some reason.
       console.error(credentialsExistingForTheCurrentUser);
       return new Error(
         'Failed to read credentials for the user from the Firebase database'
@@ -651,14 +671,27 @@ export class CAConnectionWithFirebase implements ICAConnection {
       if (credentialsValidationResult instanceof Error) {
         console.error(credentialsValidationResult);
         console.error('The credentials stored for the user is not valid');
+        // if credentials exists for the user but invalid at now
+        // return an error to inform that the user can't user
+        // this account for authorization.
+        // Credentials was already read by another users
+        // and if we set a new one in the storage it may
+        // cause inconsistency.
+        return new ErrorExtendedBaseClass(
+          "Sorry, you can't use this account anymore, cause a credentials existing for the account exists and not valid",
+          CA_CONNECTION_ERROR_ACCOUNT_CAN_NOT_BE_USED_ANYMORE
+        );
       } else {
         // if the credentials read from the
         // Firebase storage is valid
-        // for the currebt configuration
+        // for the current configuration return it
         return credentialsExistingForTheCurrentUser;
       }
     }
 
+    // generate a new credentials for the user and
+    // set it in the storage. If a credentials was
+    // provided into signUpCredentials and valid, it will be used.
     const newCredentialsGenerated = await this.generateAndSetCredentialsForTheCurrentUser(
       signUpCredentials
     );
@@ -710,59 +743,64 @@ export class CAConnectionWithFirebase implements ICAConnection {
       return isConnected;
     }
 
+    let authHandleResult;
     const { isAuthorized } = this;
 
     if (isAuthorized) {
-      return this.valueofCredentialsSignUpOnAuthorizedSuccess!!;
-    }
-    debugger;
-    const checkSignUpCredentialsResult = this.checkSignUpCredentials(
-      signUpCredentials
-    );
-    debugger;
-    if (checkSignUpCredentialsResult instanceof Error) {
-      console.error(checkSignUpCredentialsResult);
-      return this.onAuthorizationFailed(checkSignUpCredentialsResult);
-    }
-
-    // try to sign in with the credentials, then try to sign up
-    const signInResult = await this.singInWithAuthCredentials(
-      signUpCredentials
-    );
-    debugger;
-    if (signInResult instanceof Error) {
-      console.warn('Failed to sign in with the credentials given');
-
-      // if failed to sign in with the credentials
-      // try to sign up
-      const signUpResult = await this.signUp(signUpCredentials);
-
-      if (signUpResult instanceof Error) {
-        debugger;
-        console.error(signUpResult);
-        return this.onAuthorizationFailed('The user was failed to sign up');
-      }
-    }
-    debugger;
-    const connectWithStorageResult = await this.startConnectionWithCredentialsStorage();
-    debugger;
-    if (connectWithStorageResult instanceof Error) {
-      console.error(connectWithStorageResult);
-      return new Error('Failed to connect to the credentials storage');
-    }
-
-    const cryptoCredentials = await this.createOrReturnExistingCredentialsForUser(
-      signUpCredentials
-    );
-
-    if (cryptoCredentials instanceof Error) {
-      console.error(cryptoCredentials);
-      return this.onAuthorizationFailed(
-        'Failed to get a crypto credentials valid for the user'
+      authHandleResult = this.valueofCredentialsSignUpOnAuthorizedSuccess!!;
+    } else {
+      debugger;
+      const checkSignUpCredentialsResult = this.checkSignUpCredentials(
+        signUpCredentials
       );
-    }
+      debugger;
+      if (checkSignUpCredentialsResult instanceof Error) {
+        console.error(checkSignUpCredentialsResult);
+        return this.onAuthorizationFailed(checkSignUpCredentialsResult);
+      }
 
-    let authHandleResult = await this.handleAuthSuccess(cryptoCredentials);
+      // try to sign in with the credentials, then try to sign up
+      const signInResult = await this.singInWithAuthCredentials(
+        signUpCredentials
+      );
+      debugger;
+      if (signInResult instanceof Error) {
+        console.warn('Failed to sign in with the credentials given');
+
+        // if failed to sign in with the credentials
+        // try to sign up
+        const signUpResult = await this.signUp(signUpCredentials);
+
+        if (signUpResult instanceof Error) {
+          debugger;
+          console.error(signUpResult);
+          return this.onAuthorizationFailed('The user was failed to sign up');
+        }
+      }
+      debugger;
+      const connectWithStorageResult = await this.startConnectionWithCredentialsStorage();
+      debugger;
+      if (connectWithStorageResult instanceof Error) {
+        console.error(connectWithStorageResult);
+        return new Error('Failed to connect to the credentials storage');
+      }
+
+      // create a new credentnials for the user or return
+      // an existing.
+      // if a crytpto credentials provided in signUpCredentials
+      // it will be used to set in the Firebase credentials
+      // storage
+      const cryptoCredentials = await this.createOrReturnExistingCredentialsForUser(
+        signUpCredentials
+      );
+
+      if (cryptoCredentials instanceof Error) {
+        console.error('Failed to get a crypto credentials valid for the user');
+        return this.onAuthorizationFailed(cryptoCredentials);
+      }
+
+      authHandleResult = await this.handleAuthSuccess(cryptoCredentials);
+    }
 
     if (authHandleResult instanceof Error) {
       return this.onAuthorizationFailed(authHandleResult);
@@ -777,9 +815,12 @@ export class CAConnectionWithFirebase implements ICAConnection {
       authHandleResult = {
         profile: setProfileResult,
         // TODO it is necessry to set this credentials in the database
-        cryptoCredentials: cryptoCredentials,
+        cryptoCredentials: authHandleResult.cryptoCredentials,
       };
     }
+    // set the authentification success
+    // result. To return it on the second authorization
+    // request
     this.valueofCredentialsSignUpOnAuthorizedSuccess = authHandleResult;
     return authHandleResult;
   }

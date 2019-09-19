@@ -284,8 +284,7 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
   // store the credentials value
   // for the current user
   public async setUserCredentials(
-    credentials: TCentralAuthorityUserCryptoCredentials,
-    isForce: boolean = false
+    credentials: TCentralAuthorityUserCryptoCredentials
   ): Promise<Error | boolean> {
     const isAuthorizedResult = this.checkIsAuthorized();
 
@@ -301,17 +300,15 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
       return new Error('Failed to get user id of the firebase user');
     }
 
-    if (!isForce) {
-      // check if a credentials value is
-      // already exists for the user
-      const credentialsForTheCurrentUser = await this.getCredentialsForTheCurrentUser();
+    // check if a credentials value is
+    // already exists for the user
+    const credentialsForTheCurrentUser = await this.getCredentialsForTheCurrentUser();
 
-      if (
-        credentialsForTheCurrentUser != null &&
-        !(credentialsForTheCurrentUser instanceof Error)
-      ) {
-        return true;
-      }
+    if (
+      credentialsForTheCurrentUser != null &&
+      !(credentialsForTheCurrentUser instanceof Error)
+    ) {
+      return true;
     }
 
     const userId = getUserIdentityByCryptoCredentials(credentials);
@@ -359,14 +356,6 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
       return new Error('Failed to store the credentials in the database');
     }
     return true;
-  }
-
-  // set the credentials in the store forcely
-  // and rewite the existing
-  public setUserCredentialsForce(
-    credentials: TCentralAuthorityUserCryptoCredentials
-  ): Promise<Error | boolean> {
-    return this.setUserCredentials(credentials, true);
   }
 
   public async getUserCredentials(
