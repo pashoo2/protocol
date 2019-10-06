@@ -2,6 +2,7 @@ import CAConnectionWithFirebaseUtilDatabase from 'classes/central-authority-clas
 import { connectWithFirebase } from './central-authority-connection.test.firebase.utils';
 import { CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_KEY_PREFIX } from 'classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase-utils/central-authority-connection-firebase-utils.credentials-storage/central-authority-connection-firebase-utils.credentials-storage.const';
 import { generateUUID } from 'utils/identity-utils/identity-utils';
+
 export const runTestFirebaseConnectionDatabase = async () => {
   console.warn('runTestFirebaseConnectionDatabase::start');
 
@@ -11,7 +12,7 @@ export const runTestFirebaseConnectionDatabase = async () => {
     login,
     password,
   });
-  debugger;
+
   if (firebaseConnection instanceof Error) {
     console.error(firebaseConnection);
     return new Error('Failed to connect with firebase');

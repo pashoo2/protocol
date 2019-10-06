@@ -21,11 +21,28 @@ import CAConnectionWithFirebase from '../../central-authority-connection-firebas
 import { isEmptyObject } from 'utils/common-utils/common-utils-objects';
 import { encodeForFirebaseKey } from 'utils/firebase-utils/firebase-utils';
 
+/**
+ * This class is used for storing
+ * and reading the user's credentials.
+ * It also used for reading
+ * credentials of another user.
+ * @export
+ * @class CAConnectionFirestoreUtilsCredentialsStrorage
+ * @extends {CAConnectionWithFirebaseUtilDatabase}
+ */
 export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionWithFirebaseUtilDatabase {
   protected connectionToFirebase?: CAConnectionWithFirebase;
 
   protected app?: firebase.app.App;
 
+  /**
+   * returns a string will used to store/read value of
+   * the user credentials
+   * @protected
+   * @param {string} userId
+   * @returns {string}
+   * @memberof CAConnectionFirestoreUtilsCredentialsStrorage
+   */
   protected getCredentialsKeyByUserId(userId: string): string {
     return `${CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_KEY_PREFIX}${encodeForFirebaseKey(
       userId
@@ -141,6 +158,15 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
     this.app = app;
   }
 
+  /**
+   *
+   * check if a credentials set in the storage
+   * are in the valid format
+   * @protected
+   * @param {*} storedCredentialsValue
+   * @returns {storedCredentialsValue is ICAConnectionFirestoreUtilsCredentialsStrorageCredentialsSaveStructure}
+   * @memberof CAConnectionFirestoreUtilsCredentialsStrorage
+   */
   protected checkStoredCredentialsFormat(
     storedCredentialsValue: any
   ): storedCredentialsValue is ICAConnectionFirestoreUtilsCredentialsStrorageCredentialsSaveStructure {
@@ -154,12 +180,13 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
         [CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_FIREBASE_USER_ID_PROPERTY]: firebaseId,
       } = storedCredentialsValue;
 
+      // an id set for the user by the Firebase
       if (typeof firebaseId === 'string') {
         if (checkIsValidExportedCryptoCredentialsToString(credentials)) {
           return true;
         }
         console.error(
-          'Credentials not exists or is invalid in the stored credentials'
+          "Credentials are't exists or invalid in the stored credentials"
         );
       } else {
         console.error(
@@ -195,6 +222,18 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
     return importedCredentials;
   }
 
+  /**
+   *
+   * filter a value stored for the user key
+   * to get a value of the credentials
+   * for the user
+   * @protected
+   * @param {{
+   *     [key: string]: any;
+   *   }} [valueStored]
+   * @returns {(Promise<TCentralAuthorityUserCryptoCredentials | null | Error>)}
+   * @memberof CAConnectionFirestoreUtilsCredentialsStrorage
+   */
   protected async filterCredentialsValues(valueStored?: {
     [key: string]: any;
   }): Promise<TCentralAuthorityUserCryptoCredentials | null | Error> {
@@ -221,6 +260,9 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
     let valueValueStored;
     let credentialsImported;
 
+    // for each property of the value stored
+    // check wherether it is a valid
+    // crypto credentials
     for (; idx < len; idx++) {
       keyValueStored = keys[idx];
       valueValueStored = valueStored[keyValueStored];
@@ -261,6 +303,8 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
     }
     debugger;
     try {
+      // read a value storerd as user's
+      // credentials in the database
       const snapshot = await database
         .ref(CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_KEY_PREFIX)
         .orderByChild(
@@ -285,7 +329,7 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
   // for the current user
   public async setUserCredentials(
     credentials: TCentralAuthorityUserCryptoCredentials
-  ): Promise<Error | boolean> {
+  ): Promise<Error | TCentralAuthorityUserCryptoCredentials> {
     const isAuthorizedResult = this.checkIsAuthorized();
 
     if (isAuthorizedResult instanceof Error) {
@@ -308,7 +352,9 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
       credentialsForTheCurrentUser != null &&
       !(credentialsForTheCurrentUser instanceof Error)
     ) {
-      return true;
+      // if a credentials are already stored for the user
+      // return it
+      return credentialsForTheCurrentUser;
     }
 
     const userId = getUserIdentityByCryptoCredentials(credentials);
@@ -355,9 +401,17 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
       console.error(storeResult);
       return new Error('Failed to store the credentials in the database');
     }
-    return true;
+    return credentials;
   }
 
+  /**
+   *
+   * return a credentials for the user
+   * with the id = userId
+   * @param {string} userId
+   * @returns {(Promise<Error | null | TCentralAuthorityUserCryptoCredentials>)}
+   * @memberof CAConnectionFirestoreUtilsCredentialsStrorage
+   */
   public async getUserCredentials(
     userId: string
   ): Promise<Error | null | TCentralAuthorityUserCryptoCredentials> {
@@ -373,6 +427,7 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
     return this.getCredentialsByValueStored(storedCredentialsValue);
   }
 
+  // disconnect from the database
   public async disconnect(): Promise<Error | boolean> {
     const isConnected = this.checkIsConnected();
 

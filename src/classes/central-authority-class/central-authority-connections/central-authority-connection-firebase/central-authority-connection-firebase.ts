@@ -34,6 +34,15 @@ import {
 } from '../central-authority-connections-const/central-authority-connections-const';
 
 // TODO export class CAConnectionWithFirebase implements ICAConnection {
+/**
+ *
+ * This is the class realized connection with the Firebase.
+ * It allows to sign up and authorize on it, set a crypto credentials
+ * for the user and read credentials for another users.
+ * @export
+ * @class CAConnectionWithFirebase
+ * @implements {ICAConnection}
+ */
 export class CAConnectionWithFirebase implements ICAConnection {
   protected app?: firebase.app.App;
 
@@ -166,7 +175,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
       }
     }
     if (!dataValidatorUtilEmail(login)) {
-      return new Error('The login is not valid');
+      return new Error('The login must be an email valid');
     }
     if (!validatePassword(password)) {
       return new Error('The password provided is not valid');
@@ -219,13 +228,18 @@ export class CAConnectionWithFirebase implements ICAConnection {
     return true;
   }
 
+  protected handleUnauthorized() {
+    this.setAuthorizedStatus(false);
+    this.valueofCredentialsSignUpOnAuthorizedSuccess = undefined;
+  }
+
   // handle an authorization attemp failed
   protected onAuthorizationFailed(error: Error | string): Error {
     const err = error instanceof Error ? error : new Error(String(error));
 
-    this.setAuthorizedStatus(false);
     console.error(err);
     console.error('Authorization failed on remote Firebase server');
+    this.handleUnauthorized();
     return err;
   }
 
@@ -590,7 +604,9 @@ export class CAConnectionWithFirebase implements ICAConnection {
     if (setCredentialsResult instanceof Error) {
       return setCredentialsResult;
     }
-    return cryptoCredentials;
+    // if not an error then return
+    // a crypto credentials
+    return setCredentialsResult;
   }
 
   protected async generateAndSetCredentialsForTheCurrentUser(
@@ -750,7 +766,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
     const isConnected = this.checkIfConnected();
 
     if (isConnected instanceof Error) {
-      return isConnected;
+      return this.onAuthorizationFailed(isConnected);
     }
 
     let authHandleResult;
@@ -787,11 +803,13 @@ export class CAConnectionWithFirebase implements ICAConnection {
           return this.onAuthorizationFailed('The user was failed to sign up');
         }
       }
+
+      // check if the account was verfied by the user
       const isVerifiedResult = await this.chekIfVerifiedAccount();
 
       if (isVerifiedResult instanceof Error) {
-        console.error('The account must be verified');
-        return isVerifiedResult;
+        console.error(isVerifiedResult);
+        return this.onAuthorizationFailed('The account must be verified');
       }
       debugger;
       const connectWithStorageResult = await this.startConnectionWithCredentialsStorage();
@@ -885,8 +903,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
       return new Error('Failed to sign out');
     }
 
-    this.setAuthorizedStatus(false);
-    this.valueofCredentialsSignUpOnAuthorizedSuccess = undefined;
+    this.handleUnauthorized();
     return true;
   }
 
