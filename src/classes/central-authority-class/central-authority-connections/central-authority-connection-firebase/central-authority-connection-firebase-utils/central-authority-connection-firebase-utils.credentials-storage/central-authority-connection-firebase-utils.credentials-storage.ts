@@ -296,7 +296,6 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
     if (!database) {
       return new Error('There is no connection to the database server');
     }
-    debugger;
     try {
       // read a value storerd as user's
       // credentials in the database
@@ -307,10 +306,9 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
         )
         .equalTo(firebaseUserId)
         .once('value');
-      debugger;
+
       if (snapshot.exists()) {
         const valueStored = snapshot.val();
-        debugger;
         return this.filterCredentialsValues(valueStored);
       }
     } catch (err) {
@@ -353,7 +351,7 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
     }
 
     const userId = getUserIdentityByCryptoCredentials(credentials);
-    debugger;
+
     if (userId instanceof Error) {
       console.error(userId);
       return new Error("Failed to get a user's identity from the credentials");
@@ -384,14 +382,13 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
     // before to set a new one
 
     const keyForValue = this.getCredentialsKeyByUserId(userId);
-    debugger;
     const storeResult = await this.setValue<
       ICAConnectionFirestoreUtilsCredentialsStrorageCredentialsSaveStructure
     >(keyForValue, {
       credentials: exportedCryptoCredentials,
       [CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_FIREBASE_USER_ID_PROPERTY]: firebaseUserId,
     });
-    debugger;
+
     if (storeResult instanceof Error) {
       console.error(storeResult);
       return new Error('Failed to store the credentials in the database');

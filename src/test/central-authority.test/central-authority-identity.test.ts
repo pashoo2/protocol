@@ -289,7 +289,7 @@ export const runTestCAIdentityWithAuthorityProviderGenerator = async () => {
   const cryptoCredentials = await generateCryptoCredentialsWithUserIdentity({
     authorityProviderURI: CA_CONNECTION_FIREBASE_CONFIG.databaseURL,
   });
-
+  debugger;
   if (!checkIsValidCryptoCredentials(cryptoCredentials)) {
     console.error('The crypto credentials generated is not valid');
     return;
@@ -304,7 +304,7 @@ export const runTestCAIdentityWithAuthorityProviderGenerator = async () => {
     console.error('User identity generated is not valid');
     return;
   }
-
+  debugger;
   const stringifiedIdentity = caUserIdentity.toString();
 
   if (stringifiedIdentity === '') {
@@ -316,7 +316,7 @@ export const runTestCAIdentityWithAuthorityProviderGenerator = async () => {
     console.error('Parsed identity is not valid');
     return;
   }
-
+  debugger;
   const identityDescriptionParsed = caUserIdentity.identityDescription;
 
   if (identityDescriptionParsed instanceof Error) {

@@ -31,13 +31,13 @@ import { runTestErrorExtended } from 'test/error-extended-class-test';
 
 // runTestProfileValidation();
 // runTestFirebaseCredentialsStorage();
-// runTestCAIdentityWithAuthorityProviderGenerator();
-// runTestCAConnectionFirebaseCryptoCredentialsGenerateByFirebaseAuthProvider();
 
 // runTestErrorExtended();
-//runTestCAConnectionFirebase();
-runTestCAConnectionFirebaseCryptoCredentialsGenerateByFirebaseAuthProvider();
-//runTestFirebaseConnectionDatabase();
+// runTestCAConnectionFirebase();
+// runTestCAConnectionFirebaseCryptoCredentialsGenerateByFirebaseAuthProvider();
+// runTestFirebaseConnectionDatabase();
+// runTestCAIdentityWithAuthorityProviderGenerator();
+runTestFirebaseCredentialsStorage();
 
 const App: React.FC = () => {
   return (

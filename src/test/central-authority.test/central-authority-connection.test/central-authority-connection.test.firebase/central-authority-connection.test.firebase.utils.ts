@@ -34,12 +34,11 @@ export const aurhorizeWithCredentials = async (
   connectionFirebase: CAConnectionWithFirebase
 ): Promise<Error | CAConnectionWithFirebase> => {
   const authorizeResult = await connectionFirebase.authorize(authCredentials);
-  debugger;
+
   if (
     authorizeResult instanceof ErrorExtendedBaseClass &&
     authorizeResult.code === CA_CONNECTION_ERROR_ACCOUNT_NOT_VERIFIED_CODE
   ) {
-    debugger;
     alert('Please, veriy your email');
     return aurhorizeWithCredentials(authCredentials, connectionFirebase);
   }
@@ -82,7 +81,7 @@ export const connectWithFirebase = async (
   const connectionFirebase = await connectAndAuthorizeInFirebase(
     authCredentials
   );
-  debugger;
+
   if (connectionFirebase instanceof Error) {
     console.error(connectionFirebase);
     return connectionFirebase;
