@@ -1,7 +1,4 @@
-import {
-  TCentralAuthorityUserCryptoCredentialsExported,
-  TCentralAuthorityUserCryptoCredentials,
-} from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types-crypto-credentials';
+import { TCentralAuthorityUserCryptoCredentials } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types-crypto-credentials';
 import {
   checkIsCryptoKeyPairs,
   exportKeyPairsAsString,
@@ -22,6 +19,7 @@ import {
   checkIsValidCryptoCredentialsExportedFormat,
   checkIsValidExportedCryptoCredentialsToString,
 } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
+import { stringify } from 'utils/main-utils';
 
 export const exportCryptoCredentialsToString = async (
   userCryptoCredentials: TCentralAuthorityUserCryptoCredentials
@@ -51,7 +49,7 @@ export const exportCryptoCredentialsToString = async (
     );
   }
   try {
-    const exportedCryptoCredentialsAsString = JSON.stringify(
+    const exportedCryptoCredentialsAsString = stringify(
       cryptoCredentialsExported
     );
 
@@ -69,6 +67,46 @@ export const exportCryptoCredentialsToString = async (
     console.error(err);
     return new Error('Failed to stringify the crypto credentials');
   }
+};
+
+export const compareCryptoCredentials = async (
+  ...credentials: TCentralAuthorityUserCryptoCredentials[]
+): Promise<boolean | Error> => {
+  if (!(credentials instanceof Array)) {
+    return new Error('Crdentails to compare must be an array');
+  }
+
+  const exportResult = await exportCryptoCredentialsToString(credentials[0]);
+
+  if (exportResult instanceof Error) {
+    return exportResult;
+  }
+  if (credentials.length === 1) {
+    return true;
+  }
+
+  let idx = 1;
+  const length = credentials.length;
+  let exportCredentialsResult = null;
+
+  for (; idx < length; idx += 1) {
+    exportCredentialsResult = await exportCryptoCredentialsToString(
+      credentials[idx]
+    );
+
+    if (exportCredentialsResult instanceof Error) {
+      console.error(
+        `Failed to export the credentials on index ${idx} === ${credentials[idx]}`
+      );
+      return exportCredentialsResult;
+    }
+    if (exportCredentialsResult !== exportResult) {
+      return new Error(
+        `The credentials on index ${idx} are not equals to the first credentials`
+      );
+    }
+  }
+  return true;
 };
 
 export const importCryptoCredentialsFromExportedFromat = async (

@@ -52,6 +52,10 @@ export class CAConnectionWithFirebase implements ICAConnection {
 
   protected valueofCredentialsSignUpOnAuthorizedSuccess?: ICAConnectionUserAuthorizedResult;
 
+  public getAuthResult(): ICAConnectionUserAuthorizedResult | void {
+    return this.valueofCredentialsSignUpOnAuthorizedSuccess;
+  }
+
   protected connectionWithCredentialsStorage?: CAConnectionFirestoreUtilsCredentialsStrorage;
 
   protected get currentUser(): firebase.User | null {
@@ -885,7 +889,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
       connectionWithCredentialsStorage.isConnected
     ) {
       const res = await connectionWithCredentialsStorage.disconnect();
-
+      debugger;
       if (res instanceof Error) {
         console.error(res);
         return new Error(
@@ -893,6 +897,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
         );
       }
     }
+    debugger;
     this.connectionWithCredentialsStorage = undefined;
     return true;
   }
@@ -907,7 +912,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
     // disconnect the strage cause it's necessary
     // that the user was authorized
     const disconnectFromStorageResult = await this.disconnectCredentialsStorage();
-
+    debugger;
     if (disconnectFromStorageResult instanceof Error) {
       return disconnectFromStorageResult;
     }
@@ -920,8 +925,8 @@ export class CAConnectionWithFirebase implements ICAConnection {
       console.error(err);
       return new Error('Failed to sign out');
     }
-
     this.handleUnauthorized();
+    debugger;
     return true;
   }
 

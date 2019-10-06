@@ -33,8 +33,10 @@ import { runTestErrorExtended } from 'test/error-extended-class-test';
 // runTestFirebaseCredentialsStorage();
 // runTestCAIdentityWithAuthorityProviderGenerator();
 // runTestCAConnectionFirebaseCryptoCredentialsGenerateByFirebaseAuthProvider();
+
 // runTestErrorExtended();
-runTestCAConnectionFirebase();
+//runTestCAConnectionFirebase();
+runTestCAConnectionFirebaseCryptoCredentialsGenerateByFirebaseAuthProvider();
 //runTestFirebaseConnectionDatabase();
 
 const App: React.FC = () => {

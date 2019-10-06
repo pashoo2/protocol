@@ -1,10 +1,6 @@
 import { CAConnectionWithFirebaseUtilDatabase } from '../central-authority-connection-firebase-utils.database/central-authority-connection-firebase-utils.database';
 import { TCentralAuthorityUserCryptoCredentials } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
-import {
-  checkIsValidCryptoCredentials,
-  checkIsValidCryptoCredentialsExportedFormat,
-  checkIsValidExportedCryptoCredentialsToString,
-} from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
+import { checkIsValidExportedCryptoCredentialsToString } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
 import {
   getUserIdentityByCryptoCredentials,
   exportCryptoCredentialsToString,
@@ -18,7 +14,6 @@ import {
 import { validateUserIdentity } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-auth-credentials/central-authority-validators-auth-credentials';
 import { ICAConnectionFirestoreUtilsCredentialsStrorageCredentialsSaveStructure } from './central-authority-connection-firebase-utils.credentials-storage.types';
 import CAConnectionWithFirebase from '../../central-authority-connection-firebase';
-import { isEmptyObject } from 'utils/common-utils/common-utils-objects';
 import { encodeForFirebaseKey } from 'utils/firebase-utils/firebase-utils';
 
 /**

@@ -26,6 +26,7 @@ import {
 } from 'utils/encryption-keys-utils/encryption-keys-utils';
 import { TEncryptionKeyStoreFormatType } from 'types/encryption-keys.types';
 import { isTypedArray } from 'utils/typed-array-utils';
+import { stringify } from 'utils/main-utils';
 
 export const isCryptoKeyPairImported = (
   key: any
@@ -66,7 +67,7 @@ export const exportKeyAsString = async (
     return keyExported;
   }
   try {
-    return JSON.stringify(keyExported);
+    return stringify(keyExported);
   } catch (err) {
     return err;
   }
@@ -90,7 +91,7 @@ export const exportPublicKeyAsString = async (
     if (keyPublicExported instanceof Error) {
       return keyPublicExported;
     }
-    return JSON.stringify(keyPublicExported);
+    return stringify(keyPublicExported);
   } catch (err) {
     return err;
   }
@@ -133,7 +134,7 @@ export const exportKeyPairAsString = async (
     if (res instanceof Error) {
       return res;
     }
-    return JSON.stringify(res);
+    return stringify(res);
   } catch (err) {
     return err;
   }

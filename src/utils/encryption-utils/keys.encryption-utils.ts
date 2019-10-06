@@ -17,6 +17,7 @@ import {
   TCRYPTO_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE,
   TCRYPTO_UTIL_ENCRYPT_KEY_TYPES,
 } from './crypto-utils.types';
+import { stringify } from 'utils/main-utils';
 
 export const isCryptoKeyPairImported = (
   key: any
@@ -49,7 +50,7 @@ export const exportKey = (
 export const exportKeyAsString = async (
   key: CryptoKey
 ): Promise<Error | string> => {
-  return JSON.stringify(await exportKey(key));
+  return stringify(await exportKey(key));
 };
 
 export const exportPublicKey = async (keyPair: CryptoKeyPair) => {
@@ -62,7 +63,7 @@ export const exportPublicKeyAsString = async (keyPair: CryptoKeyPair) => {
   if (publicKey instanceof Error) {
     return publicKey;
   }
-  return JSON.stringify(publicKey);
+  return stringify(publicKey);
 };
 
 export const exportKeyPair = async (
@@ -102,7 +103,7 @@ export const exportKeyPairAsString = async (
     return exportedKeyPair;
   }
   try {
-    return JSON.stringify(exportedKeyPair);
+    return stringify(exportedKeyPair);
   } catch (err) {
     return err;
   }

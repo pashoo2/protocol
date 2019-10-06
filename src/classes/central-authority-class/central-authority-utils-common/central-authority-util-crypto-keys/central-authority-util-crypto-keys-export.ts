@@ -21,6 +21,7 @@ import {
   getPublicKeysFromCryptoKeyPairs,
 } from './central-authority-util-crypto-keys-common';
 import { compressString } from 'utils/data-compression-utils/data-compression-utils-strings';
+import { stringify } from 'utils/main-utils';
 
 /**
  * export two key pairs
@@ -52,12 +53,15 @@ export const exportKeyPairsAsString = async (
     return signDataKeyPairString;
   }
   try {
-    return compressString(
-      JSON.stringify({
-        [CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME]: encryptionKeyPairString,
-        [CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME]: signDataKeyPairString,
-      })
-    );
+    const stringifyResult = stringify({
+      [CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME]: encryptionKeyPairString,
+      [CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME]: signDataKeyPairString,
+    });
+
+    if (stringifyResult instanceof Error) {
+      return stringifyResult;
+    }
+    return compressString(stringifyResult);
   } catch (err) {
     return err;
   }
@@ -99,7 +103,7 @@ export const exportPublicKeysAsString = async (
     return signPublicKeyExported;
   }
   try {
-    return JSON.stringify({
+    return stringify({
       [CA_CRYPTO_KEY_PAIRS_ENCRYPTION_PUBLIC_KEY_NAME]: encryptionPublicKeyExported,
       [CA_CRYPTO_KEY_PAIRS_SIGN_PUBLIC_KEY_NAME]: signPublicKeyExported,
     });
