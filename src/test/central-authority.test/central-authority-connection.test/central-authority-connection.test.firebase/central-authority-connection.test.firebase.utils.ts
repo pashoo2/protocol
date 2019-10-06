@@ -92,10 +92,11 @@ export const connectWithFirebase = async (
 };
 
 export const deleteTheUserFromCA = async (
-  connectionFirebase: CAConnectionWithFirebase
+  connectionFirebase: CAConnectionWithFirebase,
+  authCredentials: ICAConnectionSignUpCredentials
 ): Promise<boolean | Error> => {
   if (connectionFirebase instanceof CAConnectionWithFirebase) {
-    const deleteResult = await connectionFirebase.delete();
+    const deleteResult = await connectionFirebase.delete(authCredentials);
 
     if (deleteResult instanceof Error) {
       console.error(deleteResult);

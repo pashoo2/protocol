@@ -69,5 +69,7 @@ export interface ICAConnection {
   ): Promise<Error | ICAConnectionUserAuthorizedResult>;
   signOut(): Promise<Error | boolean>;
   // delete the user data from the central authority
-  delete(): Promise<Error | boolean>;
+  delete(
+    signUpCredentials?: ICAConnectionSignUpCredentials
+  ): Promise<Error | boolean>;
 }

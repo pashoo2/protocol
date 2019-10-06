@@ -6,7 +6,7 @@ import { generateUUID } from 'utils/identity-utils/identity-utils';
 export const runTestFirebaseConnectionDatabase = async () => {
   console.warn('runTestFirebaseConnectionDatabase::start');
 
-  const login = 'hisa@itfast.net';
+  const login = 'gavidan@6mail.top';
   const password = '123456';
   const firebaseConnection = await connectWithFirebase({
     login,

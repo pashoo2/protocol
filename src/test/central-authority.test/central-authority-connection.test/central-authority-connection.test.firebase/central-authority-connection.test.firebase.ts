@@ -20,8 +20,8 @@ export const runTestCAConnectionFirebaseChangeEmail = async () => {
   }
 
   const userProfileWithEmailTest = {
-    name: 'Paul Test',
-    email: 'sofer@mail-desk.net',
+    name: 'Test account',
+    email: 'gavidan@6mail.top',
   };
   const updateProfileWithEmailResult = await connectionFirebase.setProfileData(
     userProfileWithEmailTest
@@ -51,7 +51,11 @@ export const runTestCAConnectionFirebaseChangeEmail = async () => {
 
 export const runTestCAConnectionFirebase = async () => {
   console.warn('CA connection firebase test started');
-  const connectionFirebase = await connectWithFirebase();
+  const credentials = {
+    login: 'lxnmgnyc@sharklasers.com',
+    password: '123456',
+  };
+  const connectionFirebase = await connectWithFirebase(credentials);
   debugger;
   if (connectionFirebase instanceof Error) {
     console.error(connectionFirebase);
@@ -74,7 +78,7 @@ export const runTestCAConnectionFirebase = async () => {
 
   if (updateProfileResult instanceof Error) {
     console.error('Failed tp set the profile (without a email) data');
-    return deleteTheUserFromCA(connectionFirebase);
+    return deleteTheUserFromCA(connectionFirebase, credentials);
   }
 
   if (
@@ -82,19 +86,25 @@ export const runTestCAConnectionFirebase = async () => {
     updateProfileResult.photoURL
   ) {
     console.error('The photo URL was not updated in the profile');
-    return deleteTheUserFromCA(connectionFirebase);
+    debugger;
+    return deleteTheUserFromCA(connectionFirebase, credentials);
   }
   if (userProfileTestWOEmailAndPhoneNumber.name !== updateProfileResult.name) {
     console.error('Name was not updated in the profile');
-    return deleteTheUserFromCA(connectionFirebase);
+    debugger;
+    return deleteTheUserFromCA(connectionFirebase, credentials);
   }
-
-  const deleteTheUserResult = await deleteTheUserFromCA(connectionFirebase);
-
+  debugger;
+  const deleteTheUserResult = await deleteTheUserFromCA(
+    connectionFirebase,
+    credentials
+  );
+  debugger;
   if (deleteTheUserResult instanceof Error) {
     console.error(deleteTheUserResult);
     return new Error('Failed to delete the user from the Firebase authority');
   }
+  debugger;
   console.warn('CA connection firebase test success');
 };
 

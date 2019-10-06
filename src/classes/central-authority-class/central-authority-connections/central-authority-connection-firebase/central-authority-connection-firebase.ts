@@ -246,6 +246,15 @@ export class CAConnectionWithFirebase implements ICAConnection {
   protected async singUpWithAuthCredentials(
     authCredentials: ICentralAuthorityUserAuthCredentials
   ): Promise<boolean | Error> {
+    const checkSignUpCredentialsResult = this.checkSignUpCredentials(
+      authCredentials
+    );
+
+    if (checkSignUpCredentialsResult instanceof Error) {
+      console.error(checkSignUpCredentialsResult);
+      return this.onAuthorizationFailed(checkSignUpCredentialsResult);
+    }
+
     const { login, password } = authCredentials;
 
     try {
@@ -296,13 +305,15 @@ export class CAConnectionWithFirebase implements ICAConnection {
 
     const { currentUser: currentUserData } = this;
 
+    // current user is instance
+    // of the firebase current user
     if (!currentUserData) {
       // if there is no profile data
       return {};
     }
 
     const { displayName, photoURL, phoneNumber, email } = currentUserData;
-
+    debugger;
     return {
       name: displayName || null,
       email: email || null,
@@ -400,7 +411,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
     const profileMappedForFirebaseWithoutEmail = this.mapAppProfileToFirebaseProfileWithoutEmail(
       profileDataPartialWithoutPhoneNumber
     );
-
+    debugger;
     try {
       await currentUser.updateProfile(profileMappedForFirebaseWithoutEmail);
     } catch (err) {
@@ -434,7 +445,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
       console.error(updatedProfile);
       return new Error('Failed to read the updated profile data');
     }
-
+    debugger;
     const { email } = profile;
 
     if (email) {
@@ -447,10 +458,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
         return updateEmailResult;
       }
     }
-    return {
-      ...updatedProfile,
-      email: email || null,
-    };
+    return updatedProfile;
   }
 
   protected async handleAuthEmailNotVerified(): Promise<boolean | Error> {
@@ -705,13 +713,12 @@ export class CAConnectionWithFirebase implements ICAConnection {
           "Sorry, you can't use this account anymore, cause a credentials existing for the account exists and not valid",
           CA_CONNECTION_ERROR_ACCOUNT_CAN_NOT_BE_USED_ANYMORE
         );
-      } else {
-        debugger;
-        // if the credentials read from the
-        // Firebase storage is valid
-        // for the current configuration return it
-        return credentialsExistingForTheCurrentUser;
       }
+      debugger;
+      // if the credentials read from the
+      // Firebase storage is valid
+      // for the current configuration return it
+      return credentialsExistingForTheCurrentUser;
     }
 
     // generate a new credentials for the user and
@@ -730,6 +737,22 @@ export class CAConnectionWithFirebase implements ICAConnection {
     }
     return newCredentialsGenerated;
   }
+  async signIn(
+    firebaseCredentials: ICAConnectionSignUpCredentials
+  ): Promise<boolean | Error> {
+    debugger;
+    const checkSignUpCredentialsResult = this.checkSignUpCredentials(
+      firebaseCredentials
+    );
+    debugger;
+    if (checkSignUpCredentialsResult instanceof Error) {
+      console.error(checkSignUpCredentialsResult);
+      return this.onAuthorizationFailed(checkSignUpCredentialsResult);
+    }
+
+    // try to sign in with the credentials, then try to sign up
+    return this.singInWithAuthCredentials(firebaseCredentials);
+  }
 
   protected async signUp(
     signUpCredentials: ICAConnectionSignUpCredentials
@@ -740,7 +763,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
     const signUpResult = await this.singUpWithAuthCredentials(
       signUpCredentials
     );
-
+    debugger;
     if (signUpResult instanceof Error) {
       // if sign up failed then return
       // error that the authorization
@@ -753,14 +776,14 @@ export class CAConnectionWithFirebase implements ICAConnection {
   }
 
   /**
-   * @param {ICAConnectionSignUpCredentials} signUpCredentials
-   * @param signUpCredentials.login - there must be an email to authorize with a Firebase account
-   * @param signUpCredentials.password - password used for encrypt a sensitive data and authorize
+   * @param {ICAConnectionSignUpCredentials} firebaseCredentials
+   * @param firebaseCredentials.login - there must be an email to authorize with a Firebase account
+   * @param firebaseCredentials.password - password used for encrypt a sensitive data and authorize
    * in the Firebase account
    * @param profile - if provided then the user profile will be set in firebase
    */
   public async authorize(
-    signUpCredentials: ICAConnectionSignUpCredentials,
+    firebaseCredentials: ICAConnectionSignUpCredentials,
     profile?: Partial<ICentralAuthorityUserProfile>
   ): Promise<ICAConnectionUserAuthorizedResult | Error> {
     const isConnected = this.checkIfConnected();
@@ -775,27 +798,15 @@ export class CAConnectionWithFirebase implements ICAConnection {
     if (isAuthorized) {
       authHandleResult = this.valueofCredentialsSignUpOnAuthorizedSuccess!!;
     } else {
-      debugger;
-      const checkSignUpCredentialsResult = this.checkSignUpCredentials(
-        signUpCredentials
-      );
-      debugger;
-      if (checkSignUpCredentialsResult instanceof Error) {
-        console.error(checkSignUpCredentialsResult);
-        return this.onAuthorizationFailed(checkSignUpCredentialsResult);
-      }
-
       // try to sign in with the credentials, then try to sign up
-      const signInResult = await this.singInWithAuthCredentials(
-        signUpCredentials
-      );
+      const signInResult = await this.signIn(firebaseCredentials);
       debugger;
       if (signInResult instanceof Error) {
         console.warn('Failed to sign in with the credentials given');
 
         // if failed to sign in with the credentials
         // try to sign up
-        const signUpResult = await this.signUp(signUpCredentials);
+        const signUpResult = await this.signUp(firebaseCredentials);
         debugger;
         if (signUpResult instanceof Error) {
           debugger;
@@ -808,8 +819,8 @@ export class CAConnectionWithFirebase implements ICAConnection {
       const isVerifiedResult = await this.chekIfVerifiedAccount();
 
       if (isVerifiedResult instanceof Error) {
-        console.error(isVerifiedResult);
-        return this.onAuthorizationFailed('The account must be verified');
+        console.error('The account is not verified');
+        return this.onAuthorizationFailed(isVerifiedResult);
       }
       debugger;
       const connectWithStorageResult = await this.startConnectionWithCredentialsStorage();
@@ -825,27 +836,34 @@ export class CAConnectionWithFirebase implements ICAConnection {
       // it will be used to set in the Firebase credentials
       // storage
       const cryptoCredentials = await this.createOrReturnExistingCredentialsForUser(
-        signUpCredentials
+        firebaseCredentials
       );
-
+      debugger;
       if (cryptoCredentials instanceof Error) {
         console.error('Failed to get a crypto credentials valid for the user');
         return this.onAuthorizationFailed(cryptoCredentials);
       }
 
+      // give user's profile
+      // with a credentials
       authHandleResult = await this.returnOnAuthorizedResult(cryptoCredentials);
     }
-
+    debugger;
     if (authHandleResult instanceof Error) {
       return this.onAuthorizationFailed(authHandleResult);
     }
+    // if a profile data is necessary to be set
+    // by a profile data from the arguments given
     if (profile && !isEmptyObject(profile)) {
       const setProfileResult = await this.setProfileData(profile);
-
+      debugger;
       if (setProfileResult instanceof Error) {
         console.error(setProfileResult);
         return this.onAuthorizationFailed('Failed to set the profile data');
       }
+
+      // set porofile is the user's profile
+      // data stored in the firebase
       authHandleResult = {
         profile: setProfileResult,
         // TODO it is necessry to set this credentials in the database
@@ -928,7 +946,9 @@ export class CAConnectionWithFirebase implements ICAConnection {
     return new Error('There is no active Firebase App instance to close');
   }
 
-  public async delete(): Promise<Error | boolean> {
+  public async delete(
+    firebaseCredentials: ICAConnectionSignUpCredentials
+  ): Promise<Error | boolean> {
     const isConnected = this.checkIfConnected();
 
     if (isConnected instanceof Error) {
@@ -945,22 +965,30 @@ export class CAConnectionWithFirebase implements ICAConnection {
       return new Error('There is no current user');
     }
 
+    // try to sign in with the credentials, then try to sign up
+    const signInResult = await this.signIn(firebaseCredentials);
+
+    if (signInResult instanceof Error) {
+      console.error('Failed to sign in before the user deletion');
+      return signInResult;
+    }
+
     try {
-      await currentUser.delete(); // or maybe deleteWithCompletion method
+      const result = (await currentUser.delete()) as unknown; // or maybe deleteWithCompletion method
+
+      if (result instanceof Error) {
+        console.error(result);
+        return new Error('Failed to delete the user from the firebase');
+      }
     } catch (err) {
       console.error(err);
       return new Error('Failed to delete the user from the authority');
     }
 
-    // disconnect from firebase
-    // cause the connection is neccessary
-    // that the user is authorized
-    const disconnectResult = await this.disconnect();
-
-    if (disconnectResult instanceof Error) {
-      console.error(disconnectResult);
-      return new Error('Failed to disconnect from the Firebase auth provider');
-    }
+    // disconnection from the firebase
+    // is not necessry cause the firebase
+    // disconnects automatically if the user
+    // delete himself
     return true;
   }
 }
