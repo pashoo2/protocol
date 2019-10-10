@@ -13,8 +13,17 @@
     "@types/uuid": "^3.4.5",
     "ajv": "^6.10.2",
     "firebase": "^6.4.2",
+    "ipfs": "^0.38.0",
+    "libp2p": "^0.26.2",
+    "libp2p-bootstrap": "^0.9.7",
+    "libp2p-gossipsub": "0.0.5",
+    "libp2p-kad-dht": "^0.16.0",
+    "libp2p-spdy": "^0.13.3",
+    "libp2p-webrtc-star": "^0.16.1",
+    "libp2p-websocket-star": "^0.10.2",
     "lodash.memoize": "^4.1.2",
     "lz-string": "^1.4.4",
+    "pull-mplex": "^0.1.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-scripts": "3.0.1",
@@ -25,7 +34,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "start:wrtc-star": "star-signal --port=9090 --host=127.0.0.1"
   },
   "eslintConfig": {
     "extends": "react-app"

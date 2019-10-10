@@ -10,6 +10,8 @@ import {
   runTestCAConnectionFirebaseCryptoCredentialsGenerateByFirebaseAuthProvider,
 } from 'test/central-authority.test/central-authority-connection.test/central-authority-connection.test';
 import { runTestErrorExtended } from 'test/error-extended-class-test';
+import { runTestIPFSSwarmConnection } from 'test/ipfs-swarm-connection.test/ipfs-swarm-connection.test';
+import { runTestSwarmConnectionIPFS } from 'test/ipfs-swarm-connection.test/ipfs-swarm-connection-ipfs.test';
 // import { runCACredentialsIdentityStorageTest } from 'test/central-authority.test/central-authority-storage-identity-credentials.test';
 // import { runTestCachingDecorator } from 'test/common-utils.test/common-utils.test';
 // import { runTestCAIdentity } from 'test/central-authority.test/central-authority.test';
@@ -37,7 +39,10 @@ import { runTestErrorExtended } from 'test/error-extended-class-test';
 // runTestCAConnectionFirebaseCryptoCredentialsGenerateByFirebaseAuthProvider();
 // runTestFirebaseConnectionDatabase();
 // runTestCAIdentityWithAuthorityProviderGenerator();
-runTestFirebaseCredentialsStorage();
+// runTestFirebaseCredentialsStorage();
+
+runTestSwarmConnectionIPFS();
+//runTestIPFSSwarmConnection();
 
 const App: React.FC = () => {
   return (

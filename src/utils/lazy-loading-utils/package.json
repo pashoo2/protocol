@@ -1,0 +1,4 @@
+{
+  "main": "lazy-loading-utils.ts",
+  "types": "lazy-loading-utils.ts"
+}
