@@ -1,3 +1,18 @@
+import Multiaddr from 'multiaddr';
+
+const toOptionsOrigin = Multiaddr.prototype.toOptions;
+
+Multiaddr.prototype.toOptions = function(...args: any[]) {
+  const options = toOptionsOrigin.apply(this, args);
+
+  return options && options.host && options.host.includes('0.0.0.0')
+    ? {
+        ...options,
+        host: options.host + '/ws',
+      }
+    : options;
+};
+
 export enum SWARM_CONNECTION_SUBLASS_IPFS_CONFIG_ROUTERS {
   FLOODSUB = 'floodsub',
   GOSSIPPSUB = 'gossipsub',
@@ -17,7 +32,11 @@ export const SWARM_CONNECTION_SUBLASS_IPFS_CONFIG_NODES_BOOTSTRAP = [
 //https://github.com/ipfs/js-ipfs/blob/master/doc/config.md#api
 export const SWARM_CONNECTION_SUBLASS_IPFS_CONFIG_FOR_BROWSER_DEFAULT = {
   Addresses: {
-    Swarm: ['/ip4/127.0.0.1/tcp/9090/ws/p2p-webrtc-star'],
+    // if a dommain used then '/dns4/wrtc-star.discovery.libp2p.io/tcp/443/wss/p2p-webrtc-star'
+    Swarm: [
+      // '/ip4/0.0.0.0/tcp/8080/ws/p2p-webrtc-star',
+      '/ip4/0.0.0.0/tcp/8080/ws/p2p-websocket-star',
+    ],
     API: '',
     Gateway: '',
     Delegates: [

@@ -24,6 +24,9 @@ export const getLibPeerToPeer = (opts: any) => {
   const wstar = new WStar({
     id: peerInfo.id,
   });
+  const wsstar = new WebSocketStar({
+    id: peerInfo.id,
+  });
 
   debugger;
   // Build and return our libp2p node
@@ -37,10 +40,10 @@ export const getLibPeerToPeer = (opts: any) => {
       pollInterval: 5000,
     },
     modules: {
-      transport: [wstar],
+      transport: [wstar, wsstar],
       streamMuxer: [MPLEX, SPDY],
       connEncryption: [SECIO],
-      peerDiscovery: [Bootstrap, wstar.discovery],
+      peerDiscovery: [Bootstrap, wstar.discovery, wsstar.discovery],
       dht: KadDHT,
       pubsub: PubSubGossip,
     },

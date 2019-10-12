@@ -13,7 +13,6 @@ export class SwarmConnectionSubclassIPFS implements ISwarmConnectionSubclass {
       SWARM_CONNECTION_SUBCLASS_IPFS_CDN_SCRIPT_URL
     );
 
-    debugger;
     if (scriptLoading instanceof Error) {
       console.error(
         `Failed to load the IPFS main script from the source ${SWARM_CONNECTION_SUBCLASS_IPFS_CDN_SCRIPT_URL}`
@@ -25,7 +24,7 @@ export class SwarmConnectionSubclassIPFS implements ISwarmConnectionSubclass {
         'There is no IPFS was found on the window global variable'
       );
     }
-    debugger;
+
     const { Ipfs } = window as any;
     const connection = await Ipfs.create(
       SWARM_CONNECTION_SUBLASS_IPFS_CONFIG_DEFALT
