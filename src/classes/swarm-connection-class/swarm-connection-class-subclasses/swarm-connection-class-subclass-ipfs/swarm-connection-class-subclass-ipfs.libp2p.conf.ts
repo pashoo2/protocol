@@ -2,6 +2,7 @@
 // TODO use https://github.com/libp2p/js-libp2p-webrtc-star as transport
 // https://pdos.csail.mit.edu/papers/chord:sigcomm01/chord_sigcomm.pdf
 // TODO - use https://github.com/daviddias/webrtc-explorer
+// about libp2p-secio https://github.com/auditdrivencrypto/secure-channel/blob/master/prior-art.md#ipfss-secure-channel
 import * as Libp2p from 'libp2p';
 import * as KadDHT from 'libp2p-kad-dht';
 import * as WebSocketStar from 'libp2p-websocket-star';
@@ -11,6 +12,12 @@ import * as Bootstrap from 'libp2p-bootstrap';
 import * as SECIO from 'libp2p-secio';
 import * as WStar from 'libp2p-webrtc-star';
 import * as PubSubGossip from 'libp2p-gossipsub';
+import DelegatedPeerRouter from 'libp2p-delegated-peer-routing';
+import DelegatedContentRouter from 'libp2p-delegated-content-routing';
+import {
+  SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_OPTIONS_HTTP,
+  SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_OPTIONS_WS,
+} from './swarm-connection-class-subclass-ipfs.delegate.conf';
 
 export const getLibPeerToPeer = (opts: any) => {
   // Set convenience variables to clearly showcase some of the useful things that are available
@@ -19,7 +26,6 @@ export const getLibPeerToPeer = (opts: any) => {
   const bootstrapList = opts.config.Bootstrap;
   const { multiaddr } = (window as any).Ipfs;
 
-  debugger;
   // Create our WebSocketStar transport and give it our PeerId, straight from the ipfs node
   const wstar = new WStar({
     id: peerInfo.id,
@@ -27,6 +33,20 @@ export const getLibPeerToPeer = (opts: any) => {
   const wsstar = new WebSocketStar({
     id: peerInfo.id,
   });
+  const delegatePeerRouter = new DelegatedPeerRouter(
+    SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_OPTIONS_HTTP
+  );
+  const delegatePeerRouterWS = new DelegatedPeerRouter(
+    SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_OPTIONS_WS
+  );
+  const delegateContentRouter = new DelegatedContentRouter(
+    peerInfo.id,
+    SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_OPTIONS_HTTP
+  );
+  const delegateContentRouterWS = new DelegatedContentRouter(
+    peerInfo.id,
+    SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_OPTIONS_WS
+  );
 
   debugger;
   // Build and return our libp2p node
@@ -46,6 +66,8 @@ export const getLibPeerToPeer = (opts: any) => {
       peerDiscovery: [Bootstrap, wstar.discovery, wsstar.discovery],
       dht: KadDHT,
       pubsub: PubSubGossip,
+      contentRouting: [delegateContentRouter, delegateContentRouterWS],
+      peerRouting: [delegatePeerRouter, delegatePeerRouterWS],
     },
     config: {
       peerDiscovery: {

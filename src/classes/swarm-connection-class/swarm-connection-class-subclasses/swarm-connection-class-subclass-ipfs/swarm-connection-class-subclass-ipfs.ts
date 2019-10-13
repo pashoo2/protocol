@@ -2,7 +2,7 @@
 import { ISwarmConnectionSubclass } from 'classes/swarm-connection-class/swarm-connection-class.types';
 import {
   SWARM_CONNECTION_SUBCLASS_IPFS_CDN_SCRIPT_URL,
-  SWARM_CONNECTION_SUBLASS_IPFS_CONFIG_DEFALT,
+  SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DEFALT,
 } from './swarm-connection-class-subclass-ipfs.const';
 import { lazyLoadScript } from 'utils/lazy-loading-utils/lazy-loading-utils';
 import { TIPFSPubsubMessage } from './swarm-connection-class-subclass-ipfs.types';
@@ -27,7 +27,7 @@ export class SwarmConnectionSubclassIPFS implements ISwarmConnectionSubclass {
 
     const { Ipfs } = window as any;
     const connection = await Ipfs.create(
-      SWARM_CONNECTION_SUBLASS_IPFS_CONFIG_DEFALT
+      SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DEFALT
     );
     await connection.ready;
 

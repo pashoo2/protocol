@@ -22,7 +22,7 @@ export class SwarmConnection
     this.options = options;
   }
 
-  private setConnectionSublassInstance(connection: ISwarmConnectionSubclass) {
+  private setConnectionSUBCLASSInstance(connection: ISwarmConnectionSubclass) {
     this.connection = connection;
   }
 
@@ -30,7 +30,7 @@ export class SwarmConnection
     try {
       const connectionToIPFS = new SwarmConnectionSubclassIPFS();
 
-      this.setConnectionSublassInstance(connectionToIPFS);
+      this.setConnectionSUBCLASSInstance(connectionToIPFS);
       return true;
     } catch (err) {
       console.error(err);
