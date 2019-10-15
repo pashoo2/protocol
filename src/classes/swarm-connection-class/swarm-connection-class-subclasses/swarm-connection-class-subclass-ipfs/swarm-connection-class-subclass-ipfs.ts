@@ -29,20 +29,20 @@ export class SwarmConnectionSubclassIPFS implements ISwarmConnectionSubclass {
     const connection = await Ipfs.create(
       SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DEFALT
     );
+
+    console.warn('IPFS node config');
+    console.warn(SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DEFALT);
     await connection.ready;
 
     const topic = 'topic--1111---11';
     const Buffer = Ipfs.Buffer;
     const nodeId = connection._peerInfo.id._idB58String;
-    debugger;
     const msg = new Buffer.from('bannana');
-    debugger;
     connection.pubsub.subscribe(
       topic,
       (message: TIPFSPubsubMessage): void => {
         if (message.from !== nodeId) {
           console.warn(message);
-          debugger;
         }
       },
       {
@@ -51,7 +51,6 @@ export class SwarmConnectionSubclassIPFS implements ISwarmConnectionSubclass {
       (err?: Error) => {
         if (err) {
           console.error(err);
-          debugger;
         } else {
           console.warn('Connected to pubsub');
         }

@@ -36,17 +36,22 @@ export const getLibPeerToPeer = (opts: any) => {
   const delegatePeerRouter = new DelegatedPeerRouter(
     SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_OPTIONS_HTTP
   );
-  const delegatePeerRouterWS = new DelegatedPeerRouter(
-    SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_OPTIONS_WS
-  );
   const delegateContentRouter = new DelegatedContentRouter(
     peerInfo.id,
     SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_OPTIONS_HTTP
+  );
+  const delegatePeerRouterWS = new DelegatedPeerRouter(
+    SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_OPTIONS_WS
   );
   const delegateContentRouterWS = new DelegatedContentRouter(
     peerInfo.id,
     SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_OPTIONS_WS
   );
+
+  console.warn('IPFS delegate node config HTTP');
+  console.warn(SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_OPTIONS_HTTP);
+  console.warn('IPFS delegate node config HTTP-WS');
+  console.warn(SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_OPTIONS_WS);
 
   debugger;
   // Build and return our libp2p node
@@ -66,8 +71,14 @@ export const getLibPeerToPeer = (opts: any) => {
       peerDiscovery: [Bootstrap, wstar.discovery, wsstar.discovery],
       dht: KadDHT,
       pubsub: PubSubGossip,
-      contentRouting: [delegateContentRouter, delegateContentRouterWS],
-      peerRouting: [delegatePeerRouter, delegatePeerRouterWS],
+      contentRouting: [
+        delegateContentRouter,
+        // TODO - CORS failed cause protocol is not http or https delegateContentRouterWS
+      ],
+      peerRouting: [
+        delegatePeerRouter,
+        // TODO - CORS failed with the websocket delegatePeerRouterWS
+      ],
     },
     config: {
       peerDiscovery: {
