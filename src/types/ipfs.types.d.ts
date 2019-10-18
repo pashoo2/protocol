@@ -411,4 +411,3 @@ declare namespace IPFS {
 
   export function createNode(options: Options): IPFS;
 }
-s;

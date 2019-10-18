@@ -99,7 +99,8 @@ export class SwarmConnectionSubclassIPFS
     const methodName = isSetListeners ? 'on' : 'off';
 
     connection[methodName]('error', this.handleError);
-    connection[methodName]('init', this.handleInitialized);
+    connection[methodName]('error', this.handleError);
+    connection[methodName]('stop', this.handleStop);
   }
 
   protected unsetListeners = (connection: ipfs.IpfsNode) => {
@@ -166,8 +167,19 @@ export class SwarmConnectionSubclassIPFS
     return connection.stop();
   }
 
-  protected async reconnect(): Promise<Error | boolean> {
+  protected incReconnectionAttempt() {
     this.reconnectionAttempt += 1;
+    console.warn('ipfs:incReconnectionAttempt');
+  }
+
+  protected resetReconnectionAttempt() {
+    this.reconnectionAttempt = 0;
+    console.warn('ipfs:resetReconnectionAttempt');
+  }
+
+  protected async reconnect(): Promise<Error | boolean> {
+    console.warn('ipfs:reconnect');
+    this.incReconnectionAttempt();
     if (
       this.reconnectionAttempt >
       SWARM_CONNECTION_SUBCLASS_IPFS_NODE_RECONNECTION_MAX_ATTEMPTS
@@ -194,19 +206,24 @@ export class SwarmConnectionSubclassIPFS
       console.error(startResult);
       return this.reconnect();
     }
+    this.resetReconnectionAttempt();
     return true;
   }
 
   protected async start(): Promise<Error | boolean> {
     const { isClosed, connection } = this;
 
-    this.setStatus(ESwarmConnectionSubclassStatus.CONNECTING);
+    console.warn('ipfs:start');
     if (isClosed) {
       return new Error(
         'Unable to reconnect to the swarm if the connection was closed previusely'
       );
     }
+
+    this.setStatus(ESwarmConnectionSubclassStatus.CONNECTING);
     if (!connection) {
+      // if there is no connection to the ipfs
+      // create it
       const createConnectionResult = await this.createConnetion();
 
       if (createConnectionResult instanceof Error) {
@@ -214,6 +231,8 @@ export class SwarmConnectionSubclassIPFS
         return new Error('Failed to create a new connection');
       }
     } else {
+      // stop the current connection to the ipfs
+      // before start it again
       const stopCurrentConnectionResult = await this.stopConnection(connection);
 
       if (stopCurrentConnectionResult instanceof Error) {
@@ -239,9 +258,16 @@ export class SwarmConnectionSubclassIPFS
     return true;
   }
 
+  public get isConnected(): boolean {
+    const { isClosed, connection } = this;
+
+    return isClosed || !connection || !connection.isOnline();
+  }
+
   public async close(): Promise<boolean | Error> {
     const { isClosed, connection } = this;
 
+    console.warn('ipfs:close');
     if (isClosed) {
       return true;
     }
@@ -262,6 +288,7 @@ export class SwarmConnectionSubclassIPFS
   public async connect(): Promise<boolean | Error> {
     const scriptLoadingResult = await this.preloadScriptFromCDN();
 
+    console.warn('ipfs:connect');
     if (scriptLoadingResult instanceof Error) {
       console.error(scriptLoadingResult);
       return new Error('Failed to preload the IPFS library');
@@ -271,7 +298,12 @@ export class SwarmConnectionSubclassIPFS
     const startResult = await this.start();
 
     if (startResult instanceof Error) {
-      return this.reconnect();
+      // if failed to start, then try to reconnect
+      const connectionResult = await this.reconnect();
+
+      if (connectionResult) {
+        return this.setErrorStatus('Failed to connect the first time');
+      }
     }
     this.setStatus(ESwarmConnectionSubclassStatus.CONECTED);
     return true;

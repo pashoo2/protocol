@@ -39,7 +39,7 @@ export const runTestFirebaseCredentialsStorage = async () => {
   }
 
   const credentialsForUser = await credetntialsStoreConnectionToFirebase.getCredentialsForTheCurrentUser();
-  debugger;
+
   if (credentialsForUser instanceof Error) {
     console.error(credentialsForUser);
     console.error('Failed to get credentials for the current user');
@@ -56,11 +56,11 @@ export const runTestFirebaseCredentialsStorage = async () => {
     console.error('Failed to generate crypto credentials');
     return;
   }
-  debugger;
+
   const setCredentialsResult = await credetntialsStoreConnectionToFirebase.setUserCredentials(
     credentials
   );
-  debugger;
+
   if (setCredentialsResult instanceof Error) {
     console.error(setCredentialsResult);
     console.error('Failed to set credentials');
@@ -89,7 +89,7 @@ export const runTestFirebaseCredentialsStorage = async () => {
   const getCredentialsResult = await credetntialsStoreConnectionToFirebase.getUserCredentials(
     userId
   );
-  debugger;
+
   if (!getCredentialsResult) {
     console.error(
       'There is no credentials stored before was found in the Firebsae database'

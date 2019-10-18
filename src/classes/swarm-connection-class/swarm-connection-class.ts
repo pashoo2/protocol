@@ -4,9 +4,11 @@ import {
   ESwarmConnectionClassStatus,
   ISwarmConnectionOptions,
   ESwarmConnectionClassSubclassType,
+  ISwarmConnectionSubclassSpecificOptions,
 } from './swarm-connection-class.types';
 import { SwarmConnectionSubclassIPFS } from './swarm-connection-class-subclasses/swarm-connection-class-subclass-ipfs/swarm-connection-class-subclass-ipfs';
 import { getStatusClass } from 'classes/basic-classes/status-class-base/status-class-base';
+import undefined from 'firebase/empty-import';
 
 export class SwarmConnection
   extends getStatusClass<typeof ESwarmConnectionClassStatus>({
@@ -14,9 +16,36 @@ export class SwarmConnection
     instanceName: 'SwarmConnection',
   })
   implements ISwarmConnection {
-  connection?: ISwarmConnectionSubclass;
+  private connection?: ISwarmConnectionSubclass;
 
-  options?: ISwarmConnectionOptions;
+  private options?: ISwarmConnectionOptions;
+
+  public get connectionType(): ESwarmConnectionClassSubclassType | void {
+    const { options } = this;
+
+    if (options) {
+      const { type } = options;
+
+      return type;
+    }
+  }
+
+  /**
+   *
+   * returns options specific for the subclass connection
+   * @private
+   * @returns {(ISwarmConnectionSubclassSpecificOptions | void)}
+   * @memberof SwarmConnection
+   */
+  private getSubclassSpecificOptions(): ISwarmConnectionSubclassSpecificOptions | void {
+    const { options } = this;
+
+    if (options && typeof options === 'object') {
+      const { subclassOptions } = options;
+
+      return subclassOptions ? subclassOptions : undefined;
+    }
+  }
 
   private setOptions(options: ISwarmConnectionOptions) {
     this.options = options;
@@ -41,15 +70,7 @@ export class SwarmConnection
   }
 
   private createConnectionInstance(): boolean | Error {
-    const { options } = this;
-
-    if (!options) {
-      return new Error(
-        'There is no options provided for the Swarm connections'
-      );
-    }
-
-    const { type } = options;
+    const { connectionType: type } = this;
 
     if (type === ESwarmConnectionClassSubclassType.IPFS) {
       return this.createConnectionToIPFS();
@@ -58,13 +79,21 @@ export class SwarmConnection
   }
 
   private async startConnection(): Promise<boolean | Error> {
-    const { connection } = this;
+    const { connection, connectionType } = this;
 
     if (!connection || typeof connection.connect !== 'function') {
       return new Error('There is no connection');
     }
-    const result = await connection.connect();
 
+    const subclassSpecificOptions = this.getSubclassSpecificOptions();
+    const result = await connection.connect(subclassSpecificOptions);
+
+    if (result instanceof Error) {
+      console.error(
+        `Failed to start connection to the swarm ${connectionType}`
+      );
+      return result;
+    }
     return result;
   }
 

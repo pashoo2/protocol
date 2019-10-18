@@ -17,7 +17,7 @@ export const runTestFirebaseConnectionDatabase = async () => {
     console.error(firebaseConnection);
     return new Error('Failed to connect with firebase');
   }
-  debugger;
+
   const databaseConnectionToFirebase = new CAConnectionWithFirebaseUtilDatabase();
 
   if (databaseConnectionToFirebase.isConnected) {
@@ -26,7 +26,7 @@ export const runTestFirebaseConnectionDatabase = async () => {
   }
 
   const connectionResult = await databaseConnectionToFirebase.connect();
-  debugger;
+
   if (connectionResult instanceof Error) {
     console.error(connectionResult);
     console.error('Failed to connect to the database server');
@@ -48,14 +48,14 @@ export const runTestFirebaseConnectionDatabase = async () => {
     testKey,
     testData
   );
-  debugger;
+
   if (setValueResult instanceof Error) {
     console.error(setValueResult);
     return setValueResult;
   }
 
   const readValueResult = await databaseConnectionToFirebase.getValue(testKey);
-  debugger;
+
   if (readValueResult instanceof Error) {
     console.error(readValueResult);
     console.error('Failed to read a data from the database');

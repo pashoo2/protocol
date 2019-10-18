@@ -1,15 +1,16 @@
 import ipfs from 'types/ipfs.types';
 
-export interface ISwarmConnection {
-  connect(options: ISwarmConnectionOptions): Promise<boolean | Error>;
-}
-
 export enum ESwarmConnectionClassSubclassType {
   IPFS = 'ipfs',
 }
 
+export interface ISwarmConnection {
+  connectionType: ESwarmConnectionClassSubclassType | void;
+  connect(options: ISwarmConnectionOptions): Promise<boolean | Error>;
+}
+
 // ipfs specific options
-export interface IIPFSSpecificOptions {
+export interface ISwarmConnectionSubclassSpecificOptions {
   addresses: {
     swarm?: string[];
     delegates?: string[];
@@ -19,13 +20,16 @@ export interface IIPFSSpecificOptions {
 
 export interface ISwarmConnectionOptions {
   type: ESwarmConnectionClassSubclassType;
-  specificOptions: IIPFSSpecificOptions;
+  subclassOptions: ISwarmConnectionSubclassSpecificOptions;
 }
 
 export interface ISwarmConnectionSubclass {
-  connect(): Promise<boolean | ipfs.IpfsNode | Error>;
+  connect(
+    options: ISwarmConnectionSubclassSpecificOptions | void
+  ): Promise<boolean | Error>;
   close(): Promise<boolean | Error>;
   isClosed: boolean;
+  isConnected: boolean;
 }
 
 export enum ESwarmConnectionClassStatus {

@@ -53,7 +53,6 @@ export const getLibPeerToPeer = (opts: any) => {
   console.warn('IPFS delegate node config HTTP-WS');
   console.warn(SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_OPTIONS_WS);
 
-  debugger;
   // Build and return our libp2p node
   return new Libp2p({
     peerInfo,
