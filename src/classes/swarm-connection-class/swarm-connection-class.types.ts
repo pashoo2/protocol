@@ -42,7 +42,8 @@ export enum ESwarmConnectionSubclassStatus {
   LOADING = 'loading', // preloading all necessary script and other
   INITIALIZED = 'initialized', // preloading all necessary script and other
   CONNECTING = 'connecting', // connecting to the swarm
-  CONECTED = 'connected', // connected to the swarm
+  STARTED = 'started', // node has started listening for connections
+  CONNECTED = 'connected', // connected to the swarm and is ready to use
   STOP = 'stop', // connectionn was stopped
   CLOSE = 'close', // connectionn was closed and released
   CONNECTION_FAILED = 'connection failed', // connectionn was closed and released
