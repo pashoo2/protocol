@@ -334,6 +334,14 @@ export class SwarmConnectionSubclassIPFS
         return this.setErrorStatus('Failed to connect the first time');
       }
     }
+
+    this.setStatus(ESwarmConnectionSubclassStatus.CONNECTING);
+    const startResult = await this.start();
+
+    if (startResult instanceof Error) {
+      return this.reconnect();
+    }
+    this.setStatus(ESwarmConnectionSubclassStatus.CONECTED);
     return true;
   }
 }

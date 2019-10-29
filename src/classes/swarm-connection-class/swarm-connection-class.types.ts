@@ -18,6 +18,15 @@ export interface ISwarmConnectionSubclassSpecificOptions {
   };
 }
 
+// ipfs specific options
+export interface IIPFSSpecificOptions {
+  addresses: {
+    swarm?: string[];
+    delegates?: string[];
+    bootstrap?: string[];
+  };
+}
+
 export interface ISwarmConnectionOptions {
   type: ESwarmConnectionClassSubclassType;
   subclassOptions: ISwarmConnectionSubclassSpecificOptions;
