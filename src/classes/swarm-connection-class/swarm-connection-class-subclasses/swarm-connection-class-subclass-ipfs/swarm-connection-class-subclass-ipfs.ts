@@ -11,6 +11,7 @@ import {
 import { getStatusClass } from 'classes/basic-classes/status-class-base/status-class-base';
 import { timeout } from 'utils/common-utils/common-utils-timer';
 import * as Ipfs from 'types/ipfs.types';
+import { getLibPeerToPeer } from './swarm-connection-class-subclass-ipfs.libp2p.conf';
 
 export class SwarmConnectionSubclassIPFS
   extends getStatusClass<typeof ESwarmConnectionSubclassStatus>({
@@ -81,12 +82,12 @@ export class SwarmConnectionSubclassIPFS
     return true;
   }
 
-  protected handleStarted() {
+  protected handleStarted = () => {
     console.warn('IPFS connection to the swarm was started');
     this.setStatus(ESwarmConnectionSubclassStatus.STARTED);
   }
 
-  protected async handleError(error?: Error) {
+  protected handleError = async (error?: Error) => {
     if (error) {
       console.error(
         'An error has occured with the IPFS swarm connection subclass'
@@ -95,12 +96,12 @@ export class SwarmConnectionSubclassIPFS
     }
   }
 
-  protected handleInitialized() {
+  protected handleInitialized = () => {
     console.warn('IPFS connection to the swarm was initialized');
     this.setStatus(ESwarmConnectionSubclassStatus.INITIALIZED);
   }
 
-  protected handleStop() {
+  protected handleStop = () => {
     console.warn('IPFS connection to the swarm was initialized');
     const { isClosed } = this;
 
@@ -132,9 +133,9 @@ export class SwarmConnectionSubclassIPFS
 
     if (IPFS) {
       // the IPFS module was loaded previousely
-      const connection: Ipfs.IPFS = await IPFS.create(
-        SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DEFALT
-      );
+      const connection: Ipfs.IPFS = await IPFS.create({
+        ...SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DEFALT,
+      });
 
       if (connection instanceof Error) {
         console.error('Failed to create a new IPFS node');
@@ -262,7 +263,7 @@ export class SwarmConnectionSubclassIPFS
     
     // stop the current connection if exists
     const stopConnectionResult = await this.stopCurrentConnection();
-``
+
     if (stopConnectionResult instanceof Error) {
       this.setErrorStatus('Failed to stop the previous connection');
     }

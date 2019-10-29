@@ -27,8 +27,8 @@
     "lz-string": "^1.4.4",
     "patch-package": "^6.2.0",
     "pull-mplex": "^0.1.2",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
     "react-scripts": "3.0.1",
     "sort-keys": "^3.0.0",
     "typescript": "3.5.2"
@@ -57,6 +57,8 @@
     ]
   },
   "devDependencies": {
-    "@types/mime": "^2.0.1"
+    "@types/chai": "^4.2.4",
+    "@types/mime": "^2.0.1",
+    "@types/mocha": "^5.2.7"
   }
 }

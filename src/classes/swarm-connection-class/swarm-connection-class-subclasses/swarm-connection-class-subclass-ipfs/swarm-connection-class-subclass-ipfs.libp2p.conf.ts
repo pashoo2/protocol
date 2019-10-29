@@ -24,7 +24,6 @@ export const getLibPeerToPeer = (opts: any) => {
   const peerInfo = opts.peerInfo;
   const peerBook = opts.peerBook;
   const bootstrapList = opts.config.Bootstrap;
-  const { multiaddr } = (window as any).Ipfs;
 
   // Create our WebSocketStar transport and give it our PeerId, straight from the ipfs node
   const wstar = new WStar({

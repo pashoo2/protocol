@@ -9,7 +9,7 @@ export const lazyLoadScript = (
     script.async = true;
     script.type = 'text/javascript';
     script.crossOrigin = crossOrigin;
-    window.document.documentElement.appendChild(script);
+    window.document.body.appendChild(script);
     return new Promise<Error | boolean>((res, rej) => {
       script.onload = () => {
         res(true);
