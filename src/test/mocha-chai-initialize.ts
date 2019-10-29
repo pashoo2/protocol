@@ -1,10 +1,10 @@
 /* global mocha */
-/* global chai */
 import { lazyLoadScript } from 'utils/lazy-loading-utils/lazy-loading-utils';
 import Mocha from 'mocha';
-import Chai from 'chai';
+import chai from 'chai';
+import chaiAsPromised from "chai-as-promised";
 
-export async function initializeMochaChai() {
+export async function initializeMocha() {
     const mochaNode = document.createElement('div');
     
     mochaNode.id = "mocha";
@@ -13,12 +13,6 @@ export async function initializeMochaChai() {
         await lazyLoadScript("https://unpkg.com/mocha/mocha.js");
     } catch(err) {
         console.error('Failed to load Mocha from cdn');
-        return err;
-    }
-    try {
-        await lazyLoadScript('https://unpkg.com/chai/chai.js');
-    } catch(err) {
-        console.error('Failed to load Chai from cdn');
         return err;
     }
 
@@ -31,22 +25,25 @@ export async function initializeMochaChai() {
         mocha.checkLeaks();
     `;
     document.body.append(mochaSetupScript);
+    chai.use(chaiAsPromised);
 }
 
-type TCallbackMochaChaiRun = (failures: number) => void
+type TCallbackMochaRun = (failures: number) => void
 
-export function runMochaChai(cb?: TCallbackMochaChaiRun) {
+export function runMocha(showErrorsOverlay: boolean = true, cb?: TCallbackMochaRun) {
     // it's necessary to disable
     // error overlay to run test
     // with mocha
-    const hideErrorFrameStyle = document.createElement('style');
+    if (!showErrorsOverlay) {
+        const hideErrorFrameStyle = document.createElement('style');
 
-    hideErrorFrameStyle.type = 'text/css';
-    hideErrorFrameStyle.innerHTML = `
-        body > iframe {
-            display: none;
-        }
-    `;
-    document.head.appendChild(hideErrorFrameStyle);
+        hideErrorFrameStyle.type = 'text/css';
+        hideErrorFrameStyle.innerHTML = `
+            body > iframe {
+                display: none;
+            }
+        `;
+        document.head.appendChild(hideErrorFrameStyle);
+    }
     mocha.run(cb);
 }
