@@ -307,6 +307,12 @@ export class SwarmConnectionSubclassIPFS
   }
 
   public async connect(): Promise<boolean | Error> {
+    const { isClosed } = this;
+
+    if (isClosed) {
+      return new Error('The connection was closed previousely');
+    }
+
     const scriptLoadingResult = await this.preloadIpfsModule();
 
     console.warn('ipfs:connect');

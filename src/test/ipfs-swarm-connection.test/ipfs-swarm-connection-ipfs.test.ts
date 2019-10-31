@@ -15,6 +15,7 @@ export const runTestSwarmConnectionIPFS = async () => {
         expect(connection.isConnected).to.equal(true);
         await assert.becomes(connection.close(), true, 'Connection to the swarm was not closed succesfully');
         expect(connection.isConnected).to.equal(false);
+        await expect(connection.connect()).to.eventually.be.an.instanceOf(Error)
         return Promise.resolve();
       } catch(err) {
         return Promise.reject(err);
