@@ -5,10 +5,12 @@ import {
   ISwarmConnectionOptions,
   ESwarmConnectionClassSubclassType,
   TSwarmConnectionSubclassSpecificOptions,
+  ESwarmConnectionSubclassStatus,
 } from './swarm-connection-class.types';
 import { SwarmConnectionSubclassIPFS } from './swarm-connection-class-subclasses/swarm-connection-class-subclass-ipfs/swarm-connection-class-subclass-ipfs';
 import { getStatusClass } from 'classes/basic-classes/status-class-base/status-class-base';
 import undefined from 'firebase/empty-import';
+import { STATUS_CLASS_STATUS_CHANGE_EVENT } from 'classes/basic-classes/status-class-base/status-class-base.const';
 
 export class SwarmConnection
   extends getStatusClass<typeof ESwarmConnectionClassStatus>({
@@ -19,6 +21,24 @@ export class SwarmConnection
   private connection?: ISwarmConnectionSubclass;
 
   private options?: ISwarmConnectionOptions;
+
+  public get isClosed(): boolean {
+    const { connection } = this;
+
+    if (connection) {
+      return !!connection.isClosed;
+    }
+    return this.status === ESwarmConnectionSubclassStatus.CLOSE;
+  }
+
+  public get isConnected() {
+    const { connection } = this;
+
+    if (connection) {
+      return !!connection.isConnected;
+    }
+    return false;
+  }
 
   public get connectionType(): ESwarmConnectionClassSubclassType | void {
     const { options } = this;
@@ -51,15 +71,35 @@ export class SwarmConnection
     this.options = options;
   }
 
-  private setConnectionSUBCLASSInstance(connection: ISwarmConnectionSubclass) {
+  private setConnectionStatusListener(connection: ISwarmConnectionSubclass, isSet = true) {
+    const { statusEmitter } = connection;
+
+    statusEmitter[isSet ? 'on' : 'off'](STATUS_CLASS_STATUS_CHANGE_EVENT, this.setStatus);
+  }
+
+  private unsetConnectionStatusListener(connection: ISwarmConnectionSubclass) {
+    this.setConnectionStatusListener(connection, false);
+  }
+
+  private setConnectionSubClassInstance(connection: ISwarmConnectionSubclass) {
     this.connection = connection;
+    this.setConnectionStatusListener(connection);
+  }
+
+  private unsetConnectionSubClassInstance(connection?: ISwarmConnectionSubclass) {
+    if (connection === this.connection) {
+      this.connection = undefined;
+    }
+    if (connection) {
+      this.unsetConnectionStatusListener(connection);
+    }
   }
 
   private createConnectionToIPFS(): boolean | Error {
     try {
       const connectionToIPFS = new SwarmConnectionSubclassIPFS();
 
-      this.setConnectionSUBCLASSInstance(connectionToIPFS);
+      this.setConnectionSubClassInstance(connectionToIPFS);
       return true;
     } catch (err) {
       console.error(err);
@@ -100,6 +140,12 @@ export class SwarmConnection
   public async connect(
     options: ISwarmConnectionOptions
   ): Promise<boolean | Error> {
+    const { isClosed } = this;
+
+    if (isClosed) {
+      return new Error('Failed to start the connetion which was closed perviouselly');
+    }
+
     this.setOptions(options);
     this.setStatus(ESwarmConnectionClassStatus.CONNECTING);
 
@@ -117,6 +163,22 @@ export class SwarmConnection
     if (connectionResult instanceof Error) {
       this.setErrorStatus(connectionResult);
       return connectionResult;
+    }
+    return true;
+  }
+
+  public async close(): Promise<Error | boolean> {
+    const { connection } = this;
+
+    this.unsetConnectionSubClassInstance(connection);
+    this.setStatus(ESwarmConnectionClassStatus.CLOSE);
+    if (connection) {
+      const subclassConnectionCloseResult = await connection.close();
+
+      if (subclassConnectionCloseResult instanceof Error) {
+        console.error(subclassConnectionCloseResult);
+        return this.setErrorStatus('Failed to close the sub connection');
+      }
     }
     return true;
   }

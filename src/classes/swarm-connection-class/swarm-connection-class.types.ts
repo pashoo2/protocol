@@ -1,4 +1,6 @@
 import ipfs from 'types/ipfs.types';
+import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
+import { STATUS_CLASS_STATUS_CHANGE_EVENT } from 'classes/basic-classes/status-class-base/status-class-base.const';
 
 export enum ESwarmConnectionClassSubclassType {
   IPFS = 'ipfs',
@@ -32,11 +34,9 @@ export interface ISwarmConnectionSubclass {
   close(): Promise<boolean | Error>;
   isClosed: boolean;
   isConnected: boolean;
-}
-
-export enum ESwarmConnectionClassStatus {
-  ERROR = 'error',
-  CONNECTING = 'connecting',
+  statusEmitter: EventEmitter<{
+    [STATUS_CLASS_STATUS_CHANGE_EVENT]: ESwarmConnectionSubclassStatus;
+  }>
 }
 
 export enum ESwarmConnectionSubclassStatus {
@@ -50,3 +50,5 @@ export enum ESwarmConnectionSubclassStatus {
   CLOSE = 'close', // connectionn was closed and released
   CONNECTION_FAILED = 'connection failed', // connectionn was closed and released
 }
+
+export const ESwarmConnectionClassStatus = ESwarmConnectionSubclassStatus;
