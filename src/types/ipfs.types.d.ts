@@ -1,8 +1,6 @@
 import { EventEmitter } from 'events';
 
-declare module 'ipfs' {
-  
-}
+declare module 'ipfs' {}
 
 type Callback<T> = (error: Error, result?: T) => void;
 

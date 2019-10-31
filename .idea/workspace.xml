@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="e70e70e3-e48a-4dfd-91a6-03818e8691f6" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-connection-class/swarm-connection-class-subclasses/swarm-connection-class-subclass-ipfs/swarm-connection-class-subclass-ipfs.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-connection-class/swarm-connection-class-subclasses/swarm-connection-class-subclass-ipfs/swarm-connection-class-subclass-ipfs.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/types/ipfs.types.ts" beforeDir="false" />
+    </list>
+    <ignored path="$PROJECT_DIR$/.tmp/" />
+    <ignored path="$PROJECT_DIR$/temp/" />
+    <ignored path="$PROJECT_DIR$/tmp/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="ipfs.types.d.ts" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/types/ipfs.types.d.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-3960" />
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER">
+    <package-json value="$PROJECT_DIR$/package.json" />
+  </component>
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="NodeModulesDirectoryManager">
+    <handled-path value="$PROJECT_DIR$/node_modules" />
+    <handled-path value="$PROJECT_DIR$/src/test/nodejs-helpers.test/nodejs-helpers.test.firebase/node_modules" />
+  </component>
+  <component name="NodePackageJsonFileManager">
+    <packageJsonPaths>
+      <path value="$PROJECT_DIR$/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/basic-classes/event-emitter-class-base/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/basic-classes/mime-types-class-base/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/basic-classes/queue-manager-class-base/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/basic-classes/status-class-base/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-types/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-formatters/central-authority-class-user-identity-formatters-formatter-v1/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-formatters/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-parsers/central-authority-class-user-identity-parsers-parser-v1/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-parsers/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-class-user-identity-validator-v1/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase-utils/central-authority-connection-firebase-utils.credentials-storage/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase-utils/central-authority-connection-firebase-utils.database/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase.const/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-server-api/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connections-const/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-storage/central-authority-storage-credentials/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-storage/central-authority-storage-identity-credentials/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-validators/central-authority-validators-auth-credentials/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-validators/central-authority-validators-user/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/central-authority-class/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/channel-authority-class/channel-authority-connections/channel-authority-connection-with-server-api/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/channel-authority-class/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/safe-storage-class/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/secret-storage-class/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/secret-storage-class/secret_storage_providers/secret-storage-local-storage-provider/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/secret-storage-class/secret_storage_providers/secret-storage-session-storage-provider/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/swarm-connection-class/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/swarm-connection-class/swarm-connection-class-subclasses/swarm-connection-class-subclass-ipfs/package.json" />
+      <path value="$PROJECT_DIR$/src/const/const-validation-schemes/package.json" />
+      <path value="$PROJECT_DIR$/src/test/central-authority.test/central-authority-connection.test/central-authority-connection.test.firebase/package.json" />
+      <path value="$PROJECT_DIR$/src/test/central-authority.test/central-authority-connection.test/package.json" />
+      <path value="$PROJECT_DIR$/src/test/central-authority.test/package.json" />
+      <path value="$PROJECT_DIR$/src/test/common-utils.test/package.json" />
+      <path value="$PROJECT_DIR$/src/test/ipfs-swarm-connection.test/package.json" />
+      <path value="$PROJECT_DIR$/src/test/nodejs-helpers.test/nodejs-helpers.test.firebase/package.json" />
+      <path value="$PROJECT_DIR$/src/utils/common-utils/package.json" />
+      <path value="$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/package.json" />
+      <path value="$PROJECT_DIR$/src/utils/data-cache-utils/package.json" />
+      <path value="$PROJECT_DIR$/src/utils/data-compression-utils/package.json" />
+      <path value="$PROJECT_DIR$/src/utils/data-sign-utils/package.json" />
+      <path value="$PROJECT_DIR$/src/utils/data-validators-utils/package.json" />
+      <path value="$PROJECT_DIR$/src/utils/encryption-utils/package.json" />
+      <path value="$PROJECT_DIR$/src/utils/firebase-utils/package.json" />
+      <path value="$PROJECT_DIR$/src/utils/hash-calculation-utils/package.json" />
+      <path value="$PROJECT_DIR$/src/utils/identity-utils/package.json" />
+      <path value="$PROJECT_DIR$/src/utils/lazy-loading-utils/package.json" />
+      <path value="$PROJECT_DIR$/src/utils/password-utils/package.json" />
+      <path value="$PROJECT_DIR$/src/utils/validation-utils/package.json" />
+    </packageJsonPaths>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="293" />
+    <option name="y" value="53" />
+    <option name="width" value="1400" />
+    <option name="height" value="1000" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="decentrilized-protocol" type="b2602c69:ProjectViewProjectNode" />
+              <item name="decentrilized-protocol" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="decentrilized-protocol" type="b2602c69:ProjectViewProjectNode" />
+              <item name="decentrilized-protocol" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="decentrilized-protocol" type="b2602c69:ProjectViewProjectNode" />
+              <item name="decentrilized-protocol" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="types" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="$PROJECT_DIR$/node_modules/eslint" />
+    <property name="ts.external.directory.path" value="$PROJECT_DIR$/node_modules/typescript/lib" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="e70e70e3-e48a-4dfd-91a6-03818e8691f6" name="Default" comment="" />
+      <created>1572543529735</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1572543529735</updated>
+      <workItem from="1572543532545" duration="90000" />
+      <workItem from="1572543675245" duration="30000" />
+      <workItem from="1572543727430" duration="99000" />
+      <workItem from="1572543906042" duration="59000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="278000" />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="67" y="25" width="1853" height="1055" extended-state="6" />
+    <layout>
+      <window_info anchor="bottom" id="TypeScript" order="7" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18888289" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
+      <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info id="npm" order="2" side_tool="true" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="Terminal" order="7" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Find" order="1" />
+    </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+    <option name="exactExcludedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/src/types/ipfs.types.d.ts" />
+      </list>
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/types/ipfs.types.d.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3960" />
+      </provider>
+    </entry>
+  </component>
+</project>

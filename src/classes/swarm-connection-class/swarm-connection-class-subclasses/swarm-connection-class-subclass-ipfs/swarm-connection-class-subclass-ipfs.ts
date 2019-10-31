@@ -104,7 +104,7 @@ export class SwarmConnectionSubclassIPFS
   protected handleStop = () => {
     console.warn('IPFS connection to the swarm was initialized');
     const { isClosed } = this;
-
+    
     if (!isClosed) {
       this.setStatus(ESwarmConnectionSubclassStatus.STOP);
       this.reconnect();
@@ -192,7 +192,6 @@ export class SwarmConnectionSubclassIPFS
     connection: Ipfs.IPFS
   ): Promise<Error | void> {
     console.warn('Stop the connection');
-    this.unsetCurrentConnection(connection);
     try {
       await connection.stop();
     } catch(err) {
@@ -206,6 +205,8 @@ export class SwarmConnectionSubclassIPFS
 
     if (connection) {
       // if the current connection is exists, then stop it
+      // unset the connection and it's listeners
+      this.unsetCurrentConnection(connection);
       const connectionStopResult = await this.stopConnection(connection);
 
       if (connectionStopResult instanceof Error) {
@@ -213,8 +214,6 @@ export class SwarmConnectionSubclassIPFS
         return connectionStopResult;
       }
     }
-    // unset the connection and it's listeners
-    this.unsetCurrentConnection(connection);
   }
 
   protected incReconnectionAttempt() {
@@ -282,14 +281,6 @@ export class SwarmConnectionSubclassIPFS
       this.setErrorStatus(startConnectionResult);
       return new Error('Failed to start the connection');
     }
-
-    const { connection: currentConnection } = this;
-
-    if (!currentConnection) {
-      return new Error(
-        'Failed to start the connection cause there is no connection created'
-      );
-    }
     // if started succesfully
     // then set the status that the node
     // was started succesfully
@@ -300,7 +291,7 @@ export class SwarmConnectionSubclassIPFS
   public get isConnected(): boolean {
     const { isClosed, connection } = this;
 
-    return isClosed || !connection || !connection.isOnline();
+    return !isClosed && !!connection && !!connection.isOnline();
   }
 
   public async close(): Promise<boolean | Error> {
@@ -311,7 +302,7 @@ export class SwarmConnectionSubclassIPFS
       return true;
     }
     this.setConnectionClosed();
-    this.stopCurrentConnection();
+    await this.stopCurrentConnection();
     return true;
   }
 
@@ -330,18 +321,11 @@ export class SwarmConnectionSubclassIPFS
       // if failed to start, then try to reconnect
       const connectionResult = await this.reconnect();
 
-      if (connectionResult) {
+      if (connectionResult instanceof Error) {
+        console.error(connectionResult);
         return this.setErrorStatus('Failed to connect the first time');
       }
     }
-
-    this.setStatus(ESwarmConnectionSubclassStatus.CONNECTING);
-    const startResult = await this.start();
-
-    if (startResult instanceof Error) {
-      return this.reconnect();
-    }
-    this.setStatus(ESwarmConnectionSubclassStatus.CONECTED);
     return true;
   }
 }

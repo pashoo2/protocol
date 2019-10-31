@@ -21,7 +21,10 @@ export async function initializeMocha() {
     mochaSetupScript.type = 'text/javascript';
     mochaSetupScript.className = "mocha-init";
     mochaSetupScript.innerHTML = `
-        mocha.setup('bdd');
+        mocha.setup({
+            ui: 'bdd',
+            globals: ['globalThis']
+        });
         mocha.checkLeaks();
     `;
     document.body.append(mochaSetupScript);

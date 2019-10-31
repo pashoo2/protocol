@@ -6,13 +6,20 @@ export const runTestSwarmConnectionIPFS = async () => {
   await initializeMocha();
 
   describe('ipfs swarm connection', () => {
-    it('create ipfs swarm connection', (done) => {
+    it('create ipfs swarm connection', async () => {
       const connection = new SwarmConnectionSubclassIPFS();
 
-      expect(connection.connect).to.be.a('function');
-      assert.becomes(connection.connect(), true, 'Connection to the swarm was not established');
-      done();
-    }).timeout(5000)
+      try {
+        expect(connection.connect).to.be.a('function');
+        await assert.becomes(connection.connect(), true, 'Connection to the swarm was not established');
+        expect(connection.isConnected).to.equal(true);
+        await assert.becomes(connection.close(), true, 'Connection to the swarm was not closed succesfully');
+        expect(connection.isConnected).to.equal(false);
+        return Promise.resolve();
+      } catch(err) {
+        return Promise.reject(err);
+      }
+    }).timeout(10000)
   })
   runMocha();
 };
