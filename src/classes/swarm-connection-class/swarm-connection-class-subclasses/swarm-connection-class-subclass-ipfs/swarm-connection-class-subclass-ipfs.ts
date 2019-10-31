@@ -1,6 +1,7 @@
 import {
   ISwarmConnectionSubclass,
   ESwarmConnectionSubclassStatus,
+  IIPFSSpecificOptions,
 } from 'classes/swarm-connection-class/swarm-connection-class.types';
 import {
   SWARM_CONNECTION_SUBCLASS_IPFS_CDN_SCRIPT_URL,
@@ -11,7 +12,6 @@ import {
 import { getStatusClass } from 'classes/basic-classes/status-class-base/status-class-base';
 import { timeout } from 'utils/common-utils/common-utils-timer';
 import * as Ipfs from 'types/ipfs.types';
-import { getLibPeerToPeer } from './swarm-connection-class-subclass-ipfs.libp2p.conf';
 
 export class SwarmConnectionSubclassIPFS
   extends getStatusClass<typeof ESwarmConnectionSubclassStatus>({
@@ -20,6 +20,8 @@ export class SwarmConnectionSubclassIPFS
   })
   implements ISwarmConnectionSubclass {
   protected IPFS?: any;
+
+  protected options?: IIPFSSpecificOptions;
 
   protected connection?: Ipfs.IPFS;
 
@@ -31,6 +33,15 @@ export class SwarmConnectionSubclassIPFS
     console.warn('Ipfs connection is closed');
     this.isClosed = true;
     this.setStatus(ESwarmConnectionSubclassStatus.CLOSE);
+  }
+
+  protected setOptions(options?: IIPFSSpecificOptions): Error | boolean {
+    this.options = options;
+
+    if (!options || typeof options.password !== 'string') {
+      return new Error('An options and a password must be specified to encrypt the provate data');
+    }
+    return true;
   }
 
   protected setIpfsConstructor(IPFS: any) {
@@ -129,12 +140,13 @@ export class SwarmConnectionSubclassIPFS
 
   protected async createConnection(): Promise<Error | boolean> {
     console.warn('create a new IPFS connection to the swarm');
-    const { IPFS } = this;
+    const { IPFS, options } = this;
 
     if (IPFS) {
       // the IPFS module was loaded previousely
       const connection: Ipfs.IPFS = await IPFS.create({
         ...SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DEFALT,
+        pass: options ? options.password : null, // password from options
       });
 
       if (connection instanceof Error) {
@@ -306,11 +318,18 @@ export class SwarmConnectionSubclassIPFS
     return true;
   }
 
-  public async connect(): Promise<boolean | Error> {
+  public async connect(options: IIPFSSpecificOptions): Promise<boolean | Error> {
     const { isClosed } = this;
 
     if (isClosed) {
       return new Error('The connection was closed previousely');
+    }
+
+    const setOptionsResult = this.setOptions(options);
+
+    if (setOptionsResult instanceof Error) {
+      console.error(setOptionsResult);
+      return this.setErrorStatus('Failed to set the options');
     }
 
     const scriptLoadingResult = await this.preloadIpfsModule();

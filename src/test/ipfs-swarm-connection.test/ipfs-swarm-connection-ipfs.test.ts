@@ -8,14 +8,19 @@ export const runTestSwarmConnectionIPFS = async () => {
   describe('ipfs swarm connection', () => {
     it('create ipfs swarm connection', async () => {
       const connection = new SwarmConnectionSubclassIPFS();
+      const password = '12345678910111213141516';
 
       try {
         expect(connection.connect).to.be.a('function');
-        await assert.becomes(connection.connect(), true, 'Connection to the swarm was not established');
+        await assert.becomes(connection.connect({
+          password,
+        }), true, 'Connection to the swarm was not established');
         expect(connection.isConnected).to.equal(true);
         await assert.becomes(connection.close(), true, 'Connection to the swarm was not closed succesfully');
         expect(connection.isConnected).to.equal(false);
-        await expect(connection.connect()).to.eventually.be.an.instanceOf(Error)
+        await expect(connection.connect({
+          password,
+        })).to.eventually.be.an.instanceOf(Error)
         return Promise.resolve();
       } catch(err) {
         return Promise.reject(err);

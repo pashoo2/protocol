@@ -8,33 +8,26 @@ export interface ISwarmConnection {
   connectionType: ESwarmConnectionClassSubclassType | void;
   connect(options: ISwarmConnectionOptions): Promise<boolean | Error>;
 }
-
-// ipfs specific options
-export interface ISwarmConnectionSubclassSpecificOptions {
-  addresses: {
-    swarm?: string[];
-    delegates?: string[];
-    bootstrap?: string[];
-  };
-}
-
 // ipfs specific options
 export interface IIPFSSpecificOptions {
-  addresses: {
+  addresses?: {
     swarm?: string[];
     delegates?: string[];
     bootstrap?: string[];
   };
+  password: string;
 }
+
+export type TSwarmConnectionSubclassSpecificOptions = IIPFSSpecificOptions;
 
 export interface ISwarmConnectionOptions {
   type: ESwarmConnectionClassSubclassType;
-  subclassOptions: ISwarmConnectionSubclassSpecificOptions;
+  subclassOptions: TSwarmConnectionSubclassSpecificOptions;
 }
 
 export interface ISwarmConnectionSubclass {
   connect(
-    options: ISwarmConnectionSubclassSpecificOptions | void
+    options: TSwarmConnectionSubclassSpecificOptions | void
   ): Promise<boolean | Error>;
   close(): Promise<boolean | Error>;
   isClosed: boolean;

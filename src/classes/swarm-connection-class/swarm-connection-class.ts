@@ -4,7 +4,7 @@ import {
   ESwarmConnectionClassStatus,
   ISwarmConnectionOptions,
   ESwarmConnectionClassSubclassType,
-  ISwarmConnectionSubclassSpecificOptions,
+  TSwarmConnectionSubclassSpecificOptions,
 } from './swarm-connection-class.types';
 import { SwarmConnectionSubclassIPFS } from './swarm-connection-class-subclasses/swarm-connection-class-subclass-ipfs/swarm-connection-class-subclass-ipfs';
 import { getStatusClass } from 'classes/basic-classes/status-class-base/status-class-base';
@@ -34,10 +34,10 @@ export class SwarmConnection
    *
    * returns options specific for the subclass connection
    * @private
-   * @returns {(ISwarmConnectionSubclassSpecificOptions | void)}
+   * @returns {(TSwarmConnectionSubclassSpecificOptions | void)}
    * @memberof SwarmConnection
    */
-  private getSubclassSpecificOptions(): ISwarmConnectionSubclassSpecificOptions | void {
+  private getSubclassSpecificOptions(): TSwarmConnectionSubclassSpecificOptions | void {
     const { options } = this;
 
     if (options && typeof options === 'object') {
