@@ -6,10 +6,6 @@ export enum ESwarmConnectionClassSubclassType {
   IPFS = 'ipfs',
 }
 
-export interface ISwarmConnection {
-  connectionType: ESwarmConnectionClassSubclassType | void;
-  connect(options: ISwarmConnectionOptions): Promise<boolean | Error>;
-}
 // ipfs specific options
 export interface IIPFSSpecificOptions {
   addresses?: {
@@ -31,6 +27,17 @@ export interface ISwarmConnectionSubclass {
   connect(
     options: TSwarmConnectionSubclassSpecificOptions | void
   ): Promise<boolean | Error>;
+  close(): Promise<boolean | Error>;
+  isClosed: boolean;
+  isConnected: boolean;
+  statusEmitter: EventEmitter<{
+    [STATUS_CLASS_STATUS_CHANGE_EVENT]: ESwarmConnectionSubclassStatus;
+  }>
+}
+
+export interface ISwarmConnection {
+  connectionType: ESwarmConnectionClassSubclassType | void;
+  connect(options: ISwarmConnectionOptions): Promise<boolean | Error>;
   close(): Promise<boolean | Error>;
   isClosed: boolean;
   isConnected: boolean;

@@ -10,8 +10,10 @@ import {
   runTestCAConnectionFirebaseCryptoCredentialsGenerateByFirebaseAuthProvider,
 } from 'test/central-authority.test/central-authority-connection.test/central-authority-connection.test';
 import { runTestErrorExtended } from 'test/error-extended-class-test';
-import { runTestIPFSSwarmConnection } from 'test/ipfs-swarm-connection.test/ipfs-swarm-connection.test';
+import { runTestSwarmConnection } from 'test/ipfs-swarm-connection.test/ipfs-swarm-connection.test';
 import { runTestSwarmConnectionIPFS } from 'test/ipfs-swarm-connection.test/ipfs-swarm-connection-ipfs.test';
+import { initializeMocha, runMocha } from 'test/mocha-chai-initialize';
+
 // import { runCACredentialsIdentityStorageTest } from 'test/central-authority.test/central-authority-storage-identity-credentials.test';
 // import { runTestCachingDecorator } from 'test/common-utils.test/common-utils.test';
 // import { runTestCAIdentity } from 'test/central-authority.test/central-authority.test';
@@ -41,8 +43,17 @@ import { runTestSwarmConnectionIPFS } from 'test/ipfs-swarm-connection.test/ipfs
 // runTestCAIdentityWithAuthorityProviderGenerator();
 // runTestFirebaseCredentialsStorage();
 
-runTestSwarmConnectionIPFS();
-//runTestIPFSSwarmConnection();
+// runTestSwarmConnectionIPFS();
+
+const runTest = async () => {
+  await initializeMocha();
+
+  runTestSwarmConnection();
+
+  runMocha();
+}
+
+runTest();
 
 const App: React.FC = () => {
   return null;

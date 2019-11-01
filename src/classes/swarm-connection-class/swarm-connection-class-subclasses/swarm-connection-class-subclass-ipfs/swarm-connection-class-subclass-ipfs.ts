@@ -36,11 +36,10 @@ export class SwarmConnectionSubclassIPFS
   }
 
   protected setOptions(options?: IIPFSSpecificOptions): Error | boolean {
-    this.options = options;
-
     if (!options || typeof options.password !== 'string') {
       return new Error('An options and a password must be specified to encrypt the provate data');
     }
+    this.options = options;
     return true;
   }
 

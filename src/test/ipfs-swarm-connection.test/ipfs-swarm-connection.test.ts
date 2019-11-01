@@ -1,19 +1,73 @@
 import { SwarmConnection } from 'classes/swarm-connection-class/swarm-connection-class';
-import { ESwarmConnectionClassSubclassType } from 'classes/swarm-connection-class/swarm-connection-class.types';
+import { ESwarmConnectionClassSubclassType, ESwarmConnectionSubclassStatus } from 'classes/swarm-connection-class/swarm-connection-class.types';
 import { SWARM_CONNECTION_PASSWORD } from './ipfs-swarm-connection.const';
+import { expect, assert } from 'chai';
+import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
+import { STATUS_CLASS_STATUS_CHANGE_EVENT } from 'classes/basic-classes/status-class-base/status-class-base.const';
 
-export const runTestIPFSSwarmConnection = async () => {
-  console.warn('runTestIPFSSwarmConnection');
-  const connectionToSwarm = new SwarmConnection();
-  const result = await connectionToSwarm.connect({
-    type: ESwarmConnectionClassSubclassType.IPFS,
-    subclassOptions: {
-      password: SWARM_CONNECTION_PASSWORD
-    }
-  });
+export const runTestSwarmConnection = async () => {
+  describe('swarm connection:: ipfs', () => {
+    it('create ipfs swarm connection', async () => {
+      console.warn('runTestIPFSSwarmConnection');
+      const connectionToSwarm = new SwarmConnection();
 
-  if (result instanceof Error) {
-    console.error(result);
-    return result;
-  }
+      expect(connectionToSwarm).to.be.an.instanceof(SwarmConnection);
+      expect(connectionToSwarm.connect).to.be.a('function');
+
+      const connectionOptions = {
+        type: ESwarmConnectionClassSubclassType.IPFS,
+        subclassOptions: {
+          password: SWARM_CONNECTION_PASSWORD
+        }
+      };
+
+      try {
+        await assert.becomes(connectionToSwarm.connect(connectionOptions), true, '');
+        expect(connectionToSwarm.isConnected).to.equal(true);
+        await assert.becomes(connectionToSwarm.close(), true, 'Connection to the swarm was not closed succesfully');
+        expect(connectionToSwarm.isConnected).to.equal(false);
+        await expect(connectionToSwarm.connect(connectionOptions)).to.eventually.be.an.instanceOf(Error);
+        assert(connectionToSwarm.isClosed === true, 'Connection isClosed flag must be true, after the connection was closed previousely');
+        assert(connectionToSwarm.isConnected === false, 'Connection isConnected flag must be false, after the connection was closed previousely');
+        return Promise.resolve();
+      } catch(err) {
+        console.error(err);
+        return Promise.reject(err);
+      }
+    }).timeout(10000);
+
+    it('swarm connection: check status', async () => {
+      console.warn('runTestIPFSSwarmConnection');
+      const connectionToSwarm = new SwarmConnection();
+
+      expect(connectionToSwarm).to.be.an.instanceof(SwarmConnection);
+      expect(connectionToSwarm.connect).to.be.a('function');
+
+      const connectionOptions = {
+        type: ESwarmConnectionClassSubclassType.IPFS,
+        subclassOptions: {
+          password: SWARM_CONNECTION_PASSWORD
+        }
+      };
+
+      try {
+        const { statusEmitter } = connectionToSwarm;
+        const statusesEmitted: ESwarmConnectionSubclassStatus[] = [];
+
+        expect(statusEmitter).to.be.an.instanceof(EventEmitter);
+        statusEmitter.addListener(STATUS_CLASS_STATUS_CHANGE_EVENT, status => statusesEmitted.push(status));
+        await assert.becomes(connectionToSwarm.connect(connectionOptions), true, '');
+        expect(statusesEmitted).to.be.an('array').to.include.members([
+          ESwarmConnectionSubclassStatus.CONNECTED,
+          ESwarmConnectionSubclassStatus.CONNECTING,
+          ESwarmConnectionSubclassStatus.STARTED,
+        ]);
+        return Promise.resolve();
+      } catch(err) {
+        console.error(err);
+        return Promise.reject(err);
+      }
+    }).timeout(10000)
+
+  })
 };

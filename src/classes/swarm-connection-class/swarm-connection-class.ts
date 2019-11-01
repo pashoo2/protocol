@@ -9,7 +9,6 @@ import {
 } from './swarm-connection-class.types';
 import { SwarmConnectionSubclassIPFS } from './swarm-connection-class-subclasses/swarm-connection-class-subclass-ipfs/swarm-connection-class-subclass-ipfs';
 import { getStatusClass } from 'classes/basic-classes/status-class-base/status-class-base';
-import undefined from 'firebase/empty-import';
 import { STATUS_CLASS_STATUS_CHANGE_EVENT } from 'classes/basic-classes/status-class-base/status-class-base.const';
 
 export class SwarmConnection
@@ -74,7 +73,7 @@ export class SwarmConnection
   private setConnectionStatusListener(connection: ISwarmConnectionSubclass, isSet = true) {
     const { statusEmitter } = connection;
 
-    statusEmitter[isSet ? 'on' : 'off'](STATUS_CLASS_STATUS_CHANGE_EVENT, this.setStatus);
+    statusEmitter[isSet ? 'addListener' : 'removeListener'](STATUS_CLASS_STATUS_CHANGE_EVENT, this.setStatus);
   }
 
   private unsetConnectionStatusListener(connection: ISwarmConnectionSubclass) {
@@ -168,10 +167,13 @@ export class SwarmConnection
   }
 
   public async close(): Promise<Error | boolean> {
-    const { connection } = this;
+    const { connection, isClosed } = this;
 
-    this.unsetConnectionSubClassInstance(connection);
+    if (isClosed) {
+      return new Error('The connection was closed previousely');
+    }
     this.setStatus(ESwarmConnectionClassStatus.CLOSE);
+    this.unsetConnectionSubClassInstance(connection);
     if (connection) {
       const subclassConnectionCloseResult = await connection.close();
 
