@@ -5,7 +5,7 @@ import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/eve
 import { ESwarmConnectorOrbitDbDatabseEventNames, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_LOG_PREFIX, EOrbidDBFeedSoreEvents } from './swarm-store-connector-orbit-db-subclass-database.const';
 import undefined from 'firebase/empty-import';
 
-export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmitter<ISwarmStoreConnectorOrbitDbDatabseEvents> {   
+export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmitter<ISwarmStoreConnectorOrbitDbDatabseEvents<SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType>>> {   
     // is loaded fully and ready to use
     public isReady: boolean = false;
     
@@ -34,7 +34,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmi
         const closeCurrentStoreResult = await this.closeCurrentStore();
 
         this.isClosed = true;
-        this.emitEvent(ESwarmConnectorOrbitDbDatabseEventNames.CLOSE);
+        this.emitEvent(ESwarmConnectorOrbitDbDatabseEventNames.CLOSE, this);
         if (closeCurrentStoreResult instanceof Error) {
             return closeCurrentStoreResult;
         }

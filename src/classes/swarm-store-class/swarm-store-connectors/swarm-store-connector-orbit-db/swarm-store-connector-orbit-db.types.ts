@@ -1,5 +1,6 @@
 import { IPFS } from 'types/ipfs.types';
 import { ESwarmStoreConnectorOrbitDBEventNames } from './swarm-store-connector-orbit-db.const';
+import { ISwarmStoreConnectorOrbitDbDatabseOptions } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 
 export type TESwarmStoreConnectorOrbitDBEvents = {
     [ESwarmStoreConnectorOrbitDBEventNames.STATE_CHANGE]: boolean;
@@ -12,7 +13,7 @@ export type TESwarmStoreConnectorOrbitDBEvents = {
 export interface ISwarmStoreConnectorOrbitDBOptions {
     // databases which must be started when the orbit db
     // instance will be ready to use
-    databses: IDatabseOptions[];
+    databses: ISwarmStoreConnectorOrbitDbDatabseOptions[];
 }
 
 export interface ISwarmStoreConnectorOrbitDBConnectionOptions {

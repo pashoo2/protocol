@@ -7,15 +7,15 @@ export interface ISwarmStoreConnectorOrbitDbDatabseOptions {
     isPublic?: boolean;
 }
 
-export interface ISwarmStoreConnectorOrbitDbDatabseEvents {
-    [ESwarmConnectorOrbitDbDatabseEventNames.FATAL]: [string, Error],
+export interface ISwarmStoreConnectorOrbitDbDatabseEvents<TSwarmStoreConnectorOrbitDBDatabase> {
+    [ESwarmConnectorOrbitDbDatabseEventNames.FATAL]: [string, Error, TSwarmStoreConnectorOrbitDBDatabase],
 
-    [ESwarmConnectorOrbitDbDatabseEventNames.ERROR]: [string, Error],
+    [ESwarmConnectorOrbitDbDatabseEventNames.ERROR]: [string, Error, TSwarmStoreConnectorOrbitDBDatabase],
     // databse name and percents loaded
-    [ESwarmConnectorOrbitDbDatabseEventNames.LOADING]: [string, number],
-    [ESwarmConnectorOrbitDbDatabseEventNames.UPDATE]: string,
-    [ESwarmConnectorOrbitDbDatabseEventNames.CLOSE]: string,
-    [ESwarmConnectorOrbitDbDatabseEventNames.READY]: string,
+    [ESwarmConnectorOrbitDbDatabseEventNames.LOADING]: [string, number, TSwarmStoreConnectorOrbitDBDatabase],
+    [ESwarmConnectorOrbitDbDatabseEventNames.UPDATE]: [string, TSwarmStoreConnectorOrbitDBDatabase],
+    [ESwarmConnectorOrbitDbDatabseEventNames.CLOSE]: [string, TSwarmStoreConnectorOrbitDBDatabase],
+    [ESwarmConnectorOrbitDbDatabseEventNames.READY]: [string, TSwarmStoreConnectorOrbitDBDatabase]
 }
 
 export interface ISwarmStoreConnectorOrbitDbDatabseValue<TStoreValueType> {
