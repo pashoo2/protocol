@@ -1,6 +1,6 @@
 import * as orbitDbModule from 'orbit-db';
 import OrbitDbFeedStore from 'orbit-db-feedstore';
-import { ISwarmStoreConnectorOrbitDbDatabseOptions, ISwarmStoreConnectorOrbitDbDatabseEvents } from './swarm-store-connector-orbit-db-subclass-database.types';
+import { ISwarmStoreConnectorOrbitDbDatabseOptions, ISwarmStoreConnectorOrbitDbDatabseEvents, ISwarmStoreConnectorOrbitDbDatabseValue, ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions } from './swarm-store-connector-orbit-db-subclass-database.types';
 import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { ESwarmConnectorOrbitDbDatabseEventNames, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_LOG_PREFIX, EOrbidDBFeedSoreEvents } from './swarm-store-connector-orbit-db-subclass-database.const';
 import undefined from 'firebase/empty-import';
@@ -39,6 +39,99 @@ export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmi
             return closeCurrentStoreResult;
         }
     }
+
+    public async get(hash: string): Promise<Error | ISwarmStoreConnectorOrbitDbDatabseValue<TFeedStoreType> | void> {
+        const database = this.getDbStoreInstance();
+
+        if (database instanceof Error) {
+            return database;
+        }
+
+        try {
+            const e = await database.get(hash);
+
+            if (e instanceof Error) {
+                return new Error('An error has occurred on get the data from the key');
+            }
+            if (e) {
+                return this.parseValueStored(e);
+            }
+        } catch(err) {
+            return err;
+        }
+        return undefined;
+    }
+
+    public async add(value: TFeedStoreType): Promise<string | Error> {
+        const database = this.getDbStoreInstance();
+
+        if (database instanceof Error) {
+            return database;
+        }
+        try {
+            const hash = await database.add(value);
+
+            if (typeof hash !== 'string') {
+                return new Error('An unknown type of hash was returned for the value stored');
+            }
+            return hash;
+        } catch(err) {
+            return err;
+        }
+    }
+
+    public async remove(hash: string): Promise<Error | void> {
+        const database = this.getDbStoreInstance();
+
+        if (database instanceof Error) {
+            return database;
+        }
+        try {
+            const hashRemoved = await database.remove(hash);
+
+            if (typeof hashRemoved !== 'string') {
+                return new Error('An unknown type of hash was returned for the value removed');
+            }
+        } catch(err) {
+            return err;
+        }
+    }
+
+    public async iterator(options?: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions): Promise<Error | Array<ISwarmStoreConnectorOrbitDbDatabseValue<TFeedStoreType> | Error | void>> {
+        const database = this.getDbStoreInstance();
+
+        if (database instanceof Error) {
+            return database;
+        }
+
+        return database.iterator(options).collect().map(this.parseValueStored);
+    }
+
+    protected parseValueStored = (e: LogEntry<TFeedStoreType>): ISwarmStoreConnectorOrbitDbDatabseValue<TFeedStoreType> | Error | void => {
+        const { payload, identity, hash } = e;
+
+        if (payload) {
+            return {
+                id: identity.id,
+                value: payload.value,
+                hash,
+            };
+        } else {
+            return new Error('An unknown fromat of the data stored');
+        }
+    }
+
+    private getDbStoreInstance(): Error | OrbitDbFeedStore<TFeedStoreType> {
+        const { isReady, database } = this;
+
+        if (!isReady) {
+            return new Error('The store is not ready to use');
+        }
+        if (!database) {
+            return this.emitError('The database store instance is empty');
+        }
+        return database;
+    };
 
     private setReadyState(isReady: boolean = true) {
         this.isReady = isReady;
