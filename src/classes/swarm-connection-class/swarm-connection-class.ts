@@ -10,6 +10,7 @@ import {
 import { SwarmConnectionSubclassIPFS } from './swarm-connection-class-subclasses/swarm-connection-class-subclass-ipfs/swarm-connection-class-subclass-ipfs';
 import { getStatusClass } from 'classes/basic-classes/status-class-base/status-class-base';
 import { STATUS_CLASS_STATUS_CHANGE_EVENT } from 'classes/basic-classes/status-class-base/status-class-base.const';
+import * as Ipfs from 'types/ipfs.types';
 
 export class SwarmConnection
   extends getStatusClass<typeof ESwarmConnectionClassStatus>({
@@ -17,10 +18,6 @@ export class SwarmConnection
     instanceName: 'SwarmConnection',
   })
   implements ISwarmConnection {
-  private connection?: ISwarmConnectionSubclass;
-
-  private options?: ISwarmConnectionOptions;
-
   public get isClosed(): boolean {
     const { connection } = this;
 
@@ -47,6 +44,66 @@ export class SwarmConnection
 
       return type;
     }
+  }
+
+  public getNativeConnection(): Ipfs.IPFS | undefined {
+    if (this.connection) {
+      return this.connection.getNativeConnection();
+    }
+    return undefined;
+  }
+
+  private connection?: ISwarmConnectionSubclass;
+
+  private options?: ISwarmConnectionOptions;
+
+  public async connect(
+    options: ISwarmConnectionOptions
+  ): Promise<boolean | Error> {
+    const { isClosed } = this;
+
+    if (isClosed) {
+      return new Error('Failed to start the connetion which was closed perviouselly');
+    }
+
+    this.setOptions(options);
+    this.setStatus(ESwarmConnectionClassStatus.CONNECTING);
+
+    const createConnectionInstanceResult = this.createConnectionInstance();
+
+    if (createConnectionInstanceResult instanceof Error) {
+      this.setErrorStatus(createConnectionInstanceResult);
+      return new Error(
+        'Failed to create the instance of the connection with swarm subclass'
+      );
+    }
+
+    const connectionResult = await this.startConnection();
+
+    if (connectionResult instanceof Error) {
+      this.setErrorStatus(connectionResult);
+      return connectionResult;
+    }
+    return true;
+  }
+
+  public async close(): Promise<Error | boolean> {
+    const { connection, isClosed } = this;
+
+    if (isClosed) {
+      return new Error('The connection was closed previousely');
+    }
+    this.setStatus(ESwarmConnectionClassStatus.CLOSE);
+    this.unsetConnectionSubClassInstance(connection);
+    if (connection) {
+      const subclassConnectionCloseResult = await connection.close();
+
+      if (subclassConnectionCloseResult instanceof Error) {
+        console.error(subclassConnectionCloseResult);
+        return this.setErrorStatus('Failed to close the sub connection');
+      }
+    }
+    return true;
   }
 
   /**
@@ -134,54 +191,5 @@ export class SwarmConnection
       return result;
     }
     return result;
-  }
-
-  public async connect(
-    options: ISwarmConnectionOptions
-  ): Promise<boolean | Error> {
-    const { isClosed } = this;
-
-    if (isClosed) {
-      return new Error('Failed to start the connetion which was closed perviouselly');
-    }
-
-    this.setOptions(options);
-    this.setStatus(ESwarmConnectionClassStatus.CONNECTING);
-
-    const createConnectionInstanceResult = this.createConnectionInstance();
-
-    if (createConnectionInstanceResult instanceof Error) {
-      this.setErrorStatus(createConnectionInstanceResult);
-      return new Error(
-        'Failed to create the instance of the connection with swarm subclass'
-      );
-    }
-
-    const connectionResult = await this.startConnection();
-
-    if (connectionResult instanceof Error) {
-      this.setErrorStatus(connectionResult);
-      return connectionResult;
-    }
-    return true;
-  }
-
-  public async close(): Promise<Error | boolean> {
-    const { connection, isClosed } = this;
-
-    if (isClosed) {
-      return new Error('The connection was closed previousely');
-    }
-    this.setStatus(ESwarmConnectionClassStatus.CLOSE);
-    this.unsetConnectionSubClassInstance(connection);
-    if (connection) {
-      const subclassConnectionCloseResult = await connection.close();
-
-      if (subclassConnectionCloseResult instanceof Error) {
-        console.error(subclassConnectionCloseResult);
-        return this.setErrorStatus('Failed to close the sub connection');
-      }
-    }
-    return true;
   }
 }

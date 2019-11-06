@@ -1,16 +1,15 @@
-import * as orbitDb from 'orbit-db';
+import OrbitDB from 'orbit-db';
 import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
-import { ESwarmStoreConnectorOrbitDBEventNames, SWARM_STORE_CONNECTOR_ORBITDB_CONNECTION_TIMEOUT_MS, SWARM_STORE_CONNECTOR_ORBITDB_LOG_PREFIX, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONNECTION_TIMEOUT_MS } from './swarm-store-connector-orbit-db.const';
+import { ESwarmStoreConnectorOrbitDBEventNames, SWARM_STORE_CONNECTOR_ORBITDB_CONNECTION_TIMEOUT_MS, SWARM_STORE_CONNECTOR_ORBITDB_LOG_PREFIX, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONNECTION_TIMEOUT_MS, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_RECONNECTION_ATTEMPTS_MAX } from './swarm-store-connector-orbit-db.const';
 import { IPFS } from 'types/ipfs.types';
 import { ISwarmStoreConnectorOrbitDBOptions, ISwarmStoreConnectorOrbitDBConnectionOptions, TESwarmStoreConnectorOrbitDBEvents } from './swarm-store-connector-orbit-db.types';
 import { timeout } from 'utils/common-utils/common-utils-timer';
 import { SwarmStoreConnectorOrbitDBDatabase } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database';
 import { ISwarmStoreConnectorOrbitDbDatabaseOptions, TSwarmStoreConnectorOrbitDbDatabaseMathodNames, TSwarmStoreConnectorOrbitDbDatabaseMathodArgument } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
-import { ESwarmConnectorOrbitDbDatabaseEventNames } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
-import undefined from 'firebase/empty-import';
+import { ESwarmConnectorOrbitDbDatabaseEventNames } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const'; 
 import { commonUtilsArrayDeleteFromArray } from 'utils/common-utils/common-utils';
 
-export class SwarmStoreConnctotOrbitDB<ISwarmDatabaseValueTypes> extends EventEmitter<TESwarmStoreConnectorOrbitDBEvents> {
+export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventEmitter<TESwarmStoreConnectorOrbitDBEvents> {
     public isReady: boolean = false;
 
     public isClosed: boolean = false;
@@ -23,24 +22,37 @@ export class SwarmStoreConnctotOrbitDB<ISwarmDatabaseValueTypes> extends EventEm
     /**
      * waiting for the connection to the swarm, load the database locally
      * and ready to use it
+    /**
+     *
+     *
+     * @param {ISwarmStoreConnectorOrbitDBConnectionOptions} connectionOptions
+     * @returns {(Promise<void | Error>)}
+     * @memberof SwarmStoreConnectorOrbitDB
      */
     public async connect(connectionOptions: ISwarmStoreConnectorOrbitDBConnectionOptions): Promise<void | Error> {
-        const setConnectionOptionsResult = this.setConnectionOptions(connectionOptions);
-
-        if (setConnectionOptionsResult instanceof Error) {
-            return setConnectionOptionsResult;
-        }
-        
         const disconnectFromSwarmResult = await this.disconnectFromSwarm();
 
         if (disconnectFromSwarmResult instanceof Error) {
             return disconnectFromSwarmResult;
         }
         
+        const setConnectionOptionsResult = this.setConnectionOptions(connectionOptions);
+
+        if (setConnectionOptionsResult instanceof Error) {
+            return setConnectionOptionsResult;
+        }
+        
         const connectToSwarmResult = await this.connectToSwarm();
 
         if (connectToSwarmResult instanceof Error) {
             return connectToSwarmResult;
+        }
+
+        // close the current connections to the databases if exists
+        const closeExistingDatabaseesOpened = await this.closeDatabases();
+
+        if (closeExistingDatabaseesOpened instanceof Error) {
+            return this.emitError(closeExistingDatabaseesOpened, 'openDatabases');
         }
 
         // stop the current instance of OrbitDB
@@ -50,7 +62,7 @@ export class SwarmStoreConnctotOrbitDB<ISwarmDatabaseValueTypes> extends EventEm
         if (stopOrbitDBResult instanceof Error) {
             return stopOrbitDBResult;
         }
-
+        debugger
         // create a new OrbitDB instance
         const createOrbitDbResult = await this.createOrbitDBInstance();
 
@@ -73,7 +85,11 @@ export class SwarmStoreConnctotOrbitDB<ISwarmDatabaseValueTypes> extends EventEm
      * and a method to execute
      * @memberof SwarmStoreConnctotOrbitDB
      */
-    public request = async <TFeedStoreType>(dbName: string, dbMethod: TSwarmStoreConnectorOrbitDbDatabaseMathodNames, arg: TSwarmStoreConnectorOrbitDbDatabaseMathodArgument<TFeedStoreType>): Promise<Error | any> => {
+    public request = async (
+        dbName: string,
+        dbMethod: TSwarmStoreConnectorOrbitDbDatabaseMathodNames, 
+        arg: TSwarmStoreConnectorOrbitDbDatabaseMathodArgument<ISwarmDatabaseValueTypes>,
+    ): Promise<Error | any> => {
         const { isClosed } = this;
 
         if (isClosed) {
@@ -111,7 +127,7 @@ export class SwarmStoreConnctotOrbitDB<ISwarmDatabaseValueTypes> extends EventEm
 
     protected ipfs?: IPFS; // instance of the IPFS connected through
 
-    protected orbitDb?: orbitDb.OrbitDB; // instance of the OrbitDB
+    protected orbitDb?: OrbitDB; // instance of the OrbitDB
 
     protected databases: SwarmStoreConnectorOrbitDBDatabase<ISwarmDatabaseValueTypes>[] = [];
 
@@ -181,7 +197,7 @@ export class SwarmStoreConnctotOrbitDB<ISwarmDatabaseValueTypes> extends EventEm
     }
 
     protected emitError(error: Error | string, mehodName?: string): Error {
-        const err = typeof error === 'string' ? new Error() : error;
+        const err = typeof error === 'string' ? new Error(error) : error;
 
         console.error(`${SWARM_STORE_CONNECTOR_ORBITDB_LOG_PREFIX}::error${mehodName ? `::${mehodName}` : ''}`, err);
         this.emit(ESwarmStoreConnectorOrbitDBEventNames.ERROR, err);
@@ -233,7 +249,7 @@ export class SwarmStoreConnctotOrbitDB<ISwarmDatabaseValueTypes> extends EventEm
         const { ipfs } = this;
 
         if (!ipfs) {
-            return this.emitError('An instence of the IPFS must be specified')
+            return this.emitError('An instance of the IPFS must be specified')
         }
         try {
             // wait when the ipfs will be ready to use
@@ -241,8 +257,9 @@ export class SwarmStoreConnctotOrbitDB<ISwarmDatabaseValueTypes> extends EventEm
                 ipfs.ready,
                 timeout(SWARM_STORE_CONNECTOR_ORBITDB_CONNECTION_TIMEOUT_MS),
             ]);
+            debugger
         } catch(err) {
-            this.emitError(err);
+            return this.emitError(err);
         }
     }
 
@@ -267,7 +284,11 @@ export class SwarmStoreConnctotOrbitDB<ISwarmDatabaseValueTypes> extends EventEm
             return this.emitError('An instance of IPFS must exists', 'createOrbitDBInstance');
         }
         try {
-            const instanceOfOrbitDB = await orbitDb.OrbitDB.createInstance(ipfs);
+            if (!OrbitDB) {
+                return this.emitError('A constructor of the OrbitDb is not provided');
+            }
+
+            const instanceOfOrbitDB = await OrbitDB.createInstance(ipfs);
 
             if (instanceOfOrbitDB instanceof Error) {
                 return this.emitError(instanceOfOrbitDB, 'createOrbitDBInstance::error has occurred in the "createInstance" method');
@@ -457,8 +478,10 @@ export class SwarmStoreConnctotOrbitDB<ISwarmDatabaseValueTypes> extends EventEm
         const databaseOpenResult = await this.waitDatabaseOpened(database);
 
         if (databaseOpenResult instanceof Error) {
-            await this.closeDatabase(database);
-            if (openAttempt > )
+            await this.closeDatabase(database); // close the connection to the database
+            if (openAttempt > SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_RECONNECTION_ATTEMPTS_MAX) {
+                return new Error('The max nunmber of connection attempts has reached');
+            }
             
             const openDatabaseResult = await this.openDatabase(dbOptions, openAttempt++);
 

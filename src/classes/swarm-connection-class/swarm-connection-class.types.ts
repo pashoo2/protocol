@@ -24,6 +24,7 @@ export interface ISwarmConnectionOptions {
 }
 
 export interface ISwarmConnectionSubclass {
+  getNativeConnection(): undefined | ipfs.IPFS;
   connect(
     options: TSwarmConnectionSubclassSpecificOptions | void
   ): Promise<boolean | Error>;

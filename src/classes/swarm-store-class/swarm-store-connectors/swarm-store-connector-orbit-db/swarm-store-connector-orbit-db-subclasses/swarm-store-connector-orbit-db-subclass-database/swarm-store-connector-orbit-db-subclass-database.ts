@@ -3,7 +3,6 @@ import OrbitDbFeedStore from 'orbit-db-feedstore';
 import { ISwarmStoreConnectorOrbitDbDatabaseOptions, ISwarmStoreConnectorOrbitDbDatabaseEvents, ISwarmStoreConnectorOrbitDbDatabaseValue, ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions, TFeedStoreHash } from './swarm-store-connector-orbit-db-subclass-database.types';
 import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { ESwarmConnectorOrbitDbDatabaseEventNames, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_LOG_PREFIX, EOrbidDBFeedSoreEvents } from './swarm-store-connector-orbit-db-subclass-database.const';
-import undefined from 'firebase/empty-import';
 
 export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmitter<ISwarmStoreConnectorOrbitDbDatabaseEvents<SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType>>> {   
     // is loaded fully and ready to use

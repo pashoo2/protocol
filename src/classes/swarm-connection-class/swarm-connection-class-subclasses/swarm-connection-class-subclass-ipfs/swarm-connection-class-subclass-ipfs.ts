@@ -29,6 +29,64 @@ export class SwarmConnectionSubclassIPFS
 
   protected reconnectionAttempt: number = 0;
 
+  public get isConnected(): boolean {
+    const { isClosed, connection } = this;
+
+    return !isClosed && !!connection && !!connection.isOnline();
+  }
+
+  public getNativeConnection(): Ipfs.IPFS | undefined {
+    return this.connection;
+  }
+
+  public async close(): Promise<boolean | Error> {
+    const { isClosed } = this;
+
+    console.warn('ipfs:close');
+    if (isClosed) {
+      return true;
+    }
+    this.setConnectionClosed();
+    await this.stopCurrentConnection();
+    return true;
+  }
+
+  public async connect(options: IIPFSSpecificOptions): Promise<boolean | Error> {
+    const { isClosed } = this;
+
+    if (isClosed) {
+      return new Error('The connection was closed previousely');
+    }
+
+    const setOptionsResult = this.setOptions(options);
+
+    if (setOptionsResult instanceof Error) {
+      console.error(setOptionsResult);
+      return this.setErrorStatus('Failed to set the options');
+    }
+
+    const scriptLoadingResult = await this.preloadIpfsModule();
+
+    console.warn('ipfs:connect');
+    if (scriptLoadingResult instanceof Error) {
+      console.error(scriptLoadingResult);
+      return this.setErrorStatus('Failed to preload the IPFS library');
+    }
+
+    const startResult = await this.start();
+
+    if (startResult instanceof Error) {
+      // if failed to start, then try to reconnect
+      const connectionResult = await this.reconnect();
+
+      if (connectionResult instanceof Error) {
+        console.error(connectionResult);
+        return this.setErrorStatus('Failed to connect the first time');
+      }
+    }
+    return true;
+  }
+
   protected setConnectionClosed() {
     console.warn('Ipfs connection is closed');
     this.isClosed = true;
@@ -296,60 +354,6 @@ export class SwarmConnectionSubclassIPFS
     // then set the status that the node
     // was started succesfully
     this.setStatus(ESwarmConnectionSubclassStatus.CONNECTED);
-    return true;
-  }
-
-  public get isConnected(): boolean {
-    const { isClosed, connection } = this;
-
-    return !isClosed && !!connection && !!connection.isOnline();
-  }
-
-  public async close(): Promise<boolean | Error> {
-    const { isClosed, connection } = this;
-
-    console.warn('ipfs:close');
-    if (isClosed) {
-      return true;
-    }
-    this.setConnectionClosed();
-    await this.stopCurrentConnection();
-    return true;
-  }
-
-  public async connect(options: IIPFSSpecificOptions): Promise<boolean | Error> {
-    const { isClosed } = this;
-
-    if (isClosed) {
-      return new Error('The connection was closed previousely');
-    }
-
-    const setOptionsResult = this.setOptions(options);
-
-    if (setOptionsResult instanceof Error) {
-      console.error(setOptionsResult);
-      return this.setErrorStatus('Failed to set the options');
-    }
-
-    const scriptLoadingResult = await this.preloadIpfsModule();
-
-    console.warn('ipfs:connect');
-    if (scriptLoadingResult instanceof Error) {
-      console.error(scriptLoadingResult);
-      return this.setErrorStatus('Failed to preload the IPFS library');
-    }
-
-    const startResult = await this.start();
-
-    if (startResult instanceof Error) {
-      // if failed to start, then try to reconnect
-      const connectionResult = await this.reconnect();
-
-      if (connectionResult instanceof Error) {
-        console.error(connectionResult);
-        return this.setErrorStatus('Failed to connect the first time');
-      }
-    }
     return true;
   }
 }
