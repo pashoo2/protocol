@@ -10,3 +10,11 @@ export const commonUtilsArrayOrderByDecComparationFunction = <T>(
  */
 export const commonUtilsArrayOrderByDec = <T>(arr: T[]): T[] =>
   arr.sort(commonUtilsArrayOrderByDecComparationFunction);
+
+  export const commonUtilsArrayDeleteFromArray = <T>(arr: T[], item: T) => {
+    const idxOfItem = arr.findIndex((el: T) => el === item);
+
+    if (idxOfItem !== -1) {
+      arr.splice(idxOfItem, 1);
+    }
+  }

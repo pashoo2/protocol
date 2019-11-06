@@ -20,6 +20,13 @@ export enum ESwarmStoreConnectorOrbitDBEventNames {
      */
     UPDATE = 'UPDATE',
     /**
+     * emit when connection to the
+     * database was opened
+     * arguments:
+     * 1) dbName = name of a database opened
+     */
+    READY = 'READY',
+    /**
      * the instance closed and can't be used
      * to read/write
      */
@@ -27,8 +34,7 @@ export enum ESwarmStoreConnectorOrbitDBEventNames {
     /**
      * emitted when loading the database from the local data
      * * Arguments:
-     * 1) String - name of the database
-     * 2) Number - percentage
+     * 1) Number - percentage
      */
     LOADING = 'LOADING',
     /**
@@ -43,6 +49,16 @@ export enum ESwarmStoreConnectorOrbitDBEventNames {
  * an ipfs will be timed out
  */
 export const SWARM_STORE_CONNECTOR_ORBITDB_CONNECTION_TIMEOUT_MS = 20000; 
+
+/**
+ * timeout for open a single database
+ */
+export const SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONNECTION_TIMEOUT_MS = 7000;
+
+/**
+ * maximum attempts to open connection with the database
+ */
+export const SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_RECONNECTION_ATTEMPTS_MAX = 3;
 
 // prefix used in logs
 export const SWARM_STORE_CONNECTOR_ORBITDB_LOG_PREFIX = 'SwarmStoreConnctotOrbitDB';

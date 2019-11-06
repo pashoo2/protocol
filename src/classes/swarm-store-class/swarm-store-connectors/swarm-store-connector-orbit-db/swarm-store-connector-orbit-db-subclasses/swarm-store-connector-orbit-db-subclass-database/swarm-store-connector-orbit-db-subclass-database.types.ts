@@ -1,24 +1,24 @@
-import { ESwarmConnectorOrbitDbDatabseEventNames } from './swarm-store-connector-orbit-db-subclass-database.const';
+import { ESwarmConnectorOrbitDbDatabaseEventNames } from './swarm-store-connector-orbit-db-subclass-database.const';
 
-export interface ISwarmStoreConnectorOrbitDbDatabseOptions {
-    // databse name
+export interface ISwarmStoreConnectorOrbitDbDatabaseOptions {
+    // Database name
     dbName: string;
     // is a puclic database. Private by
     isPublic?: boolean;
 }
 
-export interface ISwarmStoreConnectorOrbitDbDatabseEvents<TSwarmStoreConnectorOrbitDBDatabase> {
-    [ESwarmConnectorOrbitDbDatabseEventNames.FATAL]: [string, Error, TSwarmStoreConnectorOrbitDBDatabase],
+export interface ISwarmStoreConnectorOrbitDbDatabaseEvents<TSwarmStoreConnectorOrbitDBDatabase> {
+    [ESwarmConnectorOrbitDbDatabaseEventNames.FATAL]: [string, Error, TSwarmStoreConnectorOrbitDBDatabase],
 
-    [ESwarmConnectorOrbitDbDatabseEventNames.ERROR]: [string, Error, TSwarmStoreConnectorOrbitDBDatabase],
-    // databse name and percents loaded
-    [ESwarmConnectorOrbitDbDatabseEventNames.LOADING]: [string, number, TSwarmStoreConnectorOrbitDBDatabase],
-    [ESwarmConnectorOrbitDbDatabseEventNames.UPDATE]: [string, TSwarmStoreConnectorOrbitDBDatabase],
-    [ESwarmConnectorOrbitDbDatabseEventNames.CLOSE]: [string, TSwarmStoreConnectorOrbitDBDatabase],
-    [ESwarmConnectorOrbitDbDatabseEventNames.READY]: [string, TSwarmStoreConnectorOrbitDBDatabase]
+    [ESwarmConnectorOrbitDbDatabaseEventNames.ERROR]: [string, Error, TSwarmStoreConnectorOrbitDBDatabase],
+    // Database name and percents loaded
+    [ESwarmConnectorOrbitDbDatabaseEventNames.LOADING]: [string, number, TSwarmStoreConnectorOrbitDBDatabase],
+    [ESwarmConnectorOrbitDbDatabaseEventNames.UPDATE]: [string, TSwarmStoreConnectorOrbitDBDatabase],
+    [ESwarmConnectorOrbitDbDatabaseEventNames.CLOSE]: [string, TSwarmStoreConnectorOrbitDBDatabase],
+    [ESwarmConnectorOrbitDbDatabaseEventNames.READY]: [string, TSwarmStoreConnectorOrbitDBDatabase]
 }
 
-export interface ISwarmStoreConnectorOrbitDbDatabseValue<TStoreValueType> {
+export interface ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValueType> {
     id: string; // id of the user who is store the event
     value: TStoreValueType;
     hash: string;
@@ -32,3 +32,9 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions {
     limit?: number, 
     reverse?: boolean 
 }
+
+export type TFeedStoreHash = string;
+
+export type TSwarmStoreConnectorOrbitDbDatabaseMathodNames = 'get' | 'add' | 'remove' | 'iterator';
+
+export type TSwarmStoreConnectorOrbitDbDatabaseMathodArgument<TFeedStoreType> = TFeedStoreHash | TFeedStoreType | ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions;

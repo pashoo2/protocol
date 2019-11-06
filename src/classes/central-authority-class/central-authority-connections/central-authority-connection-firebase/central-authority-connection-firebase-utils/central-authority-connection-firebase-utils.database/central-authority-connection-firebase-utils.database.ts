@@ -68,7 +68,7 @@ export class CAConnectionWithFirebaseUtilDatabase {
       await database.goOnline();
     } catch (err) {
       console.error(err);
-      return new Error('Failed to connect to the databse server');
+      return new Error('Failed to connect to the Database server');
     }
     this.setDatabaseInstance(database);
     this.setWasConnectedStatus(true);

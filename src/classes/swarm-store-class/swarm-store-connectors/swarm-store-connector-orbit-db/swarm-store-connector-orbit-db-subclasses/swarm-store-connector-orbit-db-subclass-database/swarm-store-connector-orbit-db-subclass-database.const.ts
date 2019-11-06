@@ -8,8 +8,10 @@ export enum EOrbidDBFeedSoreEvents {
     CLOSE = 'closed',
 }
 
-export enum ESwarmConnectorOrbitDbDatabseEventNames {
+export enum ESwarmConnectorOrbitDbDatabaseEventNames {
     // on replicated from another peer
+    // arguments:
+    // 1) databaseName - a name of the database
     UPDATE = 'update',
     // loading from the local store
     LOADING = 'loading',
