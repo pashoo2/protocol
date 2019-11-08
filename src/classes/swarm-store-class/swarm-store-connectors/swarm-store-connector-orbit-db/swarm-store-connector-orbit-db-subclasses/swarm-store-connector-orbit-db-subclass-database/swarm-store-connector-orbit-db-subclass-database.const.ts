@@ -25,3 +25,10 @@ export enum ESwarmConnectorOrbitDbDatabaseEventNames {
     // the instance can't be used anymore
     FATAL = 'fatal',
 }
+export const SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONFIGURATION: IStoreOptions = {
+    localOnly: false,
+    create: true,
+    replicate: true,
+}
+
+export const SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ENTITIES_LOAD_COUNT = 500;

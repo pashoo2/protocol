@@ -62,7 +62,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
         if (stopOrbitDBResult instanceof Error) {
             return stopOrbitDBResult;
         }
-        debugger
+
         // create a new OrbitDB instance
         const createOrbitDbResult = await this.createOrbitDBInstance();
 
@@ -76,6 +76,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
         if (createDatabases instanceof Error) {
             return createDatabases;
         }
+        ;
         // set the database is ready to query
         this.setIsReady(true);
     }
@@ -114,11 +115,20 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
         this.setIsClosed();
         
         const closeAllDatabasesResult = await this.closeDatabases();
+        const stopOrbitDBResult = await this.stopOrbitDBInsance();
+        let err
 
         if (closeAllDatabasesResult instanceof Error) {
+            err = true;
             console.error(closeAllDatabasesResult);
-            return new Error('Failed to close all databases connections');
+            this.emitError('Failed to close all databases connections');
         }
+        if (stopOrbitDBResult instanceof Error) {
+            err = true;
+            console.error(closeAllDatabasesResult);
+            this.emitError('Failed to close the current instanceof OrbitDB');
+        }
+        return this.emitError('Failed to close normally the connection to the swarm store');
     }
 
     protected connectionOptions?: ISwarmStoreConnectorOrbitDBConnectionOptions;
@@ -149,7 +159,9 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
     protected getDbConnection = (dbName: string): SwarmStoreConnectorOrbitDBDatabase<ISwarmDatabaseValueTypes> | void => {
         const { databases } = this;
 
-        return databases.find(db => db && !db.isClosed && db.dbName === dbName);
+        return databases.find(db => {
+            return db && !db.isClosed && !!db.isReady && db.dbName === dbName
+        });
     }
 
     protected async waitingDbOpened(dbName: string): Promise<Error | SwarmStoreConnectorOrbitDBDatabase<ISwarmDatabaseValueTypes>> {
@@ -257,7 +269,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
                 ipfs.ready,
                 timeout(SWARM_STORE_CONNECTOR_ORBITDB_CONNECTION_TIMEOUT_MS),
             ]);
-            debugger
+            
         } catch(err) {
             return this.emitError(err);
         }
@@ -290,6 +302,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
 
             const instanceOfOrbitDB = await OrbitDB.createInstance(ipfs);
 
+            
             if (instanceOfOrbitDB instanceof Error) {
                 return this.emitError(instanceOfOrbitDB, 'createOrbitDBInstance::error has occurred in the "createInstance" method');
             }
@@ -349,7 +362,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
         this.restartDbConnection(dbName, database);
     }
 
-    private handleLoadingProgress = (progress: number): void => {
+    private handleLoadingProgress = (dbName: string, progress: number): void => {
         /* 
             databases - is a list of the databases opened already
             it means that the loading progress for this databases
@@ -357,7 +370,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
         */
         const { databases, options } = this;
         let currentProgressInPercent = 0;
-
+        
         if (options) {
             /* 
                 overallDatabases - is a list of all databases
@@ -371,9 +384,10 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
             const currentProgress = (databases ? databases.length : 0) * 100 + progress;
             // the progress reached at this time in a percentage
             currentProgressInPercent = currentProgress
-                ? (overallProgressToReach / currentProgress)
+                ? (overallProgressToReach / currentProgress) * 100
                 : 0;
         }
+        console.log(`Swarm store connector::handleLoadingProgress::${dbName}::progress::${progress}`);
         this.emit(ESwarmStoreConnectorOrbitDBEventNames.LOADING, currentProgressInPercent);
     }
 
@@ -400,6 +414,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
     private async closeDatabases(): Promise<Error | void> {
         const { databases } = this;
 
+        ;
         // set that the orbit db is not ready to use
         this.setNotReady();
         if (!databases || !databases.length) {
@@ -420,13 +435,14 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
                 }
             }
             this.databases = [];
+            ;
         } catch(err) {
             return err;
         }
     }
 
     private waitDatabaseOpened(database: SwarmStoreConnectorOrbitDBDatabase<ISwarmDatabaseValueTypes>): Promise<Error | boolean> {
-        return new Promise<Error | boolean>((res) => {
+        return new Promise<Error | boolean>(async (res) => {
             let timeout: NodeJS.Timer | undefined = undefined;
 
             function usetListeners() {
@@ -453,9 +469,20 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
                     res(new Error('A fatal error has occurred while open the database'));
                 });
                 database.once(ESwarmConnectorOrbitDbDatabaseEventNames.READY, () => {
-                    database.removeListener(ESwarmConnectorOrbitDbDatabaseEventNames.CLOSE, res);
+                    ;
+                    usetListeners();
                     res(true);
                 });
+
+                //connect to the database
+                // and wait for an events from it
+                const connectResult = await database.connect();
+                
+                if (connectResult instanceof Error) {
+                    usetListeners();
+                    console.error(connectResult);
+                    return this.emitError('The database.connect method was failed');
+                }
             } catch(err) {
                 console.error(err);
                 usetListeners();
@@ -470,7 +497,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
         if (!orbitDb) {
             return new Error('There is no instance of OrbitDB');
         }
-
+        
         const database = new SwarmStoreConnectorOrbitDBDatabase<ISwarmDatabaseValueTypes>(dbOptions, orbitDb);
         
         this.setListenersDatabaseEvents(database);
@@ -490,7 +517,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
             }
         }
         this.databases!.push(database);
-        this.emit(ESwarmConnectorOrbitDbDatabaseEventNames.READY, dbOptions.dbName);
+        this.emit(ESwarmStoreConnectorOrbitDBEventNames.READY, dbOptions.dbName);
     }
     
     private async openDatabases(): Promise<Error | void> {
@@ -500,15 +527,9 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
             return this.emitError('The options must be specified to open the databases');
         }
 
-        const closeExistingDatabaseesOpened = await this.closeDatabases();
+        const { databases } = options;
 
-        if (closeExistingDatabaseesOpened instanceof Error) {
-            return this.emitError(closeExistingDatabaseesOpened, 'openDatabases');
-        }
-
-        const { databases: databases } = options;
-
-        if (!(databases instanceof Array)) {
+        if (!(databases instanceof Array) || !databases.length) {
             return this.emitError('The options for databases must be specified');
         }
 
@@ -520,12 +541,14 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
                 const options = databases[idx];
                 const startResultStatus = await this.openDatabase(options);
 
+                ;
                 if (startResultStatus instanceof Error) {
                     console.error(startResultStatus);
                     await this.closeDatabases();
                     return new Error('Failed to open the database');
                 }
             }
+            ;
         } catch(err) {
             await this.closeDatabases();
             return this.emitError(err);

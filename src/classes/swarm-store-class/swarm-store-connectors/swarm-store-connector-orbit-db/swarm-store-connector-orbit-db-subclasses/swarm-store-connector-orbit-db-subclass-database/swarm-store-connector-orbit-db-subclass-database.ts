@@ -2,7 +2,7 @@ import * as orbitDbModule from 'orbit-db';
 import OrbitDbFeedStore from 'orbit-db-feedstore';
 import { ISwarmStoreConnectorOrbitDbDatabaseOptions, ISwarmStoreConnectorOrbitDbDatabaseEvents, ISwarmStoreConnectorOrbitDbDatabaseValue, ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions, TFeedStoreHash } from './swarm-store-connector-orbit-db-subclass-database.types';
 import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
-import { ESwarmConnectorOrbitDbDatabaseEventNames, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_LOG_PREFIX, EOrbidDBFeedSoreEvents } from './swarm-store-connector-orbit-db-subclass-database.const';
+import { ESwarmConnectorOrbitDbDatabaseEventNames, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_LOG_PREFIX, EOrbidDBFeedSoreEvents, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONFIGURATION, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ENTITIES_LOAD_COUNT } from './swarm-store-connector-orbit-db-subclass-database.const';
 
 export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmitter<ISwarmStoreConnectorOrbitDbDatabaseEvents<SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType>>> {   
     // is loaded fully and ready to use
@@ -13,6 +13,8 @@ export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmi
     
     // a name of the database
     public dbName: string = '';
+
+    private isFullyLoaded: boolean = false;
 
     public constructor(
         options: ISwarmStoreConnectorOrbitDbDatabaseOptions,
@@ -26,9 +28,21 @@ export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmi
         this.unsetReadyState();
 
         const dbStoreCreationResult = await this.createDbInstance();
-
+        
         if (dbStoreCreationResult instanceof Error) {
             return dbStoreCreationResult;
+        }
+
+        const loadDbResult = await dbStoreCreationResult.load(
+            SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ENTITIES_LOAD_COUNT,
+        );
+
+        if ((loadDbResult as unknown) instanceof Error) {
+            console.error(loadDbResult);
+            return this.onFatalError(
+                'The fatal error has occurred on databse loading', 
+                'connect',
+            );
         }
     }
 
@@ -39,6 +53,24 @@ export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmi
         this.emitEvent(ESwarmConnectorOrbitDbDatabaseEventNames.CLOSE, this);
         if (closeCurrentStoreResult instanceof Error) {
             return closeCurrentStoreResult;
+        }
+    }
+
+    public async add(value: TFeedStoreType): Promise<string | Error> {
+        const database = this.getDbStoreInstance();
+
+        if (database instanceof Error) {
+            return database;
+        }
+        try {
+            const hash = await database.add(value);
+
+            if (typeof hash !== 'string') {
+                return new Error('An unknown type of hash was returned for the value stored');
+            }
+            return hash;
+        } catch(err) {
+            return err;
         }
     }
 
@@ -62,24 +94,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmi
             return err;
         }
         return undefined;
-    }
-
-    public async add(value: TFeedStoreType): Promise<string | Error> {
-        const database = this.getDbStoreInstance();
-
-        if (database instanceof Error) {
-            return database;
-        }
-        try {
-            const hash = await database.add(value);
-
-            if (typeof hash !== 'string') {
-                return new Error('An unknown type of hash was returned for the value stored');
-            }
-            return hash;
-        } catch(err) {
-            return err;
-        }
     }
 
     public async remove(hash: TFeedStoreHash): Promise<Error | void> {
@@ -169,32 +183,46 @@ export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmi
         if (!isClosed) {
             this.close();
         }
+        return this.emitError(
+            'The database closed cause a fatal error',
+            methodName,
+            true,
+        );
     }
 
     protected emitEvent(event: ESwarmConnectorOrbitDbDatabaseEventNames, ...args: any[]) {
         const { options } = this;
         const { dbName } = options!;
-
+        
         this.emit(event, dbName, ...args);
     }
 
     private getFeedStoreOptions(): IStoreOptions | undefined | Error {
         // TODO
-        return undefined;
+        return SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONFIGURATION;
+    }
+
+    private emitFullyLoaded() {
+        if (!this.isFullyLoaded) {
+            this.isFullyLoaded = true;
+            this.emitEvent(ESwarmConnectorOrbitDbDatabaseEventNames.LOADING, 100);
+        }
     }
 
     private handleFeedStoreReady = () => {
+        this.emitFullyLoaded();
         this.setReadyState();
         this.emitEvent(ESwarmConnectorOrbitDbDatabaseEventNames.READY);
     }
 
     private handleFeedStoreLoaded = () => {
         // emit event that the database local copy was fully loaded
-        this.emitEvent(ESwarmConnectorOrbitDbDatabaseEventNames.LOADING, 100);
+        this.emitFullyLoaded();
     }
 
     private handleFeedStoreLoadProgress = (address: string, hash: string, entry: unknown, progress: number, total: number) => {
         // emit event database local copy loading progress
+        ;
         this.emitEvent(ESwarmConnectorOrbitDbDatabaseEventNames.LOADING, progress);
     }
 
@@ -202,13 +230,13 @@ export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmi
         // emit event that the db updated, cause it
         // was replicated with another peer db copy
         const { dbName } = this;
-
+        ;
         this.emitEvent(ESwarmConnectorOrbitDbDatabaseEventNames.UPDATE, dbName);
     }
 
     private handleFeedStoreClosed = () => {
         const { isClosed } = this;
-
+        ;
         if (!isClosed) {
             this.unsetReadyState();
             this.emitError('The instance was closed unexpected', 'handleFeedStoreClosed');
@@ -272,8 +300,8 @@ export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmi
         }
 
         const methodName = isSet
-            ? 'addListener'
-            : 'removeListener';
+            ? 'on'
+            : 'off';
             
         feedStore.events[methodName](EOrbidDBFeedSoreEvents.READY, this.handleFeedStoreReady);
         feedStore.events[methodName](EOrbidDBFeedSoreEvents.LOAD, this.handleFeedStoreLoaded);
@@ -286,10 +314,10 @@ export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmi
         this.setFeedStoreEventListeners(feedStore, false);
     }
 
-    private async createDbInstance(): Promise<Error | void> {
+    private async createDbInstance(): Promise<Error |  OrbitDbFeedStore<TFeedStoreType>> {
         try {
             const { orbitDb, options } = this;
-
+            
             if (!orbitDb) {
                 return this.onFatalError('There is no intance of the OrbitDb is specified', 'createDbInstance');
             }
@@ -301,13 +329,13 @@ export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmi
             }
 
             const dbFeedStoreOptions = this.getFeedStoreOptions();
-
+            ;
             if (dbFeedStoreOptions instanceof Error) {
                 return this.onFatalError(dbFeedStoreOptions, 'createDbInstance::getFeedStoreOptions')
             }
 
             const db = await orbitDb.feed<TFeedStoreType>(dbName, dbFeedStoreOptions);
-
+            ;
             if (db instanceof Error) {
                 return this.onFatalError(db, 'createDbInstance::feed store creation');
             }
@@ -317,7 +345,9 @@ export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmi
             if (setStoreListenersResult instanceof Error) {
                 return this.onFatalError(setStoreListenersResult, 'createDbInstance::set feed store listeners')
             }
+            ;
             this.database = db;
+            return db;
         } catch(err) {
             return this.onFatalError(err, 'createDbInstance')
         }

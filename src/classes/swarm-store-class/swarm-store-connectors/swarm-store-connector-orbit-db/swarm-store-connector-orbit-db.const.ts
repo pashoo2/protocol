@@ -48,12 +48,12 @@ export enum ESwarmStoreConnectorOrbitDBEventNames {
  * time out before the connection to the swarm throught
  * an ipfs will be timed out
  */
-export const SWARM_STORE_CONNECTOR_ORBITDB_CONNECTION_TIMEOUT_MS = 20000; 
+export const SWARM_STORE_CONNECTOR_ORBITDB_CONNECTION_TIMEOUT_MS = 200000; 
 
 /**
  * timeout for open a single database
  */
-export const SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONNECTION_TIMEOUT_MS = 7000;
+export const SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONNECTION_TIMEOUT_MS = 70000;
 
 /**
  * maximum attempts to open connection with the database

@@ -75,7 +75,7 @@ export const getLibPeerToPeer = (opts: any) => {
       ],
       peerRouting: [
         delegatePeerRouter,
-        // TODO - CORS failed with the websocket delegatePeerRouterWS
+        delegatePeerRouterWS,
       ],
     },
     config: {

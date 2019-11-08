@@ -1,13 +1,27 @@
+// TODO
+// export const SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_HOST =
+//   'geochat-wrtc-start.herokuapp.com';
+
+// export const SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_PROTOCOL_HTTP =
+//   'https';
+
+// export const SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_PROTOCOL_WS =
+//   'wss';
+
+// export const SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_PORT = '443';
+
 export const SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_HOST =
-  'geochat-wrtc-start.herokuapp.com';
+  '0.0.0.0';
 
 export const SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_PROTOCOL_HTTP =
-  'https';
+  'http';
 
 export const SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_PROTOCOL_WS =
-  'wss';
+  'ws';
 
-export const SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_PORT = '443';
+export const SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_PORT = '8080';
+
+
 
 // TODO - if it changes it must be copied from the output of the
 // delegate server console from a 'Swarm listening on *'
