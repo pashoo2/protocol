@@ -4,13 +4,15 @@ import Mocha from 'mocha';
 import chai from 'chai';
 import chaiAsPromised from "chai-as-promised";
 
+const MOCHA_CDN_URL = 'https://cdnjs.cloudflare.com/ajax/libs/mocha/6.2.1/mocha.min.js';
+
 export async function initializeMocha() {
     const mochaNode = document.createElement('div');
     
     mochaNode.id = "mocha";
     document.body.prepend(mochaNode);
     try {
-        await lazyLoadScript("https://unpkg.com/mocha/mocha.js");
+        await lazyLoadScript(MOCHA_CDN_URL);
     } catch(err) {
         console.error('Failed to load Mocha from cdn');
         return err;

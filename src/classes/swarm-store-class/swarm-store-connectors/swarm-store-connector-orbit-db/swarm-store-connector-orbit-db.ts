@@ -321,7 +321,9 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
 
         const { databases: databases } = options;
 
-        return databases!.find(option => option && option.dbName === dbName);
+        return databases!.find(option => (
+            option && option.dbName === dbName
+        ));
     }
 
     protected stop(): Promise<Error | void> {
@@ -469,7 +471,6 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
                     res(new Error('A fatal error has occurred while open the database'));
                 });
                 database.once(ESwarmConnectorOrbitDbDatabaseEventNames.READY, () => {
-                    ;
                     usetListeners();
                     res(true);
                 });

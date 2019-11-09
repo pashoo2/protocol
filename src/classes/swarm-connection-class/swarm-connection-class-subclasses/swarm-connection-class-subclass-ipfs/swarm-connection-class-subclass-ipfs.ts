@@ -201,10 +201,21 @@ export class SwarmConnectionSubclassIPFS
 
     if (IPFS) {
       // the IPFS module was loaded previousely
+      // TODO
+      // const connection: Ipfs.IPFS = await IPFS.create({
+      //   ...SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DEFALT,
+      //   pass: options ? options.password : null, // password from options
+      // });
+
       const connection: Ipfs.IPFS = await IPFS.create({
-        ...SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DEFALT,
-        pass: options ? options.password : null, // password from options
-      });
+        "preload":
+        {"enabled":false},
+        "config":{"Addresses":{"Swarm":["/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star"]}},
+        "repo":"orbit-chat-ipfs-dfffd",
+        "EXPERIMENTAL": {
+          "pubsub":true,
+        }}
+      );
 
       if (connection instanceof Error) {
         console.error('Failed to create a new IPFS node');
