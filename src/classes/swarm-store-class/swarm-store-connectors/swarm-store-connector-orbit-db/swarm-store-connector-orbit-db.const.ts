@@ -32,8 +32,16 @@ export enum ESwarmStoreConnectorOrbitDBEventNames {
      */
     CLOSE = 'CLOSE',
     /**
-     * emitted when loading the database from the local data
+     * the instance closed and can't be used
+     * to read/write
      * * Arguments:
+     * 1) string - name of the database closed
+     * 2) object - instance closed 
+     */
+    CLOSE_DATABASE = 'CLOSE_DATABASE',
+    /**
+     * emitted when loading the database from the local data
+     * Arguments:
      * 1) Number - percentage
      */
     LOADING = 'LOADING',

@@ -14,6 +14,7 @@ import { SWARM_CONNECTION_OPTIONS } from 'test/ipfs-swarm-connection.test/ipfs-s
 import { SwarmConnection } from 'classes/swarm-connection-class/swarm-connection-class';
 import { ESwarmStoreConnectorOrbitDBEventNames } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.const';
 import { ISwarmStoreConnectorOrbitDbDatabaseValue } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
+import { COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_ON } from 'const/common-values/common-values';
 
 export const testDatabase = async (
     connection: SwarmStoreConnectorOrbitDB<string>,
@@ -117,6 +118,24 @@ export const runTestSwarmStoreOrbitDBConnection = async () => {
                 connection,
                 SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_THREE_DATABASE_DB_NAME,
             );
+
+            let isCloseEmitted: boolean = false;
+
+            connection[COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_ON](ESwarmStoreConnectorOrbitDBEventNames.CLOSE, () => {
+                isCloseEmitted = true;
+            });
+
+            await expect(connection.close()).to.eventually.be.undefined;
+
+            assert((isCloseEmitted as boolean) === true, 'The close event must be emitted on SwarmStoreConnector close');
+
+            const addValueHashAfterClose = await connection.request(
+                SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_DB_NAME,
+                'add',
+                SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_TEST_VALUE,
+            )
+        
+            expect(addValueHashAfterClose).to.be.an('error');
         }).timeout(70000);
     })
 };

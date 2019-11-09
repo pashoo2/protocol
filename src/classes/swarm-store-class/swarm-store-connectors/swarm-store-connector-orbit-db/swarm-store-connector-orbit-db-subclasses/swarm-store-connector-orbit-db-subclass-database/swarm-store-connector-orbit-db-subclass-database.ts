@@ -3,6 +3,7 @@ import OrbitDbFeedStore from 'orbit-db-feedstore';
 import { ISwarmStoreConnectorOrbitDbDatabaseOptions, ISwarmStoreConnectorOrbitDbDatabaseEvents, ISwarmStoreConnectorOrbitDbDatabaseValue, ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions, TFeedStoreHash } from './swarm-store-connector-orbit-db-subclass-database.types';
 import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { ESwarmConnectorOrbitDbDatabaseEventNames, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_LOG_PREFIX, EOrbidDBFeedSoreEvents, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONFIGURATION, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ENTITIES_LOAD_COUNT, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ITERATOR_OPTIONS_DEFAULT } from './swarm-store-connector-orbit-db-subclass-database.const';
+import { COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_ON, COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_OFF, COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_UNSET_ALL_LISTENERS } from 'const/common-values/common-values';
 
 export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmitter<ISwarmStoreConnectorOrbitDbDatabaseEvents<SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType>>> {   
     // is loaded fully and ready to use
@@ -50,8 +51,10 @@ export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmi
     public async close(): Promise<Error | void> {
         const closeCurrentStoreResult = await this.closeCurrentStore();
 
+        this.unsetReadyState();
         this.isClosed = true;
         this.emitEvent(ESwarmConnectorOrbitDbDatabaseEventNames.CLOSE, this);
+        this.unsetAllListenersForEvents();
         if (closeCurrentStoreResult instanceof Error) {
             return closeCurrentStoreResult;
         }
@@ -167,6 +170,13 @@ export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmi
     protected orbitDb?: orbitDbModule.OrbitDB;
 
     protected database?: OrbitDbFeedStore<TFeedStoreType>;
+
+    protected unsetAllListenersForEvents = () => {
+        Object.values(EOrbidDBFeedSoreEvents)
+            .forEach(
+                this[COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_UNSET_ALL_LISTENERS].bind(this),
+            );
+    }
 
     protected emitError(error: Error | string, mehodName?: string, isFatal: boolean = false): Error {
         const err = typeof error === 'string' ? new Error() : error;
@@ -287,6 +297,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmi
                 return new Error('Failed to close the current instance of the Database store');
             }
             this.database = undefined;
+            
         }
     }
 
@@ -334,8 +345,8 @@ export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmi
         }
 
         const methodName = isSet
-            ? 'on'
-            : 'off';
+            ? COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_ON
+            : COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_OFF;
             
         feedStore.events[methodName](EOrbidDBFeedSoreEvents.READY, this.handleFeedStoreReady);
         feedStore.events[methodName](EOrbidDBFeedSoreEvents.LOAD, this.handleFeedStoreLoaded);

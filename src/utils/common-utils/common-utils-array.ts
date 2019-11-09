@@ -11,10 +11,20 @@ export const commonUtilsArrayOrderByDecComparationFunction = <T>(
 export const commonUtilsArrayOrderByDec = <T>(arr: T[]): T[] =>
   arr.sort(commonUtilsArrayOrderByDecComparationFunction);
 
-  export const commonUtilsArrayDeleteFromArray = <T>(arr: T[], item: T) => {
+/**
+ * delete an item from the array
+ * @param {Array} arr 
+ * @param {any} item 
+ */  
+export const commonUtilsArrayDeleteFromArray = <T>(arr: T[], item: T) => {
+  if (
+    arr instanceof Array
+    && arr.length  
+  ) {
     const idxOfItem = arr.findIndex((el: T) => el === item);
 
     if (idxOfItem !== -1) {
       arr.splice(idxOfItem, 1);
     }
   }
+}
