@@ -151,22 +151,13 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
         );
     }
 
-    private async closeDatabase(
-        database: SwarmStoreConnectorOrbitDBDatabase<ISwarmDatabaseValueTypes>,
-    ): Promise<Error | void> {
-        this.unsetListenersDatabaseEvents(database);
-        
-        const { dbName } = database;
+    public async closeDb(dbName: string): Promise<Error | void> {
+        const db = this.getDbConnection(dbName);
 
-        this.unsetOptionsForDatabase(dbName);
-        this.deleteDatabaseFromList(database);
-
-        const closeDatabaseResult = await database.close();
-
-        if (closeDatabaseResult instanceof Error) {
-            return this.emitError(closeDatabaseResult);
+        if (db) {
+            return this.closeDatabase(db);
         }
-        this.emitDatabaseClose(database);
+        return new Error(`The database named ${dbName} was not found`);
     }
 
     /**
@@ -525,6 +516,24 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
         dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions,
     ): void | Error {
         return this.setDbOptions(dbOptions, true);
+    }
+
+    private async closeDatabase(
+        database: SwarmStoreConnectorOrbitDBDatabase<ISwarmDatabaseValueTypes>,
+    ): Promise<Error | void> {
+        this.unsetListenersDatabaseEvents(database);
+        
+        const { dbName } = database;
+
+        this.unsetOptionsForDatabase(dbName);
+        this.deleteDatabaseFromList(database);
+
+        const closeDatabaseResult = await database.close();
+
+        if (closeDatabaseResult instanceof Error) {
+            return this.emitError(closeDatabaseResult);
+        }
+        this.emitDatabaseClose(database);
     }
 
     private setConnectionOptions(connectionOptions: ISwarmStoreConnectorOrbitDBConnectionOptions): void | Error {
