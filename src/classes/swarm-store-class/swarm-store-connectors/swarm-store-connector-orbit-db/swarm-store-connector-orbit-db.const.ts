@@ -1,3 +1,6 @@
+import { SwarmStoreConnectorOrbitDBSubclassIdentityProvider } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-identity-provider/swarm-store-connector-orbit-db-subclass-identity-provider';
+import { IdentityProvider } from 'orbit-db-identity-provider';
+
 export enum ESwarmStoreConnectorOrbitDBEventNames {
     /**
      * fired before connecting to the swarm
@@ -67,6 +70,8 @@ export const SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONNECTION_TIMEOUT_MS = 3000
  * maximum attempts to open connection with the database
  */
 export const SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_RECONNECTION_ATTEMPTS_MAX = 3;
+
+export const SWARM_STORE_CONNECTOR_ORBITDB_IDENTITY_TYPE = SwarmStoreConnectorOrbitDBSubclassIdentityProvider.type;
 
 // prefix used in logs
 export const SWARM_STORE_CONNECTOR_ORBITDB_LOG_PREFIX = 'SwarmStoreConnctotOrbitDB';

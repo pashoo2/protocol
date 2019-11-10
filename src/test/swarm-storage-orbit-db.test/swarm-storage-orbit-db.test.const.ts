@@ -13,6 +13,34 @@ export const SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE: ISwarmS
     }],
 };
 
+const USER_ID_KEY = '____userId';
+const TEST_VALUE_KEY = '____test_value';
+function promptUserIdAndTestValue() {
+    const userIdStored = localStorage.getItem(USER_ID_KEY);
+
+    if (!userIdStored) {
+        const userId = String(window.prompt('user id', 'test1'));
+
+        localStorage.setItem(USER_ID_KEY, userId);
+    }
+    
+    const testValueStored = localStorage.getItem(TEST_VALUE_KEY);
+
+    if (!testValueStored) {
+        const tstv = String(window.prompt('test value', 'tv'));
+
+        localStorage.setItem(TEST_VALUE_KEY, tstv);
+    }
+}
+promptUserIdAndTestValue();
+
+export const SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_TEST_VALUE = `${localStorage.getItem(TEST_VALUE_KEY)}${new Date()}`;
+
+export const SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_WITH_IDENTITY = {
+    ...SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE,
+    id: localStorage.getItem(USER_ID_KEY),
+}
+
 export const SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_DATABASE_TWO = {
     dbName: SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_TWO_DATABASE_DB_NAME,
     isPublic: false,
@@ -37,5 +65,3 @@ export const SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_THREE_DATABASES: ISwa
         },
     ],
 };
-
-export const SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_TEST_VALUE = 'database_test_value';

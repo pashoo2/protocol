@@ -1,7 +1,9 @@
 import OrbitDB from 'orbit-db';
+import Identities, { IdentityProvider } from 'orbit-db-identity-provider';
 import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
-import { ESwarmStoreConnectorOrbitDBEventNames, SWARM_STORE_CONNECTOR_ORBITDB_CONNECTION_TIMEOUT_MS, SWARM_STORE_CONNECTOR_ORBITDB_LOG_PREFIX, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONNECTION_TIMEOUT_MS, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_RECONNECTION_ATTEMPTS_MAX } from './swarm-store-connector-orbit-db.const';
+import { ESwarmStoreConnectorOrbitDBEventNames, SWARM_STORE_CONNECTOR_ORBITDB_CONNECTION_TIMEOUT_MS, SWARM_STORE_CONNECTOR_ORBITDB_LOG_PREFIX, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONNECTION_TIMEOUT_MS, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_RECONNECTION_ATTEMPTS_MAX, SWARM_STORE_CONNECTOR_ORBITDB_IDENTITY_TYPE } from './swarm-store-connector-orbit-db.const';
 import { IPFS } from 'types/ipfs.types';
+import { SwarmStoreConnectorOrbitDBSubclassIdentityProvider } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-identity-provider/swarm-store-connector-orbit-db-subclass-identity-provider';
 import { ISwarmStoreConnectorOrbitDBOptions, ISwarmStoreConnectorOrbitDBConnectionOptions, TESwarmStoreConnectorOrbitDBEvents } from './swarm-store-connector-orbit-db.types';
 import { timeout } from 'utils/common-utils/common-utils-timer';
 import { SwarmStoreConnectorOrbitDBDatabase } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database';
@@ -11,12 +13,35 @@ import { commonUtilsArrayDeleteFromArray } from 'utils/common-utils/common-utils
 import { COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_ON, COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_OFF, COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_UNSET_ALL_LISTENERS } from 'const/common-values/common-values';
 
 export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventEmitter<TESwarmStoreConnectorOrbitDBEvents> {
+    private static isLoadedCustomIdentityProvider: boolean = false;
+    
+    private static loadCustomIdentityProvider() {
+        if (!SwarmStoreConnectorOrbitDB.isLoadedCustomIdentityProvider) {
+            Identities.addIdentityProvider(SwarmStoreConnectorOrbitDBSubclassIdentityProvider);
+        }
+    }
+
     public isReady: boolean = false;
 
     public isClosed: boolean = false;
 
+    protected userId?: string;
+
+    protected identity?: any;
+
+    protected connectionOptions?: ISwarmStoreConnectorOrbitDBConnectionOptions;
+
+    protected options?: ISwarmStoreConnectorOrbitDBOptions;
+
+    protected ipfs?: IPFS; // instance of the IPFS connected through
+
+    protected orbitDb?: OrbitDB; // instance of the OrbitDB
+
+    protected databases: SwarmStoreConnectorOrbitDBDatabase<ISwarmDatabaseValueTypes>[] = [];
+
     public constructor(options: ISwarmStoreConnectorOrbitDBOptions) {
         super();
+        SwarmStoreConnectorOrbitDB.loadCustomIdentityProvider();
         this.setOptions(options);
     }
 
@@ -31,6 +56,13 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
      * @memberof SwarmStoreConnectorOrbitDB
      */
     public async connect(connectionOptions: ISwarmStoreConnectorOrbitDBConnectionOptions): Promise<void | Error> {
+        const resultCreateIdentity = await this.createIdentity();
+        
+        if (resultCreateIdentity instanceof Error) {
+            console.error(resultCreateIdentity);
+            return this.emitError('Failed to create an identity');
+        }
+
         const disconnectFromSwarmResult = await this.disconnectFromSwarm();
 
         if (disconnectFromSwarmResult instanceof Error) {
@@ -212,17 +244,6 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
             return this.emitError('Failed to close normally the connection to the swarm store');
         }
     }
-
-    protected connectionOptions?: ISwarmStoreConnectorOrbitDBConnectionOptions;
-
-    protected options?: ISwarmStoreConnectorOrbitDBOptions;
-
-    protected ipfs?: IPFS; // instance of the IPFS connected through
-
-    protected orbitDb?: OrbitDB; // instance of the OrbitDB
-
-    protected databases: SwarmStoreConnectorOrbitDBDatabase<ISwarmDatabaseValueTypes>[] = [];
-
     protected setIsClosed = () => {
         this.setNotReady();
         this.isClosed = true;
@@ -416,8 +437,61 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
         return false;
     }
 
+    /**
+     * set options and create the identity
+     * for the user by the user id
+     * @private
+     * @param {ISwarmStoreConnectorOrbitDBOptions} options
+     * @memberof SwarmStoreConnectorOrbitDB
+     * @throws Error - throw an error if the options are not valid
+     */
     private setOptions(options: ISwarmStoreConnectorOrbitDBOptions) {
+        if (!options || typeof options !== 'object') {
+            throw new Error('The options must be an object');
+        }
+        
         this.options = options;
+    
+        const { id } = options;
+
+        if (!id) {
+            console.warn(new Error('The user id is not provided'));
+        } else {
+            this.userId = id;
+        }
+    }
+
+    /**
+     * create identity for the user. If the userid
+     * is provided then the identity will be created
+     * by the value of the user id.
+     * 
+     * @private
+     * @returns {(Promise<Error | void>)}
+     * @memberof SwarmStoreConnectorOrbitDB
+     */
+    private async createIdentity(): Promise<Error | void> {
+        const { userId } = this;
+
+        try {
+            const identity = await Identities.createIdentity({ 
+                type: SWARM_STORE_CONNECTOR_ORBITDB_IDENTITY_TYPE,
+                id: userId
+                    ? userId
+                    : undefined,
+            });
+            
+            if (!userId) {
+                this.userId = identity.id;
+                console.warn(`The user id created automatically is ${userId}`);
+            }
+            if (identity instanceof Error) {
+                return identity;
+            }
+            this.identity = identity;
+        } catch(err) {
+            return err;
+        }
     }
 
     /**
@@ -495,7 +569,8 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
 
         if (!options) {
             this.setOptions({
-                databases: [dbOptions]
+                databases: [dbOptions],
+                id: '',
             });
             return;
         }
@@ -593,7 +668,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
     }
 
     private async createOrbitDBInstance(): Promise<Error | void> {
-        const { ipfs } = this;
+        const { ipfs, identity } = this;
 
         if (!ipfs) {
             return this.emitError('An instance of IPFS must exists', 'createOrbitDBInstance');
@@ -602,9 +677,14 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
             if (!OrbitDB) {
                 return this.emitError('A constructor of the OrbitDb is not provided');
             }
+            if (!identity) {
+                return this.emitError('An identity must be specified');
+            }
 
-            const instanceOfOrbitDB = await OrbitDB.createInstance(ipfs);
-
+            const instanceOfOrbitDB = await OrbitDB.createInstance(
+                ipfs,
+                { identity },
+            );
             
             if (instanceOfOrbitDB instanceof Error) {
                 return this.emitError(instanceOfOrbitDB, 'createOrbitDBInstance::error has occurred in the "createInstance" method');

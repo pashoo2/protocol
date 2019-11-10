@@ -213,7 +213,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmi
     }
 
     private getFeedStoreOptions(): IStoreOptions | undefined | Error {
-        // TODO
         return SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONFIGURATION;
     }
 
@@ -265,7 +264,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmi
 
     private handleFeedStoreClosed = () => {
         const { isClosed } = this;
-        ;
+        
         if (!isClosed) {
             this.unsetReadyState();
             this.emitError('The instance was closed unexpected', 'handleFeedStoreClosed');
@@ -297,7 +296,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmi
                 return new Error('Failed to close the current instance of the Database store');
             }
             this.database = undefined;
-            
         }
     }
 
@@ -375,7 +373,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmi
             }
 
             const dbFeedStoreOptions = this.getFeedStoreOptions();
-            ;
+            
             if (dbFeedStoreOptions instanceof Error) {
                 return this.onFatalError(dbFeedStoreOptions, 'createDbInstance::getFeedStoreOptions')
             }
@@ -386,7 +384,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmi
                     write: ['*']
                   }
             });
-            ;
+            
             if (db instanceof Error) {
                 return this.onFatalError(db, 'createDbInstance::feed store creation');
             }

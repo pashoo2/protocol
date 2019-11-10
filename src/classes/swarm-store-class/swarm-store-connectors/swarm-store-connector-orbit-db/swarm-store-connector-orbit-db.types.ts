@@ -15,6 +15,7 @@ export interface ISwarmStoreConnectorOrbitDBOptions {
     // databases which must be started when the orbit db
     // instance will be ready to use
     databases: ISwarmStoreConnectorOrbitDbDatabaseOptions[];
+    id?: string;
 }
 
 export interface ISwarmStoreConnectorOrbitDBConnectionOptions {
