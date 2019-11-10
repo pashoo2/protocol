@@ -1,6 +1,7 @@
 import { ESwarmConnectorOrbitDbDatabaseEventNames } from './swarm-store-connector-orbit-db-subclass-database.const';
+import { ISwarmStoreConnectorOrbitDbDatabaseAccessControlleGrantCallback, ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess } from '../swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types';
 
-export interface ISwarmStoreConnectorOrbitDbDatabaseOptions {
+export interface ISwarmStoreConnectorOrbitDbDatabaseOptions<TFeedStoreType> extends ISwarmStoreConnectorOrbitDbDatabaseAccessControlleGrantCallback<TFeedStoreType>, ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess {
     // Database name
     dbName: string;
     // is a puclic database. Private by

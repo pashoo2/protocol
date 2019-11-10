@@ -4,6 +4,8 @@ import { ISwarmStoreConnectorOrbitDbDatabaseOptions, ISwarmStoreConnectorOrbitDb
 import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { ESwarmConnectorOrbitDbDatabaseEventNames, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_LOG_PREFIX, EOrbidDBFeedSoreEvents, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONFIGURATION, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ENTITIES_LOAD_COUNT, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ITERATOR_OPTIONS_DEFAULT } from './swarm-store-connector-orbit-db-subclass-database.const';
 import { COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_ON, COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_OFF, COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_UNSET_ALL_LISTENERS } from 'const/common-values/common-values';
+import { SwarmStoreConnectorOrbitDBSubclassAccessController } from '../swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller';
+import { ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions } from '../swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types';
 
 export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmitter<ISwarmStoreConnectorOrbitDbDatabaseEvents<SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType>>> {   
     // is loaded fully and ready to use
@@ -18,7 +20,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmi
     private isFullyLoaded: boolean = false;
 
     public constructor(
-        options: ISwarmStoreConnectorOrbitDbDatabaseOptions,
+        options: ISwarmStoreConnectorOrbitDbDatabaseOptions<TFeedStoreType>,
         orbitDb: orbitDbModule.OrbitDB
     ) {
         super();
@@ -165,7 +167,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmi
         this.setReadyState(false);
     }
 
-    private options?: ISwarmStoreConnectorOrbitDbDatabaseOptions;
+    private options?: ISwarmStoreConnectorOrbitDbDatabaseOptions<TFeedStoreType>;
 
     protected orbitDb?: orbitDbModule.OrbitDB;
 
@@ -358,6 +360,36 @@ export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmi
         this.setFeedStoreEventListeners(feedStore, false);
     }
 
+    private getAccessControllerOptions(): ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions<TFeedStoreType> {
+        const { options } = this;
+        let resultedOptions: ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions<TFeedStoreType> = {
+            type: SwarmStoreConnectorOrbitDBSubclassAccessController.type,
+        };
+
+        if (!options) {
+            return resultedOptions;
+        }
+
+        const { 
+            isPublic,
+            write,
+            grantAcess,
+        } = options;
+
+        if (isPublic) {
+            resultedOptions.write = ['*'];
+        } else if (write instanceof Array) {
+            resultedOptions.write = write.filter(identity => identity && typeof identity === 'string');
+        }
+        if (typeof grantAcess === 'function') {
+            if (grantAcess.length !== 2) {
+                console.warn('The grant access callback function must have 2 arguments');
+            }
+            resultedOptions.grantAcess = grantAcess;
+        }
+        return resultedOptions;
+    }
+
     private async createDbInstance(): Promise<Error |  OrbitDbFeedStore<TFeedStoreType>> {
         try {
             const { orbitDb, options } = this;
@@ -379,10 +411,8 @@ export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmi
             }
 
             const db = await orbitDb.feed<TFeedStoreType>(dbName, {
-                create: true,
-                accessController: {
-                    write: ['*']
-                  }
+                ...SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONFIGURATION,
+                accessController: this.getAccessControllerOptions(),
             });
             
             if (db instanceof Error) {
@@ -402,7 +432,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType> extends EventEmi
         }
     }
 
-    private setOptions(options: ISwarmStoreConnectorOrbitDbDatabaseOptions): void | Error {
+    private setOptions(options: ISwarmStoreConnectorOrbitDbDatabaseOptions<TFeedStoreType>): void | Error {
         if (!options) {
             return this.onFatalError('Options must be specified', 'setOptions')
         }

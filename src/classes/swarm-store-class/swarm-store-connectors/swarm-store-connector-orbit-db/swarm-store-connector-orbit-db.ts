@@ -1,9 +1,11 @@
 import OrbitDB from 'orbit-db';
 import Identities, { IdentityProvider } from 'orbit-db-identity-provider';
+import AccessControllers from "orbit-db-access-controllers";
 import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { ESwarmStoreConnectorOrbitDBEventNames, SWARM_STORE_CONNECTOR_ORBITDB_CONNECTION_TIMEOUT_MS, SWARM_STORE_CONNECTOR_ORBITDB_LOG_PREFIX, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONNECTION_TIMEOUT_MS, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_RECONNECTION_ATTEMPTS_MAX, SWARM_STORE_CONNECTOR_ORBITDB_IDENTITY_TYPE } from './swarm-store-connector-orbit-db.const';
 import { IPFS } from 'types/ipfs.types';
 import { SwarmStoreConnectorOrbitDBSubclassIdentityProvider } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-identity-provider/swarm-store-connector-orbit-db-subclass-identity-provider';
+import { SwarmStoreConnectorOrbitDBSubclassAccessController } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller';
 import { ISwarmStoreConnectorOrbitDBOptions, ISwarmStoreConnectorOrbitDBConnectionOptions, TESwarmStoreConnectorOrbitDBEvents } from './swarm-store-connector-orbit-db.types';
 import { timeout } from 'utils/common-utils/common-utils-timer';
 import { SwarmStoreConnectorOrbitDBDatabase } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database';
@@ -21,6 +23,16 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
         }
     }
 
+    private static isLoadedCustomAccessController: boolean = false;
+    
+    private static loadCustomAccessController() {
+        if (!SwarmStoreConnectorOrbitDB.isLoadedCustomAccessController) {
+            AccessControllers.addAccessController({
+                AccessController: SwarmStoreConnectorOrbitDBSubclassAccessController,
+            });
+        }
+    }
+
     public isReady: boolean = false;
 
     public isClosed: boolean = false;
@@ -31,7 +43,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
 
     protected connectionOptions?: ISwarmStoreConnectorOrbitDBConnectionOptions;
 
-    protected options?: ISwarmStoreConnectorOrbitDBOptions;
+    protected options?: ISwarmStoreConnectorOrbitDBOptions<ISwarmDatabaseValueTypes>;
 
     protected ipfs?: IPFS; // instance of the IPFS connected through
 
@@ -39,7 +51,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
 
     protected databases: SwarmStoreConnectorOrbitDBDatabase<ISwarmDatabaseValueTypes>[] = [];
 
-    public constructor(options: ISwarmStoreConnectorOrbitDBOptions) {
+    public constructor(options: ISwarmStoreConnectorOrbitDBOptions<ISwarmDatabaseValueTypes>) {
         super();
         SwarmStoreConnectorOrbitDB.loadCustomIdentityProvider();
         this.setOptions(options);
@@ -115,7 +127,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
     }
 
     public openDatabase = async (
-        dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions,
+        dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<ISwarmDatabaseValueTypes>,
         openAttempt: number = 0,
         checkOptionsIsExists: boolean = true,
     ): Promise<void | Error> => {
@@ -428,7 +440,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
         }
     }
 
-    protected checkDbOptions(options: unknown): options is ISwarmStoreConnectorOrbitDbDatabaseOptions {
+    protected checkDbOptions(options: unknown): options is ISwarmStoreConnectorOrbitDbDatabaseOptions<ISwarmDatabaseValueTypes> {
         if (options != null && typeof options === 'object') {
             const { dbName } = options as { dbName: string };
 
@@ -445,7 +457,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
      * @memberof SwarmStoreConnectorOrbitDB
      * @throws Error - throw an error if the options are not valid
      */
-    private setOptions(options: ISwarmStoreConnectorOrbitDBOptions) {
+    private setOptions(options: ISwarmStoreConnectorOrbitDBOptions<ISwarmDatabaseValueTypes>) {
         if (!options || typeof options !== 'object') {
             throw new Error('The options must be an object');
         }
@@ -546,7 +558,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
      * @memberof SwarmStoreConnectorOrbitDB
      */
     protected setDbOptions(
-        dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions,
+        dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<ISwarmDatabaseValueTypes>,
         checkIfExists: boolean = false,
     ): void | Error {
         if (!this.checkDbOptions(dbOptions)) {
@@ -588,7 +600,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
     }
 
     protected setDbOptionsIfNotExists(
-        dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions,
+        dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<ISwarmDatabaseValueTypes>,
     ): void | Error {
         return this.setDbOptions(dbOptions, true);
     }
@@ -695,7 +707,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
         }
     }
 
-    protected getDbOptions(dbName: string): ISwarmStoreConnectorOrbitDbDatabaseOptions | void | Error {
+    protected getDbOptions(dbName: string): ISwarmStoreConnectorOrbitDbDatabaseOptions<ISwarmDatabaseValueTypes> | void | Error {
         const { options } = this;
 
         if (!options) {
@@ -723,7 +735,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
      * @memberof SwarmStoreConnectorOrbitDB
      */
     private openDatabaseNotCheckOptionsExists(
-        optionsForDb: ISwarmStoreConnectorOrbitDbDatabaseOptions,
+        optionsForDb: ISwarmStoreConnectorOrbitDbDatabaseOptions<ISwarmDatabaseValueTypes>,
     ): Promise<void | Error> {
         return this.openDatabase(optionsForDb, 0 , false);
     }

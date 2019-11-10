@@ -12,6 +12,7 @@ import {
     SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_DATABASE_TWO,
     SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_DATABASE_THREE,
     SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_WITH_IDENTITY,
+    SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_WITH_IDENTITY_AND_ACCESS_CONTROLLER,
  } from './swarm-storage-orbit-db.test.const';
 import { SWARM_CONNECTION_OPTIONS } from 'test/ipfs-swarm-connection.test/ipfs-swarm-connection.const';
 import { SwarmConnection } from 'classes/swarm-connection-class/swarm-connection-class';
@@ -233,11 +234,57 @@ export const runTestSwarmStoreOrbitDBConnection = async () => {
         //     expect(addValueHashAfterClose).to.be.an('error');
         // }).timeout(70000);
 
-        it('create swarm store OrbitDB connector - 1 database with custom identity', async () => {
+        // it('create swarm store OrbitDB connector - 1 database with custom identity', async () => {
+        //     expect(ipfsConnection).to.be.an.instanceof(ipfs);
+
+        //     const connection = new SwarmStoreConnectorOrbitDB<string>(
+        //         SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_WITH_IDENTITY as any,
+        //     );
+
+        //     expect(connection).to.be.an.instanceof(SwarmStoreConnectorOrbitDB);
+        //     expect(connection.connect).to.be.a('function');
+            
+        //     let fullProgressEmitted: boolean = false;
+        //     let readyEmitted: string[] = [];
+
+        //     connection.on(ESwarmStoreConnectorOrbitDBEventNames.LOADING, (loadingProgress: number) => {
+        //         if (loadingProgress === 100) {
+        //             fullProgressEmitted = true;
+        //         }
+        //     });
+        //     connection.on(ESwarmStoreConnectorOrbitDBEventNames.READY, (dbName: string) => {
+        //         if (dbName) {
+        //             readyEmitted.push(dbName);
+        //         }
+        //     });
+
+        //     await expect(connection.connect({
+        //         ipfs: ipfsConnection!,
+        //     })).to.be.not.eventually.an.instanceof(Error);
+
+        //     expect(connection.isClosed).to.be.equal(false);
+        //     expect(connection.isReady).to.be.equal(true);
+        //     assert(
+        //         (fullProgressEmitted as boolean) === true,
+        //         'The event 100% loading progress does not emitted',
+        //     )
+        //     expect(readyEmitted)
+        //         .to.be.an('array')
+        //         .that.include.all.members(
+        //             SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE.databases.map(db => db.dbName)
+        //         );
+
+        //     await testDatabase(
+        //         connection,
+        //         SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_DB_NAME,
+        //     );
+        // }).timeout(70000);
+
+        it('create swarm store OrbitDB connector - 1 database with custom acccess provider', async () => {
             expect(ipfsConnection).to.be.an.instanceof(ipfs);
 
             const connection = new SwarmStoreConnectorOrbitDB<string>(
-                SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_WITH_IDENTITY,
+                SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_WITH_IDENTITY_AND_ACCESS_CONTROLLER as any,
             );
 
             expect(connection).to.be.an.instanceof(SwarmStoreConnectorOrbitDB);

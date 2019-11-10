@@ -11,13 +11,19 @@ export type TESwarmStoreConnectorOrbitDBEvents = {
     [ESwarmStoreConnectorOrbitDBEventNames.READY]: string;
 }
 
-export interface ISwarmStoreConnectorOrbitDBOptions {
+export interface ISwarmStoreConnectorOrbitDBOptions<TFeedStoreTypes> {
     // databases which must be started when the orbit db
     // instance will be ready to use
-    databases: ISwarmStoreConnectorOrbitDbDatabaseOptions[];
+    databases: ISwarmStoreConnectorOrbitDbDatabaseOptions<TFeedStoreTypes>[];
     id?: string;
 }
 
 export interface ISwarmStoreConnectorOrbitDBConnectionOptions {
     ipfs: IPFS; // instance of IPFS connection
+}
+
+export interface ISwarmStoreConnectorOrbitDBLogEntity<T> {
+    op?: string,
+    key?: string,
+    value: T,
 }
