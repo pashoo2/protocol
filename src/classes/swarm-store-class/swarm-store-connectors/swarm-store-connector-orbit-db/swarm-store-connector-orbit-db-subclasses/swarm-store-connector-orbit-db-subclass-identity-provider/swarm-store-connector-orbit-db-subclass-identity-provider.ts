@@ -31,9 +31,7 @@ export class SwarmStoreConnectorOrbitDBSubclassIdentityProvider extends Identity
             identity.publicKey,
             identity.publicKey + identity.signatures.id
         );
-        if (!verifyResult) {
-            debugger
-        }
+        
         return verifyResult;
     }
 

@@ -1,12 +1,23 @@
 import { ISwarmStoreConnectorOrbitDBLogEntity } from '../../swarm-store-connector-orbit-db.types';
 
+export interface ISwarmStoreConnectorOrbitDbDatabaseAccessControllerManifest {
+    /**
+     * do not use the manifest to 
+     *
+     * @type {boolean}
+     * @memberof ISwarmStoreConnectorOrbitDbDatabaseAccessControllerManifest
+     */
+    skipManifest?: boolean;
+}
+
 /**
  * return true or false
  * to allow or disallow the acces
  * on the entry for the user with
  * userId === id
  */
-export type TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<TFeedStoreType> = (payload: ISwarmStoreConnectorOrbitDBLogEntity<TFeedStoreType>, id: string) => Promise<boolean>;
+export type TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<TFeedStoreType> = (
+    (payload: ISwarmStoreConnectorOrbitDBLogEntity<TFeedStoreType>, id: string) => Promise<boolean>);
 
 export interface ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess { 
     /**

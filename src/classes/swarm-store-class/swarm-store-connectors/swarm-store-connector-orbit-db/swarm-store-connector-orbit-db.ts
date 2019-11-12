@@ -7,7 +7,7 @@ import { IPFS } from 'types/ipfs.types';
 import { SwarmStoreConnectorOrbitDBSubclassIdentityProvider } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-identity-provider/swarm-store-connector-orbit-db-subclass-identity-provider';
 import { SwarmStoreConnectorOrbitDBSubclassAccessController } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller';
 import { ISwarmStoreConnectorOrbitDBOptions, ISwarmStoreConnectorOrbitDBConnectionOptions, TESwarmStoreConnectorOrbitDBEvents } from './swarm-store-connector-orbit-db.types';
-import { timeout } from 'utils/common-utils/common-utils-timer';
+import { timeout, delay } from 'utils/common-utils/common-utils-timer';
 import { SwarmStoreConnectorOrbitDBDatabase } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database';
 import { ISwarmStoreConnectorOrbitDbDatabaseOptions, TSwarmStoreConnectorOrbitDbDatabaseMathodNames, TSwarmStoreConnectorOrbitDbDatabaseMathodArgument } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import { ESwarmConnectorOrbitDbDatabaseEventNames } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const'; 
@@ -20,6 +20,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
     private static loadCustomIdentityProvider() {
         if (!SwarmStoreConnectorOrbitDB.isLoadedCustomIdentityProvider) {
             Identities.addIdentityProvider(SwarmStoreConnectorOrbitDBSubclassIdentityProvider);
+            SwarmStoreConnectorOrbitDB.isLoadedCustomIdentityProvider = true;
         }
     }
 
@@ -30,6 +31,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
             AccessControllers.addAccessController({
                 AccessController: SwarmStoreConnectorOrbitDBSubclassAccessController,
             });
+            SwarmStoreConnectorOrbitDB.isLoadedCustomAccessController = true;
         }
     }
 
@@ -54,6 +56,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
     public constructor(options: ISwarmStoreConnectorOrbitDBOptions<ISwarmDatabaseValueTypes>) {
         super();
         SwarmStoreConnectorOrbitDB.loadCustomIdentityProvider();
+        SwarmStoreConnectorOrbitDB.loadCustomAccessController();
         this.setOptions(options);
     }
 
@@ -172,6 +175,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
 
         if (databaseOpenResult instanceof Error) {
             await this.closeDatabase(database); // close the connection to the database
+            await delay(300);
             if (openAttempt > SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_RECONNECTION_ATTEMPTS_MAX) {
                 return this.handleErrorOnDbOpen(
                     database,
@@ -179,7 +183,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
                 );
             }
             
-            const openDatabaseResult = await this.openDatabase(dbOptions, openAttempt++);
+            const openDatabaseResult = await this.openDatabase(dbOptions, openAttempt += 1);
 
             if (openDatabaseResult instanceof Error) {
                 return this.handleErrorOnDbOpen(

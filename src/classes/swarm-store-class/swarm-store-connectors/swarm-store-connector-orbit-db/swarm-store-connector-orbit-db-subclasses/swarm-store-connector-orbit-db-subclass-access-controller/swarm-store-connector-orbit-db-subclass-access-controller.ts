@@ -1,14 +1,38 @@
 import OrbitDB from 'orbit-db';
 import AccessController from "orbit-db-access-controllers/src/access-controller-interface";
-import { SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_ACCESS_CONTROLLER_TYPE, SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_ACCESS_CONTROLLER_LOG_PREFIX } from './swarm-store-connector-orbit-db-subclass-access-controller.const';
-import { ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions, TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback } from './swarm-store-connector-orbit-db-subclass-access-controller.types';
+import { 
+  SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_ACCESS_CONTROLLER_TYPE,
+  SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_ACCESS_CONTROLLER_LOG_PREFIX,
+} from './swarm-store-connector-orbit-db-subclass-access-controller.const';
+import {
+  ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions,
+  TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback,
+  ISwarmStoreConnectorOrbitDbDatabaseAccessControllerManifest,
+} from './swarm-store-connector-orbit-db-subclass-access-controller.types';
 import { IdentityProvider } from 'orbit-db-identity-provider';
 
 export class SwarmStoreConnectorOrbitDBSubclassAccessController<T> extends AccessController {
   // Returns the type of the access controller
-  static get type(): string { 
+  public static get type(): string {
     return SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_ACCESS_CONTROLLER_TYPE;
-  }  
+  }
+  /**
+   * create and preload an instance 
+   * of the SwarmStoreConnectorOrbitDBSubclassAccessController
+   *
+   * @static
+   * @template T
+   * @param {OrbitDB} orbitdb
+   * @param {ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions<T>} [options={}]
+   * @returns
+   * @memberof SwarmStoreConnectorOrbitDBSubclassAccessController
+   */
+  public static async create<T>(
+    orbitdb: OrbitDB,
+    options: ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions<T> = {}
+  ): Promise<SwarmStoreConnectorOrbitDBSubclassAccessController<T>> {
+    return new SwarmStoreConnectorOrbitDBSubclassAccessController<T>(orbitdb, options);
+  }
   
   // if true then anyone have access
   // to the database
@@ -73,6 +97,15 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<T> extends Acces
     return false
   }
 
+  /**
+   *  return manifest params
+   *
+   * @returns
+   * @memberof SwarmStoreConnectorOrbitDBSubclassAccessController
+   */
+  public async save(): Promise<ISwarmStoreConnectorOrbitDbDatabaseAccessControllerManifest> {
+    return {};
+  }
 
   /**
    * check if the entry have the common fields

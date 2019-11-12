@@ -16,8 +16,8 @@ export const SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE: ISwarmS
 export const SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_ACCESS_CONTROLLER: ISwarmStoreConnectorOrbitDBOptions<string> = {
     databases: [{
         dbName: SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_DB_NAME,
-        isPublic: false,
-        grantAcess: (entity, id) => {
+        isPublic: true,
+        grantAcess: async (entity, id) => {
             debugger;
             return true;
         }
