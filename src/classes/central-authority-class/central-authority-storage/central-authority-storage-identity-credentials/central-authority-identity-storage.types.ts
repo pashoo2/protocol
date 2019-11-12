@@ -5,7 +5,7 @@ import {
   TCentralAuthorityUserCryptoCredentialsExported,
 } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 import { ownValueOf } from 'types/helper.types';
-import { TSecretStoreCredentials } from 'classes/secret-storage-class/secret-storage-class.types';
+import { ISecretStoreCredentials } from 'classes/secret-storage-class/secret-storage-class.types';
 
 /**
  * contains the user's identifier
@@ -62,7 +62,7 @@ export interface ICAIdentityCredentialsStorage {
   isActive: boolean;
   // connect to the storage with the credentials
   // to decrypt a values stored
-  connect(credentials: TSecretStoreCredentials): Promise<boolean | Error>;
+  connect(credentials: ISecretStoreCredentials): Promise<boolean | Error>;
   // disconnect from the storage
   disconnect(): Promise<boolean | Error>;
   // read credentials from the storage

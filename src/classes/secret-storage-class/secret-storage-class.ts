@@ -3,7 +3,7 @@ import {
   TSecretStoreConfiguration,
   TStorageProvider,
   IStorageProvider,
-  TSecretStoreCredentials,
+  ISecretStoreCredentials,
   ISecretStorage,
   ISecretStorageOptions,
 } from './secret-storage-class.types';
@@ -409,7 +409,7 @@ export class SecretStorage
   }
 
   public async authorize(
-    credentials: TSecretStoreCredentials,
+    credentials: ISecretStoreCredentials,
     options?: ISecretStorageOptions,
   ): Promise<boolean | Error> {
     const { password } = credentials;

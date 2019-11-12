@@ -9,7 +9,7 @@ import {
 import { ICAIdentityCredentialsStorage } from './central-authority-identity-storage.types';
 import { SecretStorage } from 'classes/secret-storage-class/secret-storage-class';
 import {
-  TSecretStoreCredentials,
+  ISecretStoreCredentials,
   ISecretStorage,
 } from 'classes/secret-storage-class/secret-storage-class.types';
 import {
@@ -75,7 +75,7 @@ export class CentralAuthorityIdentityCredentialsStorage
    * @param storageCredentials
    */
   public async connect(
-    storageCredentials?: TSecretStoreCredentials
+    storageCredentials?: ISecretStoreCredentials
   ): Promise<boolean | Error> {
     const connection = this.createConnectionToSecretStorage();
 

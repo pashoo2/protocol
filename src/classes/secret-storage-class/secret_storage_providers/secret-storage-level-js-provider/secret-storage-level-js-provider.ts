@@ -32,14 +32,27 @@ export class SecretStorageProviderLevelJS implements StorageProvider {
     return true;
   }
 
-  public async set(key: string, value: string): Promise<Error | true> {
+  /**
+   * WARNING! If the value is empty
+   * it will be removed with the leveljs.del
+   * 
+   * @param {string} key
+   * @param {string} [value]
+   * @returns {(Promise<Error | true>)}
+   * @memberof SecretStorageProviderLevelJS
+   */
+  public async set(key: string, value?: string): Promise<Error | true> {
     try {
       const { levelStorage } = this;
 
       if (!levelStorage) {
         return new Error('There is no storage connected');
       }
-      await levelStorage.put(key, value);
+      if (!value) {
+        await levelStorage.del(key);
+      } else {
+        await levelStorage.put(key, value);
+      }
       return true;
     } catch (err) {
       return err;

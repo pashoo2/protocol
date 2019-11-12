@@ -1,5 +1,5 @@
 import {
-  TSecretStoreCredentials,
+  ISecretStoreCredentials,
   TSecretStoreConfiguration,
   TSecretStorageProviderName,
 } from 'classes/secret-storage-class/secret-storage-class.types';
@@ -30,7 +30,7 @@ export type TSafeStorageStoredDataType<
 
 export interface ISafeStorageOptions {
   name: string; // a unique name for the storage
-  credentials: TSecretStoreCredentials; // credentials for access to the secret storage
+  credentials: ISecretStoreCredentials; // credentials for access to the secret storage
   dumpIntervalMs?: number; // how often a dump of a data must be saved in secret storage
   storageDumpProvider?: TSafeStorageProviderName; // name for the provider where the dumps will be stored
   storageType?: ESAFE_STORAGE_STORAGE_TYPE; // storage data type

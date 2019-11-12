@@ -8,7 +8,7 @@ export interface ISecretStorage {
   isActive: boolean;
   connect(options?: ISecretStorageOptions): Promise<boolean | Error>;
   // authorize and connect to the storage
-  authorize(credentials: TSecretStoreCredentials): Promise<boolean | Error>;
+  authorize(credentials: ISecretStoreCredentials, options?: ISecretStorageOptions): Promise<boolean | Error>;
   // disconnect from the storage
   disconnect(): Promise<boolean | Error>;
   set(key: string, value: string): Promise<boolean | Error>;
@@ -43,6 +43,6 @@ export type TSecretStoreConfiguration = {
   storageProviderName?: string;
 };
 
-export type TSecretStoreCredentials = {
+export interface ISecretStoreCredentials {
   password: string;
 };

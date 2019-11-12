@@ -1,5 +1,5 @@
 import { CentralAuthorityIdentityCredentialsStorage } from 'classes/central-authority-class/central-authority-storage/central-authority-storage-identity-credentials/central-authority-storage-identity-credentials';
-import { TSecretStoreCredentials } from 'classes/secret-storage-class/secret-storage-class.types';
+import { ISecretStoreCredentials } from 'classes/secret-storage-class/secret-storage-class.types';
 import {
   CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME,
   CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME,
@@ -111,7 +111,7 @@ const runCACredentialsIdentityStorageTestForCredentials = async (
 export const runCACredentialsIdentityStorageTest = async () => {
   console.warn('Storage identity test was started');
   
-  const conectionCredentials: TSecretStoreCredentials = {
+  const conectionCredentials: ISecretStoreCredentials = {
     password: '11234',
   };
   const storageInstance = new CentralAuthorityIdentityCredentialsStorage();
