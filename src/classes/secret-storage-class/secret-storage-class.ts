@@ -5,6 +5,7 @@ import {
   IStorageProvider,
   TSecretStoreCredentials,
   ISecretStorage,
+  ISecretStorageOptions,
 } from './secret-storage-class.types';
 import {
   SECRET_STORAGE_PROVIDERS,
@@ -68,6 +69,24 @@ export class SecretStorage
   private storageProviderName?: ownValueOf<
     typeof SECRET_STORAGE_PROVIDERS_NAME
   >;
+
+  /**
+   * options for the instance
+   *
+   * @private
+   * @type {ISecretStorageOptions}
+   * @memberof SecretStorage
+   */
+  private options?: ISecretStorageOptions;
+
+  /**
+   * name of the database
+   *
+   * @private
+   * @type {string}
+   * @memberof SecretStorage
+   */
+  private dbName?: string;
 
   /**
    * returns true if connected succesfully to
@@ -149,7 +168,10 @@ export class SecretStorage
       return authStorageProvider;
     }
 
-    const connectResult = await authStorageProvider.connect();
+    const { dbName } = this;
+    const connectResult = await authStorageProvider.connect({
+      dbName,
+    });
 
     if (connectResult instanceof Error) {
       return connectResult;
@@ -316,9 +338,22 @@ export class SecretStorage
     return result === true;
   }
 
-  public async connect(): Promise<boolean | Error> {
+  protected setOptions(options?: ISecretStorageOptions): void {
+    if (options && typeof options === 'object') {
+      this.options = options;
+
+      const { dbName } = options;
+
+      if (dbName && typeof dbName === 'string') {
+        this.dbName = dbName;
+      }
+    }
+  }
+
+  public async connect(options?: ISecretStorageOptions): Promise<boolean | Error> {
     this.clearState();
     this.setStatus(SECRET_STORAGE_STATUS.CONNECTING);
+    this.setOptions(options);
 
     const resultRunAuthProvider = await this.runAuthStorageProvider();
 
@@ -374,7 +409,8 @@ export class SecretStorage
   }
 
   public async authorize(
-    credentials: TSecretStoreCredentials
+    credentials: TSecretStoreCredentials,
+    options?: ISecretStorageOptions,
   ): Promise<boolean | Error> {
     const { password } = credentials;
 
@@ -405,7 +441,7 @@ export class SecretStorage
       this.setErrorStatus(setKeyResult);
       return setKeyResult;
     }
-    return this.connect();
+    return this.connect(options);
   }
 
   protected async getWithStorageProvider(

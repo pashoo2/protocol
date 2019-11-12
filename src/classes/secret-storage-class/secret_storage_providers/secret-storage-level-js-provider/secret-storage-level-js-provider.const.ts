@@ -1,0 +1,1 @@
+export const SECRET_STORAGE_LEVELJS_PROVIDER_DEFAULTS_DB_NAME = '___leveljsdb';

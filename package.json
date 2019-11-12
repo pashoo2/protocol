@@ -5,6 +5,8 @@
   "dependencies": {
     "@types/firebase": "^3.2.1",
     "@types/jest": "24.0.15",
+    "@types/level-js": "^4.0.1",
+    "@types/levelup": "^3.1.1",
     "@types/lodash.memoize": "^4.1.6",
     "@types/lz-string": "^1.3.33",
     "@types/node": "12.0.12",
@@ -14,6 +16,8 @@
     "ajv": "^6.10.2",
     "firebase": "^6.4.2",
     "ipfs": "^0.38.1",
+    "level-js": "^5.0.0",
+    "levelup": "^4.3.2",
     "libp2p": "^0.26.2",
     "libp2p-bootstrap": "^0.9.7",
     "libp2p-delegated-content-routing": "^0.3.1",
