@@ -1,5 +1,6 @@
 import levelup, { LevelUp } from 'levelup';
 import leveljs from 'level-js';
+import encodingDown from 'encoding-down';
 import { StorageProvider, IStorageProviderOptions } from '../../secret-storage-class.types';
 import { SECRET_STORAGE_LEVELJS_PROVIDER_DEFAULTS_DB_NAME } from './secret-storage-level-js-provider.const';
 
@@ -80,7 +81,7 @@ export class SecretStorageProviderLevelJS implements StorageProvider {
     const { dbName } = this;
     const dbNameRes = dbName || SECRET_STORAGE_LEVELJS_PROVIDER_DEFAULTS_DB_NAME;
     
-    const levelStorage = levelup(leveljs(dbNameRes));
+    const levelStorage = levelup(encodingDown(leveljs(dbNameRes)));
 
     try {
       await levelStorage.open();

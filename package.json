@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@types/encoding-down": "^5.0.0",
     "@types/firebase": "^3.2.1",
     "@types/jest": "24.0.15",
     "@types/level-js": "^4.0.1",
@@ -14,6 +15,7 @@
     "@types/react-dom": "16.8.4",
     "@types/uuid": "^3.4.5",
     "ajv": "^6.10.2",
+    "encoding-down": "^6.3.0",
     "firebase": "^6.4.2",
     "ipfs": "^0.38.1",
     "level-js": "^5.0.0",
