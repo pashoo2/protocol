@@ -538,7 +538,7 @@ export class SecretStorage
     return true;
   }
 
-  protected async encryptValue(value: string): Promise<string | Error> {
+  protected async encryptValue(value: string | Buffer): Promise<string | Error> {
     const { k } = this;
 
     if (!(k instanceof CryptoKey)) {
@@ -556,7 +556,10 @@ export class SecretStorage
     return encryptedValue;
   }
 
-  public async set(key: string, value: string): Promise<boolean | Error> {
+  public async set(
+    key: string,
+    value: string | Buffer,
+  ): Promise<boolean | Error> {
     const { isRunning } = this;
     
     if (!isRunning) {

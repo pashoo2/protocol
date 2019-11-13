@@ -11,8 +11,16 @@ export class SecretStorageProviderLevelJS implements StorageProvider {
   
   private options?: IStorageProviderOptions;
 
+  private isDisconnected: boolean = false;
+
   public async connect(options?: IStorageProviderOptions): Promise<true | Error> {
     try {
+      const { isDisconnected } = this;
+
+      if (isDisconnected ) {
+        return new Error('The instance of the SecretStorageProvider was closed before');
+      }
+
       this.setOptions(options);
       
       const res = await this.createInstanceOfLevelDB();
@@ -29,6 +37,21 @@ export class SecretStorageProviderLevelJS implements StorageProvider {
   }
 
   public async disconnect(): Promise<true | Error> {
+    try {
+      const { levelStorage, isDisconnected } = this;
+
+      if (isDisconnected) {
+        return true;
+      }
+      this.setIsDisconnected();
+      if (levelStorage) {
+        await levelStorage.close();
+
+        return true;
+      } 
+    } catch(err) {
+      console.error(err);
+    }
     return true;
   }
 
@@ -43,6 +66,12 @@ export class SecretStorageProviderLevelJS implements StorageProvider {
    */
   public async set(key: string, value?: string): Promise<Error | true> {
     try {
+      const isDisconnected = this.checkIsReady();
+
+      if (isDisconnected instanceof Error) {
+        return isDisconnected;
+      }
+
       const { levelStorage } = this;
 
       if (!levelStorage) {
@@ -61,13 +90,14 @@ export class SecretStorageProviderLevelJS implements StorageProvider {
 
   public async get(key: string): Promise<Error | string | undefined> {
     try {
-      const { levelStorage } = this;
+      const isDisconnected = this.checkIsReady();
 
-      if (!levelStorage) {
-        return new Error('There is no storage connected');
+      if (isDisconnected instanceof Error) {
+        return isDisconnected;
       }
 
-      const item = await levelStorage.get(key);
+      const { levelStorage } = this;
+      const item = await levelStorage!.get(key);
 
       if (typeof item !== 'string') {
         return undefined;
@@ -87,6 +117,21 @@ export class SecretStorageProviderLevelJS implements StorageProvider {
       if (dbName && typeof dbName === 'string') {
         this.dbName = dbName;
       }
+    }
+  }
+
+  protected setIsDisconnected() {
+    this.isDisconnected = true;
+  }
+  
+  protected checkIsReady(): void | Error {
+    const { isDisconnected, levelStorage } = this;
+
+    if (isDisconnected) {
+      return new Error('The StorageProvider instance is disconnected');
+    }
+    if (!levelStorage) {
+      return new Error('There is no storage connected');
     }
   }
 

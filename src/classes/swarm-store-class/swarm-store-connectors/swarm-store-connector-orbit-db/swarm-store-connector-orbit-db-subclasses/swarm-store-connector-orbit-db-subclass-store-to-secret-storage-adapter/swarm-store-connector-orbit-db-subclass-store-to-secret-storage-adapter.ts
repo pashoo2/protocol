@@ -1,10 +1,10 @@
-import { ISwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter } from './swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types';
+import { IOrbitDbCacheStore, IOrbitDbKeystoreStore } from './swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types';
 import { ISecretStorageOptions, ISecretStoreCredentials } from 'classes/secret-storage-class/secret-storage-class.types';
 import undefined from 'firebase/empty-import';
 import { SecretStorage } from 'classes/secret-storage-class/secret-storage-class';
 import { SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_DEFAULT_OPTIONS_SECRET_STORAGE } from './swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.const';
 
-export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter implements ISwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter {
+export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter implements IOrbitDbKeystoreStore, IOrbitDbCacheStore {
     protected options?: ISecretStorageOptions;
 
     protected secretStorage?: InstanceType<typeof SecretStorage>;
@@ -26,6 +26,62 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter imple
         if (result instanceof Error) {
             throw result;
         }
+    }
+
+    public async close(): Promise<void> {
+        const result = await this.disconnectSecretStorage();
+
+        if (result instanceof Error) {
+            console.error(result);
+            throw result;
+        }
+    }
+
+    public async get(k: string): Promise<string | undefined> {
+        const secretStorage = this.getSecretStorage();
+
+        if (secretStorage instanceof Error) {
+            console.error(secretStorage);
+            throw secretStorage;
+        }
+        
+        const result = await secretStorage.get(k);
+
+        if (result instanceof Error) {
+            console.error(result);
+            throw result;
+        }
+        return result 
+            ? result
+            : undefined;
+    }
+
+    public async set(
+        k: string,
+        v: string | Buffer,
+    ): Promise<void> {
+        const secretStorage = this.getSecretStorage();
+
+        if (secretStorage instanceof Error) {
+            console.error(secretStorage);
+            throw secretStorage;
+        }
+        
+        const result = await secretStorage.set(k, v);
+
+        if (result instanceof Error) {
+            console.error(result);
+            throw result;
+        }
+    }
+
+    protected getSecretStorage(): Error | SecretStorage {
+        const { secretStorage } = this;
+
+        if (secretStorage) {
+            return secretStorage;
+        }
+        return new Error('There is no connection to the SecretStorage');
     }
 
     protected setOptions(options: Required<ISecretStorageOptions>): void {
@@ -75,6 +131,10 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter imple
         this.secretStorage = secretStorage;
     }
 
+    private unsetSecretStorage() {
+        this.secretStorage = undefined;
+    }
+
     private startSecretStorage(): Promise<Error | boolean> | Error {
         const { 
             options,
@@ -89,5 +149,23 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter imple
             );
         }
         return new Error('Secret storage is not defined');
+    }
+
+    private async disconnectSecretStorage(): Promise<Error | void> {
+        const { secretStorage } = this;
+
+        if (!secretStorage) {
+            return new Error('There is no instance of the SecretStorage connected to');
+        }
+        try {
+            const result = await secretStorage.disconnect();
+            
+            if (result instanceof Error) {
+                return result;
+            }
+        } catch(err) {
+            return err;
+        }
+        this.unsetSecretStorage();
     }
 }
