@@ -22,6 +22,7 @@ import { ESwarmStoreConnectorOrbitDBEventNames } from 'classes/swarm-store-class
 import { ISwarmStoreConnectorOrbitDbDatabaseValue } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import { COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_ON } from 'const/common-values/common-values';
 import { SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter';
+import { SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.const';
 
 export const testDatabase = async (
     connection: SwarmStoreConnectorOrbitDB<string>,
@@ -348,15 +349,17 @@ export const runTestSwarmStoreOrbitDBConnection = async () => {
             expect(secretStorageAdapter)
                 .to.be.an
                 .instanceof(SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter);
-            
-            await expect(secretStorageAdapter!.open()).to.eventually.be.fulfilled;
+            expect(secretStorageAdapter!.status).to.be.equal(SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS.OPEN);
             await expect(secretStorageAdapter!.get(
                 testKey,
             )).to.be.eventually.oneOf([testValue, undefined]);
+            expect(secretStorageAdapter!.status).to.be.equal(SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS.OPEN);
             await expect(secretStorageAdapter!.put(
                 testKey,
                 testValue,
             )).to.eventually.be.fulfilled;
+            await expect(secretStorageAdapter!.open()).to.eventually.be.fulfilled;
+            expect(secretStorageAdapter!.status).to.be.equal(SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS.OPEN);
             // TODO - must provide storing values as buffer fo the SecretStorage
             await expect(secretStorageAdapter!.get(
                 testKey,
@@ -374,6 +377,7 @@ export const runTestSwarmStoreOrbitDBConnection = async () => {
                 testKeyRandom,
             )).to.be.eventually.equal(testValueRandom);
             await expect(secretStorageAdapter!.close()).to.eventually.be.fulfilled;
+            expect(secretStorageAdapter!.status).to.be.equal(SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS.CLOSE);
         }).timeout(10000);
     });
 };

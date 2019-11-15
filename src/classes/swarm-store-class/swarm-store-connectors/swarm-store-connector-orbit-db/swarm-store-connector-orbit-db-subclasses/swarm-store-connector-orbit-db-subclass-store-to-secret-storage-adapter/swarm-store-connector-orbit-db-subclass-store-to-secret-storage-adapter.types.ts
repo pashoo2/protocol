@@ -1,4 +1,13 @@
+import { SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS } from './swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.const';
+
 export interface IOrbitDbStoreBase {
+    /**
+     *
+     *
+     * @type {string}
+     * @memberof IOrbitDbStoreBase
+     */
+    status: SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS;
     /**
      * open connection to the store
      *

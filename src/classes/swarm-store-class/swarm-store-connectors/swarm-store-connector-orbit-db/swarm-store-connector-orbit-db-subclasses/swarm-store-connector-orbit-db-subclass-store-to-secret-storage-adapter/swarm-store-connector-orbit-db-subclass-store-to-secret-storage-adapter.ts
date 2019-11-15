@@ -1,14 +1,27 @@
 import { ISecretStorageOptions, ISecretStoreCredentials } from 'classes/secret-storage-class/secret-storage-class.types';
 import { SecretStorage } from 'classes/secret-storage-class/secret-storage-class';
 import { IOrbitDbCacheStore, IOrbitDbKeystoreStore } from './swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types';
-import { SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_DEFAULT_OPTIONS_SECRET_STORAGE } from './swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.const';
+import { SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_DEFAULT_OPTIONS_SECRET_STORAGE, SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS } from './swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.const';
 
 export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter implements IOrbitDbKeystoreStore, IOrbitDbCacheStore {
+    public get status(): SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS {
+        const { isClose } = this;
+
+        if (isClose) {
+            return SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS.CLOSE;
+        }
+        return SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS.OPEN;
+    }
+
     protected options?: ISecretStorageOptions;
 
     protected secretStorage?: InstanceType<typeof SecretStorage>;
 
     private credentials?: ISecretStoreCredentials;
+
+    protected isOpen: boolean = false;
+
+    protected isClose: boolean = false;
 
     constructor(
         credentials: ISecretStoreCredentials,
@@ -20,14 +33,27 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter imple
     }
 
     public async open(): Promise<void> {
+        const { isClose, isOpen } = this;
+
+        if (isClose) {
+            throw new Error('The instance was closed before');
+        }
+        if (isOpen) {
+            return;
+        }
+
+
         const result = await this.startSecretStorage();
 
         if (result instanceof Error) {
             throw result;
         }
+        this.setIsOpen();
     }
 
     public async close(): Promise<void> {
+        this.setIsClose();
+
         const result = await this.disconnectSecretStorage();
 
         if (result instanceof Error) {
@@ -37,6 +63,10 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter imple
     }
 
     public async get(k: string): Promise<string | undefined> {
+        // open connection to the secret storage
+        // before any operations
+        await this.openIfNecessary(); 
+
         const secretStorage = this.getSecretStorage();
 
         if (secretStorage instanceof Error) {
@@ -59,6 +89,8 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter imple
         k: string,
         v: string | Buffer,
     ): Promise<void> {
+        await this.openIfNecessary();
+
         const secretStorage = this.getSecretStorage();
 
         if (secretStorage instanceof Error) {
@@ -75,6 +107,14 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter imple
             console.error(result);
             throw result;
         }
+    }
+
+    protected setIsOpen() {
+        this.isOpen = true;
+    }
+
+    protected setIsClose() {
+        this.isClose = true;
     }
 
     protected getSecretStorage(): Error | SecretStorage {
@@ -169,5 +209,14 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter imple
             return err;
         }
         this.unsetSecretStorage();
+    }
+
+    protected async openIfNecessary(): Promise<void> {
+        const { isOpen } = this;
+
+        if (isOpen) {
+            return;
+        }
+        await this.open();
     }
 }
