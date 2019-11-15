@@ -35,7 +35,10 @@ export async function initializeMocha() {
 
 type TCallbackMochaRun = (failures: number) => void
 
-export function runMocha(showErrorsOverlay: boolean = true, cb?: TCallbackMochaRun) {
+export function runMocha(
+    showErrorsOverlay: boolean = true,
+    cb?: TCallbackMochaRun,
+) {
     // it's necessary to disable
     // error overlay to run test
     // with mocha

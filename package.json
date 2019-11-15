@@ -29,6 +29,7 @@
     "libp2p-spdy": "^0.13.3",
     "libp2p-webrtc-star": "^0.16.1",
     "libp2p-websocket-star": "^0.10.2",
+    "localforage": "^1.7.3",
     "lodash.memoize": "^4.1.2",
     "lz-string": "^1.4.4",
     "orbit-db": "^0.22.0",
@@ -69,6 +70,7 @@
   "devDependencies": {
     "@types/chai": "^4.2.4",
     "@types/chai-as-promised": "^7.1.2",
+    "@types/localforage": "0.0.34",
     "@types/mime": "^2.0.1",
     "@types/mocha": "^5.2.7",
     "@types/orbit-db": "git+https://github.com/orbitdb/orbit-db-types.git",

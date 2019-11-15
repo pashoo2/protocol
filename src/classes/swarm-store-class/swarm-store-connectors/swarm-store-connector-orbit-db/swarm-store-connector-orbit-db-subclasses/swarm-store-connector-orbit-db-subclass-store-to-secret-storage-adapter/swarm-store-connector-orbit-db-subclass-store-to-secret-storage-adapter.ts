@@ -1,7 +1,6 @@
-import { IOrbitDbCacheStore, IOrbitDbKeystoreStore } from './swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types';
 import { ISecretStorageOptions, ISecretStoreCredentials } from 'classes/secret-storage-class/secret-storage-class.types';
-import undefined from 'firebase/empty-import';
 import { SecretStorage } from 'classes/secret-storage-class/secret-storage-class';
+import { IOrbitDbCacheStore, IOrbitDbKeystoreStore } from './swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types';
 import { SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_DEFAULT_OPTIONS_SECRET_STORAGE } from './swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.const';
 
 export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter implements IOrbitDbKeystoreStore, IOrbitDbCacheStore {
@@ -56,7 +55,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter imple
             : undefined;
     }
 
-    public async set(
+    public async put(
         k: string,
         v: string | Buffer,
     ): Promise<void> {
@@ -67,7 +66,10 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter imple
             throw secretStorage;
         }
         
-        const result = await secretStorage.set(k, v);
+        const value = v instanceof Buffer
+            ? v.toString()
+            : v;
+        const result = await secretStorage.set(k, value);
 
         if (result instanceof Error) {
             console.error(result);

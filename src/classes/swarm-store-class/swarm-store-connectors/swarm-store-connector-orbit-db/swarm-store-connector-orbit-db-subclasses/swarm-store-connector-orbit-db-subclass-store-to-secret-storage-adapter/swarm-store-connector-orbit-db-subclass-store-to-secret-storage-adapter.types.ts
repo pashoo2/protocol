@@ -1,5 +1,3 @@
-import { ISecretStorageOptions, ISecretStoreCredentials } from 'classes/secret-storage-class/secret-storage-class.types';
-
 export interface IOrbitDbStoreBase {
     /**
      * open connection to the store
@@ -39,7 +37,7 @@ export interface IOrbitDbStoreBase {
      * @returns {Promise<string>}
      * @memberof IOrbitDbStoreBase
      */
-    set(k: string, v: Buffer | string): Promise<void>;
+    put(k: string, v: Buffer | string): Promise<void>;
 }
 
 export interface IOrbitDbKeystoreStore extends IOrbitDbStoreBase {

@@ -65,6 +65,18 @@ export const encryptDataToString = async (
   return encodeArrayBufferToDOMString(encrypted);
 };
 
+export const encryptDataToUInt8Array = async (
+  key: string | CryptoKey,
+  data: TCRYPTO_UTIL_ENCRYPT_DATA_TYPES
+): Promise<Error | Uint8Array> => {
+  const encrypted = await encryptDataToArrayBuffer(key, data);
+
+  if (encrypted instanceof Error) {
+    return encrypted;
+  }
+  return new Uint8Array(encrypted);
+};
+
 export const encryptDataWithPassword = async (
   password: string,
   data: TCRYPTO_UTIL_ENCRYPT_DATA_TYPES
