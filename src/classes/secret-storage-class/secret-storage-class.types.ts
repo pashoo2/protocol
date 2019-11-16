@@ -1,3 +1,5 @@
+import { TPASSWORD_ENCRYPTION_KEY_IMPORT_NATIVE_SUPPORTED_TYPES } from 'utils/password-utils/password-utils.types';
+
 export interface ISecretStorageOptions {
   dbName?: string;
 }
@@ -58,3 +60,7 @@ export type TSecretStoreConfiguration = {
 export interface ISecretStoreCredentials {
   password: string;
 };
+
+export interface ISecretStoreCredentialsCryptoKey {
+  key: CryptoKey
+}

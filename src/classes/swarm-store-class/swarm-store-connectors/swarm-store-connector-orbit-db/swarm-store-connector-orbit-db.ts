@@ -1,5 +1,5 @@
 import OrbitDB from 'orbit-db';
-import Identities, { IdentityProvider } from 'orbit-db-identity-provider';
+import Identities from 'orbit-db-identity-provider';
 import AccessControllers from "orbit-db-access-controllers";
 import { Keystore } from 'orbit-db-keystore';
 import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
@@ -11,19 +11,34 @@ import {
     SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_RECONNECTION_ATTEMPTS_MAX,
     SWARM_STORE_CONNECTOR_ORBITDB_IDENTITY_TYPE,
     SWARM_STORE_CONNECTOR_ORBITDB_KEYSTORE_DEFAULT_DBNAME,
+    SWARM_STORE_CONNECTOR_ORBITDB_KEYSTORE_DEFAULT_DIRECTORY,
 } from './swarm-store-connector-orbit-db.const';
 import { IPFS } from 'types/ipfs.types';
 import { SwarmStoreConnectorOrbitDBSubclassIdentityProvider } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-identity-provider/swarm-store-connector-orbit-db-subclass-identity-provider';
 import { SwarmStoreConnectorOrbitDBSubclassAccessController } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller';
-import { ISwarmStoreConnectorOrbitDBOptions, ISwarmStoreConnectorOrbitDBConnectionOptions, TESwarmStoreConnectorOrbitDBEvents } from './swarm-store-connector-orbit-db.types';
+import { 
+    ISwarmStoreConnectorOrbitDBOptions,
+    ISwarmStoreConnectorOrbitDBConnectionOptions,
+    TESwarmStoreConnectorOrbitDBEvents,
+} from './swarm-store-connector-orbit-db.types';
 import { timeout, delay } from 'utils/common-utils/common-utils-timer';
 import { SwarmStoreConnectorOrbitDBDatabase } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database';
-import { ISwarmStoreConnectorOrbitDbDatabaseOptions, TSwarmStoreConnectorOrbitDbDatabaseMathodNames, TSwarmStoreConnectorOrbitDbDatabaseMathodArgument } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
+import { 
+    ISwarmStoreConnectorOrbitDbDatabaseOptions,
+    TSwarmStoreConnectorOrbitDbDatabaseMathodNames,
+    TSwarmStoreConnectorOrbitDbDatabaseMathodArgument,
+} from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import { ESwarmConnectorOrbitDbDatabaseEventNames } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const'; 
 import { commonUtilsArrayDeleteFromArray } from 'utils/common-utils/common-utils';
-import { COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_ON, COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_OFF, COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_UNSET_ALL_LISTENERS } from 'const/common-values/common-values';
+import { 
+    COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_ON,
+    COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_OFF,
+    COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_UNSET_ALL_LISTENERS,
+} from 'const/common-values/common-values';
 import { SecretStorage } from 'classes/secret-storage-class/secret-storage-class';
 import { SwarmStorageConnectorOrbitDBSublassKeyStore } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-keystore/swarm-store-connector-orbit-db-subclass-keystore';
+import { ISwarmStoreConnectorOrbitDBSubclassStorageFabric } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-storage-fabric/swarm-store-connector-orbit-db-subclass-storage-fabric.types';
+import { SwarmStoreConnectorOrbitDBSubclassStorageFabric } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-storage-fabric/swarm-store-connector-orbit-db-subclass-storage-fabric';
 
 export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventEmitter<TESwarmStoreConnectorOrbitDBEvents> {
     private static isLoadedCustomIdentityProvider: boolean = false;
@@ -50,7 +65,9 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
 
     public isClosed: boolean = false;
 
-    protected userId?: string;
+    protected userId: string = '';
+
+    protected directory: string = SWARM_STORE_CONNECTOR_ORBITDB_KEYSTORE_DEFAULT_DIRECTORY;
 
     protected identity?: any;
 
@@ -65,6 +82,8 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
     protected databases: SwarmStoreConnectorOrbitDBDatabase<ISwarmDatabaseValueTypes>[] = [];
 
     protected identityKeystore?: Keystore;
+
+    protected storage?: ISwarmStoreConnectorOrbitDBSubclassStorageFabric;
 
     public constructor(options: ISwarmStoreConnectorOrbitDBOptions<ISwarmDatabaseValueTypes>) {
         super();
@@ -482,17 +501,26 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
         
         this.options = options;
     
-        const { id, credentials } = options;
+        const { 
+            id,
+            credentials,
+            directory,
+        } = options;
 
         if (!id) {
             console.warn(new Error('The user id is not provided'));
         } else {
             this.userId = id;
         }
+        if (typeof directory === 'string') {
+            this.directory = directory;
+        }
         if (credentials) {
             // if credentials provided, then 
-            // create the secret keystorages
+            // create the secret keystorage
             this.createIdentityKeystores(credentials);
+            // create secret storage fabric
+            this.createStorage(credentials);
         }
     }
 
@@ -506,7 +534,9 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
      * @memberof SwarmStoreConnectorOrbitDB
      * @throws Error
      */
-    private createIdentityKeystores(credentials: (ISwarmStoreConnectorOrbitDBOptions<ISwarmDatabaseValueTypes>)['credentials']): void {
+    private createIdentityKeystores(
+        credentials: (ISwarmStoreConnectorOrbitDBOptions<ISwarmDatabaseValueTypes>)['credentials'],
+    ): void {
         const validateCredentialsResult = SecretStorage.validateCredentials(credentials);
 
         if (validateCredentialsResult instanceof Error) {
@@ -514,13 +544,44 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
             throw new Error('createIdentityKeystores::credentials provided are not valid');
         }
         
-        const identityKeystore = this.createKeystore(credentials);
+        const { directory, userId } = this;
+        const identityKeystorePrefix = `${directory}/${userId}`;
+        const identityKeystore = this.createKeystore(
+            credentials,
+            identityKeystorePrefix,
+        );
 
         if (identityKeystore instanceof Error) {
             console.error(identityKeystore);
             throw new Error('Failed on create identity keystore');
         }
         this.identityKeystore = identityKeystore;
+    }
+
+    /**
+     * create a Storage fabric which is
+     * used by the OrbitDB instance
+     * to generate Cache for a
+     * Keystore and various databases
+     * to read/write values from the
+     * local persistent Cache
+     * 
+     * @private
+     * @param {(ISwarmStoreConnectorOrbitDBOptions<ISwarmDatabaseValueTypes>)['credentials']} credentials
+     * @memberof SwarmStoreConnectorOrbitDB
+     * @throws
+     */
+    private createStorage(
+        credentials: (ISwarmStoreConnectorOrbitDBOptions<ISwarmDatabaseValueTypes>)['credentials'],
+    ): void {
+        const validateCredentialsResult = SecretStorage.validateCredentials(credentials);
+
+        if (validateCredentialsResult instanceof Error) {
+            console.error(validateCredentialsResult);
+            throw new Error('createIdentityKeystores::credentials provided are not valid');
+        }
+
+        this.storage = new SwarmStoreConnectorOrbitDBSubclassStorageFabric(credentials!);
     }
 
     protected createKeystore(
@@ -746,7 +807,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
     }
 
     private async createOrbitDBInstance(): Promise<Error | void> {
-        const { ipfs, identity } = this;
+        const { ipfs, identity, storage } = this;
 
         if (!ipfs) {
             return this.emitError('An instance of IPFS must exists', 'createOrbitDBInstance');
@@ -761,7 +822,10 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
 
             const instanceOfOrbitDB = await OrbitDB.createInstance(
                 ipfs,
-                { identity },
+                { 
+                    identity,
+                    storage,
+                },
             );
             
             if (instanceOfOrbitDB instanceof Error) {

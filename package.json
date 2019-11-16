@@ -34,6 +34,7 @@
     "lz-string": "^1.4.4",
     "orbit-db": "^0.22.0",
     "orbit-db-access-controllers": "^0.2.4",
+    "orbit-db-cache": "^0.3.0",
     "orbit-db-identity-provider": "^0.2.1",
     "orbit-db-keystore": "^0.3.3",
     "patch-package": "^6.2.0",

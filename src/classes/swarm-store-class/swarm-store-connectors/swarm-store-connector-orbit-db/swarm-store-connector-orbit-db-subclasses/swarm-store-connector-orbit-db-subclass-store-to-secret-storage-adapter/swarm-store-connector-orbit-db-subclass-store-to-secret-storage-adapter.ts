@@ -1,4 +1,5 @@
-import { ISecretStorageOptions, ISecretStoreCredentials } from 'classes/secret-storage-class/secret-storage-class.types';
+
+import { ISecretStorageOptions, ISecretStoreCredentials, ISecretStoreCredentialsCryptoKey } from 'classes/secret-storage-class/secret-storage-class.types';
 import { SecretStorage } from 'classes/secret-storage-class/secret-storage-class';
 import { IOrbitDbCacheStore, IOrbitDbKeystoreStore } from './swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types';
 import { SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_DEFAULT_OPTIONS_SECRET_STORAGE, SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS } from './swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.const';
@@ -19,12 +20,14 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter imple
 
     private credentials?: ISecretStoreCredentials;
 
+    private credentialsCryptoKey?: ISecretStoreCredentialsCryptoKey;
+
     protected isOpen: boolean = false;
 
     protected isClose: boolean = false;
 
     constructor(
-        credentials: ISecretStoreCredentials,
+        credentials: ISecretStoreCredentials | ISecretStoreCredentialsCryptoKey,
         options: Required<ISecretStorageOptions>,
     ) {
         this.setOptions(options);
@@ -109,6 +112,10 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter imple
         }
     }
 
+    public async load() {}
+
+    public async destroy() {}
+
     protected setIsOpen() {
         this.isOpen = true;
     }
@@ -145,7 +152,15 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter imple
         this.options = options;
     }
 
-    protected setCredentials(credentials: ISecretStoreCredentials) {
+    /**
+     * validate and set credentials with password or crypto key
+     *
+     * @protected
+     * @param {(ISecretStoreCredentials | ISecretStoreCredentialsCryptoKey)} credentials
+     * @memberof SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
+     * @throws
+     */
+    protected setCredentials(credentials: ISecretStoreCredentials | ISecretStoreCredentialsCryptoKey) {
         if (!credentials) {
             throw new Error('Credentials must be specified');
         }
@@ -153,12 +168,23 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter imple
             throw new Error('Credentials must be an object');
         }
 
-        const { password } = credentials;
+        if ((credentials as ISecretStoreCredentialsCryptoKey).key) {
+            const credentialsValidationResult = SecretStorage.validateCryptoKeyCredentials(credentials as ISecretStoreCredentialsCryptoKey);
 
-        if (!password) {
-            throw new Error('A password must be specified');
+            if (credentialsValidationResult instanceof Error) {
+                console.error(credentialsValidationResult);
+                throw new Error('setCredentials::crypto credentials not valid');
+            }
+            this.credentialsCryptoKey = credentials as ISecretStoreCredentialsCryptoKey;
+        } else if ((credentials as ISecretStoreCredentials).password) {
+            const credentialsValidationResult = SecretStorage.validateCredentials(credentials as ISecretStoreCredentials);
+
+            if (credentialsValidationResult instanceof Error) {
+                console.error(credentialsValidationResult);
+                throw new Error('setCredentials::credentials not valid');
+            }
+            this.credentials = credentials as ISecretStoreCredentials;
         }
-        this.credentials = credentials;
     }
 
     protected unsetCredentials() {
@@ -182,13 +208,22 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter imple
             options,
             credentials,
             secretStorage,
+            credentialsCryptoKey,
         } = this;
         
         if (secretStorage) {
-            return secretStorage.authorize(
-                credentials!,
-                options!,
-            );
+            if (credentialsCryptoKey) {
+                return secretStorage.authorizeByKey(
+                    credentialsCryptoKey!,
+                    options!,
+                );
+            } else if (credentials) {
+                return secretStorage.authorize(
+                    credentials!,
+                    options!,
+                );
+            }
+            return new Error('Credentials was not provided');
         }
         return new Error('Secret storage is not defined');
     }

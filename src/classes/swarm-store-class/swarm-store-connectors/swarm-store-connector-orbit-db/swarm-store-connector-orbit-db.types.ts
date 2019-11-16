@@ -12,10 +12,19 @@ export type TESwarmStoreConnectorOrbitDBEvents = {
     [ESwarmStoreConnectorOrbitDBEventNames.READY]: string;
 }
 
+/**
+ * directory - this string will be used as a 
+ * part of keynames for all storages and databases
+ *
+ * @export
+ * @interface ISwarmStoreConnectorOrbitDBOptions
+ * @template TFeedStoreTypes
+ */
 export interface ISwarmStoreConnectorOrbitDBOptions<TFeedStoreTypes> {
     // databases which must be started when the orbit db
     // instance will be ready to use
     databases: ISwarmStoreConnectorOrbitDbDatabaseOptions<TFeedStoreTypes>[];
+    directory?: string; 
     id?: string;
     credentials?: ISecretStoreCredentials;
 }

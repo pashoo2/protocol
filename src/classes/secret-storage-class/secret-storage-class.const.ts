@@ -18,6 +18,8 @@ export const SECRET_STORAGE_PROVIDERS: ILocalStorageProviderTable = {
   [SECRET_STORAGE_PROVIDERS_NAME.LOCAL_FORAGE]: SecretStorageProviderLocalForage,
 };
 
+export const SECRET_STORAGE_PASSWORD_MIN_LENGTH = 6;
+
 export const SECRET_STORAGE_PROVIDERS_NAMES = Object.values(
   SECRET_STORAGE_PROVIDERS_NAME
 );

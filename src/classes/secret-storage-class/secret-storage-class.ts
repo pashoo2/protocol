@@ -5,12 +5,14 @@ import {
   ISecretStoreCredentials,
   ISecretStorage,
   ISecretStorageOptions,
+  ISecretStoreCredentialsCryptoKey,
 } from './secret-storage-class.types';
 import {
   SECRET_STORAGE_PROVIDERS,
   SECRET_STORAGE_PROVIDERS_NAME,
   SECRET_STORAGE_PROVIDERS_NAMES,
   SECRET_STORAGE_STATUS,
+  SECRET_STORAGE_PASSWORD_MIN_LENGTH,
 } from './secret-storage-class.const';
 import { ownValueOf, ownKeyOf } from 'types/helper.types';
 import {
@@ -41,8 +43,41 @@ export class SecretStorage
     const { password } = credentials;
 
     if (typeof password !== 'string') {
-      return new Error('validateCredentials::A password string must be provided to authorize');;
+      return new Error('validateCredentials::A password string must be provided to authorize');
     }
+    if (!password) {
+      return new Error('validateCredentials::A password non-empty string must be provided to authorize');
+    }
+    if (password.length < SECRET_STORAGE_PASSWORD_MIN_LENGTH) {
+      return new Error(`validateCredentials::The password string must be a ${SECRET_STORAGE_PASSWORD_MIN_LENGTH} characters ar least`);
+    }
+  }
+
+  public static validateCryptoKeyCredentials(credentials?: ISecretStoreCredentialsCryptoKey): void | Error {
+    if (!credentials) {
+      return new Error('validateCryptoKeyCredentials::Credentials must not be empty');
+    }
+    if (typeof credentials !== 'object') {
+      return new Error('validateCryptoKeyCredentials::Credentials must be an object');
+    }
+
+    const { key } = credentials;
+
+    if (!key) {
+      return new Error('validateCryptoKeyCredentials::A Key must be provided to authorize');
+    }
+    if (key instanceof CryptoKey) {
+      return;
+    }
+    return new Error('validateCryptoKeyCredentials::A Key must be ab instance of CryptoKey');
+  }
+
+  public static async generatePasswordKeyByPasswordString(password: string): Promise<CryptoKey | Error> {
+    if (!password) {
+      return new Error();
+    }
+
+    return generatePasswordKeyByPasswordString(password);
   }
 
   private static checkIsStorageProviderInstance(
@@ -454,13 +489,43 @@ export class SecretStorage
       return credentialsValidationResult;
     }
 
-    const cryptoKey = await generatePasswordKeyByPasswordString(credentials.password);
+    const cryptoKey = await SecretStorage.generatePasswordKeyByPasswordString(
+      credentials.password,
+    );
 
     if (cryptoKey instanceof Error) {
       this.setErrorStatus(cryptoKey);
       return cryptoKey;
     }
 
+    const resultRunAuthProvider = await this.runAuthStorageProvider();
+
+    if (resultRunAuthProvider instanceof Error) {
+      this.setErrorStatus(resultRunAuthProvider);
+      return resultRunAuthProvider;
+    }
+
+    const setKeyResult = await this.setEncryptionKey(cryptoKey);
+
+    if (setKeyResult instanceof Error) {
+      this.setErrorStatus(setKeyResult);
+      return setKeyResult;
+    }
+    return this.connect(options);
+  }
+
+  public async authorizeByKey(
+    credentials: ISecretStoreCredentialsCryptoKey,
+    options?: ISecretStorageOptions,
+  ): Promise<boolean | Error> {
+    const credentialsValidationResult = SecretStorage.validateCryptoKeyCredentials(credentials);
+
+    if (credentialsValidationResult instanceof Error) {
+      this.setErrorStatus(credentialsValidationResult);
+      return credentialsValidationResult;
+    }
+
+    const { key: cryptoKey } = credentials;
     const resultRunAuthProvider = await this.runAuthStorageProvider();
 
     if (resultRunAuthProvider instanceof Error) {
