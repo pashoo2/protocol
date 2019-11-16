@@ -27,7 +27,6 @@ import { SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter } from 'c
 import { SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.const';
 import { SecretStorage } from 'classes/secret-storage-class/secret-storage-class';
 import { SwarmStoreConnectorOrbitDBSubclassStorageFabric } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-storage-fabric/swarm-store-connector-orbit-db-subclass-storage-fabric';
-import Cache from 'orbit-db-cache';
 
 export const testDatabase = async (
     connection: SwarmStoreConnectorOrbitDB<string>,
@@ -452,10 +451,33 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
             testValueRandom,
         )).to.eventually.be.fulfilled;
         // TODO - must provide storing values as buffer fo the SecretStorage
+
+        let cbCalledTimes = 0;
+        const cb = (err: Error | undefined, value: string | undefined) => {
+            if (!err) {
+                cbCalledTimes += Number(!!value);
+            }
+        }
+
         await expect(cache!.get(
             testKeyRandom,
+            cb,
         )).to.be.eventually.equal(testValueRandom);
-        await expect(cache!.close()).to.eventually.be.fulfilled;
+        expect(cbCalledTimes).to.equal(1);
+
+        const cbErr = (err: Error | undefined) => {
+            if (!err) {
+                cbCalledTimes += 1;
+            }
+        }
+
+        await expect(cache!.del(
+            testKeyRandom,
+            cbErr,
+        )).to.be.eventually.equal(undefined);
+        expect(cbCalledTimes).to.equal(2);
+        await expect(cache!.close(cbErr,)).to.eventually.be.fulfilled;
+        expect(cbCalledTimes).to.equal(3);
         expect(cache!.status).to.be.equal(SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS.CLOSE);
     }
 
