@@ -20,7 +20,7 @@ import {
   generatePasswordKeyByPasswordString,
 } from 'utils/password-utils/derive-key.password-utils';
 import { TPASSWORD_ENCRYPTION_KEY_IMPORT_NATIVE_SUPPORTED_TYPES } from 'utils/password-utils/password-utils.types';
-import { decryptDataWithKey, decryptDataArrayOrStringWithKeyToUInt8Array, decryptDataWithKeyFromUint8Array } from 'utils/password-utils/decrypt.password-utils';
+import { decryptDataWithKey, decryptDataWithKeyFromUint8Array } from 'utils/password-utils/decrypt.password-utils';
 import { encryptDataToString, encryptDataToUInt8Array } from 'utils/password-utils/encrypt.password-utils';
 import { getStatusClass } from 'classes/basic-classes/status-class-base/status-class-base';
 
@@ -30,6 +30,21 @@ export class SecretStorage
     instanceName: 'SecretStorage',
   })
   implements ISecretStorage {
+  public static validateCredentials(credentials?: ISecretStoreCredentials): void | Error {
+    if (!credentials) {
+      return new Error('validateCredentials::Credentials must not be empty');
+  }
+  if (typeof credentials !== 'object') {
+    return new Error('validateCredentials::Credentials must be an object');
+  }
+
+    const { password } = credentials;
+
+    if (typeof password !== 'string') {
+      return new Error('validateCredentials::A password string must be provided to authorize');;
+    }
+  }
+
   private static checkIsStorageProviderInstance(
     storageProviderInstance: any,
   ): Error | boolean {
@@ -429,16 +444,14 @@ export class SecretStorage
     credentials: ISecretStoreCredentials,
     options?: ISecretStorageOptions,
   ): Promise<boolean | Error> {
-    const { password } = credentials;
+    const credentialsValidationResult = SecretStorage.validateCredentials(credentials);
 
-    if (typeof password !== 'string') {
-      const err = new Error('A password string must be provided to authorize');
-
-      this.setErrorStatus(err);
-      return err;
+    if (credentialsValidationResult instanceof Error) {
+      this.setErrorStatus(credentialsValidationResult);
+      return credentialsValidationResult;
     }
 
-    const cryptoKey = await generatePasswordKeyByPasswordString(password);
+    const cryptoKey = await generatePasswordKeyByPasswordString(credentials.password);
 
     if (cryptoKey instanceof Error) {
       this.setErrorStatus(cryptoKey);

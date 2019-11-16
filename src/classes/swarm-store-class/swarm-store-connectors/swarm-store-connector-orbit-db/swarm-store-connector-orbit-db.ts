@@ -1,8 +1,9 @@
 import OrbitDB from 'orbit-db';
 import Identities, { IdentityProvider } from 'orbit-db-identity-provider';
 import AccessControllers from "orbit-db-access-controllers";
+import { Keystore } from 'orbit-db-keystore';
 import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
-import { ESwarmStoreConnectorOrbitDBEventNames, SWARM_STORE_CONNECTOR_ORBITDB_CONNECTION_TIMEOUT_MS, SWARM_STORE_CONNECTOR_ORBITDB_LOG_PREFIX, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONNECTION_TIMEOUT_MS, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_RECONNECTION_ATTEMPTS_MAX, SWARM_STORE_CONNECTOR_ORBITDB_IDENTITY_TYPE } from './swarm-store-connector-orbit-db.const';
+import { ESwarmStoreConnectorOrbitDBEventNames, SWARM_STORE_CONNECTOR_ORBITDB_CONNECTION_TIMEOUT_MS, SWARM_STORE_CONNECTOR_ORBITDB_LOG_PREFIX, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONNECTION_TIMEOUT_MS, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_RECONNECTION_ATTEMPTS_MAX, SWARM_STORE_CONNECTOR_ORBITDB_IDENTITY_TYPE, SWARM_STORE_CONNECTOR_ORBITDB_KEYSTORE_DEFAULT_SIGNING_KEYSTORE_PREFIX, SWARM_STORE_CONNECTOR_ORBITDB_KEYSTORE_DEFAULT_DBNAME } from './swarm-store-connector-orbit-db.const';
 import { IPFS } from 'types/ipfs.types';
 import { SwarmStoreConnectorOrbitDBSubclassIdentityProvider } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-identity-provider/swarm-store-connector-orbit-db-subclass-identity-provider';
 import { SwarmStoreConnectorOrbitDBSubclassAccessController } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller';
@@ -13,6 +14,8 @@ import { ISwarmStoreConnectorOrbitDbDatabaseOptions, TSwarmStoreConnectorOrbitDb
 import { ESwarmConnectorOrbitDbDatabaseEventNames } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const'; 
 import { commonUtilsArrayDeleteFromArray } from 'utils/common-utils/common-utils';
 import { COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_ON, COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_OFF, COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_UNSET_ALL_LISTENERS } from 'const/common-values/common-values';
+import { SecretStorage } from 'classes/secret-storage-class/secret-storage-class';
+import { SwarmStorageConnectorOrbitDBSublassKeyStore } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-keystore/swarm-store-connector-orbit-db-subclass-keystore';
 
 export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventEmitter<TESwarmStoreConnectorOrbitDBEvents> {
     private static isLoadedCustomIdentityProvider: boolean = false;
@@ -53,11 +56,15 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
 
     protected databases: SwarmStoreConnectorOrbitDBDatabase<ISwarmDatabaseValueTypes>[] = [];
 
+    protected identityKeystore?: Keystore;
+
+    protected identitySigningKeystore?: Keystore;
+
     public constructor(options: ISwarmStoreConnectorOrbitDBOptions<ISwarmDatabaseValueTypes>) {
         super();
         SwarmStoreConnectorOrbitDB.loadCustomIdentityProvider();
         SwarmStoreConnectorOrbitDB.loadCustomAccessController();
-        this.setOptions(options);
+        this.applyOptions(options);
     }
 
     /**
@@ -454,27 +461,89 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
     }
 
     /**
-     * set options and create the identity
-     * for the user by the user id
+     * apply options provided for the
+     * instance
+     * 
      * @private
      * @param {ISwarmStoreConnectorOrbitDBOptions} options
      * @memberof SwarmStoreConnectorOrbitDB
      * @throws Error - throw an error if the options are not valid
      */
-    private setOptions(options: ISwarmStoreConnectorOrbitDBOptions<ISwarmDatabaseValueTypes>) {
+    private applyOptions(options: ISwarmStoreConnectorOrbitDBOptions<ISwarmDatabaseValueTypes>) {
         if (!options || typeof options !== 'object') {
             throw new Error('The options must be an object');
         }
         
         this.options = options;
     
-        const { id } = options;
+        const { id, credentials } = options;
 
         if (!id) {
             console.warn(new Error('The user id is not provided'));
         } else {
             this.userId = id;
         }
+        if (credentials) {
+            // if credentials provided, then 
+            // create the secret keystorages
+            this.createIdentityKeystores(credentials);
+        }
+    }
+
+    /**
+     * create keystores for identity provider
+     * throw an error if not valid
+     *
+     * @private
+     * @param {(ISwarmStoreConnectorOrbitDBOptions<ISwarmDatabaseValueTypes>)['credentials']} credentials
+     * @returns {void}
+     * @memberof SwarmStoreConnectorOrbitDB
+     * @throws Error
+     */
+    private createIdentityKeystores(credentials: (ISwarmStoreConnectorOrbitDBOptions<ISwarmDatabaseValueTypes>)['credentials']): void {
+        const validateCredentialsResult = SecretStorage.validateCredentials(credentials);
+
+        if (validateCredentialsResult instanceof Error) {
+            console.error(validateCredentialsResult);
+            throw new Error('createIdentityKeystores::credentials provided are not valid');
+        }
+        
+        const identityKeystore = this.createKeystore(credentials);
+
+        if (identityKeystore instanceof Error) {
+            console.error(identityKeystore);
+            throw new Error('Failed on create identity keystore');
+        }
+
+        const identitySigningKeystore = this.createKeystore(credentials);
+
+        if (identitySigningKeystore instanceof Error) {
+            console.error(identitySigningKeystore);
+            throw new Error('Failed on create identity signing keystore');
+        }
+        debugger;
+        this.identityKeystore = identityKeystore;
+        this.identitySigningKeystore = identitySigningKeystore;  
+    }
+
+    protected createKeystore(
+        credentials: (ISwarmStoreConnectorOrbitDBOptions<ISwarmDatabaseValueTypes>)['credentials'],
+        keystoreNamePrefix?: string,
+    ): Keystore | Error {
+        const keystoreName = `${keystoreNamePrefix || ''}${SWARM_STORE_CONNECTOR_ORBITDB_KEYSTORE_DEFAULT_DBNAME}`;
+
+        if (!credentials) {
+            return this.emitError('createKeystore::A Credentials must be provided');
+        }
+        return new SwarmStorageConnectorOrbitDBSublassKeyStore({
+            credentials,
+            store: keystoreName,
+        });
+    }
+    protected createSigningKeystore(
+        credentials: (ISwarmStoreConnectorOrbitDBOptions<ISwarmDatabaseValueTypes>)['credentials'],
+    ): Keystore | Error {
+        return this.createKeystore(credentials, SWARM_STORE_CONNECTOR_ORBITDB_KEYSTORE_DEFAULT_SIGNING_KEYSTORE_PREFIX);
     }
 
     /**
@@ -495,8 +564,10 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
                 id: userId
                     ? userId
                     : undefined,
+                keystore: this.identityKeystore,
+                signingKeystore: this.identitySigningKeystore,
             });
-            
+            debugger
             if (!userId) {
                 this.userId = identity.id;
                 console.warn(`The user id created automatically is ${userId}`);
@@ -584,7 +655,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
         const { options } = this;
 
         if (!options) {
-            this.setOptions({
+            this.applyOptions({
                 databases: [dbOptions],
                 id: '',
             });
