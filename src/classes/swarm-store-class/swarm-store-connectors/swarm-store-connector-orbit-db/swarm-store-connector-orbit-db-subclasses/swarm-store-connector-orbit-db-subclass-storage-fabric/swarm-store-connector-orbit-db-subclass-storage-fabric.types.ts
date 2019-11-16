@@ -1,5 +1,5 @@
-import Cache from 'orbit-db-cache';
+import { IStore } from 'orbit-db-cache';
 
 export interface ISwarmStoreConnectorOrbitDBSubclassStorageFabric {
-    createStore(path: string): Cache
+    createStore(path: string): Promise<IStore>
 }

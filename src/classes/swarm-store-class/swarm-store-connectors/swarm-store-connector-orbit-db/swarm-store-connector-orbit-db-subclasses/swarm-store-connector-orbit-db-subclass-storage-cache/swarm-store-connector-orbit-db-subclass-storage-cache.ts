@@ -1,7 +1,7 @@
 import Cache from 'orbit-db-cache';
 import { SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter } from '../swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter';
 
-export class SwarmStoreConnectorOrbitDBSubclassStorageCache extends SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter implements Cache {
+export class SwarmStoreConnectorOrbitDBSubclassStorageCache extends SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter implements Cache {   
     /**
      * @param {string} k
      * @param {*} v

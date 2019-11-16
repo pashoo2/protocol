@@ -1,7 +1,13 @@
 declare module "orbit-db-cache" {
     export type TCacheStatus = 'open' | 'close';
     
+    export type TCallbackError = (err?: Error) => void;
+
+    export type TCallbackErrorValue = (err?: Error, val?: string) => void;
+
     export interface IStore {
+        db: { status: TCacheStatus  };
+
         /**
          *
          *
@@ -17,7 +23,7 @@ declare module "orbit-db-cache" {
          * @memberof IOrbitDbStoreBase
          * @throws
          */
-        open(): Promise<void>;
+        open(cb?: TCallbackError): Promise<void>;
 
         /**
          * close connection to the storage
@@ -26,7 +32,7 @@ declare module "orbit-db-cache" {
          * @memberof IOrbitDbStoreBase
          * @throws
          */
-        close(): Promise<void>;
+        close(cb?: TCallbackError): Promise<void>;
         /**
          * get the key value as a string,
          * if there is no value for the key
@@ -37,7 +43,18 @@ declare module "orbit-db-cache" {
          * @memberof IOrbitDbStoreBase
          * @throws
          */
-        get(k: string): Promise<string | void>;
+        get(k: string, cb?: TCallbackErrorValue): Promise<string | void>;
+
+        /**
+         * delete the key from the store
+         *
+         * @param {string} k
+         * @param {TCallbackErrorValue} [cb]
+         * @returns {Promise<void>}
+         * @memberof IStore
+         * @throws
+         */
+        del(k: string, cb?: TCallbackErrorValue): Promise<void>;
 
         /**
          * save a string or a Buffer to the 
@@ -50,7 +67,7 @@ declare module "orbit-db-cache" {
          * @returns {Promise<string>}
          * @memberof IOrbitDbStoreBase
          */
-        put(k: string, v: Buffer | string): Promise<void>;
+        put(k: string, v: Buffer | string, cb?: TCallbackError): Promise<void>;
     }
     
     export default class Cache {        

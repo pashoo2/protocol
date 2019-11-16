@@ -119,3 +119,7 @@ export const SWARM_STORE_CONNECTOR_TEST_SUBCLASS_SECRET_STORAGE_CONNECTOR_OPTION
 export const SWARM_STORE_CONNECTOR_TEST_SUBCLASS_SECRET_STORAGE_CONNECTOR_CREDENTIALS: ISecretStoreCredentials = {
     password: '123456',
 };
+
+export const SWARM_STORE_CONNECTOR_TEST_SUBCLASS_CACHE_OPTIONS: Required<ISecretStorageOptions> = {
+    dbName: '__SwarmStorageConnectorTest___DB__TEST',
+};

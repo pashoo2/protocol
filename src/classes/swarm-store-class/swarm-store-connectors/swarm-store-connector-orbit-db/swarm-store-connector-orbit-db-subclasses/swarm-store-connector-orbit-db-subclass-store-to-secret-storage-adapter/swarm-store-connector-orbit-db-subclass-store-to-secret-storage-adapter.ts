@@ -3,6 +3,7 @@ import { ISecretStorageOptions, ISecretStoreCredentials, ISecretStoreCredentials
 import { SecretStorage } from 'classes/secret-storage-class/secret-storage-class';
 import { IOrbitDbCacheStore, IOrbitDbKeystoreStore } from './swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types';
 import { SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_DEFAULT_OPTIONS_SECRET_STORAGE, SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS } from './swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.const';
+import { TCallbackError, TCallbackErrorValue } from 'orbit-db-cache';
 
 export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter implements IOrbitDbKeystoreStore, IOrbitDbCacheStore {
     public get status(): SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS {
@@ -12,6 +13,20 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter imple
             return SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS.CLOSE;
         }
         return SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS.OPEN;
+    }
+    
+    /**
+     * this is used in the Cache(orbit-db-cache) in status
+     * ` get status () { return this._store.db.status } `
+     *  
+     * @readonly
+     * @type {{ status: SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS }}
+     * @memberof SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
+     */
+    public get db() {
+        return {
+            status: this.status,
+        }
     }
 
     protected options?: ISecretStorageOptions;
@@ -35,7 +50,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter imple
         this.createSecretStorage();
     }
 
-    public async open(): Promise<void> {
+    public async open(cb?: TCallbackError): Promise<void> {
         const { isClose, isOpen } = this;
 
         if (isClose) {
@@ -52,9 +67,12 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter imple
             throw result;
         }
         this.setIsOpen();
+        if (typeof cb === 'function') {
+            cb(undefined);
+        }
     }
 
-    public async close(): Promise<void> {
+    public async close(cb?: TCallbackError): Promise<void> {
         this.setIsClose();
 
         const result = await this.disconnectSecretStorage();
@@ -63,9 +81,12 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter imple
             console.error(result);
             throw result;
         }
+        if (typeof cb === 'function') {
+            cb(undefined);
+        }
     }
 
-    public async get(k: string): Promise<string | undefined> {
+    public async get(k: string, cb?: TCallbackErrorValue): Promise<string | undefined> {
         // open connection to the secret storage
         // before any operations
         await this.openIfNecessary(); 
@@ -83,14 +104,19 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter imple
             console.error(result);
             throw result;
         }
-        return result 
+        const resulted = result 
             ? result
             : undefined;
+        if (typeof cb === 'function') {
+            cb(undefined, resulted);
+        }
+        return resulted;
     }
 
     public async put(
         k: string,
         v: string | Buffer,
+        cb?: TCallbackError
     ): Promise<void> {
         await this.openIfNecessary();
 
@@ -110,11 +136,26 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter imple
             console.error(result);
             throw result;
         }
+        if (typeof cb === 'function') {
+            cb(undefined);
+        }
     }
 
+    public del(key: string, cb?: TCallbackError) {
+        return this.put(key, '', cb);
+    }
+
+    // TODO - not implemented in ocrbit-db-cache
     public async load() {}
 
-    public async destroy() {}
+    // TODO - not implemented in ocrbit-db-cache
+    public async destroy() {
+        const { secretStorage } = this;
+
+        if (secretStorage) {
+            await this.disconnectSecretStorage();
+        }
+    }
 
     protected setIsOpen() {
         this.isOpen = true;
@@ -170,7 +211,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter imple
 
         if ((credentials as ISecretStoreCredentialsCryptoKey).key) {
             const credentialsValidationResult = SecretStorage.validateCryptoKeyCredentials(credentials as ISecretStoreCredentialsCryptoKey);
-
+            
             if (credentialsValidationResult instanceof Error) {
                 console.error(credentialsValidationResult);
                 throw new Error('setCredentials::crypto credentials not valid');

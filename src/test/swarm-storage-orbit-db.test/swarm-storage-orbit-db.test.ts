@@ -16,6 +16,7 @@ import {
     SWARM_STORE_CONNECTOR_TEST_SUBCLASS_SECRET_STORAGE_CONNECTOR_CREDENTIALS,
     SWARM_STORE_CONNECTOR_TEST_SUBCLASS_SECRET_STORAGE_CONNECTOR_OPTIONS,
     SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_THREE_DATABASES_WITH_IDENTITY_AND_ACCESS_CONTROLLER_SECRET_KEYSTORE,
+    SWARM_STORE_CONNECTOR_TEST_SUBCLASS_CACHE_OPTIONS,
  } from './swarm-storage-orbit-db.test.const';
 import { SWARM_CONNECTION_OPTIONS } from 'test/ipfs-swarm-connection.test/ipfs-swarm-connection.const';
 import { SwarmConnection } from 'classes/swarm-connection-class/swarm-connection-class';
@@ -24,6 +25,9 @@ import { ISwarmStoreConnectorOrbitDbDatabaseValue } from 'classes/swarm-store-cl
 import { COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_ON } from 'const/common-values/common-values';
 import { SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter';
 import { SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.const';
+import { SecretStorage } from 'classes/secret-storage-class/secret-storage-class';
+import { SwarmStoreConnectorOrbitDBSubclassStorageFabric } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-storage-fabric/swarm-store-connector-orbit-db-subclass-storage-fabric';
+import Cache from 'orbit-db-cache';
 
 export const testDatabase = async (
     connection: SwarmStoreConnectorOrbitDB<string>,
@@ -340,7 +344,7 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
         }
 
         if (!name || name === 'create swarm store OrbitDB connector - 3 databases with custom acccess provider and secret keystore') {
-            it('create swarm store OrbitDB connector - 1 database with custom acccess provider and secret keystore', async () => {
+            it('create swarm store OrbitDB connector - 3 databases with custom acccess provider and secret keystore', async () => {
                 expect(ipfsConnection).to.be.an.instanceof(ipfs);
 
                 const connection = new SwarmStoreConnectorOrbitDB<string>(
@@ -414,6 +418,47 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
         }
     })
 
+    async function testCache(cache: SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter) {
+        const testKey = '___test_key__cache';
+        const testValue = '___test_value_cache';
+
+        expect(cache)
+            .to.be.an
+            .instanceof(SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter);
+        expect(cache.db).to.deep.equal({
+            status: SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS.OPEN
+        })
+        expect(cache!.status).to.be.equal(SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS.OPEN);
+        await expect(cache!.get(
+            testKey,
+        )).to.be.eventually.oneOf([testValue, undefined]);
+        expect(cache!.status).to.be.equal(SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS.OPEN);
+        await expect(cache!.put(
+            testKey,
+            testValue,
+        )).to.eventually.be.fulfilled;
+        await expect(cache!.open()).to.eventually.be.fulfilled;
+        expect(cache!.status).to.be.equal(SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS.OPEN);
+        // TODO - must provide storing values as buffer fo the SecretStorage
+        await expect(cache!.get(
+            testKey,
+        )).to.be.eventually.equal(testValue);
+
+        const testKeyRandom = `${Date.now()}!@#$%^&**()_)_)*(&*&TY&*%*$^#$*:":/*/-*)//..,<><.~~~~';`;
+        const testValueRandom = `${new Date()}!@#$%^&**()_)_)*(&*&TY&*%*$^#$*:":/*/-*)//..,<><.~~~~';`;
+
+        await expect(cache!.put(
+            testKeyRandom,
+            testValueRandom,
+        )).to.eventually.be.fulfilled;
+        // TODO - must provide storing values as buffer fo the SecretStorage
+        await expect(cache!.get(
+            testKeyRandom,
+        )).to.be.eventually.equal(testValueRandom);
+        await expect(cache!.close()).to.eventually.be.fulfilled;
+        expect(cache!.status).to.be.equal(SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS.CLOSE);
+    }
+
     describe('swarm store:: orbit db:: subclasses', () => {
         if (!name || name === 'subclass swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter') { 
             it('subclass swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter', async () => {
@@ -459,6 +504,54 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
                 )).to.be.eventually.equal(testValueRandom);
                 await expect(secretStorageAdapter!.close()).to.eventually.be.fulfilled;
                 expect(secretStorageAdapter!.status).to.be.equal(SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS.CLOSE);
+            }).timeout(10000);
+        }
+        if (!name || name === 'subclass swarm-store-connector-orbit-db-subclass-storage-cache') {
+            it('subclass swarm-store-connector-orbit-db-subclass-storage-cache', async () => {
+                const password = '123456';
+                let key: CryptoKey;
+                let cache: undefined | SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter;
+
+                await expect((async () => {
+                    key = await SecretStorage.generatePasswordKeyByPasswordString(password) as CryptoKey;
+                    return key;
+                })()).to.eventually.be.fulfilled;
+
+                expect(key!).to.be.an.instanceOf(CryptoKey);
+                expect(() => {
+                    cache = new SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter(
+                        { key },
+                        SWARM_STORE_CONNECTOR_TEST_SUBCLASS_CACHE_OPTIONS,
+                    );
+                }).to.not.throw();
+                await testCache(cache!);
+            }).timeout(10000);
+        }
+        if (!name || name === 'subclass swarm-store-connector-orbit-db-subclass-storage-fabric') {
+            it('subclass swarm-store-connector-orbit-db-subclass-storage-fabric', async () => {
+                const password = '123456';
+                const cachePath = '___cachePath_test';
+                const passwordFailed = '12345';
+
+                expect(() => {
+                    new SwarmStoreConnectorOrbitDBSubclassStorageFabric(
+                        { password: passwordFailed}
+                    );
+                }).to.throw();
+
+                let fabric: undefined | SwarmStoreConnectorOrbitDBSubclassStorageFabric;
+                let cache: undefined | SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter;
+
+                expect(() => {
+                    fabric = new SwarmStoreConnectorOrbitDBSubclassStorageFabric(
+                        { password }
+                    );
+                }).not.to.throw();
+                expect(fabric).to.be.instanceOf(SwarmStoreConnectorOrbitDBSubclassStorageFabric);
+                await expect((async () => {
+                    cache = await fabric!.createStore(cachePath) as SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter;
+                })()).to.eventually.be.fulfilled;
+                await testCache(cache!);
             }).timeout(10000);
         }
     });
