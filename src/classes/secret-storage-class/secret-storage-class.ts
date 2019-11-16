@@ -241,7 +241,10 @@ export class SecretStorage
             return storageProvider;
           }
 
-          const storageProviderIsRunning = await storageProvider.connect();
+          const { dbName } = this;
+          const storageProviderIsRunning = await storageProvider.connect({
+            dbName,
+          });
 
           if (storageProviderIsRunning instanceof Error) {
             return storageProviderIsRunning;
@@ -514,6 +517,9 @@ export class SecretStorage
 
     const value = await storageProvider.getUInt8Array!(key);
 
+    if (!value) {
+      return undefined;
+    }
     if (value instanceof Error) {
       return SecretStorage.error(value);
     }

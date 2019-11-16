@@ -15,7 +15,7 @@ import {
     SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_WITH_IDENTITY_AND_ACCESS_CONTROLLER,
     SWARM_STORE_CONNECTOR_TEST_SUBCLASS_SECRET_STORAGE_CONNECTOR_CREDENTIALS,
     SWARM_STORE_CONNECTOR_TEST_SUBCLASS_SECRET_STORAGE_CONNECTOR_OPTIONS,
-    SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_WITH_IDENTITY_AND_ACCESS_CONTROLLER_SECRET_KEYSTORE,
+    SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_THREE_DATABASES_WITH_IDENTITY_AND_ACCESS_CONTROLLER_SECRET_KEYSTORE,
  } from './swarm-storage-orbit-db.test.const';
 import { SWARM_CONNECTION_OPTIONS } from 'test/ipfs-swarm-connection.test/ipfs-swarm-connection.const';
 import { SwarmConnection } from 'classes/swarm-connection-class/swarm-connection-class';
@@ -339,14 +339,14 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
             }).timeout(70000);
         }
 
-        if (!name || name === 'create swarm store OrbitDB connector - 1 database with custom acccess provider and secret keystore') {
+        if (!name || name === 'create swarm store OrbitDB connector - 3 databases with custom acccess provider and secret keystore') {
             it('create swarm store OrbitDB connector - 1 database with custom acccess provider and secret keystore', async () => {
                 expect(ipfsConnection).to.be.an.instanceof(ipfs);
 
                 const connection = new SwarmStoreConnectorOrbitDB<string>(
-                    SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_WITH_IDENTITY_AND_ACCESS_CONTROLLER_SECRET_KEYSTORE as any,
+                    SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_THREE_DATABASES_WITH_IDENTITY_AND_ACCESS_CONTROLLER_SECRET_KEYSTORE as any,
                 );
-                debugger
+                
                 expect(connection).to.be.an.instanceof(SwarmStoreConnectorOrbitDB);
                 expect(connection.connect).to.be.a('function');
                 
@@ -384,6 +384,32 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
                     connection,
                     SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_DB_NAME,
                 );
+                await testDatabase(
+                    connection,
+                    SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_TWO_DATABASE_DB_NAME,
+                );
+                await testDatabase(
+                    connection,
+                    SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_THREE_DATABASE_DB_NAME,
+                );
+    
+                let isCloseEmitted: boolean = false;
+    
+                connection[COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_ON](ESwarmStoreConnectorOrbitDBEventNames.CLOSE, () => {
+                    isCloseEmitted = true;
+                });
+    
+                await expect(connection.close()).to.eventually.be.undefined;
+    
+                assert((isCloseEmitted as boolean) === true, 'The close event must be emitted on SwarmStoreConnector close');
+    
+                const addValueHashAfterClose = await connection.request(
+                    SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_DB_NAME,
+                    'add',
+                    SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_TEST_VALUE,
+                )
+            
+                expect(addValueHashAfterClose).to.be.an('error');
             }).timeout(70000);
         }
     })

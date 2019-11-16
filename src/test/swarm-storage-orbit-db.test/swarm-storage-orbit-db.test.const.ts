@@ -19,7 +19,6 @@ export const SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_ACCESS_C
         dbName: SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_DB_NAME,
         isPublic: true,
         grantAcess: async (entity, id) => {
-            debugger;
             return true;
         }
     }],
@@ -58,14 +57,6 @@ export const SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_WITH_IDE
     id: localStorage.getItem(USER_ID_KEY),
 }
 
-export const SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_WITH_IDENTITY_AND_ACCESS_CONTROLLER_SECRET_KEYSTORE = {
-    ...SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_ACCESS_CONTROLLER,
-    id: localStorage.getItem(USER_ID_KEY),
-    credentials: {
-        password: '123456',
-    }
-}
-
 export const SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_DATABASE_TWO = {
     dbName: SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_TWO_DATABASE_DB_NAME,
     isPublic: false,
@@ -80,16 +71,46 @@ export const SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_THREE_DATABASES: ISwa
     databases: [
         {
             dbName: SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_DB_NAME,
-            isPublic: false,
+            isPublic: true,
         },
         {
             ...SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_DATABASE_TWO,
+            isPublic: true,
         },
         {
             ...SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_DATABASE_THREE,
+            isPublic: true,
         },
     ],
 };
+
+export const SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_THREE_DATABASES_CUSTOM_ACCESS_CONTROLLER: ISwarmStoreConnectorOrbitDBOptions<string> = {
+    databases: [
+        {
+            dbName: SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_DB_NAME,
+            isPublic: true,
+        },
+        {
+            ...SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_DATABASE_TWO,
+            isPublic: true,
+        },
+        {
+            ...SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_DATABASE_THREE,
+            isPublic: true,
+            grantAcess: async (entity, id): Promise<boolean> => {
+                return !!entity && !!id;
+            }
+        },
+    ],
+};
+
+export const SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_THREE_DATABASES_WITH_IDENTITY_AND_ACCESS_CONTROLLER_SECRET_KEYSTORE = {
+    ...SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_THREE_DATABASES_CUSTOM_ACCESS_CONTROLLER,
+    id: localStorage.getItem(USER_ID_KEY),
+    credentials: {
+        password: '123456',
+    }
+}
 
 export const SWARM_STORE_CONNECTOR_TEST_SUBCLASS_SECRET_STORAGE_CONNECTOR_OPTIONS: Required<ISecretStorageOptions> = {
     dbName: '__SwarmStorageConnectorTest___DB__TEST',

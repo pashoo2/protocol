@@ -3,7 +3,15 @@ import Identities, { IdentityProvider } from 'orbit-db-identity-provider';
 import AccessControllers from "orbit-db-access-controllers";
 import { Keystore } from 'orbit-db-keystore';
 import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
-import { ESwarmStoreConnectorOrbitDBEventNames, SWARM_STORE_CONNECTOR_ORBITDB_CONNECTION_TIMEOUT_MS, SWARM_STORE_CONNECTOR_ORBITDB_LOG_PREFIX, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONNECTION_TIMEOUT_MS, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_RECONNECTION_ATTEMPTS_MAX, SWARM_STORE_CONNECTOR_ORBITDB_IDENTITY_TYPE, SWARM_STORE_CONNECTOR_ORBITDB_KEYSTORE_DEFAULT_SIGNING_KEYSTORE_PREFIX, SWARM_STORE_CONNECTOR_ORBITDB_KEYSTORE_DEFAULT_DBNAME } from './swarm-store-connector-orbit-db.const';
+import { 
+    ESwarmStoreConnectorOrbitDBEventNames,
+    SWARM_STORE_CONNECTOR_ORBITDB_CONNECTION_TIMEOUT_MS,
+    SWARM_STORE_CONNECTOR_ORBITDB_LOG_PREFIX,
+    SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONNECTION_TIMEOUT_MS,
+    SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_RECONNECTION_ATTEMPTS_MAX,
+    SWARM_STORE_CONNECTOR_ORBITDB_IDENTITY_TYPE,
+    SWARM_STORE_CONNECTOR_ORBITDB_KEYSTORE_DEFAULT_DBNAME,
+} from './swarm-store-connector-orbit-db.const';
 import { IPFS } from 'types/ipfs.types';
 import { SwarmStoreConnectorOrbitDBSubclassIdentityProvider } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-identity-provider/swarm-store-connector-orbit-db-subclass-identity-provider';
 import { SwarmStoreConnectorOrbitDBSubclassAccessController } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller';
@@ -57,8 +65,6 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
     protected databases: SwarmStoreConnectorOrbitDBDatabase<ISwarmDatabaseValueTypes>[] = [];
 
     protected identityKeystore?: Keystore;
-
-    protected identitySigningKeystore?: Keystore;
 
     public constructor(options: ISwarmStoreConnectorOrbitDBOptions<ISwarmDatabaseValueTypes>) {
         super();
@@ -514,16 +520,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
             console.error(identityKeystore);
             throw new Error('Failed on create identity keystore');
         }
-
-        const identitySigningKeystore = this.createKeystore(credentials);
-
-        if (identitySigningKeystore instanceof Error) {
-            console.error(identitySigningKeystore);
-            throw new Error('Failed on create identity signing keystore');
-        }
-        debugger;
         this.identityKeystore = identityKeystore;
-        this.identitySigningKeystore = identitySigningKeystore;  
     }
 
     protected createKeystore(
@@ -531,7 +528,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
         keystoreNamePrefix?: string,
     ): Keystore | Error {
         const keystoreName = `${keystoreNamePrefix || ''}${SWARM_STORE_CONNECTOR_ORBITDB_KEYSTORE_DEFAULT_DBNAME}`;
-
+        
         if (!credentials) {
             return this.emitError('createKeystore::A Credentials must be provided');
         }
@@ -539,11 +536,6 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
             credentials,
             store: keystoreName,
         });
-    }
-    protected createSigningKeystore(
-        credentials: (ISwarmStoreConnectorOrbitDBOptions<ISwarmDatabaseValueTypes>)['credentials'],
-    ): Keystore | Error {
-        return this.createKeystore(credentials, SWARM_STORE_CONNECTOR_ORBITDB_KEYSTORE_DEFAULT_SIGNING_KEYSTORE_PREFIX);
     }
 
     /**
@@ -565,9 +557,8 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes> extends EventE
                     ? userId
                     : undefined,
                 keystore: this.identityKeystore,
-                signingKeystore: this.identitySigningKeystore,
             });
-            debugger
+
             if (!userId) {
                 this.userId = identity.id;
                 console.warn(`The user id created automatically is ${userId}`);

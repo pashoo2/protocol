@@ -14,7 +14,6 @@ import { extendsOptionsWithStore } from './swarm-store-connector-orbit-db-subcla
 export class SwarmStorageConnectorOrbitDBSublassKeyStore extends KeystoreClass {
     constructor(options: IOrbitDBKeystoreOptionsForSecretStorage) {
         const optionsWithSecretStore = extendsOptionsWithStore(options);
-        debugger;
         super(optionsWithSecretStore);
     }
 }

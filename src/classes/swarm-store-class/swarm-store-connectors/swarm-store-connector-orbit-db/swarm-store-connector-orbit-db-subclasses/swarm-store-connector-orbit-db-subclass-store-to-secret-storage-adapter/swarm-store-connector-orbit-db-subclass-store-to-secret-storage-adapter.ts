@@ -27,7 +27,6 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter imple
         credentials: ISecretStoreCredentials,
         options: Required<ISecretStorageOptions>,
     ) {
-        debugger;
         this.setOptions(options);
         this.setCredentials(credentials);
         this.createSecretStorage();
@@ -35,7 +34,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter imple
 
     public async open(): Promise<void> {
         const { isClose, isOpen } = this;
-        debugger;
+
         if (isClose) {
             throw new Error('The instance was closed before');
         }
@@ -76,7 +75,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter imple
         }
         
         const result = await secretStorage.get(k);
-
+        
         if (result instanceof Error) {
             console.error(result);
             throw result;

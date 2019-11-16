@@ -165,6 +165,9 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
         key,
       );
       
+      if (!item) {
+        return undefined;
+      }
       return new Uint8Array(item as any);
     } catch (err) {
       return err;
@@ -174,9 +177,9 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
   protected setOptions(options?: IStorageProviderOptions): void {
     if (options && typeof options === 'object') {
       this.options = options;
-      
-      const { dbName } = options;
 
+      const { dbName } = options;
+      
       if (dbName && typeof dbName === 'string') {
         this.dbName = dbName;
       }
