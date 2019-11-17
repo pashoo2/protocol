@@ -1,9 +1,7 @@
 import Multiaddr from 'multiaddr';
 import {
-  SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_MULTIADDRS,
   SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_BOOTSTRAP_MULTIADDRS,
-  BOOTSTRAP_LIST,
-  DELEGATE_LIST,
+  SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_MULTIADDRS,
 } from './swarm-connection-class-subclass-ipfs.delegate.conf';
 import { SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_SIGNAL_STAR_MULTIADDRESSES } from './swarm-connection-class-subclass-ipfs.signal-star.conf';
 
@@ -17,14 +15,13 @@ export const SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_FOR_BROWSER_DEFAULT = {
   Addresses: {
     // if a dommain used then '/dns4/wrtc-star.discovery.libp2p.io/tcp/443/wss/p2p-webrtc-star'
     Swarm: [
-      ...SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_SIGNAL_STAR_MULTIADDRESSES,
-      ...BOOTSTRAP_LIST,
+      // ...SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_SIGNAL_STAR_MULTIADDRESSES,
+      ...SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_BOOTSTRAP_MULTIADDRS,
     ],
     API: '',
     Gateway: '',
     Delegates: [
-      // TODO - use delegates only for a weak devices
-      ...DELEGATE_LIST,
+      ...SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_MULTIADDRS,
     ],
   },
   Discovery: {
@@ -37,7 +34,7 @@ export const SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_FOR_BROWSER_DEFAULT = {
     },
   },
   Bootstrap: [
-    ...BOOTSTRAP_LIST,
+    ...SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_BOOTSTRAP_MULTIADDRS,
   ],
   Pubsub: {
     Enabled: true,

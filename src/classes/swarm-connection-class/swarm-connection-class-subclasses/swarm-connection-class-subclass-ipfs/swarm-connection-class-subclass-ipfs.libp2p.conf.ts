@@ -25,8 +25,9 @@ export const getLibPeerToPeer = (opts: any) => {
   // Set convenience variables to clearly showcase some of the useful things that are available
   const peerInfo = opts.peerInfo;
   const peerBook = opts.peerBook;
+  // bootstrap peers in the main configuration
   const bootstrapList = opts.config.Bootstrap;
-  debugger
+  
   // Create our WebSocketStar transport and give it our PeerId, straight from the ipfs node
   const wstar = new WStar({
     id: peerInfo.id,
@@ -35,9 +36,6 @@ export const getLibPeerToPeer = (opts: any) => {
     id: peerInfo.id,
   });
   // Content and peer routing
-  // TODO - use delegates only for a weak devices
-  // cause all the traffic will go through it
-  // if defined
   // https://github.com/libp2p/js-libp2p/tree/master/examples/peer-and-content-routing
   // https://github.com/libp2p/js-libp2p/tree/master/examples/delegated-routing
   const delegatePeerRouter = new DelegatedPeerRouter(
