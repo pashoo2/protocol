@@ -29,7 +29,6 @@
     "libp2p-spdy": "^0.13.3",
     "libp2p-webrtc-star": "^0.16.1",
     "libp2p-websocket-star": "^0.10.2",
-    "libp2p-websockets": "^0.13.1",
     "localforage": "^1.7.3",
     "lodash.memoize": "^4.1.2",
     "lz-string": "^1.4.4",

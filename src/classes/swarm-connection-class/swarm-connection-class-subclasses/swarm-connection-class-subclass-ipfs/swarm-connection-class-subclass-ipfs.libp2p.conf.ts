@@ -5,7 +5,6 @@
 // about libp2p-secio https://github.com/auditdrivencrypto/secure-channel/blob/master/prior-art.md#ipfss-secure-channel
 import * as Libp2p from 'libp2p';
 import * as KadDHT from 'libp2p-kad-dht';
-import * as WS from 'libp2p-websockets';
 import * as WebSocketStar from 'libp2p-websocket-star';
 import * as SPDY from 'libp2p-spdy';
 import * as MPLEX from 'pull-mplex';
@@ -28,8 +27,8 @@ export const getLibPeerToPeer = (opts: any) => {
   // Set convenience variables to clearly showcase some of the useful things that are available
   const peerInfo = opts.peerInfo;
   const peerBook = opts.peerBook;
-  // const bootstrapList = opts.config.Bootstrap;
-
+  const bootstrapList = opts.config.Bootstrap;
+  debugger
   // Create our WebSocketStar transport and give it our PeerId, straight from the ipfs node
   const wstar = new WStar({
     id: peerInfo.id,
@@ -133,7 +132,7 @@ export const getLibPeerToPeer = (opts: any) => {
         bootstrap: {
           interval: 30e3,
           enabled: true,
-          list: BOOTSTRAP_LIST,
+          list: bootstrapList,
         },
         webrtcStar: {               // webrtc-star options
           interval: 1000,           // ms
