@@ -67,14 +67,25 @@ export const getLibPeerToPeer = (opts: any) => {
   return new Libp2p({
     peerInfo,
     peerBook,
+    /**
+     *  https://github.com/libp2p/js-libp2p/tree/master/src/switch
+     * bp2p-switch is a dialer machine, it leverages the multiple libp2p transports, stream muxers, crypto channels and other connection upgrades to dial to peers in the libp2p network. It also supports Protocol Multiplexing through a multicodec and multistream-select handshake.
+     * libp2p-switch supports private networking. In order to enabled private networks, the switch.protector must be set and must contain a protect method. 
+     * denyTTL: - number of ms a peer should not be dialable to after it errors. Each successive deny will increase the TTL from the base value. Defaults to 5 minutes
+       denyAttempts: - number of times a peer can be denied before they are permanently denied. Defaults to 5.
+       maxParallelDials: - number of concurrent dials the switch should allow. Defaults to 100
+       maxColdCalls: - number of queued cold calls that are allowed. Defaults to 50
+       dialTimeout: - number of ms a dial to a peer should be allowed to run. Defaults to 30000 (30 seconds)
+     * 
+     */
+    switch: {
+      denyTTL: 2 * 60 * 1e3, // 2 minute base
+      denyAttempts: 5, // back off 5 times
+      maxParallelDials: 100,
+      maxColdCalls: 25,
+      dialTimeout: 20e3
+    },
     // Lets limit the connection managers peers and have it check peer health less frequently
-    // switch: {
-    //   denyTTL: 2 * 60 * 1e3, // 2 minute base
-    //   denyAttempts: 5, // back off 5 times
-    //   maxParallelDials: 100,
-    //   maxColdCalls: 25,
-    //   dialTimeout: 20e3
-    // },
     connectionManager: {
       minPeers: 25,
       maxPeers: 100,
