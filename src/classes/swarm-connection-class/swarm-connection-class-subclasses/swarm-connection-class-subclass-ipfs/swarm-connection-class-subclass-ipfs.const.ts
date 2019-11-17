@@ -25,7 +25,7 @@ export const SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DEFALT = {
   preload: {
     enabled: true,
     addresses: [
-      //...DELEGATE_LIST,
+      ...DELEGATE_LIST,
     ],
   },
   EXPERIMENTAL: {

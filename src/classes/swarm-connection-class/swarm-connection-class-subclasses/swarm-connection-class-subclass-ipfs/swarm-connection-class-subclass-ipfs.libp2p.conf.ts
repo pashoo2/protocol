@@ -17,8 +17,6 @@ import DelegatedContentRouter from 'libp2p-delegated-content-routing';
 import {
   SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_OPTIONS_HTTP,
   SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_OPTIONS_WS,
-  BOOTSTRAP_LIST,
-  DELEGATE_LIST,
 } from './swarm-connection-class-subclass-ipfs.delegate.conf';
 
 // libp2p configuration for browsers
@@ -42,13 +40,14 @@ export const getLibPeerToPeer = (opts: any) => {
   // if defined
   // https://github.com/libp2p/js-libp2p/tree/master/examples/peer-and-content-routing
   // https://github.com/libp2p/js-libp2p/tree/master/examples/delegated-routing
-  // const delegatePeerRouter = new DelegatedPeerRouter(
-  //   SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_OPTIONS_HTTP
-  // );
-  // const delegateContentRouter = new DelegatedContentRouter(
-  //   peerInfo.id,
-  //   SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_OPTIONS_HTTP
-  // );
+  const delegatePeerRouter = new DelegatedPeerRouter(
+     SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_OPTIONS_HTTP
+  );
+  const delegateContentRouter = new DelegatedContentRouter(
+    peerInfo.id,
+    SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_OPTIONS_HTTP
+  );
+  // Websocket connections failed cause CORS policy
   // const delegatePeerRouterWS = new DelegatedPeerRouter(
   //   SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_OPTIONS_WS
   // );
@@ -110,16 +109,14 @@ export const getLibPeerToPeer = (opts: any) => {
       dht: KadDHT,
       // https://github.com/libp2p/specs/tree/master/pubsub/gossipsub
       pubsub: PubSubGossip,
-      /*
-        contentRouting: [
-          // delegateContentRouter,
-          // TODO - CORS failed for websocket // delegateContentRouterWS,
-        ],
-        peerRouting: [
-          // delegatePeerRouter,
-          // TODO - CORS failed for websocket // delegatePeerRouterWS,
-        ],
-      */
+      contentRouting: [
+        delegateContentRouter,
+        // TODO - CORS failed for websocket // delegateContentRouterWS,
+      ],
+      peerRouting: [
+        delegatePeerRouter,
+        // TODO - CORS failed for websocket // delegatePeerRouterWS,
+      ],
     },
     config: {
       peerDiscovery: {

@@ -24,7 +24,7 @@ export const SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_FOR_BROWSER_DEFAULT = {
     Gateway: '',
     Delegates: [
       // TODO - use delegates only for a weak devices
-      // ...DELEGATE_LIST,
+      ...DELEGATE_LIST,
     ],
   },
   Discovery: {

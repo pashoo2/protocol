@@ -56,6 +56,7 @@ export const BOOTSTRAP_LIST = [
 ];
 
 export const DELEGATE_LIST = [
-  '/dns4/0.0.0.0/tcp/4002/http',
+  // the address which API server of the delegate node is listening must be used
+  '/dns4/0.0.0.0/tcp/5002/http',
   // TODO - CORS FAILED for ws connections '/dns4/0.0.0.0/tcp/4003/ws',
 ];
