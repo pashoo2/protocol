@@ -32,6 +32,7 @@ export const testDatabase = async (
     connection: SwarmStoreConnectorOrbitDB<string>,
     dbName: string,
 ) => {
+    const testValue = `${new Date()}--te`;
     const addValueHash = await connection.request(
         dbName,
         'add',
@@ -63,6 +64,50 @@ export const testDatabase = async (
     );
     
     assert(getValueByHashAfterRemoveResult == null, 'The value removed before must be empty');
+}
+
+export const testDatabaseWithRandomValue = async (
+    connection: SwarmStoreConnectorOrbitDB<string>,
+    dbName: string,
+) => {
+    let i = 0;
+
+    while((i += 1) <= 5) {
+        const testValue = `${new Date()}--test-value`;
+        const addValueHash = await connection.request(
+            dbName,
+            'add',
+            testValue,
+        )
+
+        expect(addValueHash).to.be.a('string');
+    
+        const getValueByHashResult: ISwarmStoreConnectorOrbitDbDatabaseValue<string> = (
+            await connection.request(
+                dbName,
+                'get',
+                addValueHash,
+            )
+        );
+    
+        expect(getValueByHashResult.id).to.be.equal((connection as any).orbitDb.identity.id);
+        expect(getValueByHashResult.hash).to.be.equal(addValueHash);
+        expect(getValueByHashResult.value).to.be.equal(testValue);
+    
+        await expect(connection.request(
+            dbName,
+            'remove',
+            addValueHash,
+        )).eventually.not.rejected.not.be.an('error');
+
+        const getValueByHashAfterRemoveResult = await connection.request(
+            dbName,
+            'get',
+            addValueHash,
+        );
+        
+        assert(getValueByHashAfterRemoveResult == null, 'The value removed before must be empty');
+    }
 }
 
 export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
@@ -382,7 +427,7 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
                     .that.include.all.members(
                         SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE.databases.map(db => db.dbName)
                     );
-
+                        
                 await testDatabase(
                     connection,
                     SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_DB_NAME,
@@ -392,6 +437,80 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
                     SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_TWO_DATABASE_DB_NAME,
                 );
                 await testDatabase(
+                    connection,
+                    SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_THREE_DATABASE_DB_NAME,
+                );
+    
+                let isCloseEmitted: boolean = false;
+    
+                connection[COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_ON](ESwarmStoreConnectorOrbitDBEventNames.CLOSE, () => {
+                    isCloseEmitted = true;
+                });
+    
+                await expect(connection.close()).to.eventually.be.undefined;
+    
+                assert((isCloseEmitted as boolean) === true, 'The close event must be emitted on SwarmStoreConnector close');
+    
+                const addValueHashAfterClose = await connection.request(
+                    SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_DB_NAME,
+                    'add',
+                    SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_TEST_VALUE,
+                )
+            
+                expect(addValueHashAfterClose).to.be.an('error');
+            }).timeout(70000);
+        }
+
+        if (!name || name === 'create swarm store OrbitDB connector - 3 databases with custom acccess provider and secret keystore -- with random loop') {
+            it('create swarm store OrbitDB connector - 3 databases with custom acccess provider and secret keystore', async () => {
+                expect(ipfsConnection).to.be.an.instanceof(ipfs);
+
+                const connection = new SwarmStoreConnectorOrbitDB<string>(
+                    SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_THREE_DATABASES_WITH_IDENTITY_AND_ACCESS_CONTROLLER_SECRET_KEYSTORE as any,
+                );
+                
+                expect(connection).to.be.an.instanceof(SwarmStoreConnectorOrbitDB);
+                expect(connection.connect).to.be.a('function');
+                
+                let fullProgressEmitted: boolean = false;
+                let readyEmitted: string[] = [];
+
+                connection.on(ESwarmStoreConnectorOrbitDBEventNames.LOADING, (loadingProgress: number) => {
+                    if (loadingProgress === 100) {
+                        fullProgressEmitted = true;
+                    }
+                });
+                connection.on(ESwarmStoreConnectorOrbitDBEventNames.READY, (dbName: string) => {
+                    if (dbName) {
+                        readyEmitted.push(dbName);
+                    }
+                });
+
+                await expect(connection.connect({
+                    ipfs: ipfsConnection!,
+                })).to.be.not.eventually.an.instanceof(Error);
+
+                expect(connection.isClosed).to.be.equal(false);
+                expect(connection.isReady).to.be.equal(true);
+                assert(
+                    (fullProgressEmitted as boolean) === true,
+                    'The event 100% loading progress does not emitted',
+                )
+                expect(readyEmitted)
+                    .to.be.an('array')
+                    .that.include.all.members(
+                        SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE.databases.map(db => db.dbName)
+                    );
+                        
+                await testDatabaseWithRandomValue(
+                    connection,
+                    SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_DB_NAME,
+                );
+                await testDatabaseWithRandomValue(
+                    connection,
+                    SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_TWO_DATABASE_DB_NAME,
+                );
+                await testDatabaseWithRandomValue(
                     connection,
                     SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_THREE_DATABASE_DB_NAME,
                 );

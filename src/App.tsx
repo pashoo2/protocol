@@ -50,7 +50,7 @@ const runTest = async () => {
   await initializeMocha();
 
   // runTestSwarmConnection();
-  runTestSwarmStoreOrbitDBConnection('subclass swarm-store-connector-orbit-db-subclass-storage-fabric');
+  runTestSwarmStoreOrbitDBConnection('create swarm store OrbitDB connector - 3 databases with custom acccess provider and secret keystore -- with random loop');
   runMocha();
 }
 

@@ -3,6 +3,7 @@ import {
   SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_NODES_BOOTSTRAP,
 } from './swarm-connection-class-subclass-ipfs.browser.conf';
 import { getLibPeerToPeer } from './swarm-connection-class-subclass-ipfs.libp2p.conf';
+import { BOOTSTRAP_LIST } from './swarm-connection-class-subclass-ipfs.delegate.conf';
 
 export const SWARM_CONNECTION_SUBCLASS_IPFS_CDN_SCRIPT_URL =
   'https://cdn.jsdelivr.net/npm/ipfs/dist/index.js';
@@ -24,7 +25,9 @@ export const SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DEFALT = {
   },
   preload: {
     enabled: true,
-    addresses: SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_NODES_BOOTSTRAP,
+    addresses: [
+      //...BOOTSTRAP_LIST,
+    ],
   },
   EXPERIMENTAL: {
     ipnsPubsub: true,
