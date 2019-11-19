@@ -1,0 +1,4 @@
+{
+    "main": "swarm-message.ts",
+    "types": "swarm-message.ts"
+}
