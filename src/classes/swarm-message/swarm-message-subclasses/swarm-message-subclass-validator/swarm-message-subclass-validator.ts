@@ -49,6 +49,17 @@ export class SwarmMessageSubclassValidator {
     protected payloadMinLength: number = SWARM_MESSAGE_SUBCLASS_VALIDATOR_PAYLOAD_MIN_LENGTH_BYTES;
 
     /**
+     * time to life of a message, the message will be invalidated if the
+     * message timestamp is not in the interval within the timestamp. If not defined or se to 0 means infinite
+     * time to live. Time to live in seconds
+     * 
+     * @protected
+     * @type {number}
+     * @memberof SwarmMessageSubclassValidator
+     */
+    protected ttlSeconds?: number;
+
+    /**
      * Creates an instance of SwarmMessageSubclassValidator.
      * @param {IMessageValidatorOptions} options
      * @memberof SwarmMessageSubclassValidator
@@ -367,6 +378,25 @@ export class SwarmMessageSubclassValidator {
     }
 
     /**
+     * validate the timestamp format and
+     * check whether it within the ttl defined
+     *
+     * @param {number} timestamp
+     * @returns {(Error | boolean)}
+     * @memberof SwarmMessageSubclassValidator
+     */
+    public validateTimestamp(timestamp: number): Error | boolean {
+        if (!timestamp) {
+            return new Error('Timestamp must be defined');
+        }
+        if (typeof timestamp !== 'number') {
+            return new Error('Timestamp must be a number');
+        }
+        
+        return true;
+    }
+
+    /**
      * set the options
      *
      * @protected
@@ -385,8 +415,15 @@ export class SwarmMessageSubclassValidator {
                 payloadMinLength,
                 issuersList,
                 typesList,
+                ttlSeconds,
             } = options;
 
+            if (ttlSeconds) {
+                if (typeof ttlSeconds !== 'number') {
+                    throw new Error('The time to live must be a number');
+                }
+                this.ttlSeconds = ttlSeconds; // set time to live in milliseconds
+            }
             if (payloadMaxLength) {
                 if (typeof payloadMaxLength === 'number') {
                     this.payloadMaxLength = payloadMaxLength;

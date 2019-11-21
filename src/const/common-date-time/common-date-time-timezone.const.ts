@@ -1,0 +1,1 @@
+export const COMMON_DATE_TIME_TIMEZONE_UTC = 'GMT+0';

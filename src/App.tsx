@@ -14,6 +14,7 @@ import { runTestSwarmConnection } from 'test/ipfs-swarm-connection.test/ipfs-swa
 import { runTestSwarmConnectionIPFS } from 'test/ipfs-swarm-connection.test/ipfs-swarm-connection-ipfs.test';
 import { initializeMocha, runMocha } from 'test/mocha-chai-initialize';
 import { runTestSwarmStoreOrbitDBConnection } from 'test/swarm-storage-orbit-db.test/swarm-storage-orbit-db.test';
+import { runTestValidateMessagingTimestampsTest } from 'test/validation-messaging.test/validate-messaging-timestamps-test';
 
 // import { runCACredentialsIdentityStorageTest } from 'test/central-authority.test/central-authority-storage-identity-credentials.test';
 // import { runTestCachingDecorator } from 'test/common-utils.test/common-utils.test';
@@ -50,7 +51,8 @@ const runTest = async () => {
   await initializeMocha();
 
   // runTestSwarmConnection();
-  runTestSwarmStoreOrbitDBConnection('create swarm store OrbitDB connector - 3 databases with custom acccess provider and secret keystore -- with random loop');
+  // runTestSwarmStoreOrbitDBConnection();
+  runTestValidateMessagingTimestampsTest();
   runMocha();
 }
 

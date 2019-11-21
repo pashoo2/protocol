@@ -14,12 +14,16 @@ export type TPayload = string | number[] | Uint8Array | ArrayBuffer | SharedArra
  * length for the payload
  * @property {string[]} [[]] issuersList - the list of the valid issuers
  * @property {Array<string | number>} [[]] typesList - the list of the valid types
+ * @property {number} [undefined] ttlSeconds - time to life of a message, the message will be invalidated if the
+ * message timestamp is not in the interval within the timestamp. If not defined or se to 0 means infinite
+ * time to live. Time to live in the seconds
  */
 export interface IMessageValidatorOptions {
     payloadMaxLength?: number;
     payloadMinLength?: number;
     issuersList?: string[];
     typesList?: TType[];
+    ttlSeconds?: number;
 }
 
 /**

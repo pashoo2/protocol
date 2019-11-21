@@ -13,16 +13,17 @@ export class SwarmMessageSubclassRawConstructor {
             return new Error('The options must be an object');
         }
 
-        const {
-            typ: string | number;
-            pld: string | Buffer;
-            uid: string;
-            iss: string;
-            k: CryptoKey;
-        } = options;
+        // const {
+        //     typ: string | number;
+        //     pld: string | Buffer;
+        //     uid: string;
+        //     iss: string;
+        //     k: CryptoKey;
+        // } = options;
 
-        if (!typ) {
-            return new Error();
-        }
+        // if (!typ) {
+        //     return new Error();
+        // }
+        return true;
     }
 }
