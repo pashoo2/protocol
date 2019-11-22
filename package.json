@@ -35,6 +35,7 @@
     "localforage": "^1.7.3",
     "lodash.memoize": "^4.1.2",
     "lz-string": "^1.4.4",
+    "ntpclient": "^1.0.2",
     "orbit-db": "^0.22.0",
     "orbit-db-access-controllers": "^0.2.4",
     "orbit-db-cache": "^0.3.0",
