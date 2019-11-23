@@ -43,13 +43,18 @@ export type THttpRequestMode = ownValueOf<typeof HTTP_REQUEST_MODE>;
 export type THttpRequestToken = object | string;
 
 export interface IHttpRequestOptions {
-  method: THttpRequestMethod;
-  contentType: THttpRequestContentType;
+  method?: THttpRequestMethod;
+  contentType?: THttpRequestContentType;
   url: THttpRequestUrl;
   body?: string | object | number;
   mode?: THttpRequestMode;
   cache?: THttpRequestCacheControl;
   token?: THttpRequestToken;
+  queryStringParams?: string;
+  baseUrl?: string;
+  // set option credentials for the Fetch API request to 'same-origin'
+  withCookie?: boolean;
+  credentials?: RequestCredentials;
 }
 
 export type THttpResponseResult = object | string | File | Blob | FormData;

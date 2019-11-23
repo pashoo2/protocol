@@ -1,38 +1,163 @@
+import { isURL } from 'validator';
 import { HttpRequestBodyProcessor } from './http-request-class-base-subclasses/http-request-class-base-body-processor';
 import {
   IHttpRequestOptions,
   IHttpRequestHeaders,
   THttpResponseResult,
   TQueryStringParams,
+  THttpRequestToken,
 } from './http-request-class-base.types';
-import { HTTP_REQUEST_HEADERS_NAMES } from './http-request-class-base.const';
+import { HTTP_REQUEST_HEADERS_NAMES, HTTP_REQUEST_METHOD, HTTP_REQUEST_MODE, HTTP_REQUEST_CONTENT_TYPE } from './http-request-class-base.const';
 import { HttpRequestResponseProcessor } from './http-request-class-base-subclasses/http-request-class-response-processor';
 import { HttpResponseError } from './http-request-class-base-subclasses/http-request-class-base-response-error';
 import { resolveQueryStringParams } from './http-request-class-base-utils';
+import { ownValueOf } from 'types/helper.types';
 
 export class HttpRequest extends HttpRequestBodyProcessor {
-  protected baseUrl?: string;
+  protected static baseUrl?: string;
+
+  private static token?: THttpRequestToken;
+
+  public static setBaseUrl(baseUrl: string): void | Error {
+    if (!isURL(baseUrl)) {
+      return new Error('This is not a valid url');
+    }
+    HttpRequest.baseUrl = baseUrl;
+  }
+  
+  public static setToken(token: THttpRequestToken): void | Error {
+    HttpRequest.token = token;
+  }
+
+  protected baseUrl?: string = HttpRequest.baseUrl;
+
+  protected url?: string;
+
+  protected method?: string;
+
+  protected mode?: RequestMode;
+
+  protected token?: THttpRequestToken = HttpRequest.token;
+
+  protected contentType?: string;
 
   protected queryStringParams?: string;
 
-  constructor(protected options: IHttpRequestOptions) {
-    super(options);
-  }
+  protected credentials?: RequestCredentials;
 
-  setBaseUrl(baseUrl: string): void {
-    if (typeof baseUrl === 'string') {
-      this.baseUrl = baseUrl;
+  /**
+   * Creates an instance of HttpRequest.
+   * @param {IHttpRequestOptions} options
+   * @memberof HttpRequest
+   * @throws
+   */
+  constructor(options: IHttpRequestOptions) {
+    super(options);
+
+    const resultSetOptions = this.setOptions(options);
+
+    if (resultSetOptions instanceof Error) {
+      console.error(
+        'HttpRequest::setOptions::failed',
+        resultSetOptions,
+        options,
+      );
+      throw resultSetOptions;
     }
   }
 
-  setQueryStringParams(params: TQueryStringParams): void {
-    const { queryStringParams } = this;
-    const resolvedParams = resolveQueryStringParams(
-      queryStringParams || '',
-      params
-    );
+  /**
+   * send the request to the server
+   * on the url defined in the 
+   * options
+   *
+   * @memberof HttpRequest
+   */
+  public send = async () => {
+    const { url, method, credentials, mode } = this;
+    const body = await this.getBody();
+    const headers = this.getRequestHeaders();
+    const cache = this.getCacheMode();
 
-    this.queryStringParams = resolvedParams;
+    try {
+      const response = await fetch(url!, {
+        mode,
+        body,
+        headers,
+        cache,
+        method,
+        credentials,
+      });
+
+      return this.preProcessResponse(response);
+    } catch (err) {
+      return err;
+    }
+  };
+
+  protected getRequestMethod(
+    method: string | undefined,
+    options: IHttpRequestOptions,
+  ): Error | ownValueOf<typeof HTTP_REQUEST_METHOD> {
+    if (!method) {
+        const { body } = options;
+
+        if (body) {
+          return HTTP_REQUEST_METHOD.POST;
+        }
+        return HTTP_REQUEST_METHOD.GET; 
+    }
+
+    const methodRes = method.trim().toUpperCase();
+    
+    if (HTTP_REQUEST_METHOD.hasOwnProperty(methodRes)) {
+      return (HTTP_REQUEST_METHOD as any)[methodRes] as ownValueOf<typeof HTTP_REQUEST_METHOD>;
+    }
+    return new Error(`An unknown request method "${method}"`);
+  }
+
+  protected getCredentials(options: IHttpRequestOptions): RequestCredentials | undefined {
+    const { withCookie, credentials } = options;
+
+    if (credentials) {
+      return credentials;
+    }
+    if (withCookie) {
+      return 'same-origin';
+    }
+  }
+
+  protected getRequestMode(
+    method: ownValueOf<typeof HTTP_REQUEST_METHOD>,
+    options: IHttpRequestOptions,
+  ): RequestMode | Error | undefined {
+    const { mode, contentType, body, url, token } = options;
+
+    if (!mode) {
+        if (token) {
+          return 'cors';
+        }
+        if (method === HTTP_REQUEST_METHOD.DELETE || method === HTTP_REQUEST_METHOD.PUT) {
+          return 'cors';
+        }
+        if (contentType !== HTTP_REQUEST_CONTENT_TYPE.URL_ENCODED
+           && contentType !== HTTP_REQUEST_CONTENT_TYPE.MULTIPART
+           && contentType !== HTTP_REQUEST_CONTENT_TYPE.PLAIN
+        ) {
+          return 'cors';  
+        }
+        if (body instanceof ReadableStream) {
+          return 'cors';
+        }
+        return undefined;
+    }
+
+    const methodRes = mode.trim().toUpperCase();
+    
+    if (HTTP_REQUEST_MODE.hasOwnProperty(methodRes)) {
+      return (HTTP_REQUEST_MODE as any)[methodRes] as RequestMode;
+    }
+    return new Error(`An unknown request mode "${mode}"`);
   }
 
   /**
@@ -40,9 +165,8 @@ export class HttpRequest extends HttpRequestBodyProcessor {
    * depending on the options url
    * base url and a query string
    */
-  resolveTargetUrl(): string {
-    const { options, baseUrl, queryStringParams } = this;
-    const { url } = options;
+  protected resolveTargetUrl(url: string): string {
+    const { baseUrl, queryStringParams } = this;
     const urlInstance = new URL(url, baseUrl || undefined);
 
     if (queryStringParams) {
@@ -51,56 +175,94 @@ export class HttpRequest extends HttpRequestBodyProcessor {
     return String(urlInstance);
   }
 
-  getRequestHeaders(): HeadersInit {
-    const { options } = this;
-    const { contentType, token } = options;
+  /**
+   * @protected
+   * @param {IHttpRequestOptions} options
+   * @memberof HttpRequest
+   * @throws
+   */
+  protected setOptions(options: IHttpRequestOptions) {
+    if (!options) {
+      throw new Error('The options must be defined for the request');
+    }
+    if (typeof options !== 'object') {
+      return new Error('The options must be an object');
+    }
+    if (typeof options.url !== 'string') {
+      return new Error('The url must be defined in options');
+    }
+    
+    const { 
+      url,
+      baseUrl,
+      method,
+      token,
+    } = options;
+
+    if (typeof url !== 'string') {
+      return new Error('The url must be defined in options');
+    }
+    if (!isURL(url)) {
+      return new Error('The url is not valid');
+    }
+    if (typeof baseUrl === 'string') {
+      if (!isURL(baseUrl)) {
+        return new Error('The baseUrl is not valid');
+      }
+      this.baseUrl = baseUrl;
+    }
+    if (token) {
+      this.token = token;
+    }
+    
+    const methodRes = this.getRequestMethod(method, options);
+
+    if (methodRes instanceof Error) {
+      return methodRes;
+    }
+    this.method = methodRes;
+    
+    const modeRes = this.getRequestMode(
+      methodRes,
+      options,
+    );    
+
+    if (modeRes instanceof Error) {
+      return modeRes;
+    }
+    this.mode = modeRes;
+    this.credentials = this.getCredentials(options);
+    this.url = this.resolveTargetUrl(url);
+   }
+
+  protected getRequestHeaders(): HeadersInit {
+    const { options, token } = this;
+    const { contentType } = options;
     const headers: IHttpRequestHeaders = {};
 
     if (contentType) {
       headers[HTTP_REQUEST_HEADERS_NAMES.CONTENT_TYPE] = contentType;
     }
     if (token) {
-      headers[HTTP_REQUEST_HEADERS_NAMES.AUTHORIZATION] = contentType;
+      headers[HTTP_REQUEST_HEADERS_NAMES.AUTHORIZATION] = `Bearer ${token}`;
     }
     return headers as HeadersInit;
   }
 
-  getCacheMode(): RequestCache {
+  protected getCacheMode(): RequestCache {
     const { options } = this;
     const { cache } = options;
 
     return cache as RequestCache;
   }
 
-  preProcessResponse(
+  protected preProcessResponse(
     response: Response
   ): Promise<Error | HttpResponseError | THttpResponseResult> {
     const responseProcessor = new HttpRequestResponseProcessor(response);
 
     return responseProcessor.getResult();
   }
-
-  send = async () => {
-    const { options } = this;
-    const { method } = options;
-    const url = this.resolveTargetUrl();
-    const body = await this.getBody();
-    const headers = this.getRequestHeaders();
-    const cache = this.getCacheMode();
-
-    try {
-      const response = await fetch(url, {
-        body,
-        headers,
-        cache,
-        method,
-      });
-
-      return this.preProcessResponse(response);
-    } catch (err) {
-      return err;
-    }
-  };
 }
 
 export default HttpRequest;
