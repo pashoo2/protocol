@@ -1,12 +1,33 @@
-import { NTPClient, NTPConfig } from 'ntpclient';
 import { 
     COMMON_DATE_TIME_NTP_SERVERS_POOL,
+    COMMON_DATE_TIME_NTP_SERVER_PORT_DEFAULT,
+    COMMON_DATE_TIME_NTP_SERVER_RESPONSE_TIMEOUT_MS,
     COMMON_DATE_TIME_NTP_SERVER_MAX_FAILS_CHECK_PERIOD_MS,
     COMMON_DATE_TIME_NTP_SERVER_MAX_FAILS_PERCENTAGE_DURING_CHECK_PERIOD,
 } from 'const/common-date-time/common-date-time-sync.const';
 
+const commonNTPClientSettings = {
+    port: COMMON_DATE_TIME_NTP_SERVER_PORT_DEFAULT,
+    replyTimeout: COMMON_DATE_TIME_NTP_SERVER_RESPONSE_TIMEOUT_MS,
+};
 const ntpServersPoolLength = COMMON_DATE_TIME_NTP_SERVERS_POOL.length;
 let currentServerInPool = 0;
+
+/**
+ * switch the current server index
+ * from the NTP servers pool
+ * 
+ */
+function switchNTPServer() {
+    if (currentServerInPool === ntpServersPoolLength) {
+        currentServerInPool = 0;
+    }
+    currentServerInPool =  Math.min(
+        currentServerInPool += 1,
+        ntpServersPoolLength,
+    );
+    ntpClientDefault = createNtpClient();
+}
 
 /**
  * returns settings to establish connection with the 
@@ -17,7 +38,35 @@ function getNtpServerConnectionSettings(): NTPConfig {
     if (currentServerInPool >= ntpServersPoolLength) {
         currentServerInPool = 0;
     }
-    return COMMON_DATE_TIME_NTP_SERVERS_POOL[currentServerInPool];
+
+    const settings = COMMON_DATE_TIME_NTP_SERVERS_POOL[currentServerInPool];
+
+    if (settings && typeof settings === 'string') {
+        // if only server's url provided
+        return {
+            server: settings,
+            port: COMMON_DATE_TIME_NTP_SERVER_PORT_DEFAULT,
+            replyTimeout: COMMON_DATE_TIME_NTP_SERVER_RESPONSE_TIMEOUT_MS,
+        }
+    } else if (settings && typeof settings === 'object') {
+        const { server } = settings;
+
+        if (server && typeof server === 'string') {
+            return {
+                ...commonNTPClientSettings,
+                ...settings,
+            };
+        }
+    }
+    console.error(
+        'Unknown settings format used for NTP server connection',
+        settings,
+    );
+    // if setting is not defined or wrong
+    // switch to another server in the 
+    // pool
+    switchNTPServer();
+    return getNtpServerConnectionSettings();
 }
 
 export function createNtpClient(): NTPClient {
@@ -45,17 +94,6 @@ let ntpCurrentClientFails = 0;
  * a time from the NTP server
  */
 let ntpCurrentClientRequests = 0;
-
-function switchNTPServer() {
-    if (currentServerInPool === ntpServersPoolLength) {
-        currentServerInPool = 0;
-    }
-    currentServerInPool =  Math.min(
-        currentServerInPool += 1,
-        ntpServersPoolLength,
-    );
-    ntpClientDefault = createNtpClient();
-}
 
 /**
  * the function calculates the current
@@ -127,6 +165,8 @@ function convertNTPServerResponseToDate(response: Date | string): Date | Error {
  */
 export function getNetworkTime(): Promise<Date | Error> {
     ntpCurrentClientRequests += 1;
+    // todo http://worldclockapi.com/api/json/utc/now
+    // http://worldtimeapi.org/api/ip
     return ntpClientDefault.getNetworkTime()
         .then(convertNTPServerResponseToDate)
         .catch(onFailedToRequestNTPServer);

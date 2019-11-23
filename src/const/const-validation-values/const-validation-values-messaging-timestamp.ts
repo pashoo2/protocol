@@ -3,6 +3,7 @@ import {
     CONST_VALIDATION_VALUES_MESSAGING_DATE_MAX,
 } from './const-validation-values-messaging-date';
 import { getSecondsByMilliseconds } from 'utils/common-utils/common-utils-date-time';
+import { CONST_VALIDATION_VALUES_MESSAGING_DATE_SYNC_INTERVAL_EVENT, timeIntervalSyncEvents } from './const-validation-values-messaging-common/const-validation-values-messaging-common';
 
 export const CONST_VALIDATION_VALUES_TIMESTAMP_UNIX_MIN_MS = CONST_VALIDATION_VALUES_MESSAGING_DATE_MIN.getTime();
 
@@ -17,4 +18,4 @@ function setTimestampsMaxByDateMax() {
     CONST_VALIDATION_VALUES_TIMESTAMP_UNIX_MAX_S =  getSecondsByMilliseconds(CONST_VALIDATION_VALUES_TIMESTAMP_UNIX_MAX_MS);
 }
 
-setTimeout(setTimestampsMaxByDateMax, 1000);
+timeIntervalSyncEvents.on(CONST_VALIDATION_VALUES_MESSAGING_DATE_SYNC_INTERVAL_EVENT, setTimestampsMaxByDateMax);

@@ -15,30 +15,12 @@ export const COMMON_DATE_TIME_NTP_SERVER_MAX_FAILS_PERCENTAGE_DURING_CHECK_PERIO
  * used to connect on one of them
  * to syncronize the client side time
  */
-export const COMMON_DATE_TIME_NTP_SERVERS_POOL: NTPConfig[] = [
-    {
-        server: 'pool.ntp.org',
-        port: COMMON_DATE_TIME_NTP_SERVER_PORT_DEFAULT,
-        replyTimeout: COMMON_DATE_TIME_NTP_SERVER_RESPONSE_TIMEOUT_MS,
-    },
-    {
-        server: '',
-        port: COMMON_DATE_TIME_NTP_SERVER_PORT_DEFAULT,
-        replyTimeout: COMMON_DATE_TIME_NTP_SERVER_RESPONSE_TIMEOUT_MS,
-    },
-    {
-        server: '',
-        port: COMMON_DATE_TIME_NTP_SERVER_PORT_DEFAULT,
-        replyTimeout: COMMON_DATE_TIME_NTP_SERVER_RESPONSE_TIMEOUT_MS,
-    },
-    {
-        server: '',
-        port: COMMON_DATE_TIME_NTP_SERVER_PORT_DEFAULT,
-        replyTimeout: COMMON_DATE_TIME_NTP_SERVER_RESPONSE_TIMEOUT_MS,
-    },
-    {
-        server: '',
-        port: COMMON_DATE_TIME_NTP_SERVER_PORT_DEFAULT,
-        replyTimeout: COMMON_DATE_TIME_NTP_SERVER_RESPONSE_TIMEOUT_MS,
-    },
+export const COMMON_DATE_TIME_NTP_SERVERS_POOL: Array<Partial<NTPConfig> | string> = [
+    'time.cloudflare.com',
+    'time.google.com',
+    'time.windows.com',
+    'time.euro.apple.com',
+    'pool.ntp.org',
+    'time-a-g.nist.gov',
+    'ntp.rsu.edu.ru',
 ];

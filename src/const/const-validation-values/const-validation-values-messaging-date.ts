@@ -1,4 +1,5 @@
 import { getCurrentDate, getDateWithTimeSyncOffset } from 'utils/common-utils/common-utils-date-time';
+import { CONST_VALIDATION_VALUES_MESSAGING_DATE_SYNC_INTERVAL_EVENT, timeIntervalSyncEvents } from './const-validation-values-messaging-common/const-validation-values-messaging-common';
 
 export const CONST_VALIDATION_VALUES_MESSAGING_MAX_ERROR_SECONDS = 10;
 
@@ -21,5 +22,4 @@ function setDateMax() {
     CONST_VALIDATION_VALUES_MESSAGING_DATE_MAX = d;
 }
 
-setTimeout(setDateMax, 1000);
-
+timeIntervalSyncEvents.on(CONST_VALIDATION_VALUES_MESSAGING_DATE_SYNC_INTERVAL_EVENT, setDateMax);
