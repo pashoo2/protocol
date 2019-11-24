@@ -335,7 +335,7 @@ export class SwarmStoreConnectorOrbitDB<
   ): SwarmStoreConnectorOrbitDBDatabase<ISwarmDatabaseValueTypes> | void => {
     const { databases } = this;
 
-    return databases.find(db => {
+    return databases.find((db) => {
       return (
         db &&
         db.dbName === dbName &&
@@ -408,7 +408,7 @@ export class SwarmStoreConnectorOrbitDB<
     } else {
       const removeListener = this.removeListener.bind(this);
 
-      return new Promise(res => {
+      return new Promise((res) => {
         let timeout: undefined | NodeJS.Timer;
         function removeListners() {
           if (timeout) {
@@ -716,7 +716,7 @@ export class SwarmStoreConnectorOrbitDB<
 
       if (databases instanceof Array) {
         return databases.findIndex(
-          db => !!db && typeof db === 'object' && db.dbName === dbName
+          (db) => !!db && typeof db === 'object' && db.dbName === dbName
         );
       }
     }
@@ -932,7 +932,7 @@ export class SwarmStoreConnectorOrbitDB<
 
     const { databases: databases } = options;
 
-    return databases.find(option => option && option.dbName === dbName);
+    return databases.find((option) => option && option.dbName === dbName);
   }
 
   protected stop(): Promise<Error | void> {
@@ -1116,7 +1116,7 @@ export class SwarmStoreConnectorOrbitDB<
   private waitDatabaseOpened(
     database: SwarmStoreConnectorOrbitDBDatabase<ISwarmDatabaseValueTypes>
   ): Promise<Error | boolean> {
-    return new Promise<Error | boolean>(async res => {
+    return new Promise<Error | boolean>(async (res) => {
       let timeout: NodeJS.Timer | undefined = undefined;
 
       function usetListeners() {

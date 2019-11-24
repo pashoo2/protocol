@@ -1,1 +1,1 @@
-export const SWARM_MESSAGE_= '';
+export const SWARM_MESSAGE_ = '';

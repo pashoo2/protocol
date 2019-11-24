@@ -31,7 +31,7 @@ export interface TypedEventEmitter<Events extends TEventsList> {
   removeListener<E extends TEvent>(event: E, listener: Events[E]): this;
 
   emit<E extends TEvent>(event: E, ...args: Arguments<Events[E]>): boolean;
-  eventNames(): (TEvent)[];
+  eventNames(): TEvent[];
   listeners<E extends TEvent>(event: E): Function[];
   listenerCount<E extends TEvent>(event: E): number;
 

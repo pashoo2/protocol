@@ -7,7 +7,7 @@ import { SecretStorageProviderLocalForage } from './secret_storage_providers/sec
 export const SECRET_STORAGE_PROVIDERS_NAME = {
   LOCAL_STORAGE: 'LOCAL_STORAGE',
   SESSION_STORAGE: 'SESSION_STORAGE',
-  LEVEL_JS: 'LEVEL_JS', 
+  LEVEL_JS: 'LEVEL_JS',
   LOCAL_FORAGE: 'LOCAL_FORAGE',
 };
 

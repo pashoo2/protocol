@@ -1,8 +1,9 @@
-import {
-  SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_FOR_BROWSER_DEFAULT,
-} from './swarm-connection-class-subclass-ipfs.browser.conf';
+import { SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_FOR_BROWSER_DEFAULT } from './swarm-connection-class-subclass-ipfs.browser.conf';
 import { getLibPeerToPeer } from './swarm-connection-class-subclass-ipfs.libp2p.conf';
-import { SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_MULTIADDRS, SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_BOOTSTRAP_MULTIADDRS } from './swarm-connection-class-subclass-ipfs.delegate.conf';
+import {
+  SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_MULTIADDRS,
+  SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_BOOTSTRAP_MULTIADDRS,
+} from './swarm-connection-class-subclass-ipfs.delegate.conf';
 
 export const SWARM_CONNECTION_SUBCLASS_IPFS_CDN_SCRIPT_URL =
   'https://cdn.jsdelivr.net/npm/ipfs/dist/index.js';

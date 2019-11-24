@@ -1,7 +1,10 @@
 import levelup, { LevelUp } from 'levelup';
 import leveljs from 'level-js';
 import encodingDown from 'encoding-down';
-import { StorageProvider, IStorageProviderOptions } from '../../secret-storage-class.types';
+import {
+  StorageProvider,
+  IStorageProviderOptions,
+} from '../../secret-storage-class.types';
 import { SECRET_STORAGE_LEVELJS_PROVIDER_DEFAULTS_DB_NAME } from './secret-storage-level-js-provider.const';
 
 export class SecretStorageProviderLevelJS implements StorageProvider {
@@ -10,23 +13,27 @@ export class SecretStorageProviderLevelJS implements StorageProvider {
   private levelStorage?: LevelUp;
 
   private dbName: string = SECRET_STORAGE_LEVELJS_PROVIDER_DEFAULTS_DB_NAME;
-  
+
   private options?: IStorageProviderOptions;
 
   private isDisconnected: boolean = false;
 
-  public async connect(options?: IStorageProviderOptions): Promise<true | Error> {
+  public async connect(
+    options?: IStorageProviderOptions
+  ): Promise<true | Error> {
     try {
       const { isDisconnected } = this;
 
-      if (isDisconnected ) {
-        return new Error('The instance of the SecretStorageProvider was closed before');
+      if (isDisconnected) {
+        return new Error(
+          'The instance of the SecretStorageProvider was closed before'
+        );
       }
 
       this.setOptions(options);
-      
+
       const res = await this.createInstanceOfLevelDB();
-    
+
       if (res instanceof Error) {
         console.error('SecretStorageProviderLevelJS', res);
         return res;
@@ -50,8 +57,8 @@ export class SecretStorageProviderLevelJS implements StorageProvider {
         await levelStorage.close();
 
         return true;
-      } 
-    } catch(err) {
+      }
+    } catch (err) {
       console.error(err);
     }
     return true;
@@ -60,7 +67,7 @@ export class SecretStorageProviderLevelJS implements StorageProvider {
   /**
    * WARNING! If the value is empty
    * it will be removed with the leveljs.del
-   * 
+   *
    * @param {string} key
    * @param {string} [value]
    * @returns {(Promise<Error | true>)}
@@ -69,7 +76,7 @@ export class SecretStorageProviderLevelJS implements StorageProvider {
   public async set(key: string, value?: string): Promise<Error | true> {
     try {
       const isDisconnected = this.checkIsReady();
-  
+
       if (isDisconnected instanceof Error) {
         return isDisconnected;
       }
@@ -93,16 +100,19 @@ export class SecretStorageProviderLevelJS implements StorageProvider {
   /**
    * WARNING! If the value is empty
    * it will be removed with the leveljs.del
-   * 
+   *
    * @param {string} key
    * @param {string} [value]
    * @returns {(Promise<Error | true>)}
    * @memberof SecretStorageProviderLevelJS
    */
-  public async setUInt8Array(key: string, value?: Uint8Array): Promise<Error | true> {
+  public async setUInt8Array(
+    key: string,
+    value?: Uint8Array
+  ): Promise<Error | true> {
     try {
       const isDisconnected = this.checkIsReady();
-  
+
       if (isDisconnected instanceof Error) {
         return isDisconnected;
       }
@@ -133,7 +143,7 @@ export class SecretStorageProviderLevelJS implements StorageProvider {
 
       const { levelStorage } = this;
       const item = await levelStorage!.get(key, { asBuffer: false });
-      
+
       if (typeof item !== 'string') {
         return undefined;
       }
@@ -143,7 +153,9 @@ export class SecretStorageProviderLevelJS implements StorageProvider {
     }
   }
 
-  public async getUInt8Array(key: string): Promise<Error | Uint8Array | undefined> {
+  public async getUInt8Array(
+    key: string
+  ): Promise<Error | Uint8Array | undefined> {
     try {
       const isDisconnected = this.checkIsReady();
 
@@ -154,10 +166,7 @@ export class SecretStorageProviderLevelJS implements StorageProvider {
       const { levelStorage } = this;
       // TODO - the custom patch used to return
       // Uint8Array instead of Buffer
-      const item = await levelStorage!.get(
-        key,
-        { asBuffer: true },
-      );
+      const item = await levelStorage!.get(key, { asBuffer: true });
 
       return new Uint8Array(item);
     } catch (err) {
@@ -168,7 +177,7 @@ export class SecretStorageProviderLevelJS implements StorageProvider {
   protected setOptions(options?: IStorageProviderOptions): void {
     if (options && typeof options === 'object') {
       this.options = options;
-      
+
       const { dbName } = options;
 
       if (dbName && typeof dbName === 'string') {
@@ -180,7 +189,7 @@ export class SecretStorageProviderLevelJS implements StorageProvider {
   protected setIsDisconnected() {
     this.isDisconnected = true;
   }
-  
+
   protected checkIsReady(): void | Error {
     const { isDisconnected, levelStorage } = this;
 
@@ -194,13 +203,14 @@ export class SecretStorageProviderLevelJS implements StorageProvider {
 
   protected async createInstanceOfLevelDB(): Promise<void | Error> {
     const { dbName } = this;
-    const dbNameRes = dbName || SECRET_STORAGE_LEVELJS_PROVIDER_DEFAULTS_DB_NAME;
-    
+    const dbNameRes =
+      dbName || SECRET_STORAGE_LEVELJS_PROVIDER_DEFAULTS_DB_NAME;
+
     const levelStorage = levelup(leveljs(dbNameRes));
 
     try {
       await levelStorage.open();
-    } catch(err) {
+    } catch (err) {
       return err;
     }
     this.levelStorage = levelup(leveljs(dbNameRes));

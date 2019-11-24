@@ -54,7 +54,7 @@ const runTest = async () => {
   // runTestSwarmStoreOrbitDBConnection();
   // runTestValidateMessagingTimestampsTest();
   runMocha();
-}
+};
 
 runTest();
 

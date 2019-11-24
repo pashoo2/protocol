@@ -33,7 +33,7 @@ export interface ISwarmConnectionSubclass {
   isConnected: boolean;
   statusEmitter: EventEmitter<{
     [STATUS_CLASS_STATUS_CHANGE_EVENT]: ESwarmConnectionSubclassStatus;
-  }>
+  }>;
 }
 
 export interface ISwarmConnection {
@@ -44,7 +44,7 @@ export interface ISwarmConnection {
   isConnected: boolean;
   statusEmitter: EventEmitter<{
     [STATUS_CLASS_STATUS_CHANGE_EVENT]: ESwarmConnectionSubclassStatus;
-  }>
+  }>;
 }
 
 export enum ESwarmConnectionSubclassStatus {

@@ -66,9 +66,7 @@ export const runTestCAConnectionFirebase = async () => {
   console.warn('CA connection firebase test succeed');
 
   //check profile update result
-  const userProfileTestWOEmailAndPhoneNumber: Partial<
-    ICentralAuthorityUserProfile
-  > = {
+  const userProfileTestWOEmailAndPhoneNumber: Partial<ICentralAuthorityUserProfile> = {
     name: 'Paul',
     photoURL:
       'https://cdn.dribbble.com/users/199982/screenshots/4044699/furkan-avatar-dribbble.png',

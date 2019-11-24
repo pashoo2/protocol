@@ -3,11 +3,19 @@ import { IValidationValuesMessagingDateSyncIntervalEvents } from './const-valida
 
 export const CONST_VALIDATION_VALUES_MESSAGING_DATE_SYNC_INTERVAL_MS = 1000;
 
-export const CONST_VALIDATION_VALUES_MESSAGING_DATE_SYNC_INTERVAL_EVENT = 'VALIDATION_VALUES_MESSAGING_DATE_SYNC_INTERVAL_EVENT';
+export const CONST_VALIDATION_VALUES_MESSAGING_DATE_SYNC_INTERVAL_EVENT =
+  'VALIDATION_VALUES_MESSAGING_DATE_SYNC_INTERVAL_EVENT';
 
-export const timeIntervalSyncEvents = new EventEmitter<IValidationValuesMessagingDateSyncIntervalEvents>();
+export const timeIntervalSyncEvents = new EventEmitter<
+  IValidationValuesMessagingDateSyncIntervalEvents
+>();
 
 function dateTimeSyncTick() {
-    timeIntervalSyncEvents.emit(CONST_VALIDATION_VALUES_MESSAGING_DATE_SYNC_INTERVAL_EVENT);
+  timeIntervalSyncEvents.emit(
+    CONST_VALIDATION_VALUES_MESSAGING_DATE_SYNC_INTERVAL_EVENT
+  );
 }
-setInterval(dateTimeSyncTick, CONST_VALIDATION_VALUES_MESSAGING_DATE_SYNC_INTERVAL_MS);
+setInterval(
+  dateTimeSyncTick,
+  CONST_VALIDATION_VALUES_MESSAGING_DATE_SYNC_INTERVAL_MS
+);

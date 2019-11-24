@@ -1,5 +1,8 @@
 import CentralAuthorityIdentity from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
-import { TCentralAuthorityUserCryptoCredentials, TCentralAuthorityUserIdentity } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
+import {
+  TCentralAuthorityUserCryptoCredentials,
+  TCentralAuthorityUserIdentity,
+} from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 import { ICAUserUniqueIdentifierDescriptionWithOptionalVersion } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types';
 
 /**
@@ -13,13 +16,12 @@ import { ICAUserUniqueIdentifierDescriptionWithOptionalVersion } from 'classes/c
  * @interface ISwarmMessageSubclassRawConstructorOptions
  */
 export interface ISwarmMessageSubclassRawConstructorOptions {
-    typ: string | number;
-    pld: string | Buffer;
-    uid: (
-        TCentralAuthorityUserCryptoCredentials
-        | TCentralAuthorityUserIdentity
-        | ICAUserUniqueIdentifierDescriptionWithOptionalVersion
-    );
-    iss: string;
-    k: CryptoKey;
+  typ: string | number;
+  pld: string | Buffer;
+  uid:
+    | TCentralAuthorityUserCryptoCredentials
+    | TCentralAuthorityUserIdentity
+    | ICAUserUniqueIdentifierDescriptionWithOptionalVersion;
+  iss: string;
+  k: CryptoKey;
 }

@@ -75,9 +75,7 @@ export const verifyFromString = async (
   }
 
   const s =
-    typeof signature === 'string'
-      ? stringToTypedArray(signature)
-      : (signature);
+    typeof signature === 'string' ? stringToTypedArray(signature) : signature;
 
   if (s instanceof Error) {
     return s;

@@ -27,7 +27,7 @@ export const getLibPeerToPeer = (opts: any) => {
   const peerBook = opts.peerBook;
   // bootstrap peers in the main configuration
   const bootstrapList = opts.config.Bootstrap;
-  
+
   // Create our WebSocketStar transport and give it our PeerId, straight from the ipfs node
   const wstar = new WStar({
     id: peerInfo.id,
@@ -39,7 +39,7 @@ export const getLibPeerToPeer = (opts: any) => {
   // https://github.com/libp2p/js-libp2p/tree/master/examples/peer-and-content-routing
   // https://github.com/libp2p/js-libp2p/tree/master/examples/delegated-routing
   const delegatePeerRouter = new DelegatedPeerRouter(
-     SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_OPTIONS_HTTP
+    SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_OPTIONS_HTTP
   );
   const delegateContentRouter = new DelegatedContentRouter(
     peerInfo.id,
@@ -79,7 +79,7 @@ export const getLibPeerToPeer = (opts: any) => {
       denyAttempts: 5, // back off 5 times
       maxParallelDials: 100,
       maxColdCalls: 25,
-      dialTimeout: 20e3
+      dialTimeout: 20e3,
     },
     // Lets limit the connection managers peers and have it check peer health less frequently
     connectionManager: {
@@ -88,22 +88,10 @@ export const getLibPeerToPeer = (opts: any) => {
       pollInterval: 5000,
     },
     modules: {
-      transport: [
-        wstar,
-        wsstar,
-      ],
-      streamMuxer: [
-        MPLEX,
-        SPDY,
-      ],
-      connEncryption: [
-        SECIO
-      ],
-      peerDiscovery: [
-        Bootstrap,
-        wstar.discovery,
-        wsstar.discovery,
-      ],
+      transport: [wstar, wsstar],
+      streamMuxer: [MPLEX, SPDY],
+      connEncryption: [SECIO],
+      peerDiscovery: [Bootstrap, wstar.discovery, wsstar.discovery],
       dht: KadDHT,
       // https://github.com/libp2p/specs/tree/master/pubsub/gossipsub
       pubsub: PubSubGossip,
@@ -129,26 +117,28 @@ export const getLibPeerToPeer = (opts: any) => {
           enabled: true,
           list: bootstrapList,
         },
-        webrtcStar: {               // webrtc-star options
-          interval: 1000,           // ms
-          enabled: true
+        webrtcStar: {
+          // webrtc-star options
+          interval: 1000, // ms
+          enabled: true,
         },
-        webSocketStar: {               // webrtc-star options
-          interval: 1000,           // ms
-          enabled: true
-        }
+        webSocketStar: {
+          // webrtc-star options
+          interval: 1000, // ms
+          enabled: true,
+        },
       },
       // Turn on relay with hop active so we can connect to more peers
-      // implements the circuit-relay mechanism that allows nodes that 
+      // implements the circuit-relay mechanism that allows nodes that
       // don't speak the same protocol to communicate using a third relay node.
       // https://github.com/libp2p/js-libp2p-circuit - DEPRECATED, but docs
       // can be forund on here
       // https://github.com/libp2p/specs/tree/master/relay
       /**
        * The circuit relay is a means to establish connectivity between libp2p nodes (e.g. IPFS nodes) that wouldn't otherwise be able to establish a direct connection to each other.
-       * 
+       *
        * Relay is needed in situations where nodes are behind NAT, reverse proxies, firewalls and/or simply don't support the same transports (e.g. go-ipfs vs. browser-ipfs). Even though libp2p has modules for NAT traversal (go-libp2p-nat), piercing through NATs isn't always an option. The circuit relay protocol exists to overcome those scenarios.
-       * Unlike a transparent tunnel, where a libp2p peer would just proxy a communication stream to a destination (the destination being unaware of the original source), a circuit relay makes the destination aware of the original source and the circuit followed to establish communication between the two. 
+       * Unlike a transparent tunnel, where a libp2p peer would just proxy a communication stream to a destination (the destination being unaware of the original source), a circuit relay makes the destination aware of the original source and the circuit followed to establish communication between the two.
        */
       relay: {
         enabled: true,
@@ -168,7 +158,7 @@ export const getLibPeerToPeer = (opts: any) => {
        * @param {object} options.validators validators object with namespace as keys and function(key, record, callback)
        * @param {object} options.selectors selectors object with namespace as keys and function(key, records)
        * @param {randomWalkOptions} options.randomWalk randomWalk options
-      */
+       */
       /**
        * Random walk options
        *
@@ -178,7 +168,7 @@ export const getLibPeerToPeer = (opts: any) => {
        * @property {number} interval how often to run the the random-walk process, in milliseconds (default: 300000)
        * @property {number} timeout how long to wait for the the random-walk query to run, in milliseconds (default: 30000)
        * @property {number} delay how long to wait before starting the first random walk, in milliseconds (default: 10000)
-      */
+       */
       dht: {
         enabled: true,
         kBucketSize: 20,

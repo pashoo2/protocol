@@ -8,8 +8,8 @@ import addSeconds from 'date-fns/addSeconds';
  * @returns {number}
  */
 export function getTimeDiffWithSyncServerSeconds(): number {
-    // TODO
-    return 1000;
+  // TODO
+  return 1000;
 }
 
 /**
@@ -21,10 +21,7 @@ export function getTimeDiffWithSyncServerSeconds(): number {
  * @returns {Date}
  */
 export function getDateWithTimeSyncOffset(d: Date): Date {
-    return addSeconds(
-        d,
-        getTimeDiffWithSyncServerSeconds(),
-    );
+  return addSeconds(d, getTimeDiffWithSyncServerSeconds());
 }
 
 /**
@@ -35,11 +32,9 @@ export function getDateWithTimeSyncOffset(d: Date): Date {
  * @returs {Date}
  */
 export function getCurrentDate(): Date {
-    return getDateWithTimeSyncOffset(
-        new Date(),
-    );
+  return getDateWithTimeSyncOffset(new Date());
 }
 
 export function getSecondsByMilliseconds(milliseconds: number): number {
-    return Math.floor(milliseconds / 1000);
+  return Math.floor(milliseconds / 1000);
 }

@@ -1,5 +1,11 @@
-import { getCurrentDate, getDateWithTimeSyncOffset } from 'utils/common-utils/common-utils-date-time';
-import { CONST_VALIDATION_VALUES_MESSAGING_DATE_SYNC_INTERVAL_EVENT, timeIntervalSyncEvents } from './const-validation-values-messaging-common/const-validation-values-messaging-common';
+import {
+  getCurrentDate,
+  getDateWithTimeSyncOffset,
+} from 'utils/common-utils/common-utils-date-time';
+import {
+  CONST_VALIDATION_VALUES_MESSAGING_DATE_SYNC_INTERVAL_EVENT,
+  timeIntervalSyncEvents,
+} from './const-validation-values-messaging-common/const-validation-values-messaging-common';
 
 export const CONST_VALIDATION_VALUES_MESSAGING_MAX_ERROR_SECONDS = 10;
 
@@ -11,15 +17,22 @@ export const CONST_VALIDATION_VALUES_MESSAGING_DATE_MIN_YEAR_MONTH_DAY = '01';
 
 export const CONST_VALIDATION_VALUES_MESSAGING_DATE_MIN_STRING_IN_UTC = `${CONST_VALIDATION_VALUES_MESSAGING_DATE_MIN_YEAR}-${CONST_VALIDATION_VALUES_MESSAGING_DATE_MIN_YEAR_MONTH}-${CONST_VALIDATION_VALUES_MESSAGING_DATE_MIN_YEAR_MONTH_DAY}T00:00:00.00Z`;
 
-export const CONST_VALIDATION_VALUES_MESSAGING_DATE_MIN = getDateWithTimeSyncOffset(new Date(CONST_VALIDATION_VALUES_MESSAGING_DATE_MIN_STRING_IN_UTC));
+export const CONST_VALIDATION_VALUES_MESSAGING_DATE_MIN = getDateWithTimeSyncOffset(
+  new Date(CONST_VALIDATION_VALUES_MESSAGING_DATE_MIN_STRING_IN_UTC)
+);
 
 export let CONST_VALIDATION_VALUES_MESSAGING_DATE_MAX = getCurrentDate();
 
 function setDateMax() {
-    const d = getCurrentDate();
+  const d = getCurrentDate();
 
-    d.setSeconds(d.getSeconds() + CONST_VALIDATION_VALUES_MESSAGING_MAX_ERROR_SECONDS);
-    CONST_VALIDATION_VALUES_MESSAGING_DATE_MAX = d;
+  d.setSeconds(
+    d.getSeconds() + CONST_VALIDATION_VALUES_MESSAGING_MAX_ERROR_SECONDS
+  );
+  CONST_VALIDATION_VALUES_MESSAGING_DATE_MAX = d;
 }
 
-timeIntervalSyncEvents.on(CONST_VALIDATION_VALUES_MESSAGING_DATE_SYNC_INTERVAL_EVENT, setDateMax);
+timeIntervalSyncEvents.on(
+  CONST_VALIDATION_VALUES_MESSAGING_DATE_SYNC_INTERVAL_EVENT,
+  setDateMax
+);

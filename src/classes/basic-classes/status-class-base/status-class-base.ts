@@ -56,7 +56,7 @@ export const getStatusClass = <TStatus extends object>({
      * @param status
      * @returns {Function} - function to set the previous status value
      */
-    protected setStatus = (status: ownValueOf<TStatus>): () => void => {
+    protected setStatus = (status: ownValueOf<TStatus>): (() => void) => {
       const { statusEmitter, status: prevStatus } = this;
 
       this.status = status;
@@ -64,7 +64,7 @@ export const getStatusClass = <TStatus extends object>({
       return () => {
         this.status = prevStatus;
       };
-    }
+    };
 
     protected setErrorStatus = (err: Error | string): Error => {
       if (err) {
@@ -75,5 +75,5 @@ export const getStatusClass = <TStatus extends object>({
       }
       this.setStatus(errorStatus);
       return new Error('Unknown error');
-    }
+    };
   };

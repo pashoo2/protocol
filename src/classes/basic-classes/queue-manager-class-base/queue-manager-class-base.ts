@@ -54,7 +54,7 @@ export class QueueManagerClassBase<T> extends EventEmitter<
    * @param items - items to remove from queue
    */
   deleteItemsFromQueue(items: T[]): void {
-    this.queue = this.queue.filter(itemQueued => items.includes(itemQueued));
+    this.queue = this.queue.filter((itemQueued) => items.includes(itemQueued));
   }
 
   emitEvent(

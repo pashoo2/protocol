@@ -15,11 +15,11 @@ export class CentralAuthorityConnectionServerAPI
     const { options } = this;
     const { getUsersDescriptionsRequestOptions, serverUrl } = options;
     const request = new HttpRequest({
-        ...getUsersDescriptionsRequestOptions,
-        baseUrl: serverUrl,
-        queryStringParams: users,
+      ...getUsersDescriptionsRequestOptions,
+      baseUrl: serverUrl,
+      queryStringParams: users,
     });
-    
+
     return request.send();
   }
 }

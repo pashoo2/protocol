@@ -75,7 +75,7 @@ export const exportKeyPair = async (
       const [privateKey, publicKey] = await Promise.all([
         exportKey(keyPair.privateKey),
         exportKey(keyPair.publicKey),
-      ]).catch(err => [err, err]);
+      ]).catch((err) => [err, err]);
 
       if (privateKey instanceof Error) {
         return privateKey;
@@ -136,7 +136,7 @@ export const importKeyPair = async (
       const [publicKey, privateKey] = await Promise.all([
         importPublicKey(keyPair[CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]),
         importPrivateKey(keyPair[CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]),
-      ]).catch(err => [err, err]);
+      ]).catch((err) => [err, err]);
 
       if (publicKey instanceof Error) {
         return publicKey;

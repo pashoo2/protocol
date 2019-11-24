@@ -7,15 +7,20 @@ import {
 import { generateUUID } from 'utils/identity-utils/identity-utils';
 import CentralAuthorityIdentity from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
 import { generateKeyPairs } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
-import { getUserIdentityByCryptoCredentials, getUserCredentialsByUserIdentityAndCryptoKeys, exportCryptoCredentialsToString } from 'classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials';
+import {
+  getUserIdentityByCryptoCredentials,
+  getUserCredentialsByUserIdentityAndCryptoKeys,
+  exportCryptoCredentialsToString,
+} from 'classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials';
 import { ICAUserUniqueIdentifierDescriptionWithOptionalVersion } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types';
 import { TCentralAuthorityUserIdentity } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 
-
 const runCACredentialsIdentityStorageTestForCredentials = async (
   storageInstance: CentralAuthorityIdentityCredentialsStorage,
-  testIdentityDescription: ICAUserUniqueIdentifierDescriptionWithOptionalVersion | TCentralAuthorityUserIdentity,
-  ): Promise<boolean | undefined> => {
+  testIdentityDescription:
+    | ICAUserUniqueIdentifierDescriptionWithOptionalVersion
+    | TCentralAuthorityUserIdentity
+): Promise<boolean | undefined> => {
   const caIdentityValueTest = new CentralAuthorityIdentity(
     testIdentityDescription
   );
@@ -38,7 +43,9 @@ const runCACredentialsIdentityStorageTestForCredentials = async (
     return;
   }
 
-  const caCryptoCredentialsTestRead = await storageInstance.getCredentials(identityTest);
+  const caCryptoCredentialsTestRead = await storageInstance.getCredentials(
+    identityTest
+  );
 
   if (caCryptoCredentialsTestRead instanceof Error) {
     console.error(caCryptoCredentialsTestRead);
@@ -46,11 +53,15 @@ const runCACredentialsIdentityStorageTestForCredentials = async (
     return;
   }
   if (!caCryptoCredentialsTestRead) {
-    console.error('The crypto credentials saved previousely have an empty value stored');
+    console.error(
+      'The crypto credentials saved previousely have an empty value stored'
+    );
     return;
   }
 
-  const identityValue = getUserIdentityByCryptoCredentials(caCryptoCredentialsTestRead);
+  const identityValue = getUserIdentityByCryptoCredentials(
+    caCryptoCredentialsTestRead
+  );
 
   if (identityValue instanceof Error) {
     console.error(identityValue);
@@ -64,16 +75,20 @@ const runCACredentialsIdentityStorageTestForCredentials = async (
 
   const caCredentialsTest = getUserCredentialsByUserIdentityAndCryptoKeys(
     identityTest,
-    testKeyPairs,
+    testKeyPairs
   );
 
-    if (caCredentialsTest instanceof Error) {
-      console.error(caCredentialsTest);
-      console.error('Failed to create CACryproCredentials by the identity and test key pairs');
-      return;
-    }
+  if (caCredentialsTest instanceof Error) {
+    console.error(caCredentialsTest);
+    console.error(
+      'Failed to create CACryproCredentials by the identity and test key pairs'
+    );
+    return;
+  }
 
-  const storeResultCaCryptoCredentials = await storageInstance.setCredentials(caCredentialsTest);
+  const storeResultCaCryptoCredentials = await storageInstance.setCredentials(
+    caCredentialsTest
+  );
 
   if (storeResultCaCryptoCredentials instanceof Error) {
     console.error(storeResultCaCryptoCredentials);
@@ -81,11 +96,15 @@ const runCACredentialsIdentityStorageTestForCredentials = async (
     return;
   }
   if (storeResultCaCryptoCredentials !== false) {
-    console.error('Crypto credentials for the same identity must not be rewritten');
-    return;    
+    console.error(
+      'Crypto credentials for the same identity must not be rewritten'
+    );
+    return;
   }
-  
-  const caCryptoCredentialsExportedToStringTest = await exportCryptoCredentialsToString(caCredentialsTest);
+
+  const caCryptoCredentialsExportedToStringTest = await exportCryptoCredentialsToString(
+    caCredentialsTest
+  );
 
   if (caCryptoCredentialsExportedToStringTest instanceof Error) {
     console.error(caCryptoCredentialsExportedToStringTest);
@@ -93,24 +112,30 @@ const runCACredentialsIdentityStorageTestForCredentials = async (
     return;
   }
 
-  const storeResultCaCryptoCredentialsExportedToString = await storageInstance.setCredentials(caCryptoCredentialsExportedToStringTest);
+  const storeResultCaCryptoCredentialsExportedToString = await storageInstance.setCredentials(
+    caCryptoCredentialsExportedToStringTest
+  );
 
   if (storeResultCaCryptoCredentialsExportedToString instanceof Error) {
     console.error(storeResultCaCryptoCredentialsExportedToString);
-    console.error('Failed to store the CACryptoCredentials exported to a string format');
+    console.error(
+      'Failed to store the CACryptoCredentials exported to a string format'
+    );
     return;
   }
   if (storeResultCaCryptoCredentialsExportedToString !== false) {
-    console.error('Crypto credentials (exported as string) for the same identity must not be rewritten');
-    return;    
+    console.error(
+      'Crypto credentials (exported as string) for the same identity must not be rewritten'
+    );
+    return;
   }
-  
+
   return true;
 };
 
 export const runCACredentialsIdentityStorageTest = async () => {
   console.warn('Storage identity test was started');
-  
+
   const conectionCredentials: ISecretStoreCredentials = {
     password: '11234',
   };
@@ -138,7 +163,8 @@ export const runCACredentialsIdentityStorageTest = async () => {
   }
 
   const testIdentityDescriptionTwo = {
-    [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: 'https://google1.com',
+    [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]:
+      'https://google1.com',
     [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]: generateUUID(),
   };
   const resultTwo = await runCACredentialsIdentityStorageTestForCredentials(
@@ -179,10 +205,12 @@ export const runCACredentialsIdentityStorageTest = async () => {
     testIdentityDescription
   );
   const identityTest = caIdentityValueTest.toString();
-    
+
   if (!identityTest) {
     console.error(identityTest);
-    console.error('Failed to generate test identity string on disconnected storage test');
+    console.error(
+      'Failed to generate test identity string on disconnected storage test'
+    );
     return;
   }
 
@@ -200,16 +228,20 @@ export const runCACredentialsIdentityStorageTest = async () => {
   );
 
   if (!(setCredentialsResultDisconnected instanceof Error)) {
-    console.error('Execution of the setCredentials method must failed on disconnected storage')
+    console.error(
+      'Execution of the setCredentials method must failed on disconnected storage'
+    );
     return;
   }
 
   const getCredentialsResultDisconnected = await storageInstance.getCredentials(
-    identityTest,
+    identityTest
   );
 
   if (!(getCredentialsResultDisconnected instanceof Error)) {
-    console.error('Execution of the getCredentials method must failed on disconnected storage')
+    console.error(
+      'Execution of the getCredentials method must failed on disconnected storage'
+    );
     return;
   }
   console.warn('Storage identity test was succes');

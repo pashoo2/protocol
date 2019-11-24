@@ -67,10 +67,7 @@ export const decryptDataWithKeyFromUint8Array = async (
   key: string | CryptoKey,
   dataWithIv: Uint8Array
 ): Promise<string | Error> => {
-  const decryptedArrayBuffer = await decryptDataWithKeyNative(
-    key,
-    dataWithIv
-  );
+  const decryptedArrayBuffer = await decryptDataWithKeyNative(key, dataWithIv);
 
   if (decryptedArrayBuffer instanceof Error) {
     return decryptedArrayBuffer;
@@ -83,9 +80,10 @@ export const decryptDataArrayOrStringWithKeyToUInt8Array = async (
   key: string | CryptoKey,
   dataWithIv: Uint8Array | string
 ): Promise<Uint8Array | Error> => {
-  const dataWithIvArrayBuffer: ArrayBuffer | Error =  typeof dataWithIv === 'string'
-    ? decodeDOMStringToArrayBuffer(dataWithIv)
-    : dataWithIv.buffer;
+  const dataWithIvArrayBuffer: ArrayBuffer | Error =
+    typeof dataWithIv === 'string'
+      ? decodeDOMStringToArrayBuffer(dataWithIv)
+      : dataWithIv.buffer;
 
   if (dataWithIvArrayBuffer instanceof Error) {
     return dataWithIvArrayBuffer;

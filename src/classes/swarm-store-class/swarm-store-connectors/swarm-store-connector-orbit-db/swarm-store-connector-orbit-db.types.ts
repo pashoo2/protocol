@@ -4,16 +4,16 @@ import { ISwarmStoreConnectorOrbitDbDatabaseOptions } from './swarm-store-connec
 import { ISecretStoreCredentials } from 'classes/secret-storage-class/secret-storage-class.types';
 
 export type TESwarmStoreConnectorOrbitDBEvents = {
-    [ESwarmStoreConnectorOrbitDBEventNames.STATE_CHANGE]: boolean;
-    [ESwarmStoreConnectorOrbitDBEventNames.ERROR]: Error;
-    [ESwarmStoreConnectorOrbitDBEventNames.CLOSE]: void;
-    [ESwarmStoreConnectorOrbitDBEventNames.UPDATE]: string;
-    [ESwarmStoreConnectorOrbitDBEventNames.LOADING]: number;
-    [ESwarmStoreConnectorOrbitDBEventNames.READY]: string;
-}
+  [ESwarmStoreConnectorOrbitDBEventNames.STATE_CHANGE]: boolean;
+  [ESwarmStoreConnectorOrbitDBEventNames.ERROR]: Error;
+  [ESwarmStoreConnectorOrbitDBEventNames.CLOSE]: void;
+  [ESwarmStoreConnectorOrbitDBEventNames.UPDATE]: string;
+  [ESwarmStoreConnectorOrbitDBEventNames.LOADING]: number;
+  [ESwarmStoreConnectorOrbitDBEventNames.READY]: string;
+};
 
 /**
- * directory - this string will be used as a 
+ * directory - this string will be used as a
  * part of keynames for all storages and databases
  *
  * @export
@@ -21,20 +21,20 @@ export type TESwarmStoreConnectorOrbitDBEvents = {
  * @template TFeedStoreTypes
  */
 export interface ISwarmStoreConnectorOrbitDBOptions<TFeedStoreTypes> {
-    // databases which must be started when the orbit db
-    // instance will be ready to use
-    databases: ISwarmStoreConnectorOrbitDbDatabaseOptions<TFeedStoreTypes>[];
-    directory?: string; 
-    id?: string;
-    credentials?: ISecretStoreCredentials;
+  // databases which must be started when the orbit db
+  // instance will be ready to use
+  databases: ISwarmStoreConnectorOrbitDbDatabaseOptions<TFeedStoreTypes>[];
+  directory?: string;
+  id?: string;
+  credentials?: ISecretStoreCredentials;
 }
 
 export interface ISwarmStoreConnectorOrbitDBConnectionOptions {
-    ipfs: IPFS; // instance of IPFS connection
+  ipfs: IPFS; // instance of IPFS connection
 }
 
 export interface ISwarmStoreConnectorOrbitDBLogEntity<T> {
-    op?: string,
-    key?: string,
-    value: T,
+  op?: string;
+  key?: string;
+  value: T;
 }

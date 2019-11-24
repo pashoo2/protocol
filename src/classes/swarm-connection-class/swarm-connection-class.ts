@@ -63,7 +63,9 @@ export class SwarmConnection
     const { isClosed } = this;
 
     if (isClosed) {
-      return new Error('Failed to start the connetion which was closed perviouselly');
+      return new Error(
+        'Failed to start the connetion which was closed perviouselly'
+      );
     }
 
     this.setOptions(options);
@@ -127,10 +129,16 @@ export class SwarmConnection
     this.options = options;
   }
 
-  private setConnectionStatusListener(connection: ISwarmConnectionSubclass, isSet = true) {
+  private setConnectionStatusListener(
+    connection: ISwarmConnectionSubclass,
+    isSet = true
+  ) {
     const { statusEmitter } = connection;
 
-    statusEmitter[isSet ? 'addListener' : 'removeListener'](STATUS_CLASS_STATUS_CHANGE_EVENT, this.setStatus);
+    statusEmitter[isSet ? 'addListener' : 'removeListener'](
+      STATUS_CLASS_STATUS_CHANGE_EVENT,
+      this.setStatus
+    );
   }
 
   private unsetConnectionStatusListener(connection: ISwarmConnectionSubclass) {
@@ -142,7 +150,9 @@ export class SwarmConnection
     this.setConnectionStatusListener(connection);
   }
 
-  private unsetConnectionSubClassInstance(connection?: ISwarmConnectionSubclass) {
+  private unsetConnectionSubClassInstance(
+    connection?: ISwarmConnectionSubclass
+  ) {
     if (connection === this.connection) {
       this.connection = undefined;
     }

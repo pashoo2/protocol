@@ -6,7 +6,7 @@ import { CA_USER_IDENTITY_PARSER_VERSIONS } from '../central-authority-class-use
 export const CA_USER_IDENTITY_VALIDATORS_BY_VERSION: {
   [key in ownValueOf<
     typeof CA_USER_IDENTITY_PARSER_VERSIONS
-  >]: IUserIdentityDescriptionValidator
+  >]: IUserIdentityDescriptionValidator;
 } = {
   [CA_USER_IDENTITY_PARSER_VERSIONS['01']]: validatorV1,
 };

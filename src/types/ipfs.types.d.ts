@@ -4,7 +4,7 @@ declare module 'ipfs' {}
 
 type Callback<T> = (error: Error, result?: T) => void;
 
-export class IPFS extends EventEmitter {  
+export class IPFS extends EventEmitter {
   constructor(options?: Options);
 
   types: Types;
@@ -355,19 +355,36 @@ type TPubSubTopic = string;
 type TpubSubTopicHandler = (msg: any) => void;
 
 type TPubSubTopicOptions = {
-  discover: boolean
+  discover: boolean;
 };
 
 type TPubSubData = string | Buffer;
 
 export interface Pubsub {
-  subscribe(topic: TPubSubTopic, handler: TpubSubTopicHandler, options: TPubSubTopicOptions, callback: Callback<any>): void;
-  subscribe(topic: TPubSubTopic, handler: TpubSubTopicHandler, options: TPubSubTopicOptions): Promise<void>;
+  subscribe(
+    topic: TPubSubTopic,
+    handler: TpubSubTopicHandler,
+    options: TPubSubTopicOptions,
+    callback: Callback<any>
+  ): void;
+  subscribe(
+    topic: TPubSubTopic,
+    handler: TpubSubTopicHandler,
+    options: TPubSubTopicOptions
+  ): Promise<void>;
 
-  unsubscribe(topic: TPubSubTopic, handler: TpubSubTopicHandler, callback: Callback<void>): void;
+  unsubscribe(
+    topic: TPubSubTopic,
+    handler: TpubSubTopicHandler,
+    callback: Callback<void>
+  ): void;
   unsubscribe(topic: TPubSubTopic, handler: TpubSubTopicHandler): Promise<void>;
 
-  publish(topic: TPubSubTopic, data: TPubSubData, callback: Callback<any>): void;
+  publish(
+    topic: TPubSubTopic,
+    data: TPubSubData,
+    callback: Callback<any>
+  ): void;
   publish(topic: TPubSubTopic, data: TPubSubData): Promise<any>;
 
   ls(callback: Callback<any>): void;

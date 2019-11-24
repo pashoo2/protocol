@@ -481,7 +481,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       resultedOptions.write = ['*'];
     } else if (write instanceof Array) {
       resultedOptions.write = write.filter(
-        identity => identity && typeof identity === 'string'
+        (identity) => identity && typeof identity === 'string'
       );
     }
     if (typeof grantAcess === 'function') {

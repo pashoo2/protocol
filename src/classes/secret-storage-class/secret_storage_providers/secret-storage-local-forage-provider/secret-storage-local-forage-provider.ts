@@ -1,9 +1,15 @@
 import localforage from 'localforage';
-import { StorageProvider, IStorageProviderOptions } from '../../secret-storage-class.types';
-import { SECRET_STORAGE_LOCAL_FORAGE_PROVIDER_DEFAULTS_DB_NAME, SECRET_STORAGE_LOCAL_FORAGE_PROVIDER_DRIVER } from './secret-storage-local-forage-provider.const';
+import {
+  StorageProvider,
+  IStorageProviderOptions,
+} from '../../secret-storage-class.types';
+import {
+  SECRET_STORAGE_LOCAL_FORAGE_PROVIDER_DEFAULTS_DB_NAME,
+  SECRET_STORAGE_LOCAL_FORAGE_PROVIDER_DRIVER,
+} from './secret-storage-local-forage-provider.const';
 
 /**
- * The main advantage of using the LocalForage provider because 
+ * The main advantage of using the LocalForage provider because
  * it can store a large binary data(such as UInt8Array) as is
  * without an issues caused unsupported encoding
  *
@@ -17,23 +23,27 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
   private localForage?: LocalForage;
 
   private dbName: string = SECRET_STORAGE_LOCAL_FORAGE_PROVIDER_DEFAULTS_DB_NAME;
-  
+
   private options?: IStorageProviderOptions;
 
   private isDisconnected: boolean = false;
 
-  public async connect(options?: IStorageProviderOptions): Promise<true | Error> {
+  public async connect(
+    options?: IStorageProviderOptions
+  ): Promise<true | Error> {
     try {
       const { isDisconnected } = this;
 
-      if (isDisconnected ) {
-        return new Error('The instance of the SecretStorageProvider was closed before');
+      if (isDisconnected) {
+        return new Error(
+          'The instance of the SecretStorageProvider was closed before'
+        );
       }
 
       this.setOptions(options);
-      
+
       const res = await this.createInstanceOfLocalforage();
-    
+
       if (res instanceof Error) {
         console.error('SecretStorageProviderLevelJS', res);
         return res;
@@ -57,8 +67,8 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
         await localForage.ready();
 
         return true;
-      } 
-    } catch(err) {
+      }
+    } catch (err) {
       console.error(err);
     }
     return true;
@@ -67,7 +77,7 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
   /**
    * WARNING! If the value is empty
    * it will be removed with the leveljs.del
-   * 
+   *
    * @param {string} key
    * @param {string} [value]
    * @returns {(Promise<Error | true>)}
@@ -76,7 +86,7 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
   public async set(key: string, value?: string): Promise<Error | true> {
     try {
       const isDisconnected = this.checkIsReady();
-  
+
       if (isDisconnected instanceof Error) {
         return isDisconnected;
       }
@@ -100,16 +110,19 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
   /**
    * WARNING! If the value is empty
    * it will be removed with the leveljs.del
-   * 
+   *
    * @param {string} key
    * @param {string} [value]
    * @returns {(Promise<Error | true>)}
    * @memberof SecretStorageProviderLevelJS
    */
-  public async setUInt8Array(key: string, value?: Uint8Array): Promise<Error | true> {
+  public async setUInt8Array(
+    key: string,
+    value?: Uint8Array
+  ): Promise<Error | true> {
     try {
       const isDisconnected = this.checkIsReady();
-  
+
       if (isDisconnected instanceof Error) {
         return isDisconnected;
       }
@@ -140,7 +153,7 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
 
       const { localForage: levelStorage } = this;
       const item = await levelStorage!.getItem(key);
-      
+
       if (typeof item !== 'string') {
         return undefined;
       }
@@ -150,7 +163,9 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
     }
   }
 
-  public async getUInt8Array(key: string): Promise<Error | Uint8Array | undefined> {
+  public async getUInt8Array(
+    key: string
+  ): Promise<Error | Uint8Array | undefined> {
     try {
       const isDisconnected = this.checkIsReady();
 
@@ -161,10 +176,8 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
       const { localForage: levelStorage } = this;
       // TODO - the custom patch used to return
       // Uint8Array instead of Buffer
-      const item = await levelStorage!.getItem(
-        key,
-      );
-      
+      const item = await levelStorage!.getItem(key);
+
       if (!item) {
         return undefined;
       }
@@ -179,7 +192,7 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
       this.options = options;
 
       const { dbName } = options;
-      
+
       if (dbName && typeof dbName === 'string') {
         this.dbName = dbName;
       }
@@ -189,7 +202,7 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
   protected setIsDisconnected() {
     this.isDisconnected = true;
   }
-  
+
   protected checkIsReady(): void | Error {
     const { isDisconnected, localForage: levelStorage } = this;
 
@@ -203,8 +216,9 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
 
   protected async createInstanceOfLocalforage(): Promise<void | Error> {
     const { dbName } = this;
-    const dbNameRes = dbName || SECRET_STORAGE_LOCAL_FORAGE_PROVIDER_DEFAULTS_DB_NAME;
-    
+    const dbNameRes =
+      dbName || SECRET_STORAGE_LOCAL_FORAGE_PROVIDER_DEFAULTS_DB_NAME;
+
     const localForage = localforage.createInstance({
       name: dbNameRes,
       storeName: dbNameRes,
@@ -213,7 +227,7 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
 
     try {
       await localForage.ready();
-    } catch(err) {
+    } catch (err) {
       return err;
     }
     this.localForage = localForage;

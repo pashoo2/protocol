@@ -284,7 +284,7 @@ export class SafeStorage<
       return true;
     }
 
-    return new Promise(res => {
+    return new Promise((res) => {
       const timeout = setTimeout(
         res,
         SAFE_STORAGE_DEFAULT_STORAGE_BUSY_TIMEOUT_MS
@@ -375,7 +375,7 @@ export class SafeStorage<
       return undefined;
     }
     try {
-      return JSON.parse(data) as (D | undefined);
+      return JSON.parse(data) as D | undefined;
     } catch (err) {
       return err as Error;
     }
@@ -407,9 +407,9 @@ export class SafeStorage<
       typeof dataToAppend === 'string'
         ? this.parseDataFromStorage(dataToAppend)
         : dataToAppend;
-    const dataCastedToStorageType = this.castDataToStorageType(dataObj as
-      | Error
-      | TSafeStorageStoredDataType<TYPE>);
+    const dataCastedToStorageType = this.castDataToStorageType(
+      dataObj as Error | TSafeStorageStoredDataType<TYPE>
+    );
     if (dataCastedToStorageType instanceof Error) {
       return this.setErrorStatus(dataCastedToStorageType);
     }
@@ -490,10 +490,13 @@ export class SafeStorage<
     }
     if (tableAppendlogsArray instanceof Array) {
       return tableAppendlogsArray
-        .map(str => (typeof str === 'string' ? decodeURIComponent(str) : str))
-        .reduce(this.mergeData, this.castDataToStorageType(
-          undefined
-        ) as TSafeStorageStoredDataType<TYPE>);
+        .map((str) => (typeof str === 'string' ? decodeURIComponent(str) : str))
+        .reduce(
+          this.mergeData,
+          this.castDataToStorageType(undefined) as TSafeStorageStoredDataType<
+            TYPE
+          >
+        );
     }
   }
 
@@ -526,10 +529,7 @@ export class SafeStorage<
     if (storageDataFromAppendLogTable instanceof Error) {
       return this.setErrorStatus(storageDataFromAppendLogTable);
     }
-    return this.mergeData(
-      storageMainTableData,
-      storageDataFromAppendLogTable
-    );
+    return this.mergeData(storageMainTableData, storageDataFromAppendLogTable);
   }
 
   /**
