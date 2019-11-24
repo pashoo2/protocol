@@ -218,7 +218,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
   ): Promise<boolean | Error> {
     let app;
     try {
-      app = await firebase.initializeApp(configuration);
+      app = firebase.initializeApp(configuration);
       this.configuration = configuration;
     } catch (err) {
       console.error(err);

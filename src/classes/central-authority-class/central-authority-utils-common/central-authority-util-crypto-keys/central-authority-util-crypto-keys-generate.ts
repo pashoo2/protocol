@@ -31,7 +31,7 @@ export const generateEncryptKeyPair = async (): Promise<
   CryptoKeyPair | Error
 > => {
   const keyPair = await generateKeyPairDataEncryption();
-  const isKeyPair = await isCryptoKeyPair(keyPair);
+  const isKeyPair = isCryptoKeyPair(keyPair);
 
   if (!isKeyPair) {
     return new Error('Failed to generate a key pair');
@@ -44,7 +44,7 @@ export const generateEncryptKeyPair = async (): Promise<
  */
 export const generateSignKeyPair = async (): Promise<CryptoKeyPair | Error> => {
   const keyPair = await generateKeyPairSignData();
-  const isKeyPair = await isCryptoKeyPair(keyPair);
+  const isKeyPair = isCryptoKeyPair(keyPair);
 
   if (!isKeyPair) {
     return new Error('Failed to generate a key pair');

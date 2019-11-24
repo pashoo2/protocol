@@ -130,17 +130,13 @@ export const encryptToTypedArray = async (
     return k;
   }
 
-  const d = await convertToTypedArray(data);
+  const d = convertToTypedArray(data);
 
   if (d instanceof Error) {
     return d;
   }
 
-  return encryptNative(
-    k as CryptoKey,
-    d as TCRYPTO_UTIL_ENCRYPT_DATA_TYPES_NATIVE,
-    cryptoKeyConfig
-  );
+  return encryptNative(k, d, cryptoKeyConfig);
 };
 
 export const encryptToString = async (

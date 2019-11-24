@@ -159,7 +159,7 @@ export class SecretStorageProviderLevelJS implements StorageProvider {
         { asBuffer: true },
       );
 
-      return new Uint8Array(item as any);
+      return new Uint8Array(item);
     } catch (err) {
       return err;
     }

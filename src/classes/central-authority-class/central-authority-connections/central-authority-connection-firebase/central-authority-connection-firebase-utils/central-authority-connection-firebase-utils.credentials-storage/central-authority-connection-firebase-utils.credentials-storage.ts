@@ -266,7 +266,7 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
       );
 
       if (!(credentialsImported instanceof Error)) {
-        return credentialsImported as TCentralAuthorityUserCryptoCredentials | null;
+        return credentialsImported;
       }
     }
     return null;

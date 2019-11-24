@@ -51,7 +51,9 @@ export class SwarmConnectionSubclassIPFS
     return true;
   }
 
-  public async connect(options: IIPFSSpecificOptions): Promise<boolean | Error> {
+  public async connect(
+    options: IIPFSSpecificOptions
+  ): Promise<boolean | Error> {
     const { isClosed } = this;
 
     if (isClosed) {
@@ -95,7 +97,9 @@ export class SwarmConnectionSubclassIPFS
 
   protected setOptions(options?: IIPFSSpecificOptions): Error | boolean {
     if (!options || typeof options.password !== 'string') {
-      return new Error('An options and a password must be specified to encrypt the provate data');
+      return new Error(
+        'An options and a password must be specified to encrypt the provate data'
+      );
     }
     this.options = options;
     return true;
@@ -110,7 +114,7 @@ export class SwarmConnectionSubclassIPFS
     // unset the listeners for the node,
     // cause it may be already set
     this.unsetListeners(ipfsNode);
-    // set listeners for an events 
+    // set listeners for an events
     // emitted by the IPFS node
     this.setListeners(ipfsNode);
   }
@@ -130,13 +134,13 @@ export class SwarmConnectionSubclassIPFS
 
   protected async preloadIpfsModule(): Promise<Error | boolean> {
     let ipfsModule: unknown | Error;
-    
+
     try {
       ipfsModule = await import('ipfs');
     } catch (err) {
       ipfsModule = err as Error;
     }
-  
+
     if (ipfsModule instanceof Error) {
       console.error(
         `Failed to load the IPFS main script from the source ${SWARM_CONNECTION_SUBCLASS_IPFS_CDN_SCRIPT_URL}`
@@ -153,7 +157,7 @@ export class SwarmConnectionSubclassIPFS
   protected handleStarted = () => {
     console.warn('IPFS connection to the swarm was started');
     this.setStatus(ESwarmConnectionSubclassStatus.STARTED);
-  }
+  };
 
   protected handleError = async (error?: Error) => {
     if (error) {
@@ -162,22 +166,22 @@ export class SwarmConnectionSubclassIPFS
       );
       console.error(error);
     }
-  }
+  };
 
   protected handleInitialized = () => {
     console.warn('IPFS connection to the swarm was initialized');
     this.setStatus(ESwarmConnectionSubclassStatus.INITIALIZED);
-  }
+  };
 
   protected handleStop = () => {
     console.warn('IPFS connection to the swarm was initialized');
     const { isClosed } = this;
-    
+
     if (!isClosed) {
       this.setStatus(ESwarmConnectionSubclassStatus.STOP);
       this.reconnect();
     }
-  }
+  };
 
   protected setListeners(
     connection: Ipfs.IPFS,
@@ -252,7 +256,9 @@ export class SwarmConnectionSubclassIPFS
       const stopConnectionResult = await this.stopConnection(connection);
 
       if (stopConnectionResult instanceof Error) {
-        this.setErrorStatus('Failed to stop the connection during creating a new one');
+        this.setErrorStatus(
+          'Failed to stop the connection during creating a new one'
+        );
         return stopConnectionResult;
       }
       return err;
@@ -267,13 +273,11 @@ export class SwarmConnectionSubclassIPFS
     return true;
   }
 
-  protected async stopConnection(
-    connection: Ipfs.IPFS
-  ): Promise<Error | void> {
+  protected async stopConnection(connection: Ipfs.IPFS): Promise<Error | void> {
     console.warn('Stop the connection');
     try {
-      await connection.stop();
-    } catch(err) {
+      connection.stop();
+    } catch (err) {
       console.error(new Error('Failed to stop the ipfs node'));
       return err;
     }
@@ -338,14 +342,14 @@ export class SwarmConnectionSubclassIPFS
       );
     }
     this.setStatus(ESwarmConnectionSubclassStatus.CONNECTING);
-    
+
     // stop the current connection if exists
     const stopConnectionResult = await this.stopCurrentConnection();
 
     if (stopConnectionResult instanceof Error) {
       this.setErrorStatus('Failed to stop the previous connection');
     }
-    
+
     // create a new connection to the ipfs
     const createConnectionResult = await this.createConnection();
 

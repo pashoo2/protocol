@@ -22,8 +22,14 @@ import {
   generatePasswordKeyByPasswordString,
 } from 'utils/password-utils/derive-key.password-utils';
 import { TPASSWORD_ENCRYPTION_KEY_IMPORT_NATIVE_SUPPORTED_TYPES } from 'utils/password-utils/password-utils.types';
-import { decryptDataWithKey, decryptDataWithKeyFromUint8Array } from 'utils/password-utils/decrypt.password-utils';
-import { encryptDataToString, encryptDataToUInt8Array } from 'utils/password-utils/encrypt.password-utils';
+import {
+  decryptDataWithKey,
+  decryptDataWithKeyFromUint8Array,
+} from 'utils/password-utils/decrypt.password-utils';
+import {
+  encryptDataToString,
+  encryptDataToUInt8Array,
+} from 'utils/password-utils/encrypt.password-utils';
 import { getStatusClass } from 'classes/basic-classes/status-class-base/status-class-base';
 
 export class SecretStorage
@@ -32,47 +38,67 @@ export class SecretStorage
     instanceName: 'SecretStorage',
   })
   implements ISecretStorage {
-  public static validateCredentials(credentials?: ISecretStoreCredentials): void | Error {
+  public static validateCredentials(
+    credentials?: ISecretStoreCredentials
+  ): void | Error {
     if (!credentials) {
       return new Error('validateCredentials::Credentials must not be empty');
-  }
-  if (typeof credentials !== 'object') {
-    return new Error('validateCredentials::Credentials must be an object');
-  }
+    }
+    if (typeof credentials !== 'object') {
+      return new Error('validateCredentials::Credentials must be an object');
+    }
 
     const { password } = credentials;
 
     if (typeof password !== 'string') {
-      return new Error('validateCredentials::A password string must be provided to authorize');
+      return new Error(
+        'validateCredentials::A password string must be provided to authorize'
+      );
     }
     if (!password) {
-      return new Error('validateCredentials::A password non-empty string must be provided to authorize');
+      return new Error(
+        'validateCredentials::A password non-empty string must be provided to authorize'
+      );
     }
     if (password.length < SECRET_STORAGE_PASSWORD_MIN_LENGTH) {
-      return new Error(`validateCredentials::The password string must be a ${SECRET_STORAGE_PASSWORD_MIN_LENGTH} characters ar least`);
+      return new Error(
+        `validateCredentials::The password string must be a ${SECRET_STORAGE_PASSWORD_MIN_LENGTH} characters ar least`
+      );
     }
   }
 
-  public static validateCryptoKeyCredentials(credentials?: ISecretStoreCredentialsCryptoKey): void | Error {
+  public static validateCryptoKeyCredentials(
+    credentials?: ISecretStoreCredentialsCryptoKey
+  ): void | Error {
     if (!credentials) {
-      return new Error('validateCryptoKeyCredentials::Credentials must not be empty');
+      return new Error(
+        'validateCryptoKeyCredentials::Credentials must not be empty'
+      );
     }
     if (typeof credentials !== 'object') {
-      return new Error('validateCryptoKeyCredentials::Credentials must be an object');
+      return new Error(
+        'validateCryptoKeyCredentials::Credentials must be an object'
+      );
     }
 
     const { key } = credentials;
 
     if (!key) {
-      return new Error('validateCryptoKeyCredentials::A Key must be provided to authorize');
+      return new Error(
+        'validateCryptoKeyCredentials::A Key must be provided to authorize'
+      );
     }
     if (key instanceof CryptoKey) {
       return;
     }
-    return new Error('validateCryptoKeyCredentials::A Key must be ab instance of CryptoKey');
+    return new Error(
+      'validateCryptoKeyCredentials::A Key must be ab instance of CryptoKey'
+    );
   }
 
-  public static async generatePasswordKeyByPasswordString(password: string): Promise<CryptoKey | Error> {
+  public static async generatePasswordKeyByPasswordString(
+    password: string
+  ): Promise<CryptoKey | Error> {
     if (!password) {
       return new Error();
     }
@@ -81,7 +107,7 @@ export class SecretStorage
   }
 
   private static checkIsStorageProviderInstance(
-    storageProviderInstance: any,
+    storageProviderInstance: any
   ): Error | boolean {
     if (
       !storageProviderInstance ||
@@ -118,7 +144,7 @@ export class SecretStorage
    * check whether the storage provider
    * is support operations on
    * UInt8Array values
-   * 
+   *
    * @private
    * @type {boolean}
    * @memberof SecretStorage
@@ -202,7 +228,9 @@ export class SecretStorage
     }
   }
 
-  private setSupportForUInt8Array(StorageProviderConstructor: IStorageProvider): void {
+  private setSupportForUInt8Array(
+    StorageProviderConstructor: IStorageProvider
+  ): void {
     this.isStorageProviderSupportUInt8Array = !!StorageProviderConstructor.isBufferSupported;
   }
 
@@ -225,7 +253,7 @@ export class SecretStorage
       return new Error('There is no provider for the auth storage is defined');
     }
 
-    const authStorageProvider = await this.createInstanceOfStorageProvider(
+    const authStorageProvider = this.createInstanceOfStorageProvider(
       AuthStorageProvider
     );
 
@@ -420,7 +448,9 @@ export class SecretStorage
     }
   }
 
-  public async connect(options?: ISecretStorageOptions): Promise<boolean | Error> {
+  public async connect(
+    options?: ISecretStorageOptions
+  ): Promise<boolean | Error> {
     this.clearState();
     this.setStatus(SECRET_STORAGE_STATUS.CONNECTING);
     this.setOptions(options);
@@ -480,9 +510,11 @@ export class SecretStorage
 
   public async authorize(
     credentials: ISecretStoreCredentials,
-    options?: ISecretStorageOptions,
+    options?: ISecretStorageOptions
   ): Promise<boolean | Error> {
-    const credentialsValidationResult = SecretStorage.validateCredentials(credentials);
+    const credentialsValidationResult = SecretStorage.validateCredentials(
+      credentials
+    );
 
     if (credentialsValidationResult instanceof Error) {
       this.setErrorStatus(credentialsValidationResult);
@@ -490,7 +522,7 @@ export class SecretStorage
     }
 
     const cryptoKey = await SecretStorage.generatePasswordKeyByPasswordString(
-      credentials.password,
+      credentials.password
     );
 
     if (cryptoKey instanceof Error) {
@@ -516,9 +548,11 @@ export class SecretStorage
 
   public async authorizeByKey(
     credentials: ISecretStoreCredentialsCryptoKey,
-    options?: ISecretStorageOptions,
+    options?: ISecretStorageOptions
   ): Promise<boolean | Error> {
-    const credentialsValidationResult = SecretStorage.validateCryptoKeyCredentials(credentials);
+    const credentialsValidationResult = SecretStorage.validateCryptoKeyCredentials(
+      credentials
+    );
 
     if (credentialsValidationResult instanceof Error) {
       this.setErrorStatus(credentialsValidationResult);
@@ -577,10 +611,12 @@ export class SecretStorage
     }
 
     if (typeof storageProvider.getUInt8Array !== 'function') {
-      return new Error('The storage provider which support Uint8Array must provide the method called getUInt8Array');
+      return new Error(
+        'The storage provider which support Uint8Array must provide the method called getUInt8Array'
+      );
     }
 
-    const value = await storageProvider.getUInt8Array!(key);
+    const value = await storageProvider.getUInt8Array(key);
 
     if (!value) {
       return undefined;
@@ -616,7 +652,9 @@ export class SecretStorage
     return decryptedValue;
   }
 
-  protected async decryptValueFromUInt8Array(value: Uint8Array): Promise<string | Error> {
+  protected async decryptValueFromUInt8Array(
+    value: Uint8Array
+  ): Promise<string | Error> {
     const { k } = this;
 
     if (!(k instanceof CryptoKey)) {
@@ -625,9 +663,7 @@ export class SecretStorage
       );
     }
     if (!value.length) {
-      return SecretStorage.error(
-        'The value must not be empty',
-      );
+      return SecretStorage.error('The value must not be empty');
     }
 
     const decryptedValue = await decryptDataWithKeyFromUint8Array(k, value);
@@ -650,11 +686,9 @@ export class SecretStorage
 
     const { isStorageProviderSupportUInt8Array } = this;
 
-    const valueEncrypted = await (
-      isStorageProviderSupportUInt8Array
-        ? this.getWithStorageProviderUint8Array(key)
-        : this.getWithStorageProvider(key)
-    );
+    const valueEncrypted = await (isStorageProviderSupportUInt8Array
+      ? this.getWithStorageProviderUint8Array(key)
+      : this.getWithStorageProvider(key));
 
     if (valueEncrypted === undefined) {
       return valueEncrypted;
@@ -662,12 +696,10 @@ export class SecretStorage
     if (valueEncrypted instanceof Error) {
       return SecretStorage.error(valueEncrypted);
     }
-    
-    const decryptResult = await (
-      valueEncrypted instanceof Uint8Array
-        ? this.decryptValueFromUInt8Array(valueEncrypted)
-        : this.decryptValue(valueEncrypted as string)
-    );
+
+    const decryptResult = await (valueEncrypted instanceof Uint8Array
+      ? this.decryptValueFromUInt8Array(valueEncrypted)
+      : this.decryptValue(valueEncrypted));
 
     if (decryptResult instanceof Error) {
       return decryptResult;
@@ -710,13 +742,15 @@ export class SecretStorage
       return new Error(
         'There is no an active connection with storage provider'
       );
-    } 
+    }
     if (typeof storageProvider.setUInt8Array !== 'function') {
-      return new Error('The storage provider doesn\'t have the method setUInt8Array');
+      return new Error(
+        "The storage provider doesn't have the method setUInt8Array"
+      );
     }
 
     const result = await storageProvider.setUInt8Array(key, value);
-    
+
     if (result instanceof Error) {
       return result;
     }
@@ -736,7 +770,7 @@ export class SecretStorage
     }
 
     const encryptedValue = await encryptDataToString(k, value);
-    
+
     if (encryptedValue instanceof Error) {
       return encryptedValue;
     }
@@ -754,7 +788,9 @@ export class SecretStorage
    * @returns {(Promise<Uint8Array | Error>)}
    * @memberof SecretStorage
    */
-  protected async encryptValueAsInt8Array(value: string | Uint8Array): Promise<Uint8Array | Error> {
+  protected async encryptValueAsInt8Array(
+    value: string | Uint8Array
+  ): Promise<Uint8Array | Error> {
     const { k } = this;
 
     if (!(k instanceof CryptoKey)) {
@@ -762,7 +798,7 @@ export class SecretStorage
     }
 
     const encryptedValue = await encryptDataToUInt8Array(k, value);
-    
+
     if (encryptedValue instanceof Error) {
       return encryptedValue;
     }
@@ -772,12 +808,9 @@ export class SecretStorage
     return encryptedValue;
   }
 
-  public async set(
-    key: string,
-    value: string,
-  ): Promise<boolean | Error> {
+  public async set(key: string, value: string): Promise<boolean | Error> {
     const { isRunning } = this;
-    
+
     if (!isRunning) {
       return SecretStorage.error(
         'The instance of SecretStorage is not connected to the storage provider or there is no an encryption key'
@@ -785,20 +818,18 @@ export class SecretStorage
     }
 
     //value - must be an escaped sctring
-    const encryptedValue = this.isStorageProviderSupportUInt8Array 
+    const encryptedValue = this.isStorageProviderSupportUInt8Array
       ? await this.encryptValueAsInt8Array(value)
-      : await this.encryptValue(value)
-    
+      : await this.encryptValue(value);
+
     if (encryptedValue instanceof Error) {
       return SecretStorage.error(encryptedValue);
     }
-    
-    const storeValueResult = await (
-      encryptedValue instanceof Uint8Array
-        ? this.setWithStorageProviderUInt8Array(key, encryptedValue)
-        : this.setWithStorageProvider(key, encryptedValue)
-    );
-    
+
+    const storeValueResult = await (encryptedValue instanceof Uint8Array
+      ? this.setWithStorageProviderUInt8Array(key, encryptedValue)
+      : this.setWithStorageProvider(key, encryptedValue));
+
     if (storeValueResult instanceof Error) {
       return SecretStorage.error(storeValueResult);
     }

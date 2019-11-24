@@ -117,7 +117,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     }
 
     try {
-      const e = await database.get(hash);
+      const e = database.get(hash);
 
       if (e instanceof Error) {
         return new Error('An error has occurred on get the data from the key');

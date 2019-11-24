@@ -255,13 +255,13 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter imple
         if (secretStorage) {
             if (credentialsCryptoKey) {
                 return secretStorage.authorizeByKey(
-                    credentialsCryptoKey!,
-                    options!,
+                    credentialsCryptoKey,
+                    options,
                 );
             } else if (credentials) {
                 return secretStorage.authorize(
-                    credentials!,
-                    options!,
+                    credentials,
+                    options,
                 );
             }
             return new Error('Credentials was not provided');

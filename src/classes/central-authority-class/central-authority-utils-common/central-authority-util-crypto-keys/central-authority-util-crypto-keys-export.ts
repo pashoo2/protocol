@@ -84,7 +84,7 @@ export const exportPublicKeysAsString = async (
   const {
     [CA_CRYPTO_KEY_PAIRS_ENCRYPTION_PUBLIC_KEY_NAME]: encryptionPublicKey,
     [CA_CRYPTO_KEY_PAIRS_SIGN_PUBLIC_KEY_NAME]: signPublicKey,
-  } = publicKeys as TCACryptoPubilicKeys;
+  } = publicKeys;
 
   const [
     encryptionPublicKeyExported,

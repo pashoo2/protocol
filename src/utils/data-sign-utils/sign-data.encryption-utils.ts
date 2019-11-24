@@ -48,16 +48,13 @@ export const signToTypedArray = async (
     return k;
   }
 
-  const d = await convertToTypedArray(data);
+  const d = convertToTypedArray(data);
 
   if (d instanceof Error) {
     return d;
   }
 
-  return signNative(
-    k as CryptoKey,
-    d as TDATA_SIGN_UTIL_SIGN_DATA_TYPES_NATIVE
-  );
+  return signNative(k, d);
 };
 
 export const signToString = async (

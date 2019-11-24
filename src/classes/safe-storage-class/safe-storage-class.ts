@@ -449,7 +449,7 @@ export class SafeStorage<
       const parsedDate = this.parseDataFromStorage(data);
 
       if (parsedDate instanceof Error) {
-        return this.setErrorStatus(parsedDate) as Error;
+        return this.setErrorStatus(parsedDate);
       }
       return parsedDate as D | undefined;
     }
@@ -493,9 +493,7 @@ export class SafeStorage<
         .map(str => (typeof str === 'string' ? decodeURIComponent(str) : str))
         .reduce(this.mergeData, this.castDataToStorageType(
           undefined
-        ) as TSafeStorageStoredDataType<TYPE>) as
-        | TSafeStorageStoredDataType<TYPE>
-        | Error;
+        ) as TSafeStorageStoredDataType<TYPE>);
     }
   }
 
@@ -529,8 +527,8 @@ export class SafeStorage<
       return this.setErrorStatus(storageDataFromAppendLogTable);
     }
     return this.mergeData(
-      storageMainTableData as TSafeStorageStoredDataType<TYPE>,
-      storageDataFromAppendLogTable as TSafeStorageStoredDataType<TYPE>
+      storageMainTableData,
+      storageDataFromAppendLogTable
     );
   }
 
@@ -814,7 +812,7 @@ export class SafeStorage<
         ...(this.appendDataTemp as TSafeStorageStoredDataTypeAppendLog),
       ];
       this.appendDataTemp = [];
-      return writeDumpResult as Error;
+      return writeDumpResult;
     }
     this.appendData = this.appendDataTemp;
     this.appendDataTemp = [];
@@ -836,7 +834,7 @@ export class SafeStorage<
         >),
       };
       this.appendDataTemp = {};
-      return writeDumpResult as Error;
+      return writeDumpResult;
     }
     this.appendData = this.appendDataTemp;
     this.appendDataTemp = {};
@@ -1052,9 +1050,9 @@ export class SafeStorage<
     const tempStorage = this.isStorageBusy ? appendDataTemp : appendData;
     const stringifiedData = this.normilizeData(data);
 
-    (tableData as TSafeStorageStoredDataTypeKeyValue)[key as string] =
+    (tableData as TSafeStorageStoredDataTypeKeyValue)[key] =
       stringifiedData || null;
-    (tempStorage as TSafeStorageStoredDataTypeKeyValue)[key as string] =
+    (tempStorage as TSafeStorageStoredDataTypeKeyValue)[key] =
       stringifiedData || null;
     return true;
   }

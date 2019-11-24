@@ -106,7 +106,7 @@ export interface RepoAPI {
   path(): string;
 }
 
-export type FileContent = Object | Blob | string;
+export type FileContent = Record<string, any> | Blob | string;
 
 /** old version? */
 export interface IPFSFile {
@@ -189,7 +189,7 @@ export interface SwarmAPI {
 export type DAGNode = any;
 export type DAGLink = any;
 export type DAGLinkRef = DAGLink | any;
-export type Obj = BufferSource | Object;
+export type Obj = BufferSource | Record<string, any>;
 
 export interface ObjectStat {
   Hash: Multihash;
