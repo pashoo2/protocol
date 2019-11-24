@@ -27,7 +27,7 @@ export const objectToUrlEncodedString = (obj: IParamsObject): string => {
 };
 
 export interface IParamsObjectFormData {
-  [paramName: string]: String | File | Blob | object;
+  [paramName: string]: string | File | Blob | object;
 }
 
 export const objectToFormData = (obj: IParamsObjectFormData): FormData => {
@@ -41,10 +41,10 @@ export const objectToFormData = (obj: IParamsObjectFormData): FormData => {
     paramValueCasted = undefined;
     thirdParam = undefined;
     if (paramValue instanceof File) {
-      paramValueCasted = paramValue as File;
+      paramValueCasted = paramValue;
       thirdParam = paramValueCasted.name;
     } else if (paramValue instanceof Blob) {
-      paramValueCasted = paramValue as Blob;
+      paramValueCasted = paramValue;
       thirdParam = 'file';
     } else if (paramValueType === 'object') {
       paramValueCasted = JSON.stringify(paramValue);

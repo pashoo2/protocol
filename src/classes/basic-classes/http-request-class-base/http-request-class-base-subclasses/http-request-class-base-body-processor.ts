@@ -82,14 +82,17 @@ export class HttpRequestBodyProcessor {
     const { options } = this;
     const { contentType } = options;
 
-    switch (contentType) {
-      case HTTP_REQUEST_CONTENT_TYPE.JSON:
-        return this.processBodyAsJSON();
-      case HTTP_REQUEST_CONTENT_TYPE.URL_ENCODED:
-        return this.processBodyAsUrlEncoded();
-      case HTTP_REQUEST_CONTENT_TYPE.MULTIPART:
-        return this.processBodyAsMultipart();
+    if (typeof contentType === 'string') {
+      switch (contentType!) {
+        case HTTP_REQUEST_CONTENT_TYPE.JSON:
+          return this.processBodyAsJSON();
+        case HTTP_REQUEST_CONTENT_TYPE.URL_ENCODED:
+          return this.processBodyAsUrlEncoded();
+        case HTTP_REQUEST_CONTENT_TYPE.MULTIPART:
+          return this.processBodyAsMultipart();
+      }
     }
+    return undefined;
   }
 
   protected getBody(): string | FormData | undefined {

@@ -50,7 +50,7 @@ export interface IHttpRequestOptions {
   mode?: THttpRequestMode;
   cache?: THttpRequestCacheControl;
   token?: THttpRequestToken;
-  queryStringParams?: string;
+  queryStringParams?: TQueryStringParams;
   baseUrl?: string;
   // set option credentials for the Fetch API request to 'same-origin'
   withCookie?: boolean;

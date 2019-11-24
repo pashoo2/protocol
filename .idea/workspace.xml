@@ -2,8 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e70e70e3-e48a-4dfd-91a6-03818e8691f6" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-connection-class/swarm-connection-class-subclasses/swarm-connection-class-subclass-ipfs/swarm-connection-class-subclass-ipfs.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-connection-class/swarm-connection-class-subclasses/swarm-connection-class-subclass-ipfs/swarm-connection-class-subclass-ipfs.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/types/ipfs.types.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base-subclasses/http-request-class-base-body-processor.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base-subclasses/http-request-class-base-body-processor.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base-utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base.const.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base.const.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base.utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base.utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-server-api/central-authority-connection-server-api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-server-api/central-authority-connection-server-api.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/const/common-date-time/common-date-time-sync.const.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/http-request-class-base.test/http-request-class-base.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/http-request-class-base.test/http-request-class-base.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/common-utils/common-utils-date-sync.ts" beforeDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -17,17 +27,54 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="ipfs.types.d.ts" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ipfs.types.d.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/types/ipfs.types.d.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3960" />
+            <state relative-caret-position="285">
+              <caret line="19" column="10" selection-start-line="19" selection-start-column="10" selection-end-line="19" selection-end-column="10" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="package.json" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/package.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-224">
+              <caret line="25" column="26" lean-forward="true" selection-start-line="25" selection-start-column="26" selection-end-line="25" selection-end-column="26" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="http-request-class-base-utils.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base-utils.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="765">
+              <caret line="51" column="31" selection-start-line="51" selection-start-column="31" selection-end-line="51" selection-end-column="31" />
+              <folding>
+                <element signature="e#0#187#0" expanded="true" />
+              </folding>
+            </state>
           </provider>
         </entry>
       </file>
     </leaf>
   </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>request.setBaseUrl(serverUrl);</find>
+    </findStrings>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="HARD" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-server-api/central-authority-connection-server-api.ts" />
+        <option value="$PROJECT_DIR$/package.json" />
+      </list>
+    </option>
   </component>
   <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
   <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER">
@@ -74,17 +121,31 @@
       <path value="$PROJECT_DIR$/src/classes/channel-authority-class/package.json" />
       <path value="$PROJECT_DIR$/src/classes/safe-storage-class/package.json" />
       <path value="$PROJECT_DIR$/src/classes/secret-storage-class/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/secret-storage-class/secret_storage_providers/secret-storage-level-js-provider/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/secret-storage-class/secret_storage_providers/secret-storage-local-forage-provider/package.json" />
       <path value="$PROJECT_DIR$/src/classes/secret-storage-class/secret_storage_providers/secret-storage-local-storage-provider/package.json" />
       <path value="$PROJECT_DIR$/src/classes/secret-storage-class/secret_storage_providers/secret-storage-session-storage-provider/package.json" />
       <path value="$PROJECT_DIR$/src/classes/swarm-connection-class/package.json" />
       <path value="$PROJECT_DIR$/src/classes/swarm-connection-class/swarm-connection-class-subclasses/swarm-connection-class-subclass-ipfs/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/swarm-message/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-identity-provider/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-keystore/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-storage-cache/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-storage-fabric/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/package.json" />
+      <path value="$PROJECT_DIR$/src/const/common-values/package.json" />
       <path value="$PROJECT_DIR$/src/const/const-validation-schemes/package.json" />
+      <path value="$PROJECT_DIR$/src/const/const-validation-values/const-validation-values-messaging-common/package.json" />
+      <path value="$PROJECT_DIR$/src/const/const-validation-values/package.json" />
       <path value="$PROJECT_DIR$/src/test/central-authority.test/central-authority-connection.test/central-authority-connection.test.firebase/package.json" />
       <path value="$PROJECT_DIR$/src/test/central-authority.test/central-authority-connection.test/package.json" />
       <path value="$PROJECT_DIR$/src/test/central-authority.test/package.json" />
       <path value="$PROJECT_DIR$/src/test/common-utils.test/package.json" />
+      <path value="$PROJECT_DIR$/src/test/http-request-class-base.test/package.json" />
       <path value="$PROJECT_DIR$/src/test/ipfs-swarm-connection.test/package.json" />
       <path value="$PROJECT_DIR$/src/test/nodejs-helpers.test/nodejs-helpers.test.firebase/package.json" />
+      <path value="$PROJECT_DIR$/src/utils/classes-helpers-utils/pseudo-ntp-class/package.json" />
       <path value="$PROJECT_DIR$/src/utils/common-utils/package.json" />
       <path value="$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/package.json" />
       <path value="$PROJECT_DIR$/src/utils/data-cache-utils/package.json" />
@@ -112,6 +173,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -128,13 +190,26 @@
               <item name="decentrilized-protocol" type="b2602c69:ProjectViewProjectNode" />
               <item name="decentrilized-protocol" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="types" type="462c0819:PsiDirectoryNode" />
+              <item name="classes" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="decentrilized-protocol" type="b2602c69:ProjectViewProjectNode" />
+              <item name="decentrilized-protocol" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="classes" type="462c0819:PsiDirectoryNode" />
+              <item name="basic-classes" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="decentrilized-protocol" type="b2602c69:ProjectViewProjectNode" />
+              <item name="decentrilized-protocol" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="classes" type="462c0819:PsiDirectoryNode" />
+              <item name="central-authority-class" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -143,6 +218,8 @@
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.selected.package.eslint" value="$PROJECT_DIR$/node_modules/eslint" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="prettierjs.PrettierConfiguration.Package" value="$PROJECT_DIR$/node_modules/prettier" />
     <property name="ts.external.directory.path" value="$PROJECT_DIR$/node_modules/typescript/lib" />
   </component>
   <component name="RunDashboard">
@@ -171,25 +248,28 @@
       <workItem from="1572543675245" duration="30000" />
       <workItem from="1572543727430" duration="99000" />
       <workItem from="1572543906042" duration="59000" />
+      <workItem from="1574620752734" duration="999000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="278000" />
+    <option name="totallyTimeSpent" value="1277000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="67" y="25" width="1853" height="1055" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info anchor="bottom" id="TypeScript" order="7" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.18888289" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
-      <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Version Control" order="7" weight="0.3286334" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.329718" />
       <window_info id="npm" order="2" side_tool="true" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="7" visible="true" weight="0.3373102" />
+      <window_info anchor="bottom" id="TypeScript" order="7" weight="0.329718" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.19125684" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Find" order="1" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Terminal" order="7" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -198,7 +278,6 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Find" order="1" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -209,13 +288,71 @@
       </list>
     </option>
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="RECENTLY_FILTERED_USER_GROUPS">
+                <collection />
+              </option>
+              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+                <collection />
+              </option>
+              <option name="COLUMN_ORDER">
+                <list>
+                  <option value="0" />
+                  <option value="1" />
+                  <option value="2" />
+                  <option value="3" />
+                </list>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/types/ipfs.types.d.ts">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/types/ipfs.types.d.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3960" />
+        <state relative-caret-position="285">
+          <caret line="19" column="10" selection-start-line="19" selection-start-column="10" selection-end-line="19" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class.ts">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-server-api/central-authority-connection-server-api.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="21" column="4" selection-start-line="21" selection-start-column="4" selection-end-line="21" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base-utils.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="765">
+          <caret line="51" column="31" selection-start-line="51" selection-start-column="31" selection-end-line="51" selection-end-column="31" />
+          <folding>
+            <element signature="e#0#187#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-224">
+          <caret line="25" column="26" lean-forward="true" selection-start-line="25" selection-start-column="26" selection-end-line="25" selection-end-column="26" />
+        </state>
       </provider>
     </entry>
   </component>

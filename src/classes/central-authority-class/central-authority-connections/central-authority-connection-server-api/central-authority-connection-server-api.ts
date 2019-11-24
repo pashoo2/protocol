@@ -14,10 +14,12 @@ export class CentralAuthorityConnectionServerAPI
   ): Promise<(IUserDescription | null)[] | Error> {
     const { options } = this;
     const { getUsersDescriptionsRequestOptions, serverUrl } = options;
-    const request = new HttpRequest(getUsersDescriptionsRequestOptions);
-
-    request.setBaseUrl(serverUrl);
-    request.setQueryStringParams(users);
+    const request = new HttpRequest({
+        ...getUsersDescriptionsRequestOptions,
+        baseUrl: serverUrl,
+        queryStringParams: users,
+    });
+    
     return request.send();
   }
 }
