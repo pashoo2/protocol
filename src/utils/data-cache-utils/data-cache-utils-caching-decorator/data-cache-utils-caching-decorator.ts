@@ -82,7 +82,7 @@ export const dataCachingUtilsCachingDecorator = <T, V, I extends object>(
           if (theMinimalRaitingValue) {
             // find the key with the minimal value of the rating
             // which value was stored in the cache
-            for (let entry of cache) {
+            for (const entry of cache) {
               if (entry[1].rating === theMinimalRaitingValue) {
                 // if found the key with the minimal
                 // rating delete it from the cache

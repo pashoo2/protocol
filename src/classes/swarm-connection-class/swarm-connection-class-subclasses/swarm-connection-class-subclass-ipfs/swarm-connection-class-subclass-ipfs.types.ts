@@ -1,6 +1,6 @@
 export type TIPFSPubsubMessage = {
-  from: String;
+  from: string;
   seqno: Buffer;
   data: Buffer;
-  topicIDs: Array<String>;
+  topicIDs: Array<string>;
 };

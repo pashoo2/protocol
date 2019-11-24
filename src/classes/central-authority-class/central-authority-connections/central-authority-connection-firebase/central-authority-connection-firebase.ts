@@ -674,6 +674,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
           break;
         }
       }
+      attempt += 1;
     }
     return cryptoCredentials;
   }
