@@ -2,6 +2,42 @@
   "name": "decentrilized-protocol",
   "version": "0.1.0",
   "private": true,
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "start:wrtc-star": "star-signal --port=9090 --host=127.0.0.1",
+    "postinstall": "patch-package",
+    "prettier:write": "prettier --parser typescript --write \"src/**/*.{ts,tsx}\"",
+    "prettier:staged": "pretty-quick --staged --parser typescript --write",
+    "lint": "eslint --fix --cache --ext .js,.jsx,.ts,.tsx --ignore-path .gitignore src",
+    "lint:quiet": "eslint --quiet --fix --cache --ext .js,.jsx,.ts,.tsx --ignore-path .gitignore --ignore-pattern \"*.test.*\" src",
+    "lint:staged": "eslint . --quiet --fix --ignore-path .gitignore --cache --ext .js,.jsx,.ts,.tsx --ignore-path .gitignore --ignore-pattern \"*.test.*\""
+  },
+  "lint-staged": {
+    "src/**/*.{ts,tsx}": [
+      "npm run lint:staged",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run prettier:staged && lint-staged"
+    }
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
   "dependencies": {
     "ajv": "^6.10.2",
     "buffer": "^5.4.3",
@@ -38,29 +74,6 @@
     "typescript": "^3.7.2",
     "validator": "^12.1.0"
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "start:wrtc-star": "star-signal --port=9090 --host=127.0.0.1",
-    "postinstall": "patch-package"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
   "devDependencies": {
     "@types/encoding-down": "^5.0.0",
     "@types/firebase": "^3.2.1",
@@ -84,6 +97,12 @@
     "@typescript-eslint/eslint-plugin": "^2.8.1-alpha.12",
     "@typescript-eslint/parser": "^2.8.1-alpha.12",
     "chai": "^4.2.0",
-    "chai-as-promised": "^7.1.1"
+    "chai-as-promised": "^7.1.1",
+    "eslint-config-prettier": "^6.7.0",
+    "eslint-plugin-react": "^7.16.0",
+    "husky": "^3.1.0",
+    "lint-staged": "^9.4.3",
+    "prettier": "^1.19.1",
+    "pretty-quick": "^2.0.1"
   }
 }

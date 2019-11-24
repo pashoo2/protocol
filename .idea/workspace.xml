@@ -2,18 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e70e70e3-e48a-4dfd-91a6-03818e8691f6" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/.eslintrc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.prettierrc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base-subclasses/http-request-class-base-body-processor.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base-subclasses/http-request-class-base-body-processor.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base-utils.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base.const.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base.const.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base.types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base.utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base.utils.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-server-api/central-authority-connection-server-api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-server-api/central-authority-connection-server-api.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/const/common-date-time/common-date-time-sync.const.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/http-request-class-base.test/http-request-class-base.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/http-request-class-base.test/http-request-class-base.test.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/common-utils/common-utils-date-sync.ts" beforeDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -36,11 +30,29 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="package.json" pinned="false" current-in-tab="true">
+      <file leaf-file-name="package.json" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/package.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-224">
-              <caret line="25" column="26" lean-forward="true" selection-start-line="25" selection-start-column="26" selection-end-line="25" selection-end-column="26" />
+            <state relative-caret-position="301">
+              <caret line="96" column="5" selection-start-line="96" selection-start-column="5" selection-end-line="96" selection-end-column="37" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name=".eslintrc" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/.eslintrc">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="285">
+              <caret line="19" column="19" selection-start-line="19" selection-start-column="19" selection-end-line="19" selection-end-column="19" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name=".prettierrc" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/.prettierrc">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="135">
+              <caret line="9" column="1" selection-start-line="9" selection-start-column="1" selection-end-line="9" selection-end-column="1" />
             </state>
           </provider>
         </entry>
@@ -73,6 +85,8 @@
       <list>
         <option value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-server-api/central-authority-connection-server-api.ts" />
         <option value="$PROJECT_DIR$/package.json" />
+        <option value="$PROJECT_DIR$/.prettierrc" />
+        <option value="$PROJECT_DIR$/.eslintrc" />
       </list>
     </option>
   </component>
@@ -181,31 +195,6 @@
               <item name="decentrilized-protocol" type="b2602c69:ProjectViewProjectNode" />
               <item name="decentrilized-protocol" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="decentrilized-protocol" type="b2602c69:ProjectViewProjectNode" />
-              <item name="decentrilized-protocol" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="decentrilized-protocol" type="b2602c69:ProjectViewProjectNode" />
-              <item name="decentrilized-protocol" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="classes" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="decentrilized-protocol" type="b2602c69:ProjectViewProjectNode" />
-              <item name="decentrilized-protocol" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="classes" type="462c0819:PsiDirectoryNode" />
-              <item name="basic-classes" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="decentrilized-protocol" type="b2602c69:ProjectViewProjectNode" />
-              <item name="decentrilized-protocol" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="classes" type="462c0819:PsiDirectoryNode" />
-              <item name="central-authority-class" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -248,12 +237,12 @@
       <workItem from="1572543675245" duration="30000" />
       <workItem from="1572543727430" duration="99000" />
       <workItem from="1572543906042" duration="59000" />
-      <workItem from="1574620752734" duration="999000" />
+      <workItem from="1574620752734" duration="1776000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1277000" />
+    <option name="totallyTimeSpent" value="2054000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="67" y="25" width="1853" height="1055" extended-state="6" />
@@ -348,10 +337,24 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/.prettierrc">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="9" column="1" selection-start-line="9" selection-start-column="1" selection-end-line="9" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/package.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-224">
-          <caret line="25" column="26" lean-forward="true" selection-start-line="25" selection-start-column="26" selection-end-line="25" selection-end-column="26" />
+        <state relative-caret-position="301">
+          <caret line="96" column="5" selection-start-line="96" selection-start-column="5" selection-end-line="96" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.eslintrc">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="19" column="19" selection-start-line="19" selection-start-column="19" selection-end-line="19" selection-end-column="19" />
         </state>
       </provider>
     </entry>
