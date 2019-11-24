@@ -83,6 +83,7 @@ export class HttpRequestBodyProcessor {
     const { contentType } = options;
 
     if (typeof contentType === 'string') {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
       switch (contentType!) {
         case HTTP_REQUEST_CONTENT_TYPE.JSON:
           return this.processBodyAsJSON();

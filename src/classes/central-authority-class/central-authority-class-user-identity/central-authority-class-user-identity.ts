@@ -116,13 +116,15 @@ export class CentralAuthorityIdentity implements ICAIdentityCommonInstance {
     return identityDescritptionSerialized;
   }
 
-  protected setIdentityIsValid() {
+  protected setIdentityIsValid(): void {
     if (this.isValid !== false) {
       this.isValid = true;
     }
   }
 
-  protected parseUserIdentity(userIdentity: TCentralAuthorityUserIdentity) {
+  protected parseUserIdentity(
+    userIdentity: TCentralAuthorityUserIdentity
+  ): void {
     if (userIdentity) {
       const parsedUserIdentity = parseIdentity(userIdentity);
       if (parsedUserIdentity instanceof Error) {

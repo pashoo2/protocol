@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/ban-types
 export type TPrototypeKeys = keyof Object;
 
 export type ownKeyOf<T extends object> = keyof T extends TPrototypeKeys

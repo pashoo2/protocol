@@ -12,7 +12,9 @@
     "prettier:write": "prettier --parser typescript --write \"src/**/*.{ts,tsx}\"",
     "prettier:staged": "pretty-quick --staged --parser typescript --write",
     "lint": "eslint --cache --ext .js,.jsx,.ts,.tsx --ignore-path .gitignore src",
+    "lint:file": "eslint --cache --ext .js,.jsx,.ts,.tsx --ignore-path .gitignore",
     "lint:quiet": "eslint --quiet --cache --ext .js,.jsx,.ts,.tsx --ignore-path .gitignore --ignore-pattern \"*.test.*\" src",
+    "lint:quiet:fix": "eslint --quiet --fix --cache --ext .js,.jsx,.ts,.tsx --ignore-path .gitignore --ignore-pattern \"*.test.*\" src",
     "lint:staged": "eslint . --quiet --ignore-path .gitignore --cache --ext .js,.jsx,.ts,.tsx --ignore-path .gitignore --ignore-pattern \"*.test.*\""
   },
   "lint-staged": {
