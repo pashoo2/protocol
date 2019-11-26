@@ -57,7 +57,13 @@ export interface IHttpRequestOptions {
   credentials?: RequestCredentials;
 }
 
-export type THttpResponseResult = object | string | File | Blob | FormData;
+export type THttpResponseResult =
+  | undefined
+  | object
+  | string
+  | File
+  | Blob
+  | FormData;
 
 export interface IHttpRequestHeaders {
   [HTTP_REQUEST_HEADERS_NAMES.AUTHORIZATION]?: string;

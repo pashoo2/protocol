@@ -1,3 +1,6 @@
+import { CONST_API_CONF_CURRENT_PROTOCOL_USED } from 'const/const-api-conf';
+import { HTTP_REQUEST_URL_PROTOCOL_DELIIMETR_REGEXP } from './http-request-class-base.const';
+
 export interface IParamsObject {
   [paramName: string]: string | number | object;
 }
@@ -60,4 +63,15 @@ export const objectToFormData = (obj: IParamsObjectFormData): FormData => {
     }
     return formData;
   }, new FormData());
+};
+
+export const prefixUrlWithHTTPProtocol = (urlString: string): string => {
+  const urlTrimmed = urlString.trim().toLowerCase();
+
+  return urlTrimmed.startsWith('http://') || urlTrimmed.startsWith('https://')
+    ? urlTrimmed
+    : `${CONST_API_CONF_CURRENT_PROTOCOL_USED}//${urlTrimmed.replace(
+        HTTP_REQUEST_URL_PROTOCOL_DELIIMETR_REGEXP,
+        ''
+      )}`;
 };

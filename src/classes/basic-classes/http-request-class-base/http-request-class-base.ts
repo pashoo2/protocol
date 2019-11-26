@@ -12,11 +12,13 @@ import {
   HTTP_REQUEST_METHOD,
   HTTP_REQUEST_MODE,
   HTTP_REQUEST_CONTENT_TYPE,
+  HTTP_REQUEST_MODES_SUPPORTED,
 } from './http-request-class-base.const';
 import { HttpRequestResponseProcessor } from './http-request-class-base-subclasses/http-request-class-response-processor';
 import { HttpResponseError } from './http-request-class-base-subclasses/http-request-class-base-response-error';
 import { ownValueOf } from 'types/helper.types';
 import { resolveQueryStringParams } from './http-request-class-base-utils';
+import { prefixUrlWithHTTPProtocol } from './http-request-class-base.utils';
 
 export class HttpRequest extends HttpRequestBodyProcessor {
   public static ContentType = HTTP_REQUEST_CONTENT_TYPE;
@@ -104,6 +106,7 @@ export class HttpRequest extends HttpRequestBodyProcessor {
 
       return this.preProcessResponse(response);
     } catch (err) {
+      console.error(`HttpRequest::${url}::send::failed`, err);
       return err;
     }
   };
@@ -174,10 +177,10 @@ export class HttpRequest extends HttpRequestBodyProcessor {
     }
 
     if (typeof mode === 'string') {
-      const methodRes = mode.trim().toUpperCase();
+      const methodRes = mode.trim().toLowerCase();
 
-      if (HTTP_REQUEST_MODE.hasOwnProperty(methodRes)) {
-        return (HTTP_REQUEST_MODE as any)[methodRes] as RequestMode;
+      if ((HTTP_REQUEST_MODES_SUPPORTED as string[]).includes(methodRes)) {
+        return methodRes as RequestMode;
       }
       return new Error(`An unknown request mode "${mode}"`);
     }
@@ -190,7 +193,10 @@ export class HttpRequest extends HttpRequestBodyProcessor {
    */
   protected resolveTargetUrl(url: string): string {
     const { baseUrl, queryStringParams } = this;
-    const urlInstance = new URL(url, baseUrl || undefined);
+    const urlInstance = new URL(
+      baseUrl ? url : prefixUrlWithHTTPProtocol(url),
+      baseUrl ? prefixUrlWithHTTPProtocol(baseUrl) : undefined
+    );
 
     if (queryStringParams) {
       urlInstance.search = queryStringParams;
@@ -230,14 +236,13 @@ export class HttpRequest extends HttpRequestBodyProcessor {
     if (typeof url !== 'string') {
       return new Error('The url must be defined in options');
     }
-    if (!isURL(url)) {
-      return new Error('The url is not valid');
-    }
     if (typeof baseUrl === 'string') {
       if (!isURL(baseUrl)) {
         return new Error('The baseUrl is not valid');
       }
       this.baseUrl = baseUrl;
+    } else if (!isURL(url)) {
+      return new Error('The url is not valid');
     }
     if (token) {
       this.token = token;
@@ -257,10 +262,10 @@ export class HttpRequest extends HttpRequestBodyProcessor {
     }
     this.mode = modeRes;
     this.credentials = this.getCredentials(options);
-    this.url = this.resolveTargetUrl(url);
     if (queryStringParams) {
       this.queryStringParams = this.getQueryStringParams(queryStringParams);
     }
+    this.url = this.resolveTargetUrl(url);
   }
 
   protected getRequestHeaders(): HeadersInit {

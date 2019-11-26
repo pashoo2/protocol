@@ -4,7 +4,7 @@ import {
   isSucceedResponse,
   getContentTypeRAW,
 } from '../http-request-class-base-utils';
-import { HTTP_REQUEST_CONTENT_TYPE } from '../http-request-class-base.const';
+import { HTTP_RESPONSE_TYPES } from '../http-request-class-base.const';
 import { MimeTypeClass } from 'classes/basic-classes/mime-types-class-base/mime-types-class-base';
 
 export class HttpRequestResponseProcessor {
@@ -120,6 +120,12 @@ export class HttpRequestResponseProcessor {
   > {
     const { response } = this;
 
+    if (response.type === HTTP_RESPONSE_TYPES.OPAQUE) {
+      return undefined;
+    }
+    if (response.type === HTTP_RESPONSE_TYPES.OPAQUE_REDIRECT) {
+      return undefined;
+    }
     if (!isSucceedResponse(response)) {
       return new HttpResponseError(response);
     }

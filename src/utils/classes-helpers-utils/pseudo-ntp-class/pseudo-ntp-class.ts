@@ -164,7 +164,7 @@ export class PseudoNTPClass extends EventEmitter<IPseudoNTPClassEvents> {
           : PSEUDO_NTP_CLASS_DEFAULT_OPTIONS.maxFailedResponses,
       maxOffsetErrorS:
         typeof maxOffsetErrorS === 'number'
-          ? maxOffsetErrorS * 1000
+          ? maxOffsetErrorS
           : PSEUDO_NTP_CLASS_DEFAULT_OPTIONS.maxOffsetErrorS,
       responseTimeoutMs:
         typeof responseTimeoutS === 'number'

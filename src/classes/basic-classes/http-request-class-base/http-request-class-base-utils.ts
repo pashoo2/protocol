@@ -3,6 +3,7 @@ import {
   HTTP_REQUEST_CONTENT_TYPE,
   HTTP_REQUEST_HEADERS_NAMES,
   HTTP_REQUEST_CONTENT_TYPES_KNOWN,
+  HTTP_RESPONSE_TYPES,
 } from './http-request-class-base.const';
 import { ownValueOf } from 'types/helper.types';
 import {
@@ -17,7 +18,11 @@ const [MIN_CODE_SUCCESS, MAX_CODE_SUCCESS] = NO_ERROR;
 const [MIN_CODE_ERROR_CLIENT, MAX_CODE_ERROR_CLIENT] = CLIENT_ERROR;
 
 export const isSucceedResponse = (response: Response): boolean => {
-  const { status } = response;
+  const { status, type } = response;
+
+  if (type === HTTP_RESPONSE_TYPES.ERROR) {
+    return false;
+  }
 
   if (!status) {
     return false;
