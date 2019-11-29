@@ -1,7 +1,5 @@
-import {
-  CONST_VALIDATION_VALUES_TIMESTAMP_UNIX_MIN_S,
-  CONST_VALIDATION_VALUES_TIMESTAMP_UNIX_MAX_S,
-} from 'const/const-validation-values/const-validation-values-messaging-timestamp';
+import { getDateNowInSeconds } from 'utils/common-utils/common-utils-date-time-synced';
+import { CONST_VALIDATION_VALUES_TIMESTAMP_UNIX_MIN_S } from 'const/const-validation-values/const-validation-values-messaging-date';
 
 /**
  * validate a timestamp of a new message
@@ -24,7 +22,7 @@ export function validateUtilsTimestampNewMessage(
   if (timestampSeconds < CONST_VALIDATION_VALUES_TIMESTAMP_UNIX_MIN_S) {
     return new Error('The timestamp is less than the minimal valid timestamp');
   }
-  if (timestampSeconds > CONST_VALIDATION_VALUES_TIMESTAMP_UNIX_MAX_S) {
+  if (timestampSeconds > getDateNowInSeconds()) {
     return new Error(
       'The timestamp is greater than the maximum valid timestamp'
     );

@@ -559,3 +559,5 @@ export class PseudoNTPClass extends EventEmitter<IPseudoNTPClassEvents> {
     };
   }
 }
+
+export default PseudoNTPClass;
