@@ -7,7 +7,7 @@ import {
   timeIntervalSyncEvents,
 } from './const-validation-values-messaging-common/const-validation-values-messaging-common';
 
-export const CONST_VALIDATION_VALUES_MESSAGING_MAX_ERROR_SECONDS = 10;
+export const CONST_VALIDATION_VALUES_MESSAGING_MAX_ERROR_SECONDS = 70;
 
 export const CONST_VALIDATION_VALUES_MESSAGING_DATE_MIN_YEAR = '2019';
 

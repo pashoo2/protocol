@@ -44,11 +44,17 @@ export type TPseudoNTPClassServerResponse = string | { [key: string]: any };
  * to parse the response from the server and must return
  * the Date on the server
  */
-export interface IPseudoNTPClassServerConnection {
+export interface IPseudoNTPClassServerConnectionField {
   server: string;
-  fieldName?: string;
+  fieldName: string;
+}
+export interface IPseudoNTPClassServerConnectionCb {
+  server: string;
   parseCallback: (response: TPseudoNTPClassServerResponse) => Date | Error;
 }
+export type IPseudoNTPClassServerConnection =
+  | IPseudoNTPClassServerConnectionCb
+  | IPseudoNTPClassServerConnectionField;
 
 export type TPseudoNTPClassServersPoolOption = IPseudoNTPClassServerConnection[];
 

@@ -8,19 +8,26 @@ import {
   TPseudoNTPClassServerResponse,
   TPseudoNTPClassResponseRaw,
   TPseudoNTPClassResponseWithTimesamps,
+  IPseudoNTPClassServerConnectionField,
+  IPseudoNTPClassServerConnectionCb,
 } from './pseudo-ntp-class.types';
 import {
   PSEUDO_NTP_CLASS_DEFAULT_OPTIONS,
   PSEUDO_NTP_CLASS_LOGS_PREFIX,
   PSEUDO_NTP_CLASS_EVENTS,
+  PSEUDO_NTP_CLASS_REQUEST_OPTIONS,
 } from './pseudo-ntp-class.const';
 import {
   getTimestampSeconds,
   addSecondsToDate,
   datesDifferenceSeconds,
 } from './pseudo-ntp-class.utils';
+import HttpRequest from 'classes/basic-classes/http-request-class-base/http-request-class-base';
+import { IHttpRequestOptions } from 'classes/basic-classes/http-request-class-base/http-request-class-base.types';
 
 export class PseudoNTPClass extends EventEmitter<IPseudoNTPClassEvents> {
+  public static Event = PSEUDO_NTP_CLASS_EVENTS;
+
   /**
    * true if the sync is running on
    *
@@ -46,6 +53,8 @@ export class PseudoNTPClass extends EventEmitter<IPseudoNTPClassEvents> {
 
   // options of the server connected to
   protected currentServerOptions?: IPseudoNTPClassServerConnection;
+
+  protected currentServerRequestOptions?: IHttpRequestOptions;
 
   // a number of fails for the current server
   protected currentServerFails: number = 0;
@@ -199,6 +208,28 @@ export class PseudoNTPClass extends EventEmitter<IPseudoNTPClassEvents> {
     this.currentServerIndex = currentServerIndexResolved;
   }
 
+  /**
+   * create an object to send the request
+   * to the server to request the current
+   * date and time
+   *
+   * @protected
+   * @returns {(void | Error)}
+   * @memberof PseudoNTPClass
+   */
+  protected setCurrentServerRequestOptions(): void | Error {
+    const { currentServerOptions } = this;
+    const { server: serverUrl } = currentServerOptions!;
+
+    if (!currentServerOptions) {
+      return new Error('The current server options is not defined');
+    }
+    this.currentServerRequestOptions = {
+      ...PSEUDO_NTP_CLASS_REQUEST_OPTIONS,
+      url: serverUrl,
+    };
+  }
+
   protected setCurrentServerFromPoolOptions(): void {
     const { serversPool, currentServerIndex } = this;
     const currentServerOptions = serversPool![currentServerIndex || 0];
@@ -210,6 +241,13 @@ export class PseudoNTPClass extends EventEmitter<IPseudoNTPClassEvents> {
         `Options is not defined for the server under the index ${currentServerIndex} in the pool`
       );
       this.setCurrentServerFromPoolIndex();
+      return this.setCurrentServerFromPoolOptions();
+    }
+    this.currentServerOptions = currentServerOptions;
+
+    const serCurrentServerRequestOptionsResult = this.setCurrentServerRequestOptions();
+
+    if (serCurrentServerRequestOptionsResult instanceof Error) {
       return this.setCurrentServerFromPoolOptions();
     }
   }
@@ -272,7 +310,7 @@ export class PseudoNTPClass extends EventEmitter<IPseudoNTPClassEvents> {
    * @protected
    * @memberof PseudoNTPClass
    */
-  protected startInterval() {
+  protected startInterval(): void {
     const { commonOptions } = this;
     const { syncIntervalMs } = commonOptions;
 
@@ -281,6 +319,7 @@ export class PseudoNTPClass extends EventEmitter<IPseudoNTPClassEvents> {
     } else {
       this.intervalRunning = setInterval(this.sync, syncIntervalMs);
       this.isRunning = true;
+      this.sync();
     }
   }
 
@@ -322,10 +361,16 @@ export class PseudoNTPClass extends EventEmitter<IPseudoNTPClassEvents> {
     response: TPseudoNTPClassServerResponse
   ): Error | Date => {
     const { currentServerOptions } = this;
-    const { fieldName, parseCallback } = currentServerOptions!;
 
-    if (typeof fieldName === 'string') {
-      if (typeof response === 'object') {
+    if (
+      typeof (currentServerOptions as IPseudoNTPClassServerConnectionField)
+        .fieldName === 'string'
+    ) {
+      const {
+        fieldName,
+      } = currentServerOptions as IPseudoNTPClassServerConnectionField;
+
+      if (typeof response !== 'object') {
         return new Error(
           `Response must be an object to get the date from the field ${fieldName}`
         );
@@ -349,7 +394,14 @@ export class PseudoNTPClass extends EventEmitter<IPseudoNTPClassEvents> {
         return err;
       }
     }
-    if (typeof parseCallback === 'function') {
+    if (
+      typeof (currentServerOptions as IPseudoNTPClassServerConnectionCb)
+        .parseCallback === 'function'
+    ) {
+      const {
+        parseCallback,
+      } = currentServerOptions as IPseudoNTPClassServerConnectionCb;
+
       if (!parseCallback.length) {
         this.log('The callback seems to have no arguments accepted');
       }
@@ -405,7 +457,7 @@ export class PseudoNTPClass extends EventEmitter<IPseudoNTPClassEvents> {
   ): void {
     // we think that the request was received on the
     // server at half of the request-response time
-    const adjustmentS = timestampReq - timestampRes / 2;
+    const adjustmentS = (timestampRes - timestampReq) / 2;
     const clientDate = addSecondsToDate(dateRes, adjustmentS);
     const offsetClientTimeFromServer = datesDifferenceSeconds(
       clientDate,
@@ -425,10 +477,10 @@ export class PseudoNTPClass extends EventEmitter<IPseudoNTPClassEvents> {
     }
   }
 
-  protected convertServerResponseRaw(
-    responseRaw: TPseudoNTPClassResponseRaw
-  ): TPseudoNTPClassServerResponse | Error {
-    return '';
+  protected convertServerResponseRaw(responseRaw: {
+    [key: string]: string;
+  }): TPseudoNTPClassServerResponse | Error {
+    return responseRaw;
   }
 
   /**
@@ -478,22 +530,29 @@ export class PseudoNTPClass extends EventEmitter<IPseudoNTPClassEvents> {
   private async sendRequestToCurrentServer(): Promise<
     Error | TPseudoNTPClassResponseWithTimesamps
   > {
-    const { currentServerOptions } = this;
-
-    if (!this.checkServerOptions(currentServerOptions)) {
-      this.setCurrentServerFromPool();
-      return new Error('There is no valid options for the current server');
-    }
-
-    const { server } = currentServerOptions;
+    const { currentServerRequestOptions } = this;
     // timestamp when the request sent
     const timestampReq = getTimestampSeconds();
+    const request = new HttpRequest({
+      ...currentServerRequestOptions!,
+    });
+    let responseRaw;
+
+    try {
+      responseRaw = await request.send();
+
+      if (responseRaw instanceof Error) {
+        console.error(responseRaw);
+        return new Error('The request failed');
+      }
+    } catch (err) {
+      return err;
+    }
     // timestamp when the response received
     const timestempRes = getTimestampSeconds();
     const dateRes = new Date();
-
     return {
-      responseRaw: '',
+      responseRaw,
       timestampReq,
       timestempRes,
       dateRes,
