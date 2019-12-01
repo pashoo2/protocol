@@ -4,7 +4,7 @@ import {
   DATE_MIN_VALID,
 } from './validation-messaging.test.const';
 import { validateUtilsTimestampNewMessage } from 'utils/validation-utils/validation-utils-timestamp';
-import { getSecondsByMilliseconds } from 'utils/common-utils/common-utils-date-time-synced';
+import { getSecondsByMilliseconds } from 'utils/common-utils/common-utils-date-time';
 
 export const runTestValidateMessagingTimestampsTest = () => {
   describe('validation of messages timestamps test', () => {

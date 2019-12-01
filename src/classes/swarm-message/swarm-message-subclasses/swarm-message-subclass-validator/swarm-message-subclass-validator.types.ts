@@ -34,7 +34,7 @@ export type TPayload =
 export interface IMessageValidatorOptions {
   issuersList?: TSwarmMessageIssuerDeserialized[];
   typesList?: TSwarmMessageType[];
-  payloadValidationOptions: ISwarmMessagePayloadValidationOptions;
+  payloadValidationOptions?: ISwarmMessagePayloadValidationOptions;
   timestampValidationOptions?: ISwarmMessageTimestampValidationOptions;
 }
 

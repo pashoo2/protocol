@@ -3,7 +3,7 @@
  * or a characters for a string values.
  * It must be increased for a non-text values
  */
-export const SWARM_MESSAGE_SUBCLASS_VALIDATOR_PAYLOAD_MAX_LENGTH_BYTES = 1000;
+export const SWARM_MESSAGE_SUBCLASS_VALIDATOR_PAYLOAD_MAX_LENGTH_BYTES = 10000;
 
 /**
  * Set the default minimum value of the payload to 2 bytes

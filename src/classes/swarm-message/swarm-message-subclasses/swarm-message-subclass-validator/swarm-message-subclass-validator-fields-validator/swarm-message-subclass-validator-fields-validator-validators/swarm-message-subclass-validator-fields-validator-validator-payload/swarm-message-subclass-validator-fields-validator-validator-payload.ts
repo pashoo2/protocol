@@ -27,8 +27,7 @@ function validatePayload(
   let len;
 
   if (pld instanceof Array) {
-    len = commonUtilsArrayCalculateLengthOfIntegerArray(pld, 255, 0);
-
+    len = commonUtilsArrayCalculateLengthOfIntegerArray(pld);
     if (len instanceof Error) {
       console.error(len);
       assert.fail(

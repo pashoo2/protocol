@@ -18,6 +18,7 @@ import { runTestValidateMessagingTimestampsTest } from 'test/validation-messagin
 import { runTestHttpRequest } from 'test/http-request-class-base.test/http-request-class-base.test';
 import { runTestPseudoNtpClass } from 'test/pseudo-ntp-class.test/pseudo-ntp-class.test';
 import { runTestClientTimeSynced } from 'test/common-utils-date-time-synced.test';
+import { runSwarmMessageFieldsValidator } from 'test/validation-messaging.test/swarm-message.test/swarm-message.fields-validator.test';
 
 // import { runCACredentialsIdentityStorageTest } from 'test/central-authority.test/central-authority-storage-identity-credentials.test';
 // import { runTestCachingDecorator } from 'test/common-utils.test/common-utils.test';
@@ -57,7 +58,8 @@ const runTest = async () => {
   // runTestSwarmStoreOrbitDBConnection();
   // runTestValidateMessagingTimestampsTest();
   // runTestHttpRequest();
-  runTestClientTimeSynced();
+  // runTestClientTimeSynced();
+  runSwarmMessageFieldsValidator();
   runMocha();
 };
 

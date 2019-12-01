@@ -16,6 +16,10 @@ export type ArgumentTypes<F extends Function> = F extends (
   ? A
   : never;
 
-export type OmitType<T extends {}, E> = {
+export type OmitTypeProp<T extends {}, E> = {
   [k in keyof T]: T[k] extends E ? never : T[k];
 };
+
+export type OmitType<T, O> = T extends O ? never : T;
+
+export type ConstructorType<T> = new (...args: any[]) => T;

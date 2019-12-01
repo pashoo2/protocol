@@ -1,3 +1,5 @@
+import { bytesInInteger } from './common-utils-number';
+
 export const commonUtilsArrayOrderByDecComparationFunction = <T>(
   a: T,
   b: T
@@ -79,12 +81,16 @@ export const commonUtilsArrayCalculateLengthOfIntegerArray = (
   let idx = 0;
   let item;
   let result = 0;
+  let bytesInIntem;
 
   for (; idx < len; idx += 1) {
     item = arr[idx];
 
     if (typeof item !== 'number') {
       return new Error('The value is not a number');
+    }
+    if (!Number.isInteger(item)) {
+      return new Error('The value is not an integer number');
     }
     if (item < 0) {
       return new Error('The number must be greater than 0');
@@ -98,13 +104,11 @@ export const commonUtilsArrayCalculateLengthOfIntegerArray = (
     if (item < minNumberRes) {
       return new Error('The number is too small');
     }
-    if (item < 255) {
-      result += 1;
-    } else if (item < 65537) {
-      result += 4;
-    } else if (item > 65537) {
-      result += 8;
+    bytesInIntem = bytesInInteger(item);
+    if (bytesInIntem instanceof Error) {
+      return bytesInIntem;
     }
+    result += bytesInIntem;
   }
   return result;
 };

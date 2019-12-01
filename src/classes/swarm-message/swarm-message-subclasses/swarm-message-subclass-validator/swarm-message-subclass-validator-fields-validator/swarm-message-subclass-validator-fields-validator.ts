@@ -51,7 +51,7 @@ export class SwarmMessageSubclassFieldsValidator {
    * @memberof SwarmMessageSubclassValidator
    * @throws
    */
-  constructor(options: IMessageValidatorOptions) {
+  constructor(options?: IMessageValidatorOptions) {
     this.setOptions(options);
   }
 
@@ -226,11 +226,9 @@ export class SwarmMessageSubclassFieldsValidator {
    * @memberof SwarmMessageSubclassValidator
    * @throws
    */
-  protected setOptions(options: IMessageValidatorOptions) {
-    if (options) {
-      if (typeof options !== 'object') {
-        throw new Error('The options must be an object');
-      }
+  protected setOptions(options?: IMessageValidatorOptions) {
+    if (options != null) {
+      assert(typeof options === 'object', 'The options must be an object');
 
       const {
         payloadValidationOptions,
@@ -241,9 +239,13 @@ export class SwarmMessageSubclassFieldsValidator {
 
       if (timestampValidationOptions) {
         this.timestampValidationOptions = timestampValidationOptions; // set time to live in milliseconds
+        this.validateTimestamp = createValidateTimestamp(
+          timestampValidationOptions
+        );
       }
       if (payloadValidationOptions) {
         this.payloadValidationOptions = payloadValidationOptions;
+        this.validatePayload = createValidatePayload(payloadValidationOptions);
       }
       if (issuersList) {
         if (issuersList instanceof Array) {
@@ -252,12 +254,10 @@ export class SwarmMessageSubclassFieldsValidator {
           >(issuersList, this.addIssuerToValidList);
 
           if (setIssuersListResult instanceof Error) {
-            throw setIssuersListResult;
+            assert.fail(setIssuersListResult);
           }
         } else {
-          throw new Error(
-            'The value of the "issuersList" option must be an Array'
-          );
+          assert.fail('The value of the "issuersList" option must be an Array');
         }
       }
       if (typesList) {
@@ -270,11 +270,11 @@ export class SwarmMessageSubclassFieldsValidator {
             throw setTypesListResult;
           }
         } else {
-          throw new Error(
-            'The value of the "typesList" option must be an Array'
-          );
+          assert.fail('The value of the "typesList" option must be an Array');
         }
       }
     }
   }
 }
+
+export default SwarmMessageSubclassFieldsValidator;
