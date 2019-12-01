@@ -1,4 +1,12 @@
-export type TType = string | number;
+import { TSwarmMessageIssuerDeserialized } from './swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-issuer-deserizlied/swarm-message-subclass-validator-fields-validator-validator-issuer-deserizlied.types';
+import { TSwarmMessageType } from './swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-type/swarm-message-subclass-validator-fields-validator-validator-type.types';
+import { TSwarmMessaggeIssuerSerialized } from './swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-issuer-serialized/swarm-message-subclass-validator-fields-validator-validator-issuer-serialized.types';
+import { TSwarmMessageUserIdentifierSerialized } from './swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
+import {
+  TSwarmMessagePayloadSerialized,
+  ISwarmMessagePayloadValidationOptions,
+} from './swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-payload/swarm-message-subclass-validator-fields-validator-validator-payload.types';
+import { ISwarmMessageTimestampValidationOptions } from './swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-timestamp/swarm-message-subclass-validator-fields-validator-validator-timestamp.types';
 
 export type TPayload =
   | string
@@ -24,11 +32,10 @@ export type TPayload =
  * time to live. Time to live in the seconds
  */
 export interface IMessageValidatorOptions {
-  payloadMaxLength?: number;
-  payloadMinLength?: number;
-  issuersList?: string[];
-  typesList?: TType[];
-  ttlSeconds?: number;
+  issuersList?: TSwarmMessageIssuerDeserialized[];
+  typesList?: TSwarmMessageType[];
+  payloadValidationOptions: ISwarmMessagePayloadValidationOptions;
+  timestampValidationOptions?: ISwarmMessageTimestampValidationOptions;
 }
 
 /**
@@ -49,11 +56,11 @@ export interface IMessageValidatorOptions {
  * the algorithm it used.
  */
 export interface ISwarmMessage {
-  typ: string | number;
-  pld: string | Buffer;
-  uid: string;
+  typ: TSwarmMessageType;
+  pld: TSwarmMessagePayloadSerialized;
+  uid: TSwarmMessageUserIdentifierSerialized;
   ts: number;
-  iss: string;
+  iss: TSwarmMessaggeIssuerSerialized;
   alg: string;
   sig: string | Buffer;
 }

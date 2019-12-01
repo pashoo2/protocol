@@ -41,7 +41,10 @@
     ]
   },
   "dependencies": {
+    "@types/assert": "^1.4.3",
+    "@types/lodash.defaultsdeep": "^4.6.6",
     "ajv": "^6.10.2",
+    "assert": "^2.0.0",
     "buffer": "^5.4.3",
     "date-fns": "^2.8.0",
     "date-fns-tz": "^1.0.8",
@@ -60,6 +63,7 @@
     "libp2p-webrtc-star": "^0.16.1",
     "libp2p-websocket-star": "^0.10.2",
     "localforage": "^1.7.3",
+    "lodash.defaultsdeep": "^4.6.1",
     "lodash.memoize": "^4.1.2",
     "lz-string": "^1.4.4",
     "orbit-db": "^0.22.0",
