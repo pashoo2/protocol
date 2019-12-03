@@ -17,6 +17,11 @@ import {
  * @interface ICAUserUniqueIdentifierDescription
  */
 
+/**
+ * for now the auth provider url is used as the
+ * unique identifier provider of an authority
+ * provider
+ */
 export type TCAuthProviderIdentifier = string;
 
 export type TCAuthProviderUserIdentifier = string;

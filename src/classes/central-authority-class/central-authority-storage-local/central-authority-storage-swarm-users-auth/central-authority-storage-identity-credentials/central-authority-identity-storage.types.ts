@@ -8,7 +8,7 @@ import { ownValueOf } from 'types/helper.types';
 import { ISecretStoreCredentials } from 'classes/secret-storage-class/secret-storage-class.types';
 
 /**
- * contains the user's identifier
+ * Contains the user's identifier
  * and a keys for data sign and
  * data encryption. An identifier
  * is unique, but an identifier's

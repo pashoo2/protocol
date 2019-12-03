@@ -4,7 +4,6 @@ import {
   CA_IDENTITY_CREDENTIALS_STORAGE_CONFIGURATION,
   CA_IDENTITY_CREDENTIALS_STORAGE_READ_CACHE_CAPACITY,
   CA_IDENTITY_CREDENTIALS_STORAGE_READ_RAW_CACHE_CAPACITY,
-  CA_IDENTITY_CREDENTIALS_STORAGE_FULL_NAME,
 } from './central-authority-storage-identity-credentials.const';
 import { ICAIdentityCredentialsStorage } from './central-authority-identity-storage.types';
 import { SecretStorage } from 'classes/secret-storage-class/secret-storage-class';
@@ -20,7 +19,6 @@ import {
 import CentralAuthorityIdentity from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
 import {
   getExportedCryptoCredentialsByCAIdentity,
-  importCryptoCredentialsFromExportedFromat,
   replaceCryptoCredentialsIdentity,
   importCryptoCredentialsFromAString,
   getUserIdentityByCryptoCredentials,
@@ -33,7 +31,7 @@ import {
 } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
 
 /**
- * this is the storage for the user
+ * This is the storage for the user
  * identifier and a public keys for
  * data sign and encryption
  */
@@ -145,7 +143,7 @@ export class CentralAuthorityIdentityCredentialsStorage
 
   @caching(CA_IDENTITY_CREDENTIALS_STORAGE_READ_RAW_CACHE_CAPACITY)
   protected async getCredentialsRaw(
-    id: string
+    identity: string
   ): Promise<string | Error | undefined> {
     const { isActive } = this;
 
@@ -155,7 +153,7 @@ export class CentralAuthorityIdentityCredentialsStorage
     try {
       const { secretStorageConnection } = this;
       const caCryptoCredentials = await secretStorageConnection!!.get(
-        this.getKeyNameWithPrefix(id)
+        this.getKeyNameWithPrefix(identity)
       );
 
       if (caCryptoCredentials instanceof Error) {

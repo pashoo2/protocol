@@ -195,6 +195,11 @@ export class CAConnectionWithFirebase implements ICAConnection {
   protected async startConnectionWithCredentialsStorage(): Promise<
     boolean | Error
   > {
+    if (this.connectionWithCredentialsStorage) {
+      // if already connected with the credentials storage
+      return true;
+    }
+
     const connectionWithCredentialsStorage = new CAConnectionFirestoreUtilsCredentialsStrorage(
       this
     );
@@ -217,6 +222,7 @@ export class CAConnectionWithFirebase implements ICAConnection {
     configuration: ICAConnectionConfigurationFirebase
   ): Promise<boolean | Error> {
     let app;
+
     try {
       app = firebase.initializeApp(configuration);
       this.configuration = configuration;

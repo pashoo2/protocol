@@ -46,7 +46,7 @@ export interface ICentralAuthorityConnectionOptions {
 }
 
 export abstract class CentralAuthorityConnection {
-  constructor(options: ICentralAuthorityConnectionOptions) {}
+  constructor() {}
   /**
    * request the users descriptions by the user identities
    */
@@ -56,7 +56,7 @@ export abstract class CentralAuthorityConnection {
 }
 
 export interface ICentralAuthorityConnection {
-  new (options: ICentralAuthorityConnectionOptions): CentralAuthorityConnection;
+  new (): CentralAuthorityConnection;
 }
 
 export type TInstanceOfCentralAuthorityConnection = InstanceType<

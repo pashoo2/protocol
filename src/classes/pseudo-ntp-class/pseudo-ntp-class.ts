@@ -25,6 +25,16 @@ import {
 import HttpRequest from 'classes/basic-classes/http-request-class-base/http-request-class-base';
 import { IHttpRequestOptions } from 'classes/basic-classes/http-request-class-base/http-request-class-base.types';
 
+/**
+ * This is class for time sync with the
+ * server which provides API to get
+ * the current date and time in UTC.
+ * This allows to sync time for all users.
+ *
+ * @export
+ * @class PseudoNTPClass
+ * @extends {EventEmitter<IPseudoNTPClassEvents>}
+ */
 export class PseudoNTPClass extends EventEmitter<IPseudoNTPClassEvents> {
   public static Event = PSEUDO_NTP_CLASS_EVENTS;
 

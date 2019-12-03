@@ -1,9 +1,3 @@
-/**
- * This is storage of the current
- * user crypto keys for signing
- * and encryptopn a data
- */
-
 import { SecretStorage } from 'classes/secret-storage-class';
 import { getStatusClass } from 'classes/basic-classes/status-class-base/status-class-base';
 import {
@@ -38,11 +32,18 @@ import { calculateHash } from 'utils/hash-calculation-utils/hash-calculation-uti
 import { checkIsValidCryptoCredentials } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
 
 /**
- *
- * this is storage which is necessary
+ * This is storage of the current
+ * user crypto keys for signing
+ * and encryptopn a data. This keys
+ * will be encrypted with the user
+ * password. Also this keys will be
+ * used to authorize on each authority
+ * provider.
+ * This is storage which is necessary
  * to save all the user keys along with the user id which
  * are necessary to communicate with another users
- * in the network in encrypted form
+ * in the network in encrypted form.
+ *
  * @export
  * @class CentralAuthorityCredentialsStorage
  * @extends {StatusClassBase<typeof CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS>}
