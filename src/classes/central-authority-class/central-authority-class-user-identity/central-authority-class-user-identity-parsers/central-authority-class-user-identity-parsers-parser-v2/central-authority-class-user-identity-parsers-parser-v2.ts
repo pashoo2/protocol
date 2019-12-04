@@ -26,7 +26,7 @@ export const CAUserIdentityParserV2: IParser = (
     ) {
       return new Error('The given user identity have a too small length');
     }
-
+    debugger;
     const delimeterPosition = userIdentityWithoutVersion.lastIndexOf(
       CA_USER_IDENTITY_V2_AUTH_PROVIDER_URL_DELIMETER
     );

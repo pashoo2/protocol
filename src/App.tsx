@@ -5,8 +5,8 @@ import './App.css';
 import { runTestFirebaseConnectionDatabase } from 'test/central-authority.test/central-authority-connection.test/central-authority-connection.test.firebase/central-authority-connection.test.firebase.database';
 import { runTestFirebaseCredentialsStorage } from 'test/central-authority.test/central-authority-connection.test/central-authority-connection.test.firebase/central-authority-connection.test.firebase.credentials-storage';
 import {
-  runTestCAIdentityWithAuthorityProviderGenerator,
-  runTestCAIdentity,
+  runTestCAIdentityWithAuthorityProviderGeneratorV1,
+  runTestCAIdentityV1,
 } from 'test/central-authority.test/central-authority.test';
 import {
   runTestCAConnectionFirebase,
@@ -22,6 +22,7 @@ import { runTestHttpRequest } from 'test/http-request-class-base.test/http-reque
 import { runTestPseudoNtpClass } from 'test/pseudo-ntp-class.test/pseudo-ntp-class.test';
 import { runTestClientTimeSynced } from 'test/common-utils-date-time-synced.test';
 import { runSwarmMessageFieldsValidator } from 'test/validation-messaging.test/swarm-message.test/swarm-message.fields-validator.test';
+import { runTestCAIdentityV2 } from 'test/central-authority-identity.test/central-authority-identity-v2.test';
 
 // import { runCACredentialsIdentityStorageTest } from 'test/central-authority.test/central-authority-storage-identity-credentials.test';
 // import { runTestCachingDecorator } from 'test/common-utils.test/common-utils.test';
@@ -63,7 +64,7 @@ const runTest = async () => {
   // runTestHttpRequest();
   // runTestClientTimeSynced();
   // runSwarmMessageFieldsValidator();
-  runTestCAIdentityWithAuthorityProviderGenerator();
+  runTestCAIdentityV2();
   runMocha();
 };
 
