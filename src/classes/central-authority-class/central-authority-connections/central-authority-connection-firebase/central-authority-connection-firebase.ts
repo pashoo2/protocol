@@ -21,7 +21,7 @@ import {
   dataValidatorUtilURL,
 } from 'utils/data-validators-utils/data-validators-utils';
 import { checkIsValidCryptoCredentials } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
-import { generateCryptoCredentialsWithUserIdentity } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
+import { generateCryptoCredentialsWithUserIdentityV1 } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
 import CentralAuthorityIdentity from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
 import { CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
 import { CAConnectionFirestoreUtilsCredentialsStrorage } from './central-authority-connection-firebase-utils/central-authority-connection-firebase-utils.credentials-storage/central-authority-connection-firebase-utils.credentials-storage';
@@ -532,9 +532,11 @@ export class CAConnectionWithFirebase implements ICAConnection {
       return databaseURL;
     }
 
-    const cryptoCredentials = await generateCryptoCredentialsWithUserIdentity({
-      authorityProviderURI: databaseURL,
-    });
+    const cryptoCredentials = await generateCryptoCredentialsWithUserIdentityV1(
+      {
+        authorityProviderURI: databaseURL,
+      }
+    );
 
     if (cryptoCredentials instanceof Error) {
       console.error(cryptoCredentials);

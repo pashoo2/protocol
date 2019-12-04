@@ -31,7 +31,7 @@ export class CentralAuthorityIdentity implements ICAIdentityCommonInstance {
     let identity = _userIdentity;
 
     if (_userIdentity && typeof _userIdentity === 'object') {
-      //check may be it is a ctrypto credentials object
+      //check may be it is a crypto credentials object
       const identityVal = ((_userIdentity as unknown) as any)[
         CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME
       ];

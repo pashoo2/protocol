@@ -4,7 +4,10 @@ import './App.css';
 
 import { runTestFirebaseConnectionDatabase } from 'test/central-authority.test/central-authority-connection.test/central-authority-connection.test.firebase/central-authority-connection.test.firebase.database';
 import { runTestFirebaseCredentialsStorage } from 'test/central-authority.test/central-authority-connection.test/central-authority-connection.test.firebase/central-authority-connection.test.firebase.credentials-storage';
-import { runTestCAIdentityWithAuthorityProviderGenerator } from 'test/central-authority.test/central-authority.test';
+import {
+  runTestCAIdentityWithAuthorityProviderGenerator,
+  runTestCAIdentity,
+} from 'test/central-authority.test/central-authority.test';
 import {
   runTestCAConnectionFirebase,
   runTestCAConnectionFirebaseCryptoCredentialsGenerateByFirebaseAuthProvider,
@@ -59,7 +62,8 @@ const runTest = async () => {
   // runTestValidateMessagingTimestampsTest();
   // runTestHttpRequest();
   // runTestClientTimeSynced();
-  runSwarmMessageFieldsValidator();
+  // runSwarmMessageFieldsValidator();
+  runTestCAIdentityWithAuthorityProviderGenerator();
   runMocha();
 };
 

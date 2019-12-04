@@ -1,29 +1,17 @@
-import {
-  TCentralAuthorityUserIdentity,
-  TCentralAuthorityUserCryptoCredentials,
-} from '../central-authority-class-types/central-authority-class-types';
+import { TCentralAuthorityUserIdentity } from '../central-authority-class-types/central-authority-class-types';
 import {
   CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME,
   CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME,
   CA_USER_IDENTITY_VERSION_PROP_NAME,
 } from './central-authority-class-user-identity.const';
 
-/**
- *
- * this is interface for description
- * of the user unique identity whithin
- * the server overall
- * @export
- * @interface ICAUserUniqueIdentifierDescription
- */
-
-/**
- * for now the auth provider url is used as the
- * unique identifier provider of an authority
- * provider
- */
+// url of the auth provider
 export type TCAuthProviderIdentifier = string;
 
+/**
+ * this is unique identifier of the user on
+ * the storage provider
+ */
 export type TCAuthProviderUserIdentifier = string;
 
 export interface ICAUserIdentityDescription {
@@ -36,6 +24,20 @@ export interface ICAUserUniqueIdentifierDescription
   [CA_USER_IDENTITY_VERSION_PROP_NAME]: string;
 }
 
+/**
+ *
+ * This satring allows to uniquely identify the user
+ * in the swarm.
+ * The user register on a auth provider service which
+ * gives the unique login for the user. Both of
+ * the auth provider URL and the user id on it, gives the
+ * unique identifier for the user, which can be used on
+ * the swarm as the unique identity for the user.
+ * The raw type ('object', 'string', 'number') of the
+ * serialized identity is in the constant CA_USER_IDENTITY_TYPE
+ * @export
+ * @interface ICAUserUniqueIdentifierDescription
+ */
 export interface ICAUserUniqueIdentifierDescriptionWithOptionalVersion
   extends ICAUserIdentityDescription {
   [CA_USER_IDENTITY_VERSION_PROP_NAME]?: string;

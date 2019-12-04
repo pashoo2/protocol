@@ -2,6 +2,8 @@ import {
   CONST_VALUES_RESTRICTIONS_COMMON_URI_MAX_LENGTH,
   CONST_VALUES_RESTRICTIONS_COMMON_UUID_V4_MAX_LENGTH,
   CONST_VALUES_RESTRICTIONS_COMMON_UUID_V4_MIN_LENGTH,
+  CONST_VALUES_RESTRICTIONS_COMMON_LOGIN_MAX_LENGTH,
+  CONST_VALUES_RESTRICTIONS_COMMON_LOGIN_MIN_LENGTH,
 } from 'const/const-values-restrictions-common';
 
 export const CONST_VALIDATION_SCHEMES_URI = {
@@ -18,6 +20,19 @@ export const CONST_VALIDATION_SCHEMES_URL = {
 export const CONST_VALIDATION_SCHEMES_EMAIL = {
   type: 'string',
   format: 'email',
+};
+
+/**
+ * validate user login - it may be a string compilant to the rules described in
+ * https://www.ibm.com/support/knowledgecenter/SSFTN5_8.5.5/com.ibm.wbpm.imuc.doc/topics/rsec_characters.html
+ * or an email address
+ */
+export const CONST_VALIDATION_SCHEMES_LOGIN = {
+  type: 'string',
+  minLength: CONST_VALUES_RESTRICTIONS_COMMON_LOGIN_MIN_LENGTH,
+  maxLength: CONST_VALUES_RESTRICTIONS_COMMON_LOGIN_MAX_LENGTH,
+  pattern:
+    '^[w\n!()?[]~;:#%$&*^+=][w\n!()?[]~;:#%$&*^+=-_.@]*[_w\n!()?[]~;:#%$&*^+=]$',
 };
 
 export const CONST_VALIDATION_SCHEMES_INTERNATIONAL_PHONE_NUMBER = {

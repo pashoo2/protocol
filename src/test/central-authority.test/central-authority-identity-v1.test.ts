@@ -3,6 +3,7 @@ import {
   CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME,
   CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME,
   CA_USER_IDENTITY_VERSION_PROP_NAME,
+  CA_USER_IDENTITY_VERSIONS,
 } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
 import { generateUUID } from 'utils/identity-utils/identity-utils';
 import { validateIdentityDescriptionVersion } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-class-user-identity-validators';
@@ -11,7 +12,7 @@ import {
   ICAUserUniqueIdentifierDescription,
   ICAUserUniqueIdentifierDescriptionWithOptionalVersion,
 } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types';
-import { generateCryptoCredentialsWithUserIdentity } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
+import { generateCryptoCredentialsWithUserIdentityV1 } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
 import { CA_CONNECTION_FIREBASE_CONFIG } from './central-authority-connection.test/central-authority-connection.test.firebase/central-authority-connection.test.firebase.const';
 import { checkIsValidCryptoCredentials } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
 import { getUserIdentityByCryptoCredentials } from 'classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials';
@@ -93,6 +94,7 @@ export const runTestCAIdentity = async () => {
   const testIdentityDescription = {
     [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: 'https://google.com',
     [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]: generateUUID(),
+    [CA_USER_IDENTITY_VERSION_PROP_NAME]: CA_USER_IDENTITY_VERSIONS['01'],
   };
   const identityValue = new CentralAuthorityIdentity(testIdentityDescription);
 
@@ -133,6 +135,7 @@ export const runTestCAIdentity = async () => {
     [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: 'https://google.com',
     [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]:
       '76d55caf-fc4a-41a9-8844-19877dcb19a#',
+    [CA_USER_IDENTITY_VERSION_PROP_NAME]: CA_USER_IDENTITY_VERSIONS['01'],
   };
   const identityValueFromWrongGUID = new CentralAuthorityIdentity(
     testIdentityDescriptionWithWrongGUID
@@ -154,6 +157,7 @@ export const runTestCAIdentity = async () => {
     [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: 'google.com',
     [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]:
       '76d55caf-fc4a-41a9-8844-19877dcb19ad',
+    [CA_USER_IDENTITY_VERSION_PROP_NAME]: CA_USER_IDENTITY_VERSIONS['01'],
   };
   const identityValueFromWrongURL = new CentralAuthorityIdentity(
     testIdentityDescriptionWithWrongURL
@@ -182,6 +186,7 @@ export const runTestCAIdentity = async () => {
       [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: 'htt://googlecom',
       [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]:
         '76d55caf-fc4a-41a9-8844-19877dcb19ad',
+      [CA_USER_IDENTITY_VERSION_PROP_NAME]: CA_USER_IDENTITY_VERSIONS['01'],
     })
   ) {
     console.error(
@@ -200,7 +205,6 @@ export const runTestCAIdentity = async () => {
     );
     return;
   }
-
   const testIdentityStringnWithWrongUUID =
     '01https://google.com76d55caf-fc4a-41a9-8*44-19877dcb19ad';
   const identityValueFromStringWrongUUID = new CentralAuthorityIdentity(
@@ -213,6 +217,7 @@ export const runTestCAIdentity = async () => {
         'https://google.com',
       [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]:
         '76d55caf-fc4a-41a9-8*44-19877dcb19ad',
+      [CA_USER_IDENTITY_VERSION_PROP_NAME]: CA_USER_IDENTITY_VERSIONS['01'],
     })
   ) {
     console.error(
@@ -229,7 +234,6 @@ export const runTestCAIdentity = async () => {
     console.error('The userIdentifier prop must be an error for a wrong uuid');
     return;
   }
-
   const testIdentityStringnWithWrongVersionUnsupported =
     '11https://google.com76d55caf-fc4a-41a9-8144-19877dcb19ad';
   const identityValueFromStringWrongVersionUnsupported = new CentralAuthorityIdentity(
@@ -239,9 +243,8 @@ export const runTestCAIdentity = async () => {
     [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: 'https://google.com',
     [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]:
       '76d55caf-fc4a-41a9-8144-19877dcb19ad',
-    [CA_USER_IDENTITY_VERSION_PROP_NAME]: '11',
+    [CA_USER_IDENTITY_VERSION_PROP_NAME]: '99',
   };
-
   if (
     validateUserIdentityInstance(
       identityValueFromStringWrongVersionUnsupported,
@@ -249,11 +252,10 @@ export const runTestCAIdentity = async () => {
     )
   ) {
     console.error(
-      `The version unsupported 11 does not recognized in the identifier string`
+      `The version unsupported 99 does not recognized in the identifier string`
     );
     return;
   }
-
   const identityValueFromIdentityDescriptionWrongVersionUnsupported = new CentralAuthorityIdentity(
     testIdentityDescriptionWithVersionUnsupported
   );
@@ -265,7 +267,7 @@ export const runTestCAIdentity = async () => {
     )
   ) {
     console.error(
-      `The version unsupported 11 does not recognized in the identifier string`
+      `The version unsupported 99 does not recognized in the identifier string`
     );
     return;
   }
@@ -286,9 +288,12 @@ export const runTestCAIdentity = async () => {
 export const runTestCAIdentityWithAuthorityProviderGenerator = async () => {
   console.warn('runTestCAIdentityWithAuthorityProviderGenerator:started');
 
-  const cryptoCredentials = await generateCryptoCredentialsWithUserIdentity({
-    authorityProviderURI: CA_CONNECTION_FIREBASE_CONFIG.databaseURL,
+  const cryptoCredentials = await generateCryptoCredentialsWithUserIdentityV1({
+    [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]:
+      CA_CONNECTION_FIREBASE_CONFIG.databaseURL,
+    [CA_USER_IDENTITY_VERSION_PROP_NAME]: CA_USER_IDENTITY_VERSIONS['01'],
   });
+  debugger;
   if (!checkIsValidCryptoCredentials(cryptoCredentials)) {
     console.error('The crypto credentials generated is not valid');
     return;

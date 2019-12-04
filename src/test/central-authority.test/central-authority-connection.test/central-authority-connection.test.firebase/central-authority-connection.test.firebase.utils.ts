@@ -5,7 +5,7 @@ import {
 } from './central-authority-connection.test.firebase.const';
 import { ICentralAuthorityUserProfile } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 import { ICAConnectionSignUpCredentials } from 'classes/central-authority-class/central-authority-connections/central-authority-connections.types';
-import { generateCryptoCredentials } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
+import { generateCryptoCredentialsV1 } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
 import ErrorExtendedBaseClass from 'classes/basic-classes/error-extended-class-base/error-extended-class-base';
 import { CA_CONNECTION_ERROR_ACCOUNT_NOT_VERIFIED_CODE } from 'classes/central-authority-class/central-authority-connections/central-authority-connections-const/central-authority-connections-const';
 

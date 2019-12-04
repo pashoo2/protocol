@@ -31,10 +31,11 @@ import { TSecretStoreConfiguration } from 'classes/secret-storage-class/secret-s
 import { calculateHash } from 'utils/hash-calculation-utils/hash-calculation-utils';
 import { checkIsValidCryptoCredentials } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
 
+// TODO - it is necessary to refactor cause the unique identifier changed to a user login in CAIdentity
 /**
  * This is storage of the current
- * user crypto keys for signing
- * and encryptopn a data. This keys
+ * user's crypto keys for signing
+ * and encrypting a data. This keys
  * will be encrypted with the user
  * password. Also this keys will be
  * used to authorize on each authority

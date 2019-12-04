@@ -1,6 +1,6 @@
 import {
   dataValidatorUtilURL,
-  dataValidatorUtilUUIDV4,
+  dataValidatorUtilSafeLogin,
 } from 'utils/data-validators-utils/data-validators-utils';
 import {
   CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME,
@@ -10,7 +10,7 @@ import {
 } from '../../central-authority-class-user-identity.const';
 import { ICAUserUniqueIdentifierDescription } from '../../central-authority-class-user-identity.types';
 
-export const validatorV1 = (
+export const validatorV2 = (
   v: any
 ): v is ICAUserUniqueIdentifierDescription => {
   if (v && typeof v === 'object') {
@@ -32,7 +32,7 @@ export const validatorV1 = (
       );
       return false;
     }
-    if (!dataValidatorUtilUUIDV4(userUniqueIdentifier)) {
+    if (!dataValidatorUtilSafeLogin(userUniqueIdentifier)) {
       console.warn(
         `The user unique identifier ${userUniqueIdentifier} have a format different from the UUIDv4`
       );
@@ -44,4 +44,4 @@ export const validatorV1 = (
   return false;
 };
 
-export default validatorV1;
+export default validatorV2;

@@ -1,6 +1,6 @@
 import { CAConnectionFirestoreUtilsCredentialsStrorage } from 'classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase-utils/central-authority-connection-firebase-utils.credentials-storage/central-authority-connection-firebase-utils.credentials-storage';
 import { connectWithFirebase } from './central-authority-connection.test.firebase.utils';
-import { generateCryptoCredentials } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
+import { generateCryptoCredentialsV1 } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
 import {
   getUserIdentityByCryptoCredentials,
   compareCryptoCredentials,
@@ -50,7 +50,7 @@ export const runTestFirebaseCredentialsStorage = async () => {
     return;
   }
 
-  const credentials = await generateCryptoCredentials();
+  const credentials = await generateCryptoCredentialsV1();
 
   if (credentials instanceof Error) {
     console.error('Failed to generate crypto credentials');

@@ -87,7 +87,7 @@ export const generateKeyPairs = async (): Promise<
  * generates a random crypto credentials
  * or return an Error if failed
  */
-export const generateCryptoCredentials = async (): Promise<
+export const generateCryptoCredentialsV1 = async (): Promise<
   TCentralAuthorityUserCryptoCredentials | Error
 > => {
   const cryptoKeyPair = await generateKeyPairs();
@@ -106,7 +106,7 @@ export const generateCryptoCredentials = async (): Promise<
  * generates a random crypto credentials
  * or return an Error if failed
  */
-export const generateCryptoCredentialsWithUserIdentity = async (
+export const generateCryptoCredentialsWithUserIdentityV1 = async (
   identityMetadata: ICAUserUniqueIdentifierMetadata
 ): Promise<TCentralAuthorityUserCryptoCredentials | Error> => {
   const validationIdentityMetadataResult = checkIsValidUserIdentityMetadata(
