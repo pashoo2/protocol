@@ -23,6 +23,7 @@ import { runTestPseudoNtpClass } from 'test/pseudo-ntp-class.test/pseudo-ntp-cla
 import { runTestClientTimeSynced } from 'test/common-utils-date-time-synced.test';
 import { runSwarmMessageFieldsValidator } from 'test/validation-messaging.test/swarm-message.test/swarm-message.fields-validator.test';
 import { runTestCAIdentityV2 } from 'test/central-authority-identity.test/central-authority-identity-v2.test';
+import { runCACredentialsIdentityStorageTest } from 'test/central-authority.test/central-authority-storage-identity-credentials.test';
 
 // import { runCACredentialsIdentityStorageTest } from 'test/central-authority.test/central-authority-storage-identity-credentials.test';
 // import { runTestCachingDecorator } from 'test/common-utils.test/common-utils.test';
@@ -64,7 +65,7 @@ const runTest = async () => {
   // runTestHttpRequest();
   // runTestClientTimeSynced();
   // runSwarmMessageFieldsValidator();
-  runTestCAIdentityV2();
+  runCACredentialsIdentityStorageTest();
   runMocha();
 };
 

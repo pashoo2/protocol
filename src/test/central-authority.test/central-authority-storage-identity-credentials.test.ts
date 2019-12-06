@@ -3,6 +3,8 @@ import { ISecretStoreCredentials } from 'classes/secret-storage-class/secret-sto
 import {
   CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME,
   CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME,
+  CA_USER_IDENTITY_VERSION_PROP_NAME,
+  CA_USER_IDENTITY_VERSIONS,
 } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
 import { generateUUID } from 'utils/identity-utils/identity-utils';
 import CentralAuthorityIdentity from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
@@ -37,16 +39,19 @@ const runCACredentialsIdentityStorageTestForCredentials = async (
     identityTest,
     testKeyPairs
   );
-
-  if (setInStorageResult instanceof Error) {
-    console.error(setInStorageResult);
-    return;
-  }
-
   const caCryptoCredentialsTestRead = await storageInstance.getCredentials(
     identityTest
   );
 
+  if (setInStorageResult instanceof Error) {
+    if (!(caCryptoCredentialsTestRead instanceof Error)) {
+      console.error(
+        'If the set in storage result was wrong, than get from the storage result must be also wrong'
+      );
+    }
+    console.error(setInStorageResult);
+    return;
+  }
   if (caCryptoCredentialsTestRead instanceof Error) {
     console.error(caCryptoCredentialsTestRead);
     console.error('Failed to read the crypto credentials saved previosely');
@@ -129,7 +134,6 @@ const runCACredentialsIdentityStorageTestForCredentials = async (
     );
     return;
   }
-
   return true;
 };
 
@@ -137,7 +141,7 @@ export const runCACredentialsIdentityStorageTest = async () => {
   console.warn('Storage identity test was started');
 
   const conectionCredentials: ISecretStoreCredentials = {
-    password: '11234',
+    password: '123456',
   };
   const storageInstance = new CentralAuthorityIdentityCredentialsStorage();
   const connectionResult = await storageInstance.connect(conectionCredentials);
@@ -151,6 +155,7 @@ export const runCACredentialsIdentityStorageTest = async () => {
   const testIdentityDescription = {
     [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: 'https://google.com',
     [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]: generateUUID(),
+    [CA_USER_IDENTITY_VERSION_PROP_NAME]: CA_USER_IDENTITY_VERSIONS['01'],
   };
   const resultFirst = await runCACredentialsIdentityStorageTestForCredentials(
     storageInstance,
@@ -165,7 +170,8 @@ export const runCACredentialsIdentityStorageTest = async () => {
   const testIdentityDescriptionTwo = {
     [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]:
       'https://google1.com',
-    [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]: generateUUID(),
+    [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]: 'WWW@WWW.RU',
+    [CA_USER_IDENTITY_VERSION_PROP_NAME]: CA_USER_IDENTITY_VERSIONS['02'],
   };
   const resultTwo = await runCACredentialsIdentityStorageTestForCredentials(
     storageInstance,
@@ -176,7 +182,6 @@ export const runCACredentialsIdentityStorageTest = async () => {
     console.error('Test for the second credentials was failed');
     return;
   }
-
   console.warn('Test for a wrong identity valie started');
   const testIdentityDescriptionWrongFormat = {
     [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: '',
@@ -187,6 +192,7 @@ export const runCACredentialsIdentityStorageTest = async () => {
     testIdentityDescriptionWrongFormat
   );
 
+  // undefined must be
   if (resultMustBeFailed) {
     console.error('Test for a wrong identity valie must failed');
     return;
