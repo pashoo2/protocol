@@ -223,29 +223,19 @@ export const getExportedAsStringCryptoCredentials = async (
 };
 
 export const getExportedCryptoCredentialsByCAIdentity = async (
-  caIdentity: CentralAuthorityIdentity,
+  caIdentity: CentralAuthorityIdentity | string,
   cryptoCredentialsKeyPairs: TCACryptoKeyPairs
 ): Promise<Error | string> => {
-  if (typeof caIdentity === 'object') {
-    return getExportedAsStringCryptoCredentials(
-      String(caIdentity), // conver it to identity
-      cryptoCredentialsKeyPairs
-    );
+  if (caIdentity instanceof CentralAuthorityIdentity) {
+    if (caIdentity.isValid) {
+      return getExportedAsStringCryptoCredentials(
+        String(caIdentity), // conver it to identity
+        cryptoCredentialsKeyPairs
+      );
+    }
+    return new Error('The CA identity is wrong');
   }
-  return new Error('The identity has a wrong format');
-};
-
-export const replaceCryptoCredentialsIdentity = (
-  cryptoCredentials: TCentralAuthorityUserCryptoCredentials,
-  identity: TCentralAuthorityUserIdentity
-): Error | TCentralAuthorityUserCryptoCredentials => {
-  if (checkIsValidCryptoCredentials(cryptoCredentials)) {
-    return {
-      ...cryptoCredentials,
-      [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: identity,
-    };
-  }
-  return new Error('The crypto credentials have a wrong format');
+  return new Error('The CA identity must be an instance of caIdentity');
 };
 
 export const getUserIdentityByCryptoCredentials = (

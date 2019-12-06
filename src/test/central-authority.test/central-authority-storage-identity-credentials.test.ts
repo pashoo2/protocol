@@ -1,4 +1,4 @@
-import { CentralAuthorityIdentityCredentialsStorage } from 'classes/central-authority-class/central-authority-storage-local/central-authority-storage-swarm-users-auth/central-authority-storage-identity-credentials/central-authority-storage-identity-credentials';
+import { CentralAuthorityIdentityCredentialsStorage } from 'classes/central-authority-class/central-authority-storage-local/central-authority-storage-swarm-users-auth/central-authority-storage-swarm-users-identity-credentials/central-authority-storage-swarm-users-identity-credentials';
 import { ISecretStoreCredentials } from 'classes/secret-storage-class/secret-storage-class.types';
 import {
   CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME,

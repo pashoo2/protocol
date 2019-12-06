@@ -4,8 +4,8 @@ import {
   CA_IDENTITY_CREDENTIALS_STORAGE_CONFIGURATION,
   CA_IDENTITY_CREDENTIALS_STORAGE_READ_CACHE_CAPACITY,
   CA_IDENTITY_CREDENTIALS_STORAGE_READ_RAW_CACHE_CAPACITY,
-} from './central-authority-storage-identity-credentials.const';
-import { ICAIdentityCredentialsStorage } from './central-authority-identity-storage.types';
+} from './central-authority-storage-swarm-users-identity-credentials.const';
+import { ICAIdentityCredentialsStorage } from './central-authority-storage-swarm-users-identity-credentials.types';
 import { SecretStorage } from 'classes/secret-storage-class/secret-storage-class';
 import {
   ISecretStoreCredentials,
@@ -19,7 +19,6 @@ import {
 import CentralAuthorityIdentity from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
 import {
   getExportedCryptoCredentialsByCAIdentity,
-  replaceCryptoCredentialsIdentity,
   importCryptoCredentialsFromAString,
   getUserIdentityByCryptoCredentials,
   getCryptoKeyPairsByCryptoCredentials,
@@ -31,9 +30,8 @@ import {
 } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
 
 /**
- * This is the storage for the user
- * identifier and a public keys for
- * data sign and encryption
+ * This is storage to cache swarm users credentials locally.
+ * To do not request it each time from the auth provider.
  */
 export class CentralAuthorityIdentityCredentialsStorage
   extends getStatusClass<typeof CA_IDENTITY_CREDENTIALS_STORAGE_STATUS>({
@@ -103,6 +101,66 @@ export class CentralAuthorityIdentityCredentialsStorage
     return true;
   }
 
+  /**
+   * get credentials stored for the identity
+   * in the local storage
+   *
+   * @param {TCentralAuthorityUserIdentity} identity
+   * @returns {(Promise<TCentralAuthorityUserCryptoCredentials | Error | null>)}
+   * @memberof CentralAuthorityIdentityCredentialsStorage
+   */
+  public async getCredentials(
+    identity: TCentralAuthorityUserIdentity
+  ): Promise<TCentralAuthorityUserCryptoCredentials | Error | null> {
+    const { isActive } = this;
+
+    if (!isActive) {
+      return new Error('The storage is not active');
+    }
+    return this.getCredentialsCached(identity);
+  }
+
+  /**
+   * set the credentials (identity + crypto keys)
+   * in the local secret storage
+   *
+   * @param {[]} args
+   * @param {string} args[0] - CAIdentity seriazlized
+   * @param {TCACryptoKeyPairs} args[1] - crypto key pairs
+   * @returns {(Promise<boolean | Error>)}
+   * @memberof CentralAuthorityIdentityCredentialsStorage
+   */
+  /**
+   * @param {...any[]} args
+   * @param {string | } args[1] - Crypto credentials (CAIdentity + TACryptoKeyPairs) serialized or deserialized
+   * @returns {(Promise<boolean | Error>)}
+   * @memberof CentralAuthorityIdentityCredentialsStorage
+   */
+  public async setCredentials(...args: any[]): Promise<boolean | Error> {
+    const argsLenght = args.length;
+
+    if (argsLenght === 2) {
+      return this.setCredentialsByIdentity(args[0], args[1]);
+    } else if (argsLenght === 1) {
+      const caCryptoCredentials = args[0];
+
+      if (checkIsValidExportedCryptoCredentialsToString(caCryptoCredentials)) {
+        return this.setCredentialsByCACryptoCredentialsExportedToString(
+          caCryptoCredentials
+        );
+      } else if (checkIsValidCryptoCredentials(caCryptoCredentials)) {
+        return this.setCredentialsByCACryptoCredentials(caCryptoCredentials);
+      }
+    }
+    return new Error('An unknown arguments');
+  }
+
+  /**
+   * disconnect from the local secret storage
+   *
+   * @returns {(Promise<Error | boolean>)}
+   * @memberof CentralAuthorityIdentityCredentialsStorage
+   */
   public async disconnect(): Promise<Error | boolean> {
     const { status, secretStorageConnection } = this;
 
@@ -138,12 +196,36 @@ export class CentralAuthorityIdentityCredentialsStorage
   }
 
   protected getKeyNameWithPrefix(key: string): string {
-    return `__CA_IDENTITY_CREDENTIALS_STORAGE_FULL_NAME___${key}`;
+    return `__CICS_${key}`;
+  }
+
+  /**
+   * returns a string as a key under which the
+   * identity will be stored in the key-value
+   * storage.
+   *
+   * @protected
+   * @param {CentralAuthorityIdentity} identity
+   * @returns {(string | Error)}
+   * @memberof CentralAuthorityIdentityCredentialsStorage
+   */
+  protected getStorageKeyByCAIdentity(
+    identity: CentralAuthorityIdentity
+  ): string | Error {
+    if (!(identity instanceof CentralAuthorityIdentity)) {
+      return new Error(
+        'The argument must be an instance of CentralAuthorityIdentity'
+      );
+    }
+    if (!identity.isValid) {
+      return new Error('The CA identity is not valid');
+    }
+    return this.getKeyNameWithPrefix(String(identity));
   }
 
   @caching(CA_IDENTITY_CREDENTIALS_STORAGE_READ_RAW_CACHE_CAPACITY)
   protected async getCredentialsRaw(
-    identity: string
+    identityKey: string
   ): Promise<string | Error | undefined> {
     const { isActive } = this;
 
@@ -153,24 +235,20 @@ export class CentralAuthorityIdentityCredentialsStorage
     try {
       const { secretStorageConnection } = this;
       const caCryptoCredentials = await secretStorageConnection!!.get(
-        this.getKeyNameWithPrefix(identity)
+        identityKey
       );
 
       if (caCryptoCredentials instanceof Error) {
         console.error(caCryptoCredentials);
         return new Error('Failed to read credentials from the storage');
       }
-      if (!caCryptoCredentials) {
-        return undefined;
-      }
-      return caCryptoCredentials;
+      return caCryptoCredentials ? caCryptoCredentials : undefined;
     } catch (err) {
       console.error(err);
       return new Error(
         'Failed to read a credentials for identity from the storage'
       );
     }
-    return undefined;
   }
 
   protected setCredentialsByIdentity = async (
@@ -185,6 +263,13 @@ export class CentralAuthorityIdentityCredentialsStorage
     try {
       // parse the identity
       const caIdentity = new CentralAuthorityIdentity(identity);
+      const caIdentityStorageKey = this.getStorageKeyByCAIdentity(caIdentity);
+
+      if (caIdentityStorageKey instanceof Error) {
+        console.error(caIdentityStorageKey);
+        return new Error('The identity is not valid');
+      }
+
       const cryptoCredentialsExported = await getExportedCryptoCredentialsByCAIdentity(
         caIdentity,
         cryptoKeyPairs
@@ -195,23 +280,9 @@ export class CentralAuthorityIdentityCredentialsStorage
         return new Error('Failed to export the credentials to a string');
       }
 
-      const { id } = caIdentity;
-      /**
-       * id - is the unique identity
-       * for the user throughout
-       * the application.
-       * Wich is uniquely identifies
-       * the user with the
-       * identity. Use it as a key
-       * to store the credentials
-       * */
-      if (id instanceof Error) {
-        return new Error(
-          'The identity value is wrong or have an unknown format'
-        );
-      }
-
-      const credentialsStoredForIdentity = await this.getCredentialsRaw(id);
+      const credentialsStoredForIdentity = await this.getCredentialsRaw(
+        caIdentityStorageKey
+      );
 
       // if a credentials was already
       // stored for the identity
@@ -231,14 +302,13 @@ export class CentralAuthorityIdentityCredentialsStorage
       const { secretStorageConnection } = this;
 
       return secretStorageConnection!!.set(
-        this.getKeyNameWithPrefix(id),
+        caIdentityStorageKey,
         cryptoCredentialsExported
       );
     } catch (err) {
       console.error(err);
       return new Error('Failed to store the credentials');
     }
-    return true;
   };
 
   protected async setCredentialsByCACryptoCredentials(
@@ -281,25 +351,6 @@ export class CentralAuthorityIdentityCredentialsStorage
     return this.setCredentialsByCACryptoCredentials(cryptoCredentials);
   }
 
-  public async setCredentials(...args: any[]): Promise<boolean | Error> {
-    const argsLenght = args.length;
-
-    if (argsLenght === 2) {
-      return this.setCredentialsByIdentity(args[0], args[1]);
-    } else if (argsLenght === 1) {
-      const caCryptoCredentials = args[0];
-
-      if (checkIsValidExportedCryptoCredentialsToString(caCryptoCredentials)) {
-        return this.setCredentialsByCACryptoCredentialsExportedToString(
-          caCryptoCredentials
-        );
-      } else if (checkIsValidCryptoCredentials(caCryptoCredentials)) {
-        return this.setCredentialsByCACryptoCredentials(caCryptoCredentials);
-      }
-    }
-    return new Error('An unknown arguments');
-  }
-
   @caching(CA_IDENTITY_CREDENTIALS_STORAGE_READ_CACHE_CAPACITY)
   protected async getCredentialsCached(
     identity: TCentralAuthorityUserIdentity
@@ -307,16 +358,14 @@ export class CentralAuthorityIdentityCredentialsStorage
     try {
       // parse the identity
       const caIdentity = new CentralAuthorityIdentity(identity);
-      const { isValid, id } = caIdentity;
+      const credentialsKey = this.getStorageKeyByCAIdentity(caIdentity);
 
-      if (!isValid) {
-        return new Error('The identity is not valid');
-      }
-      if (id instanceof Error) {
-        return new Error('Failed to parse the identity and get id');
+      if (credentialsKey instanceof Error) {
+        console.error(credentialsKey);
+        return new Error('The identity has a wrong format');
       }
 
-      const caCryptoCredentials = await this.getCredentialsRaw(id);
+      const caCryptoCredentials = await this.getCredentialsRaw(credentialsKey);
 
       if (caCryptoCredentials instanceof Error) {
         console.error(caCryptoCredentials);
@@ -334,42 +383,12 @@ export class CentralAuthorityIdentityCredentialsStorage
         console.error(importedCryptoCredentials);
         return new Error('Failed to import the value read');
       }
-
-      // replace the existing value
-      // of the user identity
-      // by a requested value.
-      // Because the stored identity
-      // version may be different
-      // from the requested. It may
-      // cause an unexpected issues
-      const resultedValue = replaceCryptoCredentialsIdentity(
-        importedCryptoCredentials,
-        identity
-      );
-
-      if (resultedValue instanceof Error) {
-        console.error(resultedValue);
-        return new Error(
-          'Failed to replace the identity in the credentials read from the storage'
-        );
-      }
-      return resultedValue;
+      return importedCryptoCredentials;
     } catch (err) {
       console.error(err);
       return new Error(
         'Failed to read a credentials for identity from the storage'
       );
     }
-  }
-
-  public async getCredentials(
-    identity: TCentralAuthorityUserIdentity
-  ): Promise<TCentralAuthorityUserCryptoCredentials | Error | null> {
-    const { isActive } = this;
-
-    if (!isActive) {
-      return new Error('The storage is not active');
-    }
-    return this.getCredentialsCached(identity);
   }
 }
