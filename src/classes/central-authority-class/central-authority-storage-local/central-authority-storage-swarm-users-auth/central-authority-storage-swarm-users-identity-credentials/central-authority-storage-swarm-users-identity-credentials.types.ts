@@ -2,9 +2,7 @@ import {
   TCentralAuthorityUserIdentity,
   TCACryptoKeyPairs,
   TCentralAuthorityUserCryptoCredentials,
-  TCentralAuthorityUserCryptoCredentialsExported,
 } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
-import { ownValueOf } from 'types/helper.types';
 import { ISecretStoreCredentials } from 'classes/secret-storage-class/secret-storage-class.types';
 
 /**

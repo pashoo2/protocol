@@ -22,7 +22,8 @@ import {
 import { stringify } from 'utils/main-utils';
 
 export const exportCryptoCredentialsToString = async (
-  userCryptoCredentials: TCentralAuthorityUserCryptoCredentials
+  userCryptoCredentials: TCentralAuthorityUserCryptoCredentials,
+  withoutIdentityVersion: boolean = false
 ): Promise<Error | string> => {
   if (!checkIsValidCryptoCredentials(userCryptoCredentials)) {
     return new Error('The given value is not a valid crypto credentials');
@@ -42,6 +43,15 @@ export const exportCryptoCredentialsToString = async (
     [CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: exportedCryptoKeys,
     [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: userIdentity,
   };
+  if (withoutIdentityVersion) {
+    const userCAIdentity = new CentralAuthorityIdentity(userIdentity);
+    const { id } = userCAIdentity;
+
+    if (id instanceof Error) {
+      return new Error('The identity is not valid');
+    }
+    cryptoCredentialsExported[CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME] = id;
+  }
 
   if (!checkIsValidCryptoCredentialsExportedFormat(cryptoCredentialsExported)) {
     return new Error(
@@ -69,6 +79,11 @@ export const exportCryptoCredentialsToString = async (
   }
 };
 
+export const exportCryptoCredentialsToStringWithoutTheCAIdentityVersion = (
+  userCryptoCredentials: TCentralAuthorityUserCryptoCredentials
+): Promise<Error | string> =>
+  exportCryptoCredentialsToString(userCryptoCredentials, true);
+
 export const compareCryptoCredentials = async (
   ...credentials: TCentralAuthorityUserCryptoCredentials[]
 ): Promise<boolean | Error> => {
@@ -76,7 +91,9 @@ export const compareCryptoCredentials = async (
     return new Error('Crdentails to compare must be an array');
   }
 
-  const exportResult = await exportCryptoCredentialsToString(credentials[0]);
+  const exportResult = await exportCryptoCredentialsToStringWithoutTheCAIdentityVersion(
+    credentials[0]
+  );
 
   if (exportResult instanceof Error) {
     return exportResult;
@@ -236,6 +253,19 @@ export const getExportedCryptoCredentialsByCAIdentity = async (
     return new Error('The CA identity is wrong');
   }
   return new Error('The CA identity must be an instance of caIdentity');
+};
+
+export const replaceCryptoCredentialsIdentity = (
+  cryptoCredentials: TCentralAuthorityUserCryptoCredentials,
+  identity: TCentralAuthorityUserIdentity
+): Error | TCentralAuthorityUserCryptoCredentials => {
+  if (checkIsValidCryptoCredentials(cryptoCredentials)) {
+    return {
+      ...cryptoCredentials,
+      [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: identity,
+    };
+  }
+  return new Error('The crypto credentials have a wrong format');
 };
 
 export const getUserIdentityByCryptoCredentials = (

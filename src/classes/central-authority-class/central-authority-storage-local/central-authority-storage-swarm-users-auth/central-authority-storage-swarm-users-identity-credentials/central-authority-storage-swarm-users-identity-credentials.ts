@@ -19,6 +19,7 @@ import {
 import CentralAuthorityIdentity from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
 import {
   getExportedCryptoCredentialsByCAIdentity,
+  replaceCryptoCredentialsIdentity,
   importCryptoCredentialsFromAString,
   getUserIdentityByCryptoCredentials,
   getCryptoKeyPairsByCryptoCredentials,
@@ -220,7 +221,16 @@ export class CentralAuthorityIdentityCredentialsStorage
     if (!identity.isValid) {
       return new Error('The CA identity is not valid');
     }
-    return this.getKeyNameWithPrefix(String(identity));
+
+    const { id } = identity;
+
+    // the id - is a unique string which identifies the user
+    // in the swarm
+    if (id instanceof Error) {
+      console.error(id);
+      return new Error('Failed to get the unique identifier of the user');
+    }
+    return this.getKeyNameWithPrefix(id);
   }
 
   @caching(CA_IDENTITY_CREDENTIALS_STORAGE_READ_RAW_CACHE_CAPACITY)
@@ -383,7 +393,26 @@ export class CentralAuthorityIdentityCredentialsStorage
         console.error(importedCryptoCredentials);
         return new Error('Failed to import the value read');
       }
-      return importedCryptoCredentials;
+
+      // replace the existing value
+      // of the user identity
+      // by a requested value.
+      // Because the stored identity
+      // version may be different
+      // from the requested. It may
+      // cause an unexpected issues
+      const resultedValue = replaceCryptoCredentialsIdentity(
+        importedCryptoCredentials,
+        identity
+      );
+
+      if (resultedValue instanceof Error) {
+        console.error(resultedValue);
+        return new Error(
+          'Failed to replace the identity in the credentials read from the storage'
+        );
+      }
+      return resultedValue;
     } catch (err) {
       console.error(err);
       return new Error(

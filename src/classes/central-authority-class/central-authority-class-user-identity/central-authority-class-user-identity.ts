@@ -13,6 +13,7 @@ import { serializeIdentity } from './central-authority-class-user-identity-forma
 import {
   CA_USER_IDENTITY_VERSION_PROP_NAME,
   CA_USER_IDENTITY_VERSION_CURRENT,
+  CA_USER_IDENTITY_AUTH_PROVIDER_URL_DELIMETER,
 } from './central-authority-class-user-identity.const';
 import { CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME } from '../central-authority-class-const/central-authority-class-const';
 export class CentralAuthorityIdentity implements ICAIdentityCommonInstance {
@@ -104,7 +105,7 @@ export class CentralAuthorityIdentity implements ICAIdentityCommonInstance {
 
     const { authorityProviderURI, userUniqueIdentifier } = identityDescription;
 
-    return `${authorityProviderURI}${userUniqueIdentifier}`;
+    return `${authorityProviderURI}${CA_USER_IDENTITY_AUTH_PROVIDER_URL_DELIMETER}${userUniqueIdentifier}`;
   }
 
   public toString(): TCentralAuthorityUserIdentity {

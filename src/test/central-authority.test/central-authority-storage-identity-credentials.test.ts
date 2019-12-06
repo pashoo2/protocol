@@ -13,6 +13,7 @@ import {
   getUserIdentityByCryptoCredentials,
   getUserCredentialsByUserIdentityAndCryptoKeys,
   exportCryptoCredentialsToString,
+  compareCryptoCredentials,
 } from 'classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials';
 import { ICAUserUniqueIdentifierDescriptionWithOptionalVersion } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types';
 import { TCentralAuthorityUserIdentity } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
@@ -164,6 +165,57 @@ export const runCACredentialsIdentityStorageTest = async () => {
 
   if (resultFirst !== true) {
     console.error('Test for the first credentials was failed');
+    return;
+  }
+
+  const testIdentityDescriptionSame = {
+    ...testIdentityDescription,
+    [CA_USER_IDENTITY_VERSION_PROP_NAME]: CA_USER_IDENTITY_VERSIONS['02'],
+  };
+  const caIdentityValue = new CentralAuthorityIdentity(testIdentityDescription);
+  const caIdentityValueSame = new CentralAuthorityIdentity(
+    testIdentityDescriptionSame
+  );
+
+  const resCredentialsValue = await storageInstance.getCredentials(
+    caIdentityValue.toString()
+  );
+
+  if (resCredentialsValue instanceof Error) {
+    console.error(resCredentialsValue);
+    console.error('Failed to read credentials');
+    return;
+  }
+  if (!resCredentialsValue) {
+    console.error('Failed to read credentials which are stored before');
+    return;
+  }
+
+  const resSameCredentialsValue = await storageInstance.getCredentials(
+    caIdentityValueSame.toString()
+  );
+
+  if (resSameCredentialsValue instanceof Error) {
+    console.error(resCredentialsValue);
+    console.error('Failed to read credentials');
+    return;
+  }
+  if (!resSameCredentialsValue) {
+    console.error('Failed to read credentials which are stored before');
+    return;
+  }
+  if (!compareCryptoCredentials(resCredentialsValue, resSameCredentialsValue)) {
+    console.error(
+      'A crypto credentials must be the same and independent from the CAIdentity version'
+    );
+    return;
+  }
+  if (
+    resCredentialsValue.userIdentity === resSameCredentialsValue.userIdentity
+  ) {
+    console.error(
+      'The user identity must not be the same cause the version is different'
+    );
     return;
   }
 

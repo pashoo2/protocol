@@ -2,7 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e70e70e3-e48a-4dfd-91a6-03818e8691f6" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.eslintcache" beforeDir="false" afterPath="$PROJECT_DIR$/.eslintcache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-parsers/central-authority-class-user-identity-parsers-parser-v2/central-authority-class-user-identity-parsers-parser-v2.const.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-parsers/central-authority-class-user-identity-parsers-parser-v2/central-authority-class-user-identity-parsers-parser-v2.const.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-storage-local/central-authority-storage-swarm-users-auth/central-authority-storage-swarm-users-identity-credentials/central-authority-storage-swarm-users-identity-credentials.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-storage-local/central-authority-storage-swarm-users-auth/central-authority-storage-swarm-users-identity-credentials/central-authority-storage-swarm-users-identity-credentials.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-storage-local/central-authority-storage-swarm-users-auth/central-authority-storage-swarm-users-identity-credentials/central-authority-storage-swarm-users-identity-credentials.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-storage-local/central-authority-storage-swarm-users-auth/central-authority-storage-swarm-users-identity-credentials/central-authority-storage-swarm-users-identity-credentials.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority.test/central-authority-storage-identity-credentials.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/central-authority.test/central-authority-storage-identity-credentials.test.ts" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -28,8 +34,8 @@
       <file leaf-file-name="package.json" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/package.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="117">
-              <caret line="93" column="29" selection-start-line="93" selection-start-column="29" selection-end-line="93" selection-end-column="29" />
+            <state relative-caret-position="1395">
+              <caret line="102" column="29" selection-start-line="102" selection-start-column="29" selection-end-line="102" selection-end-column="29" />
             </state>
           </provider>
         </entry>
@@ -37,7 +43,7 @@
       <file leaf-file-name="central-authority-connection-firebase-utils.credentials-storage.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase-utils/central-authority-connection-firebase-utils.credentials-storage/central-authority-connection-firebase-utils.credentials-storage.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-180">
+            <state>
               <folding>
                 <element signature="e#0#164#0" expanded="true" />
               </folding>
@@ -45,12 +51,18 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="central-authority-connection-firebase.ts" pinned="false" current-in-tab="true">
+      <file leaf-file-name="central-authority-connection-firebase.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase.ts">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file leaf-file-name="central-authority-utils-crypto-credentials.ts" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
+            <state relative-caret-position="330">
+              <caret line="22" lean-forward="true" selection-start-line="22" selection-end-line="22" />
               <folding>
-                <element signature="e#0#41#0" expanded="true" />
+                <element signature="e#0#168#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -64,7 +76,7 @@
       <file leaf-file-name="verify-data.encryption-utils.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/utils/data-sign-utils/verify-data.encryption-utils.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-265">
+            <state>
               <folding>
                 <element signature="e#0#102#0" expanded="true" />
               </folding>
@@ -75,7 +87,7 @@
       <file leaf-file-name=".eslintrc" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/.eslintrc">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="285">
+            <state relative-caret-position="300">
               <caret line="20" column="19" selection-start-line="20" selection-start-column="19" selection-end-line="20" selection-end-column="19" />
             </state>
           </provider>
@@ -84,7 +96,7 @@
       <file leaf-file-name=".prettierrc" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/.prettierrc">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
+            <state relative-caret-position="165">
               <caret line="11" column="1" selection-start-line="11" selection-start-column="1" selection-end-line="11" selection-end-column="1" />
             </state>
           </provider>
@@ -94,10 +106,7 @@
         <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base-utils.ts">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="585">
-              <caret line="51" column="25" selection-start-line="51" selection-start-column="25" selection-end-line="51" selection-end-column="25" />
-              <folding>
-                <element signature="e#0#187#0" expanded="true" />
-              </folding>
+              <caret line="56" column="25" selection-start-line="56" selection-start-column="25" selection-end-line="56" selection-end-column="25" />
             </state>
           </provider>
         </entry>
@@ -120,6 +129,7 @@
         <option value="$PROJECT_DIR$/package.json" />
         <option value="$PROJECT_DIR$/.prettierrc" />
         <option value="$PROJECT_DIR$/.eslintrc" />
+        <option value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials.ts" />
       </list>
     </option>
   </component>
@@ -138,6 +148,8 @@
   <component name="NodePackageJsonFileManager">
     <packageJsonPaths>
       <path value="$PROJECT_DIR$/package.json" />
+      <path value="$PROJECT_DIR$/src/backog-classes/channel-authority-class/channel-authority-connections/channel-authority-connection-with-server-api/package.json" />
+      <path value="$PROJECT_DIR$/src/backog-classes/channel-authority-class/package.json" />
       <path value="$PROJECT_DIR$/src/classes/basic-classes/event-emitter-class-base/package.json" />
       <path value="$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/package.json" />
       <path value="$PROJECT_DIR$/src/classes/basic-classes/mime-types-class-base/package.json" />
@@ -145,27 +157,29 @@
       <path value="$PROJECT_DIR$/src/classes/basic-classes/status-class-base/package.json" />
       <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-types/package.json" />
       <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-formatters/central-authority-class-user-identity-formatters-formatter-v1/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-formatters/central-authority-class-user-identity-formatters-formatter-v2/package.json" />
       <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-formatters/package.json" />
       <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-parsers/central-authority-class-user-identity-parsers-parser-v1/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-parsers/central-authority-class-user-identity-parsers-parser-v2/package.json" />
       <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-parsers/package.json" />
       <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-class-user-identity-validator-v1/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-class-user-identity-validator-v2/package.json" />
       <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/package.json" />
       <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase-utils/central-authority-connection-firebase-utils.credentials-storage/package.json" />
       <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase-utils/central-authority-connection-firebase-utils.database/package.json" />
       <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase.const/package.json" />
       <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-server-api/package.json" />
       <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connections-const/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-storage/central-authority-storage-credentials/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-storage/central-authority-storage-identity-credentials/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-storage-local/central-authority-storage-current-user-auth/central-authority-storage-credentials/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-storage-local/central-authority-storage-current-user-auth/central-authority-storage-current-user-auth/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-storage-local/central-authority-storage-swarm-users-auth/central-authority-storage-swarm-users-identity-credentials/package.json" />
       <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/package.json" />
       <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/package.json" />
       <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-validators/central-authority-validators-auth-credentials/package.json" />
       <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/package.json" />
       <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-validators/central-authority-validators-user/package.json" />
       <path value="$PROJECT_DIR$/src/classes/central-authority-class/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/channel-authority-class/channel-authority-connections/channel-authority-connection-with-server-api/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/channel-authority-class/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/pseudo-ntp-class/package.json" />
       <path value="$PROJECT_DIR$/src/classes/safe-storage-class/package.json" />
       <path value="$PROJECT_DIR$/src/classes/secret-storage-class/package.json" />
       <path value="$PROJECT_DIR$/src/classes/secret-storage-class/secret_storage_providers/secret-storage-level-js-provider/package.json" />
@@ -175,6 +189,13 @@
       <path value="$PROJECT_DIR$/src/classes/swarm-connection-class/package.json" />
       <path value="$PROJECT_DIR$/src/classes/swarm-connection-class/swarm-connection-class-subclasses/swarm-connection-class-subclass-ipfs/package.json" />
       <path value="$PROJECT_DIR$/src/classes/swarm-message/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator-fields-validator/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-issuer-deserizlied/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-issuer-serialized/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-payload/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-timestamp/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-type/package.json" />
+      <path value="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/package.json" />
       <path value="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/package.json" />
       <path value="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-identity-provider/package.json" />
       <path value="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-keystore/package.json" />
@@ -183,7 +204,6 @@
       <path value="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/package.json" />
       <path value="$PROJECT_DIR$/src/const/common-values/package.json" />
       <path value="$PROJECT_DIR$/src/const/const-validation-schemes/package.json" />
-      <path value="$PROJECT_DIR$/src/const/const-validation-values/const-validation-values-messaging-common/package.json" />
       <path value="$PROJECT_DIR$/src/const/const-validation-values/package.json" />
       <path value="$PROJECT_DIR$/src/test/central-authority.test/central-authority-connection.test/central-authority-connection.test.firebase/package.json" />
       <path value="$PROJECT_DIR$/src/test/central-authority.test/central-authority-connection.test/package.json" />
@@ -192,7 +212,6 @@
       <path value="$PROJECT_DIR$/src/test/http-request-class-base.test/package.json" />
       <path value="$PROJECT_DIR$/src/test/ipfs-swarm-connection.test/package.json" />
       <path value="$PROJECT_DIR$/src/test/nodejs-helpers.test/nodejs-helpers.test.firebase/package.json" />
-      <path value="$PROJECT_DIR$/src/utils/classes-helpers-utils/pseudo-ntp-class/package.json" />
       <path value="$PROJECT_DIR$/src/utils/common-utils/package.json" />
       <path value="$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/package.json" />
       <path value="$PROJECT_DIR$/src/utils/data-cache-utils/package.json" />
@@ -272,11 +291,12 @@
       <workItem from="1572543906042" duration="59000" />
       <workItem from="1574620752734" duration="1945000" />
       <workItem from="1574622732082" duration="2426000" />
+      <workItem from="1575665103362" duration="845000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="4649000" />
+    <option name="totallyTimeSpent" value="5494000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="67" y="25" width="1853" height="1055" extended-state="6" />
@@ -290,14 +310,14 @@
       <window_info anchor="bottom" id="Run" order="2" weight="0.329718" />
       <window_info id="npm" order="2" side_tool="true" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="7" visible="true" weight="0.3362256" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="7" visible="true" weight="0.23101953" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Find" order="1" />
     </layout>
@@ -347,6 +367,65 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1395">
+          <caret line="93" column="29" selection-start-line="93" selection-start-column="29" selection-end-line="93" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase-utils/central-authority-connection-firebase-utils.credentials-storage/central-authority-connection-firebase-utils.credentials-storage.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#164#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/data-sign-utils/verify-data.encryption-utils.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#102#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.eslintrc">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="20" column="19" selection-start-line="20" selection-start-column="19" selection-end-line="20" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.prettierrc">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="11" column="1" selection-start-line="11" selection-start-column="1" selection-end-line="11" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base-utils.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="585">
+          <caret line="51" column="25" selection-start-line="51" selection-start-column="25" selection-end-line="51" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase.ts">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/types/ipfs.types.d.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="19" column="10" selection-start-line="19" selection-start-column="10" selection-end-line="19" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/.eslintrc">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="285">
@@ -365,9 +444,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="765">
           <caret line="51" column="31" selection-start-line="51" selection-start-column="31" selection-end-line="51" selection-end-column="31" />
-          <folding>
-            <element signature="e#0#187#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -401,31 +477,28 @@
     <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base-utils.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="585">
-          <caret line="51" column="25" selection-start-line="51" selection-start-column="25" selection-end-line="51" selection-end-column="25" />
-          <folding>
-            <element signature="e#0#187#0" expanded="true" />
-          </folding>
+          <caret line="56" column="25" selection-start-line="56" selection-start-column="25" selection-end-line="56" selection-end-column="25" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/.eslintrc">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
+        <state relative-caret-position="300">
           <caret line="20" column="19" selection-start-line="20" selection-start-column="19" selection-end-line="20" selection-end-column="19" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/.prettierrc">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
+        <state relative-caret-position="165">
           <caret line="11" column="1" selection-start-line="11" selection-start-column="1" selection-end-line="11" selection-end-column="1" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/package.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="117">
-          <caret line="93" column="29" selection-start-line="93" selection-start-column="29" selection-end-line="93" selection-end-column="29" />
+        <state relative-caret-position="1395">
+          <caret line="102" column="29" selection-start-line="102" selection-start-column="29" selection-end-line="102" selection-end-column="29" />
         </state>
       </provider>
     </entry>
@@ -434,7 +507,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/utils/data-sign-utils/verify-data.encryption-utils.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-265">
+        <state>
           <folding>
             <element signature="e#0#102#0" expanded="true" />
           </folding>
@@ -443,7 +516,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase-utils/central-authority-connection-firebase-utils.credentials-storage/central-authority-connection-firebase-utils.credentials-storage.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-180">
+        <state>
           <folding>
             <element signature="e#0#164#0" expanded="true" />
           </folding>
@@ -451,10 +524,14 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase.ts">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
+        <state relative-caret-position="330">
+          <caret line="22" lean-forward="true" selection-start-line="22" selection-end-line="22" />
           <folding>
-            <element signature="e#0#41#0" expanded="true" />
+            <element signature="e#0#168#0" expanded="true" />
           </folding>
         </state>
       </provider>
