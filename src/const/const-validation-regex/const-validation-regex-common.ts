@@ -1,4 +1,4 @@
-export const CONST_VALIDATION_REGEX_LOGIN_STRING = `^[\\w\\d\\!\\(\\)\\?\\[\\]\\~\\;\\:#%\\$&\\*\\^=\\+][\\w\\d\\!\\(\\)\\?\\[\\]\\~\\;\\:#%\\$&\\*\\^=\\+\\.\\_\\-]*[\\w\\d\\!\\(\\)\\?\\[\\]\\~\\;\\:#%\\$&\\*\\^=\\+]$`;
+export const CONST_VALIDATION_REGEX_LOGIN_STRING = `^[\\w\\d\\!\\(\\)\\?\\[\\]\\~\\;\\:#%\\$&\\*\\^=\\+][\\w\\d\\!\\(\\)\\?\\[\\]\\~\\;\\:#%\\$&\\*\\^=\\+\\.\\_\\-]*@?[\\w\\d\\!\\(\\)\\?\\[\\]\\~\\;\\:#%\\$&\\*\\^=\\+\\.\\_\\-]+$`;
 
 export const CONST_VALIDATION_REGEX_LOGIN = new RegExp(
   CONST_VALIDATION_REGEX_LOGIN_STRING

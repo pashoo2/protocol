@@ -6,8 +6,9 @@ import {
   CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME,
 } from '../../central-authority-class-user-identity.const';
 import { validateUserIdentityDescriptionVersion } from '../../central-authority-class-user-identity-validators/central-authority-class-user-identity-validators.utils';
+import { CA_USER_IDENTITY_V2_FORMATTER_AUTH_PROVIDER_URL_DELIMETER } from './central-authority-class-user-identity-formatters-formatter-v2.const';
 
-export const formatterV1 = (
+export const formatterV2 = (
   userIdentityDescription: ICAUserUniqueIdentifierDescription
 ): TCentralAuthorityUserIdentity | Error => {
   const {
@@ -27,7 +28,7 @@ export const formatterV1 = (
     [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]: userUniqueIdentifier,
   } = userIdentityDescription;
 
-  return `${version}${authProviderURI}${userUniqueIdentifier}`;
+  return `${version}${authProviderURI}${CA_USER_IDENTITY_V2_FORMATTER_AUTH_PROVIDER_URL_DELIMETER}${userUniqueIdentifier}`;
 };
 
-export default formatterV1;
+export default formatterV2;

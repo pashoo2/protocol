@@ -26,7 +26,7 @@ export const CAUserIdentityParserV2: IParser = (
     ) {
       return new Error('The given user identity have a too small length');
     }
-    debugger;
+
     const delimeterPosition = userIdentityWithoutVersion.lastIndexOf(
       CA_USER_IDENTITY_V2_AUTH_PROVIDER_URL_DELIMETER
     );
@@ -36,11 +36,12 @@ export const CAUserIdentityParserV2: IParser = (
       return new Error('The delimeter character was not found in the string');
     }
 
-    const userIdentity = userIdentityWithoutVersion.slice(-delimeterPosition);
+    const userIdentity = userIdentityWithoutVersion.slice(
+      delimeterPosition + 1
+    );
     const authProviderIdentity = userIdentityWithoutVersion.slice(
       0,
-      userIdentityWithoutVersion.length -
-        CA_USER_IDENTITY_UNIQUE_IDENTIFIER_MAX_LENGTH
+      delimeterPosition
     );
 
     return getUserIdentityDescription(userIdentity, authProviderIdentity);

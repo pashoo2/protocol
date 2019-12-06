@@ -34,7 +34,7 @@ export const validatorV2 = (
     }
     if (!dataValidatorUtilSafeLogin(userUniqueIdentifier)) {
       console.warn(
-        `The user unique identifier ${userUniqueIdentifier} have a format different from the UUIDv4`
+        `The user unique identifier ${userUniqueIdentifier} have a format different from the user login safe format`
       );
       return false;
     }

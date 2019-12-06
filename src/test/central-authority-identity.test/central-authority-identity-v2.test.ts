@@ -11,6 +11,7 @@ import { CA_CONNECTION_FIREBASE_CONFIG } from '../central-authority.test/central
 import { checkIsValidCryptoCredentials } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
 import { getUserIdentityByCryptoCredentials } from 'classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials';
 import { validateUserIdentityInstance } from './central-authority-identity.utils';
+import { CA_USER_IDENTITY_V2_AUTH_PROVIDER_URL_DELIMETER } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-parsers/central-authority-class-user-identity-parsers-parser-v2/central-authority-class-user-identity-parsers-parser-v2.const';
 
 export const testIdentity = (userIdOnAuthProvider: string): void | boolean => {
   const testIdentityDescription = {
@@ -60,33 +61,30 @@ export const runTestCAIdentityV2 = async () => {
     console.error('UUIDv4 must be valid as user login on the auth server');
     return;
   }
-  debugger;
   if (!testIdentity('nnn@gmail.com')) {
     console.error('email must be valid as user login on the auth server');
     return;
   }
-  debugger;
-  if (!testIdentity('@#$%^&_()[]____.33.333..__3')) {
+  if (!testIdentity('#$%^&_()[]___@_.33.333..__3')) {
     console.error(
       'the login format must be valid as user login on the auth server'
     );
     return;
   }
-  return;
-  const testIdentityDescriptionWithWrongGUID = {
+
+  const testIdentityDescriptionWithWrongLogin = {
     [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: 'https://google.com',
-    [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]:
-      '76d55caf-fc4a-41a9-8844-19877dcb19a#',
-    [CA_USER_IDENTITY_VERSION_PROP_NAME]: CA_USER_IDENTITY_VERSIONS['01'],
+    [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]: '.11',
+    [CA_USER_IDENTITY_VERSION_PROP_NAME]: CA_USER_IDENTITY_VERSIONS['02'],
   };
-  const identityValueFromWrongGUID = new CentralAuthorityIdentity(
-    testIdentityDescriptionWithWrongGUID
+  const identityValueFromWrongLogin = new CentralAuthorityIdentity(
+    testIdentityDescriptionWithWrongLogin
   );
 
   if (
     validateUserIdentityInstance(
-      identityValueFromWrongGUID,
-      testIdentityDescriptionWithWrongGUID
+      identityValueFromWrongLogin,
+      testIdentityDescriptionWithWrongLogin
     )
   ) {
     console.error(
@@ -96,10 +94,10 @@ export const runTestCAIdentityV2 = async () => {
   }
 
   const testIdentityDescriptionWithWrongURL = {
-    [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: 'google.com',
+    [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: 'googlecom',
     [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]:
       '76d55caf-fc4a-41a9-8844-19877dcb19ad',
-    [CA_USER_IDENTITY_VERSION_PROP_NAME]: CA_USER_IDENTITY_VERSIONS['01'],
+    [CA_USER_IDENTITY_VERSION_PROP_NAME]: CA_USER_IDENTITY_VERSIONS['02'],
   };
   const identityValueFromWrongURL = new CentralAuthorityIdentity(
     testIdentityDescriptionWithWrongURL
@@ -117,8 +115,7 @@ export const runTestCAIdentityV2 = async () => {
     return;
   }
 
-  const testIdentityStringnWithWrongURL =
-    '01htt://googlecom76d55caf-fc4a-41a9-8844-19877dcb19ad';
+  const testIdentityStringnWithWrongURL = `02htt://googlecom${CA_USER_IDENTITY_V2_AUTH_PROVIDER_URL_DELIMETER}76d55caf-fc4a-41a9-8844-19877dcb19ad`;
   const identityValueFromStringWrongURL = new CentralAuthorityIdentity(
     testIdentityStringnWithWrongURL
   );
@@ -128,7 +125,7 @@ export const runTestCAIdentityV2 = async () => {
       [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: 'htt://googlecom',
       [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]:
         '76d55caf-fc4a-41a9-8844-19877dcb19ad',
-      [CA_USER_IDENTITY_VERSION_PROP_NAME]: CA_USER_IDENTITY_VERSIONS['01'],
+      [CA_USER_IDENTITY_VERSION_PROP_NAME]: CA_USER_IDENTITY_VERSIONS['02'],
     })
   ) {
     console.error(
@@ -147,19 +144,18 @@ export const runTestCAIdentityV2 = async () => {
     );
     return;
   }
-  const testIdentityStringnWithWrongUUID =
-    '01https://google.com76d55caf-fc4a-41a9-8*44-19877dcb19ad';
-  const identityValueFromStringWrongUUID = new CentralAuthorityIdentity(
-    testIdentityStringnWithWrongUUID
+
+  const testIdentityStringnWithWrongLogin = `02https://google.com${CA_USER_IDENTITY_V2_AUTH_PROVIDER_URL_DELIMETER}.44`;
+  const identityValueFromStringWrongLogin = new CentralAuthorityIdentity(
+    testIdentityStringnWithWrongLogin
   );
 
   if (
-    validateUserIdentityInstance(identityValueFromStringWrongUUID, {
+    validateUserIdentityInstance(identityValueFromStringWrongLogin, {
       [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]:
         'https://google.com',
-      [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]:
-        '76d55caf-fc4a-41a9-8*44-19877dcb19ad',
-      [CA_USER_IDENTITY_VERSION_PROP_NAME]: CA_USER_IDENTITY_VERSIONS['01'],
+      [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]: '.44',
+      [CA_USER_IDENTITY_VERSION_PROP_NAME]: CA_USER_IDENTITY_VERSIONS['02'],
     })
   ) {
     console.error(
@@ -169,7 +165,7 @@ export const runTestCAIdentityV2 = async () => {
   }
   if (
     !(
-      (identityValueFromStringWrongUUID as CentralAuthorityIdentity)
+      (identityValueFromStringWrongLogin as CentralAuthorityIdentity)
         .id instanceof Error
     )
   ) {
@@ -177,14 +173,13 @@ export const runTestCAIdentityV2 = async () => {
     return;
   }
   const testIdentityStringnWithWrongVersionUnsupported =
-    '11https://google.com76d55caf-fc4a-41a9-8144-19877dcb19ad';
+    '99https://google.com${CA_USER_IDENTITY_V2_AUTH_PROVIDER_URL_DELIMETER}121';
   const identityValueFromStringWrongVersionUnsupported = new CentralAuthorityIdentity(
     testIdentityStringnWithWrongVersionUnsupported
   );
   const testIdentityDescriptionWithVersionUnsupported = {
     [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: 'https://google.com',
-    [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]:
-      '76d55caf-fc4a-41a9-8144-19877dcb19ad',
+    [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]: '121',
     [CA_USER_IDENTITY_VERSION_PROP_NAME]: '99',
   };
   if (
@@ -225,56 +220,4 @@ export const runTestCAIdentityV2 = async () => {
     return;
   }
   console.warn('The user identity description test is succesfull');
-};
-
-export const runTestCAIdentityWithAuthorityProviderGeneratorV2 = async () => {
-  console.warn('runTestCAIdentityWithAuthorityProviderGenerator:started');
-
-  const cryptoCredentials = await generateCryptoCredentialsWithUserIdentityV1({
-    [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]:
-      CA_CONNECTION_FIREBASE_CONFIG.databaseURL,
-    [CA_USER_IDENTITY_VERSION_PROP_NAME]: CA_USER_IDENTITY_VERSIONS['01'],
-  });
-  debugger;
-  if (!checkIsValidCryptoCredentials(cryptoCredentials)) {
-    console.error('The crypto credentials generated is not valid');
-    return;
-  }
-
-  const userIdentityByCryptoCredentials = getUserIdentityByCryptoCredentials(
-    cryptoCredentials
-  );
-  const caUserIdentity = new CentralAuthorityIdentity(cryptoCredentials);
-
-  if (!caUserIdentity.isValid) {
-    console.error('User identity generated is not valid');
-    return;
-  }
-  const stringifiedIdentity = caUserIdentity.toString();
-
-  if (stringifiedIdentity === '') {
-    console.error(stringifiedIdentity);
-    console.error('Failed to parse the identity');
-    return;
-  }
-  if (stringifiedIdentity !== userIdentityByCryptoCredentials) {
-    console.error('Parsed identity is not valid');
-    return;
-  }
-  const identityDescriptionParsed = caUserIdentity.identityDescription;
-
-  if (identityDescriptionParsed instanceof Error) {
-    console.error(identityDescriptionParsed);
-    console.error('Failed to get description by identity string');
-    return;
-  }
-  if (
-    identityDescriptionParsed[
-      CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME
-    ] !== CA_CONNECTION_FIREBASE_CONFIG.databaseURL
-  ) {
-    console.error('Wrong authority provider url got from the identity string');
-    return;
-  }
-  console.warn('runTestCAIdentityWithAuthorityProviderGenerator:success');
 };
