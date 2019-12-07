@@ -1,14 +1,54 @@
 import { CAConnectionFirestoreUtilsCredentialsStrorage } from 'classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase-utils/central-authority-connection-firebase-utils.credentials-storage/central-authority-connection-firebase-utils.credentials-storage';
-import { connectWithFirebase } from './central-authority-connection.test.firebase.utils';
-import { generateCryptoCredentialsV1 } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
+import { connectWithFirebase } from './central-authority-connection.utils.firebase';
+import {
+  generateCryptoCredentialsV1,
+  generateCryptoCredentialsWithUserIdentityV1,
+  generateCryptoCredentialsWithUserIdentityV2,
+} from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
 import {
   getUserIdentityByCryptoCredentials,
   compareCryptoCredentials,
+  exportCryptoCredentialsToString,
+  importCryptoCredentialsFromAString,
 } from 'classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials';
+import {
+  CA_CONNECTION_FIREBASE_CONFIG,
+  CA_CONNECTION_FIREBASE_CREDENTIALS,
+} from './central-authority-connection.test.firebase.const';
+import { ICAUserUniqueIdentifierMetadata } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types';
+import { TCentralAuthorityUserCryptoCredentials } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
+import { ICAConnectionSignUpCredentials } from 'classes/central-authority-class/central-authority-connections/central-authority-connections.types';
 
-export const runTestFirebaseCredentialsStorage = async () => {
+const runTestFirebaseCredentialsStorageVersion = async (
+  firebaseCredentials: ICAConnectionSignUpCredentials,
+  generateCryptoCredentialsWithUserIdentityFunc: (
+    identityMetadata: ICAUserUniqueIdentifierMetadata
+  ) => Promise<TCentralAuthorityUserCryptoCredentials | Error>
+) => {
   console.warn('runTestFirebaseCredentialsStorage::start');
-  const firebaseConnection = await connectWithFirebase();
+  const credentialsForInit = await generateCryptoCredentialsWithUserIdentityFunc(
+    {
+      authorityProviderURI: CA_CONNECTION_FIREBASE_CONFIG.databaseURL,
+      userUniqueIdentifier:
+        generateCryptoCredentialsWithUserIdentityFunc ===
+        generateCryptoCredentialsWithUserIdentityV2
+          ? firebaseCredentials.login
+          : undefined,
+    }
+  );
+
+  if (credentialsForInit instanceof Error) {
+    console.error(credentialsForInit);
+    console.error(
+      'Failed to generate a credentials to initialize the new user'
+    );
+    return;
+  }
+
+  const firebaseConnection = await connectWithFirebase({
+    ...firebaseCredentials,
+    cryptoCredentials: credentialsForInit,
+  });
 
   if (firebaseConnection instanceof Error) {
     console.error(firebaseConnection);
@@ -45,15 +85,61 @@ export const runTestFirebaseCredentialsStorage = async () => {
     console.error('Failed to get credentials for the current user');
     return;
   }
-  if (!credentialsForUser) {
-    console.error('Credentials for the user must be auto generated on sign up');
-    return;
+  if (credentialsForUser) {
+    const credentialsFromLocalStorage = localStorage.getItem(
+      `______test___firebase_acc___${firebaseCredentials.login}`
+    );
+
+    if (typeof credentialsFromLocalStorage === 'string') {
+      const credentialsFromLocalStorageParsed = await importCryptoCredentialsFromAString(
+        credentialsFromLocalStorage
+      );
+
+      if (
+        credentialsFromLocalStorageParsed &&
+        !(credentialsFromLocalStorageParsed instanceof Error)
+      ) {
+        if (
+          (await compareCryptoCredentials(
+            credentialsFromLocalStorageParsed,
+            credentialsForUser
+          )) !== true
+        ) {
+          console.error('compareCryptoCredentials returs the invalid result');
+          return;
+        }
+      }
+    } else {
+      const credentialsSerialized = await exportCryptoCredentialsToString(
+        credentialsForUser
+      );
+
+      if (credentialsSerialized instanceof Error) {
+        console.error('Failed to serialize the credentials');
+        return;
+      }
+      localStorage.setItem(
+        `______test___firebase_acc___${firebaseCredentials.login}`,
+        credentialsSerialized
+      );
+    }
   }
 
-  const credentials = await generateCryptoCredentialsV1();
+  const credentials = await generateCryptoCredentialsWithUserIdentityFunc({
+    authorityProviderURI: CA_CONNECTION_FIREBASE_CONFIG.databaseURL,
+    userUniqueIdentifier:
+      generateCryptoCredentialsWithUserIdentityFunc ===
+      generateCryptoCredentialsWithUserIdentityV2
+        ? firebaseCredentials.login
+        : undefined,
+  });
 
   if (credentials instanceof Error) {
     console.error('Failed to generate crypto credentials');
+    return;
+  }
+  if ((await compareCryptoCredentials(credentials, credentials)) !== true) {
+    console.error('compareCryptoCredentials returs the invalid result');
     return;
   }
 
@@ -67,6 +153,7 @@ export const runTestFirebaseCredentialsStorage = async () => {
     return;
   }
   if (
+    credentialsForUser &&
     (await compareCryptoCredentials(
       setCredentialsResult,
       credentialsForUser
@@ -76,6 +163,33 @@ export const runTestFirebaseCredentialsStorage = async () => {
       'Credentials for the user created and stored once must be immputable anyway'
     );
     return;
+  }
+
+  if (!credentialsForUser) {
+    const credentialsForUserAfterSetANewOne = await credetntialsStoreConnectionToFirebase.getCredentialsForTheCurrentUser();
+
+    if (credentialsForUserAfterSetANewOne instanceof Error) {
+      console.error(credentialsForUser);
+      console.error('Failed to get credentials for the current user');
+      return;
+    }
+    if (!credentialsForUserAfterSetANewOne) {
+      console.error(
+        'Credentials for the current must exists cause it was set before'
+      );
+      return;
+    }
+    if (
+      (await compareCryptoCredentials(
+        credentialsForUserAfterSetANewOne,
+        credentialsForUserAfterSetANewOne
+      )) !== true
+    ) {
+      console.error(
+        'Credentials for the user created and stored once must be immputable anyway'
+      );
+      return;
+    }
   }
 
   const userId = getUserIdentityByCryptoCredentials(setCredentialsResult);
@@ -103,12 +217,52 @@ export const runTestFirebaseCredentialsStorage = async () => {
   if (
     (await compareCryptoCredentials(
       setCredentialsResult,
-      credentialsForUser
+      getCredentialsResult
     )) !== true
   ) {
     console.error(
       'Credentials for the user got by the user id must be immputable the same as the credentials set by the user on sign up flow'
     );
+    return;
+  }
+
+  const firebaseConnectionNext = await connectWithFirebase({
+    ...firebaseCredentials,
+    cryptoCredentials: credentialsForInit,
+  });
+
+  if (!(firebaseConnectionNext instanceof Error)) {
+    console.error(
+      'The next attemp to connect under the same account must be failed'
+    );
+    return;
+  }
+  return true;
+};
+
+export const runTestFirebaseCredentialsStorage = async () => {
+  if (
+    !(await runTestFirebaseCredentialsStorageVersion(
+      {
+        login: 'xitedof420@mail1.top',
+        password: '123456',
+      },
+      generateCryptoCredentialsWithUserIdentityV1
+    ))
+  ) {
+    console.error('Failed test for user identity V1');
+    return;
+  }
+  if (
+    !(await runTestFirebaseCredentialsStorageVersion(
+      {
+        login: 'tijoc30747@mail1web.org',
+        password: '123456',
+      },
+      generateCryptoCredentialsWithUserIdentityV2
+    ))
+  ) {
+    console.error('Failed test for user identity V2');
     return;
   }
   console.warn('runTestFirebaseCredentialsStorage::success');

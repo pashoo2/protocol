@@ -70,7 +70,7 @@ export const connectAndAuthorizeInFirebase = async (
  * defined
  */
 export const connectWithFirebase = async (
-  authCredentials = CA_CONNECTION_FIREBASE_CREDENTIALS
+  authCredentials: ICAConnectionSignUpCredentials = CA_CONNECTION_FIREBASE_CREDENTIALS
 ) => {
   console.warn('CA connection firebase test started');
 

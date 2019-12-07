@@ -3,7 +3,7 @@ import {
   connectToFirebase,
   connectWithFirebase,
   deleteTheUserFromCA,
-} from './central-authority-connection.test.firebase.utils';
+} from './central-authority-connection.utils.firebase';
 import {
   CA_CONNECTION_FIREBASE_USER_CREDENTIALS,
   CA_CONNECTION_FIREBASE_CONFIG,
@@ -25,7 +25,7 @@ export const runTestCAConnectionFirebaseChangeEmail = async () => {
     name: 'Test account',
     email: 'gavidan@6mail.top',
   };
-  const updateProfileWithEmailResult = await connectionFirebase.setProfileData(
+  const updateProfileWithEmailResult = await (connectionFirebase as any).setProfileData(
     userProfileWithEmailTest
   );
 
@@ -71,7 +71,7 @@ export const runTestCAConnectionFirebase = async () => {
     photoURL:
       'https://cdn.dribbble.com/users/199982/screenshots/4044699/furkan-avatar-dribbble.png',
   };
-  const updateProfileResult = await connectionFirebase.setProfileData(
+  const updateProfileResult = await (connectionFirebase as any).setProfileData(
     userProfileTestWOEmailAndPhoneNumber
   );
 

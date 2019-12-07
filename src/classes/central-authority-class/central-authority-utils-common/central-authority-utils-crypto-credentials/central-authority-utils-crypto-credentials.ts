@@ -108,7 +108,7 @@ export const compareCryptoCredentials = async (
   let exportCredentialsResult = null;
 
   for (; idx < length; idx += 1) {
-    exportCredentialsResult = await exportCryptoCredentialsToString(
+    exportCredentialsResult = await exportCryptoCredentialsToStringWithoutTheCAIdentityVersion(
       credentials[idx]
     );
 

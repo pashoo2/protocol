@@ -20,7 +20,11 @@ import {
   ICAUserUniqueIdentifierDescriptionWithOptionalVersion,
 } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types';
 import { checkIsValidUserIdentityMetadata } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-class-user-identity-validators';
-import { CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
+import {
+  CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME,
+  CA_USER_IDENTITY_VERSION_PROP_NAME,
+  CA_USER_IDENTITY_VERSIONS,
+} from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
 import CentralAuthorityIdentity from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
 import { isUUID } from 'validator';
 import { dataValidatorUtilSafeLogin } from 'utils/data-validators-utils/data-validators-utils';
@@ -128,6 +132,7 @@ export const generateCryptoCredentialsWithUserIdentityV1 = async (
   const userUniqueIdentityDescription: ICAUserUniqueIdentifierDescriptionWithOptionalVersion = {
     ...identityMetadata,
     [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]: userUUID,
+    [CA_USER_IDENTITY_VERSION_PROP_NAME]: CA_USER_IDENTITY_VERSIONS['01'],
   };
   const userUniqueIdentityInstance = new CentralAuthorityIdentity(
     userUniqueIdentityDescription
@@ -186,6 +191,7 @@ export const generateCryptoCredentialsWithUserIdentityV2 = async (
 
   const userUniqueIdentityDescription = {
     ...identityMetadata,
+    [CA_USER_IDENTITY_VERSION_PROP_NAME]: CA_USER_IDENTITY_VERSIONS['02'],
   } as ICAUserUniqueIdentifierDescriptionWithOptionalVersion;
   const userUniqueIdentityInstance = new CentralAuthorityIdentity(
     userUniqueIdentityDescription
