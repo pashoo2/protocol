@@ -303,4 +303,4 @@ export class CAConnectionWithFirebaseImplementation
   }
 }
 
-export default CAConnectionWithFirebase;
+export default CAConnectionWithFirebaseImplementation;

@@ -65,7 +65,7 @@ const runTest = async () => {
   // runTestHttpRequest();
   // runTestClientTimeSynced();
   // runSwarmMessageFieldsValidator();
-  runCACredentialsIdentityStorageTest();
+  runTestFirebaseConnectionDatabase();
   runMocha();
 };
 

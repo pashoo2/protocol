@@ -61,20 +61,30 @@ export class CAConnectionWithFirebaseUtilDatabase {
     if (isConnected) {
       return true;
     }
-
-    const database = firebase.database();
-
     try {
+      const database = firebase.database();
+
       await database.goOnline();
+      this.setDatabaseInstance(database);
     } catch (err) {
       console.error(err);
       return new Error('Failed to connect to the Database server');
     }
-    this.setDatabaseInstance(database);
     this.setWasConnectedStatus(true);
     return true;
   }
 
+  /**
+   * This method destroys the
+   * application instance, Not just
+   * go offline. This means that
+   * the reconnection with calling of
+   * the 'connect' method will failed
+   * and therefore is not allowed.
+   *
+   * @returns {(Promise<boolean | Error>)}
+   * @memberof CAConnectionWithFirebaseUtilDatabase
+   */
   public async disconnect(): Promise<boolean | Error> {
     const isConnected = this.checkIsConnected();
 
@@ -86,6 +96,12 @@ export class CAConnectionWithFirebaseUtilDatabase {
 
     try {
       await database!!.goOffline();
+    } catch (err) {
+      console.error(err);
+      return new Error('Failed to go offline before destroy the application');
+    }
+    try {
+      await firebase.app().delete();
     } catch (err) {
       console.error(err);
       return new Error('Failed to disconnect from the firebase server');

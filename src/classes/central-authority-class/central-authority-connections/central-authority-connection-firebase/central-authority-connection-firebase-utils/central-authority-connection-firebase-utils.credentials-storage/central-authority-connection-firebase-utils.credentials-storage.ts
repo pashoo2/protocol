@@ -393,7 +393,12 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
   /**
    *
    * return a credentials for the user
-   * with the id = userId
+   * with the id = userId.
+   * For the v1 the user id must be a uuidV4.
+   * For the v2 the user id must be a login(email)
+   * under which the user was registered the
+   * Firebase account.
+   *
    * @param {string} userId
    * @returns {(Promise<Error | null | TCentralAuthorityUserCryptoCredentials>)}
    * @memberof CAConnectionFirestoreUtilsCredentialsStrorage
