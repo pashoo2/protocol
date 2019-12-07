@@ -20,9 +20,10 @@ import {
   ICAUserUniqueIdentifierDescriptionWithOptionalVersion,
 } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types';
 import { checkIsValidUserIdentityMetadata } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-class-user-identity-validators';
-import { dataValidatorUtilUUIDV4 } from 'utils/data-validators-utils/data-validators-utils';
 import { CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
 import CentralAuthorityIdentity from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
+import { isUUID } from 'validator';
+import { dataValidatorUtilSafeLogin } from 'utils/data-validators-utils/data-validators-utils';
 
 /**
  * generate a key pair, used for data encryption
@@ -118,11 +119,74 @@ export const generateCryptoCredentialsWithUserIdentityV1 = async (
     return new Error('The identity metadata is not valid');
   }
 
-  const userUUID = generateUUID();
+  const uuidProvided =
+    identityMetadata[CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME];
+  const userUUID =
+    typeof uuidProvided === 'string' && isUUID(uuidProvided)
+      ? uuidProvided
+      : generateUUID();
   const userUniqueIdentityDescription: ICAUserUniqueIdentifierDescriptionWithOptionalVersion = {
     ...identityMetadata,
     [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]: userUUID,
   };
+  const userUniqueIdentityInstance = new CentralAuthorityIdentity(
+    userUniqueIdentityDescription
+  );
+
+  if (!userUniqueIdentityInstance.isValid) {
+    return new Error('Failed to generate a valid user unique identity');
+  }
+
+  const userUniqueId = userUniqueIdentityInstance.toString();
+
+  if (!userUniqueId) {
+    return new Error(
+      'Failed to get stringified version of the user unique identity generated'
+    );
+  }
+
+  const cryptoKeyPair = await generateKeyPairs();
+
+  if (cryptoKeyPair instanceof Error) {
+    console.error(cryptoKeyPair);
+    return new Error('Failed to generate a valid crypto credentials');
+  }
+
+  return {
+    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_USER_ID_KEY_NAME]: userUniqueId,
+    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeyPair,
+  };
+};
+
+/**
+ * generates a random crypto credentials
+ * or return an Error if failed
+ */
+export const generateCryptoCredentialsWithUserIdentityV2 = async (
+  identityMetadata: ICAUserUniqueIdentifierMetadata
+): Promise<TCentralAuthorityUserCryptoCredentials | Error> => {
+  const validationIdentityMetadataResult = checkIsValidUserIdentityMetadata(
+    identityMetadata
+  );
+
+  if (validationIdentityMetadataResult instanceof Error) {
+    console.error(validationIdentityMetadataResult);
+    return new Error('The identity metadata is not valid');
+  }
+
+  const userIdentifier =
+    identityMetadata[CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME];
+
+  if (!userIdentifier) {
+    return new Error('A user identifier must be specified');
+  }
+  if (!dataValidatorUtilSafeLogin(userIdentifier)) {
+    return new Error('The user identifier provided is not valid');
+  }
+
+  const userUniqueIdentityDescription = {
+    ...identityMetadata,
+  } as ICAUserUniqueIdentifierDescriptionWithOptionalVersion;
   const userUniqueIdentityInstance = new CentralAuthorityIdentity(
     userUniqueIdentityDescription
   );

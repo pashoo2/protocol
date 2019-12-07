@@ -3,7 +3,9 @@ import {
   CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME,
   CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME,
   CA_USER_IDENTITY_VERSION_PROP_NAME,
+  CA_USER_IDENTITY_VERSIONS,
 } from './central-authority-class-user-identity.const';
+import { ownValueOf } from 'types/helper.types';
 
 // url of the auth provider
 export type TCAuthProviderIdentifier = string;
@@ -45,8 +47,11 @@ export interface ICAUserUniqueIdentifierDescriptionWithOptionalVersion
 
 export interface ICAUserUniqueIdentifierMetadata {
   [CA_USER_IDENTITY_VERSION_PROP_NAME]?: string;
+  [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]?: string;
   [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: TCAuthProviderIdentifier;
 }
+
+export type TUserIdentityVersion = ownValueOf<typeof CA_USER_IDENTITY_VERSIONS>;
 
 export interface ICAIdentityCommonInstance {
   identityDescription: ICAUserUniqueIdentifierDescription | Error;
@@ -55,4 +60,5 @@ export interface ICAIdentityCommonInstance {
   // returns a unique string, may be used as a unique identifier in overall system
   id: string | Error;
   isValid?: boolean;
+  version: TUserIdentityVersion | Error;
 }

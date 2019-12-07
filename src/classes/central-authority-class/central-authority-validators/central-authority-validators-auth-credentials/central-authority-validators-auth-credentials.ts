@@ -7,11 +7,11 @@ import {
   CA_AUTH_CREDENTIALS_USER_PASSWORD_PROP_NAME,
   CA_USER_IDENTITY_MAX_LENGTH,
 } from 'classes/central-authority-class/central-authority-class-const/central-authority-class-const';
+import { UTILS_DATA_COMPRESSION_COMPRESSION_RATIO_MAX } from 'utils/data-compression-utils/data-compression-utils.const';
 import {
   TCentralAuthorityUserIdentity,
   TCentralAuthorityAuthCredentials,
 } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
-import { UTILS_DATA_COMPRESSION_COMPRESSION_RATIO_MAX } from 'utils/data-compression-utils/data-compression-utils.const';
 
 export const validateUserIdentityType = (v: any): boolean =>
   typeof v === CA_USER_IDENTITY_TYPE;

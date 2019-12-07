@@ -20,6 +20,7 @@ import {
   checkIsValidExportedCryptoCredentialsToString,
 } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
 import { stringify } from 'utils/main-utils';
+import { TUserIdentityVersion } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types';
 
 export const exportCryptoCredentialsToString = async (
   userCryptoCredentials: TCentralAuthorityUserCryptoCredentials,
@@ -300,4 +301,35 @@ export const getCryptoKeyPairsByCryptoCredentials = (
     return cryptoKeyPairs;
   }
   return new Error('The crypto key pairs are not valid');
+};
+
+export const getUserIdentityVersion = (
+  userIdentity: TCentralAuthorityUserIdentity | CentralAuthorityIdentity
+): TUserIdentityVersion | Error => {
+  if (
+    !(userIdentity instanceof CentralAuthorityIdentity) &&
+    typeof userIdentity !== 'string'
+  ) {
+    return new Error(
+      'The userIdentity must be a string or an instance of the CentralAuthorityIdentity class'
+    );
+  }
+
+  const userIdentityObj = new CentralAuthorityIdentity(userIdentity);
+
+  if (!userIdentityObj.isValid) {
+    return new Error('The user identity is not valid');
+  }
+  return userIdentityObj.version;
+};
+
+export const getVersionOfCryptoCredentials = (
+  cryptoCredentials: TCentralAuthorityUserCryptoCredentials
+): TUserIdentityVersion | Error => {
+  const userIdentity = getUserIdentityByCryptoCredentials(cryptoCredentials);
+
+  if (userIdentity instanceof Error) {
+    return userIdentity;
+  }
+  return getUserIdentityVersion(userIdentity);
 };

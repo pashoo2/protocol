@@ -2,6 +2,7 @@ import {
   ICAUserUniqueIdentifierDescription,
   ICAUserUniqueIdentifierDescriptionWithOptionalVersion,
   ICAIdentityCommonInstance,
+  TUserIdentityVersion,
 } from './central-authority-class-user-identity.types';
 import {
   TCentralAuthorityUserIdentity,
@@ -14,8 +15,10 @@ import {
   CA_USER_IDENTITY_VERSION_PROP_NAME,
   CA_USER_IDENTITY_VERSION_CURRENT,
   CA_USER_IDENTITY_AUTH_PROVIDER_URL_DELIMETER,
+  CA_USER_IDENTITY_VERSIONS,
 } from './central-authority-class-user-identity.const';
 import { CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME } from '../central-authority-class-const/central-authority-class-const';
+import { ownValueOf } from 'types/helper.types';
 export class CentralAuthorityIdentity implements ICAIdentityCommonInstance {
   protected _userIdentitySerialized?: Error | TCentralAuthorityUserIdentity;
 
@@ -25,10 +28,15 @@ export class CentralAuthorityIdentity implements ICAIdentityCommonInstance {
 
   constructor(
     protected _userIdentity:
+      | CentralAuthorityIdentity
       | TCentralAuthorityUserCryptoCredentials
       | TCentralAuthorityUserIdentity
       | ICAUserUniqueIdentifierDescriptionWithOptionalVersion
   ) {
+    if (_userIdentity instanceof CentralAuthorityIdentity) {
+      return _userIdentity;
+    }
+
     let identity = _userIdentity;
 
     if (_userIdentity && typeof _userIdentity === 'object') {
@@ -106,6 +114,17 @@ export class CentralAuthorityIdentity implements ICAIdentityCommonInstance {
     const { authorityProviderURI, userUniqueIdentifier } = identityDescription;
 
     return `${authorityProviderURI}${CA_USER_IDENTITY_AUTH_PROVIDER_URL_DELIMETER}${userUniqueIdentifier}`;
+  }
+
+  public get version(): TUserIdentityVersion | Error {
+    const { identityDescription } = this;
+
+    if (identityDescription instanceof Error) {
+      return identityDescription;
+    }
+
+    return ((identityDescription.version ||
+      CA_USER_IDENTITY_VERSION_CURRENT) as unknown) as TUserIdentityVersion;
   }
 
   public toString(): TCentralAuthorityUserIdentity {

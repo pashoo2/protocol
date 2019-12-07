@@ -1,6 +1,4 @@
 import { CAConnectionWithFirebaseUtilDatabase } from '../central-authority-connection-firebase-utils.database/central-authority-connection-firebase-utils.database';
-import { TCentralAuthorityUserCryptoCredentials } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
-import { checkIsValidExportedCryptoCredentialsToString } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
 import {
   getUserIdentityByCryptoCredentials,
   exportCryptoCredentialsToString,
@@ -11,22 +9,27 @@ import {
   CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_FIREBASE_USER_ID_PROPERTY,
   CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_FIREBASE_MAXIMUM_STORED_VALUES_CHECK,
 } from './central-authority-connection-firebase-utils.credentials-storage.const';
-import { validateUserIdentity } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-auth-credentials/central-authority-validators-auth-credentials';
-import { ICAConnectionFirestoreUtilsCredentialsStrorageCredentialsSaveStructure } from './central-authority-connection-firebase-utils.credentials-storage.types';
-import CAConnectionWithFirebase from '../../central-authority-connection-firebase';
+import {
+  ICAConnectionFirebase,
+  ICAConnectionFirestoreUtilsCredentialsStrorageCredentialsSaveStructure,
+} from './central-authority-connection-firebase-utils.credentials-storage.types';
 import { encodeForFirebaseKey } from 'utils/firebase-utils/firebase-utils';
+import { validateUserIdentity } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-auth-credentials/central-authority-validators-auth-credentials';
+import { TCentralAuthorityUserCryptoCredentials } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
+import { checkIsValidExportedCryptoCredentialsToString } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
 
 /**
  * This class is used for storing
  * and reading the user's credentials.
  * It also used for reading
- * credentials of another user.
+ * credentials of another user from the
+ * Firebase remote database.
  * @export
  * @class CAConnectionFirestoreUtilsCredentialsStrorage
  * @extends {CAConnectionWithFirebaseUtilDatabase}
  */
 export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionWithFirebaseUtilDatabase {
-  protected connectionToFirebase?: CAConnectionWithFirebase;
+  protected connectionToFirebase?: ICAConnectionFirebase;
 
   protected app?: firebase.app.App;
 
@@ -125,19 +128,13 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
     return true;
   }
 
-  constructor(connectionToFirebase: CAConnectionWithFirebase) {
+  constructor(connectionToFirebase: ICAConnectionFirebase) {
     super();
 
     this.setUpConnection(connectionToFirebase);
   }
 
-  protected setUpConnection(connectionToFirebase: CAConnectionWithFirebase) {
-    if (
-      typeof connectionToFirebase !== 'object' ||
-      !(connectionToFirebase instanceof CAConnectionWithFirebase)
-    ) {
-      throw new Error('There is no instance of CAConnectionWithFirebase');
-    }
+  protected setUpConnection(connectionToFirebase: ICAConnectionFirebase) {
     if (!connectionToFirebase.isUserSignedIn) {
       throw new Error('The user must be authorized in firebase');
     }
@@ -377,9 +374,6 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
         'A crypto credentials is already exists for the user id'
       );
     }
-
-    // TODO - it's necessary to remove all credentials for the user
-    // before to set a new one
 
     const keyForValue = this.getCredentialsKeyByUserId(userId);
     const storeResult = await this.setValue<

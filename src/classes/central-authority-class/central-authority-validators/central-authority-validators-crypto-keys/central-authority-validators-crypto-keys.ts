@@ -1,15 +1,15 @@
 import { validateBySchema } from 'utils/validation-utils/validation-utils';
 import { caValidatorsCryptoKeysExportedObjectValidationSchema } from './central-authority-validators-crypto-keys-schemas';
 import {
-  TCentralAuthorityUserCryptoCredentialsExported,
-  TCentralAuthorityUserCryptoCredentials,
-} from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
-import {
   CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME,
   CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME,
   CA_CREDENTIALS_KEY_CRYPTO_CREDENTIALS_EXPORTED_AS_STRING_MIN_LENGTH,
 } from 'classes/central-authority-class/central-authority-class-const/central-authority-class-const';
 import { validateUserIdentity } from '../central-authority-validators-auth-credentials/central-authority-validators-auth-credentials';
+import {
+  TCentralAuthorityUserCryptoCredentialsExported,
+  TCentralAuthorityUserCryptoCredentials,
+} from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 import {
   checkIsCryptoKeyPairs,
   checkIsCryptoKeyPairsExportedAsString,

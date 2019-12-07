@@ -1,0 +1,306 @@
+import CAConnectionWithFirebaseBase from '../central-authority-connection-firebase-base/central-authority-connection-firebase-base';
+import {
+  ICAConnection,
+  ICAConnectionSignUpCredentials,
+  ICAConnectionUserAuthorizedResult,
+} from '../../central-authority-connections.types';
+import { isEmptyObject } from 'utils/common-utils/common-utils-objects';
+import {
+  ICentralAuthorityUserProfile,
+  TCentralAuthorityUserCryptoCredentials,
+} from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
+import { getVersionOfCryptoCredentials } from 'classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials';
+import {
+  CA_USER_IDENTITY_VERSIONS,
+  CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME,
+  CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME,
+  CA_USER_IDENTITY_VERSION_CURRENT,
+} from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
+import { generateCryptoCredentialsWithUserIdentityV2 } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
+
+/**
+ *
+ * This is the class realized connection with the Firebase.
+ * It allows to sign up and authorize on it, set a crypto credentials
+ * for the user and read credentials for another users.
+ * The versions of a connections to the Firebase must
+ * extends this class. This implementation is compilant
+ * to the V1 and V2 of the user identity.
+ *
+ * @export
+ * @class CAConnectionWithFirebase
+ * @implements {ICAConnection}
+ */
+export class CAConnectionWithFirebaseImplementation
+  extends CAConnectionWithFirebaseBase
+  implements ICAConnection {
+  protected userLogin?: string;
+
+  /**
+   * @param {ICAConnectionSignUpCredentials} firebaseCredentials
+   * @param firebaseCredentials.login - there must be an email to authorize with a Firebase account
+   * @param firebaseCredentials.password - password used for encrypt a sensitive data and authorize
+   * in the Firebase account
+   * @param profile - if provided then the user profile will be set in firebase
+   */
+  public async authorize(
+    firebaseCredentials: ICAConnectionSignUpCredentials,
+    profile?: Partial<ICentralAuthorityUserProfile>
+  ): Promise<ICAConnectionUserAuthorizedResult | Error> {
+    const isConnected = this.checkIfConnected();
+
+    if (isConnected instanceof Error) {
+      return this.onAuthorizationFailed(isConnected);
+    }
+
+    let authHandleResult;
+    const { isAuthorized } = this;
+
+    if (isAuthorized) {
+      authHandleResult = this.valueofCredentialsSignUpOnAuthorizedSuccess!!;
+    } else {
+      // try to sign in with the credentials, then try to sign up
+      const signInResult = await this.signIn(firebaseCredentials);
+
+      if (signInResult instanceof Error) {
+        console.warn('Failed to sign in with the credentials given');
+
+        // if failed to sign in with the credentials
+        // try to sign up
+        const signUpResult = await this.signUp(firebaseCredentials);
+
+        if (signUpResult instanceof Error) {
+          console.error(signUpResult);
+          return this.onAuthorizationFailed('The user was failed to sign up');
+        }
+      }
+
+      // check if the account was verfied by the user
+      const isVerifiedResult = await this.chekIfVerifiedAccount();
+
+      if (isVerifiedResult instanceof Error) {
+        console.error('The account is not verified');
+        return this.onAuthorizationFailed(isVerifiedResult);
+      }
+
+      const connectWithStorageResult = await this.startConnectionWithCredentialsStorage();
+
+      if (connectWithStorageResult instanceof Error) {
+        console.error(connectWithStorageResult);
+        return new Error('Failed to connect to the credentials storage');
+      }
+      // set the user login to use it to generate
+      // crypto credentials
+      this.setUserLogin(firebaseCredentials.login);
+
+      // create a new credentnials for the user or return
+      // an existing.
+      // if a crytpto credentials provided in signUpCredentials
+      // it will be used to set in the Firebase credentials
+      // storage
+      const cryptoCredentials = await this.createOrReturnExistingCredentialsForUser(
+        firebaseCredentials
+      );
+
+      if (cryptoCredentials instanceof Error) {
+        console.error('Failed to get a crypto credentials valid for the user');
+        return this.onAuthorizationFailed(cryptoCredentials);
+      }
+
+      // give user's profile
+      // with a credentials
+      authHandleResult = await this.returnOnAuthorizedResult(cryptoCredentials);
+    }
+
+    if (authHandleResult instanceof Error) {
+      return this.onAuthorizationFailed(authHandleResult);
+    }
+    // if a profile data is necessary to be set
+    // by a profile data from the arguments given
+    if (profile && !isEmptyObject(profile)) {
+      const setProfileResult = await this.setProfileData(profile);
+
+      if (setProfileResult instanceof Error) {
+        console.error(setProfileResult);
+        return this.onAuthorizationFailed('Failed to set the profile data');
+      }
+
+      // set porofile is the user's profile
+      // data stored in the firebase
+      authHandleResult = {
+        profile: setProfileResult,
+        // TODO it is necessry to set this credentials in the database
+        cryptoCredentials: authHandleResult.cryptoCredentials,
+      };
+    }
+    // set the authentification success
+    // result. To return it on the second authorization
+    // request
+    this.valueofCredentialsSignUpOnAuthorizedSuccess = authHandleResult;
+    return authHandleResult;
+  }
+
+  public async disconnect() {
+    const disconnectFromStorageResult = await this.disconnectCredentialsStorage();
+
+    if (disconnectFromStorageResult instanceof Error) {
+      return disconnectFromStorageResult;
+    }
+
+    const { app } = this;
+
+    if (app) {
+      try {
+        // disconect from the application
+        await app.delete();
+      } catch (err) {
+        console.error(err);
+        return new Error('Failed to disconnect from the Firebase app');
+      }
+    }
+    return new Error('There is no active Firebase App instance to close');
+  }
+
+  public async delete(
+    firebaseCredentials: ICAConnectionSignUpCredentials
+  ): Promise<Error | boolean> {
+    const isConnected = this.checkIfConnected();
+
+    if (isConnected instanceof Error) {
+      return isConnected;
+    }
+
+    const { currentUser } = this;
+
+    if (currentUser instanceof Error) {
+      console.error(currentUser);
+      return new Error('Failed to read the current user');
+    }
+    if (currentUser == null) {
+      return new Error('There is no current user');
+    }
+
+    // try to sign in with the credentials, then try to sign up
+    // it is required by the firebase to sign in before
+    // delete the user
+    const signInResult = await this.signIn(firebaseCredentials);
+
+    if (signInResult instanceof Error) {
+      console.error('Failed to sign in before the user deletion');
+      return signInResult;
+    }
+
+    try {
+      const result = (await currentUser.delete()) as unknown; // or maybe deleteWithCompletion method
+
+      if (result instanceof Error) {
+        console.error(result);
+        return new Error('Failed to delete the user from the firebase');
+      }
+    } catch (err) {
+      console.error(err);
+      return new Error('Failed to delete the user from the authority');
+    }
+
+    // disconnection from the firebase
+    // is not necessry cause the firebase
+    // disconnects automatically if the user
+    // delete himself
+    return true;
+  }
+
+  protected setUserLogin(login: string) {
+    this.userLogin = login;
+  }
+
+  /**
+   * this method generates credentials compilant to the version
+   * version 2 of the user identity
+   * @protected
+   * @returns {(Promise<
+   *     Error | TCentralAuthorityUserCryptoCredentials
+   *   >)}
+   * @memberof CAConnectionWithFirebaseImplementation
+   */
+  protected generateNewCryptoCredentialsForConfigurationProvidedV2 = async (): Promise<
+    Error | TCentralAuthorityUserCryptoCredentials
+  > => {
+    const { databaseURL } = this;
+
+    if (databaseURL instanceof Error) {
+      return databaseURL;
+    }
+
+    const cryptoCredentials = await generateCryptoCredentialsWithUserIdentityV2(
+      {
+        [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: databaseURL,
+        [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]: this.userLogin,
+      }
+    );
+
+    if (cryptoCredentials instanceof Error) {
+      console.error(cryptoCredentials);
+      return new Error('Failed to generate a new crypto credentials');
+    }
+    return cryptoCredentials;
+  };
+
+  /**
+   * substitute the method to support v2 identity
+   *
+   * @protected
+   * @param {ICAConnectionSignUpCredentials} signUpCredentials
+   * @returns {(Promise<Error | TCentralAuthorityUserCryptoCredentials>)}
+   * @memberof CAConnectionWithFirebaseImplementation
+   */
+  protected async generateAndSetCredentialsForTheCurrentUser(
+    signUpCredentials: ICAConnectionSignUpCredentials
+  ): Promise<Error | TCentralAuthorityUserCryptoCredentials> {
+    const credentialsProvidedCheckResult = this.checkSignUpCredentials(
+      signUpCredentials
+    );
+
+    if (credentialsProvidedCheckResult instanceof Error) {
+      console.error(credentialsProvidedCheckResult);
+      return credentialsProvidedCheckResult;
+    }
+
+    const { cryptoCredentials } = signUpCredentials;
+    let credentialsForV1 = false;
+
+    if (CA_USER_IDENTITY_VERSION_CURRENT === CA_USER_IDENTITY_VERSIONS['01']) {
+      credentialsForV1 = true;
+    } else if (cryptoCredentials) {
+      // check a version of the credentials
+      // to decide what to do next
+      const cryptoCredentialsVersion = getVersionOfCryptoCredentials(
+        cryptoCredentials
+      );
+
+      if (cryptoCredentialsVersion instanceof Error) {
+        console.error(cryptoCredentialsVersion);
+        return new Error(
+          'Failed to define a version of the crypto credentials'
+        );
+      }
+      if (cryptoCredentialsVersion === CA_USER_IDENTITY_VERSIONS['01']) {
+        // if the credentials version is 01 we may use the
+        // current implementation cause it is fully
+        // compilant to that version
+        credentialsForV1 = true;
+      }
+    }
+    // if a credentials for the V1 must be generated and set
+    if (credentialsForV1 === true) {
+      return this.createOrSetCredentialsInDB(cryptoCredentials);
+    }
+    // if the version is not 01, then provide another implementations
+    // of the methods to generate and set the crypto credentials
+    return this.createOrSetCredentialsInDB(
+      cryptoCredentials,
+      this.generateNewCryptoCredentialsForConfigurationProvidedV2
+    );
+  }
+}
+
+export default CAConnectionWithFirebase;
