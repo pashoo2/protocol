@@ -1,4 +1,7 @@
-import { ICentralAuthorityUserProfile } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
+import {
+  ICentralAuthorityUserProfile,
+  TCentralAuthorityUserCryptoCredentials,
+} from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 import {
   connectToFirebase,
   connectWithFirebase,
@@ -10,20 +13,58 @@ import {
 } from './central-authority-connection.test.firebase.const';
 import { checkIsValidCryptoCredentials } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
 import CentralAuthorityIdentity from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
-import { ICAConnectionUserAuthorizedResult } from 'classes/central-authority-class/central-authority-connections/central-authority-connections.types';
+import {
+  ICAConnectionUserAuthorizedResult,
+  ICAConnectionSignUpCredentials,
+} from 'classes/central-authority-class/central-authority-connections/central-authority-connections.types';
 import { compareCryptoCredentials } from 'classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials';
+import {
+  generateCryptoCredentialsWithUserIdentityV1,
+  generateCryptoCredentialsWithUserIdentityV2,
+} from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
+import { ICAUserUniqueIdentifierMetadata } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types';
 
-export const runTestCAConnectionFirebaseChangeEmail = async () => {
-  const connectionFirebase = await connectToFirebase();
+const runTestCAConnectionFirebaseChangeEmailForVersion = async (
+  firebaseCredentials: ICAConnectionSignUpCredentials,
+  generateCryptoCredentialsWithUserIdentityFunc: (
+    identityMetadata: ICAUserUniqueIdentifierMetadata
+  ) => Promise<TCentralAuthorityUserCryptoCredentials | Error>
+) => {
+  const credentialsForInit = await generateCryptoCredentialsWithUserIdentityFunc(
+    {
+      authorityProviderURI: CA_CONNECTION_FIREBASE_CONFIG.databaseURL,
+      userUniqueIdentifier:
+        generateCryptoCredentialsWithUserIdentityFunc ===
+        generateCryptoCredentialsWithUserIdentityV2
+          ? firebaseCredentials.login
+          : undefined,
+    }
+  );
+
+  if (credentialsForInit instanceof Error) {
+    console.error(credentialsForInit);
+    console.error(
+      'Failed to generate a credentials to initialize the new user'
+    );
+    return;
+  }
+
+  const credentials = {
+    ...firebaseCredentials,
+    cryptoCredentials: credentialsForInit,
+  };
+  const connectionFirebase = await connectWithFirebase(credentials);
 
   if (connectionFirebase instanceof Error) {
     console.error(connectionFirebase);
     return;
   }
 
+  // TODO - it's necessary to use an email
+  // which can be accessed
   const userProfileWithEmailTest = {
-    name: 'Test account',
-    email: 'gavidan@6mail.top',
+    name: `Test account ${Date.now()}`,
+    email: 'cogej95883@mail1web.org',
   };
   const updateProfileWithEmailResult = await (connectionFirebase as any).setProfileData(
     userProfileWithEmailTest
@@ -49,20 +90,45 @@ export const runTestCAConnectionFirebaseChangeEmail = async () => {
     );
     return;
   }
+  return true;
 };
 
-export const runTestCAConnectionFirebase = async () => {
+const runTestCAConnectionFirebaseForVersion = async (
+  firebaseCredentials: ICAConnectionSignUpCredentials,
+  generateCryptoCredentialsWithUserIdentityFunc: (
+    identityMetadata: ICAUserUniqueIdentifierMetadata
+  ) => Promise<TCentralAuthorityUserCryptoCredentials | Error>
+) => {
   console.warn('CA connection firebase test started');
+  const credentialsForInit = await generateCryptoCredentialsWithUserIdentityFunc(
+    {
+      authorityProviderURI: CA_CONNECTION_FIREBASE_CONFIG.databaseURL,
+      userUniqueIdentifier:
+        generateCryptoCredentialsWithUserIdentityFunc ===
+        generateCryptoCredentialsWithUserIdentityV2
+          ? firebaseCredentials.login
+          : undefined,
+    }
+  );
+
+  if (credentialsForInit instanceof Error) {
+    console.error(credentialsForInit);
+    console.error(
+      'Failed to generate a credentials to initialize the new user'
+    );
+    return;
+  }
+
   const credentials = {
-    login: 'lxnmgnyc@sharklasers.com',
-    password: '123456',
+    ...firebaseCredentials,
+    cryptoCredentials: credentialsForInit,
   };
   const connectionFirebase = await connectWithFirebase(credentials);
+
   if (connectionFirebase instanceof Error) {
     console.error(connectionFirebase);
     return;
   }
-
   console.warn('CA connection firebase test succeed');
 
   //check profile update result
@@ -79,7 +145,6 @@ export const runTestCAConnectionFirebase = async () => {
     console.error('Failed tp set the profile (without a email) data');
     return deleteTheUserFromCA(connectionFirebase, credentials);
   }
-
   if (
     userProfileTestWOEmailAndPhoneNumber.photoURL !==
     updateProfileResult.photoURL
@@ -91,22 +156,89 @@ export const runTestCAConnectionFirebase = async () => {
     console.error('Name was not updated in the profile');
     return deleteTheUserFromCA(connectionFirebase, credentials);
   }
+
   const deleteTheUserResult = await deleteTheUserFromCA(
     connectionFirebase,
     credentials
   );
+
   if (deleteTheUserResult instanceof Error) {
     console.error(deleteTheUserResult);
     return new Error('Failed to delete the user from the Firebase authority');
   }
-  console.warn('CA connection firebase test success');
+  return true;
+};
+
+export const runTestCAConnectionFirebase = async () => {
+  // TODO - to run full test it's necessary to change
+  // the credentials to a new
+  const credentialsTest1 = {
+    login: 'xamali6554@mail-help.net',
+    password: '123456',
+  };
+  const resultTestVersion1 = await runTestCAConnectionFirebaseForVersion(
+    credentialsTest1,
+    generateCryptoCredentialsWithUserIdentityV1
+  );
+
+  if (resultTestVersion1 !== true) {
+    console.warn('CA connection firebase for the identity V1 test failed');
+    return;
+  }
+  console.warn('CA connection firebase for the identity V1 test success');
+  const credentialsTest1EmailChange = {
+    login: 'hogano8384@swift-mail.net',
+    password: '123456',
+  };
+  const resultTestVersion1EmailChange = await runTestCAConnectionFirebaseChangeEmailForVersion(
+    credentialsTest1EmailChange,
+    generateCryptoCredentialsWithUserIdentityV1
+  );
+
+  if (resultTestVersion1EmailChange !== true) {
+    console.warn(
+      'CA connection firebase for the identity V1 email change test failed'
+    );
+    return;
+  }
+  console.warn(
+    'CA connection firebase for the identity V1 email change test succeed'
+  );
+  const credentialsTest2 = {
+    login: 'sisarar105@mail-help.net',
+    password: '123456',
+  };
+  const resultTestVersion2 = await runTestCAConnectionFirebaseForVersion(
+    credentialsTest2,
+    generateCryptoCredentialsWithUserIdentityV2
+  );
+
+  if (resultTestVersion2 !== true) {
+    console.warn('CA connection firebase for the identity V2 test failed');
+    return;
+  }
+  const credentialsTest2EmailChange = {
+    login: 'lodajab497@max-mail.org',
+    password: '123456',
+  };
+  const resultTestVersion2EmailChange = await runTestCAConnectionFirebaseChangeEmailForVersion(
+    credentialsTest2EmailChange,
+    generateCryptoCredentialsWithUserIdentityV2
+  );
+
+  if (resultTestVersion2EmailChange !== true) {
+    console.warn(
+      'CA connection firebase for the identity V1 email change test failed'
+    );
+    return;
+  }
+  console.warn(
+    'CA connection firebase for the identity V1 email change test succeed'
+  );
+  console.warn('CA connection firebase for the identity V2 test success');
 };
 
 export const runTestCAConnectionFirebaseCryptoCredentialsGenerateByFirebaseAuthProvider = async () => {
-  const credentials = {
-    login: 'lxnmgnyc@sharklasers.com',
-    password: '123456',
-  };
   console.error('runTestCAConnectionFirebaseWithoutCryptoCredentials::start');
   const connectionFirebase = await connectWithFirebase();
 

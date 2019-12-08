@@ -180,9 +180,9 @@ export class CAConnectionWithFirebaseImplementation
       return new Error('There is no current user');
     }
 
-    // try to sign in with the credentials, then try to sign up
+    // try to sign in with the credentials.
     // it is required by the firebase to sign in before
-    // delete the user
+    // delete the user.
     const signInResult = await this.signIn(firebaseCredentials);
 
     if (signInResult instanceof Error) {

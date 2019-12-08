@@ -519,6 +519,10 @@ export class CAConnectionWithFirebaseBase {
       if (updateEmailResult instanceof Error) {
         return updateEmailResult;
       }
+      return {
+        ...updatedProfile,
+        email,
+      };
     }
     return updatedProfile;
   }

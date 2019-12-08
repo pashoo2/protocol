@@ -363,7 +363,9 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
       return new Error('Failed to export the crypto credentials value');
     }
 
-    //check if the user id is not exists in the database
+    // check if the user id is not exists in the database
+    // user id is a user identity
+    // TODO - it's necessary to implement on the Firebase server to check whether the user can update credentials for the userid
     const credentialsForTheUserId = await this.getUserCredentials(userId);
 
     if (
