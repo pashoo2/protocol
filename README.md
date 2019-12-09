@@ -62,17 +62,9 @@ on the client:
     ".read": "true",
     ".write": "auth != null",
       "credentials": {
-        ".read": true,
-        /* prevents delete and wrote an existing value */
-    		".write": "!data.exists() && newData.exists()",
-        ".indexOn": "firebase_user_id",
         "$userID": {
-          ".write": "!data.exists() && newData.exists()",
-          ".validate": "!data.exists() && ($userID.beginsWith('02https%3A*_S%25%C3%AB5nN*_S%25%C3%AB5nNprotocol-f251b_P%25%C3%AB5nN*firebaseio_P%25%C3%AB5nN*com%7C') || $userID.beginsWith('01https%3A*_S%25%C3%AB5nN*_S%25%C3%AB5nNprotocol-f251b_P%25%C3%AB5nN*firebaseio_P%25%C3%AB5nN*com%7C')) && newData.hasChildren(['credentials', 'firebase_user_id']) && newData.child('credentials').isString() && newData.child('firebase_user_id').isString() && newData.child('credentials').val().length < 5000 && newData.child('credentials').val().length > 100 && newData.child('firebase_user_id').val() === auth.uid",
+          ".validate": "!data.exists() && newData.exists() && ($userID.beginsWith('02https:*_S%ë5nN*_S%ë5nNprotocol-f251b_P%ë5nN*firebaseio_P%ë5nN*com') || $userID.beginsWith('01https:*_S%ë5nN*_S%ë5nNprotocol-f251b_P%ë5nN*firebaseio_P%ë5nN*com')) && newData.hasChildren(['credentials', 'firebase_user_id']) && newData.child('credentials').isString() && newData.child('firebase_user_id').isString() && newData.child('credentials').val().length < 5000 && newData.child('credentials').val().length > 100 && newData.child('firebase_user_id').val() === auth.uid",
           ".indexOn": "firebase_user_id",
-          "firebase_user_id": {
-            ".read": "data.val() === auth.uid"
-          }
         }
       }
   }

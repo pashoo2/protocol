@@ -275,7 +275,9 @@ export class CAConnectionWithFirebaseImplementation
 
   /**
    * this method generates credentials compilant to the version
-   * version 2 of the user identity
+   * version 2 of the user identity. The firebase app user uid
+   * is used as the user id.
+   *
    * @protected
    * @returns {(Promise<
    *     Error | TCentralAuthorityUserCryptoCredentials
@@ -285,7 +287,11 @@ export class CAConnectionWithFirebaseImplementation
   protected generateNewCryptoCredentialsForConfigurationProvidedV2 = async (): Promise<
     Error | TCentralAuthorityUserCryptoCredentials
   > => {
-    const { databaseURL } = this;
+    const { databaseURL, currentUser } = this;
+
+    if (!currentUser) {
+      return new Error('The user is not defined');
+    }
 
     if (databaseURL instanceof Error) {
       return databaseURL;
@@ -294,7 +300,7 @@ export class CAConnectionWithFirebaseImplementation
     const cryptoCredentials = await generateCryptoCredentialsWithUserIdentityV2(
       {
         [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: databaseURL,
-        [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]: this.userLogin,
+        [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]: currentUser.uid,
       }
     );
 
@@ -330,8 +336,6 @@ export class CAConnectionWithFirebaseImplementation
     let credentialsForV1 = false;
 
     if (this.isVersionSupported(V1)) {
-      credentialsForV1 =
-        CA_USER_IDENTITY_VERSION_CURRENT === CA_USER_IDENTITY_VERSIONS['01'];
       credentialsForV1 =
         CA_USER_IDENTITY_VERSION_CURRENT === CA_USER_IDENTITY_VERSIONS['01'];
 
