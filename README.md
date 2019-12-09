@@ -54,3 +54,27 @@ instead of "credentials" must be a value of the constant "CA_CONNECTION_FIREBASE
 !!It is necessary to set the configuration, to prevent data filtration
 on the client:
 ".indexOn": "firebase_user_id"
+
+```
+{
+  /* Visit https://firebase.google.com/docs/database/security to learn more about security rules. */
+  "rules": {
+    ".read": "true",
+    ".write": "auth != null",
+      "credentials": {
+        ".read": true,
+        /* prevents delete and wrote an existing value */
+    		".write": "!data.exists() && newData.exists()",
+        ".indexOn": "firebase_user_id",
+        "$userID": {
+          ".write": "!data.exists() && newData.exists()",
+          ".validate": "!data.exists() && ($userID.beginsWith('02https%3A*_S%25%C3%AB5nN*_S%25%C3%AB5nNprotocol-f251b_P%25%C3%AB5nN*firebaseio_P%25%C3%AB5nN*com%7C') || $userID.beginsWith('01https%3A*_S%25%C3%AB5nN*_S%25%C3%AB5nNprotocol-f251b_P%25%C3%AB5nN*firebaseio_P%25%C3%AB5nN*com%7C')) && newData.hasChildren(['credentials', 'firebase_user_id']) && newData.child('credentials').isString() && newData.child('firebase_user_id').isString() && newData.child('credentials').val().length < 5000 && newData.child('credentials').val().length > 100 && newData.child('firebase_user_id').val() === auth.uid",
+          ".indexOn": "firebase_user_id",
+          "firebase_user_id": {
+            ".read": "data.val() === auth.uid"
+          }
+        }
+      }
+  }
+}
+```

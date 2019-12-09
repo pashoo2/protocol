@@ -1,3 +1,4 @@
+import memoize from 'lodash.memoize';
 import CAConnectionWithFirebaseBase from '../central-authority-connection-firebase-base/central-authority-connection-firebase-base';
 import {
   ICAConnection,
@@ -17,6 +18,8 @@ import {
   CA_USER_IDENTITY_VERSION_CURRENT,
 } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
 import { generateCryptoCredentialsWithUserIdentityV2 } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
+import { validateUserIdentityVersion } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-auth-credentials/central-authority-validators-auth-credentials';
+import { TUserIdentityVersion } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types';
 
 /**
  *
@@ -34,7 +37,64 @@ import { generateCryptoCredentialsWithUserIdentityV2 } from 'classes/central-aut
 export class CAConnectionWithFirebaseImplementation
   extends CAConnectionWithFirebaseBase
   implements ICAConnection {
+  public get authProviderURL() {
+    const { databaseURL } = this;
+
+    return databaseURL instanceof Error ? undefined : databaseURL;
+  }
+
   protected userLogin?: string;
+
+  /**
+   * list with identity versions supported by the connection
+   *
+   * @type {Array<TUserIdentityVersion>}
+   * @memberof CAConnectionWithFirebaseImplementation
+   */
+  protected readonly supportedVersions: Array<TUserIdentityVersion> = [
+    CA_USER_IDENTITY_VERSIONS['01'],
+    CA_USER_IDENTITY_VERSIONS['02'],
+  ];
+
+  /**
+   * checks whether the identity version
+   * is supported by the connection
+   *
+   * @memberof CAConnectionWithFirebaseImplementation
+   */
+  public isVersionSupported = memoize(
+    (version: TUserIdentityVersion): boolean =>
+      this.supportedVersions.includes(version)
+  );
+
+  /**
+   * set identity versions which are
+   * supported by the connection
+   * instance
+   *
+   * @protected
+   * @param {Array<TUserIdentityVersion>} [supportedVersions]
+   * @returns {(Error | void)}
+   * @memberof CAConnectionWithFirebaseImplementation
+   */
+  protected setVersionsSupported(
+    supportedVersions?: Array<TUserIdentityVersion>
+  ): Error | void {
+    if (supportedVersions instanceof Array) {
+      const len = supportedVersions.length;
+      let idx = 0;
+      let version;
+
+      for (; idx++; len < idx) {
+        version = supportedVersions[idx];
+        if (validateUserIdentityVersion(version)) {
+          this.supportedVersions.push(version);
+        }
+        return new Error('The version is not supproted');
+      }
+    }
+    return new Error('The argument must be an Array');
+  }
 
   /**
    * @param {ICAConnectionSignUpCredentials} firebaseCredentials
@@ -266,33 +326,41 @@ export class CAConnectionWithFirebaseImplementation
     }
 
     const { cryptoCredentials } = signUpCredentials;
+    const V1 = CA_USER_IDENTITY_VERSIONS['01'];
     let credentialsForV1 = false;
 
-    if (CA_USER_IDENTITY_VERSION_CURRENT === CA_USER_IDENTITY_VERSIONS['01']) {
-      credentialsForV1 = true;
-    } else if (cryptoCredentials) {
-      // check a version of the credentials
-      // to decide what to do next
-      const cryptoCredentialsVersion = getVersionOfCryptoCredentials(
-        cryptoCredentials
-      );
+    if (this.isVersionSupported(V1)) {
+      credentialsForV1 =
+        CA_USER_IDENTITY_VERSION_CURRENT === CA_USER_IDENTITY_VERSIONS['01'];
+      credentialsForV1 =
+        CA_USER_IDENTITY_VERSION_CURRENT === CA_USER_IDENTITY_VERSIONS['01'];
 
-      if (cryptoCredentialsVersion instanceof Error) {
-        console.error(cryptoCredentialsVersion);
-        return new Error(
-          'Failed to define a version of the crypto credentials'
+      if (cryptoCredentials) {
+        // check a version of the credentials
+        // to decide what to do next
+        const cryptoCredentialsVersion = getVersionOfCryptoCredentials(
+          cryptoCredentials
         );
+
+        if (cryptoCredentialsVersion instanceof Error) {
+          console.error(cryptoCredentialsVersion);
+          return new Error(
+            'Failed to define a version of the crypto credentials'
+          );
+        }
+        if (cryptoCredentialsVersion === CA_USER_IDENTITY_VERSIONS['01']) {
+          // if the credentials version is 01 we may use the
+          // current implementation cause it is fully
+          // compilant to that version
+          credentialsForV1 = true;
+        } else {
+          credentialsForV1 = false;
+        }
       }
-      if (cryptoCredentialsVersion === CA_USER_IDENTITY_VERSIONS['01']) {
-        // if the credentials version is 01 we may use the
-        // current implementation cause it is fully
-        // compilant to that version
-        credentialsForV1 = true;
+      // if a credentials for the V1 must be generated and set
+      if (credentialsForV1 === true) {
+        return this.createOrSetCredentialsInDB(cryptoCredentials);
       }
-    }
-    // if a credentials for the V1 must be generated and set
-    if (credentialsForV1 === true) {
-      return this.createOrSetCredentialsInDB(cryptoCredentials);
     }
     // if the version is not 01, then provide another implementations
     // of the methods to generate and set the crypto credentials

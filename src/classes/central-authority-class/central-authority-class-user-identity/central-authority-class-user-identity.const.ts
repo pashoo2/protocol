@@ -5,6 +5,10 @@ export const CA_USER_IDENTITY_VERSIONS = {
   '02': '02',
 };
 
+export const CA_USER_IDENTITY_VERSIONS_LIST = Object.values(
+  CA_USER_IDENTITY_VERSIONS
+);
+
 export const CA_USER_IDENTITY_PARSER_VERSIONS_SUPPORTED = Object.values(
   CA_USER_IDENTITY_VERSIONS
 );

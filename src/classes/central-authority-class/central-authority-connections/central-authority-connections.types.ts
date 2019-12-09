@@ -4,6 +4,7 @@ import {
   ICentralAuthorityUserAuthCredentials,
 } from '../central-authority-class-types/central-authority-class-types';
 import { ICAConnectionConfigurationFirebase } from './central-authority-connection-firebase/central-authority-connection-firebase.types.configuration';
+import { TUserIdentityVersion } from '../central-authority-class-user-identity/central-authority-class-user-identity.types';
 
 export interface ICAConnectionUserAuthorizedResult {
   cryptoCredentials: TCentralAuthorityUserCryptoCredentials;
@@ -38,6 +39,16 @@ export interface ICAConnection {
   // is the user was authorized
   // (signed in)
   isAuthorized: boolean;
+  // the url string with the auth providet url
+  // to which the connection is established
+  authProviderURL: string | undefined;
+  /**
+   * checks whether the identity version
+   * is supported by the connection
+   *
+   * @param {TUserIdentityVersion} v - identity version
+   */
+  isVersionSupported(v: TUserIdentityVersion): boolean;
   // connect to firebase
   connect(
     configuration: ICAConnectionConfigurationFirebase

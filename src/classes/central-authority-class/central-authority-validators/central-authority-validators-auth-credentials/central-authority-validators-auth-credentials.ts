@@ -12,9 +12,16 @@ import {
   TCentralAuthorityUserIdentity,
   TCentralAuthorityAuthCredentials,
 } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
+import { CA_USER_IDENTITY_VERSIONS_LIST } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
+import { TUserIdentityVersion } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types';
 
 export const validateUserIdentityType = (v: any): boolean =>
   typeof v === CA_USER_IDENTITY_TYPE;
+
+export const validateUserIdentityVersion = (
+  v: any
+): v is TUserIdentityVersion =>
+  typeof v === 'string' && CA_USER_IDENTITY_VERSIONS_LIST.includes(v);
 
 export const validateUserIdentity = (
   v: any,
