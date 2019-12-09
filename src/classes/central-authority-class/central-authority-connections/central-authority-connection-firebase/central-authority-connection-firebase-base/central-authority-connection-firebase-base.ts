@@ -720,8 +720,8 @@ export class CAConnectionWithFirebaseBase {
     // a network errors or user id
     // is already exists in the database
     while (
-      attempt < CA_CONNECTION_FIREBASE_CREDENTIALS_GENERATION_MAX_ATTEMPTS ||
-      isSuccess
+      attempt < CA_CONNECTION_FIREBASE_CREDENTIALS_GENERATION_MAX_ATTEMPTS &&
+      !isSuccess
     ) {
       cryptoCredentials = credentialsGiven
         ? // if a credentials provided, then use it

@@ -10,6 +10,16 @@ export const CA_CONNECTION_FIREBASE_CONFIG = {
   appId: '1:275196342406:web:40b79d671c50af57',
 };
 
+export const CA_CONNECTION_FIREBASE_CONFIG_WATCHA3 = {
+  apiKey: 'AIzaSyCmjgbWZjUcDYxV2d0DxbiuroFrftW7qrQ',
+  authDomain: 'watcha3-191815.firebaseapp.com',
+  databaseURL: 'https://watcha3-191815.firebaseio.com',
+  projectId: 'watcha3-191815',
+  storageBucket: 'watcha3-191815.appspot.com',
+  messagingSenderId: '271822572791',
+  appId: '1:271822572791:web:2e31bfd34ccabe551597f2',
+};
+
 export const CA_CONNECTION_FIREBASE_USER_CREDENTIALS = {
   login: 'akulich.p@gmail.com',
   password: '123456',

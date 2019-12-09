@@ -292,18 +292,17 @@ export class CAConnectionWithFirebaseImplementation
     if (!currentUser) {
       return new Error('The user is not defined');
     }
-
     if (databaseURL instanceof Error) {
       return databaseURL;
     }
-
+    debugger;
     const cryptoCredentials = await generateCryptoCredentialsWithUserIdentityV2(
       {
         [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: databaseURL,
         [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]: currentUser.uid,
       }
     );
-
+    debugger;
     if (cryptoCredentials instanceof Error) {
       console.error(cryptoCredentials);
       return new Error('Failed to generate a new crypto credentials');

@@ -14,6 +14,7 @@ import {
 import {
   CA_CONNECTION_FIREBASE_CONFIG,
   CA_CONNECTION_FIREBASE_CREDENTIALS,
+  CA_CONNECTION_FIREBASE_CONFIG_WATCHA3,
 } from './central-authority-connection.test.firebase.const';
 import { ICAUserUniqueIdentifierMetadata } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types';
 import { TCentralAuthorityUserCryptoCredentials } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
@@ -21,21 +22,23 @@ import { ICAConnectionSignUpCredentials } from 'classes/central-authority-class/
 
 const runTestFirebaseCredentialsStorageVersion = async (
   firebaseCredentials: ICAConnectionSignUpCredentials,
-  generateCryptoCredentialsWithUserIdentityFunc: (
+  generateCryptoCredentialsWithUserIdentityFunc?: (
     identityMetadata: ICAUserUniqueIdentifierMetadata
-  ) => Promise<TCentralAuthorityUserCryptoCredentials | Error>
+  ) => Promise<TCentralAuthorityUserCryptoCredentials | Error>,
+  firebaseConnectionOptions: typeof CA_CONNECTION_FIREBASE_CONFIG = CA_CONNECTION_FIREBASE_CONFIG
 ) => {
   console.warn('runTestFirebaseCredentialsStorage::start');
-  const credentialsForInit = await generateCryptoCredentialsWithUserIdentityFunc(
-    {
-      authorityProviderURI: CA_CONNECTION_FIREBASE_CONFIG.databaseURL,
+  let credentialsForInit;
+  if (generateCryptoCredentialsWithUserIdentityFunc) {
+    credentialsForInit = await generateCryptoCredentialsWithUserIdentityFunc({
+      authorityProviderURI: firebaseConnectionOptions.databaseURL,
       userUniqueIdentifier:
         generateCryptoCredentialsWithUserIdentityFunc ===
         generateCryptoCredentialsWithUserIdentityV2
           ? firebaseCredentials.login
           : undefined,
-    }
-  );
+    });
+  }
 
   if (credentialsForInit instanceof Error) {
     console.error(credentialsForInit);
@@ -45,10 +48,13 @@ const runTestFirebaseCredentialsStorageVersion = async (
     return;
   }
 
-  const firebaseConnection = await connectWithFirebase({
-    ...firebaseCredentials,
-    cryptoCredentials: credentialsForInit,
-  });
+  const firebaseConnection = await connectWithFirebase(
+    {
+      ...firebaseCredentials,
+      cryptoCredentials: credentialsForInit,
+    },
+    firebaseConnectionOptions
+  );
 
   if (firebaseConnection instanceof Error) {
     console.error(firebaseConnection);
@@ -125,12 +131,17 @@ const runTestFirebaseCredentialsStorageVersion = async (
     }
   }
 
-  const credentials = await generateCryptoCredentialsWithUserIdentityFunc({
-    authorityProviderURI: CA_CONNECTION_FIREBASE_CONFIG.databaseURL,
+  const credentials = await (
+    generateCryptoCredentialsWithUserIdentityFunc ||
+    generateCryptoCredentialsWithUserIdentityV2
+  )({
+    authorityProviderURI: firebaseConnectionOptions.databaseURL,
     userUniqueIdentifier:
       generateCryptoCredentialsWithUserIdentityFunc ===
       generateCryptoCredentialsWithUserIdentityV2
         ? firebaseCredentials.login
+        : !generateCryptoCredentialsWithUserIdentityFunc
+        ? '123412'
         : undefined,
   });
 
@@ -241,25 +252,38 @@ const runTestFirebaseCredentialsStorageVersion = async (
 };
 
 export const runTestFirebaseCredentialsStorage = async () => {
+  // if (
+  //   !(await runTestFirebaseCredentialsStorageVersion(
+  //     {
+  //       login: 'rehodip223@mailhub.pro',
+  //       password: '123456',
+  //     },
+  //     generateCryptoCredentialsWithUserIdentityV1
+  //   ))
+  // ) {
+  //   console.error('Failed test for user identity V1');
+  //   return;
+  // }
+  // if (
+  //   !(await runTestFirebaseCredentialsStorageVersion(
+  //     {
+  //       login: 'pefik89126@mailhub.pro',
+  //       password: '123456',
+  //     },
+  //     generateCryptoCredentialsWithUserIdentityV2
+  //   ))
+  // ) {
+  //   console.error('Failed test for user identity V2');
+  //   return;
+  // }
   if (
     !(await runTestFirebaseCredentialsStorageVersion(
       {
-        login: 'xitedof420@mail1.top',
+        login: 'yaxida4519@email1.pro',
         password: '123456',
       },
-      generateCryptoCredentialsWithUserIdentityV1
-    ))
-  ) {
-    console.error('Failed test for user identity V1');
-    return;
-  }
-  if (
-    !(await runTestFirebaseCredentialsStorageVersion(
-      {
-        login: 'tijoc30747@mail1web.org',
-        password: '123456',
-      },
-      generateCryptoCredentialsWithUserIdentityV2
+      undefined,
+      CA_CONNECTION_FIREBASE_CONFIG_WATCHA3
     ))
   ) {
     console.error('Failed test for user identity V2');

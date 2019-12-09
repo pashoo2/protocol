@@ -9,13 +9,11 @@ import { generateCryptoCredentialsV1 } from 'classes/central-authority-class/cen
 import ErrorExtendedBaseClass from 'classes/basic-classes/error-extended-class-base/error-extended-class-base';
 import { CA_CONNECTION_ERROR_ACCOUNT_NOT_VERIFIED_CODE } from 'classes/central-authority-class/central-authority-connections/central-authority-connections-const/central-authority-connections-const';
 
-export const connectToFirebase = async (): Promise<
-  Error | CAConnectionWithFirebase
-> => {
+export const connectToFirebase = async (
+  firebaseParams: typeof CA_CONNECTION_FIREBASE_CONFIG = CA_CONNECTION_FIREBASE_CONFIG
+): Promise<Error | CAConnectionWithFirebase> => {
   const connectionFirebase = new CAConnectionWithFirebase();
-  const connectionResult = await connectionFirebase.connect(
-    CA_CONNECTION_FIREBASE_CONFIG
-  );
+  const connectionResult = await connectionFirebase.connect(firebaseParams);
 
   if (connectionResult instanceof Error) {
     console.error(connectionResult);
@@ -54,9 +52,10 @@ export const aurhorizeWithCredentials = async (
 };
 
 export const connectAndAuthorizeInFirebase = async (
-  authCredentials: ICAConnectionSignUpCredentials
+  authCredentials: ICAConnectionSignUpCredentials,
+  firebaseParams?: typeof CA_CONNECTION_FIREBASE_CONFIG
 ): Promise<CAConnectionWithFirebase | Error> => {
-  const connectionFirebase = await connectToFirebase();
+  const connectionFirebase = await connectToFirebase(firebaseParams);
 
   if (connectionFirebase instanceof Error) {
     console.error(connectionFirebase);
@@ -70,7 +69,8 @@ export const connectAndAuthorizeInFirebase = async (
  * defined
  */
 export const connectWithFirebase = async (
-  authCredentials: ICAConnectionSignUpCredentials = CA_CONNECTION_FIREBASE_CREDENTIALS
+  authCredentials: ICAConnectionSignUpCredentials = CA_CONNECTION_FIREBASE_CREDENTIALS,
+  firebaseParams?: typeof CA_CONNECTION_FIREBASE_CONFIG
 ) => {
   console.warn('CA connection firebase test started');
 
@@ -79,7 +79,8 @@ export const connectWithFirebase = async (
   }
 
   const connectionFirebase = await connectAndAuthorizeInFirebase(
-    authCredentials
+    authCredentials,
+    firebaseParams
   );
 
   if (connectionFirebase instanceof Error) {
