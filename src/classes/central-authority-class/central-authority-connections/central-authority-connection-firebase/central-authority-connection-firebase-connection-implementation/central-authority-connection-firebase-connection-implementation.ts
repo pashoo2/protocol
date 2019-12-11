@@ -41,6 +41,18 @@ import { CA_CONNECTION_STATUS } from '../../central-authority-connections-const/
 export class CAConnectionWithFirebaseImplementation
   extends CAConnectionWithFirebaseBase
   implements ICAConnection {
+  public get cryptoCredentials():
+    | TCentralAuthorityUserCryptoCredentials
+    | undefined {
+    const { valueofCredentialsSignUpOnAuthorizedSuccess } = this;
+
+    if (valueofCredentialsSignUpOnAuthorizedSuccess) {
+      const { cryptoCredentials } = valueofCredentialsSignUpOnAuthorizedSuccess;
+
+      return cryptoCredentials;
+    }
+  }
+
   public get authProviderURL() {
     const { databaseURL } = this;
 
@@ -135,6 +147,14 @@ export class CAConnectionWithFirebaseImplementation
       console.error(err);
       return new Error('Failed to connect anonymousely');
     }
+
+    const connectWithStorageResult = await this.startConnectionWithCredentialsStorage();
+
+    if (connectWithStorageResult instanceof Error) {
+      console.error(connectWithStorageResult);
+      return new Error('Failed to connect to the credentials storage');
+    }
+    this.setIsAnonymousely();
     return resultConnection;
   }
 
@@ -153,9 +173,9 @@ export class CAConnectionWithFirebaseImplementation
   public async getUserCredentials(
     userId: string
   ): Promise<Error | null | TCentralAuthorityUserCryptoCredentials> {
-    const { isConnected } = this;
+    const { status } = this;
 
-    if (isConnected) {
+    if (status !== CA_CONNECTION_STATUS.DISCONNECTED) {
       const { connectionWithCredentialsStorage } = this;
 
       return connectionWithCredentialsStorage!.getUserCredentials(userId);
@@ -210,12 +230,6 @@ export class CAConnectionWithFirebaseImplementation
         return this.onAuthorizationFailed(isVerifiedResult);
       }
 
-      const connectWithStorageResult = await this.startConnectionWithCredentialsStorage();
-
-      if (connectWithStorageResult instanceof Error) {
-        console.error(connectWithStorageResult);
-        return new Error('Failed to connect to the credentials storage');
-      }
       // set the user login to use it to generate
       // crypto credentials
       this.setUserLogin(firebaseCredentials.login);
@@ -264,12 +278,14 @@ export class CAConnectionWithFirebaseImplementation
     // result. To return it on the second authorization
     // request
     this.valueofCredentialsSignUpOnAuthorizedSuccess = authHandleResult;
+    this.setValueofCredentialsSignUpOnAuthorizedSuccess(authHandleResult);
     this.unsetIsAnonymousely();
     return authHandleResult;
   }
 
   public async disconnect() {
     this.unsetIsAnonymousely();
+    this.unsetValueofCredentialsSignUpOnAuthorizedSuccess();
 
     const disconnectFromStorageResult = await this.disconnectCredentialsStorage();
 
@@ -283,6 +299,7 @@ export class CAConnectionWithFirebaseImplementation
       try {
         // disconect from the application
         await app.delete();
+        return;
       } catch (err) {
         console.error(err);
         return new Error('Failed to disconnect from the Firebase app');
@@ -347,7 +364,7 @@ export class CAConnectionWithFirebaseImplementation
    * @memberof CAConnectionWithFirebaseImplementation
    */
   protected setIsAnonymousely() {
-    this.isAnonymousely = false;
+    this.isAnonymousely = true;
   }
 
   /**
@@ -359,6 +376,16 @@ export class CAConnectionWithFirebaseImplementation
    */
   protected unsetIsAnonymousely() {
     this.isAnonymousely = false;
+  }
+
+  protected setValueofCredentialsSignUpOnAuthorizedSuccess(
+    authResult: ICAConnectionUserAuthorizedResult
+  ) {
+    this.valueofCredentialsSignUpOnAuthorizedSuccess = authResult;
+  }
+
+  protected unsetValueofCredentialsSignUpOnAuthorizedSuccess() {
+    this.valueofCredentialsSignUpOnAuthorizedSuccess = undefined;
   }
 
   /**

@@ -35,6 +35,9 @@ export interface ICAConnectionSignInCredentials {
 }
 
 export interface ICAConnection {
+  // crypto credentials for the user
+  // authorized in the Firebase
+  cryptoCredentials?: TCentralAuthorityUserCryptoCredentials;
   // the current status of the connection
   status: CA_CONNECTION_STATUS;
   // the url string with the auth providet url

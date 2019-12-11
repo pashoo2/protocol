@@ -17,6 +17,7 @@ import { encodeForFirebaseKey } from 'utils/firebase-utils/firebase-utils';
 import { validateUserIdentity } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-auth-credentials/central-authority-validators-auth-credentials';
 import { TCentralAuthorityUserCryptoCredentials } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 import { checkIsValidExportedCryptoCredentialsToString } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
+import { CA_CONNECTION_STATUS } from 'classes/central-authority-class/central-authority-connections/central-authority-connections-const/central-authority-connections-const';
 
 /**
  * This class is used for storing
@@ -135,9 +136,6 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
   }
 
   protected setUpConnection(connectionToFirebase: ICAConnectionFirebase) {
-    if (!connectionToFirebase.isUserSignedIn) {
-      throw new Error('The user must be authorized in firebase');
-    }
     this.connectionToFirebase = connectionToFirebase;
 
     const app = connectionToFirebase.getApp();
@@ -408,6 +406,9 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
   public async getUserCredentials(
     userId: string
   ): Promise<Error | null | TCentralAuthorityUserCryptoCredentials> {
+    if (!this.checkIsConnected()) {
+      return new Error('There is no active connection to the Firebase');
+    }
     if (!validateUserIdentity(userId)) {
       return new Error('The user identity is not valid');
     }
