@@ -41,6 +41,7 @@ import {
  * @class CAConnectionWithFirebase
  */
 export class CAConnectionWithFirebaseBase {
+  // if the application is connected with the remote Firebase
   public isConnected: boolean = false;
 
   public get isUserSignedIn(): boolean {
@@ -117,10 +118,17 @@ export class CAConnectionWithFirebaseBase {
     );
   }
 
+  // return the firebase application
   public getApp(): void | firebase.app.App {
     return this.app;
   }
 
+  /**
+   * sign out if authorized before
+   *
+   * @returns {(Promise<boolean | Error>)}
+   * @memberof CAConnectionWithFirebaseBase
+   */
   public async signOut(): Promise<boolean | Error> {
     const isConnected = this.checkIfConnected();
 
@@ -149,6 +157,15 @@ export class CAConnectionWithFirebaseBase {
     return true;
   }
 
+  /**
+   * connect to the Firebase database. To authorize
+   * in the database to set credentials it is necesssry
+   * to authorize in.
+   *
+   * @param {ICAConnectionConfigurationFirebase} configuration
+   * @returns {(Promise<boolean | Error>)}
+   * @memberof CAConnectionWithFirebaseBase
+   */
   public async connect(
     configuration: ICAConnectionConfigurationFirebase
   ): Promise<boolean | Error> {

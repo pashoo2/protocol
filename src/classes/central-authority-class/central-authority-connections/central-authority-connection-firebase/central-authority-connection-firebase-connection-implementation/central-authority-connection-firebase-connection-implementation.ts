@@ -1,4 +1,6 @@
 import memoize from 'lodash.memoize';
+import * as firebase from 'firebase/app';
+import 'firebase/auth';
 import CAConnectionWithFirebaseBase from '../central-authority-connection-firebase-base/central-authority-connection-firebase-base';
 import {
   ICAConnection,
@@ -20,6 +22,8 @@ import {
 import { generateCryptoCredentialsWithUserIdentityV2 } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
 import { validateUserIdentityVersion } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-auth-credentials/central-authority-validators-auth-credentials';
 import { TUserIdentityVersion } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types';
+import { ICAConnectionConfigurationFirebase } from '../central-authority-connection-firebase.types.configuration';
+import { CA_CONNECTION_STATUS } from '../../central-authority-connections-const/central-authority-connections-const';
 
 /**
  *
@@ -42,6 +46,38 @@ export class CAConnectionWithFirebaseImplementation
 
     return databaseURL instanceof Error ? undefined : databaseURL;
   }
+
+  /**
+   * the current status of the connection
+   * to the Firebase remote database
+   *
+   * @readonly
+   * @type {CA_CONNECTION_STATUS}
+   * @memberof CAConnectionWithFirebaseImplementation
+   */
+  public get status(): CA_CONNECTION_STATUS {
+    const { isConnected, isAuthorized, isAnonymousely } = this;
+
+    if (!isConnected) {
+      return CA_CONNECTION_STATUS.DISCONNECTED;
+    }
+    if (isAuthorized) {
+      return CA_CONNECTION_STATUS.AUTHORIZED;
+    }
+    if (isAnonymousely) {
+      return CA_CONNECTION_STATUS.CONNECTED;
+    }
+    return CA_CONNECTION_STATUS.DISCONNECTED;
+  }
+
+  /**
+   * whether the user is connected anonymousely
+   * or not. User must be authorized or connected
+   * anonymousely
+   *
+   * @memberof CAConnectionWithFirebaseImplementation
+   */
+  protected isAnonymousely = false;
 
   protected userLogin?: string;
 
@@ -68,32 +104,63 @@ export class CAConnectionWithFirebaseImplementation
   );
 
   /**
-   * set identity versions which are
-   * supported by the connection
-   * instance
+   * connect to the Firebase database. To authorize
+   * in the database to set credentials it is necesssry
+   * to authorize in.
+   * To read credentials of another user authorization is not
+   * necessary.
+   * Connection will be established in the anonymous mode
    *
-   * @protected
-   * @param {Array<TUserIdentityVersion>} [supportedVersions]
-   * @returns {(Error | void)}
-   * @memberof CAConnectionWithFirebaseImplementation
+   * @param {ICAConnectionConfigurationFirebase} configuration
+   * @returns {(Promise<boolean | Error>)}
+   * @memberof CAConnectionWithFirebaseBase
    */
-  protected setVersionsSupported(
-    supportedVersions?: Array<TUserIdentityVersion>
-  ): Error | void {
-    if (supportedVersions instanceof Array) {
-      const len = supportedVersions.length;
-      let idx = 0;
-      let version;
+  public async connect(
+    configuration: ICAConnectionConfigurationFirebase
+  ): Promise<boolean | Error> {
+    const resultConnection = super.connect(configuration);
 
-      for (; idx++; len < idx) {
-        version = supportedVersions[idx];
-        if (validateUserIdentityVersion(version)) {
-          this.supportedVersions.push(version);
-        }
-        return new Error('The version is not supproted');
-      }
+    if (resultConnection instanceof Error) {
+      return resultConnection;
     }
-    return new Error('The argument must be an Array');
+    try {
+      const connectAnonymouselyResult = await firebase
+        .auth()
+        .signInAnonymously();
+
+      if (connectAnonymouselyResult instanceof Error) {
+        return connectAnonymouselyResult;
+      }
+    } catch (err) {
+      console.error(err);
+      return new Error('Failed to connect anonymousely');
+    }
+    return resultConnection;
+  }
+
+  /**
+   * return a credentials for the user
+   * with the id = userId.
+   * For the v1 the user id must be a uuidV4.
+   * For the v2 the user id must be a login/email/uuid.
+   * under which the user was registered the
+   * Firebase account.
+   *
+   * @param {string} userId
+   * @returns {(Promise<Error | null | TCentralAuthorityUserCryptoCredentials>)}
+   * @memberof CAConnectionFirestoreUtilsCredentialsStrorage
+   */
+  public async getUserCredentials(
+    userId: string
+  ): Promise<Error | null | TCentralAuthorityUserCryptoCredentials> {
+    const { isConnected } = this;
+
+    if (isConnected) {
+      const { connectionWithCredentialsStorage } = this;
+
+      return connectionWithCredentialsStorage!.getUserCredentials(userId);
+    }
+    return new Error('Not connected to the Firebase');
   }
 
   /**
@@ -197,10 +264,13 @@ export class CAConnectionWithFirebaseImplementation
     // result. To return it on the second authorization
     // request
     this.valueofCredentialsSignUpOnAuthorizedSuccess = authHandleResult;
+    this.unsetIsAnonymousely();
     return authHandleResult;
   }
 
   public async disconnect() {
+    this.unsetIsAnonymousely();
+
     const disconnectFromStorageResult = await this.disconnectCredentialsStorage();
 
     if (disconnectFromStorageResult instanceof Error) {
@@ -269,6 +339,57 @@ export class CAConnectionWithFirebaseImplementation
     return true;
   }
 
+  /**
+   * set that connected anonymousely
+   * to the Firebase
+   *
+   * @protected
+   * @memberof CAConnectionWithFirebaseImplementation
+   */
+  protected setIsAnonymousely() {
+    this.isAnonymousely = false;
+  }
+
+  /**
+   * unset that connected to the Firebase
+   * anonymousely
+   *
+   * @protected
+   * @memberof CAConnectionWithFirebaseImplementation
+   */
+  protected unsetIsAnonymousely() {
+    this.isAnonymousely = false;
+  }
+
+  /**
+   * set identity versions which are
+   * supported by the connection
+   * instance
+   *
+   * @protected
+   * @param {Array<TUserIdentityVersion>} [supportedVersions]
+   * @returns {(Error | void)}
+   * @memberof CAConnectionWithFirebaseImplementation
+   */
+  protected setVersionsSupported(
+    supportedVersions?: Array<TUserIdentityVersion>
+  ): Error | void {
+    if (supportedVersions instanceof Array) {
+      const len = supportedVersions.length;
+      let idx = 0;
+      let version;
+
+      for (; idx++; len < idx) {
+        version = supportedVersions[idx];
+        if (validateUserIdentityVersion(version)) {
+          this.supportedVersions.push(version);
+        }
+        return new Error('The version is not supproted');
+      }
+    }
+    return new Error('The argument must be an Array');
+  }
+
   protected setUserLogin(login: string) {
     this.userLogin = login;
   }
@@ -295,14 +416,14 @@ export class CAConnectionWithFirebaseImplementation
     if (databaseURL instanceof Error) {
       return databaseURL;
     }
-    debugger;
+
     const cryptoCredentials = await generateCryptoCredentialsWithUserIdentityV2(
       {
         [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: databaseURL,
         [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]: currentUser.uid,
       }
     );
-    debugger;
+
     if (cryptoCredentials instanceof Error) {
       console.error(cryptoCredentials);
       return new Error('Failed to generate a new crypto credentials');

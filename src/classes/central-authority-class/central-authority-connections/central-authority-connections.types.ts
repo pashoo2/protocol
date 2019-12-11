@@ -5,6 +5,7 @@ import {
 } from '../central-authority-class-types/central-authority-class-types';
 import { ICAConnectionConfigurationFirebase } from './central-authority-connection-firebase/central-authority-connection-firebase.types.configuration';
 import { TUserIdentityVersion } from '../central-authority-class-user-identity/central-authority-class-user-identity.types';
+import { CA_CONNECTION_STATUS } from './central-authority-connections-const/central-authority-connections-const';
 
 export interface ICAConnectionUserAuthorizedResult {
   cryptoCredentials: TCentralAuthorityUserCryptoCredentials;
@@ -34,11 +35,8 @@ export interface ICAConnectionSignInCredentials {
 }
 
 export interface ICAConnection {
-  // is connection active
-  isConnected: boolean;
-  // is the user was authorized
-  // (signed in)
-  isAuthorized: boolean;
+  // the current status of the connection
+  status: CA_CONNECTION_STATUS;
   // the url string with the auth providet url
   // to which the connection is established
   authProviderURL: string | undefined;
@@ -49,7 +47,7 @@ export interface ICAConnection {
    * @param {TUserIdentityVersion} v - identity version
    */
   isVersionSupported(v: TUserIdentityVersion): boolean;
-  // connect to firebase
+  // connect to Firebase database in the anonymous mode
   connect(
     configuration: ICAConnectionConfigurationFirebase
   ): Promise<boolean | Error>;
@@ -83,4 +81,15 @@ export interface ICAConnection {
   delete(
     signUpCredentials?: ICAConnectionSignUpCredentials
   ): Promise<Error | boolean>;
+  /**
+   * return a credentials for the user
+   * with the id = userId.
+   * For the v1 the user id must be a uuidV4.
+   * For the v2 the user id must be a login/email/uuid.
+   * under which the user was registered the
+   * Firebase account.
+   */
+  getUserCredentials(
+    userId: string
+  ): Promise<Error | null | TCentralAuthorityUserCryptoCredentials>;
 }
