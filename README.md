@@ -74,6 +74,7 @@ version of the firebase rules which allowed userId with guid or user login as us
 ```
 
 another version of the firebase rules which allowed userId only with the auth.uid in the user idenitity string
+this version of the rules must be used if the user allowed only a one user identity per account
 
 ```
 {
