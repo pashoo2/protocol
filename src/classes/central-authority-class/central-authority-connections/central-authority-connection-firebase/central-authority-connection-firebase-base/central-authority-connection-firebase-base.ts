@@ -31,6 +31,7 @@ import {
   CA_CONNECTION_ERROR_ACCOUNT_NOT_VERIFIED_CODE,
   CA_CONNECTION_ERROR_ACCOUNT_CAN_NOT_BE_USED_ANYMORE,
 } from '../../central-authority-connections-const/central-authority-connections-const';
+import { valiateCAAuthConnectionFirebaseUtilsConnetionConfiguration } from '../central-authority-connection-firebase-utils/central-authority-connection-firebase-utils.validators';
 
 /**
  *
@@ -41,6 +42,8 @@ import {
  * @class CAConnectionWithFirebase
  */
 export class CAConnectionWithFirebaseBase {
+  public static validateConfiguration = valiateCAAuthConnectionFirebaseUtilsConnetionConfiguration;
+
   // if the application is connected with the remote Firebase
   public isConnected: boolean = false;
 

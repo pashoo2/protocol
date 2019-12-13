@@ -7,6 +7,11 @@ import { ICAConnectionConfigurationFirebase } from './central-authority-connecti
 import { TUserIdentityVersion } from '../central-authority-class-user-identity/central-authority-class-user-identity.types';
 import { CA_CONNECTION_STATUS } from './central-authority-connections-const/central-authority-connections-const';
 
+/**
+ * the base url of auth provider
+ */
+export type TCAAuthProviderURL = string;
+
 export interface ICAConnectionUserAuthorizedResult {
   cryptoCredentials: TCentralAuthorityUserCryptoCredentials;
   profile: ICentralAuthorityUserProfile;

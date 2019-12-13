@@ -66,6 +66,7 @@
     "lodash.defaultsdeep": "^4.6.1",
     "lodash.memoize": "^4.1.2",
     "lz-string": "^1.4.4",
+    "normalize-url": "^4.5.0",
     "orbit-db": "^0.22.0",
     "orbit-db-access-controllers": "^0.2.4",
     "orbit-db-cache": "^0.3.0",
