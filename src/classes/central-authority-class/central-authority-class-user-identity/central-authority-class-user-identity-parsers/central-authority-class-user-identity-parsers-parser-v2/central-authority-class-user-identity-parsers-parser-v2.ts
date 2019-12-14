@@ -1,3 +1,4 @@
+import { normalizeUrl } from 'utils/common-utils/common-utils-url';
 import { IParser } from '../central-authority-class-user-identity-parsers.types';
 import { ICAUserIdentityDescription } from '../../central-authority-class-user-identity.types';
 import {
@@ -5,7 +6,6 @@ import {
   CA_USER_IDENTITY_V2_AUTH_PROVIDER_URL_DELIMETER,
 } from './central-authority-class-user-identity-parsers-parser-v2.const';
 import { getUserIdentityDescription } from '../central-authority-class-user-identity-parsers.utils';
-import { CA_USER_IDENTITY_UNIQUE_IDENTIFIER_MAX_LENGTH } from 'classes/central-authority-class/central-authority-class-const/central-authority-class-const';
 
 /**
  * this will deserizlize the unique identifier
@@ -39,11 +39,13 @@ export const CAUserIdentityParserV2: IParser = (
     const userIdentity = userIdentityWithoutVersion.slice(
       delimeterPosition + 1
     );
-    const authProviderIdentity = userIdentityWithoutVersion.slice(
-      0,
-      delimeterPosition
+    const authProviderIdentity = normalizeUrl(
+      userIdentityWithoutVersion.slice(0, delimeterPosition)
     );
 
+    if (authProviderIdentity instanceof Error) {
+      return authProviderIdentity;
+    }
     return getUserIdentityDescription(userIdentity, authProviderIdentity);
   }
   return new Error('The given user identity have a wrong type');

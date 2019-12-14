@@ -3,9 +3,11 @@ export const CA_AUTH_CONNECTION_FIREBASE_UTILS_VALIDATOR_SCHEME_CONNECTION_OPTIO
   properties: {
     apiKey: {
       type: 'string',
+      minLength: 5,
     },
     authDomain: {
       type: 'string',
+      minLength: 1,
     },
     databaseURL: {
       type: 'string',
@@ -13,12 +15,14 @@ export const CA_AUTH_CONNECTION_FIREBASE_UTILS_VALIDATOR_SCHEME_CONNECTION_OPTIO
     },
     projectId: {
       type: 'string',
+      minLength: 5,
     },
     storageBucket: {
       type: 'string',
     },
     messagingSenderId: {
       type: 'string',
+      minLength: 5,
     },
   },
   required: [

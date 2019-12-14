@@ -1,3 +1,4 @@
+import { normalizeUrl } from 'utils/common-utils/common-utils-url';
 import { ICAUserUniqueIdentifierDescription } from '../../central-authority-class-user-identity.types';
 import { TCentralAuthorityUserIdentity } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 import {
@@ -26,8 +27,12 @@ export const formatterV1 = (
     [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: authProviderURI,
     [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]: userUniqueIdentifier,
   } = userIdentityDescription;
+  const normalizedAuthProviderUrl = normalizeUrl(authProviderURI);
 
-  return `${version}${authProviderURI}${userUniqueIdentifier}`;
+  if (normalizedAuthProviderUrl instanceof Error) {
+    return normalizedAuthProviderUrl;
+  }
+  return `${version}${normalizedAuthProviderUrl}${userUniqueIdentifier}`;
 };
 
 export default formatterV1;

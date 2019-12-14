@@ -103,7 +103,7 @@ export class CAConnectionsPool {
       options,
     } = authProviderConnectionConfiguration;
 
-    if (!caProvider) {
+    if (caProvider == null) {
       throw new Error('Provider type must be defined');
     }
     if (!validateCAConnectionAuthProviderType(caProvider)) {
@@ -135,7 +135,7 @@ export class CAConnectionsPool {
       )
     ) {
       throw new Error(
-        `The configuration for the auth provider ${authProviderUrlNormalized} is not specified`
+        `The configuration for the auth provider ${authProviderUrlNormalized} is not valid`
       );
     }
 

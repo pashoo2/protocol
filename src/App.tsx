@@ -26,6 +26,7 @@ import { runTestCAIdentityV2 } from 'test/central-authority-identity.test/centra
 import { runCACredentialsIdentityStorageTest } from 'test/central-authority.test/central-authority-storage-identity-credentials.test';
 import { runTestCAConnectionsUtilsValidators } from 'test/central-authority.test/central-authority-connection.test/central-authority-connections-utils.validators.test';
 import { runTestCommonUtilsURL } from 'test/common-utils.test/common-utils-url.test';
+import { runTestCAConnectionsPoolTest } from 'test/central-authority.test/central-authority-connection.test/central-authority-connections-pool.test/central-authority-connections-pool.test';
 
 // import { runCACredentialsIdentityStorageTest } from 'test/central-authority.test/central-authority-storage-identity-credentials.test';
 // import { runTestCachingDecorator } from 'test/common-utils.test/common-utils.test';
@@ -69,7 +70,7 @@ const runTest = async () => {
   // runSwarmMessageFieldsValidator();
   // runTestFirebaseCredentialsStorage();
   // runTestCAConnectionsUtilsValidators();
-  runTestCommonUtilsURL();
+  runTestCAConnectionsPoolTest();
   runMocha();
 };
 
