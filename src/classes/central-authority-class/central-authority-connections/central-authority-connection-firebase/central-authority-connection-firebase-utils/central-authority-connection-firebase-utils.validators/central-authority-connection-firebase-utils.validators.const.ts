@@ -21,4 +21,12 @@ export const CA_AUTH_CONNECTION_FIREBASE_UTILS_VALIDATOR_SCHEME_CONNECTION_OPTIO
       type: 'string',
     },
   },
+  required: [
+    'apiKey',
+    'authDomain',
+    'databaseURL',
+    'projectId',
+    'storageBucket',
+    'messagingSenderId',
+  ],
 };

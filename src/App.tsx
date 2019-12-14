@@ -24,7 +24,7 @@ import { runTestClientTimeSynced } from 'test/common-utils-date-time-synced.test
 import { runSwarmMessageFieldsValidator } from 'test/validation-messaging.test/swarm-message.test/swarm-message.fields-validator.test';
 import { runTestCAIdentityV2 } from 'test/central-authority-identity.test/central-authority-identity-v2.test';
 import { runCACredentialsIdentityStorageTest } from 'test/central-authority.test/central-authority-storage-identity-credentials.test';
-import { runTestConnectToFirebaseAnonymousely } from 'test/central-authority.test/central-authority-connection.test/central-authority-connection.test.firebase/central-authority-connection.test.firebase.anonymousely';
+import { runTestCAConnectionsUtilsValidators } from 'test/central-authority.test/central-authority-connection.test/central-authority-connections-utils.validators.test';
 
 // import { runCACredentialsIdentityStorageTest } from 'test/central-authority.test/central-authority-storage-identity-credentials.test';
 // import { runTestCachingDecorator } from 'test/common-utils.test/common-utils.test';
@@ -66,7 +66,8 @@ const runTest = async () => {
   // runTestHttpRequest();
   // runTestClientTimeSynced();
   // runSwarmMessageFieldsValidator();
-  runTestConnectToFirebaseAnonymousely();
+  // runTestFirebaseCredentialsStorage();
+  runTestCAConnectionsUtilsValidators();
   runMocha();
 };
 

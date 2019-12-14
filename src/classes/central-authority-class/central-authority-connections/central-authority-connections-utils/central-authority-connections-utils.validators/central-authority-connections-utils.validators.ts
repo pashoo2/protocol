@@ -13,7 +13,13 @@ export const validateCAConnectionAuthProviderType = (
 
 export const validateCAConnectionAuthProviderUrl = (
   caAuthProviderUrl: string
-): caAuthProviderUrl is TCAAuthProviderURL => isURL(caAuthProviderUrl);
+): caAuthProviderUrl is TCAAuthProviderURL => {
+  try {
+    return isURL(caAuthProviderUrl);
+  } catch {
+    return false;
+  }
+};
 
 export const validateCAConnectionAuthProviderConnectionConfiguration = (
   authProviderType: CA_CONNECTION_AUTH_PROVIDERS,
