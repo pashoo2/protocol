@@ -1,15 +1,18 @@
 import { ICAConnectionConfigurationFirebase } from '../central-authority-connection-firebase/central-authority-connection-firebase.types.configuration';
 import {
   ICAConnection,
-  TCAAuthProviderURL,
+  TCAAuthProviderIdentity,
+  TCAConnectionsAuthProviderConnectionOptions,
+  ICAConnectionSignUpCredentials,
 } from '../central-authority-connections.types';
 import { CA_CONNECTION_AUTH_PROVIDERS } from '../central-authority-connections.const';
+import { ICentralAuthorityUserProfile } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 
 /**
  * options to connect with
  * auth provider extended by the provider type
  */
-export type TAuthProviderConnectionOptions = ICAConnectionConfigurationFirebase;
+export type TAuthProviderConnectionOptions = TCAConnectionsAuthProviderConnectionOptions;
 
 /**
  * configuration to establish connectoin
@@ -17,7 +20,7 @@ export type TAuthProviderConnectionOptions = ICAConnectionConfigurationFirebase;
  */
 export interface IAuthProviderConnectionConfiguration {
   options: TAuthProviderConnectionOptions;
-  caProviderUrl: TCAAuthProviderURL;
+  caProviderUrl: TCAAuthProviderIdentity;
   caProvider: CA_CONNECTION_AUTH_PROVIDERS;
 }
 
@@ -45,7 +48,7 @@ export interface ICAConnectionsPoolOptions {
 export interface ICAConnectionsPoolCurrentConnections {
   options: TAuthProviderConnectionOptions;
   caProvider: CA_CONNECTION_AUTH_PROVIDERS;
-  caProviderUrl: TCAAuthProviderURL;
+  caProviderUrl: TCAAuthProviderIdentity;
   connection?: ICAConnection;
 }
 
@@ -60,4 +63,27 @@ export interface ICAConnectionsPoolCurrentConnections {
  */
 export interface ICAConnectionsPoolConnections {
   [key: string]: ICAConnectionsPoolCurrentConnections;
+}
+
+export interface ICAConnectionPool {
+  // establish a new connection with the auth provider or returns an existing
+  getConnection(
+    authProviderUrl: TCAAuthProviderIdentity
+  ): Promise<Error | ICAConnection>;
+  // establish a new connection with the auth provider or returns an existing
+  connect(
+    authProviderUrl: TCAAuthProviderIdentity
+  ): Promise<Error | ICAConnection>;
+  // authorize on the auth provider service or return an existing connection authorized on
+  authorize(
+    authProviderUrl: TCAAuthProviderIdentity,
+    signUpCredentials: ICAConnectionSignUpCredentials,
+    profile?: Partial<ICentralAuthorityUserProfile>
+  ): Promise<Error | ICAConnection>;
+  // disconnect from the auth provider service
+  disconnect(authProviderUrl: TCAAuthProviderIdentity): Promise<Error | void>;
+  // disconnect from all the connected providers
+  disconnectAll(): Promise<Error | void>;
+  // sign out from the service currently authorized throught
+  signOut(): Promise<Error | void>;
 }

@@ -1,14 +1,24 @@
+import { normalizeUrl } from 'utils/common-utils/common-utils-url';
 import {
   ICAConnectionsPoolOptions,
   ICAConnectionsPoolConnections,
   IAuthProviderConnectionConfiguration,
   ICAConnectionsPoolCurrentConnections,
+  ICAConnectionPool,
 } from './central-authority-connections-pool.types';
 import {
   normalizeCAConnectionAuthProviderURL,
   validateCAConnectionAuthProviderType,
   validateCAConnectionAuthProviderConnectionConfiguration,
+  validateCAConnectionAuthProviderUrl,
 } from '../central-authority-connections-utils/central-authority-connections-utils';
+import {
+  ICAConnection,
+  TCAAuthProviderIdentity,
+  ICAConnectionSignUpCredentials,
+} from '../central-authority-connections.types';
+import { getConnectionConstructorAuthProviderType } from '../central-authority-connections-utils/central-authority-connections-utils.common/central-authority-connections-utils.common';
+import { ICentralAuthorityUserProfile } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 
 /**
  * This is used to establish connections
@@ -18,7 +28,7 @@ import {
  * @export
  * @class CAConnectionsPool
  */
-export class CAConnectionsPool {
+export class CAConnectionsPool implements ICAConnectionPool {
   /**
    * States of connections to auth
    * providers
@@ -28,6 +38,44 @@ export class CAConnectionsPool {
    * @memberof CAConnectionsPool
    */
   protected providersConnectionState: ICAConnectionsPoolConnections = {};
+
+  /**
+   * connection throught which the user
+   * is authorized on auth provider service.
+   * Search trought all the connections
+   * connection with the auth flag.
+   *
+   * @readonly
+   * @protected
+   * @type {(ICAConnection | void)}
+   * @memberof CAConnectionsPool
+   */
+  protected get authConnection(): {
+    connection: ICAConnection;
+    authProviderUrl: string;
+  } | void {
+    const { providersConnectionState } = this;
+    const providersConnectionsStates = Object.values(providersConnectionState);
+    let idx = 0;
+    let authProviderConnection;
+    let authProviderUrl;
+    const len = providersConnectionsStates.length;
+
+    while ((idx += 1) < len) {
+      ({
+        connection: authProviderConnection,
+        caProviderUrl: authProviderUrl,
+      } = providersConnectionsStates[idx]);
+      if (authProviderConnection && authProviderConnection.isAuthorized) {
+        return {
+          connection: authProviderConnection,
+          authProviderUrl:
+            authProviderUrl ||
+            (authProviderConnection.authProviderURL as string),
+        };
+      }
+    }
+  }
 
   /**
    * Creates an instance of CAConnectionsPool.
@@ -40,14 +88,316 @@ export class CAConnectionsPool {
   }
 
   /**
-   * set the current state of a connection
-   * to the auth provider
+   * at now it is alias for the connect method
+   *
+   * @param {TCAAuthProviderIdentity} authProvider
+   * @returns
+   * @memberof CAConnectionsPool
+   */
+  public getConnection(authProvider: TCAAuthProviderIdentity) {
+    return this.connect(authProvider);
+  }
+
+  /**
+   * establish a new connection with the auth
+   * provider or returns an existing connection
+   * if it is active(isConnected = true)
+   *
+   * @param {TCAAuthProviderIdentity} authProviderUrl
+   * @returns {(Promise<ICAConnection | Error>)}
+   * @memberof CAConnectionsPool
+   */
+  public async connect(
+    authProviderUrl: TCAAuthProviderIdentity
+  ): Promise<ICAConnection | Error> {
+    if (!validateCAConnectionAuthProviderUrl(authProviderUrl)) {
+      return new Error(
+        'The url provided as the auth provider service url is not valid'
+      );
+    }
+
+    const currentConnectionWithAuthProvider = this.getActiveConnectionWithAuthProvider(
+      authProviderUrl
+    );
+
+    if (currentConnectionWithAuthProvider instanceof Error) {
+      return currentConnectionWithAuthProvider;
+    }
+
+    const connectionWithAuthProvider = await this.connectWithAuthProvider(
+      authProviderUrl
+    );
+
+    if (connectionWithAuthProvider instanceof Error) {
+      return connectionWithAuthProvider;
+    }
+
+    const setConnectionInAuhProviderConnectionStatesStore = this.setConnectionWithAuthProvider(
+      authProviderUrl,
+      connectionWithAuthProvider
+    );
+
+    if (setConnectionInAuhProviderConnectionStatesStore instanceof Error) {
+      console.error(setConnectionInAuhProviderConnectionStatesStore);
+
+      const disconnectResult = await connectionWithAuthProvider.disconnect();
+
+      if (disconnectResult instanceof Error) {
+        console.error(disconnectResult);
+      }
+      return new Error('Failed to set connection with auth provider');
+    }
+    return connectionWithAuthProvider;
+  }
+
+  /**
+   * authorize on the service or return an existing
+   * connection which is the user authorized through
+   *
+   * @param {TCAAuthProviderIdentity} authProviderUrl
+   * @param {ICAConnectionSignUpCredentials} signUpCredentials
+   * @param {Partial<ICentralAuthorityUserProfile>} [profile]
+   * @returns {(Promise<Error | ICAConnection>)}
+   * @memberof CAConnectionsPool
+   */
+  public async authorize(
+    authProviderUrl: TCAAuthProviderIdentity,
+    signUpCredentials: ICAConnectionSignUpCredentials,
+    profile?: Partial<ICentralAuthorityUserProfile>
+  ): Promise<Error | ICAConnection> {
+    if (!validateCAConnectionAuthProviderUrl(authProviderUrl)) {
+      return new Error(
+        'The url provided as the auth provider service url is not valid'
+      );
+    }
+
+    const { authConnection: currentConnectionWithProviderAuthOn } = this;
+    const normalizedUrl = normalizeUrl(authProviderUrl);
+
+    if (normalizedUrl instanceof Error) {
+      console.error(normalizedUrl);
+      return new Error('Failed to normalize the url of the auth provider');
+    }
+    if (currentConnectionWithProviderAuthOn) {
+      const {
+        authProviderUrl: currentAuthProviderUrl,
+        connection,
+      } = currentConnectionWithProviderAuthOn;
+      const normalizedUrlAuthProviderCurrent = normalizeUrl(
+        currentAuthProviderUrl
+      );
+
+      if (normalizedUrlAuthProviderCurrent !== normalizedUrl) {
+        return new Error(
+          `Already authorized on the ${normalizedUrlAuthProviderCurrent} service, differ from the requested ${authProviderUrl}`
+        );
+      }
+      return connection;
+    }
+
+    const connectionWithAuthProvider = await this.connect(authProviderUrl);
+
+    if (connectionWithAuthProvider instanceof Error) {
+      console.error(connectionWithAuthProvider);
+      return new Error(
+        `Failed to connect with the auth provider ${authProviderUrl}`
+      );
+    }
+
+    const authResult = connectionWithAuthProvider.authorize(
+      signUpCredentials,
+      profile
+    );
+
+    if (authResult instanceof Error) {
+      console.error(authResult);
+      return new Error(
+        `Failed to authorize with the auth provider ${authProviderUrl}`
+      );
+    }
+    return connectionWithAuthProvider;
+  }
+
+  /**
+   * disconnect from the auth provider.
+   * succed even if not connected to.
+   *
+   * @param {TCAAuthProviderIdentity} authProviderUrl
+   * @returns {(Promise<void | Error>)}
+   * @memberof CAConnectionsPool
+   */
+  public async disconnect(
+    authProviderUrl: TCAAuthProviderIdentity
+  ): Promise<void | Error> {
+    const currentConnectionWithAuthProvider = this.getActiveConnectionWithAuthProvider(
+      authProviderUrl
+    );
+
+    if (currentConnectionWithAuthProvider instanceof Error) {
+      return currentConnectionWithAuthProvider;
+    }
+    if (currentConnectionWithAuthProvider) {
+      const disconnectionResult = currentConnectionWithAuthProvider.disconnect();
+
+      if (disconnectionResult instanceof Error) {
+        console.error(disconnectionResult);
+        return new Error(
+          `Failed to disconnect from the auth provider ${authProviderUrl}`
+        );
+      }
+    }
+    return this.unsetConnectionWithAuthProvider(authProviderUrl);
+  }
+
+  /**
+   * disconnect from all the active connections
+   *
+   * @returns {(Promise<Error | void>)}
+   * @memberof CAConnectionsPool
+   */
+  public async disconnectAll(): Promise<Error | void> {
+    const { providersConnectionState } = this;
+    const providerConnectionStateValues = Object.values(
+      providersConnectionState
+    );
+    const disconnectResults = [];
+    const len = providerConnectionStateValues.length;
+    let idx = 0;
+    let connectionToAuthProviderStateDesc;
+    let connectionToAuthProvider;
+    let errorMessage = '';
+
+    while ((idx += 1) < len) {
+      connectionToAuthProviderStateDesc = providerConnectionStateValues[idx];
+      ({
+        connection: connectionToAuthProvider,
+      } = connectionToAuthProviderStateDesc);
+      if (connectionToAuthProvider) {
+        const connectionToAuthProviderUrl =
+          connectionToAuthProviderStateDesc.caProviderUrl;
+
+        if (connectionToAuthProvider.isConnected) {
+          disconnectResults.push(
+            connectionToAuthProvider
+              .disconnect()
+              .then((result) => {
+                if (result instanceof Error) {
+                  console.error(result);
+                  errorMessage += `/nThe error has occured when disconnect from the auth provider ${connectionToAuthProviderUrl}`;
+                } else {
+                  this.unsetConnectionWithAuthProvider(
+                    connectionToAuthProviderUrl
+                  );
+                }
+              })
+              .catch((err) => {
+                console.error(err);
+                errorMessage += `/nCrashed while disconnect from the auth provider ${connectionToAuthProviderUrl}`;
+              })
+          );
+        }
+        this.unsetConnectionWithAuthProvider(connectionToAuthProviderUrl);
+      }
+    }
+    // wait till all connections will be pro
+    await Promise.all(disconnectResults);
+    if (errorMessage) {
+      return new Error(errorMessage);
+    }
+  }
+
+  /**
+   * sign out from the auth provider service
+   * which is currently authorized on
+   *
+   * @returns {(Promise<Error | void>)}
+   * @memberof CAConnectionsPool
+   */
+  public async signOut(): Promise<Error | void> {
+    const { authConnection } = this;
+
+    if (authConnection) {
+      const { connection, authProviderUrl } = authConnection;
+
+      if (connection) {
+        const signOutResult = await connection.signOut();
+
+        if (signOutResult instanceof Error) {
+          console.error(signOutResult);
+          return new Error(
+            `The error has occurred when sign out from the ${authProviderUrl}`
+          );
+        }
+        if (signOutResult !== true) {
+          return new Error(
+            `An unknown error has occurred when signOut from the ${authProviderUrl}`
+          );
+        }
+        // unset the connection cause disconnected when signOut
+        this.unsetConnectionWithAuthProvider(authProviderUrl);
+      }
+    }
+  }
+
+  /**
+   * returns the current state of a connection
+   * to the auth provider.
+   *
+   * @protected
+   * @param {TCAAuthProviderIdentity} authProviderUrl
+   * @returns {(ICAConnectionsPoolCurrentConnections | undefined | Error)}
+   * @memberof CAConnectionsPool
+   */
+  protected getAuthProviderStateDesc(
+    authProviderUrl: TCAAuthProviderIdentity
+  ): ICAConnectionsPoolCurrentConnections | undefined | Error {
+    const normalizedUrl = normalizeUrl(authProviderUrl);
+
+    if (normalizedUrl instanceof Error) {
+      console.error(normalizedUrl);
+      return new Error('The url is not valid');
+    }
+
+    const { providersConnectionState } = this;
+
+    return providersConnectionState[normalizedUrl];
+  }
+
+  /**
+   * returns connection which is active
+   * and the flag isConnected = true
+   *
+   * @protected
+   * @param {TCAAuthProviderIdentity} authProviderUrl
+   * @returns {(ICAConnection | void | Error)}
+   * @memberof CAConnectionsPool
+   */
+  protected getActiveConnectionWithAuthProvider(
+    authProviderUrl: TCAAuthProviderIdentity
+  ): ICAConnection | void | Error {
+    const authProviderState = this.getAuthProviderStateDesc(authProviderUrl);
+
+    if (authProviderState instanceof Error) {
+      return authProviderState;
+    }
+    if (authProviderState) {
+      const { connection } = authProviderState;
+
+      if (connection && connection.isConnected) {
+        return connection;
+      }
+    }
+  }
+
+  /**
+   * updates the current state of connection
+   * with the auth provider.
    *
    * @protected
    * @param {ICAConnectionsPoolCurrentConnections} authProviderConnectionState
    * @memberof CAConnectionsPool
    */
-  protected setStateForAuthProvider(
+  protected updateStateAuthProvider(
     authProviderConnectionState: Partial<
       ICAConnectionsPoolCurrentConnections
     > & { caProviderUrl: ICAConnectionsPoolCurrentConnections['caProviderUrl'] }
@@ -76,6 +426,154 @@ export class CAConnectionsPool {
     } else {
       Object.assign(existingState, authProviderConnectionState);
     }
+  }
+
+  /**
+   * set an active connection with an
+   * auth provider in the auth
+   * providers state.
+   *
+   * @protected
+   * @param {TCAAuthProviderIdentity} authProviderUrl
+   * @param {ICAConnection} connection
+   * @returns
+   * @memberof CAConnectionsPool
+   */
+  protected setConnectionWithAuthProvider(
+    authProviderUrl: TCAAuthProviderIdentity,
+    connection: ICAConnection
+  ) {
+    const authProviderUrlNormalized = normalizeUrl(authProviderUrl);
+
+    if (authProviderUrlNormalized instanceof Error) {
+      console.error(authProviderUrlNormalized);
+      return new Error('The url is not valid');
+    }
+
+    if (!connection) {
+      return new Error(
+        `Connection with the auth provider ${authProviderUrl} must be specified`
+      );
+    }
+    if (
+      typeof connection.authorize !== 'function' ||
+      typeof connection.connect !== 'function'
+    ) {
+      return new Error('The instance of the CAConnection is not valid');
+    }
+    if (!connection.isConnected) {
+      return new Error('The connection must be in active state');
+    }
+
+    const existingConnection = this.getActiveConnectionWithAuthProvider(
+      authProviderUrl
+    );
+
+    if (existingConnection instanceof Error) {
+      return existingConnection;
+    }
+    if (existingConnection) {
+      return new Error(
+        `Connection with the ${authProviderUrl} is already exists`
+      );
+    }
+    return this.updateStateAuthProvider({
+      connection,
+      caProviderUrl: authProviderUrl,
+    });
+  }
+
+  /**
+   * unset the current connection in the auth provider
+   * connections states store
+   *
+   * @protected
+   * @memberof CAConnectionsPool
+   */
+  protected unsetConnectionWithAuthProvider(
+    authProviderUrl: TCAAuthProviderIdentity
+  ): Error | void {
+    return this.updateStateAuthProvider({
+      caProviderUrl: authProviderUrl,
+      connection: undefined,
+    });
+  }
+
+  /**
+   * establish a new connection with the auth
+   * provider.
+   *
+   * @protected
+   * @param {TCAAuthProviderIdentity} authProviderUrl
+   * @returns {(Promise<Error | ICAConnection>)}
+   * @memberof CAConnectionsPool
+   */
+  protected async connectWithAuthProvider(
+    authProviderUrl: TCAAuthProviderIdentity
+  ): Promise<Error | ICAConnection> {
+    const normalizedAuthProviderUrl = normalizeUrl(authProviderUrl);
+
+    if (normalizedAuthProviderUrl instanceof Error) {
+      console.error(normalizedAuthProviderUrl);
+      return new Error('The url provided for the auth provider is not valid');
+    }
+
+    const stateOfAuthProvider = this.getAuthProviderStateDesc(authProviderUrl);
+
+    if (stateOfAuthProvider instanceof Error) {
+      console.error(stateOfAuthProvider);
+      return new Error(
+        `The configuration for the ${authProviderUrl} is not valid`
+      );
+    }
+    if (!stateOfAuthProvider) {
+      return new Error(`The url provided ${authProviderUrl} is not known`);
+    }
+
+    const { options, caProvider } = stateOfAuthProvider;
+
+    if (!options) {
+      return new Error(
+        `Connection options is not specified for the auth provider ${authProviderUrl}`
+      );
+    }
+    if (!caProvider) {
+      return new Error('Auth provider type is not specified');
+    }
+
+    const ConnectionConstructor = getConnectionConstructorAuthProviderType(
+      caProvider
+    );
+
+    if (!ConnectionConstructor) {
+      return new Error(
+        `There is no constructor class for the auth provider ${authProviderUrl}`
+      );
+    }
+    if (ConnectionConstructor instanceof Error) {
+      console.error(ConnectionConstructor);
+      return new Error(
+        `An error has occurred on define constructor class for the auth provider ${authProviderUrl}`
+      );
+    }
+
+    let connectionWithAuthProvider;
+    try {
+      connectionWithAuthProvider = new ConnectionConstructor();
+    } catch (err) {
+      console.error(err);
+      return new Error('The error has occurred when construct the connection');
+    }
+
+    const connectionResult = await connectionWithAuthProvider.connect(options);
+
+    if (connectionResult instanceof Error) {
+      console.error(connectionResult);
+      return new Error(
+        `Failed to connect with the auth provider ${authProviderUrl}`
+      );
+    }
+    return connectionWithAuthProvider;
   }
 
   /**
@@ -139,7 +637,7 @@ export class CAConnectionsPool {
       );
     }
 
-    const setAuthProviderConnectionStateResult = this.setStateForAuthProvider({
+    const setAuthProviderConnectionStateResult = this.updateStateAuthProvider({
       caProvider,
       caProviderUrl,
       options,

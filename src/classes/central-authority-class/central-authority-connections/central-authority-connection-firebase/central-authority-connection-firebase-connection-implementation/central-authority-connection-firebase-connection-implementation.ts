@@ -230,6 +230,12 @@ export class CAConnectionWithFirebaseImplementation
         return this.onAuthorizationFailed(isVerifiedResult);
       }
 
+      const connectWithStorageResult = await this.startConnectionWithCredentialsStorage();
+
+      if (connectWithStorageResult instanceof Error) {
+        console.error(connectWithStorageResult);
+        return new Error('Failed to connect to the credentials storage');
+      }
       // set the user login to use it to generate
       // crypto credentials
       this.setUserLogin(firebaseCredentials.login);
@@ -283,29 +289,25 @@ export class CAConnectionWithFirebaseImplementation
     return authHandleResult;
   }
 
+  /**
+   * disconnect from the app and sign out
+   * if authorized
+   *
+   * @returns
+   * @memberof CAConnectionWithFirebaseImplementation
+   */
   public async disconnect() {
-    this.unsetIsAnonymousely();
-    this.unsetValueofCredentialsSignUpOnAuthorizedSuccess();
+    if (this.isAuthorized) {
+      const signOutResult = await this.signOut();
 
-    const disconnectFromStorageResult = await this.disconnectCredentialsStorage();
-
-    if (disconnectFromStorageResult instanceof Error) {
-      return disconnectFromStorageResult;
-    }
-
-    const { app } = this;
-
-    if (app) {
-      try {
-        // disconect from the application
-        await app.delete();
-        return;
-      } catch (err) {
-        console.error(err);
-        return new Error('Failed to disconnect from the Firebase app');
+      if (signOutResult instanceof Error) {
+        return signOutResult;
+      }
+      if (signOutResult !== true) {
+        return new Error('An unknown error has occurred while sign out');
       }
     }
-    return new Error('There is no active Firebase App instance to close');
+    return this.disconnectFromTheApp();
   }
 
   public async delete(
@@ -519,6 +521,39 @@ export class CAConnectionWithFirebaseImplementation
       cryptoCredentials,
       this.generateNewCryptoCredentialsForConfigurationProvidedV2
     );
+  }
+
+  /**
+   * disconnect from the Firebase app
+   *
+   * @protected
+   * @returns {(Promise<Error | void>)}
+   * @memberof CAConnectionWithFirebaseImplementation
+   */
+  protected async disconnectFromTheApp(): Promise<Error | void> {
+      this.unsetIsAnonymousely();
+      this.unsetValueofCredentialsSignUpOnAuthorizedSuccess();
+
+      const disconnectFromStorageResult = await this.disconnectCredentialsStorage();
+
+      if (disconnectFromStorageResult instanceof Error) {
+          return disconnectFromStorageResult;
+      }
+
+      const { app } = this;
+
+      if (app) {
+          try {
+              // disconect from the application
+              await app.delete();
+              return;
+          } catch (err) {
+              console.error(err);
+              return new Error('Failed to disconnect from the Firebase app');
+          }
+      }
+      return new Error('There is no active Firebase App instance to close');
+
   }
 }
 

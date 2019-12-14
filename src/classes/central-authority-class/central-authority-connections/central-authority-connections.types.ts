@@ -8,9 +8,21 @@ import { TUserIdentityVersion } from '../central-authority-class-user-identity/c
 import { CA_CONNECTION_STATUS } from './central-authority-connections-const/central-authority-connections-const';
 
 /**
- * the base url of auth provider
+ * options to connect with
+ * auth provider extended by the provider type
  */
-export type TCAAuthProviderURL = string;
+export type TCAConnectionsAuthProviderConnectionOptions = ICAConnectionConfigurationFirebase;
+
+export interface ICAConnectionAuthProviderConstructor {
+  new (): ICAConnection;
+}
+
+/**
+ * A unique identifier for an auth provider.
+ * At this version the url of auth provider
+ * is use as.
+ */
+export type TCAAuthProviderIdentity = string;
 
 export interface ICAConnectionUserAuthorizedResult {
   cryptoCredentials: TCentralAuthorityUserCryptoCredentials;
@@ -100,4 +112,6 @@ export interface ICAConnection {
   getUserCredentials(
     userId: string
   ): Promise<Error | null | TCentralAuthorityUserCryptoCredentials>;
+  // disconnect from the remote server
+  disconnect(): Promise<Error | void>;
 }

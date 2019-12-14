@@ -1,5 +1,5 @@
 import memoize from 'lodash.memoize';
-import { TCAAuthProviderURL } from '../central-authority-connections.types';
+import { TCAAuthProviderIdentity } from '../central-authority-connections.types';
 import { validateCAConnectionAuthProviderUrl } from './central-authority-connections-utils.validators/central-authority-connections-utils.validators';
 import { normalizeUrl } from 'utils/common-utils/common-utils-url';
 
@@ -10,7 +10,9 @@ import { normalizeUrl } from 'utils/common-utils/common-utils-url';
  * @param authProviderUrl
  */
 export const normalizeCAConnectionAuthProviderURL = memoize(
-  (authProviderUrl: TCAAuthProviderURL): Error | TCAAuthProviderURL => {
+  (
+    authProviderUrl: TCAAuthProviderIdentity
+  ): Error | TCAAuthProviderIdentity => {
     if (!authProviderUrl) {
       return new Error('Auth provider url is not defined');
     }
