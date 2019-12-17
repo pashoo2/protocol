@@ -67,7 +67,13 @@ export interface ICAConnection {
    * @param {TUserIdentityVersion} v - identity version
    */
   isVersionSupported(v: TUserIdentityVersion): boolean;
-  // connect to Firebase database in the anonymous mode
+  /**
+   * initialize connction with the remote auth provider
+   *
+   * @param {ICAConnectionConfigurationFirebase} configuration
+   * @returns {(Promise<boolean | Error>)}
+   * @memberof ICAConnection
+   */
   connect(
     configuration: ICAConnectionConfigurationFirebase
   ): Promise<boolean | Error>;

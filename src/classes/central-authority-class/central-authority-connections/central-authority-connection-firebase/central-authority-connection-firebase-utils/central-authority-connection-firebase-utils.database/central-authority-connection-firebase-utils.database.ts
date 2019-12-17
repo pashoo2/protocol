@@ -5,6 +5,8 @@ import {
 } from './central-authority-connection-firebase-utils.database.const';
 
 export class CAConnectionWithFirebaseUtilDatabase {
+  protected app?: firebase.app.App;
+
   protected database?: firebase.database.Database;
 
   protected wasConnected: boolean = false;
@@ -56,13 +58,16 @@ export class CAConnectionWithFirebaseUtilDatabase {
   }
 
   public async connect(): Promise<boolean | Error> {
-    const { isConnected } = this;
+    const { isConnected, app } = this;
 
     if (isConnected) {
       return true;
     }
+    if (!app) {
+      return new Error('The app is not defined');
+    }
     try {
-      const database = firebase.database();
+      const database = app.database();
 
       await database.goOnline();
       this.setDatabaseInstance(database);
@@ -99,12 +104,6 @@ export class CAConnectionWithFirebaseUtilDatabase {
     } catch (err) {
       console.error(err);
       return new Error('Failed to go offline before destroy the application');
-    }
-    try {
-      await firebase.app().delete();
-    } catch (err) {
-      console.error(err);
-      return new Error('Failed to disconnect from the firebase server');
     }
     this.setWasConnectedStatus(false);
     return true;

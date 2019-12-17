@@ -83,7 +83,7 @@ export interface ICAConnectionPool {
   // disconnect from the auth provider service
   disconnect(authProviderUrl: TCAAuthProviderIdentity): Promise<Error | void>;
   // disconnect from all the connected providers
-  disconnectAll(): Promise<Error | void>;
+  close(): Promise<Error | void>;
   // sign out from the service currently authorized throught
   signOut(): Promise<Error | void>;
 }

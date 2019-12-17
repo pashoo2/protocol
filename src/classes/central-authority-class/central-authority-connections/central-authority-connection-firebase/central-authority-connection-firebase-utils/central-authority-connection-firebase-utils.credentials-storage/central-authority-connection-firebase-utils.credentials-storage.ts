@@ -32,8 +32,6 @@ import { CA_CONNECTION_STATUS } from 'classes/central-authority-class/central-au
 export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionWithFirebaseUtilDatabase {
   protected connectionToFirebase?: ICAConnectionFirebase;
 
-  protected app?: firebase.app.App;
-
   /**
    * returns a string will used to store/read value of
    * the user credentials

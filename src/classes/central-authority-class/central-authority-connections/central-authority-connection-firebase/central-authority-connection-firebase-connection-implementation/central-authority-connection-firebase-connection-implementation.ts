@@ -1,6 +1,6 @@
-import memoize from 'lodash.memoize';
-import * as firebase from 'firebase/app';
+import firebase from 'firebase';
 import 'firebase/auth';
+import memoize from 'lodash.memoize';
 import CAConnectionWithFirebaseBase from '../central-authority-connection-firebase-base/central-authority-connection-firebase-base';
 import {
   ICAConnection,
@@ -130,7 +130,13 @@ export class CAConnectionWithFirebaseImplementation
   public async connect(
     configuration: ICAConnectionConfigurationFirebase
   ): Promise<boolean | Error> {
-    const resultConnection = super.connect(configuration);
+    // if there is an active apps exists then it is necessary
+    // to provide the app name, elswere the Firebase will throw
+    // an error.
+    const appName = firebase.apps.length
+      ? configuration.databaseURL
+      : undefined;
+    const resultConnection = await super.connect(configuration, appName);
 
     if (resultConnection instanceof Error) {
       return resultConnection;
@@ -207,8 +213,9 @@ export class CAConnectionWithFirebaseImplementation
       authHandleResult = this.valueofCredentialsSignUpOnAuthorizedSuccess!!;
     } else {
       // try to sign in with the credentials, then try to sign up
+      // const userLoggedPromise = this.waitingUserInit();
       const signInResult = await this.signIn(firebaseCredentials);
-
+      debugger;
       if (signInResult instanceof Error) {
         console.warn('Failed to sign in with the credentials given');
 
@@ -222,6 +229,16 @@ export class CAConnectionWithFirebaseImplementation
         }
       }
 
+      // const user = await userLoggedPromise;
+      // debugger;
+      // if (!user) {
+      //   return new Error('Failed to get the user authorized');
+      // }
+      // if (user instanceof Error) {
+      //   return new Error('Error on login');
+      // }
+      // if (!user.emailVerified) {
+      debugger;
       // check if the account was verfied by the user
       const isVerifiedResult = await this.chekIfVerifiedAccount();
 
@@ -229,6 +246,7 @@ export class CAConnectionWithFirebaseImplementation
         console.error('The account is not verified');
         return this.onAuthorizationFailed(isVerifiedResult);
       }
+      //}
 
       const connectWithStorageResult = await this.startConnectionWithCredentialsStorage();
 
@@ -297,7 +315,15 @@ export class CAConnectionWithFirebaseImplementation
    * @memberof CAConnectionWithFirebaseImplementation
    */
   public async disconnect() {
-    if (this.isAuthorized) {
+    const { app } = this;
+    if (!app) {
+      return;
+    }
+    debugger;
+    if ((app as any).isDeleted_) {
+      return;
+    }
+    if (this.status === CA_CONNECTION_STATUS.AUTHORIZED) {
       const signOutResult = await this.signOut();
 
       if (signOutResult instanceof Error) {
@@ -531,29 +557,28 @@ export class CAConnectionWithFirebaseImplementation
    * @memberof CAConnectionWithFirebaseImplementation
    */
   protected async disconnectFromTheApp(): Promise<Error | void> {
-      this.unsetIsAnonymousely();
-      this.unsetValueofCredentialsSignUpOnAuthorizedSuccess();
+    this.unsetIsAnonymousely();
+    this.unsetValueofCredentialsSignUpOnAuthorizedSuccess();
 
-      const disconnectFromStorageResult = await this.disconnectCredentialsStorage();
+    const disconnectFromStorageResult = await this.disconnectCredentialsStorage();
 
-      if (disconnectFromStorageResult instanceof Error) {
-          return disconnectFromStorageResult;
+    if (disconnectFromStorageResult instanceof Error) {
+      return disconnectFromStorageResult;
+    }
+
+    const { app } = this;
+
+    if (app) {
+      try {
+        // delete the application to allow connect to the Firebase with the same settings
+        await app.delete();
+      } catch (err) {
+        console.error(err);
+        return new Error('Failed to disconnect from the Firebase app');
       }
-
-      const { app } = this;
-
-      if (app) {
-          try {
-              // disconect from the application
-              await app.delete();
-              return;
-          } catch (err) {
-              console.error(err);
-              return new Error('Failed to disconnect from the Firebase app');
-          }
-      }
+    } else {
       return new Error('There is no active Firebase App instance to close');
-
+    }
   }
 }
 

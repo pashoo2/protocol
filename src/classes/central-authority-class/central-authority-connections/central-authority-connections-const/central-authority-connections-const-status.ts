@@ -8,7 +8,7 @@
  * @enum {number}
  */
 export enum CA_CONNECTION_STATUS {
+  DISCONNECTED,
   CONNECTED,
   AUTHORIZED,
-  DISCONNECTED,
 }

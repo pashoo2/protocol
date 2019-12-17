@@ -99,7 +99,10 @@ export class CAConnectionWithFirebaseBase {
     if (!currentUserData) {
       return false;
     }
-    return !!currentUserData.emailVerified;
+    if (!currentUserData.emailVerified) {
+      return false;
+    }
+    return true;
   }
 
   protected get databaseURL(): Error | string {
@@ -166,16 +169,22 @@ export class CAConnectionWithFirebaseBase {
    * to authorize in.
    *
    * @param {ICAConnectionConfigurationFirebase} configuration
+   * @param {string} name - name of the application,
+   * it's necessary to provide a name string if more than one Firebase
+   * applications will be used simultaneousely. But at the first time
+   * no name must be provided, cause it means that the DEFAULT application
+   * will be created, which is required by the Firebase.
    * @returns {(Promise<boolean | Error>)}
    * @memberof CAConnectionWithFirebaseBase
    */
   public async connect(
-    configuration: ICAConnectionConfigurationFirebase
+    configuration: ICAConnectionConfigurationFirebase,
+    name?: string
   ): Promise<boolean | Error> {
     let app;
 
     try {
-      app = firebase.initializeApp(configuration);
+      app = firebase.initializeApp(configuration, name);
       this.configuration = configuration;
     } catch (err) {
       console.error(err);
@@ -308,6 +317,25 @@ export class CAConnectionWithFirebaseBase {
     }
     this.setConnectionWithCredentialsStorage(connectionWithCredentialsStorage);
     return true;
+  }
+
+  protected async waitingUserInit(): Promise<void | firebase.User | Error> {
+    const isConnected = this.checkIfConnected();
+
+    if (isConnected instanceof Error) {
+      return new Error('The connection is not established');
+    }
+    if (!this.app) {
+      return new Error('The Firebase app is not defined');
+    }
+    return new Promise((res) => {
+      this.app!!.auth().onAuthStateChanged((user) => {
+        debugger;
+        if (user && user.email) {
+          res(user);
+        }
+      });
+    });
   }
 
   protected handleUnauthorized() {
@@ -548,6 +576,7 @@ export class CAConnectionWithFirebaseBase {
   }
 
   protected async handleAuthEmailNotVerified(): Promise<boolean | Error> {
+    debugger;
     const isConnected = this.checkIfConnected();
 
     if (isConnected instanceof Error) {
@@ -555,9 +584,9 @@ export class CAConnectionWithFirebaseBase {
     }
 
     const { currentUser } = this;
-
+    debugger;
     if (!currentUser) {
-      return new Error('There is no an active connection to the remote server');
+      return new Error('There is no user authorized');
     }
 
     try {
@@ -579,10 +608,8 @@ export class CAConnectionWithFirebaseBase {
    * @memberof CAConnectionWithFirebase
    */
   protected async chekIfVerifiedAccount(): Promise<boolean | Error> {
-    const { isVerifiedAccount } = this;
-
     // if the account was validated by email
-    if (isVerifiedAccount) {
+    if (this.isVerifiedAccount) {
       return true;
     }
 

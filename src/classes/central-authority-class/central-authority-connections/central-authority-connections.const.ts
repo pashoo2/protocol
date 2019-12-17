@@ -1,4 +1,4 @@
-import CAConnectionWithFirebase from './central-authority-connection-firebase/central-authority-connection-firebase';
+import CAConnectionWithFirebase from './central-authority-connection-firebase';
 
 export enum CA_CONNECTION_AUTH_PROVIDERS {
   FIREBASE,
