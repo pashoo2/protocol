@@ -43,7 +43,7 @@ export const runTestsCredentialsStorage = async () => {
     return;
   }
 
-  const credentials = await cryptoCredentialsStorage.getCredentials();
+  const credentials = await cryptoCredentialsStorage.getUserCryptoInfo();
 
   if (credentials instanceof Error) {
     console.error(credentials);
@@ -55,7 +55,7 @@ export const runTestsCredentialsStorage = async () => {
     return;
   }
 
-  const credentialsSetResult = await cryptoCredentialsStorage.setCredentials(
+  const credentialsSetResult = await cryptoCredentialsStorage.setUserCryptoInfo(
     cryptoKeyPairsGenerated
   );
 
@@ -65,7 +65,7 @@ export const runTestsCredentialsStorage = async () => {
     return;
   }
 
-  const credentialsCached = await cryptoCredentialsStorage.getCredentials();
+  const credentialsCached = await cryptoCredentialsStorage.getUserCryptoInfo();
 
   if (credentialsCached instanceof Error) {
     console.error(credentialsCached);
@@ -101,14 +101,14 @@ export const runTestsCredentialsStorage = async () => {
     return;
   }
 
-  const credentialsReadFromStorageDisconnected = await cryptoCredentialsStorage.getCredentials();
+  const credentialsReadFromStorageDisconnected = await cryptoCredentialsStorage.getUserCryptoInfo();
 
   if (!(credentialsReadFromStorageDisconnected instanceof Error)) {
     console.error('Any read from the disconnected storage must cause an error');
     return;
   }
 
-  const resultSetCredentialsReadFromStorageDisconnected = await cryptoCredentialsStorage.setCredentials(
+  const resultSetCredentialsReadFromStorageDisconnected = await cryptoCredentialsStorage.setUserCryptoInfo(
     cryptoKeyPairsGenerated
   );
 
@@ -140,7 +140,7 @@ export const runTestsCredentialsStorage = async () => {
     return;
   }
 
-  const credentialsReadFromStorage = await cryptoCredentialsStorageSecondInstance.getCredentials();
+  const credentialsReadFromStorage = await cryptoCredentialsStorageSecondInstance.getUserCryptoInfo();
 
   if (credentialsReadFromStorage instanceof Error) {
     console.error(credentials);

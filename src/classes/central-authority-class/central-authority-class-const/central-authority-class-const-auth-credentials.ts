@@ -35,3 +35,5 @@ export const CA_USER_IDENTITY_MAX_LENGTH =
 export const CA_USER_PASSWORD_TYPE = 'string';
 
 export const CA_USER_PASSWORD_MIN_LENGTH = 6;
+
+export const CA_USER_LOGIN_MIN_LENGTH = 3;

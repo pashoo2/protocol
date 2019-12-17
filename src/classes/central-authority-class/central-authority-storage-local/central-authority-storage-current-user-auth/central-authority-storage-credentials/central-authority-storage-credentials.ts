@@ -7,7 +7,6 @@ import {
 import {
   TCentralAuthorityUserIdentity,
   TCACryptoKeyPairs,
-  ICentralAuthorityStorageCryptoCredentials,
 } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 import {
   validateUserIdentity,
@@ -30,32 +29,20 @@ import {
 import { TSecretStoreConfiguration } from 'classes/secret-storage-class/secret-storage-class.types';
 import { calculateHash } from 'utils/hash-calculation-utils/hash-calculation-utils';
 import { checkIsValidCryptoCredentials } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
+import {
+  ICAStorageCredentials,
+  ICAStorageCredentialsAuthCredentials,
+  ICAStorageCredentialsUserCryptoInfo,
+} from './central-authority-storage-credentials.types';
+import { validateUserCryptoInfo } from './central-authority-storage-credentials.utils';
 
-// TODO - it is necessary to refactor cause the unique identifier changed to a user login in CAIdentity
-/**
- * This is storage of the current
- * user's crypto keys for signing
- * and encrypting a data. This keys
- * will be encrypted with the user
- * password. Also this keys will be
- * used to authorize on each authority
- * provider.
- * This is storage which is necessary
- * to save all the user keys along with the user id which
- * are necessary to communicate with another users
- * in the network in encrypted form.
- *
- * @export
- * @class CentralAuthorityCredentialsStorage
- * @extends {StatusClassBase<typeof CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS>}
- */
 export class CentralAuthorityCredentialsStorage
   extends getStatusClass<typeof CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS>({
     errorStatus: CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS.ERROR,
     initialStatus: CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS.NEW,
     instanceName: 'CentralAuthorityCredentialsStorage',
   })
-  implements ICentralAuthorityStorageCryptoCredentials {
+  implements ICAStorageCredentials {
   protected __userIdentity?: TCentralAuthorityUserIdentity;
 
   protected __userIdentityHash?: string;
@@ -97,6 +84,89 @@ export class CentralAuthorityCredentialsStorage
     };
   }
 
+  /**
+   * connect to the storage where the user's cryptro keys are
+   * stored.
+   *
+   * @param {ICAStorageCredentialsAuthCredentials} credentials
+   * @returns {(Promise<void | Error>)}
+   * @memberof CentralAuthorityCredentialsStorage
+   */
+  public async connect(
+    credentials: ICAStorageCredentialsAuthCredentials
+  ): Promise<void | Error> {
+    this.setStatus(CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS.CONNECTING);
+    this.createSecretStorageInstance();
+
+    const connectionResult = await this.connectToTheStorage(credentials);
+
+    if (connectionResult instanceof Error) {
+      this.setStatus(
+        CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS.CONNECTION_FAILED
+      );
+      CentralAuthorityCredentialsStorage.error(connectionResult);
+      return connectionResult;
+    }
+    this.setStatus(CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS.CONNECTED);
+  }
+
+  public async setUserCryptoInfo(
+    userCryptoInfo: ICAStorageCredentialsUserCryptoInfo
+  ): Promise<Error | boolean> {
+    const { isConnectedToStorage } = this;
+
+    if (!isConnectedToStorage) {
+      return new Error('There is no an active connection to the storage');
+    }
+    
+    const userCryptoInfoValidationResult = validateUserCryptoInfo(userCryptoInfo);
+    
+    if (userCryptoInfoValidationResult instanceof Error) {
+      return userCryptoInfoValidationResult;
+    }
+
+    const { 
+      userIdentity,
+      cryptoKeyPairs
+    } = userCryptoInfo;
+
+    const cryptoCredentials = getUserCredentialsByUserIdentityAndCryptoKeys(
+      userIdentity,
+      cryptoKeyPairs
+    );
+
+    if (cryptoCredentials instanceof Error) {
+      console.error(cryptoCredentials);
+      return new Error(
+        'Failed to create a valid crypro credentials from the given crypto keys and the user identity'
+      );
+    }
+
+    const resultSetCryptoCredentialsToStorage = await this.setCryptoCredentialsToStorage(
+      cryptoCredentials
+    );
+
+    if (resultSetCryptoCredentialsToStorage instanceof Error) {
+      this.unsetUserCredentialsInCache();
+      if ((await this.unsetCryptoCredentialsToStorage()) instanceof Error) {
+        console.error('Failed to unset a crypto credentials in the storage');
+      }
+      console.error(resultSetCryptoCredentialsToStorage);
+      return new Error('Failed to set the crypto credentials in the storage');
+    }
+
+    const setCredentialsInCacheResult = this.setUserCredentialsToCache(
+      cryptoCredentials
+    );
+
+    if (setCredentialsInCacheResult instanceof Error) {
+      this.unsetUserCredentialsInCache();
+      console.error(setCredentialsInCacheResult);
+      return new Error('Failed to set the crypto credentials in the cahce');
+    }
+    return true;
+  }
+
   protected async setUserIdentity(userIdentity: any): Promise<Error | boolean> {
     if (validateUserIdentity(userIdentity)) {
       const userIdentityHash = await calculateHash(userIdentity);
@@ -120,75 +190,41 @@ export class CentralAuthorityCredentialsStorage
   }
 
   /**
-   * authorize to the storage with a credentials given
+   * authorize to the storage with a password given
    * @param {object} credentials
    */
   protected authorizeWithCredentials(
-    credentials: TCentralAuthorityCredentialsStorageAuthCredentials
+    credentials: ICAStorageCredentialsAuthCredentials
   ): Promise<Error | boolean> | Error {
     const { secretStorageConnection } = this;
-    const {
-      [CA_AUTH_CREDENTIALS_USER_PASSWORD_PROP_NAME]: password,
-    } = credentials;
 
     if (secretStorageConnection) {
-      return secretStorageConnection.authorize({ password });
+      return secretStorageConnection.authorize({
+        password: credentials.password,
+      });
     }
     return new Error('There is no secretStorageConnection');
   }
 
-  /**
-   * connect to the SecretStorage without credentials.
-   * the success will depending on the previous
-   * connection with credentials - if it was succed
-   * then the credentials may be stored in the session
-   * storage
-   */
-  protected connectToStorageWithoutCredentials():
-    | Promise<Error | boolean>
-    | Error {
-    const { secretStorageConnection } = this;
-
-    if (secretStorageConnection) {
-      return secretStorageConnection.connect();
-    }
-    return new Error('There is no secretStorageConnection');
+  protected checkLoginOnAuthorized() {
+    const userCryptoInfo = this.
   }
 
   protected async connectToTheStorage(
-    credentials?: TCentralAuthorityCredentialsStorageAuthCredentials
+    credentials: ICAStorageCredentialsAuthCredentials
   ): Promise<boolean | Error> {
-    if (validateAuthCredentials(credentials)) {
-      const {
-        [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: userIdentity,
-      } = credentials;
-      const resultSetUserIdentity = await this.setUserIdentity(userIdentity);
+    const credentialsValidationResult = validateAuthCredentials(credentials);
 
-      if (resultSetUserIdentity === true) {
-        return this.authorizeWithCredentials(credentials);
-      }
-      return new Error('A wrong user identity');
+    if (credentialsValidationResult instanceof Error) {
+      return credentialsValidationResult;
     }
-    return this.connectToStorageWithoutCredentials();
-  }
+    const { login: userIdentity } = credentials;
+    const resultSetUserIdentity = await this.setUserIdentity(userIdentity);
 
-  public async connect(
-    credentials?: TCentralAuthorityCredentialsStorageAuthCredentials
-  ): Promise<boolean | Error> {
-    this.setStatus(CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS.CONNECTING);
-    this.createSecretStorageInstance();
-
-    const connectionResult = await this.connectToTheStorage(credentials);
-
-    if (connectionResult instanceof Error) {
-      this.setStatus(
-        CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS.CONNECTION_FAILED
-      );
-      CentralAuthorityCredentialsStorage.error(connectionResult);
-      return connectionResult;
+    if (resultSetUserIdentity === true) {
+      return this.authorizeWithCredentials(credentials);
     }
-    this.setStatus(CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS.CONNECTED);
-    return true;
+    return new Error('A wrong user identity');
   }
 
   protected reset() {
@@ -257,7 +293,7 @@ export class CentralAuthorityCredentialsStorage
   }
 
   protected async setCryptoCredentialsToStorage(
-    userCryptoCredentials: TCentralAuthorityUserCryptoCredentials
+    userCryptoInfo: ICAStorageCredentialsUserCryptoInfo
   ): Promise<Error | boolean> {
     const {
       isConnectedToStorage: isConnectedToTheSecretStorage,
@@ -268,8 +304,9 @@ export class CentralAuthorityCredentialsStorage
       return new Error('There is no active connecion to the secret storage');
     }
 
+    const {}
     const exportedUserCryptoCredentials = await exportCryptoCredentialsToString(
-      userCryptoCredentials
+      userCryptoInfo
     );
 
     if (exportedUserCryptoCredentials instanceof Error) {
@@ -343,7 +380,7 @@ export class CentralAuthorityCredentialsStorage
     return importedCryptoKey;
   }
 
-  public async getCredentials(): Promise<
+  public async getUserCryptoInfo(): Promise<
     TCentralAuthorityUserCryptoCredentials | Error | null
   > {
     const { isConnectedToStorage } = this;
@@ -386,54 +423,5 @@ export class CentralAuthorityCredentialsStorage
       );
     }
     return storedCryptoCredentials;
-  }
-
-  public async setCredentials(
-    cryptoKeyPairs: TCACryptoKeyPairs
-  ): Promise<Error | boolean> {
-    const { userIdentity, isConnectedToStorage } = this;
-
-    if (!isConnectedToStorage) {
-      return new Error('There is no an active connection to the storage');
-    }
-    if (!userIdentity) {
-      return new Error('A user identity value was not set');
-    }
-
-    const cryptoCredentials = getUserCredentialsByUserIdentityAndCryptoKeys(
-      userIdentity,
-      cryptoKeyPairs
-    );
-
-    if (cryptoCredentials instanceof Error) {
-      console.error(cryptoCredentials);
-      return new Error(
-        'Failed to create a valid crypro credentials from the given crypto keys and the user identity'
-      );
-    }
-
-    const setCredentialsInCacheResult = this.setUserCredentialsToCache(
-      cryptoCredentials
-    );
-
-    if (setCredentialsInCacheResult instanceof Error) {
-      this.unsetUserCredentialsInCache();
-      console.error(setCredentialsInCacheResult);
-      return new Error('Failed to set the crypto credentials in the cahce');
-    }
-
-    const resultSetCryptoCredentialsToStorage = await this.setCryptoCredentialsToStorage(
-      cryptoCredentials
-    );
-
-    if (resultSetCryptoCredentialsToStorage instanceof Error) {
-      this.unsetUserCredentialsInCache();
-      if ((await this.unsetCryptoCredentialsToStorage()) instanceof Error) {
-        console.error('Failed to unset a crypto credentials in the storage');
-      }
-      console.error(resultSetCryptoCredentialsToStorage);
-      return new Error('Failed to set the crypto credentials in the storage');
-    }
-    return true;
   }
 }
