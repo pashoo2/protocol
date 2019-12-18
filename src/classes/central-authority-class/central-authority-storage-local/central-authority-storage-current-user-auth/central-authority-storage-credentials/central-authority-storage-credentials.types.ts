@@ -24,10 +24,7 @@ export interface ICAStorageCredentialsAuthCredentials {
  * including private and public keys.
  */
 export interface ICAStorageCredentialsUserCryptoInfo {
-  login: string;
   cryptoCredentials: TCentralAuthorityUserCryptoCredentials;
-  userIdentity: TCAuthProviderUserIdentifier;
-  cryptoKeyPairs: TCACryptoKeyPairs;
 }
 
 /**
@@ -72,7 +69,7 @@ export interface ICAStorageCredentials {
    * @memberof ICAStorageCredentials
    */
   getUserCryptoInfo(): Promise<
-    TCentralAuthorityUserCryptoCredentials | Error | null
+    ICAStorageCredentialsUserCryptoInfo | Error | null
   >;
   /**
    * set credentials for the user, only if

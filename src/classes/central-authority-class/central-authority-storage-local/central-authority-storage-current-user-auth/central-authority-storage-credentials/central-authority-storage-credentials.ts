@@ -118,17 +118,16 @@ export class CentralAuthorityCredentialsStorage
     if (!isConnectedToStorage) {
       return new Error('There is no an active connection to the storage');
     }
-    
-    const userCryptoInfoValidationResult = validateUserCryptoInfo(userCryptoInfo);
-    
+
+    const userCryptoInfoValidationResult = validateUserCryptoInfo(
+      userCryptoInfo
+    );
+
     if (userCryptoInfoValidationResult instanceof Error) {
       return userCryptoInfoValidationResult;
     }
 
-    const { 
-      userIdentity,
-      cryptoKeyPairs
-    } = userCryptoInfo;
+    const { userIdentity, cryptoKeyPairs } = userCryptoInfo;
 
     const cryptoCredentials = getUserCredentialsByUserIdentityAndCryptoKeys(
       userIdentity,
@@ -206,10 +205,6 @@ export class CentralAuthorityCredentialsStorage
     return new Error('There is no secretStorageConnection');
   }
 
-  protected checkLoginOnAuthorized() {
-    const userCryptoInfo = this.
-  }
-
   protected async connectToTheStorage(
     credentials: ICAStorageCredentialsAuthCredentials
   ): Promise<boolean | Error> {
@@ -218,13 +213,8 @@ export class CentralAuthorityCredentialsStorage
     if (credentialsValidationResult instanceof Error) {
       return credentialsValidationResult;
     }
-    const { login: userIdentity } = credentials;
-    const resultSetUserIdentity = await this.setUserIdentity(userIdentity);
 
-    if (resultSetUserIdentity === true) {
-      return this.authorizeWithCredentials(credentials);
-    }
-    return new Error('A wrong user identity');
+    return this.authorizeWithCredentials(credentials);
   }
 
   protected reset() {
@@ -233,21 +223,21 @@ export class CentralAuthorityCredentialsStorage
     this.secretStorageConnection = undefined;
   }
 
-  public async disconnect(): Promise<boolean | Error> {
+  public async disconnect(): Promise<Error | void> {
     const { isConnectedToStorage, secretStorageConnection } = this;
 
-    if (isConnectedToStorage && secretStorageConnection) {
-      const disconnectFromStorageResult = await secretStorageConnection.disconnect();
-
-      if (disconnectFromStorageResult instanceof Error) {
-        console.error(disconnectFromStorageResult);
-        return new Error('Failed to disconnect from the storage');
-      }
-      this.reset();
-      this.setStatus(CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS.DISCONNECTED);
-      return true;
+    if (!isConnectedToStorage || !secretStorageConnection) {
+      return new Error('Not connected to the storage');
     }
-    return new Error('Not connected to the storage');
+
+    const disconnectFromStorageResult = await secretStorageConnection.disconnect();
+
+    if (disconnectFromStorageResult instanceof Error) {
+      console.error(disconnectFromStorageResult);
+      return new Error('Failed to disconnect from the storage');
+    }
+    this.reset();
+    this.setStatus(CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_STATUS.DISCONNECTED);
   }
 
   protected setUserCredentialsToCache(
@@ -304,7 +294,6 @@ export class CentralAuthorityCredentialsStorage
       return new Error('There is no active connecion to the secret storage');
     }
 
-    const {}
     const exportedUserCryptoCredentials = await exportCryptoCredentialsToString(
       userCryptoInfo
     );

@@ -15,15 +15,18 @@ export const validateUserCryptoInfo = (
     return new Error('A user crypto info must be an object');
   }
 
-  const { login, userIdentity, cryptoKeyPairs } = userCryptoInfo;
+  const { cryptoCredentials } = userCryptoInfo;
 
-  if (!validateLogin(login)) {
-    return new Error('The login is not valid');
+  if (!cryptoCredentials) {
+    return new Error('A crypto credentials must be defined');
   }
+
+  const { cryptoKeys, userIdentity } = cryptoCredentials;
+
   if (!validateUserIdentity(userIdentity)) {
     return new Error('The user identity is not valid');
   }
-  if (checkIsCryptoKeyPairs(cryptoKeyPairs)) {
+  if (checkIsCryptoKeyPairs(cryptoKeys)) {
     return new Error('The crypto key pairs is not valid');
   }
 };

@@ -6,7 +6,6 @@ import {
   CA_USER_IDENTITY_PARSER_VERSIONS_SUPPORTED,
 } from '../central-authority-class-user-identity.const';
 import { ICAUserUniqueIdentifierMetadata } from '../central-authority-class-user-identity.types';
-import { CONST_VALIDATION_SCHEMES_URL } from 'const/const-validation-schemes/const-validation-schemes-common';
 import { dataValidatorUtilURL } from 'utils/data-validators-utils/data-validators-utils';
 
 export const validateIdentityDescriptionVersion = (
