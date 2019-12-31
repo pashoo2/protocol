@@ -2,7 +2,7 @@
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": 2018,
-    "project": "./tsconfig.json",
+    "project": "tsconfig.json",
     "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
@@ -24,6 +24,8 @@
   ],
   "plugins": ["@typescript-eslint"],
   "rules": {
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/member-ordering": [
       1,
       {

@@ -1,3 +1,4 @@
+import { TSaltUtilsSaltType } from './../encryption-utils/salt-utils.types';
 import {
   PASSWORD_ENCRYPTION_UTILS_ENCRYPTION_INITIALIZATION_VECTOR_LENGTH,
   PASSWORD_ENCRYPTION_UTILS_ENCRYPTION_PARAMS,
@@ -79,9 +80,10 @@ export const encryptDataToUInt8Array = async (
 
 export const encryptDataWithPassword = async (
   password: string,
+  salt: TSaltUtilsSaltType,
   data: TCRYPTO_UTIL_ENCRYPT_DATA_TYPES
 ): Promise<Error | string> => {
-  const key = await generatePasswordKeyByPasswordString(password);
+  const key = await generatePasswordKeyByPasswordString(password, salt);
 
   if (key instanceof Error) {
     console.error(key);

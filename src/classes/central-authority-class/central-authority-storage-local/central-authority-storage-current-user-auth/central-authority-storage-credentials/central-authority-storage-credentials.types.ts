@@ -23,9 +23,9 @@ export interface ICAStorageCredentialsAuthCredentials {
  * @param {TCACryptoKeyPairs} - the crypto credentials of the user
  * including private and public keys.
  */
-export interface ICAStorageCredentialsUserCryptoInfo {
-  cryptoCredentials: TCentralAuthorityUserCryptoCredentials;
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface ICAStorageCredentialsUserCryptoInfo
+  extends TCentralAuthorityUserCryptoCredentials {}
 
 /**
  * the class used to read the public and provate keys

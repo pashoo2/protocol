@@ -103,7 +103,8 @@ export class SecretStorage
       return new Error();
     }
 
-    return generatePasswordKeyByPasswordString(password);
+    // TODO
+    return generatePasswordKeyByPasswordString(password, '');
   }
 
   private static checkIsStorageProviderInstance(

@@ -40,6 +40,7 @@ import { runTestCAConnectionsPoolTest } from 'test/central-authority.test/centra
 // import { runTest } from 'test/safe-storage.test';
 //import { runTest } from 'test/valiation-utils.test';
 // import { runTest } from 'test/secret-storage.test';
+import { runTestSaltUtils } from './test/salt-generation-utils.test/salt-generation-utils.test';
 
 // runTest();
 // runTestsCredentialsStorage();
@@ -70,7 +71,8 @@ const runTest = async () => {
   // runSwarmMessageFieldsValidator();
   // runTestFirebaseCredentialsStorage();
   // runTestCAConnectionsUtilsValidators();
-  runTestCAConnectionsPoolTest();
+  // runTestCAConnectionsPoolTest();
+  runTestSaltUtils();
   runMocha();
 };
 
