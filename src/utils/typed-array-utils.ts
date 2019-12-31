@@ -1,3 +1,4 @@
+import { TTypedArraysNative } from './../types/main.types';
 import { TTypedArrays, TMainDataTypes } from 'types/main.types';
 import { stringify, TStringifyData } from './main-utils';
 import {
@@ -20,8 +21,41 @@ export const arrayBufferFromTypedArray = (
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type isTypedArrayData = any;
 
+export const isTypedArrayNative = (
+  data: isTypedArrayData
+): data is TTypedArraysNative =>
+  data instanceof Int8Array ||
+  data instanceof Uint8Array ||
+  data instanceof Uint8ClampedArray ||
+  data instanceof Int16Array ||
+  data instanceof Uint16Array ||
+  data instanceof Int32Array ||
+  data instanceof Uint32Array ||
+  data instanceof Float32Array ||
+  data instanceof Float64Array ||
+  data instanceof BigInt64Array ||
+  data instanceof BigUint64Array;
+
 export const isTypedArray = (data: isTypedArrayData): data is TTypedArrays =>
   data instanceof ArrayBuffer || ArrayBuffer.isView(data);
+
+export const isEqualArrayBufferNative = (
+  arr1: TTypedArraysNative | ArrayBuffer,
+  arr2: TTypedArraysNative | ArrayBuffer
+) => {
+  const arr1Uint8 = new Uint8Array(arr1);
+  const arr2Uint8 = new Uint8Array(arr2);
+
+  if (arr1Uint8.byteLength !== arr2Uint8.byteLength) {
+    return false;
+  }
+  for (let idx = 0; idx < arr1Uint8.byteLength; idx++) {
+    if (arr1Uint8[idx] !== arr2Uint8[idx]) {
+      return false;
+    }
+  }
+  return true;
+};
 
 export const stringToTypedArray = (
   data: TMainDataTypes

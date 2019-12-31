@@ -1,6 +1,10 @@
-import { TSaltUtilsSaltType } from './salt-utils.types';
-import { isTypedArray } from './../typed-array-utils';
 import {
+  isTypedArrayNative,
+  isEqualArrayBufferNative,
+} from './../typed-array-utils';
+import { TSaltUtilsSaltType } from './salt-utils.types';
+import {
+  isTypedArray,
   typedArrayToString,
   stringToTypedArray,
 } from 'utils/typed-array-utils';
@@ -10,16 +14,28 @@ import {
   SALT_GENERATION_UTILS_SALT_MAX_LENGTH_BYTES,
 } from './salt-utils.const';
 
-export const generateSalt = (
-  saltLength = SALT_GENERATION_UTILS_SALT_LENGTH_BYTES
-): Uint8Array | Error => {
-  let saltValue;
+export const generateSaltNative = (saltLength: number): Uint8Array | Error => {
   try {
-    saltValue = crypto.getRandomValues(new Uint8Array(saltLength));
+    return crypto.getRandomValues(new Uint8Array(saltLength));
   } catch (err) {
-    saltValue = err;
+    return err;
   }
-  return saltValue;
+};
+
+export const generateSalt = (
+  saltLength: number = SALT_GENERATION_UTILS_SALT_LENGTH_BYTES
+): Uint8Array | Error => {
+  if (saltLength < SALT_GENERATION_UTILS_SALT_MIN_LENGTH_BYTES) {
+    return new Error(
+      `The length ${saltLength} must not be less than the ${SALT_GENERATION_UTILS_SALT_MIN_LENGTH_BYTES}`
+    );
+  }
+  if (saltLength > SALT_GENERATION_UTILS_SALT_MAX_LENGTH_BYTES) {
+    return new Error(
+      `The length ${saltLength} should not be greater than ${SALT_GENERATION_UTILS_SALT_MAX_LENGTH_BYTES}`
+    );
+  }
+  return generateSaltNative(saltLength);
 };
 
 export const generateSaltString = (saltLength?: number): string | Error => {
@@ -33,25 +49,51 @@ export const generateSaltString = (saltLength?: number): string | Error => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isValidSalt = (salt: any): salt is TSaltUtilsSaltType => {
-  let saltValue;
+  if (isTypedArrayNative(salt) || salt instanceof ArrayBuffer) {
+    const strFromTyped = typedArrayToString(salt);
 
-  if (isTypedArray(salt)) {
-    saltValue = typedArrayToString(salt);
-  } else if (typeof salt === 'string') {
-    saltValue = salt;
-  }
-  if (typeof saltValue === 'string') {
+    if (strFromTyped instanceof Error) {
+      return false;
+    }
+
+    const typedFromStr = stringToTypedArray(strFromTyped);
+
+    if (typedFromStr instanceof Error) {
+      return false;
+    }
+    if (!isEqualArrayBufferNative(typedFromStr, salt)) {
+      return false;
+    }
     return (
-      encodeURI(saltValue) === saltValue &&
-      saltValue.length >= SALT_GENERATION_UTILS_SALT_MIN_LENGTH_BYTES &&
-      saltValue.length <= SALT_GENERATION_UTILS_SALT_MAX_LENGTH_BYTES
+      salt.byteLength >= SALT_GENERATION_UTILS_SALT_MIN_LENGTH_BYTES &&
+      salt.byteLength <= SALT_GENERATION_UTILS_SALT_MAX_LENGTH_BYTES
+    );
+  }
+  if (typeof salt === 'string') {
+    const typedFromStr = stringToTypedArray(salt);
+
+    if (typedFromStr instanceof Error) {
+      return false;
+    }
+
+    const strFromTyped = typedArrayToString(typedFromStr);
+
+    if (strFromTyped instanceof Error) {
+      return false;
+    }
+    if (salt !== strFromTyped) {
+      return false;
+    }
+    return (
+      typedFromStr.byteLength >= SALT_GENERATION_UTILS_SALT_MIN_LENGTH_BYTES &&
+      typedFromStr.byteLength <= SALT_GENERATION_UTILS_SALT_MAX_LENGTH_BYTES
     );
   }
   return false;
 };
 
 export const importSalt = (salt: TSaltUtilsSaltType): Uint8Array | Error => {
-  if (isValidSalt(salt)) {
+  if (!isValidSalt(salt)) {
     return new Error('The salt is not valid');
   }
 

@@ -1,15 +1,17 @@
-export type TTypedArrays =
+export type TTypedArraysNative =
   | Int8Array
-  | Int16Array
-  | Int32Array
   | Uint8Array
-  | Uint16Array
-  | Uint32Array
   | Uint8ClampedArray
+  | Int16Array
+  | Uint16Array
+  | Int32Array
+  | Uint32Array
   | Float32Array
   | Float64Array
-  | DataView
-  | ArrayBuffer;
+  | BigInt64Array
+  | BigUint64Array;
+
+export type TTypedArrays = TTypedArraysNative | DataView | ArrayBuffer;
 
 export type TArrayBufferView = TTypedArrays;
 

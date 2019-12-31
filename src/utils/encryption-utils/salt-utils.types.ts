@@ -1,3 +1,3 @@
-import { TTypedArrays } from 'types/main.types';
+import { TTypedArraysNative } from 'types/main.types';
 
-export type TSaltUtilsSaltType = string | TTypedArrays;
+export type TSaltUtilsSaltType = string | TTypedArraysNative | ArrayBuffer;
