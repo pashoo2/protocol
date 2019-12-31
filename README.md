@@ -53,3 +53,9 @@ this version of the rules must be used if the user allowed only a one user ident
   }
 }
 ```
+
+### CREDENTIALS STORAGE FORMAT
+
+The key for the credentials storage value is a crypto hash from the user login
+The value is salt which is encrypted by the crypto key produced by the login
+The crypto credentials are encrypted by the login + password

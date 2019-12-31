@@ -1,3 +1,5 @@
+import { importSalt } from '../encryption-utils/salt-utils';
+import { TSaltUtilsSaltType } from '../encryption-utils/salt-utils.types';
 import {
   TPASSWORD_ENCRYPTION_SUPPORTED_PASSWORD_NATIVE_TYPES,
   TPASSWORD_ENCRYPTION_SUPPORTES_SALT_NATIVE_TYPES,
@@ -11,12 +13,12 @@ import {
   PASSWORD_ENCRYPTON_UTILS_KEY_USAGES,
   PASSWORD_ENCRYPTION_UTILS_KEY_GENERATION_ALHORITHM,
   PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_BASE_KEY_CONFIG,
-  SALT_DEFAULT_ARRAY_BUFFER,
   PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_CONFIG,
   PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_USAGES,
   PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_IS_EXPORTED,
   PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_EXPORT_FORMAT,
   PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_IMPORT_FORMAT,
+  PASSWORD_ENCRYPTION_UTILS_KEY_GENERATION_KEY_SALT_GENERATED_LENGTH,
 } from './password-utils.const';
 import { decodeDOMStringToArrayBuffer } from 'utils/string-encoding-utils';
 
@@ -43,9 +45,12 @@ export const generatePasswordKey = async (
 
 export const getDeriviationNative = async (
   passwordKey: CryptoKey,
-  salt: TPASSWORD_ENCRYPTION_SUPPORTES_SALT_NATIVE_TYPES = SALT_DEFAULT_ARRAY_BUFFER
+  saltValue: Uint8Array
 ): Promise<Error | CryptoKey> => {
-  if (!isTypedArray(salt)) {
+  if (!saltValue) {
+    return new Error('The generated random value of salt is empty');
+  }
+  if (!isTypedArray(saltValue)) {
     return new Error('The password must have a TypedArray type');
   }
   if (!(passwordKey instanceof CryptoKey)) {
@@ -55,7 +60,7 @@ export const getDeriviationNative = async (
     return await crypto.subtle.deriveKey(
       {
         ...PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_BASE_KEY_CONFIG,
-        salt,
+        salt: saltValue,
       },
       passwordKey,
       {
@@ -71,7 +76,8 @@ export const getDeriviationNative = async (
 };
 
 export const generatePasswordKeyByPasswordString = async (
-  passwordString: string
+  passwordString: string,
+  saltValue: TSaltUtilsSaltType
 ): Promise<CryptoKey | Error> => {
   const passwordArrayBuffer = decodeDOMStringToArrayBuffer(passwordString);
 
@@ -85,7 +91,12 @@ export const generatePasswordKeyByPasswordString = async (
     return passwordBaseKey;
   }
 
-  return getDeriviationNative(passwordBaseKey);
+  const saltImported = importSalt(saltValue);
+
+  if (saltImported instanceof Error) {
+    return saltImported;
+  }
+  return getDeriviationNative(passwordBaseKey, saltImported);
 };
 
 export const exportPasswordKey = (
@@ -124,11 +135,15 @@ export const exportPasswordKeyAsString = async (
 };
 
 export const generatePasswordKeyInExportFormat = async (
-  passwordString: string
+  passwordString: string,
+  salt: TSaltUtilsSaltType
 ): Promise<
   TPASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_EXPORT_FORMAT | Error
 > => {
-  const passwordKey = await generatePasswordKeyByPasswordString(passwordString);
+  const passwordKey = await generatePasswordKeyByPasswordString(
+    passwordString,
+    salt
+  );
 
   if (passwordKey instanceof Error) {
     return passwordKey;
@@ -138,10 +153,12 @@ export const generatePasswordKeyInExportFormat = async (
 };
 
 export const generatePasswordKeyAsString = async (
-  passwordString: string
+  passwordString: string,
+  salt: TSaltUtilsSaltType
 ): Promise<string | Error> => {
   const passwordKeyExported = await generatePasswordKeyInExportFormat(
-    passwordString
+    passwordString,
+    salt
   );
 
   if (passwordKeyExported instanceof Error) {

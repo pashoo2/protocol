@@ -17,6 +17,7 @@ export const arrayBufferFromTypedArray = (
   return new Error('The data given is not a typed array');
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type isTypedArrayData = any;
 
 export const isTypedArray = (data: isTypedArrayData): data is TTypedArrays =>
@@ -43,13 +44,17 @@ export const typedArrayToString = (
     return new Error('The data is not a typed array');
   }
 
-  const dataAsArrayBuffer = arrayBufferFromTypedArray(data);
+  try {
+    const dataAsArrayBuffer = arrayBufferFromTypedArray(data);
 
-  if (dataAsArrayBuffer instanceof Error) {
-    return dataAsArrayBuffer;
+    if (dataAsArrayBuffer instanceof Error) {
+      return dataAsArrayBuffer;
+    }
+
+    return encodeArrayBufferToDOMString(dataAsArrayBuffer);
+  } catch (err) {
+    return err;
   }
-
-  return encodeArrayBufferToDOMString(dataAsArrayBuffer);
 };
 
 type TConvertedToTypedArrayData = TStringifyData | TTypedArrays;
