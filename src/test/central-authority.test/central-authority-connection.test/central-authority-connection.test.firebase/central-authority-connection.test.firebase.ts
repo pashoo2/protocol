@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   ICentralAuthorityUserProfile,
   TCentralAuthorityUserCryptoCredentials,
 } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 import {
-  connectToFirebase,
   connectWithFirebase,
   deleteTheUserFromCA,
 } from './central-authority-connection.utils.firebase';
@@ -74,13 +74,11 @@ const runTestCAConnectionFirebaseChangeEmailForVersion = async (
     console.error('Failed to set the profile (with a email) data');
     return;
   }
-  if (updateProfileWithEmailResult.name !== updateProfileWithEmailResult.name) {
+  if (userProfileWithEmailTest.name !== updateProfileWithEmailResult.name) {
     console.error('Name was not updated in the profile');
     return;
   }
-  if (
-    updateProfileWithEmailResult.email !== updateProfileWithEmailResult.email
-  ) {
+  if (userProfileWithEmailTest.email !== updateProfileWithEmailResult.email) {
     console.error('The email was not updated in the profile');
     return;
   }

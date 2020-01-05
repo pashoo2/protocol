@@ -112,9 +112,9 @@ export class SwarmStoreConnectorOrbitDB<
      * @returns {(Promise<void | Error>)}
      * @memberof SwarmStoreConnectorOrbitDB
      */
-  public async connect(
+  public connect = async (
     connectionOptions: ISwarmStoreConnectorOrbitDBConnectionOptions
-  ): Promise<void | Error> {
+  ): Promise<void | Error> => {
     const resultCreateIdentity = await this.createIdentity();
 
     if (resultCreateIdentity instanceof Error) {
@@ -172,7 +172,7 @@ export class SwarmStoreConnectorOrbitDB<
     }
     // set the database is ready to query
     this.setIsReady(true);
-  }
+  };
 
   public openDatabase = async (
     dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<
@@ -763,9 +763,9 @@ export class SwarmStoreConnectorOrbitDB<
 
       if (idxExisting !== -1) {
         return new Error(`
-                    Options for the database ${dbName} is already exists.
-                    May be the database was opened but still not be in ready state
-                `);
+          Options for the database ${dbName} is already exists.
+          May be the database was opened but still not be in ready state
+        `);
       }
     }
 
@@ -773,9 +773,10 @@ export class SwarmStoreConnectorOrbitDB<
 
     if (!options) {
       this.applyOptions({
-        databases: [dbOptions],
+        ...this.options,
         id: '',
-      });
+        databases: [dbOptions],
+      } as ISwarmStoreConnectorOrbitDBOptions<ISwarmDatabaseValueTypes>);
       return;
     }
 

@@ -1,10 +1,6 @@
 import { CAConnectionFirestoreUtilsCredentialsStrorage } from 'classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase-utils/central-authority-connection-firebase-utils.credentials-storage/central-authority-connection-firebase-utils.credentials-storage';
 import { connectWithFirebase } from './central-authority-connection.utils.firebase';
-import {
-  generateCryptoCredentialsV1,
-  generateCryptoCredentialsWithUserIdentityV1,
-  generateCryptoCredentialsWithUserIdentityV2,
-} from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
+import { generateCryptoCredentialsWithUserIdentityV2 } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
 import {
   getUserIdentityByCryptoCredentials,
   compareCryptoCredentials,
@@ -13,7 +9,6 @@ import {
 } from 'classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials';
 import {
   CA_CONNECTION_FIREBASE_CONFIG,
-  CA_CONNECTION_FIREBASE_CREDENTIALS,
   CA_CONNECTION_FIREBASE_CONFIG_WATCHA3,
 } from './central-authority-connection.test.firebase.const';
 import { ICAUserUniqueIdentifierMetadata } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types';

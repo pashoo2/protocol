@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { signToString, verifyFromString } from 'utils/data-sign-utils';
 import {
   getPublicKeysFromCryptoKeyPairs,
@@ -13,10 +14,7 @@ import {
   encryptNative,
   decryptNative,
 } from 'utils/encryption-utils/encryption-utils';
-import {
-  TCACryptoKeyPairs,
-  TCACryptoPubilicKeys,
-} from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
+import { TCACryptoKeyPairs } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 import {
   stringToTypedArray,
   typedArrayToString,
@@ -282,9 +280,7 @@ export const runTestForKeyPairs = async (
       ...importedKeyPairs,
       [CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME]: {
         ...importedKeyPairs[CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME],
-        publicKey: (publicKeys as TCACryptoPubilicKeys)[
-          CA_CRYPTO_KEY_PAIRS_ENCRYPTION_PUBLIC_KEY_NAME
-        ],
+        publicKey: publicKeys[CA_CRYPTO_KEY_PAIRS_ENCRYPTION_PUBLIC_KEY_NAME],
       },
     })) !== true
   ) {
@@ -302,9 +298,7 @@ export const runTestForKeyPairs = async (
       ...importedKeyPairs,
       [CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME]: {
         ...importedKeyPairs[CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME],
-        publicKey: (publicKeys as TCACryptoPubilicKeys)[
-          CA_CRYPTO_KEY_PAIRS_SIGN_PUBLIC_KEY_NAME
-        ],
+        publicKey: publicKeys[CA_CRYPTO_KEY_PAIRS_SIGN_PUBLIC_KEY_NAME],
       },
     })) !== true
   ) {

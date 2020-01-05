@@ -1,6 +1,5 @@
 import {
   ISecretStoreCredentials,
-  TSecretStoreConfiguration,
   TSecretStorageProviderName,
 } from 'classes/secret-storage-class/secret-storage-class.types';
 import {

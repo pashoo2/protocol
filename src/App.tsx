@@ -74,7 +74,7 @@ const runTest = async () => {
   // runTestFirebaseCredentialsStorage();
   // runTestCAConnectionsUtilsValidators();
   // runTestCAConnectionsPoolTest();
-  runTestSecretStorage();
+  runTestSwarmStoreOrbitDBConnection();
   runMocha();
 };
 

@@ -6,10 +6,6 @@ import {
   CA_USER_IDENTITY_VERSIONS,
 } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
 import { generateUUID } from 'utils/identity-utils/identity-utils';
-import { generateCryptoCredentialsWithUserIdentityV1 } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
-import { CA_CONNECTION_FIREBASE_CONFIG } from '../central-authority.test/central-authority-connection.test/central-authority-connection.test.firebase/central-authority-connection.test.firebase.const';
-import { checkIsValidCryptoCredentials } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
-import { getUserIdentityByCryptoCredentials } from 'classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials';
 import { validateUserIdentityInstance } from './central-authority-identity.utils';
 import { CA_USER_IDENTITY_V2_AUTH_PROVIDER_URL_DELIMETER } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-parsers/central-authority-class-user-identity-parsers-parser-v2/central-authority-class-user-identity-parsers-parser-v2.const';
 
@@ -43,9 +39,7 @@ export const testIdentity = (userIdOnAuthProvider: string): void | boolean => {
     return;
   }
 
-  const {
-    id: userIdentifier,
-  } = identityFromIdentityString as CentralAuthorityIdentity;
+  const { id: userIdentifier } = identityFromIdentityString;
 
   if (userIdentifier instanceof Error || typeof userIdentifier !== 'string') {
     console.error(
@@ -172,8 +166,7 @@ export const runTestCAIdentityV2 = async () => {
     console.error('The userIdentifier prop must be an error for a wrong uuid');
     return;
   }
-  const testIdentityStringnWithWrongVersionUnsupported =
-    '99https://google.com${CA_USER_IDENTITY_V2_AUTH_PROVIDER_URL_DELIMETER}121';
+  const testIdentityStringnWithWrongVersionUnsupported = `99https://google.com${CA_USER_IDENTITY_V2_AUTH_PROVIDER_URL_DELIMETER}121`;
   const identityValueFromStringWrongVersionUnsupported = new CentralAuthorityIdentity(
     testIdentityStringnWithWrongVersionUnsupported
   );

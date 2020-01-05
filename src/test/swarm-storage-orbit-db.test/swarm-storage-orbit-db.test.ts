@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { IPFS } from 'types/ipfs.types';
 import ipfs from 'ipfs';
 import { expect, assert } from 'chai';
@@ -32,7 +34,6 @@ export const testDatabase = async (
   connection: SwarmStoreConnectorOrbitDB<string>,
   dbName: string
 ) => {
-  const testValue = `${new Date()}--te`;
   const addValueHash = await connection.request(
     dbName,
     'add',
@@ -148,7 +149,7 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
         expect(connection.connect).to.be.a('function');
 
         let fullProgressEmitted: boolean = false;
-        let readyEmitted: string[] = [];
+        const readyEmitted: string[] = [];
 
         connection.on(
           ESwarmStoreConnectorOrbitDBEventNames.LOADING,
@@ -242,7 +243,7 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
         expect(connection.connect).to.be.a('function');
 
         let fullProgressEmitted: boolean = false;
-        let readyEmitted: string[] = [];
+        const readyEmitted: string[] = [];
 
         connection.on(
           ESwarmStoreConnectorOrbitDBEventNames.LOADING,
@@ -383,7 +384,7 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
         expect(connection.connect).to.be.a('function');
 
         let fullProgressEmitted: boolean = false;
-        let readyEmitted: string[] = [];
+        const readyEmitted: string[] = [];
 
         connection.on(
           ESwarmStoreConnectorOrbitDBEventNames.LOADING,
@@ -445,7 +446,7 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
         expect(connection.connect).to.be.a('function');
 
         let fullProgressEmitted: boolean = false;
-        let readyEmitted: string[] = [];
+        const readyEmitted: string[] = [];
 
         connection.on(
           ESwarmStoreConnectorOrbitDBEventNames.LOADING,
@@ -507,7 +508,7 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
         expect(connection.connect).to.be.a('function');
 
         let fullProgressEmitted: boolean = false;
-        let readyEmitted: string[] = [];
+        const readyEmitted: string[] = [];
 
         connection.on(
           ESwarmStoreConnectorOrbitDBEventNames.LOADING,
@@ -601,7 +602,7 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
         expect(connection.connect).to.be.a('function');
 
         let fullProgressEmitted: boolean = false;
-        let readyEmitted: string[] = [];
+        const readyEmitted: string[] = [];
 
         connection.on(
           ESwarmStoreConnectorOrbitDBEventNames.LOADING,
@@ -693,28 +694,28 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
       status:
         SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS.OPEN,
     });
-    expect(cache!.status).to.be.equal(
+    expect(cache.status).to.be.equal(
       SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS.OPEN
     );
-    await expect(cache!.get(testKey)).to.be.eventually.oneOf([
+    await expect(cache.get(testKey)).to.be.eventually.oneOf([
       testValue,
       undefined,
     ]);
-    expect(cache!.status).to.be.equal(
+    expect(cache.status).to.be.equal(
       SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS.OPEN
     );
-    await expect(cache!.put(testKey, testValue)).to.eventually.be.fulfilled;
-    await expect(cache!.open()).to.eventually.be.fulfilled;
-    expect(cache!.status).to.be.equal(
+    await expect(cache.put(testKey, testValue)).to.eventually.be.fulfilled;
+    await expect(cache.open()).to.eventually.be.fulfilled;
+    expect(cache.status).to.be.equal(
       SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS.OPEN
     );
     // TODO - must provide storing values as buffer fo the SecretStorage
-    await expect(cache!.get(testKey)).to.be.eventually.equal(testValue);
+    await expect(cache.get(testKey)).to.be.eventually.equal(testValue);
 
     const testKeyRandom = `${Date.now()}!@#$%^&**()_)_)*(&*&TY&*%*$^#$*:":/*/-*)//..,<><.~~~~';`;
     const testValueRandom = `${new Date()}!@#$%^&**()_)_)*(&*&TY&*%*$^#$*:":/*/-*)//..,<><.~~~~';`;
 
-    await expect(cache!.put(testKeyRandom, testValueRandom)).to.eventually.be
+    await expect(cache.put(testKeyRandom, testValueRandom)).to.eventually.be
       .fulfilled;
     // TODO - must provide storing values as buffer fo the SecretStorage
 
@@ -725,7 +726,7 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
       }
     };
 
-    await expect(cache!.get(testKeyRandom, cb)).to.be.eventually.equal(
+    await expect(cache.get(testKeyRandom, cb)).to.be.eventually.equal(
       testValueRandom
     );
     expect(cbCalledTimes).to.equal(1);
@@ -736,13 +737,13 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
       }
     };
 
-    await expect(cache!.del(testKeyRandom, cbErr)).to.be.eventually.equal(
+    await expect(cache.del(testKeyRandom, cbErr)).to.be.eventually.equal(
       undefined
     );
     expect(cbCalledTimes).to.equal(2);
-    await expect(cache!.close(cbErr)).to.eventually.be.fulfilled;
+    await expect(cache.close(cbErr)).to.eventually.be.fulfilled;
     expect(cbCalledTimes).to.equal(3);
-    expect(cache!.status).to.be.equal(
+    expect(cache.status).to.be.equal(
       SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS.CLOSE
     );
   }
@@ -810,6 +811,7 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
     ) {
       it('subclass swarm-store-connector-orbit-db-subclass-storage-cache', async () => {
         const password = '123456';
+        const login = 'user@login.com';
         let key: CryptoKey;
         let cache:
           | undefined
@@ -817,9 +819,11 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
 
         await expect(
           (async () => {
-            key = (await SecretStorage.generatePasswordKeyByPasswordSalt(
-              password
-            )) as CryptoKey;
+            const secretStorage = new SecretStorage();
+            key = (await secretStorage.generateCryptoKey({
+              login,
+              password,
+            })) as CryptoKey;
             return key;
           })()
         ).to.eventually.be.fulfilled;
@@ -839,12 +843,14 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
       name === 'subclass swarm-store-connector-orbit-db-subclass-storage-fabric'
     ) {
       it('subclass swarm-store-connector-orbit-db-subclass-storage-fabric', async () => {
+        const login = 'user@login.com';
         const password = '123456';
         const cachePath = '___cachePath_test';
         const passwordFailed = '12345';
 
         expect(() => {
           new SwarmStoreConnectorOrbitDBSubclassStorageFabric({
+            login,
             password: passwordFailed,
           });
         }).to.throw();
@@ -856,6 +862,7 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
 
         expect(() => {
           fabric = new SwarmStoreConnectorOrbitDBSubclassStorageFabric({
+            login,
             password,
           });
         }).not.to.throw();

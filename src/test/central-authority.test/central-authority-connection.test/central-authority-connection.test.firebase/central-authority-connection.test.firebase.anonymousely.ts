@@ -42,6 +42,9 @@ export const runTestForFirebaseConfig = async (
   const userCryptoCredentials = connectionToFirebase.cryptoCredentials;
   const disconnectResult = await connectionToFirebase.disconnect();
 
+  if (!userCryptoCredentials) {
+    return new Error('The user crypto credentials are empty');
+  }
   if (disconnectResult instanceof Error) {
     return disconnectResult;
   }
@@ -55,7 +58,7 @@ export const runTestForFirebaseConfig = async (
   }
 
   const userCredentials = await connectAnonymousely.getUserCredentials(
-    userCryptoCredentials!.userIdentity
+    userCryptoCredentials.userIdentity
   );
 
   if (userCredentials instanceof Error) {
@@ -66,7 +69,7 @@ export const runTestForFirebaseConfig = async (
       'User crypto credentials must be returned even if the user is not authorized'
     );
   }
-  if (!compareCryptoCredentials(userCryptoCredentials!, userCredentials!)) {
+  if (!compareCryptoCredentials(userCryptoCredentials, userCredentials)) {
     return new Error(
       'User crypto credentials must be the same with the credentials when the user is authorized'
     );

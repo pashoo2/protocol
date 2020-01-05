@@ -14,7 +14,11 @@ export type TESwarmStoreConnectorOrbitDBEvents = {
 
 /**
  * directory - this string will be used as a
- * part of keynames for all storages and databases
+ * part of keynames for all storages and databases.
+ * If the credentials property does not specified
+ * then the local secret storage will not be used
+ * and all data will be stored in the default,
+ * not safe, storages of the OrbitDB.
  *
  * @export
  * @interface ISwarmStoreConnectorOrbitDBOptions

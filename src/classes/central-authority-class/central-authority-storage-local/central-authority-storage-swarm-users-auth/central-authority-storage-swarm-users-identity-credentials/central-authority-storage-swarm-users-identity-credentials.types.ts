@@ -61,7 +61,7 @@ export interface ICAIdentityCredentialsStorage {
   // connect to the storage with the credentials
   // to decrypt a values stored
   connect(credentials: ISecretStoreCredentials): Promise<boolean | Error>;
-  // disconnect from the storage
+  // disconnect from the stor`age
   disconnect(): Promise<boolean | Error>;
   // read credentials from the storage
   getCredentials(

@@ -42,9 +42,7 @@ export const runTestCAIdentityV1 = async () => {
     return;
   }
 
-  const {
-    id: userIdentifier,
-  } = identityFromIdentityString as CentralAuthorityIdentity;
+  const { id: userIdentifier } = identityFromIdentityString;
 
   if (userIdentifier instanceof Error || typeof userIdentifier !== 'string') {
     console.error(
