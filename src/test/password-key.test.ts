@@ -1,4 +1,12 @@
 import {
+  SALT_GENERATION_UTILS_SALT_MAX_LENGTH_BYTES,
+  SALT_GENERATION_UTILS_SALT_MIN_LENGTH_BYTES,
+} from './../utils/encryption-utils/salt-utils.const';
+import {
+  generateSalt,
+  generateSaltString,
+} from './../utils/encryption-utils/salt-utils';
+import {
   generatePasswordKeyAsString,
   importPasswordKeyFromString,
   exportPasswordKey,
@@ -14,7 +22,7 @@ import {
   decryptDataByPassword,
 } from 'utils/password-utils/decrypt.password-utils';
 
-const testKeyGeneration = async () => {
+export const testKeyGeneration = async () => {
   /**
    * test key generation from a password
    */
@@ -51,11 +59,32 @@ const testKeyGeneration = async () => {
   //   }
   // }
   const passwordString = '12345678';
-  const passwordKey = await generatePasswordKeyAsString(passwordString);
+  const saltGenerated = generateSalt(
+    SALT_GENERATION_UTILS_SALT_MAX_LENGTH_BYTES
+  );
+
+  if (saltGenerated instanceof Error) {
+    console.error(saltGenerated);
+    return new Error('Failed to generate a valid salt');
+  }
+
+  const passwordKey = await generatePasswordKeyAsString(
+    passwordString,
+    saltGenerated
+  );
 
   if (passwordKey instanceof Error) {
     console.error(passwordKey);
-    return passwordKey;
+    console.error('Failed to generate a valid password key string');
+    return;
+  }
+
+  const passwordKeyImported = await importPasswordKeyFromString(passwordKey);
+
+  if (passwordKeyImported instanceof Error) {
+    console.error(passwordKeyImported);
+    console.error('Failed to import key from the string');
+    return;
   }
 
   const data = 'test_string';
@@ -66,32 +95,56 @@ const testKeyGeneration = async () => {
     return chipher;
   }
   console.log('chipher', chipher);
-  const decrypted = await decryptDataWithKey(passwordKey, chipher);
+  const decrypted = await decryptDataWithKey(passwordKeyImported, chipher);
 
   if (decrypted instanceof Error) {
     console.error(decrypted);
     return decrypted;
   }
   console.log('decrypted', decrypted);
-  console.log('is valid', decrypted === data);
+  if (decrypted !== data) {
+    console.error(new Error('The data decrypted is not valid'));
+    return;
+  }
 
-  const dataTest = 'test string fo password';
+  const dataTest = '~!@#$%^^(&^())*(&*(^!)&)*^#&^)&*(^#@#(*^:"}{[]\\*-F|';
   const pwd = 'pwd_test';
-  const encrypted = await encryptDataWithPassword(pwd, dataTest);
+  const saltGeneratedMinLenght = generateSaltString(
+    SALT_GENERATION_UTILS_SALT_MIN_LENGTH_BYTES
+  );
+
+  if (saltGeneratedMinLenght instanceof Error) {
+    console.error(saltGeneratedMinLenght);
+    console.error(new Error('Failed to generate salt with a min byte length'));
+    return;
+  }
+
+  const encrypted = await encryptDataWithPassword(
+    pwd,
+    saltGeneratedMinLenght,
+    dataTest
+  );
 
   if (encrypted instanceof Error) {
     console.error(encrypted);
     return encrypted;
   }
 
-  const decryptedPwd = await decryptDataByPassword(pwd, encrypted);
+  const decryptedPwd = await decryptDataByPassword(
+    pwd,
+    saltGeneratedMinLenght,
+    encrypted
+  );
 
   if (decryptedPwd instanceof Error) {
     console.error(decryptedPwd);
     return decryptedPwd;
   }
   console.log('decryptedPwd', decryptedPwd);
-  console.log('is valid', decryptedPwd === dataTest);
+  if (decryptedPwd !== dataTest) {
+    console.error(new Error('The data decrypted second params is not valid'));
+    return;
+  }
 };
 
 testKeyGeneration();

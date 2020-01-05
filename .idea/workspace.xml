@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e70e70e3-e48a-4dfd-91a6-03818e8691f6" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.eslintrc" beforeDir="false" afterPath="$PROJECT_DIR$/.eslintrc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-types/central-authority-class-types-common.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-types/central-authority-class-types-common.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-storage-local/central-authority-storage-current-user-auth/central-authority-storage-credentials/central-authority-storage-credentials.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-storage-local/central-authority-storage-current-user-auth/central-authority-storage-credentials/central-authority-storage-credentials.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-storage-local/central-authority-storage-current-user-auth/central-authority-storage-credentials/central-authority-storage-credentials.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-storage-local/central-authority-storage-current-user-auth/central-authority-storage-credentials/central-authority-storage-credentials.types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
-    </list>
+    <list default="true" id="e70e70e3-e48a-4dfd-91a6-03818e8691f6" name="Default" comment="" />
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
     <ignored path="$PROJECT_DIR$/tmp/" />
@@ -235,7 +228,7 @@
       <path value="$PROJECT_DIR$/src/utils/validation-utils/package.json" />
     </packageJsonPaths>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="293" />
     <option name="y" value="53" />
     <option name="width" value="1400" />
@@ -301,15 +294,15 @@
       <workItem from="1574622732082" duration="2426000" />
       <workItem from="1575665103362" duration="845000" />
       <workItem from="1576427069715" duration="577000" />
-      <workItem from="1577798304901" duration="528000" />
+      <workItem from="1577798304901" duration="1128000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="6599000" />
+    <option name="totallyTimeSpent" value="7199000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="67" y="25" width="1853" height="1055" extended-state="6" />
+    <frame x="67" y="25" width="1853" height="1055" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TypeScript" order="7" weight="0.329718" />
