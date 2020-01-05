@@ -67,7 +67,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStorageFabric
   protected async createKey(
     credentials: ISecretStoreCredentials
   ): Promise<void> {
-    const key = await SecretStorage.generatePasswordKeyByPasswordString(
+    const key = await SecretStorage.generatePasswordKeyByPasswordSalt(
       credentials.password
     );
 

@@ -1,3 +1,13 @@
+import { checkIsStorageProviderInstance } from './secret-storage-class-utils/secret-storage-class-utils-main/secret-storage-class-utils-main';
+import {
+  decryptValueByLogin,
+  encryptValueByLogin,
+} from './secret-storage-class-utils/secret-storage-class-utils-login/secret-storage-class-utils-login';
+import { SecretStorageProviderLocalStorage } from './secret_storage_providers/secret-storage-local-storage-provider/secret-storage-local-storage-provider';
+import {
+  generatePasswordKeyByPasswordSalt,
+  generateSaltForPassword,
+} from './secret-storage-class-utils/secret-storage-class-utils-password/secret-storage-class-utils-password';
 import {
   TInstanceofStorageProvider,
   TSecretStoreConfiguration,
@@ -14,7 +24,7 @@ import {
   SECRET_STORAGE_STATUS,
   SECRET_STORAGE_PASSWORD_MIN_LENGTH,
 } from './secret-storage-class.const';
-import { ownValueOf, ownKeyOf } from 'types/helper.types';
+import { ownValueOf } from 'types/helper.types';
 import {
   importPasswordKey,
   exportPasswordKeyAsString,
@@ -31,6 +41,8 @@ import {
   encryptDataToUInt8Array,
 } from 'utils/password-utils/encrypt.password-utils';
 import { getStatusClass } from 'classes/basic-classes/status-class-base/status-class-base';
+import { getLoginHash } from './secret-storage-class-utils/secret-storage-class-utils-login';
+import { SECRET_STORAGE_LOGIN_MIN_LENGTH } from './secret-storage-class.const';
 
 export class SecretStorage
   extends getStatusClass<typeof SECRET_STORAGE_STATUS>({
@@ -38,6 +50,15 @@ export class SecretStorage
     instanceName: 'SecretStorage',
   })
   implements ISecretStorage {
+  private static AuthStorageProvider: IStorageProvider =
+    SECRET_STORAGE_PROVIDERS[SECRET_STORAGE_PROVIDERS_NAME.SESSION_STORAGE];
+
+  private static PREFIX_KEY_IN_AUTH_STORAGE = '__SecretStorage__uk';
+
+  private static PREFIX_KEY_IN_SECRET_STORAGE = '__SecretStorage__';
+
+  private static PREFIX_FOR_SALT_VALUE = '__SecretStorage__s_uk';
+
   public static validateCredentials(
     credentials?: ISecretStoreCredentials
   ): void | Error {
@@ -48,7 +69,7 @@ export class SecretStorage
       return new Error('validateCredentials::Credentials must be an object');
     }
 
-    const { password } = credentials;
+    const { password, login } = credentials;
 
     if (typeof password !== 'string') {
       return new Error(
@@ -65,9 +86,38 @@ export class SecretStorage
         `validateCredentials::The password string must be a ${SECRET_STORAGE_PASSWORD_MIN_LENGTH} characters ar least`
       );
     }
+    if (typeof login !== 'string') {
+      return new Error(
+        'validateCredentials::A login string must be provided to authorize'
+      );
+    }
+    if (!login) {
+      return new Error(
+        'validateCredentials::A login non-empty string must be provided to authorize'
+      );
+    }
+    if (login.length < SECRET_STORAGE_LOGIN_MIN_LENGTH) {
+      return new Error(
+        `validateCredentials::The login string must be a ${SECRET_STORAGE_LOGIN_MIN_LENGTH} characters ar least`
+      );
+    }
   }
 
-  public static validateCryptoKeyCredentials(
+  private static async saltKey(credentials: ISecretStoreCredentials) {
+    const loginHash = await getLoginHash(credentials.login);
+
+    if (loginHash instanceof Error) {
+      console.error(loginHash);
+      return new Error('Failed to calculate hash by a login string');
+    }
+    return `${SecretStorage.PREFIX_FOR_SALT_VALUE}__${loginHash}`;
+  }
+
+  protected static storageKey(key: string) {
+    return `${SecretStorage.PREFIX_KEY_IN_SECRET_STORAGE}_${key}`;
+  }
+
+  protected static validateCryptoKeyCredentials(
     credentials?: ISecretStoreCredentialsCryptoKey
   ): void | Error {
     if (!credentials) {
@@ -95,47 +145,6 @@ export class SecretStorage
       'validateCryptoKeyCredentials::A Key must be ab instance of CryptoKey'
     );
   }
-
-  public static async generatePasswordKeyByPasswordString(
-    password: string
-  ): Promise<CryptoKey | Error> {
-    if (!password) {
-      return new Error();
-    }
-
-    // TODO
-    return generatePasswordKeyByPasswordString(password, '');
-  }
-
-  private static checkIsStorageProviderInstance(
-    storageProviderInstance: any
-  ): Error | boolean {
-    if (
-      !storageProviderInstance ||
-      typeof storageProviderInstance !== 'object'
-    ) {
-      return new Error('Storage provider must be an object');
-    }
-
-    const { connect, get, set, disconnect } = storageProviderInstance;
-
-    if (
-      typeof connect !== 'function' ||
-      typeof get !== 'function' ||
-      typeof set !== 'function' ||
-      typeof disconnect !== 'function'
-    ) {
-      return new Error(
-        'The instance has a wrong implemntation of a StorageProvider interface'
-      );
-    }
-    return true;
-  }
-
-  private static AuthStorageProvider: IStorageProvider =
-    SECRET_STORAGE_PROVIDERS[SECRET_STORAGE_PROVIDERS_NAME.SESSION_STORAGE];
-
-  private static KEY_IN_AUTH_STORAGE = '__SecretStorage__uk';
 
   private k?: CryptoKey;
 
@@ -180,14 +189,14 @@ export class SecretStorage
    * returns true if connected succesfully to
    * a storage and have a vaild crypto key
    */
-  protected isRunning() {
+  protected get isRunning() {
     const { status } = this;
 
     return status === SECRET_STORAGE_STATUS.RUNNING;
   }
 
   public get isActive() {
-    return !!this.isRunning();
+    return !!this.isRunning;
   }
 
   /**
@@ -199,6 +208,189 @@ export class SecretStorage
     protected configuration: Partial<TSecretStoreConfiguration> = {}
   ) {
     super();
+  }
+
+  public async connect(
+    options?: ISecretStorageOptions
+  ): Promise<boolean | Error> {
+    this.clearState();
+    this.setStatus(SECRET_STORAGE_STATUS.CONNECTING);
+    this.setOptions(options);
+
+    const resultRunAuthProvider = await this.runAuthStorageProvider();
+
+    if (resultRunAuthProvider instanceof Error) {
+      this.setErrorStatus(resultRunAuthProvider);
+      return resultRunAuthProvider;
+    }
+
+    const isKeyExists = await this.importCryptoKey();
+
+    if (isKeyExists instanceof Error) {
+      this.setErrorStatus(isKeyExists);
+      return isKeyExists;
+    }
+
+    const isStorageProviderStarted = await this.runStorageProvider();
+
+    if (isStorageProviderStarted instanceof Error) {
+      this.setErrorStatus(isStorageProviderStarted);
+      return isStorageProviderStarted;
+    }
+    this.setStatus(SECRET_STORAGE_STATUS.RUNNING);
+    return true;
+  }
+
+  public async disconnect(): Promise<boolean | Error> {
+    const resultDisconnectFromStorageProvider = await this.storageProviderDisconnect();
+
+    if (resultDisconnectFromStorageProvider instanceof Error) {
+      console.error(resultDisconnectFromStorageProvider);
+      return new Error('Failed to disconnect from the storage provider');
+    }
+    this.reset();
+    this.setStatus(SECRET_STORAGE_STATUS.STOPPED);
+    return true;
+  }
+
+  public async authorize(
+    credentials: ISecretStoreCredentials,
+    options?: ISecretStorageOptions
+  ): Promise<boolean | Error> {
+    const credentialsValidationResult = SecretStorage.validateCredentials(
+      credentials
+    );
+
+    if (credentialsValidationResult instanceof Error) {
+      this.setErrorStatus(credentialsValidationResult);
+      return credentialsValidationResult;
+    }
+
+    const salt = await this.getSaltValue(credentials);
+
+    if (salt instanceof Error) {
+      this.setErrorStatus(salt);
+      return false;
+    }
+
+    const cryptoKey = await generatePasswordKeyByPasswordSalt(
+      credentials.password,
+      salt
+    );
+
+    if (cryptoKey instanceof Error) {
+      this.setErrorStatus(cryptoKey);
+      return cryptoKey;
+    }
+
+    const resultRunAuthProvider = await this.runAuthStorageProvider();
+
+    if (resultRunAuthProvider instanceof Error) {
+      this.setErrorStatus(resultRunAuthProvider);
+      return resultRunAuthProvider;
+    }
+
+    const setKeyResult = await this.setEncryptionKey(cryptoKey);
+
+    if (setKeyResult instanceof Error) {
+      this.setErrorStatus(setKeyResult);
+      return setKeyResult;
+    }
+    return this.connect(options);
+  }
+
+  public async authorizeByKey(
+    credentials: ISecretStoreCredentialsCryptoKey,
+    options?: ISecretStorageOptions
+  ): Promise<boolean | Error> {
+    const credentialsValidationResult = SecretStorage.validateCryptoKeyCredentials(
+      credentials
+    );
+
+    if (credentialsValidationResult instanceof Error) {
+      this.setErrorStatus(credentialsValidationResult);
+      return credentialsValidationResult;
+    }
+
+    const { key: cryptoKey } = credentials;
+    const resultRunAuthProvider = await this.runAuthStorageProvider();
+
+    if (resultRunAuthProvider instanceof Error) {
+      this.setErrorStatus(resultRunAuthProvider);
+      return resultRunAuthProvider;
+    }
+
+    const setKeyResult = await this.setEncryptionKey(cryptoKey);
+
+    if (setKeyResult instanceof Error) {
+      this.setErrorStatus(setKeyResult);
+      return setKeyResult;
+    }
+    return this.connect(options);
+  }
+
+  public get = async (
+    keyForValue: string
+  ): Promise<string | Error | undefined> => {
+    const { isRunning } = this;
+
+    if (!isRunning) {
+      return new Error('There is no connection with storage or not authorized');
+    }
+
+    const key = SecretStorage.storageKey(keyForValue);
+    const { isStorageProviderSupportUInt8Array } = this;
+    const valueEncrypted = await (isStorageProviderSupportUInt8Array
+      ? this.getWithStorageProviderUint8Array(key)
+      : this.getWithStorageProvider(key));
+
+    if (valueEncrypted === undefined) {
+      return valueEncrypted;
+    }
+    if (valueEncrypted instanceof Error) {
+      return SecretStorage.error(valueEncrypted);
+    }
+
+    const decryptResult = await (valueEncrypted instanceof Uint8Array
+      ? this.decryptValueFromUInt8Array(valueEncrypted)
+      : this.decryptValue(valueEncrypted));
+
+    if (decryptResult instanceof Error) {
+      return decryptResult;
+    }
+    return decryptResult || undefined;
+  };
+
+  public async set(
+    keyForValue: string,
+    value: string
+  ): Promise<boolean | Error> {
+    const { isRunning } = this;
+
+    if (!isRunning) {
+      return SecretStorage.error(
+        'The instance of SecretStorage is not connected to the storage provider or there is no an encryption key'
+      );
+    }
+
+    //value - must be an escaped sctring
+    const encryptedValue = this.isStorageProviderSupportUInt8Array
+      ? await this.encryptValueAsInt8Array(value)
+      : await this.encryptValue(value);
+
+    if (encryptedValue instanceof Error) {
+      return SecretStorage.error(encryptedValue);
+    }
+
+    const key = SecretStorage.storageKey(keyForValue);
+    const storeValueResult = await (encryptedValue instanceof Uint8Array
+      ? this.setWithStorageProviderUInt8Array(key, encryptedValue)
+      : this.setWithStorageProvider(key, encryptedValue));
+
+    if (storeValueResult instanceof Error) {
+      return SecretStorage.error(storeValueResult);
+    }
+    return storeValueResult;
   }
 
   private setStorageProviderName(
@@ -216,9 +408,7 @@ export class SecretStorage
   ): TInstanceofStorageProvider | Error {
     try {
       const storageProvider = new StorageProviderConstructor();
-      const checkResult = SecretStorage.checkIsStorageProviderInstance(
-        storageProvider
-      );
+      const checkResult = checkIsStorageProviderInstance(storageProvider);
 
       if (checkResult instanceof Error) {
         return checkResult;
@@ -237,7 +427,7 @@ export class SecretStorage
 
   private async runAuthStorageProvider(): Promise<boolean | Error> {
     const { authStorageProvider: runningAuthStorageProvider } = this;
-    const checkIsRunning = SecretStorage.checkIsStorageProviderInstance(
+    const checkIsRunning = checkIsStorageProviderInstance(
       runningAuthStorageProvider
     );
 
@@ -326,7 +516,9 @@ export class SecretStorage
     key: string
   ): Promise<boolean | Error> {
     try {
-      const { KEY_IN_AUTH_STORAGE: KEY_IN_SESSION_STORAGE } = SecretStorage;
+      const {
+        PREFIX_KEY_IN_AUTH_STORAGE: KEY_IN_SESSION_STORAGE,
+      } = SecretStorage;
       const { authStorageProvider } = this;
 
       if (!authStorageProvider) {
@@ -343,7 +535,9 @@ export class SecretStorage
     CryptoKey | Error
   > {
     try {
-      const { KEY_IN_AUTH_STORAGE: KEY_IN_SESSION_STORAGE } = SecretStorage;
+      const {
+        PREFIX_KEY_IN_AUTH_STORAGE: KEY_IN_SESSION_STORAGE,
+      } = SecretStorage;
       const { authStorageProvider } = this;
 
       if (!authStorageProvider) {
@@ -449,37 +643,6 @@ export class SecretStorage
     }
   }
 
-  public async connect(
-    options?: ISecretStorageOptions
-  ): Promise<boolean | Error> {
-    this.clearState();
-    this.setStatus(SECRET_STORAGE_STATUS.CONNECTING);
-    this.setOptions(options);
-
-    const resultRunAuthProvider = await this.runAuthStorageProvider();
-
-    if (resultRunAuthProvider instanceof Error) {
-      this.setErrorStatus(resultRunAuthProvider);
-      return resultRunAuthProvider;
-    }
-
-    const isKeyExists = await this.importCryptoKey();
-
-    if (isKeyExists instanceof Error) {
-      this.setErrorStatus(isKeyExists);
-      return isKeyExists;
-    }
-
-    const isStorageProviderStarted = await this.runStorageProvider();
-
-    if (isStorageProviderStarted instanceof Error) {
-      this.setErrorStatus(isStorageProviderStarted);
-      return isStorageProviderStarted;
-    }
-    this.setStatus(SECRET_STORAGE_STATUS.RUNNING);
-    return true;
-  }
-
   protected reset() {
     this.clearError();
     this.clearStatus();
@@ -497,84 +660,64 @@ export class SecretStorage
     return new Error('There is no Auth storage provider defined');
   }
 
-  public async disconnect(): Promise<boolean | Error> {
-    const resultDisconnectFromStorageProvider = await this.storageProviderDisconnect();
+  protected async getSaltValue(
+    credentials: ISecretStoreCredentials
+  ): Promise<Error | string> {
+    const key = await SecretStorage.saltKey(credentials);
 
-    if (resultDisconnectFromStorageProvider instanceof Error) {
-      console.error(resultDisconnectFromStorageProvider);
-      return new Error('Failed to disconnect from the storage provider');
-    }
-    this.reset();
-    this.setStatus(SECRET_STORAGE_STATUS.STOPPED);
-    return true;
-  }
-
-  public async authorize(
-    credentials: ISecretStoreCredentials,
-    options?: ISecretStorageOptions
-  ): Promise<boolean | Error> {
-    const credentialsValidationResult = SecretStorage.validateCredentials(
-      credentials
-    );
-
-    if (credentialsValidationResult instanceof Error) {
-      this.setErrorStatus(credentialsValidationResult);
-      return credentialsValidationResult;
+    if (key instanceof Error) {
+      console.error(key);
+      return new Error('Failed to get key for a salt value');
     }
 
-    const cryptoKey = await SecretStorage.generatePasswordKeyByPasswordString(
-      credentials.password
-    );
+    const saltStorageProvider = new SecretStorageProviderLocalStorage();
+    const saltStorageProviderConnectResult = await saltStorageProvider.connect();
 
-    if (cryptoKey instanceof Error) {
-      this.setErrorStatus(cryptoKey);
-      return cryptoKey;
+    if (saltStorageProviderConnectResult instanceof Error) {
+      console.error(saltStorageProviderConnectResult);
+      return new Error('Failed to connect to the salt storage provider');
     }
 
-    const resultRunAuthProvider = await this.runAuthStorageProvider();
+    const saltEncrypted = await saltStorageProvider.get(key);
 
-    if (resultRunAuthProvider instanceof Error) {
-      this.setErrorStatus(resultRunAuthProvider);
-      return resultRunAuthProvider;
+    if (saltEncrypted instanceof Error) {
+      console.error(saltEncrypted);
+      return new Error('Failed to read salt value');
     }
+    if (!saltEncrypted) {
+      console.log('A salt value was not found a new one will be generated');
 
-    const setKeyResult = await this.setEncryptionKey(cryptoKey);
+      const newSalt = generateSaltForPassword();
 
-    if (setKeyResult instanceof Error) {
-      this.setErrorStatus(setKeyResult);
-      return setKeyResult;
+      if (newSalt instanceof Error) {
+        console.error(newSalt);
+        return new Error('Failed to generate a new salt value');
+      }
+
+      const saltEncrypted = await encryptValueByLogin(
+        credentials.login,
+        newSalt
+      );
+
+      if (saltEncrypted instanceof Error) {
+        console.error(saltEncrypted);
+        return new Error('Failed to encrypt the salt value');
+      }
+
+      const saltValueSetInStorageResult = await saltStorageProvider.set(
+        key,
+        saltEncrypted
+      );
+
+      if (saltValueSetInStorageResult instanceof Error) {
+        console.error(saltValueSetInStorageResult);
+        return new Error(
+          'Failed to store the salt value in the persistant storage'
+        );
+      }
+      return newSalt;
     }
-    return this.connect(options);
-  }
-
-  public async authorizeByKey(
-    credentials: ISecretStoreCredentialsCryptoKey,
-    options?: ISecretStorageOptions
-  ): Promise<boolean | Error> {
-    const credentialsValidationResult = SecretStorage.validateCryptoKeyCredentials(
-      credentials
-    );
-
-    if (credentialsValidationResult instanceof Error) {
-      this.setErrorStatus(credentialsValidationResult);
-      return credentialsValidationResult;
-    }
-
-    const { key: cryptoKey } = credentials;
-    const resultRunAuthProvider = await this.runAuthStorageProvider();
-
-    if (resultRunAuthProvider instanceof Error) {
-      this.setErrorStatus(resultRunAuthProvider);
-      return resultRunAuthProvider;
-    }
-
-    const setKeyResult = await this.setEncryptionKey(cryptoKey);
-
-    if (setKeyResult instanceof Error) {
-      this.setErrorStatus(setKeyResult);
-      return setKeyResult;
-    }
-    return this.connect(options);
+    return decryptValueByLogin(credentials.login, saltEncrypted);
   }
 
   protected async getWithStorageProvider(
@@ -678,36 +821,6 @@ export class SecretStorage
     return decryptedValue;
   }
 
-  public get = async (key: string): Promise<string | Error | undefined> => {
-    const { isRunning } = this;
-
-    if (!isRunning) {
-      return new Error('There is no connection with storage or not authorized');
-    }
-
-    const { isStorageProviderSupportUInt8Array } = this;
-
-    const valueEncrypted = await (isStorageProviderSupportUInt8Array
-      ? this.getWithStorageProviderUint8Array(key)
-      : this.getWithStorageProvider(key));
-
-    if (valueEncrypted === undefined) {
-      return valueEncrypted;
-    }
-    if (valueEncrypted instanceof Error) {
-      return SecretStorage.error(valueEncrypted);
-    }
-
-    const decryptResult = await (valueEncrypted instanceof Uint8Array
-      ? this.decryptValueFromUInt8Array(valueEncrypted)
-      : this.decryptValue(valueEncrypted));
-
-    if (decryptResult instanceof Error) {
-      return decryptResult;
-    }
-    return decryptResult || undefined;
-  };
-
   protected async setWithStorageProvider(
     key: string,
     value: string
@@ -807,33 +920,5 @@ export class SecretStorage
       return new Error('A wrong encryption result for the value');
     }
     return encryptedValue;
-  }
-
-  public async set(key: string, value: string): Promise<boolean | Error> {
-    const { isRunning } = this;
-
-    if (!isRunning) {
-      return SecretStorage.error(
-        'The instance of SecretStorage is not connected to the storage provider or there is no an encryption key'
-      );
-    }
-
-    //value - must be an escaped sctring
-    const encryptedValue = this.isStorageProviderSupportUInt8Array
-      ? await this.encryptValueAsInt8Array(value)
-      : await this.encryptValue(value);
-
-    if (encryptedValue instanceof Error) {
-      return SecretStorage.error(encryptedValue);
-    }
-
-    const storeValueResult = await (encryptedValue instanceof Uint8Array
-      ? this.setWithStorageProviderUInt8Array(key, encryptedValue)
-      : this.setWithStorageProvider(key, encryptedValue));
-
-    if (storeValueResult instanceof Error) {
-      return SecretStorage.error(storeValueResult);
-    }
-    return storeValueResult;
   }
 }

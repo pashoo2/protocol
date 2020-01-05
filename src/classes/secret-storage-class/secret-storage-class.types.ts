@@ -68,6 +68,7 @@ export type TSecretStoreConfiguration = {
 };
 
 export interface ISecretStoreCredentials {
+  login: string;
   password: string;
 }
 

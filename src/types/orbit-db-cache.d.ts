@@ -71,8 +71,6 @@ declare module 'orbit-db-cache' {
   }
 
   export default class Cache {
-    constructor(store: IStore);
-
     /**
      *
      *
@@ -80,6 +78,8 @@ declare module 'orbit-db-cache' {
      * @memberof IOrbitDbStoreBase
      */
     status: TCacheStatus;
+
+    constructor(store: IStore);
 
     /**
      * open connection to the store

@@ -32,6 +32,47 @@ import { CA_CONNECTION_STATUS } from 'classes/central-authority-class/central-au
 export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionWithFirebaseUtilDatabase {
   protected connectionToFirebase?: ICAConnectionFirebase;
 
+  protected get firebaseUserData(): firebase.User | null | Error {
+    const isConnected = this.checkIsConnected();
+
+    if (isConnected instanceof Error) {
+      return isConnected;
+    }
+
+    const { app } = this;
+
+    try {
+      return app!!.auth().currentUser;
+    } catch (err) {
+      console.error(err);
+      return new Error('Failed to get the user id for firebase');
+    }
+  }
+
+  protected get firebaseUserId(): string | Error {
+    const { firebaseUserData: userData } = this;
+
+    if (userData instanceof Error) {
+      console.error(userData);
+      return new Error('Failed to read the user data from a firebase');
+    }
+    if (userData == null) {
+      return new Error('There is no user data');
+    }
+    try {
+      return userData.uid;
+    } catch (err) {
+      console.error(err);
+      return new Error('Failed to get the user id for firebase');
+    }
+  }
+
+  constructor(connectionToFirebase: ICAConnectionFirebase) {
+    super();
+
+    this.setUpConnection(connectionToFirebase);
+  }
+
   /**
    * returns a string will used to store/read value of
    * the user credentials
@@ -71,41 +112,6 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
     return true;
   }
 
-  protected get firebaseUserData(): firebase.User | null | Error {
-    const isConnected = this.checkIsConnected();
-
-    if (isConnected instanceof Error) {
-      return isConnected;
-    }
-
-    const { app } = this;
-
-    try {
-      return app!!.auth().currentUser;
-    } catch (err) {
-      console.error(err);
-      return new Error('Failed to get the user id for firebase');
-    }
-  }
-
-  protected get firebaseUserId(): string | Error {
-    const { firebaseUserData: userData } = this;
-
-    if (userData instanceof Error) {
-      console.error(userData);
-      return new Error('Failed to read the user data from a firebase');
-    }
-    if (userData == null) {
-      return new Error('There is no user data');
-    }
-    try {
-      return userData.uid;
-    } catch (err) {
-      console.error(err);
-      return new Error('Failed to get the user id for firebase');
-    }
-  }
-
   protected checkIsAuthorized(): boolean | Error {
     const isConnectedToDatabase = this.checkIsConnected();
 
@@ -125,12 +131,6 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
       return new Error('The user is not authorized');
     }
     return true;
-  }
-
-  constructor(connectionToFirebase: ICAConnectionFirebase) {
-    super();
-
-    this.setUpConnection(connectionToFirebase);
   }
 
   protected setUpConnection(connectionToFirebase: ICAConnectionFirebase) {

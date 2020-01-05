@@ -42,7 +42,13 @@ export class SwarmStoreConnectorOrbitDBDatabase<
 
   private isFullyLoaded: boolean = false;
 
-  public constructor(
+  private options?: ISwarmStoreConnectorOrbitDbDatabaseOptions<TFeedStoreType>;
+
+  protected orbitDb?: orbitDbModule.OrbitDB;
+
+  protected database?: OrbitDbFeedStore<TFeedStoreType>;
+
+  constructor(
     options: ISwarmStoreConnectorOrbitDbDatabaseOptions<TFeedStoreType>,
     orbitDb: orbitDbModule.OrbitDB
   ) {
@@ -212,12 +218,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   private unsetReadyState() {
     this.setReadyState(false);
   }
-
-  private options?: ISwarmStoreConnectorOrbitDbDatabaseOptions<TFeedStoreType>;
-
-  protected orbitDb?: orbitDbModule.OrbitDB;
-
-  protected database?: OrbitDbFeedStore<TFeedStoreType>;
 
   protected unsetAllListenersForEvents = () => {
     Object.values(EOrbidDBFeedSoreEvents).forEach(

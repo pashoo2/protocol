@@ -817,7 +817,7 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
 
         await expect(
           (async () => {
-            key = (await SecretStorage.generatePasswordKeyByPasswordString(
+            key = (await SecretStorage.generatePasswordKeyByPasswordSalt(
               password
             )) as CryptoKey;
             return key;

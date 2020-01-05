@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/member-ordering */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { EventEmitter } from 'events';
 
 declare module 'ipfs' {}

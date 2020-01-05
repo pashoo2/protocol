@@ -9,15 +9,12 @@ import {
 import {
   generatePasswordKeyAsString,
   importPasswordKeyFromString,
-  exportPasswordKey,
 } from 'utils/password-utils/derive-key.password-utils';
 import {
-  encryptDataToArrayBuffer,
   encryptDataToString,
   encryptDataWithPassword,
 } from 'utils/password-utils/encrypt.password-utils';
 import {
-  decryptDataWithKeyNative,
   decryptDataWithKey,
   decryptDataByPassword,
 } from 'utils/password-utils/decrypt.password-utils';

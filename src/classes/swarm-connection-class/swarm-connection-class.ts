@@ -46,16 +46,16 @@ export class SwarmConnection
     }
   }
 
+  private connection?: ISwarmConnectionSubclass;
+
+  private options?: ISwarmConnectionOptions;
+
   public getNativeConnection(): Ipfs.IPFS | undefined {
     if (this.connection) {
       return this.connection.getNativeConnection();
     }
     return undefined;
   }
-
-  private connection?: ISwarmConnectionSubclass;
-
-  private options?: ISwarmConnectionOptions;
 
   public async connect(
     options: ISwarmConnectionOptions

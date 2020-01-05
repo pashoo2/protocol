@@ -4,20 +4,21 @@ import {
   encodeArrayBufferToDOMString,
 } from 'utils/string-encoding-utils';
 import { TTypedArrays } from 'types/main.types';
-import { HASH_CALCULATION_UTILS_DEFAULT_HASH_ALHORITHM } from './hash-calculation-utils.const';
+import {
+  HASH_CALCULATION_UTILS_DEFAULT_HASH_ALHORITHM,
+  HASH_CALCULATION_UTILS_HASH_ALHORITHM,
+} from './hash-calculation-utils.const';
 
 export const hashCalculator = window.crypto.subtle.digest.bind(
   window.crypto.subtle
 );
 
 export const calculateHashNative = async (
-  data: TTypedArrays
+  data: TTypedArrays,
+  alg: HASH_CALCULATION_UTILS_HASH_ALHORITHM
 ): Promise<ArrayBuffer | Error> => {
   try {
-    const hashString = await hashCalculator(
-      HASH_CALCULATION_UTILS_DEFAULT_HASH_ALHORITHM,
-      data
-    );
+    const hashString = await hashCalculator(alg, data);
 
     return hashString;
   } catch (err) {
@@ -26,7 +27,8 @@ export const calculateHashNative = async (
 };
 
 export const calculateHash = async (
-  data: TStringifyData
+  data: TStringifyData,
+  alg: HASH_CALCULATION_UTILS_HASH_ALHORITHM = HASH_CALCULATION_UTILS_HASH_ALHORITHM.SHA256
 ): Promise<string | Error> => {
   const dataAsString = stringify(data);
 
@@ -40,7 +42,7 @@ export const calculateHash = async (
     return dataAsArrayBuffer;
   }
 
-  const hashArrayBuffer = await calculateHashNative(dataAsArrayBuffer);
+  const hashArrayBuffer = await calculateHashNative(dataAsArrayBuffer, alg);
 
   if (hashArrayBuffer instanceof Error) {
     return hashArrayBuffer;

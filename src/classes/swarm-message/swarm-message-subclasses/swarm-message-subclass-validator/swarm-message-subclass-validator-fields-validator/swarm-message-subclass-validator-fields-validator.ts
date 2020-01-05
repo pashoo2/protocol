@@ -45,6 +45,16 @@ export class SwarmMessageSubclassFieldsValidator {
 
   protected timestampValidationOptions?: ISwarmMessageTimestampValidationOptions;
 
+  protected validateUserIdentifier = validateUserIdentifier;
+
+  protected validatePayload = createValidatePayload(
+    this.payloadValidationOptions
+  );
+
+  protected validateTimestamp = createValidateTimestamp(
+    this.timestampValidationOptions
+  );
+
   /**
    * Creates an instance of SwarmMessageSubclassValidator.
    * @param {IMessageValidatorOptions} options
@@ -207,16 +217,6 @@ export class SwarmMessageSubclassFieldsValidator {
     validateTypeFormat(type);
     this.checkTypeInList(type);
   }
-
-  protected validateUserIdentifier = validateUserIdentifier;
-
-  protected validatePayload = createValidatePayload(
-    this.payloadValidationOptions
-  );
-
-  protected validateTimestamp = createValidateTimestamp(
-    this.timestampValidationOptions
-  );
 
   /**
    * set the options

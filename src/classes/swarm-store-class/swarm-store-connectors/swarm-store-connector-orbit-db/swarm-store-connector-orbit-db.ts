@@ -45,6 +45,8 @@ export class SwarmStoreConnectorOrbitDB<
 > extends EventEmitter<TESwarmStoreConnectorOrbitDBEvents> {
   private static isLoadedCustomIdentityProvider: boolean = false;
 
+  private static isLoadedCustomAccessController: boolean = false;
+
   private static loadCustomIdentityProvider() {
     if (!SwarmStoreConnectorOrbitDB.isLoadedCustomIdentityProvider) {
       Identities.addIdentityProvider(
@@ -53,8 +55,6 @@ export class SwarmStoreConnectorOrbitDB<
       SwarmStoreConnectorOrbitDB.isLoadedCustomIdentityProvider = true;
     }
   }
-
-  private static isLoadedCustomAccessController: boolean = false;
 
   private static loadCustomAccessController() {
     if (!SwarmStoreConnectorOrbitDB.isLoadedCustomAccessController) {
@@ -930,7 +930,7 @@ export class SwarmStoreConnectorOrbitDB<
       );
     }
 
-    const { databases: databases } = options;
+    const { databases } = options;
 
     return databases.find((option) => option && option.dbName === dbName);
   }
