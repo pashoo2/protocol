@@ -1,3 +1,4 @@
+import { ISecretStoreCredentialsCryptoKey } from './../../secret-storage-class.types';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const checkIsStorageProviderInstance = (
   storageProviderInstance: any
@@ -19,4 +20,33 @@ export const checkIsStorageProviderInstance = (
     );
   }
   return true;
+};
+
+export const validateCryptoKeyCredentials = (
+  credentials?: ISecretStoreCredentialsCryptoKey
+): void | Error => {
+  if (!credentials) {
+    return new Error(
+      'validateCryptoKeyCredentials::Credentials must not be empty'
+    );
+  }
+  if (typeof credentials !== 'object') {
+    return new Error(
+      'validateCryptoKeyCredentials::Credentials must be an object'
+    );
+  }
+
+  const { key } = credentials;
+
+  if (!key) {
+    return new Error(
+      'validateCryptoKeyCredentials::A Key must be provided to authorize'
+    );
+  }
+  if (key instanceof CryptoKey) {
+    return;
+  }
+  return new Error(
+    'validateCryptoKeyCredentials::A Key must be ab instance of CryptoKey'
+  );
 };

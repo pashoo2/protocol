@@ -42,6 +42,7 @@ import { runTestCAConnectionsPoolTest } from 'test/central-authority.test/centra
 // import { runTest } from 'test/secret-storage.test';
 import { runTestSaltUtils } from './test/salt-generation-utils.test/salt-generation-utils.test';
 import { testKeyGeneration } from 'test/password-key.test';
+import { runTestSecretStorage } from 'test/secret-storage.test';
 
 // runTest();
 // runTestsCredentialsStorage();
@@ -73,8 +74,7 @@ const runTest = async () => {
   // runTestFirebaseCredentialsStorage();
   // runTestCAConnectionsUtilsValidators();
   // runTestCAConnectionsPoolTest();
-  testKeyGeneration();
-  runTestSaltUtils();
+  runTestSecretStorage();
   runMocha();
 };
 

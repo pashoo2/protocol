@@ -636,7 +636,7 @@ export class SwarmStoreConnectorOrbitDB<
       credentials
     );
 
-    if (validateCredentialsResult instanceof Error) {
+    if (!credentials || validateCredentialsResult instanceof Error) {
       console.error(validateCredentialsResult);
       throw new Error(
         'createIdentityKeystores::credentials provided are not valid'
@@ -644,7 +644,7 @@ export class SwarmStoreConnectorOrbitDB<
     }
 
     this.storage = new SwarmStoreConnectorOrbitDBSubclassStorageFabric(
-      credentials!
+      credentials
     );
   }
 

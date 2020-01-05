@@ -3,6 +3,7 @@ import { IHttpRequestOptions } from 'classes/basic-classes/http-request-class-ba
 import {
   CA_AUTH_CREDENTIALS_USER_PASSWORD_PROP_NAME,
   CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME,
+  CA_AUTH_CREDENTIALS_USER_SECRET_LOGIN_PROP_NAME,
 } from '../central-authority-class-const/central-authority-class-const-auth-credentials';
 import { TCACryptoKeyPairs } from './central-authority-class-types-crypto-keys';
 import {
@@ -21,9 +22,18 @@ export interface ICentralAuthorityUserAuthCredentials {
   password: TCentralAuthorityUserPassword;
 }
 
+/**
+ * this credentials used to authorize the user on a central authority
+ * provider service and getting access to a local data encrypted.
+ * The secret login property used to encrypt some part of a local data
+ * and may be empty. If it's empty then user identity value will be used
+ * for encryption. But it may take no effect cause it is public value
+ * in most cases.
+ */
 export type TCentralAuthorityAuthCredentials = {
-  [CA_AUTH_CREDENTIALS_USER_PASSWORD_PROP_NAME]: string;
   [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: TCentralAuthorityUserIdentity;
+  [CA_AUTH_CREDENTIALS_USER_PASSWORD_PROP_NAME]: string;
+  [CA_AUTH_CREDENTIALS_USER_SECRET_LOGIN_PROP_NAME]?: string;
 };
 
 export interface ICentralAuthorityUserProfile {

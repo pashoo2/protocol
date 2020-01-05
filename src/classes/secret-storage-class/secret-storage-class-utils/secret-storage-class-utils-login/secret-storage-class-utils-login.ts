@@ -27,7 +27,8 @@ export const encryptValueByLogin = async (
   const loginCryptoKey = await getCryptoKeyByLogin(login);
 
   if (loginCryptoKey instanceof Error) {
-    return loginCryptoKey;
+    console.error(loginCryptoKey);
+    return new Error('Failed to generate a crypto key by the login');
   }
   return encryptDataToString(loginCryptoKey, value);
 };

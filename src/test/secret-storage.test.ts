@@ -1,9 +1,11 @@
 import { SecretStorage } from 'classes/secret-storage-class';
 
-export const runTest = async () => {
+export const runTestSecretStorage = async () => {
   const secretStorage = new SecretStorage();
+  const login = 'paul@mail.com';
   const password = '494949494';
   const isAuthorized = await secretStorage.authorize({
+    login,
     password,
   });
 
@@ -14,7 +16,7 @@ export const runTest = async () => {
   console.log('isAuthorized', isAuthorized);
 
   const secretStorageNewInstance = new SecretStorage();
-  //should connect because authoirized before and credentials are stored (e.g. in the session storage)
+  // should connect because authoirized before and credentials are stored (e.g. in the session storage)
   const connectionResult = await secretStorageNewInstance.connect();
 
   if (connectionResult instanceof Error) {
@@ -23,8 +25,8 @@ export const runTest = async () => {
   }
   console.log('is new instance connected', connectionResult);
 
-  const testValue = 'testy value for the secret storage';
-  const testValueKey = 'test_value';
+  const testValue = `@#$%^&*()_//?<>+-={}[];:'",.`;
+  const testValueKey = testValue;
   const setTestValueResult = await secretStorage.set(testValueKey, testValue);
 
   if (setTestValueResult instanceof Error) {
@@ -39,6 +41,8 @@ export const runTest = async () => {
     console.error(getTestValueResult);
     return getTestValueResult;
   }
+  if (testValue !== getTestValueResult) {
+    return new Error('Test value is not valid');
+  }
   console.log('getTestValueResult', getTestValueResult);
-  console.log('is valid', testValue === getTestValueResult);
 };

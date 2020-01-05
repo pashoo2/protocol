@@ -1,3 +1,4 @@
+import { validateCryptoKeyCredentials } from './../../../../../secret-storage-class/secret-storage-class-utils/secret-storage-class-utils-main/secret-storage-class-utils-main';
 import {
   ISecretStorageOptions,
   ISecretStoreCredentials,
@@ -220,7 +221,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
     }
 
     if ((credentials as ISecretStoreCredentialsCryptoKey).key) {
-      const credentialsValidationResult = SecretStorage.validateCryptoKeyCredentials(
+      const credentialsValidationResult = validateCryptoKeyCredentials(
         credentials as ISecretStoreCredentialsCryptoKey
       );
 

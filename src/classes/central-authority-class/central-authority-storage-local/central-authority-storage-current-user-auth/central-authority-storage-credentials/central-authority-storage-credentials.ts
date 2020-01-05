@@ -1,3 +1,4 @@
+import { CA_AUTH_CREDENTIALS_USER_SECRET_LOGIN_PROP_NAME } from './../../../central-authority-class-const/central-authority-class-const-auth-credentials';
 import { SecretStorage } from 'classes/secret-storage-class';
 import { getStatusClass } from 'classes/basic-classes/status-class-base/status-class-base';
 import {
@@ -130,10 +131,15 @@ export class CentralAuthorityCredentialsStorage
     const { secretStorageConnection } = this;
     const {
       [CA_AUTH_CREDENTIALS_USER_PASSWORD_PROP_NAME]: password,
+      [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: id,
+      [CA_AUTH_CREDENTIALS_USER_SECRET_LOGIN_PROP_NAME]: secretLogin,
     } = credentials;
 
     if (secretStorageConnection) {
-      return secretStorageConnection.authorize({ password });
+      return secretStorageConnection.authorize({
+        password,
+        login: secretLogin || id,
+      });
     }
     return new Error('There is no secretStorageConnection');
   }

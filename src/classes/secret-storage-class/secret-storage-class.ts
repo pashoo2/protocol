@@ -1,4 +1,7 @@
-import { checkIsStorageProviderInstance } from './secret-storage-class-utils/secret-storage-class-utils-main/secret-storage-class-utils-main';
+import {
+  checkIsStorageProviderInstance,
+  validateCryptoKeyCredentials,
+} from './secret-storage-class-utils/secret-storage-class-utils-main/secret-storage-class-utils-main';
 import {
   decryptValueByLogin,
   encryptValueByLogin,
@@ -117,35 +120,6 @@ export class SecretStorage
     return `${SecretStorage.PREFIX_KEY_IN_SECRET_STORAGE}_${key}`;
   }
 
-  protected static validateCryptoKeyCredentials(
-    credentials?: ISecretStoreCredentialsCryptoKey
-  ): void | Error {
-    if (!credentials) {
-      return new Error(
-        'validateCryptoKeyCredentials::Credentials must not be empty'
-      );
-    }
-    if (typeof credentials !== 'object') {
-      return new Error(
-        'validateCryptoKeyCredentials::Credentials must be an object'
-      );
-    }
-
-    const { key } = credentials;
-
-    if (!key) {
-      return new Error(
-        'validateCryptoKeyCredentials::A Key must be provided to authorize'
-      );
-    }
-    if (key instanceof CryptoKey) {
-      return;
-    }
-    return new Error(
-      'validateCryptoKeyCredentials::A Key must be ab instance of CryptoKey'
-    );
-  }
-
   private k?: CryptoKey;
 
   private storageProvider?: TInstanceofStorageProvider;
@@ -253,10 +227,16 @@ export class SecretStorage
     return true;
   }
 
-  public async authorize(
-    credentials: ISecretStoreCredentials,
-    options?: ISecretStorageOptions
-  ): Promise<boolean | Error> {
+  /**
+   * generate a new crypto key with salt provided
+   *
+   * @param {ISecretStoreCredentials} credentials
+   * @returns {(Promise<CryptoKey | Error>)}
+   * @memberof SecretStorage
+   */
+  public async generateCryptoKey(
+    credentials: ISecretStoreCredentials
+  ): Promise<CryptoKey | Error> {
     const credentialsValidationResult = SecretStorage.validateCredentials(
       credentials
     );
@@ -270,7 +250,7 @@ export class SecretStorage
 
     if (salt instanceof Error) {
       this.setErrorStatus(salt);
-      return false;
+      return new Error('Failed to generate salt value');
     }
 
     const cryptoKey = await generatePasswordKeyByPasswordSalt(
@@ -281,6 +261,19 @@ export class SecretStorage
     if (cryptoKey instanceof Error) {
       this.setErrorStatus(cryptoKey);
       return cryptoKey;
+    }
+    return cryptoKey;
+  }
+
+  public async authorize(
+    credentials: ISecretStoreCredentials,
+    options?: ISecretStorageOptions
+  ): Promise<boolean | Error> {
+    const cryptoKey = await this.generateCryptoKey(credentials);
+
+    if (cryptoKey instanceof Error) {
+      console.error(cryptoKey);
+      return new Error('Failed to generate a crypto key to encrypt local data');
     }
 
     const resultRunAuthProvider = await this.runAuthStorageProvider();
@@ -303,7 +296,7 @@ export class SecretStorage
     credentials: ISecretStoreCredentialsCryptoKey,
     options?: ISecretStorageOptions
   ): Promise<boolean | Error> {
-    const credentialsValidationResult = SecretStorage.validateCryptoKeyCredentials(
+    const credentialsValidationResult = validateCryptoKeyCredentials(
       credentials
     );
 
@@ -694,19 +687,19 @@ export class SecretStorage
         return new Error('Failed to generate a new salt value');
       }
 
-      const saltEncrypted = await encryptValueByLogin(
+      const newSaltEncrypted = await encryptValueByLogin(
         credentials.login,
         newSalt
       );
 
-      if (saltEncrypted instanceof Error) {
-        console.error(saltEncrypted);
+      if (newSaltEncrypted instanceof Error) {
+        console.error(newSaltEncrypted);
         return new Error('Failed to encrypt the salt value');
       }
 
       const saltValueSetInStorageResult = await saltStorageProvider.set(
         key,
-        saltEncrypted
+        newSaltEncrypted
       );
 
       if (saltValueSetInStorageResult instanceof Error) {

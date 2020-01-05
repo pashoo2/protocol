@@ -22,8 +22,6 @@ export const SECRET_STORAGE_PASSWORD_MIN_LENGTH = 6;
 
 export const SECRET_STORAGE_LOGIN_MIN_LENGTH = 4;
 
-export const S;
-
 export const SECRET_STORAGE_PROVIDERS_NAMES = Object.values(
   SECRET_STORAGE_PROVIDERS_NAME
 );

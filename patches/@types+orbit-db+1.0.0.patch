@@ -23,6 +23,7 @@ index 1bc5dd8..b759372 100644
 +    }
 +    
 +    export interface IOrbitDBStorageCredentials {
++        login: string;
 +        password: string;
 +    }
 +
