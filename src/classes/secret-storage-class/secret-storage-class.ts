@@ -1,3 +1,4 @@
+import { calcCryptoKeyHash } from './../../utils/encryption-keys-utils/encryption-keys-utils';
 import {
   checkIsStorageProviderInstance,
   validateCryptoKeyCredentials,
@@ -49,6 +50,22 @@ import {
   SECRET_STORAGE_UNSET_MAX_ATTEMPTS,
 } from './secret-storage-class.const';
 
+/**
+ * this classed used to store value in a
+ * persistent storage locally on client side
+ * in encrypted format. Each key for a value is unique
+ * for the user which is authorized withing database.
+ * Therefore another user authorized can't to unset values
+ * which were set before by another user.
+ *
+ * @export
+ * @class SecretStorage
+ * @extends {getStatusClass<typeof SECRET_STORAGE_STATUS>({
+ *     errorStatus: SECRET_STORAGE_STATUS.ERROR,
+ *     instanceName: 'SecretStorage',
+ *   })}
+ * @implements {ISecretStorage}
+ */
 export class SecretStorage
   extends getStatusClass<typeof SECRET_STORAGE_STATUS>({
     errorStatus: SECRET_STORAGE_STATUS.ERROR,
@@ -118,9 +135,7 @@ export class SecretStorage
     return `${SecretStorage.PREFIX_FOR_SALT_VALUE}__${loginHash}`;
   }
 
-  protected static storageKey(key: string) {
-    return `${SecretStorage.PREFIX_KEY_IN_SECRET_STORAGE}_${key}`;
-  }
+  private keyHash: string = '';
 
   private k?: CryptoKey;
 
@@ -160,6 +175,15 @@ export class SecretStorage
    * @memberof SecretStorage
    */
   private dbName?: string;
+
+  /**
+   * Hash of the user login will be used as the prefix for the key
+   *
+   * @private
+   * @type {string}
+   * @memberof SecretStorage
+   */
+  private userHash?: string;
 
   /**
    * returns true if connected succesfully to
@@ -333,13 +357,13 @@ export class SecretStorage
       return new Error('There is no connection with storage or not authorized');
     }
 
-    const key = SecretStorage.storageKey(keyForValue);
+    const key = this.storageKey(keyForValue);
     const { isStorageProviderSupportUInt8Array } = this;
     const valueEncrypted = await (isStorageProviderSupportUInt8Array
       ? this.getWithStorageProviderUint8Array(key)
       : this.getWithStorageProvider(key));
 
-    if (valueEncrypted === undefined) {
+    if (!valueEncrypted) {
       return valueEncrypted;
     }
     if (valueEncrypted instanceof Error) {
@@ -377,7 +401,7 @@ export class SecretStorage
       return SecretStorage.error(encryptedValue);
     }
 
-    const key = SecretStorage.storageKey(keyForValue);
+    const key = this.storageKey(keyForValue);
     const storeValueResult = await (encryptedValue instanceof Uint8Array
       ? this.setWithStorageProviderUInt8Array(key, encryptedValue)
       : this.setWithStorageProvider(key, encryptedValue));
@@ -541,6 +565,10 @@ export class SecretStorage
     throw new Error('There is no storage provider configuration was defined');
   }
 
+  protected storageKey(key: string) {
+    return `${SecretStorage.PREFIX_KEY_IN_SECRET_STORAGE}_${this.keyHash}_${key}`;
+  }
+
   protected async setEncryptonKeyAuthInStorage(
     key: string
   ): Promise<boolean | Error> {
@@ -617,12 +645,20 @@ export class SecretStorage
       return new Error("Can't convert the key to exported format");
     }
 
+    const keyHash = await calcCryptoKeyHash(k);
+
+    if (keyHash instanceof Error) {
+      console.error(keyHash);
+      return new Error('Failed to calculate hash value for the CryptoKey');
+    }
+
     const result = await this.setEncryptonKeyAuthInStorage(keyString);
 
     if (result instanceof Error) {
       return new Error("Can't save the key in storage");
     }
     this.k = k;
+    this.keyHash = keyHash;
     return true;
   }
 
@@ -763,7 +799,7 @@ export class SecretStorage
     if (value instanceof Error) {
       return SecretStorage.error(value);
     }
-    if (value === undefined) {
+    if (!value) {
       return value;
     }
     if (typeof value !== 'string' || !value.length) {
@@ -886,7 +922,7 @@ export class SecretStorage
       );
     }
 
-    const result = await storageProvider.set(key);
+    const result = await storageProvider.set(this.storageKey(key));
 
     if (result instanceof Error) {
       return result;

@@ -12,7 +12,8 @@ import { TCentralAuthorityUserCryptoCredentials } from './../../../central-autho
 import { ISecretStoreCredentials } from 'classes/secret-storage-class/secret-storage-class.types';
 import {
   CA_STORAGE_CURRENT_USER_CREDENTIALS_SECRET_STORAGE_CONFIGURATION,
-  CA_STORAGE_CURRENT_USER_CREDENTIALS_SECRET_STORAGE_PREFIX,
+  CA_STORAGE_CURRENT_USER_CREDENTIALS_SECRET_STORAGE_DATABASE_NAME,
+  CA_STORAGE_CURRENT_USER_CREDENTIALS_SECRET_STORAGE_OPTIONS,
 } from './central-authority-storage-current-user-credentials.const';
 import { SecretStorage } from 'classes/secret-storage-class';
 import {
@@ -27,11 +28,40 @@ import {
  */
 export class CentralAuthorityStorageCurrentUserCredentials
   implements ICAStorageCurrentUserCredentials {
+  protected static async authorizeInStorage(
+    secretStorageConnection: SecretStorage,
+    cryptoKey: CryptoKey
+  ): Promise<Error | void> {
+    if (!(cryptoKey instanceof CryptoKey)) {
+      return new Error('Crypto key must be an instance of the Crypto key');
+    }
+    if (!(secretStorageConnection instanceof SecretStorage)) {
+      return new Error(
+        'The secret storage connection must be an instance of the SecretStorage'
+      );
+    }
+
+    const authorizeByKeyResult = await secretStorageConnection.authorizeByKey(
+      {
+        key: cryptoKey,
+      },
+      CA_STORAGE_CURRENT_USER_CREDENTIALS_SECRET_STORAGE_OPTIONS
+    );
+
+    if (authorizeByKeyResult instanceof Error) {
+      return authorizeByKeyResult;
+    }
+  }
+
   protected get isSecretStorageActive(): boolean {
     return (
-      !!this.secretStorageConnection && this.secretStorageConnection.isActive
+      !!this.isDisconnected &&
+      !!this.secretStorageConnection &&
+      this.secretStorageConnection.isActive
     );
   }
+
+  private isDisconnected: boolean = false;
 
   private secretStorageEncryptionKey?: CryptoKey;
 
@@ -61,6 +91,7 @@ export class CentralAuthorityStorageCurrentUserCredentials
     if (connectToSecretStorageResult instanceof Error) {
       return connectToSecretStorageResult;
     }
+    this.unsetIsDisconnected();
   };
 
   public disconnect = async (): Promise<Error | void> => {
@@ -70,6 +101,7 @@ export class CentralAuthorityStorageCurrentUserCredentials
       return disconnectFromSecretStorageResult;
     }
     this.unsetSecretStorageCryptoKey();
+    this.setIsDisconnected();
   };
 
   /**
@@ -81,10 +113,10 @@ export class CentralAuthorityStorageCurrentUserCredentials
   public set = async (
     userCryptoCredentials: TCentralAuthorityUserCryptoCredentials
   ): Promise<void | Error> => {
-    const { isSecretStorageActive } = this;
+    const connectionCheckResult = await this.checkConnectionAndReconnect();
 
-    if (!isSecretStorageActive) {
-      return new Error('The connection to the secret storage is not active');
+    if (connectionCheckResult instanceof Error) {
+      return connectionCheckResult;
     }
 
     const credentialsExportedToString = await this.exportCredentialsToString(
@@ -142,11 +174,6 @@ export class CentralAuthorityStorageCurrentUserCredentials
   public get = async (
     userIdentity: TCentralAuthorityUserIdentity
   ): Promise<TCentralAuthorityUserCryptoCredentials | Error | void> => {
-    const { isSecretStorageActive } = this;
-
-    if (!isSecretStorageActive) {
-      return new Error('The connection to the secret storage is not active');
-    }
     if (!this.validateUserIdentity(userIdentity)) {
       return new Error('The user identity is not valid');
     }
@@ -162,11 +189,6 @@ export class CentralAuthorityStorageCurrentUserCredentials
   public unset = async (
     userIdentity: TCentralAuthorityUserIdentity
   ): Promise<Error | void> => {
-    const { isSecretStorageActive } = this;
-
-    if (!isSecretStorageActive) {
-      return new Error('The connection to the secret storage is not active');
-    }
     return this.unsetCredentialsForUser(userIdentity);
   };
 
@@ -178,10 +200,10 @@ export class CentralAuthorityStorageCurrentUserCredentials
   public getByAuthProvider = async (
     authProviderIdentity: string
   ): Promise<TCentralAuthorityUserCryptoCredentials | Error | void> => {
-    const { isSecretStorageActive, secretStorageConnection } = this;
+    const connectionCheckResult = await this.checkConnectionAndReconnect();
 
-    if (!secretStorageConnection || !isSecretStorageActive) {
-      return new Error('The connection to the secret storage is not active');
+    if (connectionCheckResult instanceof Error) {
+      return connectionCheckResult;
     }
 
     const validationResult = this.validateAuthProviderId(authProviderIdentity);
@@ -193,8 +215,13 @@ export class CentralAuthorityStorageCurrentUserCredentials
   };
 
   protected async reconnect(): Promise<Error | void> {
-    const { secretStorageEncryptionKey } = this;
+    const { secretStorageEncryptionKey, isDisconnected } = this;
 
+    if (isDisconnected) {
+      return new Error(
+        'The instance was disconnected from the secret storage from the outside by calling the "disconnect" method'
+      );
+    }
     if (!secretStorageEncryptionKey) {
       return new Error('There is no encryption key');
     }
@@ -207,10 +234,9 @@ export class CentralAuthorityStorageCurrentUserCredentials
     }
 
     const secretStorageConnection = this.createConnectionToSecretStorage();
-    const authToSecretStorageResult = await secretStorageConnection.authorizeByKey(
-      {
-        key: secretStorageEncryptionKey,
-      }
+    const authToSecretStorageResult = await CentralAuthorityStorageCurrentUserCredentials.authorizeInStorage(
+      secretStorageConnection,
+      secretStorageEncryptionKey
     );
 
     if (authToSecretStorageResult instanceof Error) {
@@ -228,16 +254,22 @@ export class CentralAuthorityStorageCurrentUserCredentials
    * @memberof CentralAuthorityStorageCurrentUserCredentials
    */
   protected keyWithPrefix(key: string): string {
-    return `${CA_STORAGE_CURRENT_USER_CREDENTIALS_SECRET_STORAGE_PREFIX}_${key}`;
+    return `${CA_STORAGE_CURRENT_USER_CREDENTIALS_SECRET_STORAGE_DATABASE_NAME}_${key}`;
   }
 
   protected async getCredentials(
     key: string
   ): Promise<TCentralAuthorityUserCryptoCredentials | Error | void> {
-    const { isSecretStorageActive, secretStorageConnection } = this;
+    const connectionCheckResult = await this.checkConnectionAndReconnect();
 
-    if (!secretStorageConnection || !isSecretStorageActive) {
-      return new Error('The connection to the secret storage is not active');
+    if (connectionCheckResult instanceof Error) {
+      return connectionCheckResult;
+    }
+
+    const { secretStorageConnection } = this;
+
+    if (!secretStorageConnection) {
+      return new Error('There is no active connection with the SecretStorage');
     }
 
     const keyPrefixed = this.keyWithPrefix(key);
@@ -308,10 +340,16 @@ export class CentralAuthorityStorageCurrentUserCredentials
     userCryptoCredentials: TCentralAuthorityUserCryptoCredentials,
     userCryptoCredentialsExported: string
   ): Promise<void | Error> {
-    const { isSecretStorageActive, secretStorageConnection } = this;
+    const connectionCheckResult = await this.checkConnectionAndReconnect();
 
-    if (!secretStorageConnection || !isSecretStorageActive) {
-      return new Error('The connection to the secret storage is not active');
+    if (connectionCheckResult instanceof Error) {
+      return connectionCheckResult;
+    }
+
+    const { secretStorageConnection } = this;
+
+    if (!secretStorageConnection) {
+      return new Error('There is no active connection with the SecretStorage');
     }
 
     const userIdentity = getUserIdentityByCryptoCredentials(
@@ -332,10 +370,16 @@ export class CentralAuthorityStorageCurrentUserCredentials
     userCryptoCredentials: TCentralAuthorityUserCryptoCredentials,
     userCryptoCredentialsExported: string
   ): Promise<Error | void> {
-    const { isSecretStorageActive, secretStorageConnection } = this;
+    const connectionCheckResult = await this.checkConnectionAndReconnect();
 
-    if (!secretStorageConnection || !isSecretStorageActive) {
-      return new Error('The connection to the secret storage is not active');
+    if (connectionCheckResult instanceof Error) {
+      return connectionCheckResult;
+    }
+
+    const { secretStorageConnection } = this;
+
+    if (!secretStorageConnection) {
+      return new Error('There is no active connection with the SecretStorage');
     }
 
     const userIdentity = getUserIdentityByCryptoCredentials(
@@ -363,10 +407,16 @@ export class CentralAuthorityStorageCurrentUserCredentials
   protected async unsetCredentialsForUser(
     identityOrCredentials: string | TCentralAuthorityUserCryptoCredentials
   ): Promise<Error | void> {
-    const { isSecretStorageActive, secretStorageConnection } = this;
+    const connectionCheckResult = await this.checkConnectionAndReconnect();
 
-    if (!secretStorageConnection || !isSecretStorageActive) {
-      return new Error('The connection to the secret storage is not active');
+    if (connectionCheckResult instanceof Error) {
+      return connectionCheckResult;
+    }
+
+    const { secretStorageConnection } = this;
+
+    if (!secretStorageConnection) {
+      return new Error('There is no active connection with the SecretStorage');
     }
 
     const userIdentity =
@@ -396,6 +446,14 @@ export class CentralAuthorityStorageCurrentUserCredentials
     cryptoCredentials: any
   ): cryptoCredentials is TCentralAuthorityUserCryptoCredentials {
     return checkIsValidCryptoCredentials(cryptoCredentials);
+  }
+
+  private setIsDisconnected() {
+    this.isDisconnected = true;
+  }
+
+  private unsetIsDisconnected() {
+    this.isDisconnected = false;
   }
 
   private setSecretStorageCryptoKey(key: CryptoKey) {
@@ -434,10 +492,9 @@ export class CentralAuthorityStorageCurrentUserCredentials
     }
     this.setSecretStorageCryptoKey(cryptoKey);
 
-    const authToSecretStorageResult = await secretStorageConnection.authorizeByKey(
-      {
-        key: cryptoKey,
-      }
+    const authToSecretStorageResult = await CentralAuthorityStorageCurrentUserCredentials.authorizeInStorage(
+      secretStorageConnection,
+      cryptoKey
     );
 
     if (authToSecretStorageResult instanceof Error) {
@@ -459,5 +516,20 @@ export class CentralAuthorityStorageCurrentUserCredentials
       }
     }
     this.unsetSecretStorageConnection();
+  }
+
+  private async checkConnectionAndReconnect(): Promise<void | Error> {
+    const { isSecretStorageActive } = this;
+
+    if (!isSecretStorageActive) {
+      const reconnect = await this.reconnect();
+
+      if (reconnect instanceof Error) {
+        console.error(reconnect);
+        return new Error(
+          'Connection to the SecretStorage is not active and failed to reconnect'
+        );
+      }
+    }
   }
 }

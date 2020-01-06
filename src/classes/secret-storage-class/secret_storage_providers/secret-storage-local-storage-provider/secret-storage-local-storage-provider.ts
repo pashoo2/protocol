@@ -20,14 +20,18 @@ export class SecretStorageProviderLocalStorage implements StorageProvider {
     return true;
   }
 
-  public async set(key: string, value: string): Promise<Error | true> {
+  public async set(key: string, value?: string): Promise<Error | true> {
     try {
       const { localStorage } = this;
 
       if (!localStorage) {
         return new Error('There is no storage connected');
       }
-      localStorage.setItem(key, value);
+      if (!value) {
+        localStorage.removeItem(key);
+      } else {
+        localStorage.setItem(key, value);
+      }
       return true;
     } catch (err) {
       return err;

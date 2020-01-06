@@ -1,7 +1,11 @@
+import { encodeArrayBufferToDOMString } from 'utils/string-encoding-utils';
+import { calculateHashNative } from './../hash-calculation-utils/hash-calculation-utils';
+import { HASH_CALCULATION_UTILS_HASH_ALHORITHM } from 'utils/hash-calculation-utils/hash-calculation-utils.const';
 import {
   MIN_JWK_PROPS_COUNT,
   MIN_JWK_STRING_LENGTH,
   ENCRYPTIONS_KEYS_UTILS_JWK_FORMAT_OBJECT_KEYS,
+  ENCRYPTIONS_KEYS_UTILS_EXPORT_FORMATS,
 } from './encryption-keys-utils.const';
 
 export const isCryptoKey = (v: any): v is CryptoKey => v instanceof CryptoKey;
@@ -75,3 +79,48 @@ export const getJWKOrError = (key: any): JsonWebKey | Error =>
 
 export const getJWKOrBool = (key: any): JsonWebKey | boolean =>
   getJWK(key, false) as JsonWebKey | boolean;
+
+export const exportCryptokeyInFormat = async (
+  key: CryptoKey,
+  format: ENCRYPTIONS_KEYS_UTILS_EXPORT_FORMATS
+): Promise<ArrayBuffer | JsonWebKey | Error> => {
+  try {
+    return crypto.subtle.exportKey(format, key);
+  } catch (err) {
+    return err;
+  }
+};
+
+/**
+ * calculates hash string of the crypto key
+ * @param {CryptoKey} key
+ */
+export const calcCryptoKeyHash = async (
+  key: CryptoKey,
+  alg: HASH_CALCULATION_UTILS_HASH_ALHORITHM = HASH_CALCULATION_UTILS_HASH_ALHORITHM.SHA256
+): Promise<Error | string> => {
+  if (!(key instanceof CryptoKey)) {
+    return new Error('Key os not an instane of CryptoKey');
+  }
+
+  const exportedCryptoKey = await exportCryptokeyInFormat(
+    key,
+    ENCRYPTIONS_KEYS_UTILS_EXPORT_FORMATS.RAW
+  );
+
+  if (exportedCryptoKey instanceof Error) {
+    console.error(exportedCryptoKey);
+    return new Error('Failed to export the crypto key in the RAW format');
+  }
+
+  const hashCalcResult = await calculateHashNative(
+    exportedCryptoKey as ArrayBuffer,
+    alg
+  );
+
+  if (hashCalcResult instanceof Error) {
+    console.error(hashCalcResult);
+    return new Error('Failed to calculate a hash for the exported crypto key');
+  }
+  return encodeArrayBufferToDOMString(hashCalcResult);
+};

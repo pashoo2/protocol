@@ -4,10 +4,7 @@ import {
   encodeArrayBufferToDOMString,
 } from 'utils/string-encoding-utils';
 import { TTypedArrays } from 'types/main.types';
-import {
-  HASH_CALCULATION_UTILS_DEFAULT_HASH_ALHORITHM,
-  HASH_CALCULATION_UTILS_HASH_ALHORITHM,
-} from './hash-calculation-utils.const';
+import { HASH_CALCULATION_UTILS_HASH_ALHORITHM } from './hash-calculation-utils.const';
 
 export const hashCalculator = window.crypto.subtle.digest.bind(
   window.crypto.subtle
@@ -47,6 +44,5 @@ export const calculateHash = async (
   if (hashArrayBuffer instanceof Error) {
     return hashArrayBuffer;
   }
-
   return encodeArrayBufferToDOMString(hashArrayBuffer);
 };

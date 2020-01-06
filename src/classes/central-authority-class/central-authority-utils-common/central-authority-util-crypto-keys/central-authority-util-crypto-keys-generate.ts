@@ -1,3 +1,5 @@
+import { CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME } from './../../central-authority-class-const/central-authority-class-const-auth-credentials';
+import { CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME } from 'classes/central-authority-class/central-authority-class-const/central-authority-class-const';
 import { generateKeyPair as generateKeyPairDataEncryption } from 'utils/encryption-utils';
 import { generateKeyPair as generateKeyPairSignData } from 'utils/data-sign-utils';
 import { isCryptoKeyPair } from 'utils/encryption-keys-utils/encryption-keys-utils';
@@ -10,10 +12,6 @@ import {
   CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME,
 } from './central-authority-util-crypto-keys.const';
 import { checkIsCryptoKeyPairs } from './central-authority-util-crypto-keys-common';
-import {
-  CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_USER_ID_KEY_NAME,
-  CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME,
-} from 'classes/central-authority-class/central-authority-storage-local/central-authority-storage-current-user-auth/central-authority-storage-credentials/central-authority-storage-credentials.const';
 import { generateUUID } from 'utils/identity-utils/identity-utils';
 import {
   ICAUserUniqueIdentifierMetadata,
@@ -102,8 +100,8 @@ export const generateCryptoCredentialsV1 = async (): Promise<
     return new Error('Failed to generate a valid crypto credentials');
   }
   return {
-    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_USER_ID_KEY_NAME]: generateUUID(),
-    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeyPair,
+    [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: generateUUID(),
+    [CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeyPair,
   };
 };
 
@@ -158,8 +156,8 @@ export const generateCryptoCredentialsWithUserIdentityV1 = async (
   }
 
   return {
-    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_USER_ID_KEY_NAME]: userUniqueId,
-    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeyPair,
+    [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: userUniqueId,
+    [CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeyPair,
   };
 };
 
@@ -217,7 +215,7 @@ export const generateCryptoCredentialsWithUserIdentityV2 = async (
   }
 
   return {
-    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_USER_ID_KEY_NAME]: userUniqueId,
-    [CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeyPair,
+    [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: userUniqueId,
+    [CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeyPair,
   };
 };

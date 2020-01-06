@@ -45,4 +45,67 @@ export const runTestSecretStorage = async () => {
     return new Error('Test value is not valid');
   }
   console.log('getTestValueResult', getTestValueResult);
+
+  const secretStorageTwo = new SecretStorage();
+  const loginTwo = 'paul1@mail.com';
+  const passwordTwo = '494949494';
+  const isAuthorizedTwo = await secretStorageTwo.authorize({
+    login: loginTwo,
+    password: passwordTwo,
+  });
+
+  if (isAuthorizedTwo instanceof Error) {
+    console.error(isAuthorizedTwo);
+    return isAuthorizedTwo;
+  }
+  console.log('isAuthorized', isAuthorized);
+
+  const testValueTwo = '!';
+  const setTestValueResultTwo = await secretStorageTwo.set(
+    testValueKey,
+    testValueTwo
+  );
+
+  if (setTestValueResultTwo instanceof Error) {
+    console.error(setTestValueResultTwo);
+    return new Error('Failed to set value by user two');
+  }
+  const getTestValueResultTwo = await secretStorageTwo.get(testValueKey);
+  debugger;
+  if (getTestValueResultTwo instanceof Error) {
+    console.error(getTestValueResultTwo);
+    return getTestValueResultTwo;
+  }
+  if (getTestValueResultTwo !== testValueTwo) {
+    return new Error('There is a wrong value');
+  }
+
+  const getTestValueResultOne = await secretStorageNewInstance.get(
+    testValueKey
+  );
+
+  if (getTestValueResultOne instanceof Error) {
+    console.error(getTestValueResult);
+    return getTestValueResult;
+  }
+  if (testValue !== getTestValueResultOne) {
+    return new Error('Test value is not valid');
+  }
+
+  const unsetResult = await secretStorageNewInstance.unset(testValueKey);
+
+  if (unsetResult instanceof Error) {
+    console.error(unsetResult);
+    return unsetResult;
+  }
+
+  const getTestValueResultOneNext = await secretStorage.get(testValueKey);
+
+  if (getTestValueResultOneNext instanceof Error) {
+    console.error(getTestValueResult);
+    return getTestValueResult;
+  }
+  if (getTestValueResultOneNext) {
+    return new Error('Test value must be unset');
+  }
 };
