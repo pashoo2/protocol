@@ -1,7 +1,5 @@
-import {
-  dataValidatorUtilURL,
-  dataValidatorUtilUUIDV4,
-} from 'utils/data-validators-utils/data-validators-utils';
+import { validateAuthProviderIdentity } from './../../../central-authority-validators/central-authority-validators-auth-credentials/central-authority-validators-auth-credentials';
+import { dataValidatorUtilUUIDV4 } from 'utils/data-validators-utils/data-validators-utils';
 import {
   CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME,
   CA_USER_IDENTITY_VERSION_PROP_NAME,
@@ -11,6 +9,7 @@ import {
 import { ICAUserUniqueIdentifierDescription } from '../../central-authority-class-user-identity.types';
 
 export const validatorV1 = (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   v: any
 ): v is ICAUserUniqueIdentifierDescription => {
   if (v && typeof v === 'object') {
@@ -26,7 +25,7 @@ export const validatorV1 = (
     ) {
       return false;
     }
-    if (!dataValidatorUtilURL(authProviderURI)) {
+    if (!validateAuthProviderIdentity(authProviderURI)) {
       console.warn(
         `The auth provider's uri ${authProviderURI} have a wrong format`
       );

@@ -15,10 +15,9 @@ import {
   CA_USER_IDENTITY_VERSION_PROP_NAME,
   CA_USER_IDENTITY_VERSION_CURRENT,
   CA_USER_IDENTITY_AUTH_PROVIDER_URL_DELIMETER,
-  CA_USER_IDENTITY_VERSIONS,
 } from './central-authority-class-user-identity.const';
 import { CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME } from '../central-authority-class-const/central-authority-class-const';
-import { ownValueOf } from 'types/helper.types';
+
 export class CentralAuthorityIdentity implements ICAIdentityCommonInstance {
   protected _userIdentitySerialized?: Error | TCentralAuthorityUserIdentity;
 

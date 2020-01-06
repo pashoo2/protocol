@@ -1,3 +1,5 @@
+import { dataValidatorUtilURL } from './../../../../utils/data-validators-utils/data-validators-utils-common';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   CA_USER_IDENTITY_TYPE,
   CA_USER_IDENTITY_MIN_LENGTH,
@@ -93,5 +95,16 @@ export const validateAuthCredentials = (authCredentials: any): void | Error => {
   }
   if (!dataValidatorUtilSafeLogin(login)) {
     return new Error('The login is not safe');
+  }
+};
+
+export const validateAuthProviderIdentity = (
+  authProviderId: string
+): void | Error => {
+  if (typeof authProviderId !== 'string') {
+    return new Error('The auth provider identity must be a string');
+  }
+  if (!dataValidatorUtilURL(authProviderId)) {
+    return new Error('The auth provider must be a valid URL address');
   }
 };

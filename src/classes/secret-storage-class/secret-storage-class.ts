@@ -32,7 +32,6 @@ import {
   importPasswordKey,
   exportPasswordKeyAsString,
   importPasswordKeyFromString,
-  generatePasswordKeyByPasswordString,
 } from 'utils/password-utils/derive-key.password-utils';
 import { TPASSWORD_ENCRYPTION_KEY_IMPORT_NATIVE_SUPPORTED_TYPES } from 'utils/password-utils/password-utils.types';
 import {
@@ -45,7 +44,10 @@ import {
 } from 'utils/password-utils/encrypt.password-utils';
 import { getStatusClass } from 'classes/basic-classes/status-class-base/status-class-base';
 import { getLoginHash } from './secret-storage-class-utils/secret-storage-class-utils-login';
-import { SECRET_STORAGE_LOGIN_MIN_LENGTH } from './secret-storage-class.const';
+import {
+  SECRET_STORAGE_LOGIN_MIN_LENGTH,
+  SECRET_STORAGE_UNSET_MAX_ATTEMPTS,
+} from './secret-storage-class.const';
 
 export class SecretStorage
   extends getStatusClass<typeof SECRET_STORAGE_STATUS>({
@@ -384,6 +386,40 @@ export class SecretStorage
       return SecretStorage.error(storeValueResult);
     }
     return storeValueResult;
+  }
+
+  public async unset(
+    key: string | string[],
+    maxAttempts: number = SECRET_STORAGE_UNSET_MAX_ATTEMPTS
+  ): Promise<Error | void> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let promisePending: Promise<any>[] = [];
+    let attempt = 1;
+    const isKeyString = typeof key === 'string';
+
+    if (key instanceof Array) {
+      promisePending = key.map(this.unsetWithStorageProvider);
+    } else if (isKeyString) {
+      promisePending = [this.unsetWithStorageProvider(key)];
+    } else {
+      return new Error('Key must be a string or an array of strings');
+    }
+    while (promisePending.length && attempt++ < maxAttempts) {
+      const results = await Promise.all(promisePending);
+      promisePending = [];
+      const len = results.length;
+      let idx = 0;
+
+      for (; idx < len; idx++) {
+        if (results[idx] instanceof Error) {
+          promisePending.push(
+            this.unsetWithStorageProvider(
+              isKeyString ? (key as string) : key[idx]
+            )
+          );
+        }
+      }
+    }
   }
 
   private setStorageProviderName(
@@ -838,6 +874,25 @@ export class SecretStorage
     }
     return true;
   }
+
+  protected unsetWithStorageProvider = async (
+    key: string
+  ): Promise<boolean | Error> => {
+    const { storageProvider } = this;
+
+    if (!storageProvider) {
+      return new Error(
+        'There is no an active connection with storage provider'
+      );
+    }
+
+    const result = await storageProvider.set(key);
+
+    if (result instanceof Error) {
+      return result;
+    }
+    return true;
+  };
 
   protected async setWithStorageProviderUInt8Array(
     key: string,

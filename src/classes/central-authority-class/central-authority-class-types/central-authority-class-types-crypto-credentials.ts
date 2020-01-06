@@ -1,7 +1,4 @@
-import {
-  TCACryptoKeyPairsExported,
-  TCACryptoKeyPairs,
-} from './central-authority-class-types-crypto-keys';
+import { TCACryptoKeyPairs } from './central-authority-class-types-crypto-keys';
 import {
   CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_USER_ID_KEY_NAME,
   CENTRAL_AUTHORITY_STORAGE_CREDENTIALS_CRYPTO_KEYS_KEY_NAME,

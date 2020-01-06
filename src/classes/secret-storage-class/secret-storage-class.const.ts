@@ -11,6 +11,8 @@ export const SECRET_STORAGE_PROVIDERS_NAME = {
   LOCAL_FORAGE: 'LOCAL_FORAGE',
 };
 
+export const SECRET_STORAGE_UNSET_MAX_ATTEMPTS = 3;
+
 export const SECRET_STORAGE_PROVIDERS: ILocalStorageProviderTable = {
   [SECRET_STORAGE_PROVIDERS_NAME.LOCAL_STORAGE]: SecretStorageProviderLocalStorage,
   [SECRET_STORAGE_PROVIDERS_NAME.SESSION_STORAGE]: SecretStorageProvideSessionStorage,

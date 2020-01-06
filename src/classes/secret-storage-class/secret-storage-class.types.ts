@@ -22,12 +22,16 @@ export interface IStorageProviderOptions {
   dbName?: string;
 }
 
+export type TSecretStoreConfiguration = {
+  storageProviderName?: string;
+};
+
 export abstract class StorageProvider {
   public abstract connect(
     options?: IStorageProviderOptions
   ): Promise<boolean | Error>;
   public abstract disconnect(): Promise<boolean | Error>;
-  public abstract set(key: string, value: string): Promise<boolean | Error>;
+  public abstract set(key: string, value?: string): Promise<boolean | Error>;
 
   public abstract setUInt8Array?(
     key: string,
@@ -50,7 +54,7 @@ export type TStorageProvider = typeof StorageProvider;
  */
 export interface IStorageProvider {
   isBufferSupported?: boolean;
-  new (): StorageProvider;
+  new (configuration?: Partial<TSecretStoreConfiguration>): StorageProvider;
 }
 
 export type TInstanceofStorageProvider = InstanceType<IStorageProvider>;
@@ -60,10 +64,6 @@ export type TSecretStorageProviderName = string;
 export interface ILocalStorageProviderTable {
   [providerName: string]: IStorageProvider;
 }
-
-export type TSecretStoreConfiguration = {
-  storageProviderName?: string;
-};
 
 export interface ISecretStoreCredentials {
   login: string;
