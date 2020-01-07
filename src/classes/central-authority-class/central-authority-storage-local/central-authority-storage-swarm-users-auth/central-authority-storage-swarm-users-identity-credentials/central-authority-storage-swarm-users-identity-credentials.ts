@@ -1,3 +1,4 @@
+import { OpenStorage } from './../../../../open-storage/open-storage';
 import { getStatusClass } from 'classes/basic-classes/status-class-base/status-class-base';
 import {
   CA_IDENTITY_CREDENTIALS_STORAGE_STATUS,
@@ -6,11 +7,6 @@ import {
   CA_IDENTITY_CREDENTIALS_STORAGE_READ_RAW_CACHE_CAPACITY,
 } from './central-authority-storage-swarm-users-identity-credentials.const';
 import { ICAIdentityCredentialsStorage } from './central-authority-storage-swarm-users-identity-credentials.types';
-import { SecretStorage } from 'classes/secret-storage-class/secret-storage-class';
-import {
-  ISecretStoreCredentials,
-  ISecretStorage,
-} from 'classes/secret-storage-class/secret-storage-class.types';
 import {
   TCentralAuthorityUserIdentity,
   TCACryptoKeyPairs,
@@ -42,13 +38,11 @@ export class CentralAuthorityIdentityCredentialsStorage
     instanceName: 'CentralAuthorityIdentityCredentialsStorage',
   })
   implements ICAIdentityCredentialsStorage {
-  protected secretStorageConnection?: ISecretStorage;
+  protected storageConnection?: OpenStorage;
 
-  protected createConnectionToSecretStorage(): SecretStorage | Error {
+  protected createConnectionToStorage(): OpenStorage | Error {
     try {
-      const connection = new SecretStorage(
-        CA_IDENTITY_CREDENTIALS_STORAGE_CONFIGURATION
-      );
+      const connection = new OpenStorage();
 
       return connection;
     } catch (err) {
@@ -58,12 +52,12 @@ export class CentralAuthorityIdentityCredentialsStorage
   }
 
   public get isActive(): boolean {
-    const { status, secretStorageConnection } = this;
+    const { status, storageConnection } = this;
 
     return (
       status === CA_IDENTITY_CREDENTIALS_STORAGE_STATUS.CONNECTED &&
-      !!secretStorageConnection &&
-      secretStorageConnection.isActive
+      !!storageConnection &&
+      storageConnection.isActive
     );
   }
 
@@ -72,10 +66,8 @@ export class CentralAuthorityIdentityCredentialsStorage
    * the user's credentials
    * @param storageCredentials
    */
-  public async connect(
-    storageCredentials?: ISecretStoreCredentials
-  ): Promise<boolean | Error> {
-    const connection = this.createConnectionToSecretStorage();
+  public async connect(): Promise<boolean | Error> {
+    const connection = this.createConnectionToStorage();
 
     if (connection instanceof Error) {
       console.error(connection);
@@ -85,13 +77,9 @@ export class CentralAuthorityIdentityCredentialsStorage
     }
     this.setStatus(CA_IDENTITY_CREDENTIALS_STORAGE_STATUS.CONNECTING);
 
-    let connectionResult;
-
-    if (storageCredentials) {
-      connectionResult = await connection.authorize(storageCredentials);
-    } else {
-      connectionResult = await connection.connect();
-    }
+    const connectionResult = await connection.connect(
+      CA_IDENTITY_CREDENTIALS_STORAGE_CONFIGURATION
+    );
 
     if (connectionResult instanceof Error) {
       console.error(connectionResult);
@@ -99,7 +87,7 @@ export class CentralAuthorityIdentityCredentialsStorage
       return new Error('Failed to authorize');
     }
     this.setStatus(CA_IDENTITY_CREDENTIALS_STORAGE_STATUS.CONNECTED);
-    this.secretStorageConnection = connection;
+    this.storageConnection = connection;
     return true;
   }
 
@@ -138,6 +126,7 @@ export class CentralAuthorityIdentityCredentialsStorage
    * @returns {(Promise<boolean | Error>)}
    * @memberof CentralAuthorityIdentityCredentialsStorage
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async setCredentials(...args: any[]): Promise<boolean | Error> {
     const argsLenght = args.length;
 
@@ -164,7 +153,7 @@ export class CentralAuthorityIdentityCredentialsStorage
    * @memberof CentralAuthorityIdentityCredentialsStorage
    */
   public async disconnect(): Promise<Error | boolean> {
-    const { status, secretStorageConnection } = this;
+    const { status, storageConnection } = this;
 
     if (status === CA_IDENTITY_CREDENTIALS_STORAGE_STATUS.DISCONNECTED) {
       console.error(
@@ -183,11 +172,11 @@ export class CentralAuthorityIdentityCredentialsStorage
         )
       );
     }
-    if (!(secretStorageConnection instanceof SecretStorage)) {
+    if (!(storageConnection instanceof OpenStorage)) {
       return this.setErrorStatus('There is no connection to the SecretStorage');
     }
 
-    const disconnectionResult = await secretStorageConnection.disconnect();
+    const disconnectionResult = await storageConnection.disconnect();
 
     if (disconnectionResult instanceof Error) {
       console.error(disconnectionResult);
@@ -238,16 +227,13 @@ export class CentralAuthorityIdentityCredentialsStorage
   protected async getCredentialsRaw(
     identityKey: string
   ): Promise<string | Error | undefined> {
-    const { isActive } = this;
+    const { isActive, storageConnection } = this;
 
-    if (!isActive) {
+    if (!isActive || !storageConnection) {
       return new Error('The storage is not active');
     }
     try {
-      const { secretStorageConnection } = this;
-      const caCryptoCredentials = await secretStorageConnection!!.get(
-        identityKey
-      );
+      const caCryptoCredentials = await storageConnection.get(identityKey);
 
       if (caCryptoCredentials instanceof Error) {
         console.error(caCryptoCredentials);
@@ -266,9 +252,8 @@ export class CentralAuthorityIdentityCredentialsStorage
     identity: TCentralAuthorityUserIdentity,
     cryptoKeyPairs: TCACryptoKeyPairs
   ): Promise<boolean | Error> => {
-    const { isActive } = this;
-
-    if (!isActive) {
+    const { isActive, storageConnection } = this;
+    if (!isActive || !storageConnection) {
       return new Error('The storage is not active');
     }
     try {
@@ -310,9 +295,7 @@ export class CentralAuthorityIdentityCredentialsStorage
       // if the given values are valid
       // then can put it to the storage
       // connected to
-      const { secretStorageConnection } = this;
-
-      return secretStorageConnection!!.set(
+      return storageConnection.set(
         caIdentityStorageKey,
         cryptoCredentialsExported
       );

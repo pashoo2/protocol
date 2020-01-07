@@ -79,7 +79,8 @@ const runTest = async () => {
   // runTestCAConnectionsUtilsValidators();
   // runTestCAConnectionsPoolTest();
   // runTestAuthorityStorageCurrentUser();
-  runTestOpenStorageTest();
+  // runTestOpenStorageTest();
+  runCACredentialsIdentityStorageTest();
   runMocha();
 };
 

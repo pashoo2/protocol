@@ -140,13 +140,8 @@ const runCACredentialsIdentityStorageTestForCredentials = async (
 
 export const runCACredentialsIdentityStorageTest = async () => {
   console.warn('Storage identity test was started');
-
-  const conectionCredentials: ISecretStoreCredentials = {
-    login: 'login@value',
-    password: '123456',
-  };
   const storageInstance = new CentralAuthorityIdentityCredentialsStorage();
-  const connectionResult = await storageInstance.connect(conectionCredentials);
+  const connectionResult = await storageInstance.connect();
 
   if (connectionResult instanceof Error) {
     console.error(connectionResult);
