@@ -46,6 +46,7 @@ import { runTestSecretStorage } from 'test/secret-storage.test';
 import { runTestEncryptionKeysUtils } from 'utils/encryption-keys-utils.test';
 import { runTestAuthorityStorageCurrentUser } from 'test/central-authority.test/central-authority-storage-current-user-credentials.test';
 import { runTestCentralAuthorityUtils } from 'test/central-authority.test/central-authority-utils.test';
+import { runTestOpenStorageTest } from 'test/open-storage.test';
 
 // runTest();
 // runTestsCredentialsStorage();
@@ -77,7 +78,8 @@ const runTest = async () => {
   // runTestFirebaseCredentialsStorage();
   // runTestCAConnectionsUtilsValidators();
   // runTestCAConnectionsPoolTest();
-  runTestAuthorityStorageCurrentUser();
+  // runTestAuthorityStorageCurrentUser();
+  runTestOpenStorageTest();
   runMocha();
 };
 

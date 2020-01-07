@@ -1,5 +1,5 @@
-import { TSecretStoreConfiguration } from 'classes/secret-storage-class/secret-storage-class.types';
-import { SECRET_STORAGE_PROVIDERS_NAME } from 'classes/secret-storage-class/secret-storage-class.const';
+import { STORAGE_PROVIDERS_NAME } from 'classes/storage-providers/storage-providers.const';
+import { ISecretStoreConfiguration } from 'classes/secret-storage-class/secret-storage-class.types';
 
 export const CA_IDENTITY_CREDENTIALS_STORAGE_NAME =
   'CA_IDENTITY_CREDENTIALS_STORAGE';
@@ -18,8 +18,8 @@ export const CA_IDENTITY_CREDENTIALS_STORAGE_STATUS = {
   DISCONNECTED: 'disconnected', // disconnected from the storage and a state was cleared
 };
 
-export const CA_IDENTITY_CREDENTIALS_STORAGE_CONFIGURATION: TSecretStoreConfiguration = {
-  storageProviderName: SECRET_STORAGE_PROVIDERS_NAME.LOCAL_STORAGE,
+export const CA_IDENTITY_CREDENTIALS_STORAGE_CONFIGURATION: ISecretStoreConfiguration = {
+  storageProviderName: STORAGE_PROVIDERS_NAME.LOCAL_STORAGE,
 };
 
 export const CA_IDENTITY_CREDENTIALS_STORAGE_READ_CACHE_CAPACITY = 300;

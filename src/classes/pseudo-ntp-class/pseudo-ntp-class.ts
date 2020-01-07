@@ -6,7 +6,6 @@ import {
   IPseudoNTPClassServerConnection,
   IPseudoNTPClassCommonOptionsMilliseconds,
   TPseudoNTPClassServerResponse,
-  TPseudoNTPClassResponseRaw,
   TPseudoNTPClassResponseWithTimesamps,
   IPseudoNTPClassServerConnectionField,
   IPseudoNTPClassServerConnectionCb,

@@ -1,28 +1,17 @@
-import localforage from 'localforage';
+import levelup, { LevelUp } from 'levelup';
+import leveljs from 'level-js';
 import {
   StorageProvider,
   IStorageProviderOptions,
-} from '../../secret-storage-class.types';
-import {
-  SECRET_STORAGE_LOCAL_FORAGE_PROVIDER_DEFAULTS_DB_NAME,
-  SECRET_STORAGE_LOCAL_FORAGE_PROVIDER_DRIVER,
-} from './secret-storage-local-forage-provider.const';
+} from '../storage-providers.types';
+import { SECRET_STORAGE_LEVELJS_PROVIDER_DEFAULTS_DB_NAME } from './secret-storage-level-js-provider.const';
 
-/**
- * The main advantage of using the LocalForage provider because
- * it can store a large binary data(such as UInt8Array) as is
- * without an issues caused unsupported encoding
- *
- * @export
- * @class SecretStorageProviderLocalForage
- * @implements {StorageProvider}
- */
-export class SecretStorageProviderLocalForage implements StorageProvider {
+export class SecretStorageProviderLevelJS implements StorageProvider {
   public static isBufferSupported = true;
 
-  private localForage?: LocalForage;
+  private levelStorage?: LevelUp;
 
-  private dbName: string = SECRET_STORAGE_LOCAL_FORAGE_PROVIDER_DEFAULTS_DB_NAME;
+  private dbName: string = SECRET_STORAGE_LEVELJS_PROVIDER_DEFAULTS_DB_NAME;
 
   private options?: IStorageProviderOptions;
 
@@ -42,7 +31,7 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
 
       this.setOptions(options);
 
-      const res = await this.createInstanceOfLocalforage();
+      const res = await this.createInstanceOfLevelDB();
 
       if (res instanceof Error) {
         console.error('SecretStorageProviderLevelJS', res);
@@ -57,14 +46,14 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
 
   public async disconnect(): Promise<true | Error> {
     try {
-      const { localForage, isDisconnected } = this;
+      const { levelStorage, isDisconnected } = this;
 
       if (isDisconnected) {
         return true;
       }
       this.setIsDisconnected();
-      if (localForage) {
-        await localForage.ready();
+      if (levelStorage) {
+        await levelStorage.close();
 
         return true;
       }
@@ -91,15 +80,15 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
         return isDisconnected;
       }
 
-      const { localForage: levelStorage } = this;
+      const { levelStorage } = this;
 
       if (!levelStorage) {
         return new Error('There is no storage connected');
       }
       if (!value) {
-        await levelStorage.removeItem(key);
+        await levelStorage.del(key);
       } else {
-        await levelStorage.setItem(key, value);
+        await levelStorage.put(key, value);
       }
       return true;
     } catch (err) {
@@ -127,15 +116,15 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
         return isDisconnected;
       }
 
-      const { localForage: levelStorage } = this;
+      const { levelStorage } = this;
 
       if (!levelStorage) {
         return new Error('There is no storage connected');
       }
       if (!value) {
-        await levelStorage.removeItem(key);
+        await levelStorage.del(key);
       } else {
-        await levelStorage.setItem(key, value);
+        await levelStorage.put(key, value);
       }
       return true;
     } catch (err) {
@@ -146,16 +135,13 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
   public async get(key: string): Promise<Error | string | undefined> {
     try {
       const isDisconnected = this.checkIsReady();
-      const { localForage } = this;
 
       if (isDisconnected instanceof Error) {
         return isDisconnected;
       }
-      if (!localForage) {
-        return new Error('There is no connection to the local forage');
-      }
 
-      const item = await localForage.getItem(key);
+      const { levelStorage } = this;
+      const item = await levelStorage!.get(key, { asBuffer: false });
 
       if (typeof item !== 'string') {
         return undefined;
@@ -171,23 +157,17 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
   ): Promise<Error | Uint8Array | undefined> {
     try {
       const isDisconnected = this.checkIsReady();
-      const { localForage } = this;
 
       if (isDisconnected instanceof Error) {
         return isDisconnected;
       }
-      if (!localForage) {
-        return new Error('There is no connection to the local forage');
-      }
 
+      const { levelStorage } = this;
       // TODO - the custom patch used to return
       // Uint8Array instead of Buffer
-      const item = await localForage.getItem(key);
+      const item = await levelStorage!.get(key, { asBuffer: true });
 
-      if (!item) {
-        return undefined;
-      }
-      return new Uint8Array(item as Buffer);
+      return new Uint8Array(item);
     } catch (err) {
       return err;
     }
@@ -210,7 +190,7 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
   }
 
   protected checkIsReady(): void | Error {
-    const { isDisconnected, localForage: levelStorage } = this;
+    const { isDisconnected, levelStorage } = this;
 
     if (isDisconnected) {
       return new Error('The StorageProvider instance is disconnected');
@@ -220,22 +200,18 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
     }
   }
 
-  protected async createInstanceOfLocalforage(): Promise<void | Error> {
+  protected async createInstanceOfLevelDB(): Promise<void | Error> {
     const { dbName } = this;
     const dbNameRes =
-      dbName || SECRET_STORAGE_LOCAL_FORAGE_PROVIDER_DEFAULTS_DB_NAME;
+      dbName || SECRET_STORAGE_LEVELJS_PROVIDER_DEFAULTS_DB_NAME;
 
-    const localForage = localforage.createInstance({
-      name: dbNameRes,
-      storeName: dbNameRes,
-      driver: SECRET_STORAGE_LOCAL_FORAGE_PROVIDER_DRIVER,
-    });
+    const levelStorage = levelup(leveljs(dbNameRes));
 
     try {
-      await localForage.ready();
+      await levelStorage.open();
     } catch (err) {
       return err;
     }
-    this.localForage = localForage;
+    this.levelStorage = levelup(leveljs(dbNameRes));
   }
 }

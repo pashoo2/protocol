@@ -1,13 +1,13 @@
-import { TSecretStoreConfiguration } from 'classes/secret-storage-class/secret-storage-class.types';
-import { SECRET_STORAGE_PROVIDERS_NAME } from 'classes/secret-storage-class/secret-storage-class.const';
+import { STORAGE_PROVIDERS_NAME } from 'classes/storage-providers/storage-providers.const';
+import { ISecretStoreConfiguration } from 'classes/secret-storage-class/secret-storage-class.types';
 
 export const CA_STORAGE_CURRENT_USER_CREDENTIALS_SECRET_STORAGE_PROVIDER =
-  SECRET_STORAGE_PROVIDERS_NAME.LOCAL_FORAGE;
+  STORAGE_PROVIDERS_NAME.LOCAL_FORAGE;
 
 export const CA_STORAGE_CURRENT_USER_CREDENTIALS_SECRET_STORAGE_DATABASE_NAME =
   'CA_STORAGE_CURRENT_USER_CREDENTIALS';
 
-export const CA_STORAGE_CURRENT_USER_CREDENTIALS_SECRET_STORAGE_CONFIGURATION: TSecretStoreConfiguration = {
+export const CA_STORAGE_CURRENT_USER_CREDENTIALS_SECRET_STORAGE_CONFIGURATION: ISecretStoreConfiguration = {
   storageProviderName: CA_STORAGE_CURRENT_USER_CREDENTIALS_SECRET_STORAGE_PROVIDER,
 };
 

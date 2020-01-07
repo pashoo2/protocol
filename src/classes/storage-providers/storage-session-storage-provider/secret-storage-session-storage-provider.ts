@@ -1,4 +1,4 @@
-import { StorageProvider } from '../../secret-storage-class.types';
+import { StorageProvider } from '../storage-providers.types';
 
 export class SecretStorageProvideSessionStorage implements StorageProvider {
   private sessionStorage?: Storage;

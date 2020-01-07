@@ -1,33 +1,4 @@
-import { calcCryptoKeyHash } from './../../utils/encryption-keys-utils/encryption-keys-utils';
-import {
-  checkIsStorageProviderInstance,
-  validateCryptoKeyCredentials,
-} from './secret-storage-class-utils/secret-storage-class-utils-main/secret-storage-class-utils-main';
-import {
-  decryptValueByLogin,
-  encryptValueByLogin,
-} from './secret-storage-class-utils/secret-storage-class-utils-login/secret-storage-class-utils-login';
-import { SecretStorageProviderLocalStorage } from './secret_storage_providers/secret-storage-local-storage-provider/secret-storage-local-storage-provider';
-import {
-  generatePasswordKeyByPasswordSalt,
-  generateSaltForPassword,
-} from './secret-storage-class-utils/secret-storage-class-utils-password/secret-storage-class-utils-password';
-import {
-  TInstanceofStorageProvider,
-  TSecretStoreConfiguration,
-  IStorageProvider,
-  ISecretStoreCredentials,
-  ISecretStorage,
-  ISecretStorageOptions,
-  ISecretStoreCredentialsCryptoKey,
-} from './secret-storage-class.types';
-import {
-  SECRET_STORAGE_PROVIDERS,
-  SECRET_STORAGE_PROVIDERS_NAME,
-  SECRET_STORAGE_PROVIDERS_NAMES,
-  SECRET_STORAGE_STATUS,
-  SECRET_STORAGE_PASSWORD_MIN_LENGTH,
-} from './secret-storage-class.const';
+import { ISecretStoreConfiguration } from 'classes/secret-storage-class/secret-storage-class.types';
 import { ownValueOf } from 'types/helper.types';
 import {
   importPasswordKey,
@@ -44,11 +15,42 @@ import {
   encryptDataToUInt8Array,
 } from 'utils/password-utils/encrypt.password-utils';
 import { getStatusClass } from 'classes/basic-classes/status-class-base/status-class-base';
+import {
+  STORAGE_PROVIDERS,
+  STORAGE_PROVIDERS_NAME,
+  STORAGE_PROVIDERS_NAMES,
+} from 'classes/storage-providers/storage-providers.const';
+import { SecretStorageProviderLocalStorage } from 'classes/storage-providers/storage-local-storage-provider/secret-storage-local-storage-provider';
+import { calcCryptoKeyHash } from './../../utils/encryption-keys-utils/encryption-keys-utils';
+import {
+  checkIsStorageProviderInstance,
+  validateCryptoKeyCredentials,
+} from './secret-storage-class-utils/secret-storage-class-utils-main/secret-storage-class-utils-main';
+import {
+  decryptValueByLogin,
+  encryptValueByLogin,
+} from './secret-storage-class-utils/secret-storage-class-utils-login/secret-storage-class-utils-login';
+import {
+  generatePasswordKeyByPasswordSalt,
+  generateSaltForPassword,
+} from './secret-storage-class-utils/secret-storage-class-utils-password/secret-storage-class-utils-password';
+import {
+  TInstanceofStorageProvider,
+  IStorageProvider,
+  ISecretStoreCredentials,
+  ISecretStorage,
+  ISecretStoreCredentialsCryptoKey,
+} from './secret-storage-class.types';
+import {
+  SECRET_STORAGE_STATUS,
+  SECRET_STORAGE_PASSWORD_MIN_LENGTH,
+} from './secret-storage-class.const';
 import { getLoginHash } from './secret-storage-class-utils/secret-storage-class-utils-login';
 import {
   SECRET_STORAGE_LOGIN_MIN_LENGTH,
   SECRET_STORAGE_UNSET_MAX_ATTEMPTS,
 } from './secret-storage-class.const';
+import { IStorageProviderOptions } from 'classes/storage-providers/storage-providers.types';
 
 /**
  * this classed used to store value in a
@@ -73,7 +75,7 @@ export class SecretStorage
   })
   implements ISecretStorage {
   private static AuthStorageProvider: IStorageProvider =
-    SECRET_STORAGE_PROVIDERS[SECRET_STORAGE_PROVIDERS_NAME.SESSION_STORAGE];
+    STORAGE_PROVIDERS[STORAGE_PROVIDERS_NAME.SESSION_STORAGE];
 
   private static PREFIX_KEY_IN_AUTH_STORAGE = '__SecretStorage__uk';
 
@@ -154,18 +156,16 @@ export class SecretStorage
 
   private authStorageProvider?: TInstanceofStorageProvider;
 
-  private storageProviderName?: ownValueOf<
-    typeof SECRET_STORAGE_PROVIDERS_NAME
-  >;
+  private storageProviderName?: ownValueOf<typeof STORAGE_PROVIDERS_NAME>;
 
   /**
    * options for the instance
    *
    * @private
-   * @type {ISecretStorageOptions}
+   * @type {IStorageProviderOptions}
    * @memberof SecretStorage
    */
-  private options?: ISecretStorageOptions;
+  private options?: IStorageProviderOptions;
 
   /**
    * name of the database
@@ -205,13 +205,13 @@ export class SecretStorage
    * - provider name use to store a secret data
    */
   constructor(
-    protected configuration: Partial<TSecretStoreConfiguration> = {}
+    protected configuration: Partial<ISecretStoreConfiguration> = {}
   ) {
     super();
   }
 
   public async connect(
-    options?: ISecretStorageOptions
+    options?: IStorageProviderOptions
   ): Promise<boolean | Error> {
     this.clearState();
     this.setStatus(SECRET_STORAGE_STATUS.CONNECTING);
@@ -293,7 +293,7 @@ export class SecretStorage
 
   public async authorize(
     credentials: ISecretStoreCredentials,
-    options?: ISecretStorageOptions
+    options?: IStorageProviderOptions
   ): Promise<boolean | Error> {
     const cryptoKey = await this.generateCryptoKey(credentials);
 
@@ -320,7 +320,7 @@ export class SecretStorage
 
   public async authorizeByKey(
     credentials: ISecretStoreCredentialsCryptoKey,
-    options?: ISecretStorageOptions
+    options?: IStorageProviderOptions
   ): Promise<boolean | Error> {
     const credentialsValidationResult = validateCryptoKeyCredentials(
       credentials
@@ -447,9 +447,9 @@ export class SecretStorage
   }
 
   private setStorageProviderName(
-    storageProviderName: string = SECRET_STORAGE_PROVIDERS_NAME.LOCAL_STORAGE
+    storageProviderName: string = STORAGE_PROVIDERS_NAME.LOCAL_STORAGE
   ): boolean {
-    if (SECRET_STORAGE_PROVIDERS_NAMES.includes(storageProviderName)) {
+    if (STORAGE_PROVIDERS_NAMES.includes(storageProviderName)) {
       this.storageProviderName = storageProviderName;
       return true;
     }
@@ -536,7 +536,7 @@ export class SecretStorage
         }
 
         const storageProviderConstructor =
-          SECRET_STORAGE_PROVIDERS[storageProviderChosenName];
+          STORAGE_PROVIDERS[storageProviderChosenName];
 
         this.setSupportForUInt8Array(storageProviderConstructor);
         if (storageProviderConstructor) {
@@ -696,7 +696,7 @@ export class SecretStorage
     return result === true;
   }
 
-  protected setOptions(options?: ISecretStorageOptions): void {
+  protected setOptions(options?: IStorageProviderOptions): void {
     if (options && typeof options === 'object') {
       this.options = options;
 

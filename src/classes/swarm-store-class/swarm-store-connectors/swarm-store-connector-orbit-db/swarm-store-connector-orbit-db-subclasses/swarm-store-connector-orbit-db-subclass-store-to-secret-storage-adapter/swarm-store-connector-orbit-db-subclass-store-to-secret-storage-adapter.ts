@@ -1,6 +1,6 @@
+import { IStorageProviderOptions } from 'classes/storage-providers/storage-providers.types';
 import { validateCryptoKeyCredentials } from './../../../../../secret-storage-class/secret-storage-class-utils/secret-storage-class-utils-main/secret-storage-class-utils-main';
 import {
-  ISecretStorageOptions,
   ISecretStoreCredentials,
   ISecretStoreCredentialsCryptoKey,
 } from 'classes/secret-storage-class/secret-storage-class.types';
@@ -40,7 +40,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
     };
   }
 
-  protected options?: ISecretStorageOptions;
+  protected options?: IStorageProviderOptions;
 
   protected secretStorage?: InstanceType<typeof SecretStorage>;
 
@@ -54,7 +54,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
 
   constructor(
     credentials: ISecretStoreCredentials | ISecretStoreCredentialsCryptoKey,
-    options: Required<ISecretStorageOptions>
+    options: Required<IStorageProviderOptions>
   ) {
     this.setOptions(options);
     this.setCredentials(credentials);
@@ -183,7 +183,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
     return new Error('There is no connection to the SecretStorage');
   }
 
-  protected setOptions(options: Required<ISecretStorageOptions>): void {
+  protected setOptions(options: Required<IStorageProviderOptions>): void {
     if (!options) {
       throw new Error('Options must be provided');
     }

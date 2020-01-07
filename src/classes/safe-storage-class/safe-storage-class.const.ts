@@ -1,4 +1,4 @@
-import { SECRET_STORAGE_PROVIDERS_NAME } from 'classes/secret-storage-class/secret-storage-class.const';
+import { STORAGE_PROVIDERS_NAME } from 'classes/storage-providers/storage-providers.const';
 
 export const SAFE_STORAGE_STORAGE_NAME_COMMON_PREFIX = '__safe_storage__';
 
@@ -14,7 +14,7 @@ export const SAFE_STORAGE_PARSE_DATA_ERROR_TRY_TO_DECODE = 'Unexpected token %';
 
 export const SAFE_STORAGE_MAX_ITEMS_APPEND_LOG = 200;
 
-export const SAFE_STORAGE_DUMP_PROVIDERS = { ...SECRET_STORAGE_PROVIDERS_NAME };
+export const SAFE_STORAGE_DUMP_PROVIDERS = { ...STORAGE_PROVIDERS_NAME };
 
 export const SAFE_STORAGE_DUMP_PROVIDER_DEFAULT =
   SAFE_STORAGE_DUMP_PROVIDERS.LOCAL_STORAGE;

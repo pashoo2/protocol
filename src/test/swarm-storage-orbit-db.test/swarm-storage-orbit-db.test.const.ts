@@ -1,8 +1,6 @@
+import { IStorageProviderOptions } from 'classes/storage-providers/storage-providers.types';
 import { ISwarmStoreConnectorOrbitDBOptions } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.types';
-import {
-  ISecretStorageOptions,
-  ISecretStoreCredentials,
-} from 'classes/secret-storage-class/secret-storage-class.types';
+import { ISecretStoreCredentials } from 'classes/secret-storage-class/secret-storage-class.types';
 
 export const SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_DB_NAME =
   'database_test';
@@ -125,7 +123,7 @@ export const SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_THREE_DATABASES_WITH_
   },
 };
 
-export const SWARM_STORE_CONNECTOR_TEST_SUBCLASS_SECRET_STORAGE_CONNECTOR_OPTIONS: Required<ISecretStorageOptions> = {
+export const SWARM_STORE_CONNECTOR_TEST_SUBCLASS_SECRET_STORAGE_CONNECTOR_OPTIONS: Required<IStorageProviderOptions> = {
   dbName: '__SwarmStorageConnectorTest___DB__TEST',
 };
 
@@ -134,6 +132,6 @@ export const SWARM_STORE_CONNECTOR_TEST_SUBCLASS_SECRET_STORAGE_CONNECTOR_CREDEN
   password: '123456',
 };
 
-export const SWARM_STORE_CONNECTOR_TEST_SUBCLASS_CACHE_OPTIONS: Required<ISecretStorageOptions> = {
+export const SWARM_STORE_CONNECTOR_TEST_SUBCLASS_CACHE_OPTIONS: Required<IStorageProviderOptions> = {
   dbName: '__SwarmStorageConnectorTest___DB__TEST',
 };

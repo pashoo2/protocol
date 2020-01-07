@@ -1,9 +1,12 @@
-import { StorageProvider } from '../../secret-storage-class.types';
+import { IStorageProviderOptions } from './../storage-providers.types';
+import { StorageProvider } from '../storage-providers.types';
 
 export class SecretStorageProviderLocalStorage implements StorageProvider {
   private localStorage?: Storage;
 
-  public async connect(): Promise<true | Error> {
+  public async connect(
+    options?: IStorageProviderOptions
+  ): Promise<true | Error> {
     try {
       if (!window || !window.localStorage) {
         return new Error('There is no localStorage available for this context');
