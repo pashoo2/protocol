@@ -146,13 +146,16 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
   public async get(key: string): Promise<Error | string | undefined> {
     try {
       const isDisconnected = this.checkIsReady();
+      const { localForage } = this;
 
       if (isDisconnected instanceof Error) {
         return isDisconnected;
       }
+      if (!localForage) {
+        return new Error('There is no connection to the local forage');
+      }
 
-      const { localForage: levelStorage } = this;
-      const item = await levelStorage!.getItem(key);
+      const item = await localForage.getItem(key);
 
       if (typeof item !== 'string') {
         return undefined;
@@ -168,20 +171,23 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
   ): Promise<Error | Uint8Array | undefined> {
     try {
       const isDisconnected = this.checkIsReady();
+      const { localForage } = this;
 
       if (isDisconnected instanceof Error) {
         return isDisconnected;
       }
+      if (!localForage) {
+        return new Error('There is no connection to the local forage');
+      }
 
-      const { localForage: levelStorage } = this;
       // TODO - the custom patch used to return
       // Uint8Array instead of Buffer
-      const item = await levelStorage!.getItem(key);
+      const item = await localForage.getItem(key);
 
       if (!item) {
         return undefined;
       }
-      return new Uint8Array(item as any);
+      return new Uint8Array(item as Buffer);
     } catch (err) {
       return err;
     }

@@ -154,7 +154,6 @@ export const generateCryptoCredentialsWithUserIdentityV1 = async (
     console.error(cryptoKeyPair);
     return new Error('Failed to generate a valid crypto credentials');
   }
-
   return {
     [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: userUniqueId,
     [CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeyPair,

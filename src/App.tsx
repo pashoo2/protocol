@@ -44,6 +44,8 @@ import { runTestSaltUtils } from './test/salt-generation-utils.test/salt-generat
 import { testKeyGeneration } from 'test/password-key.test';
 import { runTestSecretStorage } from 'test/secret-storage.test';
 import { runTestEncryptionKeysUtils } from 'utils/encryption-keys-utils.test';
+import { runTestAuthorityStorageCurrentUser } from 'test/central-authority.test/central-authority-storage-current-user-credentials.test';
+import { runTestCentralAuthorityUtils } from 'test/central-authority.test/central-authority-utils.test';
 
 // runTest();
 // runTestsCredentialsStorage();
@@ -75,7 +77,7 @@ const runTest = async () => {
   // runTestFirebaseCredentialsStorage();
   // runTestCAConnectionsUtilsValidators();
   // runTestCAConnectionsPoolTest();
-  runTestSecretStorage();
+  runTestAuthorityStorageCurrentUser();
   runMocha();
 };
 

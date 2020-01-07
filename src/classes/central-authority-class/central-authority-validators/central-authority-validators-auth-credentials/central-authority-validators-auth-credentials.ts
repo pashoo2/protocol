@@ -100,11 +100,14 @@ export const validateAuthCredentials = (authCredentials: any): void | Error => {
 
 export const validateAuthProviderIdentity = (
   authProviderId: string
-): void | Error => {
+): boolean => {
   if (typeof authProviderId !== 'string') {
-    return new Error('The auth provider identity must be a string');
+    console.error(new Error('The auth provider identity must be a string'));
+    return false;
   }
   if (!dataValidatorUtilURL(authProviderId)) {
-    return new Error('The auth provider must be a valid URL address');
+    console.error(new Error('The auth provider must be a valid URL address'));
+    return false;
   }
+  return true;
 };

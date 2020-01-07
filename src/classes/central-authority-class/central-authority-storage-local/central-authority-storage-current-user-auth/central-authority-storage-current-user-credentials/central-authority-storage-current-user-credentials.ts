@@ -55,7 +55,7 @@ export class CentralAuthorityStorageCurrentUserCredentials
 
   protected get isSecretStorageActive(): boolean {
     return (
-      !!this.isDisconnected &&
+      !this.isDisconnected &&
       !!this.secretStorageConnection &&
       this.secretStorageConnection.isActive
     );
@@ -294,8 +294,7 @@ export class CentralAuthorityStorageCurrentUserCredentials
   protected validateAuthProviderId(authProviderURL: string): Error | void {
     const validationResult = validateAuthProviderIdentity(authProviderURL);
 
-    if (validationResult instanceof Error) {
-      console.error(validationResult);
+    if (!validationResult) {
       return new Error('The auth provider identity is not valid');
     }
   }
@@ -438,7 +437,10 @@ export class CentralAuthorityStorageCurrentUserCredentials
     if (authorityProviderURL instanceof Error) {
       return authorityProviderURL;
     }
-    return secretStorageConnection.unset([userIdentity, authorityProviderURL]);
+    return secretStorageConnection.unset([
+      this.keyWithPrefix(userIdentity),
+      this.keyWithPrefix(authorityProviderURL),
+    ]);
   }
 
   protected validateCryptoCredentials(

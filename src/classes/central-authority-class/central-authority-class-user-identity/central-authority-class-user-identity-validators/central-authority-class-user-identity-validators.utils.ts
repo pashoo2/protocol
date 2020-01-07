@@ -1,3 +1,4 @@
+import { CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME } from './../central-authority-class-user-identity.const';
 import { CA_USER_IDENTITY_VALIDATORS_BY_VERSION } from './central-authority-class-user-identity-validators.const';
 import { IUserIdentityDescriptionValidator } from './central-authority-class-user-identity-validators.types';
 import {
@@ -101,7 +102,10 @@ export const checkIsValidUserIdentityMetadata = (
     return new Error('Identity metadata must not be empty');
   }
 
-  const { version, authorityProviderURI } = identityMetadata;
+  const {
+    [CA_USER_IDENTITY_VERSION_PROP_NAME]: version,
+    [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: authorityProviderURI,
+  } = identityMetadata;
 
   if (version && !validateIdentityDescriptionVersion(version)) {
     return new Error('Version in Identity metadata have a wrong format');

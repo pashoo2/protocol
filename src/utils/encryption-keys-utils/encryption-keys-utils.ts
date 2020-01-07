@@ -1,12 +1,16 @@
+import { CONST_CRYPTO_KEYS_TYPES_EXPORT_FORMATS } from 'const/const-crypto-keys/const-crypto-keys';
 import { encodeArrayBufferToDOMString } from 'utils/string-encoding-utils';
-import { calculateHashNative } from './../hash-calculation-utils/hash-calculation-utils';
+import {
+  calculateHashNative,
+  calculateHash,
+} from './../hash-calculation-utils/hash-calculation-utils';
 import { HASH_CALCULATION_UTILS_HASH_ALHORITHM } from 'utils/hash-calculation-utils/hash-calculation-utils.const';
 import {
   MIN_JWK_PROPS_COUNT,
   MIN_JWK_STRING_LENGTH,
   ENCRYPTIONS_KEYS_UTILS_JWK_FORMAT_OBJECT_KEYS,
-  ENCRYPTIONS_KEYS_UTILS_EXPORT_FORMATS,
 } from './encryption-keys-utils.const';
+import { CONST_CRYPTO_KEYS_TYPES } from 'const/const-crypto-keys/const-crypto-keys';
 
 export const isCryptoKey = (v: any): v is CryptoKey => v instanceof CryptoKey;
 
@@ -82,12 +86,24 @@ export const getJWKOrBool = (key: any): JsonWebKey | boolean =>
 
 export const exportCryptokeyInFormat = async (
   key: CryptoKey,
-  format: ENCRYPTIONS_KEYS_UTILS_EXPORT_FORMATS
+  format: CONST_CRYPTO_KEYS_TYPES_EXPORT_FORMATS
 ): Promise<ArrayBuffer | JsonWebKey | Error> => {
   try {
-    return crypto.subtle.exportKey(format, key);
+    const result = await crypto.subtle.exportKey(format, key);
+
+    if (result instanceof Error) {
+      console.error(result);
+      return new Error(
+        'exportCryptokeyInFormat::error returned from the exportKey'
+      );
+    }
+    return result;
   } catch (err) {
-    return err;
+    debugger;
+    console.error(err);
+    return new Error(
+      'exportCryptokeyInFormat::An error thrown when export the crypto key'
+    );
   }
 };
 
@@ -100,13 +116,25 @@ export const calcCryptoKeyHash = async (
   alg: HASH_CALCULATION_UTILS_HASH_ALHORITHM = HASH_CALCULATION_UTILS_HASH_ALHORITHM.SHA256
 ): Promise<Error | string> => {
   if (!(key instanceof CryptoKey)) {
-    return new Error('Key os not an instane of CryptoKey');
+    return new Error('Key os not an instance of CryptoKey');
+  }
+  if (!key.extractable) {
+    return new Error('The crypto key is not extractable');
   }
 
-  const exportedCryptoKey = await exportCryptokeyInFormat(
-    key,
-    ENCRYPTIONS_KEYS_UTILS_EXPORT_FORMATS.RAW
-  );
+  let format: CONST_CRYPTO_KEYS_TYPES_EXPORT_FORMATS =
+    CONST_CRYPTO_KEYS_TYPES_EXPORT_FORMATS.RAW;
+  const keyAlgName = key.algorithm.name.toLowerCase();
+
+  if (keyAlgName.includes('rsa-') || keyAlgName.includes('ecdsa')) {
+    if (key.type.includes(CONST_CRYPTO_KEYS_TYPES.PUBLIC)) {
+      format = CONST_CRYPTO_KEYS_TYPES_EXPORT_FORMATS.SPKI;
+    } else {
+      format = CONST_CRYPTO_KEYS_TYPES_EXPORT_FORMATS.PKCS8;
+    }
+  }
+
+  const exportedCryptoKey = await exportCryptokeyInFormat(key, format);
 
   if (exportedCryptoKey instanceof Error) {
     console.error(exportedCryptoKey);
@@ -123,4 +151,26 @@ export const calcCryptoKeyHash = async (
     return new Error('Failed to calculate a hash for the exported crypto key');
   }
   return encodeArrayBufferToDOMString(hashCalcResult);
+};
+
+// allow to absent for a private keys in a pairs
+export const calcCryptoKeyPairHash = async (
+  cryptoPair: CryptoKeyPair,
+  alg?: HASH_CALCULATION_UTILS_HASH_ALHORITHM
+): Promise<Error | string> => {
+  const pending = [calcCryptoKeyHash(cryptoPair.publicKey)];
+
+  if (cryptoPair.privateKey) {
+    pending.push(calcCryptoKeyHash(cryptoPair.privateKey));
+  }
+
+  const results = await Promise.all(pending);
+
+  if (results[0] instanceof Error) {
+    return new Error('Failed to calculate hash of the private key');
+  }
+  if (results[1] instanceof Error) {
+    return new Error('Failed to calculate hash of the puclic key');
+  }
+  return calculateHash(`${results[0]}___${results[1]}`);
 };

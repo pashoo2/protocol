@@ -21,6 +21,7 @@ import {
 } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
 import { stringify } from 'utils/main-utils';
 import { TUserIdentityVersion } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types';
+import { calcCryptoKeyPairHash } from 'utils/encryption-keys-utils/encryption-keys-utils';
 
 export const exportCryptoCredentialsToString = async (
   userCryptoCredentials: TCentralAuthorityUserCryptoCredentials,
@@ -80,6 +81,7 @@ export const exportCryptoCredentialsToString = async (
   }
 };
 
+// allow to absent for a private keys in a pairs
 export const exportCryptoCredentialsToStringWithoutTheCAIdentityVersion = (
   userCryptoCredentials: TCentralAuthorityUserCryptoCredentials
 ): Promise<Error | string> =>
@@ -92,36 +94,88 @@ export const compareCryptoCredentials = async (
     return new Error('Crdentails to compare must be an array');
   }
 
-  const exportResult = await exportCryptoCredentialsToStringWithoutTheCAIdentityVersion(
-    credentials[0]
-  );
+  const cryptoCredentialsBase = credentials[0];
 
-  if (exportResult instanceof Error) {
-    return exportResult;
+  if (!checkIsValidCryptoCredentials(cryptoCredentialsBase)) {
+    return new Error('The crypto credentials on index 0 is not valid');
   }
   if (credentials.length === 1) {
     return true;
   }
 
+  const userIdentityBase = new CentralAuthorityIdentity(
+    cryptoCredentialsBase[CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]
+  );
+
+  if (!userIdentityBase.isValid) {
+    return new Error(
+      'The user identity is not valid in the crypto credentials base'
+    );
+  }
+
+  const cryptoCredentialsKeysBase =
+    cryptoCredentialsBase[CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME];
+  const cryptoCredentialsEncryptKeyPairHashBase = await calcCryptoKeyPairHash(
+    cryptoCredentialsKeysBase.encryptionKeyPair
+  );
+
+  if (cryptoCredentialsEncryptKeyPairHashBase instanceof Error) {
+    return new Error('Failed to calculate hash of the encrypt key pairs base');
+  }
+
+  const cryptoCredentialsSignKeyPairHashBase = await calcCryptoKeyPairHash(
+    cryptoCredentialsKeysBase.signDataKeyPair
+  );
+
+  if (cryptoCredentialsSignKeyPairHashBase instanceof Error) {
+    return new Error(
+      'Failed to calculate hash of the data sign key pairs base'
+    );
+  }
+
   let idx = 1;
   const length = credentials.length;
-  let exportCredentialsResult = null;
+  let nextCryptoCredentials = null;
+  let keyPairs = null;
+  let userIdentity = null;
+  let encryptionKeyPairsHash = null;
+  let signPairsHash = null;
 
   for (; idx < length; idx += 1) {
-    exportCredentialsResult = await exportCryptoCredentialsToStringWithoutTheCAIdentityVersion(
-      credentials[idx]
+    nextCryptoCredentials = credentials[idx];
+
+    if (!checkIsValidCryptoCredentials(nextCryptoCredentials)) {
+      return new Error(`The crypto credentials on index ${idx} is not valid`);
+    }
+
+    userIdentity = new CentralAuthorityIdentity(
+      nextCryptoCredentials[CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]
     );
 
-    if (exportCredentialsResult instanceof Error) {
-      console.error(
-        `Failed to export the credentials on index ${idx} === ${credentials[idx]}`
-      );
-      return exportCredentialsResult;
-    }
-    if (exportCredentialsResult !== exportResult) {
+    if (!userIdentity.isValid) {
       return new Error(
-        `The credentials on index ${idx} are not equals to the first credentials`
+        `The user identity is not valid in the crypto credentials on index ${idx}`
       );
+    }
+    if (userIdentity.id !== userIdentityBase.id) {
+      return new Error(`The user identity are different on index ${idx}`);
+    }
+
+    keyPairs = nextCryptoCredentials[CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME];
+    encryptionKeyPairsHash = await calcCryptoKeyPairHash(
+      keyPairs.encryptionKeyPair
+    );
+
+    if (cryptoCredentialsEncryptKeyPairHashBase !== encryptionKeyPairsHash) {
+      return new Error(
+        `The encryption key pairs are different on index ${idx}`
+      );
+    }
+
+    signPairsHash = await calcCryptoKeyPairHash(keyPairs.signDataKeyPair);
+
+    if (cryptoCredentialsSignKeyPairHashBase !== signPairsHash) {
+      return new Error(`The data sign key pairs are different on index ${idx}`);
     }
   }
   return true;

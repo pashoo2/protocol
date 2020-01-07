@@ -430,10 +430,10 @@ export class SecretStorage
     }
     while (promisePending.length && attempt++ < maxAttempts) {
       const results = await Promise.all(promisePending);
-      promisePending = [];
       const len = results.length;
       let idx = 0;
 
+      promisePending = [];
       for (; idx < len; idx++) {
         if (results[idx] instanceof Error) {
           promisePending.push(
@@ -922,7 +922,7 @@ export class SecretStorage
       );
     }
 
-    const result = await storageProvider.set(this.storageKey(key));
+    const result = await storageProvider.set(this.storageKey(key), undefined);
 
     if (result instanceof Error) {
       return result;
