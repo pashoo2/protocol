@@ -99,7 +99,6 @@ export const exportCryptokeyInFormat = async (
     }
     return result;
   } catch (err) {
-    debugger;
     console.error(err);
     return new Error(
       'exportCryptokeyInFormat::An error thrown when export the crypto key'

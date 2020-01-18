@@ -215,7 +215,7 @@ export class CAConnectionWithFirebaseImplementation
       // try to sign in with the credentials, then try to sign up
       // const userLoggedPromise = this.waitingUserInit();
       const signInResult = await this.signIn(firebaseCredentials);
-      debugger;
+
       if (signInResult instanceof Error) {
         console.warn('Failed to sign in with the credentials given');
 
@@ -238,7 +238,7 @@ export class CAConnectionWithFirebaseImplementation
       //   return new Error('Error on login');
       // }
       // if (!user.emailVerified) {
-      debugger;
+
       // check if the account was verfied by the user
       const isVerifiedResult = await this.chekIfVerifiedAccount();
 
@@ -319,7 +319,6 @@ export class CAConnectionWithFirebaseImplementation
     if (!app) {
       return;
     }
-    debugger;
     if ((app as any).isDeleted_) {
       return;
     }

@@ -239,11 +239,10 @@ export class CAConnectionsPool implements ICAConnectionPool {
   public async disconnect(
     authProviderUrl: TCAAuthProviderIdentity
   ): Promise<void | Error> {
-    debugger;
     const currentConnectionWithAuthProvider = this.getConnectionWithAuthProvider(
       authProviderUrl
     );
-    debugger;
+
     if (currentConnectionWithAuthProvider instanceof Error) {
       return currentConnectionWithAuthProvider;
     }

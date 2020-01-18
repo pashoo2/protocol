@@ -71,7 +71,7 @@ export const runTestSecretStorage = async () => {
     return new Error('Failed to set value by user two');
   }
   const getTestValueResultTwo = await secretStorageTwo.get(testValueKey);
-  debugger;
+
   if (getTestValueResultTwo instanceof Error) {
     console.error(getTestValueResultTwo);
     return getTestValueResultTwo;

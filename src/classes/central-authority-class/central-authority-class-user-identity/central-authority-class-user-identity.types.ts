@@ -1,3 +1,5 @@
+import { TCentralAuthorityUserCryptoCredentials } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
+import { CentralAuthorityIdentity } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
 import { TCentralAuthorityUserIdentity } from '../central-authority-class-types/central-authority-class-types';
 import {
   CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME,
@@ -62,3 +64,9 @@ export interface ICAIdentityCommonInstance {
   isValid?: boolean;
   version: TUserIdentityVersion | Error;
 }
+
+export type TCAUserIdentityRawTypes =
+  | CentralAuthorityIdentity
+  | TCentralAuthorityUserCryptoCredentials
+  | TCentralAuthorityUserIdentity
+  | ICAUserUniqueIdentifierDescriptionWithOptionalVersion;

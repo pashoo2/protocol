@@ -331,7 +331,6 @@ export class CAConnectionWithFirebaseBase {
     }
     return new Promise((res) => {
       this.app!!.auth().onAuthStateChanged((user) => {
-        debugger;
         if (user && user.email) {
           res(user);
         }
@@ -577,7 +576,6 @@ export class CAConnectionWithFirebaseBase {
   }
 
   protected async handleAuthEmailNotVerified(): Promise<boolean | Error> {
-    debugger;
     const isConnected = this.checkIfConnected();
 
     if (isConnected instanceof Error) {
@@ -585,7 +583,7 @@ export class CAConnectionWithFirebaseBase {
     }
 
     const { currentUser } = this;
-    debugger;
+
     if (!currentUser) {
       return new Error('There is no user authorized');
     }

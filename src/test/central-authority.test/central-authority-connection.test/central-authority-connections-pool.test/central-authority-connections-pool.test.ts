@@ -11,6 +11,7 @@ import CAConnectionWithFirebase from 'classes/central-authority-class/central-au
 import { CA_CONNECTIONS_POOL_AUTH_PROVIDERS_CONNECTION_CONSTRUCTORS } from 'classes/central-authority-class/central-authority-connections/central-authority-connections.const';
 import { IAuthProviderConnectionConfiguration } from 'classes/central-authority-class/central-authority-connections/central-authority-connections-pool/central-authority-connections-pool.types';
 import { delay } from 'utils/common-utils/common-utils-timer';
+import { createCAConnectionsPoolWithTwoProviders } from './central-authority-connections-pool.test.shared';
 
 export const runTestCAConnectionsPoolTest = () => {
   describe('central-authority-connections-pool module test', () => {
@@ -30,14 +31,7 @@ export const runTestCAConnectionsPoolTest = () => {
             ],
           });
         }).not.to.throw();
-        expect(() => {
-          new CAConnectionsPool({
-            providers: [
-              CA_CONNECTOINS_CONNECTIONS_POOL_TEST_FIREBASE_DB_WATCHA_AUTH_PROVIDER_CONF,
-              CA_CONNECTOINS_CONNECTIONS_POOL_TEST_FIREBASE_DB_PROTOCOL_AUTH_PROVIDER_CONF,
-            ],
-          });
-        }).not.to.throw();
+        expect(createCAConnectionsPoolWithTwoProviders).not.to.throw();
       });
       it('invalid configurations for the auth providers - should throw', () => {
         expect(() => {
@@ -257,7 +251,6 @@ export const runTestCAConnectionsPoolTest = () => {
             CA_CONNECTOINS_CONNECTIONS_POOL_TEST_FIREBASE_DB_WATCHA_AUTH_PROVIDER_CONF.caProviderUrl
           )
         ).to.eventually.not.be.an('error');
-        debugger;
         await delay(1000);
         const credentialsAnotherProvider = {
           login: 'cemilic688@themail3.net',
@@ -267,7 +260,7 @@ export const runTestCAConnectionsPoolTest = () => {
           CA_CONNECTOINS_CONNECTIONS_POOL_TEST_FIREBASE_DB_PROTOCOL_AUTH_PROVIDER_CONF.caProviderUrl,
           credentialsAnotherProvider
         );
-        debugger;
+
         expect(authConnectionToAnotherProvider).to.be.an.instanceOf(
           CA_CONNECTIONS_POOL_AUTH_PROVIDERS_CONNECTION_CONSTRUCTORS[
             CA_CONNECTOINS_CONNECTIONS_POOL_TEST_FIREBASE_DB_PROTOCOL_AUTH_PROVIDER_CONF
@@ -279,7 +272,6 @@ export const runTestCAConnectionsPoolTest = () => {
           'After authorization connection to the auth provider must not be created again and must be reused connection opened before'
         );
         await expect(connectionPool.signOut()).to.eventually.not.be.an('error');
-        debugger;
       }).timeout(120000);
     });
   });

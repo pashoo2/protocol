@@ -1,8 +1,9 @@
 import { IOpenStorageConfiguration } from './../../../../open-storage/open-storage.types';
 import { STORAGE_PROVIDERS_NAME } from 'classes/storage-providers/storage-providers.const';
 
-export const CA_IDENTITY_CREDENTIALS_STORAGE_NAME =
-  'CA_IDENTITY_CREDENTIALS_STORAGE';
+export const CA_IDENTITY_CREDENTIALS_STORAGE_NAME_OPTIONS_MAX_LENGTH = 30;
+
+export const CA_IDENTITY_CREDENTIALS_STORAGE_NAME = '_CICS';
 
 export const CA_IDENTITY_CREDENTIALS_STORAGE_VERSION = '01';
 

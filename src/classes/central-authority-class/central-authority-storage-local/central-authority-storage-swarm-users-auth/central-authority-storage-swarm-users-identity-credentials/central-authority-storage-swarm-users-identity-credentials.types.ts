@@ -1,3 +1,4 @@
+import { TCAUserIdentityRawTypes } from './../../../central-authority-class-user-identity/central-authority-class-user-identity.types';
 import {
   TCentralAuthorityUserIdentity,
   TCACryptoKeyPairs,
@@ -41,6 +42,10 @@ export interface ICAIdentityCredentialsDescriptionStored {
   credentials: TCACryptoKeyPairs;
 }
 
+export interface ICAIdentityCredentialsStorageConntionOptions {
+  storageName?: string;
+}
+
 /**
  * the interface for the storage
  * implementation. There are
@@ -59,24 +64,26 @@ export interface ICAIdentityCredentialsStorage {
   isActive: boolean;
   // connect to the storage with the credentials
   // to decrypt a values stored
-  connect(): Promise<boolean | Error>;
+  connect(
+    options?: ICAIdentityCredentialsStorageConntionOptions
+  ): Promise<boolean | Error>;
   // disconnect from the stor`age
   disconnect(): Promise<boolean | Error>;
   // read credentials from the storage
   getCredentials(
-    identity: TCentralAuthorityUserIdentity
+    identity: TCAUserIdentityRawTypes
   ): Promise<TCentralAuthorityUserCryptoCredentials | Error | null>;
   // store credentials for the identity
   // in the storage
   setCredentials(
-    identity: TCentralAuthorityUserIdentity,
+    identity: TCAUserIdentityRawTypes,
     cryptoCredentials: TCACryptoKeyPairs
   ): Promise<boolean | Error>;
   // Store the crypto credentials.
   // It will be parsed to
   // identity and key pairs
   setCredentials(
-    cryptoCredentials: TCentralAuthorityUserCryptoCredentials
+    cryptoCredentials: TCAUserIdentityRawTypes
   ): Promise<boolean | Error>;
   // store the crypto credentials
   // exported to a string.

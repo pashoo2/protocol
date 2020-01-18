@@ -1,3 +1,4 @@
+import { TCAUserIdentityRawTypes } from './../../../central-authority-class-user-identity/central-authority-class-user-identity.types';
 import { OpenStorage } from './../../../../open-storage/open-storage';
 import { getStatusClass } from 'classes/basic-classes/status-class-base/status-class-base';
 import {
@@ -5,8 +6,13 @@ import {
   CA_IDENTITY_CREDENTIALS_STORAGE_CONFIGURATION,
   CA_IDENTITY_CREDENTIALS_STORAGE_READ_CACHE_CAPACITY,
   CA_IDENTITY_CREDENTIALS_STORAGE_READ_RAW_CACHE_CAPACITY,
+  CA_IDENTITY_CREDENTIALS_STORAGE_NAME_OPTIONS_MAX_LENGTH,
+  CA_IDENTITY_CREDENTIALS_STORAGE_FULL_NAME,
 } from './central-authority-storage-swarm-users-identity-credentials.const';
-import { ICAIdentityCredentialsStorage } from './central-authority-storage-swarm-users-identity-credentials.types';
+import {
+  ICAIdentityCredentialsStorage,
+  ICAIdentityCredentialsStorageConntionOptions,
+} from './central-authority-storage-swarm-users-identity-credentials.types';
 import {
   TCentralAuthorityUserIdentity,
   TCACryptoKeyPairs,
@@ -38,19 +44,6 @@ export class CentralAuthorityIdentityCredentialsStorage
     instanceName: 'CentralAuthorityIdentityCredentialsStorage',
   })
   implements ICAIdentityCredentialsStorage {
-  protected storageConnection?: OpenStorage;
-
-  protected createConnectionToStorage(): OpenStorage | Error {
-    try {
-      const connection = new OpenStorage();
-
-      return connection;
-    } catch (err) {
-      console.error(err);
-      return err;
-    }
-  }
-
   public get isActive(): boolean {
     const { status, storageConnection } = this;
 
@@ -61,12 +54,25 @@ export class CentralAuthorityIdentityCredentialsStorage
     );
   }
 
+  protected storageConnection?: OpenStorage;
+
+  protected storageName?: string;
+
   /**
    * connect to the SecretStorage with
    * the user's credentials
    * @param storageCredentials
    */
-  public async connect(): Promise<boolean | Error> {
+  public async connect(
+    options?: ICAIdentityCredentialsStorageConntionOptions
+  ): Promise<boolean | Error> {
+    const resultSetOptions = this.setOptions(options);
+
+    if (resultSetOptions instanceof Error) {
+      console.error(resultSetOptions);
+      return new Error('Failed to set options');
+    }
+
     const connection = this.createConnectionToStorage();
 
     if (connection instanceof Error) {
@@ -187,7 +193,49 @@ export class CentralAuthorityIdentityCredentialsStorage
   }
 
   protected getKeyNameWithPrefix(key: string): string {
-    return `__CICS_${key}`;
+    return `${this.storageName}_${key}`;
+  }
+
+  protected setStorageName(postfix: string = '') {
+    this.storageName = `${CA_IDENTITY_CREDENTIALS_STORAGE_FULL_NAME}_${postfix}`;
+  }
+
+  protected setDefaultOptions() {
+    this.setStorageName();
+  }
+
+  protected setOptions(
+    options?: ICAIdentityCredentialsStorageConntionOptions
+  ): void | Error {
+    this.setDefaultOptions();
+    if (!options) {
+      return;
+    }
+    if (options.storageName) {
+      if (typeof options.storageName !== 'string') {
+        return new Error('The storage name must be a string');
+      }
+      if (
+        options.storageName.length >
+        CA_IDENTITY_CREDENTIALS_STORAGE_NAME_OPTIONS_MAX_LENGTH
+      ) {
+        return new Error(
+          `The maximum length of a storage name is ${CA_IDENTITY_CREDENTIALS_STORAGE_NAME_OPTIONS_MAX_LENGTH}`
+        );
+      }
+      this.setStorageName(options.storageName);
+    }
+  }
+
+  protected createConnectionToStorage(): OpenStorage | Error {
+    try {
+      const connection = new OpenStorage();
+
+      return connection;
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
   }
 
   /**
@@ -201,7 +249,7 @@ export class CentralAuthorityIdentityCredentialsStorage
    * @memberof CentralAuthorityIdentityCredentialsStorage
    */
   protected getStorageKeyByCAIdentity(
-    identity: CentralAuthorityIdentity
+    identity: TCAUserIdentityRawTypes
   ): string | Error {
     if (!(identity instanceof CentralAuthorityIdentity)) {
       return new Error(
@@ -249,7 +297,7 @@ export class CentralAuthorityIdentityCredentialsStorage
   }
 
   protected setCredentialsByIdentity = async (
-    identity: TCentralAuthorityUserIdentity,
+    identity: TCAUserIdentityRawTypes,
     cryptoKeyPairs: TCACryptoKeyPairs
   ): Promise<boolean | Error> => {
     const { isActive, storageConnection } = this;
@@ -347,7 +395,7 @@ export class CentralAuthorityIdentityCredentialsStorage
 
   @caching(CA_IDENTITY_CREDENTIALS_STORAGE_READ_CACHE_CAPACITY)
   protected async getCredentialsCached(
-    identity: TCentralAuthorityUserIdentity
+    identity: TCAUserIdentityRawTypes
   ): Promise<TCentralAuthorityUserCryptoCredentials | Error | null> {
     try {
       // parse the identity
@@ -387,7 +435,7 @@ export class CentralAuthorityIdentityCredentialsStorage
       // cause an unexpected issues
       const resultedValue = replaceCryptoCredentialsIdentity(
         importedCryptoCredentials,
-        identity
+        String(caIdentity)
       );
 
       if (resultedValue instanceof Error) {

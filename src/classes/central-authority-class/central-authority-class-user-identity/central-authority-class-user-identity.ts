@@ -3,11 +3,9 @@ import {
   ICAUserUniqueIdentifierDescriptionWithOptionalVersion,
   ICAIdentityCommonInstance,
   TUserIdentityVersion,
+  TCAUserIdentityRawTypes,
 } from './central-authority-class-user-identity.types';
-import {
-  TCentralAuthorityUserIdentity,
-  TCentralAuthorityUserCryptoCredentials,
-} from '../central-authority-class-types/central-authority-class-types';
+import { TCentralAuthorityUserIdentity } from '../central-authority-class-types/central-authority-class-types';
 import { validateUserIdentitySilent } from '../central-authority-validators/central-authority-validators-auth-credentials/central-authority-validators-auth-credentials';
 import { parseIdentity } from './central-authority-class-user-identity-parsers/central-authority-class-user-identity-parsers';
 import { serializeIdentity } from './central-authority-class-user-identity-formatters/central-authority-class-user-identity-formatters';
@@ -25,13 +23,7 @@ export class CentralAuthorityIdentity implements ICAIdentityCommonInstance {
 
   public isValid?: boolean;
 
-  constructor(
-    protected _userIdentity:
-      | CentralAuthorityIdentity
-      | TCentralAuthorityUserCryptoCredentials
-      | TCentralAuthorityUserIdentity
-      | ICAUserUniqueIdentifierDescriptionWithOptionalVersion
-  ) {
+  constructor(protected _userIdentity: TCAUserIdentityRawTypes) {
     if (_userIdentity instanceof CentralAuthorityIdentity) {
       return _userIdentity;
     }
