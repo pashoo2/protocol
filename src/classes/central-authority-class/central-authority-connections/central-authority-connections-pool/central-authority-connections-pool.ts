@@ -20,6 +20,13 @@ import {
 import { getConnectionConstructorAuthProviderType } from '../central-authority-connections-utils/central-authority-connections-utils.common/central-authority-connections-utils.common';
 import { ICentralAuthorityUserProfile } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 import { CA_CONNECTION_STATUS } from '../central-authority-connections-const/central-authority-connections-const';
+import { ICAConnectionUserAuthorizedResult } from '../central-authority-connections.types';
+import { TCAuthProviderIdentifier } from '../../central-authority-class-user-identity/central-authority-class-user-identity.types';
+import { ICAConnectionPoolAuthResult } from './central-authority-connections-pool.types';
+import { checkIsValidCryptoCredentials } from '../../central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
+import CentralAuthorityIdentity from '../../central-authority-class-user-identity/central-authority-class-user-identity';
+import { CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME } from '../../central-authority-class-user-identity/central-authority-class-user-identity.const';
+import { compareAuthProvidersIdentities } from '../../central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials';
 
 /**
  * This is used to establish connections
@@ -30,6 +37,8 @@ import { CA_CONNECTION_STATUS } from '../central-authority-connections-const/cen
  * @class CAConnectionsPool
  */
 export class CAConnectionsPool implements ICAConnectionPool {
+  public userAuthResult?: ICAConnectionPoolAuthResult;
+
   /**
    * States of connections to auth
    * providers
@@ -53,7 +62,7 @@ export class CAConnectionsPool implements ICAConnectionPool {
    */
   protected get authConnection(): {
     connection: ICAConnection;
-    authProviderUrl: string;
+    authProviderId: TCAuthProviderIdentifier;
   } | void {
     const { providersConnectionState } = this;
     const providersConnectionsStates = Object.values(providersConnectionState);
@@ -73,7 +82,7 @@ export class CAConnectionsPool implements ICAConnectionPool {
       ) {
         return {
           connection: authProviderConnection,
-          authProviderUrl:
+          authProviderId:
             authProviderUrl ||
             (authProviderConnection.authProviderURL as string),
         };
@@ -180,6 +189,17 @@ export class CAConnectionsPool implements ICAConnectionPool {
         'The url provided as the auth provider service url is not valid'
       );
     }
+    if (this.userAuthResult) {
+      // if the user is already authorized on auth provider service
+      const signOutResult = await this.signOut();
+
+      if (signOutResult instanceof Error) {
+        console.error(signOutResult);
+        return new Error(
+          'The user is already authorized on the auth provider service, and failed to sign out from it'
+        );
+      }
+    }
 
     const currentConnectionWithProviderAuthOn = this.authConnection;
     const normalizedUrl = normalizeUrl(authProviderUrl);
@@ -190,7 +210,7 @@ export class CAConnectionsPool implements ICAConnectionPool {
     }
     if (currentConnectionWithProviderAuthOn) {
       const {
-        authProviderUrl: currentAuthProviderUrl,
+        authProviderId: currentAuthProviderUrl,
         connection,
       } = currentConnectionWithProviderAuthOn;
       const normalizedUrlAuthProviderCurrent = normalizeUrl(
@@ -225,6 +245,7 @@ export class CAConnectionsPool implements ICAConnectionPool {
         `Failed to authorize with the auth provider ${authProviderUrl}`
       );
     }
+    this.setAuthResult(authProviderUrl, authResult);
     return connectionWithAuthProvider;
   }
 
@@ -237,7 +258,7 @@ export class CAConnectionsPool implements ICAConnectionPool {
    * @memberof CAConnectionsPool
    */
   public async disconnect(
-    authProviderUrl: TCAAuthProviderIdentity
+    authProviderUrl: TCAuthProviderIdentifier
   ): Promise<void | Error> {
     const currentConnectionWithAuthProvider = this.getConnectionWithAuthProvider(
       authProviderUrl
@@ -329,13 +350,72 @@ export class CAConnectionsPool implements ICAConnectionPool {
   public async signOut(): Promise<Error | void> {
     const { authConnection } = this;
 
+    this.unsetAuthResult();
     if (authConnection) {
-      const { connection, authProviderUrl } = authConnection;
+      const { connection, authProviderId: authProviderUrl } = authConnection;
 
       if (connection) {
-        return this.disconnect(authProviderUrl);
+        const disconnectResult = await this.disconnect(authProviderUrl);
+
+        if (disconnectResult instanceof Error) {
+          console.error(disconnectResult);
+          return new Error(
+            `Failed to disconnect from the auth procider ${authProviderUrl} on sign out from it`
+          );
+        }
       }
     }
+  }
+
+  /**
+   * set the auth result and check the auth provider
+   * in the result is equals to the auth provider id.
+   *
+   * @protected
+   * @param {TCAAuthProviderIdentity} authProviderId
+   * @param {ICAConnectionUserAuthorizedResult} authResult
+   * @returns {(Error | void)}
+   * @memberof CAConnectionsPool
+   */
+  protected setAuthResult(
+    authProviderId: TCAAuthProviderIdentity,
+    authResult: ICAConnectionUserAuthorizedResult
+  ): Error | void {
+    const { cryptoCredentials } = authResult;
+    const validationResult = checkIsValidCryptoCredentials(cryptoCredentials);
+
+    if (!validationResult) {
+      return new Error('The crypto credentials are not valid');
+    }
+
+    const userIdentity = new CentralAuthorityIdentity(
+      cryptoCredentials.userIdentity
+    );
+
+    if (userIdentity.identityDescription instanceof Error) {
+      return new Error('The user identity is not valid');
+    }
+    if (
+      !compareAuthProvidersIdentities(
+        userIdentity.identityDescription[
+          CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME
+        ],
+        authProviderId
+      )
+    ) {
+      return new Error(`
+        The auth provider url from the auth crdentials ${userIdentity.identityDescription[CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]} is not equals to the provider the user authorized on ${authProviderId}
+      `);
+    }
+
+    this.userAuthResult = {
+      ...authResult,
+      authProviderId,
+    };
+  }
+
+  protected unsetAuthResult() {
+    this.userAuthResult = undefined;
   }
 
   /**

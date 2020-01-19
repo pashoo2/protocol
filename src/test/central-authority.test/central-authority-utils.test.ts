@@ -18,12 +18,37 @@ import {
   generateCryptoCredentialsWithUserIdentityV1,
   generateCryptoCredentialsWithUserIdentityV2,
 } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
-import { compareCryptoCredentials } from 'classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials';
+import {
+  compareCryptoCredentials,
+  compareAuthProvidersIdentities,
+} from 'classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials';
 import { expect } from 'chai';
 
 export const runTestCentralAuthorityUtils = () => {
   describe('CA utils test', () => {
     describe('CA utils crypto credentials', () => {
+      it('test compare auth providers identity', () => {
+        expect(compareAuthProvidersIdentities()).to.be.equal(true);
+        expect(
+          compareAuthProvidersIdentities('http://firebase.com')
+        ).to.be.equal(true);
+        expect(
+          compareAuthProvidersIdentities('http://firebase.com')
+        ).to.be.equal(true);
+        expect(
+          compareAuthProvidersIdentities('http://firebase.com', 'firebase.com/')
+        ).to.be.equal(true);
+        expect(
+          compareAuthProvidersIdentities(
+            'https://watcha3-191815.firebaseio.com',
+            'https://watcha3-191815.firebaseio.com/',
+            'watcha3-191815.firebaseio.com',
+            'watcha3-191815.firebaseio.com/',
+            ' https://Watcha3-191815.firebaseiO.COM   ',
+            '     Https://Watcha3-191815.firebaseiO.COM'
+          )
+        ).to.be.equal(true);
+      });
       it('test compare crypto credentials', async () => {
         // credentials must be the same idependently to the version
         // of the user identity

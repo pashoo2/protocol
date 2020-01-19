@@ -7,6 +7,8 @@ import {
 } from '../central-authority-connections.types';
 import { CA_CONNECTION_AUTH_PROVIDERS } from '../central-authority-connections.const';
 import { ICentralAuthorityUserProfile } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
+import { ICAConnectionUserAuthorizedResult } from '../central-authority-connections.types';
+import { TCAuthProviderIdentifier } from '../../central-authority-class-user-identity/central-authority-class-user-identity.types';
 
 /**
  * options to connect with
@@ -65,7 +67,16 @@ export interface ICAConnectionsPoolConnections {
   [key: string]: ICAConnectionsPoolCurrentConnections;
 }
 
+export interface ICAConnectionPoolAuthResult
+  extends ICAConnectionUserAuthorizedResult {
+  authProviderId: TCAuthProviderIdentifier;
+}
+
 export interface ICAConnectionPool {
+  // will be defined if the user is authorized
+  // on auth provider service, otherwise
+  // it will be undefined.
+  userAuthResult?: ICAConnectionUserAuthorizedResult;
   // establish a new connection with the auth provider or returns an existing
   getConnection(
     authProviderUrl: TCAAuthProviderIdentity

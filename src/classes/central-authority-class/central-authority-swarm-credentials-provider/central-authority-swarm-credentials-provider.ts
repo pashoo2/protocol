@@ -21,9 +21,11 @@ import {
 } from './central-authority-swarm-credentials-provider.types';
 
 /**
+ * This class is necessary to resolve crypto credentials
+ * of another users by user identity values of them.
  * This class used to get credentials of the users by
  * connection to the swarm, and store it in the local
- * cache or from the local cache
+ * cache or from the local cache.
  */
 export class CASwarmCredentialsProvider implements ICASwarmCredentialsProvider {
   protected isRunning: boolean = false;

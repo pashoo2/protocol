@@ -16,6 +16,7 @@ import {
   CA_STORAGE_CURRENT_USER_CREDENTIALS_SECRET_STORAGE_OPTIONS,
 } from './central-authority-storage-current-user-credentials.const';
 import { SecretStorage } from 'classes/secret-storage-class';
+import { TCAuthProviderIdentifier } from '../../../central-authority-class-user-identity/central-authority-class-user-identity.types';
 import {
   ICAStorageCurrentUserCredentials,
   ICAStorageCurrentUserCredentialsOptions,
@@ -198,7 +199,7 @@ export class CentralAuthorityStorageCurrentUserCredentials
    * @memberof CentralAuthorityStorageCurrentUserCredentials
    */
   public getByAuthProvider = async (
-    authProviderIdentity: string
+    authProviderIdentity: TCAuthProviderIdentifier
   ): Promise<TCentralAuthorityUserCryptoCredentials | Error | void> => {
     const connectionCheckResult = await this.checkConnectionAndReconnect();
 

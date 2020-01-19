@@ -22,6 +22,9 @@ import {
 import { stringify } from 'utils/main-utils';
 import { TUserIdentityVersion } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types';
 import { calcCryptoKeyPairHash } from 'utils/encryption-keys-utils/encryption-keys-utils';
+import { TCAAuthProviderIdentity } from '../../central-authority-connections/central-authority-connections.types';
+import { normalizeUrl } from '../../../../utils/common-utils/common-utils-url';
+import { CA_UTILS_CRYPTO_CREDENTIALS_NORMALIZE_URL_OPTIONS } from './central-authority-utils-crypto-credentials.const';
 
 export const exportCryptoCredentialsToString = async (
   userCryptoCredentials: TCentralAuthorityUserCryptoCredentials,
@@ -86,6 +89,35 @@ export const exportCryptoCredentialsToStringWithoutTheCAIdentityVersion = (
   userCryptoCredentials: TCentralAuthorityUserCryptoCredentials
 ): Promise<Error | string> =>
   exportCryptoCredentialsToString(userCryptoCredentials, true);
+
+export const compareAuthProvidersIdentities = (
+  ...authProvidersIds: TCAAuthProviderIdentity[]
+): boolean => {
+  const { length: len } = authProvidersIds;
+
+  if (len < 2) {
+    return true;
+  }
+
+  const firstAuthProviderId = normalizeUrl(
+    authProvidersIds[0],
+    CA_UTILS_CRYPTO_CREDENTIALS_NORMALIZE_URL_OPTIONS
+  );
+  let idx = 0;
+
+  while (++idx < len) {
+    if (
+      firstAuthProviderId !==
+      normalizeUrl(
+        authProvidersIds[idx],
+        CA_UTILS_CRYPTO_CREDENTIALS_NORMALIZE_URL_OPTIONS
+      )
+    ) {
+      return false;
+    }
+  }
+  return true;
+};
 
 export const compareCryptoCredentials = async (
   ...credentials: TCentralAuthorityUserCryptoCredentials[]

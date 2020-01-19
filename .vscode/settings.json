@@ -1,10 +1,5 @@
 {
   "editor.formatOnSave": true,
   "editor.formatOnSaveTimeout": 1000,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "eslint.options": {
-    "parserOptions": {
-      "project": ["${workspaceFolder}/tsconfig.json"]
-    }
-  }
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
 }

@@ -82,7 +82,8 @@ const runTest = async () => {
   // runTestAuthorityStorageCurrentUser();
   // runTestOpenStorageTest();
   // runCACredentialsIdentityStorageTest();
-  runTestCASwarmCredentilsProvider();
+  // runTestCASwarmCredentilsProvider();
+  runTestCentralAuthorityUtils(); // TODO - necessary to test urls comparation
   runMocha();
 };
 
