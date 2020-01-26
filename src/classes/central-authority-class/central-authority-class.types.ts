@@ -1,6 +1,9 @@
 import { TCentralAuthorityUserCryptoCredentials } from './central-authority-class-types/central-authority-class-types-crypto-credentials';
 import { TCAUserIdentityRawTypes } from './central-authority-class-user-identity/central-authority-class-user-identity.types';
-import { ICentralAuthorityUserProfile } from './central-authority-class-types/central-authority-class-types-common';
+import {
+  ICentralAuthorityUserProfile,
+  TCentralAuthorityUserIdentity,
+} from './central-authority-class-types/central-authority-class-types-common';
 import {
   TCAAuthProviderIdentity,
   ICAConnectionSignUpCredentials,
@@ -101,6 +104,56 @@ export interface ICentralAuthority {
   getSwarmUserCredentials(
     identity: TCAUserIdentityRawTypes
   ): Promise<TCentralAuthorityUserCryptoCredentials | Error | null>;
+
+  /**
+   * returns a crypto key of the swarm user used
+   * for data encryption
+   *
+   * @param {TCAUserIdentityRawTypes} identity
+   * @returns {(Promise<Error | null | CryptoKey>)}
+   * @memberof ICentralAuthority
+   */
+  getSwarmUserEncryptionPubKey(
+    identity: TCAUserIdentityRawTypes
+  ): Promise<Error | null | CryptoKey>;
+  /**
+   * returns a crypto key of the swarm user used
+   * for data sign
+   *
+   * @param {TCAUserIdentityRawTypes} identity
+   * @returns {(Promise<Error | null | CryptoKey>)}
+   * @memberof ICentralAuthority
+   */
+  getSwarmUserSignPubKey(
+    identity: TCAUserIdentityRawTypes
+  ): Promise<Error | null | CryptoKey>;
+  /**
+   * return the identity of the current user
+   *
+   * @returns {Error | TCentralAuthorityUserIdentity}
+   * @memberof ICentralAuthority
+   */
+  getUserIdentity(): Error | TCentralAuthorityUserIdentity;
+  /**
+   * return encryption key pair,used for
+   * a data encryption, which was
+   * specified for the current user when
+   * he register on an auth provider.
+   *
+   * @returns {Error | CryptoKeyPair>}
+   * @memberof ICentralAuthority
+   */
+  getUserEncryptionKeyPair(): Error | CryptoKeyPair;
+  /**
+   * return encryption key pair,used for
+   * a data signign, which was
+   * specified for the current user when
+   * he register on an auth provider.
+   *
+   * @returns {Error | CryptoKeyPair}
+   * @memberof ICentralAuthority
+   */
+  getUserDataSignKeyPair(): Error | CryptoKeyPair;
   /**
    * export a crypto keys, including a private keys.
    * This crypto keys are used to sign or encrypt
@@ -120,27 +173,7 @@ export interface ICentralAuthority {
    *   >)}
    * @memberof ICentralAuthority
    */
-  importCryptoCredentials(
+  importCryptoCredentials?( // TODO - necessary to implement it in the feature
     cryptoCredentials: string
   ): Promise<TCentralAuthorityUserCryptoCredentials | Error>;
-  /**
-   * return encryption key pair,used for
-   * a data encryption, which was
-   * specified for the current user when
-   * he register on an auth provider.
-   *
-   * @returns {(Promise<Error | CryptoKeyPair>)}
-   * @memberof ICentralAuthority
-   */
-  getUserEncryptionKeyPair(): Promise<Error | CryptoKeyPair>;
-  /**
-   * return encryption key pair,used for
-   * a data signign, which was
-   * specified for the current user when
-   * he register on an auth provider.
-   *
-   * @returns {(Promise<Error | CryptoKeyPair>)}
-   * @memberof ICentralAuthority
-   */
-  getUserSignKeyPair(): Promise<Error | CryptoKeyPair>;
 }
