@@ -27,10 +27,13 @@ export class CentralAuthorityIdentity implements ICAIdentityCommonInstance {
     if (_userIdentity instanceof CentralAuthorityIdentity) {
       return _userIdentity;
     }
+    if (!_userIdentity) {
+      return;
+    }
 
     let identity = _userIdentity;
 
-    if (_userIdentity && typeof _userIdentity === 'object') {
+    if (typeof _userIdentity === 'object') {
       //check may be it is a crypto credentials object
       const identityVal = ((_userIdentity as unknown) as any)[
         CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME
@@ -73,6 +76,12 @@ export class CentralAuthorityIdentity implements ICAIdentityCommonInstance {
   }
 
   public get identityDescription(): ICAUserUniqueIdentifierDescription | Error {
+    const res = this.checkUserIdentityDescriptionIsValid();
+
+    if (res instanceof Error) {
+      return res;
+    }
+
     const { _userIdentityParsed } = this;
 
     if (!_userIdentityParsed) {
@@ -84,6 +93,12 @@ export class CentralAuthorityIdentity implements ICAIdentityCommonInstance {
   public get identityDescritptionSerialized():
     | TCentralAuthorityUserIdentity
     | Error {
+    const res = this.checkUserIdentityDescriptionIsValid();
+
+    if (res instanceof Error) {
+      return res;
+    }
+
     const { _userIdentitySerialized } = this;
 
     if (!_userIdentitySerialized) {
@@ -96,36 +111,63 @@ export class CentralAuthorityIdentity implements ICAIdentityCommonInstance {
    * uniquely identifies the user
    */
   public get id(): string | Error {
-    const { identityDescription } = this;
+    const res = this.checkUserIdentityDescriptionIsValid();
 
-    if (identityDescription instanceof Error) {
-      return identityDescription;
+    if (res instanceof Error) {
+      return res;
     }
 
-    const { authorityProviderURI, userUniqueIdentifier } = identityDescription;
+    const { authorityProviderURI, userUniqueIdentifier } = this
+      .identityDescription as ICAUserUniqueIdentifierDescription;
 
     return `${authorityProviderURI}${CA_USER_IDENTITY_AUTH_PROVIDER_URL_DELIMETER}${userUniqueIdentifier}`;
   }
 
   public get version(): TUserIdentityVersion | Error {
-    const { identityDescription } = this;
+    const res = this.checkUserIdentityDescriptionIsValid();
 
-    if (identityDescription instanceof Error) {
-      return identityDescription;
+    if (res instanceof Error) {
+      return res;
     }
 
-    return ((identityDescription.version ||
+    return (((this.identityDescription as ICAUserUniqueIdentifierDescription)
+      .version ||
       CA_USER_IDENTITY_VERSION_CURRENT) as unknown) as TUserIdentityVersion;
   }
 
   public toString(): TCentralAuthorityUserIdentity {
-    const { identityDescritptionSerialized } = this;
+    const res = this.checkUserIdentityDescriptionIsValid();
 
-    if (identityDescritptionSerialized instanceof Error) {
+    if (res instanceof Error) {
       return '';
     }
-    return identityDescritptionSerialized;
+    return this.identityDescritptionSerialized as string;
   }
+
+  protected checkUserIdentityDescriptionIsValid = (): Error | void => {
+    const { _userIdentitySerialized, isValid, _userIdentityParsed } = this;
+    let err: Error | void;
+
+    if (!isValid) {
+      err = new Error('The identity is not valid');
+    }
+    if (!_userIdentityParsed) {
+      err = new Error('There is no user identity parsed');
+    }
+    if (_userIdentityParsed instanceof Error) {
+      err = _userIdentityParsed;
+    }
+    if (!_userIdentitySerialized) {
+      err = new Error('The identity description serialized is not defined');
+    }
+    if (_userIdentitySerialized instanceof Error) {
+      err = _userIdentitySerialized;
+    }
+    if (err instanceof Error) {
+      console.error(err);
+      return err;
+    }
+  };
 
   protected setIdentityIsValid(): void {
     if (this.isValid !== false) {
