@@ -1,9 +1,6 @@
 import { CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
 import { CentralAuthorityIdentity } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
-import {
-  TCentralAuthorityUserIdentity,
-  TCentralAuthorityUserCryptoCredentials,
-} from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
+import { TCentralAuthorityUserCryptoCredentials } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 import {
   TCAuthProviderIdentifier,
   TCAUserIdentityRawTypes,

@@ -1,4 +1,4 @@
-import {CONST_VALIDATION_SCHEMES_URL} from "const/const-validation-schemes/const-validation-schemes-common";
+import { CONST_VALIDATION_SCHEMES_URL } from 'const/const-validation-schemes/const-validation-schemes-common';
 
 export const CENTRAL_AUTHORITY_CLASS_ERRORS_PREFIX = 'CentralAuthority';
 
@@ -71,3 +71,6 @@ export const CENTRAL_AUTHORITY_CLASS_OPTIONS_SCHEMA = {
   },
   required: ['authProvidersPool', 'user'],
 };
+
+export const CENTRAL_AUTHORITY_CLASS_SWARM_CREDENTIALS_STORAGE_DB_NAME =
+  '__ca_conn';
