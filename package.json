@@ -42,8 +42,6 @@
     ]
   },
   "dependencies": {
-    "@types/assert": "^1.4.3",
-    "@types/lodash.defaultsdeep": "^4.6.6",
     "ajv": "^6.10.2",
     "assert": "^2.0.0",
     "buffer": "^5.4.3",
@@ -84,6 +82,8 @@
     "validator": "^12.1.0"
   },
   "devDependencies": {
+    "@types/assert": "^1.4.3",
+    "@types/lodash.defaultsdeep": "^4.6.6",
     "@types/chai": "^4.2.4",
     "@types/chai-as-promised": "^7.1.2",
     "@types/date-fns": "^2.6.0",
@@ -98,7 +98,7 @@
     "@types/mime": "^2.0.1",
     "@types/mocha": "^5.2.7",
     "@types/node": "12.0.12",
-    "@types/orbit-db": "git+https://github.com/orbitdb/orbit-db-types.git",
+    "@types/orbit-db": "file:node_modules-local/orbit-db-types",
     "@types/react": "16.8.23",
     "@types/react-dom": "16.8.4",
     "@types/uuid": "^3.4.5",

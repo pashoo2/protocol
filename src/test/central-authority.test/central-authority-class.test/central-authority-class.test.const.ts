@@ -7,7 +7,10 @@ import {
   CA_CONNECTOINS_CONNECTIONS_POOL_TEST_FIREBASE_AUTH_PROVIDERS_CONF,
   CA_CONNECTOINS_CONNECTIONS_POOL_TEST_FIREBASE_AUTH_PROVIDERS_CONF_INVALID,
 } from '../central-authority-connection.test/central-authority-connections-pool.test/central-authority-connections-pool.test.const';
-
+export {
+  CA_SWARM_CREDENTIALS_PROVIDER_TEST_USERIDENTITY,
+  CA_SWARM_CREDENTIALS_PROVIDER_TEST_USERIDENTITY_SECOND,
+} from '../central-authority-swarm-credentials-provider/central-authority-swarm-credentials-provider.shared';
 export const CA_CLASS_OPTIONS_VALID_NO_PROFILE: ICentralAuthorityOptions = {
   authProvidersPool: {
     providersConfigurations:

@@ -1,9 +1,10 @@
 diff --git a/node_modules/@types/orbit-db/Keystore.d.ts b/node_modules/@types/orbit-db/Keystore.d.ts
-index 1bc5dd8..b82230a 100644
+index 1bc5dd8..b759372 100644
 --- a/node_modules/@types/orbit-db/Keystore.d.ts
 +++ b/node_modules/@types/orbit-db/Keystore.d.ts
-@@ -1,4 +1,34 @@
+@@ -1,6 +1,35 @@
  declare module "orbit-db-keystore" {
+-    export class Keystore {
 +    export interface IOrbitDBKeystoreStore {
 +        status: string;
 +        open(): Promise<void>;
@@ -11,7 +12,7 @@ index 1bc5dd8..b82230a 100644
 +        put(k: string, v :any): Promise<void>;
 +        get(k: string): string | Uint8Array;
 +    }
-+    
++
 +    export interface IOrbitDBKeystoreCache {
 +        length: number;
 +        keys: string[];
@@ -25,19 +26,21 @@ index 1bc5dd8..b82230a 100644
 +        login: string;
 +        password: string;
 +    }
-+        export interface IOrbitDBKeystoreOptionsForSecretStorage {
++
++    export interface IOrbitDBKeystoreOptionsForSecretStorage {
 +        store?: string | IOrbitDBKeystoreStore;
 +        cache?: IOrbitDBKeystoreCache;
 +        dbName?: string;
 +        credentials: IOrbitDBStorageCredentials;
 +    }
-+         
-+    export type TOrbitDBKeystoreOptions = IOrbitDBKeystoreOptionsForSecretStorage | string;
-+    
-     export class Keystore {
  
++   export type TOrbitDBKeystoreOptions = IOrbitDBKeystoreOptionsForSecretStorage | string;
++    
++    export class Keystore {
          hasKey(id:string): Promise<boolean>
-@@ -9,8 +39,9 @@ declare module "orbit-db-keystore" {
+ 
+         createKey(id:string): Promise<{publicKey: string, privateKey: string}>
+@@ -9,8 +38,9 @@ declare module "orbit-db-keystore" {
  
      }
  
@@ -49,10 +52,10 @@ index 1bc5dd8..b82230a 100644
      }
  }
 diff --git a/node_modules/@types/orbit-db/OrbitDB.d.ts b/node_modules/@types/orbit-db/OrbitDB.d.ts
-index 406d6e8..de10cc9 100644
+index 406d6e8..5c4b70a 100644
 --- a/node_modules/@types/orbit-db/OrbitDB.d.ts
 +++ b/node_modules/@types/orbit-db/OrbitDB.d.ts
-@@ -13,6 +13,19 @@ declare module 'orbit-db' {
+@@ -13,6 +13,18 @@ declare module 'orbit-db' {
      import * as IPFS from "ipfs";
      import * as elliptic from "elliptic";
  
@@ -68,22 +71,32 @@ index 406d6e8..de10cc9 100644
 +        storage?: OrbitDbStorage,
 +    }; 
 +
-+
      export class OrbitDB {
  
          stores: any;
-@@ -26,6 +39,7 @@ declare module 'orbit-db' {
-             peerId?: string,
-             keystore?: Keystore
-         });
+@@ -22,10 +34,7 @@ declare module 'orbit-db' {
+         static databaseTypes: string[];
+         
+ 
+-        constructor(ipfs: IPFS, directory?: string, options?: {
+-            peerId?: string,
+-            keystore?: Keystore
+-        });
 +        constructor(ipfs: IPFS, identity?: Identity, options?: IOrbitDBOptions);
  
          /**
           * Creates and returns an instance of OrbitDB. 
-@@ -46,6 +60,7 @@ declare module 'orbit-db' {
-             cache?: Cache,
-             identity?: Identity
-         }): Promise<OrbitDB>
+@@ -39,13 +48,7 @@ declare module 'orbit-db' {
+          * <li>identity (Identity Instance): By default it creates an instance of Identity</li>
+          * </ul>
+          */
+-        static createInstance(ipfs: IPFS, options?: {
+-            directory?: string,
+-            peerId?: string,
+-            keystore?: Keystore,
+-            cache?: Cache,
+-            identity?: Identity
+-        }): Promise<OrbitDB>
 +        static createInstance(ipfs: IPFS, options?: IOrbitDBOptions & { identity?: Identity }): Promise<OrbitDB>
  
          create(name: string, type: TStoreType, options?: ICreateOptions): Promise<Store>;

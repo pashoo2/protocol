@@ -1,6 +1,21 @@
 import { expect } from 'chai';
 import { CentralAuthority } from '../../../classes/central-authority-class/central-authority-class';
 import {
+  CA_SWARM_CREDENTIALS_PROVIDER_TEST_USERIDENTITY,
+  CA_SWARM_CREDENTIALS_PROVIDER_TEST_USERIDENTITY_SECOND,
+} from '../central-authority-swarm-credentials-provider/central-authority-swarm-credentials-provider.const';
+import { checkIsValidCryptoCredentials } from '../../../classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
+import { validateUserIdentity } from '../../../classes/central-authority-class/central-authority-validators/central-authority-validators-auth-credentials/central-authority-validators-auth-credentials';
+import { TCentralAuthorityUserCryptoCredentials } from '../../../classes/central-authority-class/central-authority-class-types/central-authority-class-types-crypto-credentials';
+import {
+  getDataEncryptionPubKeyByCryptoCredentials,
+  getDataSignPubKeyByCryptoCredentials,
+} from '../../../classes/central-authority-class/central-authority-class.utils';
+import {
+  CA_SWARM_USER_CRYPTO_KEY_DATA_ENCRYPTION_PUBLIC_USAGES,
+  CA_SWARM_USER_CRYPTO_KEY_DATA_SIGN_PUBLIC_USAGES,
+} from '../../../classes/central-authority-class/central-authority-class-const/central-authority-class-const-crypto-keys-usages';
+import {
   CA_CLASS_USER_IDENTITY_NOT_VALID_NO_AUTH_PROVIDER_URL,
   CA_CLASS_USER_IDENTITY_NOT_VALID_NO_USER_IDENTITY,
 } from './central-authority-class.test.const';
@@ -92,6 +107,7 @@ export const runTestCentralAuthority = () => {
 
       describe('test of a methods to get swarm users credentials', () => {
         let caConnection: CentralAuthority;
+        const context = {} as any;
         beforeEach(async function() {
           this.timeout(6000);
           caConnection = new CentralAuthority();
@@ -108,54 +124,228 @@ export const runTestCentralAuthority = () => {
           ).to.eventually.not.be.an.instanceof(Error);
           expect(caConnection.isRunning).to.be.equal(false);
         });
-        it('check getSwarmUserCredentials method user identity not exists auth providers', async () => {
+        // it('check getSwarmUserCredentials method user identity not exists auth providers', async () => {
+        //   expect(caConnection).to.be.an.instanceof(CentralAuthority);
+        //   expect(caConnection.isRunning).to.be.equal(true);
+        //   await expect(
+        //     (caConnection as any).getSwarmUserCredentials(
+        //       CA_CLASS_USER_IDENTITY_NOT_EXISTS_AUTH_PROVIDER_YARU
+        //     )
+        //   ).to.eventually.be.an.instanceOf(Error);
+        //   await expect(
+        //     (caConnection as any).getSwarmUserCredentials(
+        //       CA_CLASS_USER_IDENTITY_NOT_EXISTS_AUTH_PROVIDER_MAILRU
+        //     )
+        //   ).to.eventually.be.an.instanceOf(Error);
+        // }).timeout(10000);
+
+        // it('check getSwarmUserCredentials method user identity not valid', async () => {
+        //   expect(caConnection).to.be.an.instanceof(CentralAuthority);
+        //   expect(caConnection.isRunning).to.be.equal(true);
+        //   await expect(
+        //     (caConnection as any).getSwarmUserCredentials()
+        //   ).to.eventually.be.an.instanceOf(Error);
+        //   await expect(
+        //     (caConnection as any).getSwarmUserCredentials('')
+        //   ).to.eventually.be.an.instanceOf(Error);
+        //   await expect(
+        //     (caConnection as any).getSwarmUserCredentials({})
+        //   ).to.eventually.be.an.instanceOf(Error);
+        //   await expect(
+        //     (caConnection as any).getSwarmUserCredentials(
+        //       CA_CLASS_USER_IDENTITY_NOT_VALID_NO_DELIMETER
+        //     )
+        //   ).to.eventually.be.an.instanceOf(Error);
+        //   await expect(
+        //     (caConnection as any).getSwarmUserCredentials(
+        //       CA_CLASS_USER_IDENTITY_NOT_VALID_NO_VERSION
+        //     )
+        //   ).to.eventually.be.an.instanceOf(Error);
+        //   await expect(
+        //     (caConnection as any).getSwarmUserCredentials(
+        //       CA_CLASS_USER_IDENTITY_NOT_VALID_NO_AUTH_PROVIDER_URL
+        //     )
+        //   ).to.eventually.be.an.instanceOf(Error);
+        //   await expect(
+        //     (caConnection as any).getSwarmUserCredentials(
+        //       CA_CLASS_USER_IDENTITY_NOT_VALID_NO_USER_IDENTITY
+        //     )
+        //   ).to.eventually.be.an.instanceOf(Error);
+        // }).timeout(15000);
+
+        it('check getSwarmUserCredentials method user identity exists auth providers', async () => {
           expect(caConnection).to.be.an.instanceof(CentralAuthority);
           expect(caConnection.isRunning).to.be.equal(true);
-          await expect(
-            (caConnection as any).getSwarmUserCredentials(
-              CA_CLASS_USER_IDENTITY_NOT_EXISTS_AUTH_PROVIDER_YARU
+          expect(
+            validateUserIdentity(
+              CA_SWARM_CREDENTIALS_PROVIDER_TEST_USERIDENTITY
             )
-          ).to.eventually.be.an.instanceOf(Error);
+          ).to.be.equal(true);
           await expect(
-            (caConnection as any).getSwarmUserCredentials(
-              CA_CLASS_USER_IDENTITY_NOT_EXISTS_AUTH_PROVIDER_MAILRU
+            caConnection.getSwarmUserCredentials(
+              CA_SWARM_CREDENTIALS_PROVIDER_TEST_USERIDENTITY
             )
-          ).to.eventually.be.an.instanceOf(Error);
+          ).eventually.not.to.be.an('error');
+
+          const cryptoCredentials = await caConnection.getSwarmUserCredentials(
+            CA_SWARM_CREDENTIALS_PROVIDER_TEST_USERIDENTITY
+          );
+
+          expect(cryptoCredentials)
+            .not.to.be.equal(null)
+            .to.be.equal(undefined);
+          expect(checkIsValidCryptoCredentials(cryptoCredentials)).to.be.equal(
+            true
+          );
+          expect(
+            (cryptoCredentials as TCentralAuthorityUserCryptoCredentials)
+              .userIdentity
+          ).to.be.equal(CA_SWARM_CREDENTIALS_PROVIDER_TEST_USERIDENTITY);
+
+          expect(
+            validateUserIdentity(
+              CA_SWARM_CREDENTIALS_PROVIDER_TEST_USERIDENTITY_SECOND
+            )
+          ).to.be.equal(true);
+          await expect(
+            caConnection.getSwarmUserCredentials(
+              CA_SWARM_CREDENTIALS_PROVIDER_TEST_USERIDENTITY_SECOND
+            )
+          ).eventually.not.to.be.an('error');
+
+          const cryptoCredentialsSecond = await caConnection.getSwarmUserCredentials(
+            CA_SWARM_CREDENTIALS_PROVIDER_TEST_USERIDENTITY_SECOND
+          );
+
+          expect(cryptoCredentialsSecond)
+            .not.to.be.equal(null)
+            .to.be.equal(undefined);
+          expect(
+            checkIsValidCryptoCredentials(cryptoCredentialsSecond)
+          ).to.be.equal(true);
+          expect(
+            (cryptoCredentialsSecond as TCentralAuthorityUserCryptoCredentials)
+              .userIdentity
+          ).to.be.equal(CA_SWARM_CREDENTIALS_PROVIDER_TEST_USERIDENTITY_SECOND);
+          context.firstIdentityCredentials = cryptoCredentials;
+          context.secodIdentityCredentials = cryptoCredentialsSecond;
         }).timeout(10000);
 
-        it('check getSwarmUserCredentials method user identity not valid', async () => {
+        it('check getSwarmUserEncryptionPubKey method user identity exists auth providers', async () => {
           expect(caConnection).to.be.an.instanceof(CentralAuthority);
           expect(caConnection.isRunning).to.be.equal(true);
+          expect(context).to.be.an('object');
+          expect(context.firstIdentityCredentials).to.be.an('object');
+          expect(context.secodIdentityCredentials).to.be.an('object');
+
+          const {
+            firstIdentityCredentials,
+            secodIdentityCredentials,
+          } = context;
+
+          expect(
+            checkIsValidCryptoCredentials(firstIdentityCredentials)
+          ).to.be.equal(true);
+          expect(
+            checkIsValidCryptoCredentials(secodIdentityCredentials)
+          ).to.be.equal(true);
+
+          const expectedPubKeyFirstIdentity = getDataEncryptionPubKeyByCryptoCredentials(
+            firstIdentityCredentials as TCentralAuthorityUserCryptoCredentials
+          );
+
+          expect(expectedPubKeyFirstIdentity)
+            .to.be.an.instanceof(CryptoKey)
+            .that.have.property('usages')
+            .which.is.an('array')
+            .contain.all.members(
+              CA_SWARM_USER_CRYPTO_KEY_DATA_ENCRYPTION_PUBLIC_USAGES
+            ); // the key is used to encrypt a data for the user with this public key, then the user must decrypt it by the private key
           await expect(
-            (caConnection as any).getSwarmUserCredentials()
-          ).to.eventually.be.an.instanceOf(Error);
-          await expect(
-            (caConnection as any).getSwarmUserCredentials('')
-          ).to.eventually.be.an.instanceOf(Error);
-          await expect(
-            (caConnection as any).getSwarmUserCredentials({})
-          ).to.eventually.be.an.instanceOf(Error);
-          await expect(
-            (caConnection as any).getSwarmUserCredentials(
-              CA_CLASS_USER_IDENTITY_NOT_VALID_NO_DELIMETER
+            caConnection.getSwarmUserEncryptionPubKey(
+              firstIdentityCredentials as TCentralAuthorityUserCryptoCredentials
             )
-          ).to.eventually.be.an.instanceOf(Error);
+          )
+            .eventually.not.to.be.an('error')
+            .that.is.equal(expectedPubKeyFirstIdentity);
+
+          const expectedPubKeySecondIdentity = getDataEncryptionPubKeyByCryptoCredentials(
+            secodIdentityCredentials as TCentralAuthorityUserCryptoCredentials
+          );
+
+          expect(expectedPubKeySecondIdentity)
+            .to.be.an.instanceof(CryptoKey)
+            .that.have.property('usages')
+            .which.is.an('array')
+            .contain.all.members(
+              CA_SWARM_USER_CRYPTO_KEY_DATA_ENCRYPTION_PUBLIC_USAGES
+            );
           await expect(
-            (caConnection as any).getSwarmUserCredentials(
-              CA_CLASS_USER_IDENTITY_NOT_VALID_NO_VERSION
+            caConnection.getSwarmUserEncryptionPubKey(
+              secodIdentityCredentials as TCentralAuthorityUserCryptoCredentials
             )
-          ).to.eventually.be.an.instanceOf(Error);
+          )
+            .eventually.not.to.be.an('error')
+            .that.is.equal(expectedPubKeySecondIdentity);
+        }).timeout(10000);
+
+        it('check getSwarmUserSignPubKey method user identity exists auth providers', async () => {
+          expect(caConnection).to.be.an.instanceof(CentralAuthority);
+          expect(caConnection.isRunning).to.be.equal(true);
+          expect(context).to.be.an('object');
+          expect(context.firstIdentityCredentials).to.be.an('object');
+          expect(context.secodIdentityCredentials).to.be.an('object');
+
+          const {
+            firstIdentityCredentials,
+            secodIdentityCredentials,
+          } = context;
+
+          expect(
+            checkIsValidCryptoCredentials(firstIdentityCredentials)
+          ).to.be.equal(true);
+          expect(
+            checkIsValidCryptoCredentials(secodIdentityCredentials)
+          ).to.be.equal(true);
+
+          const expectedPubKeyFirstIdentity = getDataSignPubKeyByCryptoCredentials(
+            firstIdentityCredentials as TCentralAuthorityUserCryptoCredentials
+          );
+
+          expect(expectedPubKeyFirstIdentity)
+            .to.be.an.instanceof(CryptoKey)
+            .that.have.property('usages')
+            .which.is.an('array')
+            .contain.all.members(
+              CA_SWARM_USER_CRYPTO_KEY_DATA_SIGN_PUBLIC_USAGES
+            );
           await expect(
-            (caConnection as any).getSwarmUserCredentials(
-              CA_CLASS_USER_IDENTITY_NOT_VALID_NO_AUTH_PROVIDER_URL
+            caConnection.getSwarmUserEncryptionPubKey(
+              firstIdentityCredentials as TCentralAuthorityUserCryptoCredentials
             )
-          ).to.eventually.be.an.instanceOf(Error);
+          )
+            .eventually.not.to.be.an('error')
+            .that.is.equal(expectedPubKeyFirstIdentity);
+
+          const expectedPubKeySecondIdentity = getDataSignPubKeyByCryptoCredentials(
+            secodIdentityCredentials as TCentralAuthorityUserCryptoCredentials
+          );
+
+          expect(expectedPubKeySecondIdentity)
+            .to.be.an.instanceof(CryptoKey)
+            .that.have.property('usages')
+            .which.is.an('array')
+            .contain.all.members(
+              CA_SWARM_USER_CRYPTO_KEY_DATA_SIGN_PUBLIC_USAGES
+            );
           await expect(
-            (caConnection as any).getSwarmUserCredentials(
-              CA_CLASS_USER_IDENTITY_NOT_VALID_NO_USER_IDENTITY
+            caConnection.getSwarmUserEncryptionPubKey(
+              secodIdentityCredentials as TCentralAuthorityUserCryptoCredentials
             )
-          ).to.eventually.be.an.instanceOf(Error);
-        }).timeout(15000);
+          )
+            .eventually.not.to.be.an('error')
+            .that.is.equal(expectedPubKeySecondIdentity);
+        }).timeout(10000);
       });
     });
   });
