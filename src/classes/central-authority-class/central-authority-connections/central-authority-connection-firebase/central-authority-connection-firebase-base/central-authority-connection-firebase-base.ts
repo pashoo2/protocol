@@ -404,6 +404,8 @@ export class CAConnectionWithFirebaseBase {
     return true;
   }
 
+  // TODO - add to the CentralAuthrotity methods
+  // the ability to get swarm users profiles data
   protected async getUserProfileData(): Promise<
     Error | ICentralAuthorityUserProfile
   > {

@@ -14,7 +14,7 @@ export class ValidationError extends Error {
     let message;
 
     if (error instanceof Array) {
-      message = ValidationError.mergeErrorObjects(message);
+      message = ValidationError.mergeErrorObjects(error);
     } else {
       message = 'An unknown error';
     }

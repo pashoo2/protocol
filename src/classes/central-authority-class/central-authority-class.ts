@@ -80,7 +80,11 @@ const CAError = getErrorScopedClass(CENTRAL_AUTHORITY_CLASS_ERRORS_PREFIX);
  * @class CentralAuthority
  */
 export class CentralAuthority implements ICentralAuthority {
-  protected isRunning?: boolean;
+  public get isRunning(): boolean {
+    return this.isRunningInstance;
+  }
+
+  protected isRunningInstance: boolean = false;
   /**
    * an identity of auth provider the user is authorized on
    *
@@ -142,7 +146,7 @@ export class CentralAuthority implements ICentralAuthority {
       isError = true;
     }
     if (isError) {
-      return this.handleExceptionAndClose(
+      return this.handleFailAndClose(
         'There is an error occurred while connecting to the providers'
       );
     }
@@ -151,7 +155,7 @@ export class CentralAuthority implements ICentralAuthority {
 
     if (setLocallyStoredCredentialsResult instanceof Error) {
       console.error(setLocallyStoredCredentialsResult);
-      return this.handleExceptionAndClose(
+      return this.handleFailAndClose(
         'Failed to read the locally stored credentials for the current user'
       );
     }
@@ -160,7 +164,7 @@ export class CentralAuthority implements ICentralAuthority {
 
     if (checkUserCredentialsResult instanceof Error) {
       console.error(checkUserCredentialsResult);
-      return this.handleExceptionAndClose(
+      return this.handleFailAndClose(
         'The user credentials stored locally and provided by the auth provided are not same'
       );
     }
@@ -169,7 +173,7 @@ export class CentralAuthority implements ICentralAuthority {
 
     if (storeCredentialsLocallyResult instanceof Error) {
       console.error(storeCredentialsLocallyResult);
-      return this.handleExceptionAndClose(
+      return this.handleFailAndClose(
         'Failed to store the credentials for the user locally'
       );
     }
@@ -178,7 +182,7 @@ export class CentralAuthority implements ICentralAuthority {
 
     if (createConnectionToSwarmCredentialsStorageResult instanceof Error) {
       console.error(createConnectionToSwarmCredentialsStorageResult);
-      return this.handleExceptionAndClose(
+      return this.handleFailAndClose(
         'Failed to connect to the swarm credentials storage provider'
       );
     }
@@ -351,6 +355,7 @@ export class CentralAuthority implements ICentralAuthority {
     if (!options) {
       return new CAError('Options must be provided');
     }
+
     const validationResult = validateVerboseBySchema(
       CENTRAL_AUTHORITY_CLASS_OPTIONS_SCHEMA,
       options
@@ -380,11 +385,11 @@ export class CentralAuthority implements ICentralAuthority {
   }
 
   protected setIsRunning() {
-    this.isRunning = true;
+    this.isRunningInstance = true;
   }
 
   protected unsetIsRunning() {
-    this.isRunning = true;
+    this.isRunningInstance = false;
   }
 
   protected async closeConnectionToAuthProvidersPool(): Promise<Error | void> {
@@ -475,21 +480,28 @@ export class CentralAuthority implements ICentralAuthority {
       console.error(closeConnectionsResult);
       return closeConnectionsResult;
     }
-    return closeConnectionsResult;
   }
 
-  protected async handleExceptionAndClose(error?: string | Error) {
+  /**
+   * close the instance and emit an error
+   *
+   * @protected
+   * @param {(string | Error)} [error]
+   * @returns {Promise<Error>}
+   * @memberof CentralAuthority
+   */
+  protected async handleFailAndClose(error?: string | Error): Promise<Error> {
     const closeConnectionsResult = await this.disconnectAll();
 
-    if (error) {
-      console.error(new CAError(error));
-    }
     if (closeConnectionsResult instanceof Error) {
       console.error(closeConnectionsResult);
       console.error(
-        new CAError('handleExceptionAndClose::failed to close the instance')
+        new CAError('handleFailAndClose::failed to close the instance')
       );
     }
+    return new CAError(
+      error || 'handleFailAndClose::an unknown error caused the instance close'
+    );
   }
 
   protected getOptionsForAuthProvidersConnectionsPool(
@@ -502,10 +514,15 @@ export class CentralAuthority implements ICentralAuthority {
 
   protected getOptionsToAuthorizeUserOnAuthConnection(
     optionsUserCredentials: ICentralAuthorityUser
-  ): [TCAAuthProviderIdentity, ICAConnectionSignUpCredentials] {
+  ): [
+    TCAAuthProviderIdentity,
+    ICAConnectionSignUpCredentials,
+    Partial<ICentralAuthorityUserProfile> | undefined
+  ] {
     return [
       optionsUserCredentials.authProviderUrl,
       optionsUserCredentials.credentials,
+      optionsUserCredentials.profile,
     ];
   }
 
@@ -559,6 +576,7 @@ export class CentralAuthority implements ICentralAuthority {
       optionsConnectionPool
     );
     let connectionToAuthProvidersPool: CAConnectionsPool;
+
     try {
       connectionToAuthProvidersPool = new CAConnectionsPool(
         optionsAuthProvidersPool

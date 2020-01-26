@@ -12,6 +12,7 @@ import { CA_CONNECTIONS_POOL_AUTH_PROVIDERS_CONNECTION_CONSTRUCTORS } from 'clas
 import { IAuthProviderConnectionConfiguration } from 'classes/central-authority-class/central-authority-connections/central-authority-connections-pool/central-authority-connections-pool.types';
 import { delay } from 'utils/common-utils/common-utils-timer';
 import { createCAConnectionsPoolWithTwoProviders } from './central-authority-connections-pool.test.shared';
+import { CA_CONNECTOINS_CONNECTIONS_POOL_TEST_FIREBASE_DB_WATCHA_AUTH_PROVIDER_CREDENTIALS } from './central-authority-connections-pool.test.const';
 
 export const runTestCAConnectionsPoolTest = () => {
   describe('central-authority-connections-pool module test', () => {
@@ -177,10 +178,7 @@ export const runTestCAConnectionsPoolTest = () => {
       // }).timeout(10000);
 
       it('authorize method to a valid auth provider url - should authorize and disconnect', async () => {
-        const credentials = {
-          login: 'vovit83253@mailfile.org',
-          password: '123456',
-        };
+        const credentials = CA_CONNECTOINS_CONNECTIONS_POOL_TEST_FIREBASE_DB_WATCHA_AUTH_PROVIDER_CREDENTIALS;
         const connectionWithAuthProvider = await connectionPool.authorize(
           CA_CONNECTOINS_CONNECTIONS_POOL_TEST_FIREBASE_DB_WATCHA_AUTH_PROVIDER_CONF.caProviderUrl,
           credentials

@@ -18,7 +18,14 @@ export const CENTRAL_AUTHORITY_CLASS_OPTIONS_SCHEMA = {
               },
               caProviderUrl: CONST_VALIDATION_SCHEMES_URL,
               caProvider: {
-                type: 'string',
+                oneOf: [
+                  {
+                    type: 'string',
+                  },
+                  {
+                    type: 'number',
+                  },
+                ],
               },
             },
             required: ['options', 'caProviderUrl', 'caProvider'],

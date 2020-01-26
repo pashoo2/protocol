@@ -70,6 +70,14 @@ export interface ICentralAuthorityOptions {
  */
 export interface ICentralAuthority {
   /**
+   * returns true if the instance is connected
+   * to the storages and ready to be used
+   *
+   * @type {boolean}
+   * @memberof ICentralAuthority
+   */
+  readonly isRunning: boolean;
+  /**
    * connect to the auth providers pool and
    * authorize the user on one of them. Also
    * connect to the data storages which

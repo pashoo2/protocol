@@ -240,6 +240,16 @@ export class CAConnectionsPool implements ICAConnectionPool {
     );
 
     if (authResult instanceof Error) {
+      const disconnectFromTheConnectionResult = await connectionWithAuthProvider.disconnect();
+
+      if (disconnectFromTheConnectionResult instanceof Error) {
+        console.error(disconnectFromTheConnectionResult);
+        console.error(
+          new Error(
+            'Failed to disconnect form the auth provider which failed to authorize on'
+          )
+        );
+      }
       console.error(authResult);
       return new Error(
         `Failed to authorize with the auth provider ${authProviderUrl}`

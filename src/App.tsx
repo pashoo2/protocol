@@ -48,6 +48,7 @@ import { runTestEncryptionKeysUtils } from 'utils/encryption-keys-utils.test';
 import { runTestAuthorityStorageCurrentUser } from 'test/central-authority.test/central-authority-storage-current-user-credentials.test';
 import { runTestCentralAuthorityUtils } from 'test/central-authority.test/central-authority-utils.test';
 import { runTestOpenStorageTest } from 'test/open-storage.test';
+import { runTestCentralAuthority } from './test/central-authority.test/central-authority-class.test/central-authority-class.test';
 
 // runTest();
 // runTestsCredentialsStorage();
@@ -83,7 +84,8 @@ const runTest = async () => {
   // runTestOpenStorageTest();
   // runCACredentialsIdentityStorageTest();
   // runTestCASwarmCredentilsProvider();
-  runTestCentralAuthorityUtils(); // TODO - necessary to test urls comparation
+  // runTestCentralAuthorityUtils(); // TODO - necessary to test urls comparation
+  runTestCentralAuthority();
   runMocha();
 };
 
