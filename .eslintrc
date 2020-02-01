@@ -23,7 +23,9 @@
     "prettier/@typescript-eslint"
   ],
   "plugins": ["@typescript-eslint/eslint-plugin"],
+  "ignorePatterns": ["temp.js", "node_modules/", "node_modules-local/"],
   "rules": {
+    "@typescript-eslint/camelcase": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/member-ordering": [

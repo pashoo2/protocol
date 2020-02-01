@@ -112,3 +112,25 @@ export const commonUtilsArrayCalculateLengthOfIntegerArray = (
   }
   return result;
 };
+
+/**
+ * check wherether the array
+ * includes all items
+ * @param testedArray
+ * @param requiredItems
+ */
+export const commonUtilsArrayIncludesAll = (
+  testedArray: any[],
+  requiredItems: any[]
+): boolean => {
+  const len = requiredItems.length;
+  let idx = 0;
+
+  while (idx < len) {
+    if (!testedArray.includes(requiredItems[idx])) {
+      return false;
+    }
+    idx++;
+  }
+  return true;
+};

@@ -1,19 +1,17 @@
-import { validateBySchema } from 'utils/validation-utils/validation-utils';
-import { caValidatorsCryptoKeysExportedObjectValidationSchema } from './central-authority-validators-crypto-keys-schemas';
 import {
-  CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME,
   CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME,
+  CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME,
   CA_CREDENTIALS_KEY_CRYPTO_CREDENTIALS_EXPORTED_AS_STRING_MIN_LENGTH,
 } from 'classes/central-authority-class/central-authority-class-const/central-authority-class-const';
-import { validateUserIdentity } from '../central-authority-validators-auth-credentials/central-authority-validators-auth-credentials';
 import {
-  TCentralAuthorityUserCryptoCredentialsExported,
   TCentralAuthorityUserCryptoCredentials,
+  TCentralAuthorityUserCryptoCredentialsExported,
 } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
-import {
-  checkIsCryptoKeyPairs,
-  checkIsCryptoKeyPairsExportedAsString,
-} from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
+import { checkIsCryptoKeyPairs } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
+import { validateBySchema } from 'utils/validation-utils/validation-utils';
+
+import { validateUserIdentity } from '../central-authority-validators-auth-credentials/central-authority-validators-auth-credentials';
+import { caValidatorsCryptoKeysExportedObjectValidationSchema } from './central-authority-validators-crypto-keys-schemas';
 
 export const caValidateCryptoKeyPairExportedObject = (value: any): boolean =>
   validateBySchema(caValidatorsCryptoKeysExportedObjectValidationSchema, value);
@@ -66,13 +64,13 @@ export const checkIsValidCryptoCredentials = (
 
 /**
  * validate is a given value has
- * a valid crypto key pair and
- * the user identity
- * in the exported format
+ * a valid crypto key pair by a function provided
+ * and user's identity
  * @param {any} cryptoCredentials
  */
-export const checkIsValidCryptoCredentialsExportedFormat = (
-  cryptoCredentials: any
+export const checkIsValidCryptoCredentialsWithFunc = (
+  cryptoCredentials: any,
+  credentialsValidationFunction: (c: any) => boolean
 ): cryptoCredentials is TCentralAuthorityUserCryptoCredentialsExported => {
   if (!cryptoCredentials || typeof cryptoCredentials !== 'object') {
     return false;
@@ -91,20 +89,41 @@ export const checkIsValidCryptoCredentialsExportedFormat = (
   }
   if (!userIdentity) {
     console.error(
-      'There is a wrong format of the crypto credentials value, case a user identity value was not found'
+      'There is a wrong format of the crypto credentials value, cause a user identity value was not found'
     );
     return false;
   }
   if (!validateUserIdentity(userIdentity)) {
     console.error(
-      'There is a wrong format of the crypto credentials value, case the user identity value have a wrong type'
+      'There is a wrong format of the crypto credentials value, cause the user identity value have a wrong type'
     );
     return false;
   }
-  if (!checkIsCryptoKeyPairsExportedAsString(cryptoKeys)) {
+  if (!credentialsValidationFunction(cryptoKeys)) {
     console.error(
-      'There is a wrong format of the crypto credentials value, case the crypto keys exported as a string value have a wrong type'
+      'There is a wrong format of the crypto credentials value, cause the crypto keys exported as a string value have a wrong type'
     );
+    return false;
+  }
+  return true;
+};
+
+/**
+ * validate is a given value has
+ * a valid crypto key pair and
+ * the user identity
+ * in the exported format
+ * @param {any} cryptoCredentials
+ */
+export const checkIsValidCryptoCredentialsExportedFormat = (
+  cryptoCredentials: any
+): cryptoCredentials is TCentralAuthorityUserCryptoCredentialsExported => {
+  if (
+    !checkIsValidCryptoCredentialsWithFunc(
+      cryptoCredentials,
+      checkIsValidExportedCryptoCredentialsToString
+    )
+  ) {
     return false;
   }
   return true;

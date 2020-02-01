@@ -27,5 +27,5 @@
     "src/index.tsx",
     "src/App.tsx"
   ],
-  "exclude": ["node_modules", "**/*.spec.ts", "**/*.js"]
+  "exclude": ["node_modules", "**/*.spec.ts", "**/*.js", "node_modules*"]
 }

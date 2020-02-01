@@ -1,12 +1,23 @@
+import {
+  CRYPTO_UTIL_DATA_SIGN_PRIVATE_KEY_USAGE,
+  CRYPTO_UTIL_DATA_SIGN_PUBLIC_KEY_USAGE,
+  CRYPTO_UTIL_PRIVATE_KEY_USAGE,
+  CRYPTO_UTIL_PUBLIC_KEY_USAGE,
+} from '../../../utils/encryption-utils/crypto-utils.const';
+
 // the key is used to encrypt a data for the user with this public key, then the user must decrypt it by the private key
 export const CA_SWARM_USER_CRYPTO_KEY_DATA_ENCRYPTION_PUBLIC_USAGES = [
-  'encrypt',
+  CRYPTO_UTIL_PUBLIC_KEY_USAGE,
 ];
 
 export const CA_SWARM_USER_CRYPTO_KEY_DATA_ENCRYPTION_PRIVATE_USAGES = [
-  'decrypt',
+  CRYPTO_UTIL_PRIVATE_KEY_USAGE,
 ];
 
-export const CA_SWARM_USER_CRYPTO_KEY_DATA_SIGN_PUBLIC_USAGES = ['verify'];
+export const CA_SWARM_USER_CRYPTO_KEY_DATA_SIGN_PUBLIC_USAGES = [
+  CRYPTO_UTIL_DATA_SIGN_PUBLIC_KEY_USAGE,
+];
 
-export const CA_SWARM_USER_CRYPTO_KEY_DATA_SIGN_PRIVATE_USAGES = ['sign'];
+export const CA_SWARM_USER_CRYPTO_KEY_DATA_SIGN_PRIVATE_USAGES = [
+  CRYPTO_UTIL_DATA_SIGN_PRIVATE_KEY_USAGE,
+];

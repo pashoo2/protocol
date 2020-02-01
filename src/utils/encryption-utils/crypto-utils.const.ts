@@ -7,13 +7,35 @@ export const CRYPTO_UTIL_KEY_DESC = {
   hash: { name: 'SHA-256' },
 };
 
-export const CRYPTO_UTIL_PUBLIC_KEY_USAGE = 'encrypt';
+export enum eCRYPTO_UTILS_KEYS_USAGES {
+  'encrypt' = 'encrypt',
+  'decrypt' = 'decrypt',
+  'sign' = 'sign',
+  'verify' = 'verify',
+  'deriveKey' = 'deriveKey',
+  'deriveBits' = 'deriveBits',
+  'wrapKey' = 'wrapKey',
+  'unwrapKey' = 'unwrapKey',
+}
 
-export const CRYPTO_UTIL_PRIVATE_KEY_USAGE = 'decrypt';
+export enum eCRYPTO_UTILS_KEYS_TYPES {
+  public = 'public',
+  private = 'private',
+}
 
-export const CRYPTO_UTIL_ENCRYPTION_KEY_TYPE = 'public';
+export const CRYPTO_UTIL_PUBLIC_KEY_USAGE = eCRYPTO_UTILS_KEYS_USAGES.encrypt;
 
-export const CRYPTO_UTIL_DECRIPTION_KEY_TYPE = 'private';
+export const CRYPTO_UTIL_PRIVATE_KEY_USAGE = eCRYPTO_UTILS_KEYS_USAGES.decrypt;
+
+export const CRYPTO_UTIL_DATA_SIGN_PUBLIC_KEY_USAGE =
+  eCRYPTO_UTILS_KEYS_USAGES.verify;
+
+export const CRYPTO_UTIL_DATA_SIGN_PRIVATE_KEY_USAGE =
+  eCRYPTO_UTILS_KEYS_USAGES.sign;
+
+export const CRYPTO_UTIL_ENCRYPTION_KEY_TYPE = eCRYPTO_UTILS_KEYS_TYPES.public;
+
+export const CRYPTO_UTIL_DECRIPTION_KEY_TYPE = eCRYPTO_UTILS_KEYS_TYPES.private;
 
 export const CRYPTO_UTIL_KEYPAIR_USAGES = [
   CRYPTO_UTIL_PUBLIC_KEY_USAGE,

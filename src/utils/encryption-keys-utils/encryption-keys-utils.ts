@@ -1,25 +1,38 @@
-import { CONST_CRYPTO_KEYS_TYPES_EXPORT_FORMATS } from 'const/const-crypto-keys/const-crypto-keys';
-import { encodeArrayBufferToDOMString } from 'utils/string-encoding-utils';
 import {
-  calculateHashNative,
-  calculateHash,
-} from './../hash-calculation-utils/hash-calculation-utils';
+  CONST_CRYPTO_KEYS_TYPES,
+  CONST_CRYPTO_KEYS_TYPES_EXPORT_FORMATS,
+} from 'const/const-crypto-keys/const-crypto-keys';
 import { HASH_CALCULATION_UTILS_HASH_ALHORITHM } from 'utils/hash-calculation-utils/hash-calculation-utils.const';
+import { encodeArrayBufferToDOMString } from 'utils/string-encoding-utils';
+
+import { commonUtilsArrayIncludesAll } from '../common-utils/common-utils-array';
 import {
+  calculateHash,
+  calculateHashNative,
+} from './../hash-calculation-utils/hash-calculation-utils';
+import {
+  ENCRYPTIONS_KEYS_UTILS_JWK_FORMAT_OBJECT_KEYS,
   MIN_JWK_PROPS_COUNT,
   MIN_JWK_STRING_LENGTH,
-  ENCRYPTIONS_KEYS_UTILS_JWK_FORMAT_OBJECT_KEYS,
 } from './encryption-keys-utils.const';
-import { CONST_CRYPTO_KEYS_TYPES } from 'const/const-crypto-keys/const-crypto-keys';
 
 export const isCryptoKey = (v: any): v is CryptoKey => v instanceof CryptoKey;
 
 export const isCryptoKeyPair = (keyPair: any): keyPair is CryptoKeyPair => {
   return (
     typeof keyPair === 'object' &&
-    keyPair.publicKey instanceof CryptoKey &&
-    keyPair.privateKey instanceof CryptoKey
+    isCryptoKey(keyPair.publicKey) &&
+    isCryptoKey(keyPair.privateKey)
   );
+};
+
+export const isCryptoKeyIncludesUsages = (
+  cryptoKey: CryptoKey,
+  expectedUsages: string[]
+): boolean => {
+  const { usages } = cryptoKey;
+
+  return commonUtilsArrayIncludesAll(usages, expectedUsages);
 };
 
 export const isCryptoKeyPairExportedAsString = (keyPair: any): boolean => {

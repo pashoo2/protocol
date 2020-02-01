@@ -1,64 +1,60 @@
-import { CentralAuthorityStorageCurrentUserCredentials } from './central-authority-storage-local/central-authority-storage-current-user-auth/central-authority-storage-current-user-credentials/central-authority-storage-current-user-credentials';
+import { checkIsError } from '../../utils/common-utils/common-utils-check-value';
+import { dataCachingUtilsCachingDecorator } from '../../utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator';
 import { validateVerboseBySchema } from './../../utils/validation-utils/validation-utils';
 import { getErrorScopedClass } from './../basic-classes/error-extended-scoped-class-base/error-extended-scoped-class-base';
+import {
+  ICentralAuthorityUserProfile,
+  TCentralAuthorityUserIdentity,
+} from './central-authority-class-types/central-authority-class-types-common';
+import { TCentralAuthorityUserCryptoCredentials } from './central-authority-class-types/central-authority-class-types-crypto-credentials';
+import {
+  TCAUserIdentityRawTypes,
+  TCAuthProviderIdentifier,
+} from './central-authority-class-user-identity/central-authority-class-user-identity.types';
+import {
+  CENTRAL_AUTHORITY_CLASS_ERRORS_PREFIX,
+  CENTRAL_AUTHORITY_CLASS_OPTIONS_SCHEMA,
+  CENTRAL_AUTHORITY_CLASS_SWARM_CREDENTIALS_STORAGE_DB_NAME,
+  CENTRAL_AUTHORITY_CLASS_SWARM_CREDENTIALS_SWARM_USERS_CREDENTIALS_CACHE_CAPACITY,
+} from './central-authority-class.const';
+import {
+  ICentralAuthority,
+  ICentralAuthorityAuthProvidersOptions,
+  ICentralAuthorityOptions,
+  ICentralAuthorityUser,
+} from './central-authority-class.types';
+import { CAConnectionsPool } from './central-authority-connections/central-authority-connections-pool/central-authority-connections-pool';
+import {
+  ICAConnectionPool,
+  ICAConnectionPoolAuthResult,
+  ICAConnectionsPoolOptions,
+} from './central-authority-connections/central-authority-connections-pool/central-authority-connections-pool.types';
+import {
+  ICAConnectionSignUpCredentials,
+  TCAAuthProviderIdentity,
+} from './central-authority-connections/central-authority-connections.types';
+import { CentralAuthorityStorageCurrentUserCredentials } from './central-authority-storage-local/central-authority-storage-current-user-auth/central-authority-storage-current-user-credentials/central-authority-storage-current-user-credentials';
 import {
   ICAStorageCurrentUserCredentials,
   ICAStorageCurrentUserCredentialsOptions,
 } from './central-authority-storage-local/central-authority-storage-current-user-auth/central-authority-storage-current-user-credentials/central-authority-storage-current-user-credentials.types';
+import { CASwarmCredentialsProvider } from './central-authority-swarm-credentials-provider/central-authority-swarm-credentials-provider';
 import {
   ICASwarmCredentialsProvider,
   ICASwarmCredentialsProviderOptions,
 } from './central-authority-swarm-credentials-provider/central-authority-swarm-credentials-provider.types';
 import {
-  ICAConnectionPool,
-  ICAConnectionsPoolOptions,
-} from './central-authority-connections/central-authority-connections-pool/central-authority-connections-pool.types';
-import { TCentralAuthorityUserCryptoCredentials } from './central-authority-class-types/central-authority-class-types-crypto-credentials';
-import { CAConnectionsPool } from './central-authority-connections/central-authority-connections-pool/central-authority-connections-pool';
-import {
-  ICentralAuthorityUserProfile,
-  TCentralAuthorityUserIdentity,
-} from './central-authority-class-types/central-authority-class-types-common';
-import {
-  TCAuthProviderIdentifier,
-  TCAUserIdentityRawTypes,
-} from './central-authority-class-user-identity/central-authority-class-user-identity.types';
-import { ICAConnectionPoolAuthResult } from './central-authority-connections/central-authority-connections-pool/central-authority-connections-pool.types';
-import {
   compareCryptoCredentials,
   exportCryptoCredentialsToString,
 } from './central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials';
-import { checkIsValidCryptoCredentials } from './central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
-import { CASwarmCredentialsProvider } from './central-authority-swarm-credentials-provider/central-authority-swarm-credentials-provider';
 import {
-  CENTRAL_AUTHORITY_CLASS_SWARM_CREDENTIALS_STORAGE_DB_NAME,
-  CENTRAL_AUTHORITY_CLASS_SWARM_CREDENTIALS_SWARM_USERS_CREDENTIALS_CACHE_CAPACITY,
-} from './central-authority-class.const';
-import { checkIsError } from '../../utils/common-utils/common-utils-check-value';
-import { dataCachingUtilsCachingDecorator } from '../../utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator';
-import { getDataSignKeyPairByCryptoCredentials } from './central-authority-class.utils';
-import {
-  getUserIdentityByCryptoCredentials,
   getDataEncryptionKeyPairByCryptoCredentials,
-} from './central-authority-class.utils';
-import {
-  getDataSignPubKeyByCryptoCredentials,
   getDataEncryptionPubKeyByCryptoCredentials,
-} from './central-authority-class.utils';
-import {
-  TCAAuthProviderIdentity,
-  ICAConnectionSignUpCredentials,
-} from './central-authority-connections/central-authority-connections.types';
-import {
-  ICentralAuthority,
-  ICentralAuthorityOptions,
-  ICentralAuthorityAuthProvidersOptions,
-  ICentralAuthorityUser,
-} from './central-authority-class.types';
-import {
-  CENTRAL_AUTHORITY_CLASS_ERRORS_PREFIX,
-  CENTRAL_AUTHORITY_CLASS_OPTIONS_SCHEMA,
-} from './central-authority-class.const';
+  getDataSignKeyPairByCryptoCredentials,
+  getDataSignPubKeyByCryptoCredentials,
+  getUserIdentityByCryptoCredentials,
+} from './central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials-crypto-keys';
+import { checkIsValidCryptoCredentials } from './central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
 
 const CAError = getErrorScopedClass(CENTRAL_AUTHORITY_CLASS_ERRORS_PREFIX);
 
@@ -215,7 +211,7 @@ export class CentralAuthority implements ICentralAuthority {
 
   /**
    * read credentials of the user connected to the swarm
-   * from a local cache or, if not found in the local
+   * from a local cache or, if it's not found, in the local
    * cache, from the swarm auth provider.
    *
    * @param {TCAUserIdentityRawTypes} identity

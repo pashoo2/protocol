@@ -1,14 +1,14 @@
-import { TCentralAuthorityUserCryptoCredentials } from './central-authority-class-types/central-authority-class-types-crypto-credentials';
-import { TCACryptoKeyPairs } from './central-authority-class-types/central-authority-class-types-crypto-keys';
 import {
-  CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME,
   CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME,
-} from './central-authority-class-const/central-authority-class-const-auth-credentials';
-import { TCentralAuthorityUserIdentity } from './central-authority-class-types/central-authority-class-types-common';
+  CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME,
+} from '../../central-authority-class-const/central-authority-class-const-auth-credentials';
+import { TCentralAuthorityUserIdentity } from '../../central-authority-class-types/central-authority-class-types-common';
+import { TCentralAuthorityUserCryptoCredentials } from '../../central-authority-class-types/central-authority-class-types-crypto-credentials';
+import { TCACryptoKeyPairs } from '../../central-authority-class-types/central-authority-class-types-crypto-keys';
 import {
   CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME,
   CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME,
-} from './central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys.const';
+} from '../central-authority-util-crypto-keys/central-authority-util-crypto-keys.const';
 
 export const getCryptoKeysByCryptoCredentials = (
   cryptoCredentials: TCentralAuthorityUserCryptoCredentials | null
