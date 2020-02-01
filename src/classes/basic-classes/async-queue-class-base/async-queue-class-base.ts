@@ -18,10 +18,10 @@ export class AsyncQueueClassBase extends TAsyncQueueBaseClass {
 
   protected runPromiseProvider?: ReturnType<typeof getRun>;
 
-  constructor(options: Partial<IAsyncQueueBaseClassOptions>) {
+  constructor(options?: Partial<IAsyncQueueBaseClassOptions>) {
     super(
       extend(
-        options,
+        options || {},
         ASYNC_QUEUE_BASE_CLASS_OPTIONS
       ) as IAsyncQueueBaseClassOptions
     );
@@ -58,6 +58,9 @@ export class AsyncQueueClassBase extends TAsyncQueueBaseClass {
     if (this.batch) {
       return;
     }
+    if (!this.queue.length) {
+      return;
+    }
     this.batch = this.createBatch();
     try {
       await this.batch;
@@ -70,6 +73,7 @@ export class AsyncQueueClassBase extends TAsyncQueueBaseClass {
 
     await delay(delayMs);
     this.batch = undefined;
+    this.start();
   };
 
   protected createPromise = <T>(

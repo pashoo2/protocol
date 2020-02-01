@@ -16,7 +16,12 @@
     "jsx": "preserve",
     "baseUrl": "src/",
     "rootDirs": ["src/"],
-    "typeRoots": ["types", "**/types", "**/node_modules/types"],
+    "typeRoots": [
+      "types",
+      "**/types",
+      "**/node_modules/types",
+      "**/node_modules/@types"
+    ],
     "experimentalDecorators": true,
     "resolveJsonModule": true
   },

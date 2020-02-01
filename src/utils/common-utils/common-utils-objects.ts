@@ -37,7 +37,7 @@ export function extend<T extends TDictionary<any>, E extends TDictionary<any>>(
   while (idx < len) {
     k = keys[idx];
     idx++;
-    if (isDefined(ext[k])) {
+    if (!isDefined(ext[k])) {
       continue;
     }
     if (!isDefined(o[k])) {
