@@ -4,7 +4,10 @@ import {
   encodeArrayBufferToDOMString,
 } from 'utils/string-encoding-utils';
 import { TTypedArrays } from 'types/main.types';
-import { HASH_CALCULATION_UTILS_HASH_ALHORITHM } from './hash-calculation-utils.const';
+import {
+  HASH_CALCULATION_UTILS_DEFAULT_HASH_ALHORITHM,
+  HASH_CALCULATION_UTILS_HASH_ALHORITHM,
+} from './hash-calculation-utils.const';
 import {
   cryptoModule,
   crypto,
@@ -27,7 +30,7 @@ export const calculateHashNative = async (
 
 export const calculateHash = async (
   data: TStringifyData,
-  alg: HASH_CALCULATION_UTILS_HASH_ALHORITHM = HASH_CALCULATION_UTILS_HASH_ALHORITHM.SHA256
+  alg: HASH_CALCULATION_UTILS_HASH_ALHORITHM = HASH_CALCULATION_UTILS_DEFAULT_HASH_ALHORITHM
 ): Promise<string | Error> => {
   const dataAsString = stringify(data);
 

@@ -2,7 +2,10 @@ import {
   CONST_CRYPTO_KEYS_TYPES,
   CONST_CRYPTO_KEYS_TYPES_EXPORT_FORMATS,
 } from 'const/const-crypto-keys/const-crypto-keys';
-import { HASH_CALCULATION_UTILS_HASH_ALHORITHM } from 'utils/hash-calculation-utils/hash-calculation-utils.const';
+import {
+  HASH_CALCULATION_UTILS_DEFAULT_HASH_ALHORITHM,
+  HASH_CALCULATION_UTILS_HASH_ALHORITHM,
+} from 'utils/hash-calculation-utils/hash-calculation-utils.const';
 import { encodeArrayBufferToDOMString } from 'utils/string-encoding-utils';
 
 import { commonUtilsArrayIncludesAll } from '../common-utils/common-utils-array';
@@ -150,7 +153,7 @@ export const exportCryptokeyInFormat = async (
  */
 export const calcCryptoKeyHash = async (
   key: CryptoKey,
-  alg: HASH_CALCULATION_UTILS_HASH_ALHORITHM = HASH_CALCULATION_UTILS_HASH_ALHORITHM.SHA256
+  alg: HASH_CALCULATION_UTILS_HASH_ALHORITHM = HASH_CALCULATION_UTILS_DEFAULT_HASH_ALHORITHM
 ): Promise<Error | string> => {
   if (!(key instanceof CryptoKey)) {
     return new Error('Key os not an instance of CryptoKey');

@@ -13,6 +13,7 @@ import { decryptData } from '../../../utils/encryption-utils/decrypt-data.encryp
 import {
   TDATA_SIGN_UTIL_SIGN_DATA_TYPES,
   TDATA_SIGN_UTIL_VERIFY_DATA_TYPES,
+  TDATA_SIGN_UTIL_VERIFY_DATA_TYPES_EXTENDED,
 } from '../../../utils/data-sign-utils/data-sign-utils.types';
 import {
   isCryptoKeyDataSign,
@@ -92,7 +93,7 @@ export class QueuedEncryptionClassBase implements IQueuedEncrypyionClassBase {
   };
 
   public verifyData = (
-    data: TDATA_SIGN_UTIL_VERIFY_DATA_TYPES,
+    data: TDATA_SIGN_UTIL_VERIFY_DATA_TYPES_EXTENDED,
     signature: TDATA_SIGN_UTIL_VERIFY_DATA_TYPES,
     key: CryptoKey
   ): Promise<boolean | Error> => {
@@ -101,7 +102,7 @@ export class QueuedEncryptionClassBase implements IQueuedEncrypyionClassBase {
         new Error('A crypto key must provide a data verification functionality')
       );
     }
-    return this.addInQueue(() => verifyData(key, signature, data));
+    return this.addInQueue(() => verifyData(key, data, signature));
   };
 
   protected startAsyncQueue(options?: IAsyncQueueBaseClassOptions) {

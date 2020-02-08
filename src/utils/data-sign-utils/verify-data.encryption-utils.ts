@@ -11,6 +11,7 @@ import {
 } from './data-sign-utils.const';
 import {
   TDATA_SIGN_UTIL_VERIFY_DATA_TYPES,
+  TDATA_SIGN_UTIL_VERIFY_DATA_TYPES_EXTENDED,
   TDATA_SIGN_UTIL_VERIFY_DATA_TYPES_NATIVE,
   TDATA_SIGN_UTIL_VERIFY_KEY_TYPES,
 } from './data-sign-utils.types';
@@ -45,7 +46,7 @@ export const verifyNative = async (
 
 export const verifyData = async (
   key: TDATA_SIGN_UTIL_VERIFY_KEY_TYPES,
-  data: TDATA_SIGN_UTIL_VERIFY_DATA_TYPES | object,
+  data: TDATA_SIGN_UTIL_VERIFY_DATA_TYPES_EXTENDED,
   signature: TDATA_SIGN_UTIL_VERIFY_DATA_TYPES
 ): Promise<boolean | Error> => {
   const k = await getKeyOfType(key, DATA_SIGN_CRYPTO_UTIL_VERIFY_KEY_TYPE);

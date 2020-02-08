@@ -1,9 +1,11 @@
 import { eCRYPTO_UTILS_KEYS_USAGES } from '../encryption-utils/crypto-utils.const';
+import { ENCRYPTION_FORMAT_SUPPORTED } from './main.data-sign-utils.const';
 export const DATA_SIGN_CRYPTO_UTIL_KEYS_EXTRACTABLE = true;
 
 export const DATA_SIGN_CRYPTO_UTIL_KEY_ALGORITHM = 'ECDSA';
 
-export const DATA_SIGN_CRYPTO_UTIL_HASH_ALGORITHM = 'SHA-256';
+export const DATA_SIGN_CRYPTO_UTIL_HASH_ALGORITHM =
+  ENCRYPTION_FORMAT_SUPPORTED || 'SHA-256';
 
 export const DATA_SIGN_CRYPTO_UTIL_KEY_DESC = {
   name: DATA_SIGN_CRYPTO_UTIL_KEY_ALGORITHM,
