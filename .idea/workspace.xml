@@ -3,16 +3,12 @@
   <component name="ChangeListManager">
     <list default="true" id="e70e70e3-e48a-4dfd-91a6-03818e8691f6" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.test.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/data-sign-utils/data-sign-utils.const.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/data-sign-utils/data-sign-utils.const.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/data-sign-utils/data-sign-utils.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/data-sign-utils/data-sign-utils.types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/data-sign-utils/main.data-sign-utils.const.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/data-sign-utils/main.data-sign-utils.const.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/data-sign-utils/verify-data.encryption-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/data-sign-utils/verify-data.encryption-utils.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/encryption-keys-utils/encryption-keys-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/encryption-keys-utils/encryption-keys-utils.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/encryption-utils/crypto-utils.const.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/encryption-utils/crypto-utils.const.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/hash-calculation-utils/hash-calculation-utils.const.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/hash-calculation-utils/hash-calculation-utils.const.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/hash-calculation-utils/hash-calculation-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/hash-calculation-utils/hash-calculation-utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jest.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/jest.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-type/swarm-message-subclass-validator-fields-validator-validator-type.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-type/swarm-message-subclass-validator-fields-validator-validator-type.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/data-sign-test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/data-sign-test.ts" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -29,97 +25,97 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="verify-data.encryption-utils.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/utils/data-sign-utils/verify-data.encryption-utils.ts">
+      <file leaf-file-name="swarm-message-subclass-validator-fields-validator-validator-user-identifier.test.ts" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/test/swarm-message/swarm-message-subclass-validator-fields-validator-validator-user-identifier.test.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1394">
+              <caret line="82" column="10" lean-forward="true" selection-start-line="82" selection-start-column="10" selection-end-line="82" selection-end-column="10" />
+              <folding>
+                <element signature="e#23#384#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="jest.config.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/jest.config.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="153">
-              <caret line="48" column="50" selection-start-line="48" selection-start-column="8" selection-end-line="48" selection-end-column="50" />
+              <caret line="9" column="3" selection-start-line="9" selection-start-column="3" selection-end-line="9" selection-end-column="3" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="central-authority-class-user-identity.const.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="119">
+              <caret line="7" column="43" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="43" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="central-authority-class-user-identity.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="34">
+              <caret line="18" column="37" selection-start-line="18" selection-start-column="13" selection-end-line="18" selection-end-column="37" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="central-authority-identity-v2.test.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/test/central-authority-identity.test/central-authority-identity-v2.test.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="68">
+              <caret line="13" column="4" selection-start-line="13" selection-start-column="4" selection-end-line="15" selection-end-column="74" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="central-authority-class-user-identity.types.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="680">
+              <caret line="49" column="48" selection-start-line="49" selection-start-column="17" selection-end-line="49" selection-end-column="48" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="swarm-message-subclass-validator-fields-validator-validator-user-identifier.types.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types.ts">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file leaf-file-name="swarm-message-subclass-validator-fields-validator-validator-user-identifier.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="527">
+              <caret line="37" column="37" selection-start-line="37" selection-start-column="15" selection-end-line="37" selection-end-column="37" />
               <folding>
-                <element signature="e#0#102#0" expanded="true" />
+                <element signature="e#0#147#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="data-sign-utils.types.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/utils/data-sign-utils/data-sign-utils.types.ts">
+      <file leaf-file-name="swarm-message-subclass-validator-fields-validator.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="385">
-              <caret line="54" lean-forward="true" selection-start-line="54" selection-end-line="54" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="main.data-sign-utils.const.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/utils/data-sign-utils/main.data-sign-utils.const.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="6" column="40" selection-start-line="6" selection-start-column="13" selection-end-line="6" selection-end-column="40" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="hash-calculation-utils.const.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/utils/hash-calculation-utils/hash-calculation-utils.const.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="8" column="89" selection-start-line="8" selection-start-column="89" selection-end-line="8" selection-end-column="89" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="queued-encryption-class-base.test.ts" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.test.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1275">
-              <caret line="126" column="11" lean-forward="true" selection-start-line="126" selection-start-column="11" selection-end-line="126" selection-end-column="11" />
+            <state relative-caret-position="391">
+              <caret line="41" column="109" selection-start-line="41" selection-start-column="109" selection-end-line="41" selection-end-column="109" />
               <folding>
-                <element signature="n#!!doc" expanded="true" />
-                <element signature="e#64#139#0" expanded="true" />
-                <element signature="e#419#478#0" />
-                <element signature="e#979#2358#0" />
-                <element signature="e#4503#4965#0" />
-                <element signature="e#5027#5353#0" />
-                <element signature="e#6553#6577#0" />
-                <element signature="e#6634#6658#0" />
+                <element signature="e#0#28#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="common-utils-objects.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/utils/common-utils/common-utils-objects.ts">
+      <file leaf-file-name="swarm-message-subclass-validator.types.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator.types.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="663">
-              <caret line="40" column="14" selection-start-line="40" selection-start-column="14" selection-end-line="40" selection-end-column="14" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="common-utils-main.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/utils/common-utils/common-utils-main.ts">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file leaf-file-name="common-utils.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/utils/common-utils/common-utils.ts">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/node_modules/react-scripts/node_modules/expect/build/index.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="334">
-              <caret line="208" column="15" lean-forward="true" selection-start-line="208" selection-start-column="15" selection-end-line="208" selection-end-column="15" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="crypto-utils.const.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/utils/encryption-utils/crypto-utils.const.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="374">
-              <caret line="24" column="22" lean-forward="true" selection-start-line="24" selection-start-column="22" selection-end-line="24" selection-end-column="22" />
+            <state relative-caret-position="306">
+              <caret line="26" column="12" selection-start-line="26" selection-start-column="12" selection-end-line="26" selection-end-column="12" />
             </state>
           </provider>
         </entry>
@@ -128,8 +124,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>request.setBaseUrl(serverUrl);</find>
-      <find>setVersionsSupported</find>
       <find>disconnectFromTheApp</find>
       <find>ICentralAuthorityStorageCryptoCredentials</find>
       <find>CentralAuthorityStorageCurrentUserCredentials</find>
@@ -149,6 +143,17 @@
       <find>ENCRYPTION_FORMAT_SUPPROTED</find>
       <find>sha-256</find>
       <find>SHA-256</find>
+      <find>describe('validateUserIdentifier tests');</find>
+      <find>issuersList</find>
+      <find>supportedUserIdentifierVer</find>
+      <find>TSwarmMessageUserIdentifierVersion</find>
+      <find>CentralAuthorityIdentity</find>
+      <find>new CentralAuthorityIdentity</find>
+      <find>validateUserIdentifier</find>
+      <find>userIdOnAuthProvider</find>
+      <find>testIdentity</find>
+      <find>'https://identity.provider.com'</find>
+      <find>userIdentityProviderURLV1</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -175,7 +180,6 @@
         <option value="$PROJECT_DIR$/jest-workaround.d.ts" />
         <option value="$PROJECT_DIR$/jest.setup.js" />
         <option value="$PROJECT_DIR$/src/utils/encryption-utils/encrypt-data.encryption-utils.ts" />
-        <option value="$PROJECT_DIR$/jest.config.js" />
         <option value="$PROJECT_DIR$/src/utils/encryption-keys-utils/encryption-keys-utils.ts" />
         <option value="$PROJECT_DIR$/src/utils/data-sign-utils/data-sign-utils.types.ts" />
         <option value="$PROJECT_DIR$/src/utils/data-sign-utils/verify-data.encryption-utils.ts" />
@@ -184,6 +188,14 @@
         <option value="$PROJECT_DIR$/src/utils/hash-calculation-utils/hash-calculation-utils.const.ts" />
         <option value="$PROJECT_DIR$/src/utils/encryption-utils/crypto-utils.const.ts" />
         <option value="$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.test.ts" />
+        <option value="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator.types.ts" />
+        <option value="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.ts" />
+        <option value="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator.ts" />
+        <option value="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-tests/swarm-message-subclass-validator-fields-validator-validator-user-identifier.test.ts" />
+        <option value="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.test.ts" />
+        <option value="$PROJECT_DIR$/jest.config.js" />
+        <option value="$PROJECT_DIR$/src/classes/swarm-message/__test__/swarm-message-subclass-validator-fields-validator-validator-user-identifier.test.ts" />
+        <option value="$PROJECT_DIR$/src/test/swarm-message/swarm-message-subclass-validator-fields-validator-validator-user-identifier.test.ts" />
       </list>
     </option>
   </component>
@@ -303,6 +315,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -325,40 +338,24 @@
               <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
               <item name="protocol" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="classes" type="462c0819:PsiDirectoryNode" />
-              <item name="basic-classes" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
               <item name="protocol" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="classes" type="462c0819:PsiDirectoryNode" />
-              <item name="basic-classes" type="462c0819:PsiDirectoryNode" />
-              <item name="queued-encryption-class-base" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
-              <item name="protocol" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="utils" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
-              <item name="protocol" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="utils" type="462c0819:PsiDirectoryNode" />
-              <item name="common-utils" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-message" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/jest.config.js" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.standard" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -372,7 +369,14 @@
     <property name="ts.external.directory.path" value="$PROJECT_DIR$/node_modules/typescript/lib" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/test/swarm-message" />
+      <recent name="$PROJECT_DIR$/src/classes/swarm-message/__test__" />
+      <recent name="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier" />
+      <recent name="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-tests" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/test" />
       <recent name="$PROJECT_DIR$/src/classes/basic-classes/async-queue-class-base" />
     </key>
   </component>
@@ -388,86 +392,91 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Jest.QueuedEncryptionClassBase tests.test data decryption.decrypt object should not failed">
-    <configuration name="QueuedEncryptionClassBase tests.test data decryption.decrypt object should not failed" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Jest.validateUserIdentifier tests.validateUserIdentifier should fail with valid identifier string v2 but supproted version is v1">
+    <configuration name="swarm-message-subclass-validator-fields-validator-validator-user-identifier.test.ts" type="JavaScriptTestRunnerJest" factoryName="Jest" nameIsGenerated="true">
+      <config-file value="$PROJECT_DIR$/jest.config.js" />
+      <node-interpreter value="project" />
+      <node-options value="" />
+      <working-dir value="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier" />
+      <envs />
+      <scope-kind value="TEST_FILE" />
+      <test-file value="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.test.ts" />
+    </configuration>
+    <configuration name="validateUserIdentifier tests.validateUserIdentifier should fail with invalid identifier string v2" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <node-options value="" />
       <working-dir value="$PROJECT_DIR$" />
       <envs />
       <scope-kind value="TEST" />
-      <test-file value="$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.test.ts" />
+      <test-file value="$PROJECT_DIR$/src/test/swarm-message/swarm-message-subclass-validator-fields-validator-validator-user-identifier.test.ts" />
       <test-names>
-        <test-name value="QueuedEncryptionClassBase tests" />
-        <test-name value="test data decryption" />
-        <test-name value="decrypt object should not failed" />
+        <test-name value="validateUserIdentifier tests" />
+        <test-name value="validateUserIdentifier should fail with invalid identifier string v2" />
       </test-names>
     </configuration>
-    <configuration name="QueuedEncryptionClassBase tests.test data decryption.decrypt string should not failed" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
+    <configuration name="validateUserIdentifier tests.validateUserIdentifier should fail with valid identifier string v1 but supproted version is v2" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <node-options value="" />
       <working-dir value="$PROJECT_DIR$" />
       <envs />
       <scope-kind value="TEST" />
-      <test-file value="$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.test.ts" />
+      <test-file value="$PROJECT_DIR$/src/test/swarm-message/swarm-message-subclass-validator-fields-validator-validator-user-identifier.test.ts" />
       <test-names>
-        <test-name value="QueuedEncryptionClassBase tests" />
-        <test-name value="test data decryption" />
-        <test-name value="decrypt string should not failed" />
+        <test-name value="validateUserIdentifier tests" />
+        <test-name value="validateUserIdentifier should fail with valid identifier string v1 but supproted version is v2" />
       </test-names>
     </configuration>
-    <configuration name="QueuedEncryptionClassBase tests.test data encryption.encrypt object should not failed" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
+    <configuration name="validateUserIdentifier tests.validateUserIdentifier should fail with valid identifier string v2 but supproted version is v1" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <node-options value="" />
       <working-dir value="$PROJECT_DIR$" />
       <envs />
       <scope-kind value="TEST" />
-      <test-file value="$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.test.ts" />
+      <test-file value="$PROJECT_DIR$/src/test/swarm-message/swarm-message-subclass-validator-fields-validator-validator-user-identifier.test.ts" />
       <test-names>
-        <test-name value="QueuedEncryptionClassBase tests" />
-        <test-name value="test data encryption" />
-        <test-name value="encrypt object should not failed" />
+        <test-name value="validateUserIdentifier tests" />
+        <test-name value="validateUserIdentifier should fail with valid identifier string v2 but supproted version is v1" />
       </test-names>
     </configuration>
-    <configuration name="QueuedEncryptionClassBase tests.test data encryption.encrypt string should not failed" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
+    <configuration name="validateUserIdentifier tests.validateUserIdentifier should not fail with valid identifier string v1 and supproted version is v1" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <node-options value="" />
       <working-dir value="$PROJECT_DIR$" />
       <envs />
       <scope-kind value="TEST" />
-      <test-file value="$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.test.ts" />
+      <test-file value="$PROJECT_DIR$/src/test/swarm-message/swarm-message-subclass-validator-fields-validator-validator-user-identifier.test.ts" />
       <test-names>
-        <test-name value="QueuedEncryptionClassBase tests" />
-        <test-name value="test data encryption" />
-        <test-name value="encrypt string should not failed" />
+        <test-name value="validateUserIdentifier tests" />
+        <test-name value="validateUserIdentifier should not fail with valid identifier string v1 and supproted version is v1" />
       </test-names>
     </configuration>
-    <configuration name="QueuedEncryptionClassBase tests.test data verify.sign an object should not failed" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
+    <configuration name="validateUserIdentifier tests.validateUserIdentifier should not fail with valid identifier string v2 and supproted version is v2" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <node-options value="" />
       <working-dir value="$PROJECT_DIR$" />
       <envs />
       <scope-kind value="TEST" />
-      <test-file value="$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.test.ts" />
+      <test-file value="$PROJECT_DIR$/src/test/swarm-message/swarm-message-subclass-validator-fields-validator-validator-user-identifier.test.ts" />
       <test-names>
-        <test-name value="QueuedEncryptionClassBase tests" />
-        <test-name value="test data verify" />
-        <test-name value="sign an object should not failed" />
+        <test-name value="validateUserIdentifier tests" />
+        <test-name value="validateUserIdentifier should not fail with valid identifier string v2 and supproted version is v2" />
       </test-names>
     </configuration>
     <list>
-      <item itemvalue="Jest.QueuedEncryptionClassBase tests.test data verify.sign an object should not failed" />
-      <item itemvalue="Jest.QueuedEncryptionClassBase tests.test data encryption.encrypt string should not failed" />
-      <item itemvalue="Jest.QueuedEncryptionClassBase tests.test data encryption.encrypt object should not failed" />
-      <item itemvalue="Jest.QueuedEncryptionClassBase tests.test data decryption.decrypt string should not failed" />
-      <item itemvalue="Jest.QueuedEncryptionClassBase tests.test data decryption.decrypt object should not failed" />
+      <item itemvalue="Jest.swarm-message-subclass-validator-fields-validator-validator-user-identifier.test.ts" />
+      <item itemvalue="Jest.validateUserIdentifier tests.validateUserIdentifier should fail with invalid identifier string v2" />
+      <item itemvalue="Jest.validateUserIdentifier tests.validateUserIdentifier should fail with valid identifier string v1 but supproted version is v2" />
+      <item itemvalue="Jest.validateUserIdentifier tests.validateUserIdentifier should not fail with valid identifier string v1 and supproted version is v1" />
+      <item itemvalue="Jest.validateUserIdentifier tests.validateUserIdentifier should not fail with valid identifier string v2 and supproted version is v2" />
+      <item itemvalue="Jest.validateUserIdentifier tests.validateUserIdentifier should fail with valid identifier string v2 but supproted version is v1" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Jest.QueuedEncryptionClassBase tests.test data decryption.decrypt object should not failed" />
-        <item itemvalue="Jest.QueuedEncryptionClassBase tests.test data decryption.decrypt string should not failed" />
-        <item itemvalue="Jest.QueuedEncryptionClassBase tests.test data encryption.encrypt object should not failed" />
-        <item itemvalue="Jest.QueuedEncryptionClassBase tests.test data encryption.encrypt string should not failed" />
-        <item itemvalue="Jest.QueuedEncryptionClassBase tests.test data verify.sign an object should not failed" />
+        <item itemvalue="Jest.validateUserIdentifier tests.validateUserIdentifier should fail with valid identifier string v2 but supproted version is v1" />
+        <item itemvalue="Jest.validateUserIdentifier tests.validateUserIdentifier should not fail with valid identifier string v2 and supproted version is v2" />
+        <item itemvalue="Jest.validateUserIdentifier tests.validateUserIdentifier should not fail with valid identifier string v1 and supproted version is v1" />
+        <item itemvalue="Jest.validateUserIdentifier tests.validateUserIdentifier should fail with valid identifier string v1 but supproted version is v2" />
+        <item itemvalue="Jest.validateUserIdentifier tests.validateUserIdentifier should fail with invalid identifier string v2" />
       </list>
     </recent_temporary>
   </component>
@@ -496,56 +505,58 @@
       <workItem from="1580586955186" duration="4282000" />
       <workItem from="1581181798543" duration="775000" />
       <workItem from="1581183764806" duration="7049000" />
+      <workItem from="1581193083417" duration="3214000" />
+      <workItem from="1581196358201" duration="57000" />
+      <workItem from="1581196431362" duration="1340000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="QueuedEncryptionClassBase_tests_test_data_encryption_encrypt_object_should_not_failed - 2020.02.08 at 23h 28m 17s.xml">
-      <configuration name="QueuedEncryptionClassBase tests.test data encryption.encrypt object should not failed" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="validateUserIdentifier_tests_validateUserIdentifier_should_fail_with_invalid_identifier_string_v1 - 2020.02.09 at 01h 28m 16s.xml">
+      <configuration name="validateUserIdentifier tests.validateUserIdentifier should fail with invalid identifier string v1" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="QueuedEncryptionClassBase_tests_test_data_decryption_decrypt_string_should_not_failed - 2020.02.08 at 23h 31m 20s.xml">
-      <configuration name="QueuedEncryptionClassBase tests.test data decryption.decrypt string should not failed" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="validateUserIdentifier_tests_validateUserIdentifier_should_fail_with_invalid_identifier_string_v2 - 2020.02.09 at 01h 29m 01s.xml">
+      <configuration name="validateUserIdentifier tests.validateUserIdentifier should fail with invalid identifier string v2" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="QueuedEncryptionClassBase_tests_test_data_decryption_decrypt_string_should_not_failed - 2020.02.08 at 23h 31m 32s.xml">
-      <configuration name="QueuedEncryptionClassBase tests.test data decryption.decrypt string should not failed" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="validateUserIdentifier_tests_validateUserIdentifier_should_fail_with_invalid_identifier_string_v2 - 2020.02.09 at 01h 31m 21s.xml">
+      <configuration name="validateUserIdentifier tests.validateUserIdentifier should fail with invalid identifier string v2" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="QueuedEncryptionClassBase_tests_test_data_decryption_decrypt_string_should_not_failed - 2020.02.08 at 23h 31m 46s.xml">
-      <configuration name="QueuedEncryptionClassBase tests.test data decryption.decrypt string should not failed" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="validateUserIdentifier_tests_validateUserIdentifier_should_fail_with_invalid_identifier_string_v2 - 2020.02.09 at 01h 31m 42s.xml">
+      <configuration name="validateUserIdentifier tests.validateUserIdentifier should fail with invalid identifier string v2" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="QueuedEncryptionClassBase_tests_test_data_decryption_decrypt_object_should_not_failed - 2020.02.08 at 23h 33m 08s.xml">
-      <configuration name="QueuedEncryptionClassBase tests.test data decryption.decrypt object should not failed" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="validateUserIdentifier_tests_validateUserIdentifier_should_fail_with_valid_identifier_string_v1_but_supproted_version_is_v2 - 2020.02.09 at 01h 33m 06s.xml">
+      <configuration name="validateUserIdentifier tests.validateUserIdentifier should fail with valid identifier string v1 but supproted version is v2" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="QueuedEncryptionClassBase_tests_test_data_decryption_decrypt_object_should_not_failed - 2020.02.08 at 23h 34m 38s.xml">
-      <configuration name="QueuedEncryptionClassBase tests.test data decryption.decrypt object should not failed" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="validateUserIdentifier_tests_validateUserIdentifier_should_not_fail_with_valid_identifier_string_v1_and_supproted_version_is_v1 - 2020.02.09 at 01h 33m 42s.xml">
+      <configuration name="validateUserIdentifier tests.validateUserIdentifier should not fail with valid identifier string v1 and supproted version is v1" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="QueuedEncryptionClassBase_tests_test_data_decryption_decrypt_object_should_not_failed - 2020.02.08 at 23h 37m 45s.xml">
-      <configuration name="QueuedEncryptionClassBase tests.test data decryption.decrypt object should not failed" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="validateUserIdentifier_tests_validateUserIdentifier_should_not_fail_with_valid_identifier_string_v2_and_supproted_version_is_v2 - 2020.02.09 at 01h 34m 31s.xml">
+      <configuration name="validateUserIdentifier tests.validateUserIdentifier should not fail with valid identifier string v2 and supproted version is v2" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="QueuedEncryptionClassBase_tests_test_data_decryption_decrypt_object_should_not_failed - 2020.02.08 at 23h 38m 15s.xml">
-      <configuration name="QueuedEncryptionClassBase tests.test data decryption.decrypt object should not failed" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="validateUserIdentifier_tests_validateUserIdentifier_should_fail_with_valid_identifier_string_v2_but_supproted_version_is_v1 - 2020.02.09 at 01h 34m 57s.xml">
+      <configuration name="validateUserIdentifier tests.validateUserIdentifier should fail with valid identifier string v2 but supproted version is v1" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="QueuedEncryptionClassBase_tests_test_data_decryption_decrypt_object_should_not_failed - 2020.02.08 at 23h 40m 45s.xml">
-      <configuration name="QueuedEncryptionClassBase tests.test data decryption.decrypt object should not failed" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="validateUserIdentifier_tests_validateUserIdentifier_should_fail_with_valid_identifier_string_v2_but_supproted_version_is_v1 - 2020.02.09 at 01h 35m 46s.xml">
+      <configuration name="validateUserIdentifier tests.validateUserIdentifier should fail with valid identifier string v2 but supproted version is v1" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="QueuedEncryptionClassBase_tests_test_data_decryption_decrypt_object_should_not_failed - 2020.02.08 at 23h 40m 53s.xml">
-      <configuration name="QueuedEncryptionClassBase tests.test data decryption.decrypt object should not failed" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="validateUserIdentifier_tests_validateUserIdentifier_should_fail_with_valid_identifier_string_v2_but_supproted_version_is_v1 - 2020.02.09 at 01h 35m 57s.xml">
+      <configuration name="validateUserIdentifier tests.validateUserIdentifier should fail with valid identifier string v2 but supproted version is v1" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="19913000" />
+    <option name="totallyTimeSpent" value="24524000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="1920" height="1007" extended-state="6" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
-      <window_info anchor="bottom" id="Version Control" order="7" weight="0.24186552" />
+      <window_info anchor="bottom" id="Version Control" order="7" weight="0.2416953" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.29095075" />
       <window_info id="npm" order="2" side_tool="true" />
-      <window_info anchor="right" id="Coverage" side_tool="true" weight="0.32960597" />
       <window_info anchor="bottom" id="Terminal" order="7" weight="0.35738832" />
-      <window_info anchor="bottom" id="TypeScript" order="7" weight="0.329718" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.19542067" />
+      <window_info anchor="bottom" id="TypeScript" order="7" weight="0.32875144" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.3744076" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32875144" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -557,6 +568,7 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="right" id="Coverage" order="3" side_tool="true" weight="0.32960597" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -602,76 +614,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/types/ipfs.types.d.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="19" column="10" selection-start-line="19" selection-start-column="10" selection-end-line="19" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.eslintrc">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="19" column="19" selection-start-line="19" selection-start-column="19" selection-end-line="19" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.prettierrc">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="9" column="1" selection-start-line="9" selection-start-column="1" selection-end-line="9" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base-utils.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="765">
-          <caret line="51" column="31" selection-start-line="51" selection-start-column="31" selection-end-line="51" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/package.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1440">
-          <caret line="96" column="27" selection-start-line="96" selection-start-column="27" selection-end-line="96" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/types/ipfs.types.d.ts">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/types/ipfs.types.d.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="21" column="10" selection-start-line="21" selection-start-column="10" selection-end-line="21" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-server-api/central-authority-connection-server-api.ts" />
-    <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base-utils.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="645">
-          <caret line="56" column="25" selection-start-line="56" selection-start-column="25" selection-end-line="56" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.eslintrc">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="20" column="19" selection-start-line="20" selection-start-column="19" selection-end-line="20" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.prettierrc">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" column="1" selection-start-line="11" selection-start-column="1" selection-end-line="11" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase-utils/central-authority-connection-firebase-utils.credentials-storage/central-authority-connection-firebase-utils.credentials-storage.ts">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -699,13 +641,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="345">
           <caret line="23" column="48" selection-start-line="23" selection-start-column="35" selection-end-line="23" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/classes/central-authority-class/central-authority-storage-local/central-authority-storage-current-user-auth/central-authority-storage-current-user-credentials/central-authority-storage-current-user-credentials.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="75" column="52" selection-start-line="75" selection-start-column="13" selection-end-line="75" selection-end-column="52" />
         </state>
       </provider>
     </entry>
@@ -774,9 +709,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17">
           <caret line="72" selection-start-line="72" selection-end-line="72" />
-          <folding>
-            <element signature="e#0#80#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -798,26 +730,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="204">
           <caret line="21" column="75" selection-start-line="21" selection-start-column="75" selection-end-line="21" selection-end-column="75" />
-          <folding>
-            <element signature="e#0#57#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/jest.config.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" column="67" selection-start-line="6" selection-start-column="67" selection-end-line="6" selection-end-column="67" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/jest.setup.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="37" lean-forward="true" selection-end-line="1" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/jest.setup.js" />
     <entry file="file://$PROJECT_DIR$/node_modules/@trust/webcrypto/src/keys/CryptoKey.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-975">
@@ -843,9 +759,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="119">
           <caret line="7" column="50" selection-start-line="7" selection-start-column="17" selection-end-line="7" selection-end-column="50" />
-          <folding>
-            <element signature="e#0#101#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -853,40 +766,34 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-40">
           <caret line="37" column="20" selection-start-line="37" selection-start-column="9" selection-end-line="37" selection-end-column="20" />
-          <folding>
-            <element signature="e#0#139#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/node_modules/react-scripts/node_modules/expect/build/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="334">
-          <caret line="208" column="15" lean-forward="true" selection-start-line="208" selection-start-column="15" selection-end-line="208" selection-end-column="15" />
+        <state relative-caret-position="3536">
+          <caret line="208" column="15" selection-start-line="208" selection-start-column="15" selection-end-line="208" selection-end-column="15" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/utils/data-sign-utils/verify-data.encryption-utils.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="48" column="50" selection-start-line="48" selection-start-column="8" selection-end-line="48" selection-end-column="50" />
-          <folding>
-            <element signature="e#0#102#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="527">
+          <caret line="48" column="50" selection-start-line="48" selection-start-column="50" selection-end-line="48" selection-end-column="50" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/utils/data-sign-utils/data-sign-utils.types.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="385">
-          <caret line="54" lean-forward="true" selection-start-line="54" selection-end-line="54" />
+        <state relative-caret-position="850">
+          <caret line="56" selection-start-line="56" selection-end-line="56" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/utils/hash-calculation-utils/hash-calculation-utils.const.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
-          <caret line="8" column="89" selection-start-line="8" selection-start-column="89" selection-end-line="8" selection-end-column="89" />
+          <caret line="8" column="60" selection-start-line="8" selection-start-column="60" selection-end-line="8" selection-end-column="60" />
         </state>
       </provider>
     </entry>
@@ -899,8 +806,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/utils/encryption-utils/crypto-utils.const.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="24" column="22" lean-forward="true" selection-start-line="24" selection-start-column="22" selection-end-line="24" selection-end-column="22" />
+        <state relative-caret-position="408">
+          <caret line="24" column="22" selection-start-line="24" selection-start-column="22" selection-end-line="24" selection-end-column="22" />
         </state>
       </provider>
     </entry>
@@ -919,17 +826,112 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.test.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1275">
-          <caret line="126" column="11" lean-forward="true" selection-start-line="126" selection-start-column="11" selection-end-line="126" selection-end-column="11" />
+        <state relative-caret-position="688">
+          <caret line="105" column="56" selection-start-line="105" selection-start-column="56" selection-end-line="105" selection-end-column="56" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-issuer-deserizlied/swarm-message-subclass-validator-fields-validator-validator-issuer-deserizlied.types.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="1" selection-end-line="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator.types.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="26" column="12" selection-start-line="26" selection-start-column="12" selection-end-line="26" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types.ts">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/central-authority-class/central-authority-storage-local/central-authority-storage-current-user-auth/central-authority-storage-current-user-credentials/central-authority-storage-current-user-credentials.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="29" column="13" selection-start-line="29" selection-start-column="13" selection-end-line="29" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/central-authority.test/central-authority-storage-current-user-credentials.test.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="493">
+          <caret line="41" column="6" selection-start-line="41" selection-start-column="6" selection-end-line="41" selection-end-column="76" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/central-authority-identity.test/central-authority-identity-v2.test.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="13" column="4" selection-start-line="13" selection-start-column="4" selection-end-line="15" selection-end-column="74" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="680">
+          <caret line="49" column="48" selection-start-line="49" selection-start-column="17" selection-end-line="49" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="43" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="41" column="109" selection-start-line="41" selection-start-column="109" selection-end-line="41" selection-end-column="109" />
           <folding>
-            <element signature="n#!!doc" expanded="true" />
-            <element signature="e#64#139#0" expanded="true" />
-            <element signature="e#419#478#0" />
-            <element signature="e#979#2358#0" />
-            <element signature="e#4503#4965#0" />
-            <element signature="e#5027#5353#0" />
-            <element signature="e#6553#6577#0" />
-            <element signature="e#6634#6658#0" />
+            <element signature="e#0#28#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="527">
+          <caret line="37" column="37" selection-start-line="37" selection-start-column="15" selection-end-line="37" selection-end-column="37" />
+          <folding>
+            <element signature="e#0#147#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="18" column="37" selection-start-line="18" selection-start-column="13" selection-end-line="18" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/swarm-message-subclass-validator-fields-validator-validator-user-identifier.test.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#23#384#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/jest.config.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" column="3" selection-start-line="9" selection-start-column="3" selection-end-line="9" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/swarm-message/swarm-message-subclass-validator-fields-validator-validator-user-identifier.test.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1394">
+          <caret line="82" column="10" lean-forward="true" selection-start-line="82" selection-start-column="10" selection-end-line="82" selection-end-column="10" />
+          <folding>
+            <element signature="e#23#384#0" expanded="true" />
           </folding>
         </state>
       </provider>

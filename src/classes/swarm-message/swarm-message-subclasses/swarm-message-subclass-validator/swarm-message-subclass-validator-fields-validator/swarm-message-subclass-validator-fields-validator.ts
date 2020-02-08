@@ -3,7 +3,10 @@ import {
   commonUtilsArrayDeleteFromArray,
   commonUtilsArrayDoCallbackTillNoError,
 } from 'utils/common-utils/common-utils';
-import { IMessageValidatorOptions } from '../swarm-message-subclass-validator.types';
+import {
+  IMessageValidatorOptions,
+  TSwarmMessageUserIdentifierVersion,
+} from '../swarm-message-subclass-validator.types';
 import validateIssuerDesirizlizedFormat from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-issuer-deserizlied/swarm-message-subclass-validator-fields-validator-validator-issuer-deserizlied';
 import validateIssuerSerializedFormat from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-issuer-serialized/swarm-message-subclass-validator-fields-validator-validator-issuer-serialized';
 import { TSwarmMessageIssuerDeserialized } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-issuer-deserizlied/swarm-message-subclass-validator-fields-validator-validator-issuer-deserizlied.types';
@@ -15,6 +18,8 @@ import { TSwarmMessageType } from './swarm-message-subclass-validator-fields-val
 import { ISwarmMessagePayloadValidationOptions } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-payload/swarm-message-subclass-validator-fields-validator-validator-payload.types';
 import { ISwarmMessageTimestampValidationOptions } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-timestamp/swarm-message-subclass-validator-fields-validator-validator-timestamp.types';
 import { ISwarmMessage } from 'classes/swarm-message/swarm-message.types';
+import { TSwarmMessageUserIdentifierSerialized } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
+import { CA_USER_IDENTITY_VERSIONS_LIST } from '../../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
 
 export class SwarmMessageSubclassFieldsValidator {
   /**
@@ -28,6 +33,16 @@ export class SwarmMessageSubclassFieldsValidator {
    * @memberof SwarmMessageSubclassValidator
    */
   protected issuersList: TSwarmMessageIssuerDeserialized[] = [];
+
+  /**
+   * list of a valid user identifier versions.
+   *
+   * @protected
+   * @static
+   * @type {string[]}
+   * @memberof SwarmMessageSubclassValidator
+   */
+  protected supportedUserIdentifierVer: TSwarmMessageUserIdentifierVersion[] = CA_USER_IDENTITY_VERSIONS_LIST;
 
   /**
    * list of a valid message types.
@@ -44,8 +59,6 @@ export class SwarmMessageSubclassFieldsValidator {
   protected payloadValidationOptions?: ISwarmMessagePayloadValidationOptions;
 
   protected timestampValidationOptions?: ISwarmMessageTimestampValidationOptions;
-
-  protected validateUserIdentifier = validateUserIdentifier;
 
   protected validatePayload = createValidatePayload(
     this.payloadValidationOptions
@@ -167,10 +180,7 @@ export class SwarmMessageSubclassFieldsValidator {
   protected addType = (type: TSwarmMessageType): void => {
     const { typesList } = this;
 
-    validateTypeFormat(type);
-    if (!typesList.includes(type)) {
-      typesList.push(type);
-    }
+    validateTypeFormat(type, typesList);
   };
 
   /**
@@ -218,6 +228,12 @@ export class SwarmMessageSubclassFieldsValidator {
     this.checkTypeInList(type);
   }
 
+  protected validateUserIdentifier = (
+    userId: TSwarmMessageUserIdentifierSerialized
+  ): void => {
+    validateUserIdentifier(userId, this.supportedUserIdentifierVer);
+  };
+
   /**
    * set the options
    *
@@ -231,6 +247,7 @@ export class SwarmMessageSubclassFieldsValidator {
       assert(typeof options === 'object', 'The options must be an object');
 
       const {
+        supportedUserIdentifierVer,
         payloadValidationOptions,
         issuersList,
         typesList,
@@ -246,6 +263,18 @@ export class SwarmMessageSubclassFieldsValidator {
       if (payloadValidationOptions) {
         this.payloadValidationOptions = payloadValidationOptions;
         this.validatePayload = createValidatePayload(payloadValidationOptions);
+      }
+      if (supportedUserIdentifierVer instanceof Array) {
+        this.supportedUserIdentifierVer = supportedUserIdentifierVer.map(
+          (userIdentifierVersion) => {
+            if (typeof userIdentifierVersion === 'string') {
+              return userIdentifierVersion;
+            }
+            assert.fail(
+              `The version ${userIdentifierVersion} must be a string`
+            );
+          }
+        );
       }
       if (issuersList) {
         if (issuersList instanceof Array) {

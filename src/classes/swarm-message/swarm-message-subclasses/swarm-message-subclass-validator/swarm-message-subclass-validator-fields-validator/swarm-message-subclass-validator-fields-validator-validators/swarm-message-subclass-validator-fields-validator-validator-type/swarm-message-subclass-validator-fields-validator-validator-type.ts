@@ -8,8 +8,14 @@ import { TSwarmMessageType } from './swarm-message-subclass-validator-fields-val
  * @param {string | number} [type]
  * @throws
  */
-function validateTypeFormat(type?: TSwarmMessageType): void {
+function validateTypeFormat(
+  type?: TSwarmMessageType,
+  typesAllowed?: TSwarmMessageType[]
+): void {
   assert(type != null, 'A type must be specified');
+  if (type && typesAllowed && !typesAllowed.includes(type)) {
+    assert.fail('The type in not allowed');
+  }
   if (typeof type === 'string') {
     assert(!!type.length, 'The type of the message must not be empty');
     return;

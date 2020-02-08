@@ -3,7 +3,7 @@ import {
   exportKeyPairAsString,
   importKeyPairFromString,
   signToString,
-  verifyFromString,
+  verifyData,
 } from 'utils/data-sign-utils';
 import { calculateHash } from 'utils/hash-calculation-utils';
 
@@ -75,7 +75,7 @@ const testDataSigning = async () => {
 
   console.log('signStringTwice', signStringTwice);
 
-  const isValid = await verifyFromString(keyPairImported, data, signString);
+  const isValid = await verifyData(keyPairImported, data, signString);
 
   if (isValid instanceof Error) {
     console.error(isValid);
@@ -83,7 +83,7 @@ const testDataSigning = async () => {
   }
   console.log('isValid', isValid);
 
-  const isValidTwice = await verifyFromString(
+  const isValidTwice = await verifyData(
     keyPairImported,
     dataTwice,
     signStringTwice

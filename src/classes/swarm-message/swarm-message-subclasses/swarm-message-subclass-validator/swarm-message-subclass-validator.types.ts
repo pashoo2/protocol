@@ -15,12 +15,16 @@ export type TPayload =
   | ArrayBuffer
   | SharedArrayBuffer;
 
+export type TSwarmMessageUserIdentifierVersion = string;
+
 /**
  * interface for the options for the validator
  * of a swarm messages
  *
  * @export
  * @interface IMessageValidatorOptions
+ * @property {Array<TSwarmMessageUserIdentifierVersion>} supportedUserIdentifierVer - a user identifier versions
+ * supported
  * @property {number} [SWARM_MESSAGE_SUBCLASS_VALIDATOR_PAYLOAD_MAX_LENGTH_BYTES] payloadMaxLength - the maximum
  * length for the payload
  * @property {number} [SWARM_MESSAGE_SUBCLASS_VALIDATOR_PAYLOAD_MAX_LENGTH_BYTES] payloadMinLength - the minimum
@@ -36,6 +40,7 @@ export interface IMessageValidatorOptions {
   typesList?: TSwarmMessageType[];
   payloadValidationOptions?: ISwarmMessagePayloadValidationOptions;
   timestampValidationOptions?: ISwarmMessageTimestampValidationOptions;
+  supportedUserIdentifierVer?: TSwarmMessageUserIdentifierVersion[];
 }
 
 /**
