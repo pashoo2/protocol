@@ -30,7 +30,7 @@ export const generateInitializationVectorNative = (
   vectorLength: number = INITIALIZATION_VECTOR_DEFAULT_LENGTH
 ): Uint8Array | Error => {
   try {
-    return window.crypto.getRandomValues(new Uint8Array(vectorLength));
+    return cryptoModule.getRandomValues(new Uint8Array(vectorLength));
   } catch (err) {
     return err;
   }

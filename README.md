@@ -1,5 +1,10 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## JEST WORKAROUND
+
+put it on top of the testfile an uncomment to get the right Jest types instead of Mocha typings
+import '@types/jest';
+
 ## FIREBASE CENTRAL AUTHORITY - RELATIME DATABASE
 
 **IT IS NECESSARY TO RELOAD THE BROWSER WITNODOW ON SIGN OUT FROM THE FIREBASE APP**

@@ -72,7 +72,7 @@ export const decryptDataFromString = async (
   return decryptNative(k, d, decryptKeyParams);
 };
 
-export const decryptFromString = async (
+export const decryptData = async (
   key: TCRYPTO_UTIL_DECRYPT_KEY_TYPES,
   data: TCRYPTO_UTIL_DECRYPT_DATA_TYPES,
   decryptKeyParams?: TCRYPTO_UTILS_DECRYPT_DATA_KEY_CONFIG

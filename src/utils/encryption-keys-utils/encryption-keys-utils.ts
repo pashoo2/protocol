@@ -6,6 +6,7 @@ import { HASH_CALCULATION_UTILS_HASH_ALHORITHM } from 'utils/hash-calculation-ut
 import { encodeArrayBufferToDOMString } from 'utils/string-encoding-utils';
 
 import { commonUtilsArrayIncludesAll } from '../common-utils/common-utils-array';
+import { eCRYPTO_UTILS_KEYS_USAGES } from '../encryption-utils/crypto-utils.const';
 import {
   calculateHash,
   calculateHashNative,
@@ -15,6 +16,7 @@ import {
   MIN_JWK_PROPS_COUNT,
   MIN_JWK_STRING_LENGTH,
 } from './encryption-keys-utils.const';
+import { crypto } from '../data-sign-utils/main.data-sign-utils.const';
 
 export const isCryptoKey = (v: any): v is CryptoKey => v instanceof CryptoKey;
 
@@ -28,12 +30,35 @@ export const isCryptoKeyPair = (keyPair: any): keyPair is CryptoKeyPair => {
 
 export const isCryptoKeyIncludesUsages = (
   cryptoKey: CryptoKey,
-  expectedUsages: string[]
+  expectedUsages: eCRYPTO_UTILS_KEYS_USAGES[] | eCRYPTO_UTILS_KEYS_USAGES
 ): boolean => {
   const { usages } = cryptoKey;
 
-  return commonUtilsArrayIncludesAll(usages, expectedUsages);
+  if (typeof expectedUsages === 'string') {
+    return usages.includes(expectedUsages);
+  }
+  return commonUtilsArrayIncludesAll(usages, expectedUsages as string[]);
 };
+
+export const isCryptoKeyDataSign = (cryptoKey: any): cryptoKey is CryptoKey =>
+  isCryptoKey(cryptoKey) &&
+  isCryptoKeyIncludesUsages(cryptoKey, eCRYPTO_UTILS_KEYS_USAGES.sign);
+
+export const isCryptoKeyDataVerify = (cryptoKey: any): cryptoKey is CryptoKey =>
+  isCryptoKey(cryptoKey) &&
+  isCryptoKeyIncludesUsages(cryptoKey, eCRYPTO_UTILS_KEYS_USAGES.verify);
+
+export const isCryptoKeyDataEncryption = (
+  cryptoKey: any
+): cryptoKey is CryptoKey =>
+  isCryptoKey(cryptoKey) &&
+  isCryptoKeyIncludesUsages(cryptoKey, eCRYPTO_UTILS_KEYS_USAGES.encrypt);
+
+export const isCryptoKeyDataDecryption = (
+  cryptoKey: any
+): cryptoKey is CryptoKey =>
+  isCryptoKey(cryptoKey) &&
+  isCryptoKeyIncludesUsages(cryptoKey, eCRYPTO_UTILS_KEYS_USAGES.decrypt);
 
 export const isCryptoKeyPairExportedAsString = (keyPair: any): boolean => {
   return typeof keyPair === 'string' && keyPair.length >= MIN_JWK_STRING_LENGTH;

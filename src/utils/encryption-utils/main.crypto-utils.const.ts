@@ -1,1 +1,3 @@
-export const cryptoModule = window.crypto.subtle;
+import { cryptoModule as cryptoModuleMain } from '../data-sign-utils/main.data-sign-utils.const';
+
+export const cryptoModule = cryptoModuleMain;

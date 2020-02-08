@@ -43,7 +43,7 @@ export const verifyNative = async (
   }
 };
 
-export const verifyFromString = async (
+export const verifyData = async (
   key: TDATA_SIGN_UTIL_VERIFY_KEY_TYPES,
   data: TDATA_SIGN_UTIL_VERIFY_DATA_TYPES | object,
   signature: TDATA_SIGN_UTIL_VERIFY_DATA_TYPES

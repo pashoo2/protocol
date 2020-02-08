@@ -2,14 +2,27 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e70e70e3-e48a-4dfd-91a6-03818e8691f6" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/classes/basic-classes/async-queue-class-base/async-queue-class-base.test-workaround.d.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.test.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.eslintcache" beforeDir="false" afterPath="$PROJECT_DIR$/.eslintcache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jest-workaround.d.ts" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/async-queue-class-base/async-queue-class-base.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/async-queue-class-base/async-queue-class-base.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/common-utils/common-utils-objects.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/common-utils/common-utils-objects.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/encryption-test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/encryption-test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/salt-generation-utils.test/salt-generation-utils.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/salt-generation-utils.test/salt-generation-utils.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/data-sign-utils/data-sign-utils.const.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/data-sign-utils/data-sign-utils.const.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/data-sign-utils/main.data-sign-utils.const.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/data-sign-utils/main.data-sign-utils.const.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/data-sign-utils/verify-data.encryption-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/data-sign-utils/verify-data.encryption-utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/encryption-keys-utils/encryption-keys-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/encryption-keys-utils/encryption-keys-utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/encryption-utils/decrypt-data.encryption-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/encryption-utils/decrypt-data.encryption-utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/encryption-utils/encrypt-data.encryption-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/encryption-utils/encrypt-data.encryption-utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/encryption-utils/main.crypto-utils.const.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/encryption-utils/main.crypto-utils.const.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/hash-calculation-utils/hash-calculation-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/hash-calculation-utils/hash-calculation-utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/password-utils/derive-key.password-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/password-utils/derive-key.password-utils.ts" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -21,68 +34,103 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/protocol$QueuedEncryptionClassBase_tests_constructor_tests.dat" NAME="QueuedEncryptionClassBase tests.constructor tests Coverage Results" MODIFIED="1581185963023" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="JestJavaScriptTestRunnerCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
+  </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="jest.config.js" pinned="false" current-in-tab="true">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="jest.config.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/jest.config.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="8" selection-start-line="8" selection-end-line="8" />
+            <state relative-caret-position="102">
+              <caret line="6" column="67" selection-start-line="6" selection-start-column="67" selection-end-line="6" selection-end-column="67" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="package.json" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/package.json">
+      <file leaf-file-name="queued-encryption-class-base.test.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.test.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="396">
-              <caret line="82" column="29" selection-start-line="82" selection-start-column="29" selection-end-line="82" selection-end-column="29" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="tsconfig.json" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/tsconfig.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="18" column="87" selection-start-line="18" selection-start-column="87" selection-end-line="18" selection-end-column="87" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="async-queue-class-base.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/async-queue-class-base/async-queue-class-base.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="281">
-              <caret line="71" column="25" selection-start-line="71" selection-start-column="25" selection-end-line="71" selection-end-column="25" />
+            <state relative-caret-position="-322">
+              <caret line="35" column="12" lean-forward="true" selection-start-line="35" selection-start-column="12" selection-end-line="35" selection-end-column="12" />
               <folding>
-                <element signature="e#0#80#0" expanded="true" />
+                <element signature="n#!!doc" expanded="true" />
+                <element signature="e#64#139#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="common-utils-timer.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/utils/common-utils/common-utils-timer.ts">
+      <file leaf-file-name="encryption-keys-utils.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/utils/encryption-keys-utils/encryption-keys-utils.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="11" column="14" selection-start-line="11" selection-start-column="7" selection-end-line="11" selection-end-column="14" />
+            <state relative-caret-position="306">
+              <caret line="18" column="57" selection-start-line="18" selection-start-column="57" selection-end-line="18" selection-end-column="57" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="common-utils-objects.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/utils/common-utils/common-utils-objects.ts">
+      <file leaf-file-name="keys.data-sign-utils.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/utils/data-sign-utils/keys.data-sign-utils.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="40" column="14" lean-forward="true" selection-start-line="40" selection-start-column="14" selection-end-line="40" selection-end-column="14" />
+            <state relative-caret-position="221">
+              <caret line="41" column="10" selection-start-line="41" selection-start-column="10" selection-end-line="41" selection-end-column="10" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="async-queue-class-base.const.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/async-queue-class-base/async-queue-class-base.const.ts">
-          <provider selected="true" editor-type-id="text-editor" />
+      <file leaf-file-name="queued-encryption-class-base.ts" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="290">
+              <caret line="90" column="54" lean-forward="true" selection-start-line="90" selection-start-column="54" selection-end-line="90" selection-end-column="54" />
+              <folding>
+                <element signature="e#0#139#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="main.data-sign-utils.const.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/utils/data-sign-utils/main.data-sign-utils.const.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="136">
+              <caret line="8" column="42" lean-forward="true" selection-start-line="8" selection-start-column="42" selection-end-line="8" selection-end-column="42" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="encrypt-data.encryption-utils.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/utils/encryption-utils/encrypt-data.encryption-utils.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="204">
+              <caret line="21" column="75" selection-start-line="21" selection-start-column="75" selection-end-line="21" selection-end-column="75" />
+              <folding>
+                <element signature="e#0#57#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="queued-encryption-class-base.types.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.types.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="119">
+              <caret line="7" column="50" selection-start-line="7" selection-start-column="17" selection-end-line="7" selection-end-column="50" />
+              <folding>
+                <element signature="e#0#101#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="async-queue-class-base.test.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/async-queue-class-base/async-queue-class-base.test.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="153">
+              <caret line="10" column="32" lean-forward="true" selection-start-line="10" selection-start-column="32" selection-end-line="14" selection-end-column="9" />
+            </state>
+          </provider>
         </entry>
       </file>
     </leaf>
@@ -96,6 +144,12 @@
       <find>CentralAuthorityStorageCurrentUserCredentials</find>
       <find>SCHEMA</find>
       <find>descri</find>
+      <find>cryptoModule</find>
+      <find>window.crypto</find>
+      <find>window.c</find>
+      <find>crypto.</find>
+      <find>instanceof CryptoKey</find>
+      <find>keyToUse</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -119,6 +173,14 @@
         <option value="$PROJECT_DIR$/src/utils/common-utils/common-utils-objects.ts" />
         <option value="$PROJECT_DIR$/src/classes/basic-classes/async-queue-class-base/async-queue-class-base.ts" />
         <option value="$PROJECT_DIR$/src/classes/basic-classes/async-queue-class-base/async-queue-class-base.test.ts" />
+        <option value="$PROJECT_DIR$/jest-workaround.d.ts" />
+        <option value="$PROJECT_DIR$/jest.setup.js" />
+        <option value="$PROJECT_DIR$/src/utils/encryption-utils/encrypt-data.encryption-utils.ts" />
+        <option value="$PROJECT_DIR$/jest.config.js" />
+        <option value="$PROJECT_DIR$/src/utils/encryption-keys-utils/encryption-keys-utils.ts" />
+        <option value="$PROJECT_DIR$/src/utils/data-sign-utils/main.data-sign-utils.const.ts" />
+        <option value="$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.test.ts" />
+        <option value="$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.ts" />
       </list>
     </option>
   </component>
@@ -228,10 +290,9 @@
     </packageJsonPaths>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="293" />
-    <option name="y" value="53" />
-    <option name="width" value="1400" />
-    <option name="height" value="1000" />
+    <option name="y" value="27" />
+    <option name="width" value="960" />
+    <option name="height" value="1007" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -239,7 +300,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -271,12 +331,13 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="classes" type="462c0819:PsiDirectoryNode" />
               <item name="basic-classes" type="462c0819:PsiDirectoryNode" />
-              <item name="async-queue-class-base" type="462c0819:PsiDirectoryNode" />
+              <item name="queued-encryption-class-base" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -311,81 +372,85 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Jest.AsyncQueueClassBase.should return same result as in the Promise.resolve with multiple times called async withing one cycle">
-    <configuration name="AsyncQueueClassBase.should return same result as in the Promise.resolve with multiple times called async withing one cycle" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Jest.QueuedEncryptionClassBase tests.constructor tests.constructor with wrong queueOptions in options should fail">
+    <configuration name="QueuedEncryptionClassBase tests.constructor tests" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <node-options value="" />
       <working-dir value="$PROJECT_DIR$" />
       <envs />
-      <scope-kind value="TEST" />
-      <test-file value="$PROJECT_DIR$/src/classes/basic-classes/async-queue-class-base/async-queue-class-base.test.ts" />
+      <scope-kind value="SUITE" />
+      <test-file value="$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.test.ts" />
       <test-names>
-        <test-name value="AsyncQueueClassBase" />
-        <test-name value="should return same result as in the Promise.resolve with multiple times called async withing one cycle" />
+        <test-name value="QueuedEncryptionClassBase tests" />
+        <test-name value="constructor tests" />
       </test-names>
     </configuration>
-    <configuration name="AsyncQueueClassBase.should return same result as in the Promise.resolve with multiple times called withing one cycle" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
+    <configuration name="QueuedEncryptionClassBase tests.constructor tests.consrtuctor with keys in options should not fail" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <node-options value="" />
       <working-dir value="$PROJECT_DIR$" />
       <envs />
       <scope-kind value="TEST" />
-      <test-file value="$PROJECT_DIR$/src/classes/basic-classes/async-queue-class-base/async-queue-class-base.test.ts" />
+      <test-file value="$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.test.ts" />
       <test-names>
-        <test-name value="AsyncQueueClassBase" />
-        <test-name value="should return same result as in the Promise.resolve with multiple times called withing one cycle" />
+        <test-name value="QueuedEncryptionClassBase tests" />
+        <test-name value="constructor tests" />
+        <test-name value="consrtuctor with keys in options should not fail" />
       </test-names>
     </configuration>
-    <configuration name="AsyncQueueClassBase.should return same result as in the Promise.resolve with multiple" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
+    <configuration name="QueuedEncryptionClassBase tests.constructor tests.constructor with full options should not fail" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <node-options value="" />
       <working-dir value="$PROJECT_DIR$" />
       <envs />
       <scope-kind value="TEST" />
-      <test-file value="$PROJECT_DIR$/src/classes/basic-classes/async-queue-class-base/async-queue-class-base.test.ts" />
+      <test-file value="$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.test.ts" />
       <test-names>
-        <test-name value="AsyncQueueClassBase" />
-        <test-name value="should return same result as in the Promise.resolve with multiple" />
+        <test-name value="QueuedEncryptionClassBase tests" />
+        <test-name value="constructor tests" />
+        <test-name value="constructor with full options should not fail" />
       </test-names>
     </configuration>
-    <configuration name="AsyncQueueClassBase.should return same result as in the Promise.resolve" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
+    <configuration name="QueuedEncryptionClassBase tests.constructor tests.constructor with wrong keys in options should fail" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <node-options value="" />
       <working-dir value="$PROJECT_DIR$" />
       <envs />
       <scope-kind value="TEST" />
-      <test-file value="$PROJECT_DIR$/src/classes/basic-classes/async-queue-class-base/async-queue-class-base.test.ts" />
+      <test-file value="$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.test.ts" />
       <test-names>
-        <test-name value="AsyncQueueClassBase" />
-        <test-name value="should return same result as in the Promise.resolve" />
+        <test-name value="QueuedEncryptionClassBase tests" />
+        <test-name value="constructor tests" />
+        <test-name value="constructor with wrong keys in options should fail" />
       </test-names>
     </configuration>
-    <configuration name="AsyncQueueClassBase.should works with delay between batches" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
+    <configuration name="QueuedEncryptionClassBase tests.constructor tests.constructor with wrong queueOptions in options should fail" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <node-options value="" />
       <working-dir value="$PROJECT_DIR$" />
       <envs />
       <scope-kind value="TEST" />
-      <test-file value="$PROJECT_DIR$/src/classes/basic-classes/async-queue-class-base/async-queue-class-base.test.ts" />
+      <test-file value="$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.test.ts" />
       <test-names>
-        <test-name value="AsyncQueueClassBase" />
-        <test-name value="should works with delay between batches" />
+        <test-name value="QueuedEncryptionClassBase tests" />
+        <test-name value="constructor tests" />
+        <test-name value="constructor with wrong queueOptions in options should fail" />
       </test-names>
     </configuration>
     <list>
-      <item itemvalue="Jest.AsyncQueueClassBase.should return same result as in the Promise.resolve" />
-      <item itemvalue="Jest.AsyncQueueClassBase.should return same result as in the Promise.resolve with multiple" />
-      <item itemvalue="Jest.AsyncQueueClassBase.should works with delay between batches" />
-      <item itemvalue="Jest.AsyncQueueClassBase.should return same result as in the Promise.resolve with multiple times called withing one cycle" />
-      <item itemvalue="Jest.AsyncQueueClassBase.should return same result as in the Promise.resolve with multiple times called async withing one cycle" />
+      <item itemvalue="Jest.QueuedEncryptionClassBase tests.constructor tests" />
+      <item itemvalue="Jest.QueuedEncryptionClassBase tests.constructor tests.consrtuctor with keys in options should not fail" />
+      <item itemvalue="Jest.QueuedEncryptionClassBase tests.constructor tests.constructor with full options should not fail" />
+      <item itemvalue="Jest.QueuedEncryptionClassBase tests.constructor tests.constructor with wrong keys in options should fail" />
+      <item itemvalue="Jest.QueuedEncryptionClassBase tests.constructor tests.constructor with wrong queueOptions in options should fail" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Jest.AsyncQueueClassBase.should return same result as in the Promise.resolve with multiple times called async withing one cycle" />
-        <item itemvalue="Jest.AsyncQueueClassBase.should return same result as in the Promise.resolve with multiple times called withing one cycle" />
-        <item itemvalue="Jest.AsyncQueueClassBase.should works with delay between batches" />
-        <item itemvalue="Jest.AsyncQueueClassBase.should return same result as in the Promise.resolve with multiple" />
-        <item itemvalue="Jest.AsyncQueueClassBase.should return same result as in the Promise.resolve" />
+        <item itemvalue="Jest.QueuedEncryptionClassBase tests.constructor tests.constructor with wrong queueOptions in options should fail" />
+        <item itemvalue="Jest.QueuedEncryptionClassBase tests.constructor tests.constructor with wrong keys in options should fail" />
+        <item itemvalue="Jest.QueuedEncryptionClassBase tests.constructor tests.constructor with full options should not fail" />
+        <item itemvalue="Jest.QueuedEncryptionClassBase tests.constructor tests.consrtuctor with keys in options should not fail" />
+        <item itemvalue="Jest.QueuedEncryptionClassBase tests.constructor tests" />
       </list>
     </recent_temporary>
   </component>
@@ -412,66 +477,70 @@
       <workItem from="1579457796761" duration="541000" />
       <workItem from="1580566318627" duration="10000" />
       <workItem from="1580586955186" duration="4282000" />
+      <workItem from="1581181798543" duration="775000" />
+      <workItem from="1581183764806" duration="2753000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="AsyncQueueClassBase_should_return_same_result_as_in_the_Promise_resolve - 2020.02.02 at 00h 47m 25s.xml">
-      <configuration name="AsyncQueueClassBase.should return same result as in the Promise.resolve" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="QueuedEncryptionClassBase_tests_constructor_tests_constructor_with_no_options_should_no_fail - 2020.02.08 at 22h 08m 59s.xml">
+      <configuration name="QueuedEncryptionClassBase tests.constructor tests.constructor with no options should no fail" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="AsyncQueueClassBase_should_return_same_result_as_in_the_Promise_resolve_with_multiple - 2020.02.02 at 00h 51m 51s.xml">
-      <configuration name="AsyncQueueClassBase.should return same result as in the Promise.resolve with multiple" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="QueuedEncryptionClassBase_tests_constructor_tests_constructor_with_no_options_should_no_fail - 2020.02.08 at 22h 09m 23s.xml">
+      <configuration name="QueuedEncryptionClassBase tests.constructor tests.constructor with no options should no fail" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="AsyncQueueClassBase_should_works_with_delay_between_batches - 2020.02.02 at 00h 58m 58s.xml">
-      <configuration name="AsyncQueueClassBase.should works with delay between batches" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="QueuedEncryptionClassBase_tests_constructor_tests_constructor_with_no_options_should_no_fail - 2020.02.08 at 22h 10m 47s.xml">
+      <configuration name="QueuedEncryptionClassBase tests.constructor tests.constructor with no options should no fail" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="AsyncQueueClassBase_should_works_with_delay_between_batches - 2020.02.02 at 01h 00m 13s.xml">
-      <configuration name="AsyncQueueClassBase.should works with delay between batches" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="QueuedEncryptionClassBase_tests_constructor_tests_constructor_with_no_options_should_no_fail - 2020.02.08 at 22h 16m 12s.xml">
+      <configuration name="QueuedEncryptionClassBase tests.constructor tests.constructor with no options should no fail" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="AsyncQueueClassBase_should_works_with_delay_between_batches - 2020.02.02 at 01h 01m 32s.xml">
-      <configuration name="AsyncQueueClassBase.should works with delay between batches" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="QueuedEncryptionClassBase_tests_constructor_tests - 2020.02.08 at 22h 19m 22s.xml">
+      <configuration name="QueuedEncryptionClassBase tests.constructor tests" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="AsyncQueueClassBase_should_works_with_delay_between_batches - 2020.02.02 at 01h 01m 45s.xml">
-      <configuration name="AsyncQueueClassBase.should works with delay between batches" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="QueuedEncryptionClassBase_tests_constructor_tests_consrtuctor_with_keys_in_options_should_not_fail - 2020.02.08 at 22h 24m 28s.xml">
+      <configuration name="QueuedEncryptionClassBase tests.constructor tests.consrtuctor with keys in options should not fail" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="AsyncQueueClassBase_should_works_with_delay_between_batches - 2020.02.02 at 01h 01m 52s.xml">
-      <configuration name="AsyncQueueClassBase.should works with delay between batches" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="QueuedEncryptionClassBase_tests_constructor_tests_constructor_with_full_options_should_not_fail - 2020.02.08 at 22h 24m 36s.xml">
+      <configuration name="QueuedEncryptionClassBase tests.constructor tests.constructor with full options should not fail" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="AsyncQueueClassBase_should_works_with_delay_between_batches - 2020.02.02 at 01h 02m 04s.xml">
-      <configuration name="AsyncQueueClassBase.should works with delay between batches" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="QueuedEncryptionClassBase_tests_constructor_tests_constructor_with_wrong_keys_in_options_should_fail - 2020.02.08 at 22h 24m 40s.xml">
+      <configuration name="QueuedEncryptionClassBase tests.constructor tests.constructor with wrong keys in options should fail" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="AsyncQueueClassBase_should_return_same_result_as_in_the_Promise_resolve_with_multiple_times_called_withing_one_cycle - 2020.02.02 at 01h 05m 33s.xml">
-      <configuration name="AsyncQueueClassBase.should return same result as in the Promise.resolve with multiple times called withing one cycle" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="QueuedEncryptionClassBase_tests_constructor_tests_constructor_with_wrong_keys_in_options_should_fail - 2020.02.08 at 22h 26m 01s.xml">
+      <configuration name="QueuedEncryptionClassBase tests.constructor tests.constructor with wrong keys in options should fail" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="AsyncQueueClassBase_should_return_same_result_as_in_the_Promise_resolve_with_multiple_times_called_async_withing_one_cycle - 2020.02.02 at 01h 07m 01s.xml">
-      <configuration name="AsyncQueueClassBase.should return same result as in the Promise.resolve with multiple times called async withing one cycle" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="QueuedEncryptionClassBase_tests_constructor_tests_constructor_with_wrong_queueOptions_in_options_should_fail - 2020.02.08 at 22h 26m 03s.xml">
+      <configuration name="QueuedEncryptionClassBase tests.constructor tests.constructor with wrong queueOptions in options should fail" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="12089000" />
+    <option name="totallyTimeSpent" value="15617000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="1920" height="1007" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info anchor="bottom" id="TypeScript" order="7" weight="0.329718" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.19114584" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.24186552" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.21205357" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.17983964" />
       <window_info id="npm" order="2" side_tool="true" />
+      <window_info anchor="right" id="Coverage" side_tool="true" weight="0.32960597" />
+      <window_info anchor="bottom" id="Terminal" order="7" visible="true" weight="0.35738832" />
+      <window_info anchor="bottom" id="TypeScript" order="7" weight="0.329718" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.19542067" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32875144" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Terminal" order="7" weight="0.42745537" />
       <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.2578125" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.2565865" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Find" order="1" visible="true" weight="0.329718" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -513,64 +582,10 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="5" />
+      <option name="time" value="10" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase.ts">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/utils/data-sign-utils/verify-data.encryption-utils.ts">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.eslintrc">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="20" column="19" selection-start-line="20" selection-start-column="19" selection-end-line="20" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.prettierrc">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" column="1" selection-start-line="11" selection-start-column="1" selection-end-line="11" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/http-request-class-base-utils.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="645">
-          <caret line="56" column="25" selection-start-line="56" selection-start-column="25" selection-end-line="56" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="22" lean-forward="true" selection-start-line="22" selection-end-line="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/types/ipfs.types.d.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="19" column="10" selection-start-line="19" selection-start-column="10" selection-end-line="19" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/package.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1395">
-          <caret line="93" column="29" selection-start-line="93" selection-start-column="29" selection-end-line="93" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase-utils/central-authority-connection-firebase-utils.credentials-storage/central-authority-connection-firebase-utils.credentials-storage.ts">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -750,15 +765,12 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
           <caret line="6" column="26" selection-start-line="6" selection-start-column="26" selection-end-line="6" selection-end-column="26" />
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/package.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
+        <state relative-caret-position="1394">
           <caret line="82" column="29" selection-start-line="82" selection-start-column="29" selection-end-line="82" selection-end-column="29" />
         </state>
       </provider>
@@ -768,18 +780,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/utils/common-utils/common-utils-objects.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="40" column="14" lean-forward="true" selection-start-line="40" selection-start-column="14" selection-end-line="40" selection-end-column="14" />
+        <state relative-caret-position="663">
+          <caret line="40" column="14" selection-start-line="40" selection-start-column="14" selection-end-line="40" selection-end-column="14" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/async-queue-class-base/async-queue-class-base.test-workaround.d.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="22" selection-start-column="22" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/async-queue-class-base/async-queue-class-base.test-workaround.d.ts" />
     <entry file="file://$PROJECT_DIR$/src/utils/common-utils/common-utils-timer.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="187">
@@ -787,37 +793,111 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tsconfig.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="18" column="87" selection-start-line="18" selection-start-column="87" selection-end-line="18" selection-end-column="87" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/jest-workaround.d.ts" />
     <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/async-queue-class-base/async-queue-class-base.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="281">
-          <caret line="71" column="25" selection-start-line="71" selection-start-column="25" selection-end-line="71" selection-end-column="25" />
+        <state relative-caret-position="17">
+          <caret line="72" selection-start-line="72" selection-end-line="72" />
           <folding>
             <element signature="e#0#80#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/tsconfig.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="18" column="18" selection-start-line="18" selection-start-column="18" selection-end-line="18" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.types.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="50" selection-start-line="7" selection-start-column="17" selection-end-line="7" selection-end-column="50" />
+          <folding>
+            <element signature="e#0#101#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/async-queue-class-base/async-queue-class-base.test.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="72" column="29" lean-forward="true" selection-start-line="72" selection-start-column="29" selection-end-line="72" selection-end-column="29" />
+        <state relative-caret-position="153">
+          <caret line="10" column="32" lean-forward="true" selection-start-line="10" selection-start-column="32" selection-end-line="14" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/encryption-utils/encrypt-data.encryption-utils.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="21" column="75" selection-start-line="21" selection-start-column="75" selection-end-line="21" selection-end-column="75" />
           <folding>
-            <element signature="e#0#61#0" expanded="true" />
+            <element signature="e#0#57#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/jest.config.js">
       <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="6" column="67" selection-start-line="6" selection-start-column="67" selection-end-line="6" selection-end-column="67" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/jest.setup.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="37" lean-forward="true" selection-end-line="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/node_modules/@trust/webcrypto/src/keys/CryptoKey.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-975">
+          <caret line="3" column="15" selection-start-line="3" selection-start-column="6" selection-end-line="3" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/encryption-keys-utils/encryption-keys-utils.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="18" column="57" selection-start-line="18" selection-start-column="57" selection-end-line="18" selection-end-column="57" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/data-sign-utils/keys.data-sign-utils.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="41" column="10" selection-start-line="41" selection-start-column="10" selection-end-line="41" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/data-sign-utils/main.data-sign-utils.const.ts">
+      <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
-          <caret line="8" selection-start-line="8" selection-end-line="8" />
+          <caret line="8" column="42" lean-forward="true" selection-start-line="8" selection-start-column="42" selection-end-line="8" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.test.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-322">
+          <caret line="35" column="12" lean-forward="true" selection-start-line="35" selection-start-column="12" selection-end-line="35" selection-end-column="12" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+            <element signature="e#64#139#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="290">
+          <caret line="90" column="54" lean-forward="true" selection-start-line="90" selection-start-column="54" selection-end-line="90" selection-end-column="54" />
+          <folding>
+            <element signature="e#0#139#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

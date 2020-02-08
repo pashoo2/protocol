@@ -19,8 +19,10 @@ import {
   PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_IMPORT_FORMAT,
 } from './password-utils.const';
 import { decodeDOMStringToArrayBuffer } from 'utils/string-encoding-utils';
-
-const cryptoModule = window.crypto.subtle;
+import {
+  crypto,
+  cryptoModule,
+} from '../data-sign-utils/main.data-sign-utils.const';
 
 export const generatePasswordKey = async (
   password: TPASSWORD_ENCRYPTION_SUPPORTED_PASSWORD_NATIVE_TYPES

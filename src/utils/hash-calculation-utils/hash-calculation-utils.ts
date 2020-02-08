@@ -5,10 +5,12 @@ import {
 } from 'utils/string-encoding-utils';
 import { TTypedArrays } from 'types/main.types';
 import { HASH_CALCULATION_UTILS_HASH_ALHORITHM } from './hash-calculation-utils.const';
+import {
+  cryptoModule,
+  crypto,
+} from '../data-sign-utils/main.data-sign-utils.const';
 
-export const hashCalculator = window.crypto.subtle.digest.bind(
-  window.crypto.subtle
-);
+export const hashCalculator = cryptoModule.digest.bind(crypto.subtle);
 
 export const calculateHashNative = async (
   data: TTypedArrays,

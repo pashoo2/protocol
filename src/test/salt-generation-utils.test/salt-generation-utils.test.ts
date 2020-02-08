@@ -11,6 +11,7 @@ import {
   SALT_GENERATION_UTILS_SALT_MAX_LENGTH_BYTES,
   SALT_GENERATION_UTILS_SALT_MIN_LENGTH_BYTES,
 } from '../../utils/encryption-utils/salt-utils.const';
+import { crypto } from '../../utils/data-sign-utils/main.data-sign-utils.const';
 
 export function runTestSaltUtils() {
   describe('test encryption salt utils', () => {

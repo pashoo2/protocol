@@ -30,7 +30,7 @@ export class AsyncQueueClassBase extends TAsyncQueueBaseClass {
 
   public do = async <T>(
     promiseProvider: TAsyncQueueBaseClassPromiseProviderPending<T>
-  ): Promise<T | Array<T | Error> | Error> => {
+  ): Promise<T | Error | (T extends any[] ? Array<T | Error> : never)> => {
     return new Promise((res) => {
       this.queue.push(() => {
         return this.createPromise<T>(promiseProvider)

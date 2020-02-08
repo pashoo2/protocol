@@ -5,7 +5,7 @@ import {
   exportKeyPairAsString,
   importKeyPairFromString,
   encryptToString,
-  decryptFromString,
+  decryptData,
   encryptToTypedArray,
 } from 'utils/encryption-utils';
 import { calculateHash } from 'utils/hash-calculation-utils';
