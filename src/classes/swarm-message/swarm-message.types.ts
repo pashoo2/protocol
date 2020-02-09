@@ -1,6 +1,9 @@
+import { TSwarmMessageUserIdentifierSerialized } from './swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 /**
  * message for sending an information in
- * the peer to peer decentralized system
+ * the peer to peer decentralized system.
+ * This interface describes deserialized
+ * message body.
  *
  * @export
  * @interface ISwarmMessage
@@ -15,12 +18,59 @@
  * The signature must sign all the fields, including
  * the algorithm it used.
  */
-export interface ISwarmMessage {
+export interface ISwarmMessageBodyDeserialized {
   typ: string | number;
   pld: string | Buffer;
-  uid: string;
   ts: number;
   iss: string;
   alg: string;
-  sig: string | Buffer;
+}
+
+/**
+ * This is type of the message's body
+ * serialized.
+ */
+export type TSwarmMessageBodyRaw = string;
+
+/**
+ * This interface represents a message
+ * incoming.
+ *
+ * @export
+ * @interface ISwarmMessageRaw
+ */
+export interface ISwarmMessageRaw {
+  /**
+   * body of the message serialized
+   *
+   * @type {TSwarmMessageBodyRaw}
+   * @memberof ISwarmMessageRaw
+   */
+  bdy: TSwarmMessageBodyRaw;
+  /**
+   * sender identifier serialized
+   *
+   * @type {string}
+   * @memberof ISwarmMessageRaw
+   */
+  uid: TSwarmMessageUserIdentifierSerialized;
+  /**
+   * signature of the message body
+   * and sender of the message
+   *
+   * @type {string}
+   * @memberof ISwarmMessageRaw
+   */
+  sig: string;
+}
+
+/**
+ * this is representation of a message deserialized.
+ *
+ * @export
+ * @interface ISwarmMessage
+ * @extends {ISwarmMessageBodyDeserialized}
+ */
+export interface ISwarmMessage extends Omit<ISwarmMessageRaw, 'bdy'> {
+  bdy: ISwarmMessageBodyDeserialized;
 }

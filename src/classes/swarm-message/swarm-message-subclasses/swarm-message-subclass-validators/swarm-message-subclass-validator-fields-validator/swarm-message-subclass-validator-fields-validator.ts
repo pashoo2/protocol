@@ -3,10 +3,7 @@ import {
   commonUtilsArrayDeleteFromArray,
   commonUtilsArrayDoCallbackTillNoError,
 } from 'utils/common-utils/common-utils';
-import {
-  IMessageValidatorOptions,
-  TSwarmMessageUserIdentifierVersion,
-} from '../swarm-message-subclass-validator.types';
+import { TSwarmMessageUserIdentifierVersion } from '../swarm-message-subclass-validator.types';
 import validateIssuerDesirizlizedFormat from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-issuer-deserizlied/swarm-message-subclass-validator-fields-validator-validator-issuer-deserizlied';
 import validateIssuerSerializedFormat from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-issuer-serialized/swarm-message-subclass-validator-fields-validator-validator-issuer-serialized';
 import { TSwarmMessageIssuerDeserialized } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-issuer-deserizlied/swarm-message-subclass-validator-fields-validator-validator-issuer-deserizlied.types';
@@ -17,11 +14,22 @@ import createValidateTimestamp from './swarm-message-subclass-validator-fields-v
 import { TSwarmMessageType } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-type/swarm-message-subclass-validator-fields-validator-validator-type.types';
 import { ISwarmMessagePayloadValidationOptions } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-payload/swarm-message-subclass-validator-fields-validator-validator-payload.types';
 import { ISwarmMessageTimestampValidationOptions } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-timestamp/swarm-message-subclass-validator-fields-validator-validator-timestamp.types';
-import { ISwarmMessage } from 'classes/swarm-message/swarm-message.types';
 import { TSwarmMessageUserIdentifierSerialized } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import { CA_USER_IDENTITY_VERSIONS_LIST } from '../../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
+import { ISwarmMessage } from '../../../swarm-message.types';
+import { validateMessageBodyRawFormat } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-body-raw/swarm-message-subclass-validator-fields-validator-body-raw';
+import { validateMessageSignatureFormat } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-signature/swarm-message-subclass-validator-fields-validator-signature';
+import {
+  IMessageFieldsValidatorOptions,
+  ISwarmMessageSubclassFieldsValidator,
+} from './swarm-message-subclass-validator-fields-validator.types';
+import {
+  ISwarmMessageBodyDeserialized,
+  ISwarmMessageRaw,
+} from '../../../swarm-message.types';
 
-export class SwarmMessageSubclassFieldsValidator {
+export class SwarmMessageSubclassFieldsValidator
+  implements ISwarmMessageSubclassFieldsValidator {
   /**
    * list of a valid issuers.
    * If it is empty then any issuer will
@@ -70,11 +78,11 @@ export class SwarmMessageSubclassFieldsValidator {
 
   /**
    * Creates an instance of SwarmMessageSubclassValidator.
-   * @param {IMessageValidatorOptions} options
+   * @param {IMessageFieldsValidatorOptions} options
    * @memberof SwarmMessageSubclassValidator
    * @throws
    */
-  constructor(options?: IMessageValidatorOptions) {
+  constructor(options?: IMessageFieldsValidatorOptions) {
     this.setOptions(options);
   }
 
@@ -83,7 +91,7 @@ export class SwarmMessageSubclassFieldsValidator {
    * throw an error if the message
    * is not valid
    *
-   * @param {ISwarmMessage} message
+   * @param {ISwarmMessageBodyDeserialized} message
    * @memberof SwarmMessageSubclassFieldsValidator
    * @throws
    */
@@ -91,13 +99,36 @@ export class SwarmMessageSubclassFieldsValidator {
     assert(!!message, 'Message must be defined');
     assert(typeof message === 'object', 'Message must be an object');
 
-    const { iss, pld, ts, uid, typ } = message;
+    const { bdy, uid, sig } = message;
+
+    assert(!!bdy, 'A body of the message must be defined');
+    assert(typeof bdy === 'object', 'A body of the message must be an object');
+    validateMessageSignatureFormat(sig);
+    this.validateUserIdentifier(uid);
+
+    const { iss, pld, ts, typ } = bdy;
 
     this.validateType(typ);
     this.validateIssuer(iss);
     this.validatePayload(pld);
     this.validateTimestamp(ts);
-    // the most complex validation
+  }
+
+  /**
+   * validate the message's in format
+   * when the body is serizlized
+   *
+   * @param {ISwarmMessageRaw} messageRaw
+   * @memberof SwarmMessageSubclassFieldsValidator
+   */
+  public validateMessageRaw(messageRaw: ISwarmMessageRaw): void {
+    assert(!!messageRaw, 'Message must be defined');
+    assert(typeof messageRaw === 'object', 'Message must be an object');
+
+    const { bdy, uid, sig } = messageRaw;
+
+    validateMessageBodyRawFormat(bdy);
+    validateMessageSignatureFormat(sig);
     this.validateUserIdentifier(uid);
   }
 
@@ -238,11 +269,11 @@ export class SwarmMessageSubclassFieldsValidator {
    * set the options
    *
    * @protected
-   * @param {IMessageValidatorOptions} options
+   * @param {IMessageFieldsValidatorOptions} options
    * @memberof SwarmMessageSubclassValidator
    * @throws
    */
-  protected setOptions(options?: IMessageValidatorOptions) {
+  protected setOptions(options?: IMessageFieldsValidatorOptions) {
     if (options != null) {
       assert(typeof options === 'object', 'The options must be an object');
 

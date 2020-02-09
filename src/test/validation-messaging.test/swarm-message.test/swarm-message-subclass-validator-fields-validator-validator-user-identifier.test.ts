@@ -1,13 +1,13 @@
 //import '@type/jest';
-import validateUserIdentifier from '../../classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier';
-import CentralAuthorityIdentity from '../../classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
+import validateUserIdentifier from '../../../classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier';
+import CentralAuthorityIdentity from '../../../classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
 import {
   CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME,
   CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME,
   CA_USER_IDENTITY_VERSION_PROP_NAME,
   CA_USER_IDENTITY_VERSIONS,
-} from '../../classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
-import { generateUUID } from '../../utils/identity-utils/identity-utils';
+} from '../../../classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
+import { generateUUID } from '../../../utils/identity-utils/identity-utils';
 
 describe('validateUserIdentifier tests', () => {
   const userUUIDV1 = generateUUID();
