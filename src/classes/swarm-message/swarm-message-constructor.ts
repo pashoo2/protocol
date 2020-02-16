@@ -146,7 +146,7 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
     assert(options, 'An options must be defined');
     assert(typeof options === 'object', 'The options must be an object');
 
-    const { utils, caConnection, instances } = options;
+    const { utils, caConnection, instances, validation } = options;
 
     assert(
       caConnection,
@@ -166,6 +166,24 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
     );
     if (utils) {
       assert(typeof utils === 'object', 'The utils must be an object');
+    }
+    if (validation) {
+      assert(
+        typeof validation === 'object',
+        'The validation options must be an object'
+      );
+      if (validation.formatValidatorOpts) {
+        assert(
+          typeof validation.formatValidatorOpts === 'object',
+          'The formatValidatorOpts options must be an object'
+        );
+      }
+      if (validation.signatureValidationOpts) {
+        assert(
+          typeof validation.signatureValidationOpts === 'object',
+          'The signatureValidationOpts options must be an object'
+        );
+      }
     }
     if (instances) {
       assert(typeof instances === 'object', 'The instances must be an object');
@@ -210,12 +228,10 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
           caConnection: options.caConnection,
         },
       }),
-      utils: options.utils
-        ? extend(
-            options.utils,
-            SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_UTILS
-          )
-        : { ...SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_UTILS },
+      utils: extend(
+        options.utils || {},
+        SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_UTILS
+      ),
     };
   }
 
@@ -282,6 +298,7 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
   protected setOptions(options: TSwarmMessageConstructorOptions) {
     this.validateOptions(options);
     this.constructorOptions = this.extendOptionsByDefaults(options);
+    debugger;
     // validator must runs at first cause
     // it used by another instances
     this.runSwarmMessageValidator();

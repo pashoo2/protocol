@@ -1,3 +1,4 @@
+import 'mocha';
 import { compareCryptoCredentials } from 'classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials';
 import { TCentralAuthorityUserCryptoCredentials } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 import { checkIsValidCryptoCredentials } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
@@ -19,6 +20,9 @@ import {
 import { CASwarmCredentialsProvider } from './../../../classes/central-authority-class/central-authority-swarm-credentials-provider/central-authority-swarm-credentials-provider';
 import { expect } from 'chai';
 import { createCAConnectionsPoolWithTwoProviders } from './../central-authority-connection.test/central-authority-connections-pool.test/central-authority-connections-pool.test.shared';
+import mocha from 'mocha';
+
+const it = mocha.it;
 
 const getAuthProviderIdByUserIdentity = (
   userIdentity: CentralAuthorityIdentity

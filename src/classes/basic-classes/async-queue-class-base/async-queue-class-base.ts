@@ -10,6 +10,7 @@ import {
 } from './async-queue-class-base.types';
 import { getRun } from './async-queue-class-base.utils';
 import { delay } from '../../../utils/common-utils/common-utils-timer';
+import { TAsyncQueueBaseClassPromiseProviderBatch } from './async-queue-class-base.types';
 
 export class AsyncQueueClassBase extends TAsyncQueueBaseClass {
   protected queue: TAsyncQueueBaseClassPromiseProvider<any>[] = [];
@@ -49,8 +50,11 @@ export class AsyncQueueClassBase extends TAsyncQueueBaseClass {
     const { options } = this;
     const promisePendingBatch = this.queue.splice(0, options.batchSize);
 
+    if (!this.runPromiseProvider) {
+      throw new Error('runPromiseProvider is not defined');
+    }
     return Promise.all(
-      promisePendingBatch.map(this.runPromiseProvider!)
+      promisePendingBatch.map(this.runPromiseProvider)
     ).catch((err) => new Array(promisePendingBatch.length).fill(err)); // fill with an error if the batch was rejected
   }
 
@@ -76,16 +80,33 @@ export class AsyncQueueClassBase extends TAsyncQueueBaseClass {
     this.start();
   };
 
-  protected createPromise = <T>(
+  protected isBatch<T>(
+    promiseProvider: any
+  ): promiseProvider is TAsyncQueueBaseClassPromiseProviderBatch<T> {
+    return promiseProvider instanceof Array;
+  }
+  protected createPromise<T>(promiseProvider: any): Promise<T | Error>;
+  protected createPromise<T>(promiseProvider: any[]): Promise<Array<T | Error>>;
+  protected createPromise<T>(
     promiseProvider: TAsyncQueueBaseClassPromiseProviderPending<T>
-  ): Promise<T | Array<T | Error> | Error> => {
+  ): Promise<Array<T | Error> | T | Error> {
     let result;
-    if (promiseProvider instanceof Array) {
-      result = Promise.all(promiseProvider.map(this.runPromiseProvider!));
+
+    if (!this.runPromiseProvider) {
+      throw new Error('runPromiseProvider is not defined');
+    }
+    if (this.isBatch<T>(promiseProvider)) {
+      result = Promise.all(
+        (promiseProvider as TAsyncQueueBaseClassPromiseProviderBatch<T>).map(
+          this.runPromiseProvider
+        )
+      );
     } else {
-      result = this.runPromiseProvider!(promiseProvider);
+      result = this.runPromiseProvider(
+        promiseProvider as TAsyncQueueBaseClassPromiseProvider<T>
+      );
     }
     this.start();
     return result;
-  };
+  }
 }

@@ -1,4 +1,5 @@
 import { cryptoModule } from './main.crypto-utils.const';
+import { crypto } from '../data-sign-utils/main.data-sign-utils.const';
 import {
   CRYPTO_UTIL_KEY_DESC,
   CRYPTO_UTIL_ENCRYPTION_KEY_TYPE,
@@ -30,7 +31,7 @@ export const generateInitializationVectorNative = (
   vectorLength: number = INITIALIZATION_VECTOR_DEFAULT_LENGTH
 ): Uint8Array | Error => {
   try {
-    return cryptoModule.getRandomValues(new Uint8Array(vectorLength));
+    return crypto.getRandomValues(new Uint8Array(vectorLength));
   } catch (err) {
     return err;
   }
