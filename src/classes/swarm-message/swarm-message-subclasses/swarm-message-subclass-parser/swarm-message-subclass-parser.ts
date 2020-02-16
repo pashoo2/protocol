@@ -3,7 +3,7 @@ import {
   ISwarmMessageRaw,
   ISwarmMessage,
   TSwarmMessageSeriazlized,
-} from '../../swarm-message.types';
+} from '../../swarm-message-constructortypes';
 import {
   ISwarmMessageSubclassParserOptions,
   ISwarmMessageSubclassParser,

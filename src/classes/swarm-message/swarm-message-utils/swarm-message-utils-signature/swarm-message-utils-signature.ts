@@ -1,7 +1,7 @@
 import {
   ISwarmMessageRaw,
   TSwarmMessageSignatureAlgorithm,
-} from '../../swarm-message.types';
+} from '../../swarm-message-constructortypes';
 import { ISwarmMessageUtilSignatureGetStringForSignByMessageRaw } from './swarm-message-utils-signature.types';
 import { SWARM_MESSAGE_UTIL_SIGNATURE_GET_STRING_FOR_SIGN_BY_MESSAGE_RAW_DELIMETER } from './swarm-message-utils-signature.const';
 

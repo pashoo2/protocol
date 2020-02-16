@@ -4,7 +4,7 @@ import { ISwarmMessageUtilsBodyParser } from '../../swarm-message-utils/swarm-me
 import {
   TSwarmMessageSeriazlized,
   ISwarmMessage,
-} from '../../swarm-message.types';
+} from '../../swarm-message-constructortypes';
 
 export interface ISwarmMessageSubclassParserUtils {
   messageParser: ISwarmMessageUtilsMessageParser;

@@ -6,11 +6,11 @@ import CentralAuthorityIdentity from '../../../central-authority-class/central-a
 import {
   TSwarmMessageBodyRaw,
   ISwarmMessageRaw,
-} from '../../swarm-message.types';
+} from '../../swarm-message-constructortypes';
 import {
   ISwarmMessageBodyDeserialized,
   TSwarmMessageSerialized,
-} from '../../swarm-message.types';
+} from '../../swarm-message-constructortypes';
 import {
   IQueuedEncrypyionClassBase,
   IQueuedEncrypyionClassBaseOptions,

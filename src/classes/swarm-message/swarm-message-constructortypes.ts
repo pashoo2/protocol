@@ -1,5 +1,23 @@
 import { TSwarmMessageUserIdentifierSerialized } from './swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import { ownKeyOf } from '../../types/helper.types';
+import {
+  ISwarmMessageSubclassParserUtils,
+  ISwarmMessageSubclassParser,
+} from './swarm-message-subclasses/swarm-message-subclass-parser/swarm-message-subclass-parser.types';
+import {
+  ISwarmMessageSerializerUtils,
+  ISwarmMessageSerializer,
+} from './swarm-message-subclasses/swarm-message-subclass-serializer/swarm-message-subclass-serializer.types';
+import { IMessageSignatureValidatorOptionsUtils } from './swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-signature-validator/swarm-message-subclass-validator-signature-validator.types';
+import { ICentralAuthority } from '../central-authority-class/central-authority-class.types';
+import {
+  IMessageValidatorOptions,
+  ISwarmMessageSubclassValidator,
+} from './swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator.types';
+
+export enum ESwarmMessageSignatureAlgorithms {
+  'ep256' = 'ep256',
+}
 
 export enum ESwarmMessageSignatureAlgorithmsDescription {
   'ep256' = 'ECDSA_P-256',
@@ -99,4 +117,54 @@ export type TSwarmMessageSeriazlized = string;
  */
 export interface ISwarmMessage extends Omit<ISwarmMessageRaw, 'bdy'> {
   bdy: ISwarmMessageBodyDeserialized;
+}
+
+/**
+ * utilities used for messages parsing,
+ * serizlization and validation
+ *
+ * @export
+ * @interface ISwarmMessageConstructorUtils
+ * @extends {ISwarmMessageSubclassParserUtils}
+ * @extends {ISwarmMessageSerializerUtils}
+ * @extends {IMessageSignatureValidatorOptionsUtils}
+ */
+export interface ISwarmMessageConstructorUtils
+  extends ISwarmMessageSubclassParserUtils,
+    ISwarmMessageSerializerUtils,
+    IMessageSignatureValidatorOptionsUtils {}
+
+export interface ISwarmMessageConstructorOptionsInstances {
+  parser: ISwarmMessageSubclassParser;
+  serizlizer: ISwarmMessageSerializer;
+  validator: ISwarmMessageSubclassValidator;
+}
+
+export interface ISwarmMessageConstructorOptionsRequired {
+  utils: ISwarmMessageConstructorUtils;
+  caConnection: ICentralAuthority;
+  validation: IMessageValidatorOptions;
+  instances?: Partial<ISwarmMessageConstructorOptionsInstances>;
+}
+
+/**
+ * options used for swarm messages construction.
+ *
+ * @export
+ * @interface ISwarmMessageConstructorOptions
+ */
+export type TSwarmMessageConstructorOptions = ISwarmMessageConstructorOptionsRequired & {
+  utils?: Partial<ISwarmMessageConstructorOptionsRequired['utils']>;
+};
+
+export interface ISwarmMessageConstructor {
+  construct(message: TSwarmMessageSeriazlized): ISwarmMessage;
+}
+
+export interface ISwarmMessageConstructor {
+  construct(
+    messageBody: ISwarmMessageBodyDeserialized &
+      Omit<ISwarmMessageBodyDeserialized, 'ts'> &
+      Partial<ISwarmMessageBodyDeserialized>
+  ): TSwarmMessageSeriazlized;
 }
