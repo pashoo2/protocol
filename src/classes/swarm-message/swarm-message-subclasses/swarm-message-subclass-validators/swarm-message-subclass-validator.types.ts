@@ -40,7 +40,8 @@ export interface ISwarmMessageSubclassValidator {
   valiadateSwarmMessageRaw(msgRaw: ISwarmMessageRaw): Promise<void>;
 
   /**
-   * validates swarm messge desirialized
+   * validates swarm messge desirialized format
+   * only. Does not verifies the signature
    *
    * @param {ISwarmMessage} msg
    * @memberof ISwarmMessageSubclassValidator
