@@ -1,39 +1,34 @@
 import assert from 'assert';
+import { getDateNowInSeconds } from '../../utils/common-utils/common-utils-date-time-synced';
 import { extend } from '../../utils/common-utils/common-utils-objects';
 import {
-  SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_UTILS,
   SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_SERIALIZER,
+  SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_UTILS,
 } from './swarm-message-constructor.const';
-import { SwarmMessageSubclassParser } from './swarm-message-subclasses/swarm-message-subclass-parser/swarm-message-subclass-parser';
-import { SwarmMessageSubclassValidator } from './swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator';
-import { SwarmMessageSerializer } from './swarm-message-subclasses/swarm-message-subclass-serializer/swarm-message-subclass-serializer';
-import { getDateNowInSeconds } from '../../utils/common-utils/common-utils-date-time-synced';
 import {
+  ISwarmMessageConstructor,
+  ISwarmMessageConstructorOptionsRequired,
   ISwarmMessageInstance,
   TSwarmMessageConstructorArgumentBody,
-} from './swarm-message-constructor.types';
-import {
-  TSwarmMessageConstructorArgumentBody,
-  TSwarmMessageSeriazlized,
-  ISwarmMessage,
-} from './swarm-message-constructor.types';
-import {
-  ISwarmMessageSubclassParserOptions,
-  ISwarmMessageSubclassParser,
-} from './swarm-message-subclasses/swarm-message-subclass-parser/swarm-message-subclass-parser.types';
-import {
-  ISwarmMessageSubclassValidator,
-  IMessageValidatorOptions,
-} from './swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator.types';
-import {
-  ISwarmMessageSerializerConstructorOptions,
-  ISwarmMessageSerializer,
-} from './swarm-message-subclasses/swarm-message-subclass-serializer/swarm-message-subclass-serializer.types';
-import {
   TSwarmMessageConstructorOptions,
-  ISwarmMessageConstructorOptionsRequired,
-  ISwarmMessageConstructor,
+  TSwarmMessageSeriazlized,
 } from './swarm-message-constructor.types';
+import { SwarmMessageSubclassParser } from './swarm-message-subclasses/swarm-message-subclass-parser/swarm-message-subclass-parser';
+import {
+  ISwarmMessageSubclassParser,
+  ISwarmMessageSubclassParserOptions,
+} from './swarm-message-subclasses/swarm-message-subclass-parser/swarm-message-subclass-parser.types';
+import { SwarmMessageSerializer } from './swarm-message-subclasses/swarm-message-subclass-serializer/swarm-message-subclass-serializer';
+import {
+  ISwarmMessageSerializer,
+  ISwarmMessageSerializerConstructorOptions,
+} from './swarm-message-subclasses/swarm-message-subclass-serializer/swarm-message-subclass-serializer.types';
+import { SwarmMessageSubclassValidator } from './swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator';
+import { SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_VALIDATION } from './swarm-message-constructor.const';
+import {
+  IMessageValidatorOptions,
+  ISwarmMessageSubclassValidator,
+} from './swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator.types';
 
 export class SwarmMessageConstructor implements ISwarmMessageConstructor {
   protected constructorOptions?: ISwarmMessageConstructorOptionsRequired;
@@ -208,6 +203,13 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
   ): ISwarmMessageConstructorOptionsRequired {
     return {
       ...options,
+      validation: extend(options.validation || {}, {
+        ...SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_VALIDATION,
+        signatureValidationOpts: {
+          ...SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_VALIDATION.signatureValidationOpts,
+          caConnection: options.caConnection,
+        },
+      }),
       utils: options.utils
         ? extend(
             options.utils,

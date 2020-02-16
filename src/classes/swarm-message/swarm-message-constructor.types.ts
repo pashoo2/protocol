@@ -147,7 +147,12 @@ export interface ISwarmMessageConstructorOptionsInstances {
 export interface ISwarmMessageConstructorOptionsRequired {
   utils: ISwarmMessageConstructorUtils;
   caConnection: ICentralAuthority;
-  validation: IMessageValidatorOptions;
+  validation: IMessageValidatorOptions & {
+    signatureValidationOpts: Omit<
+      IMessageValidatorOptions['signatureValidationOpts'],
+      'caConnection'
+    >;
+  };
   instances?: Partial<ISwarmMessageConstructorOptionsInstances>;
 }
 
@@ -157,16 +162,22 @@ export interface ISwarmMessageConstructorOptionsRequired {
  * @export
  * @interface ISwarmMessageConstructorOptions
  */
-export type TSwarmMessageConstructorOptions = ISwarmMessageConstructorOptionsRequired & {
+export type TSwarmMessageConstructorOptions = Omit<
+  Omit<ISwarmMessageConstructorOptionsRequired, 'utils'>,
+  'validation'
+> & {
   utils?: Partial<ISwarmMessageConstructorOptionsRequired['utils']>;
+  validation?: Partial<ISwarmMessageConstructorOptionsRequired['validation']>;
 };
 
 export interface ISwarmMessageConstructor {
   construct(message: TSwarmMessageSeriazlized): Promise<ISwarmMessageInstance>;
 }
 
-export type TSwarmMessageConstructorArgumentBody = ISwarmMessageBodyDeserialized &
-  Omit<ISwarmMessageBodyDeserialized, 'ts'> &
+export type TSwarmMessageConstructorArgumentBody = Omit<
+  ISwarmMessageBodyDeserialized,
+  'ts'
+> &
   Partial<ISwarmMessageBodyDeserialized>;
 
 export interface ISwarmMessageConstructor {

@@ -17,9 +17,18 @@ export const SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_UTILS: ISwarmMessageCons
   swarmMessageSerializer: swarmMessageUtilsMessageSerializer,
 };
 
-export const SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_SERIALIZER_QUEUE_OPTIONS: ISwarmMessageSerializerConstructorOptions['queueOptions'] = undefined;
+export const SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_QUEUE_OPTIONS: ISwarmMessageSerializerConstructorOptions['queueOptions'] = undefined;
 
 export const SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_SERIALIZER = {
   alg: ESwarmMessageSignatureAlgorithms.ep256,
-  queueOptions: SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_SERIALIZER_QUEUE_OPTIONS,
+  queueOptions: SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_QUEUE_OPTIONS,
+};
+
+export const SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_VALIDATION = {
+  formatValidatorOpts: {},
+  signatureValidationOpts: {
+    algSupported: ESwarmMessageSignatureAlgorithms.ep256,
+    utils: SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_UTILS,
+    queueOptions: SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_QUEUE_OPTIONS,
+  },
 };

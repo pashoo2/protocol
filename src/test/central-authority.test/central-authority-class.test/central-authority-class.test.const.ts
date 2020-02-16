@@ -11,6 +11,7 @@ export {
   CA_SWARM_CREDENTIALS_PROVIDER_TEST_USERIDENTITY,
   CA_SWARM_CREDENTIALS_PROVIDER_TEST_USERIDENTITY_SECOND,
 } from '../central-authority-swarm-credentials-provider/central-authority-swarm-credentials-provider.shared';
+
 export const CA_CLASS_OPTIONS_VALID_NO_PROFILE: ICentralAuthorityOptions = {
   authProvidersPool: {
     providersConfigurations:

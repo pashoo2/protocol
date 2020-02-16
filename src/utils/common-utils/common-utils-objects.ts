@@ -28,7 +28,7 @@ export const getObjectKeys = (o: object): Array<TObjectKeys> =>
 export function extend<T extends TDictionary<any>, E extends TDictionary<any>>(
   o: T,
   ext: E
-): T {
+): T & E {
   const keys = getObjectKeys(ext);
   let idx = 0;
   let k: keyof E;
