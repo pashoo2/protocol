@@ -1,7 +1,7 @@
 import {
   ISwarmMessageConstructorUtils,
   ESwarmMessageSignatureAlgorithms,
-} from './swarm-message-constructortypes';
+} from './swarm-message-constructor.types';
 import { swarmMessageUtilSignatureGetStringForSignByMessageRaw } from './swarm-message-utils/swarm-message-utils-signature/swarm-message-utils-signature';
 import { swarmMessageUtilsBodyParser } from './swarm-message-utils/swarm-message-utils-body-parser/swarm-message-utils-body-parser';
 import { swarmMessageUtilsMessageParser } from './swarm-message-utils/swarm-message-utils-message-parser/swarm-message-utils-message-parser';

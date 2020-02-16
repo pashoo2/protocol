@@ -1,9 +1,10 @@
 import assert from 'assert';
+import { ISwarmMessageInstance } from '../../swarm-message-constructor.types';
 import {
   ISwarmMessageRaw,
   ISwarmMessage,
   TSwarmMessageSeriazlized,
-} from '../../swarm-message-constructortypes';
+} from '../../swarm-message-constructor.types';
 import {
   ISwarmMessageSubclassParserOptions,
   ISwarmMessageSubclassParser,
@@ -31,11 +32,13 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
    */
   public parse = async (
     message: TSwarmMessageSeriazlized
-  ): Promise<ISwarmMessage> => {
+  ): Promise<ISwarmMessageInstance> => {
     const messageRaw = await this.parseMessageToRaw(message);
+    const messageParsed = this.parseMessageRaw(messageRaw);
 
-    return this.parseMessageRaw(messageRaw);
+    return this.getSwarmMessageInstance(messageParsed, message);
   };
+
   protected validateOptions(options: ISwarmMessageSubclassParserOptions): void {
     assert(options, 'Options must be provided');
     assert(
@@ -114,5 +117,17 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
 
     validator.valiadateSwarmMessage(swarmMessage);
     return swarmMessage;
+  }
+
+  protected getSwarmMessageInstance(
+    msg: ISwarmMessage,
+    msgSerizlized: TSwarmMessageSeriazlized
+  ): ISwarmMessageInstance {
+    return {
+      ...msg,
+      toString: function(a: TSwarmMessageSeriazlized) {
+        return a;
+      }.bind(undefined, msgSerizlized),
+    };
   }
 }

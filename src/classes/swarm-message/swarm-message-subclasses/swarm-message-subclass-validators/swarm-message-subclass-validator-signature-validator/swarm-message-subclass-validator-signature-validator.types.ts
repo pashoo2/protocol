@@ -3,7 +3,7 @@ import { ICentralAuthority } from '../../../../central-authority-class/central-a
 import {
   ISwarmMessageRaw,
   TSwarmMessageSignatureAlgorithm,
-} from '../../../swarm-message-constructortypes';
+} from '../../../swarm-message-constructor.types';
 import { ISwarmMessageUtilSignatureGetStringForSignByMessageRaw } from '../../../swarm-message-utils/swarm-message-utils-signature/swarm-message-utils-signature.types';
 
 export interface IMessageSignatureValidatorOptionsUtils {

@@ -1,6 +1,6 @@
 import { IMessageSignatureValidatorOptions } from './swarm-message-subclass-validator-signature-validator.types';
 import assert from 'assert';
-import { ISwarmMessageRaw } from '../../../swarm-message-constructortypes';
+import { ISwarmMessageRaw } from '../../../swarm-message-constructor.types';
 import { ICentralAuthority } from '../../../../central-authority-class/central-authority-class.types';
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import { isCryptoKeyDataVerify } from '../../../../../utils/encryption-keys-utils/encryption-keys-utils';

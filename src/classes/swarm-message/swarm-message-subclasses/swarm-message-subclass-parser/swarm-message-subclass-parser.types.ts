@@ -3,8 +3,8 @@ import { ISwarmMessageUtilsMessageParser } from '../../swarm-message-utils/swarm
 import { ISwarmMessageUtilsBodyParser } from '../../swarm-message-utils/swarm-message-utils-body-parser';
 import {
   TSwarmMessageSeriazlized,
-  ISwarmMessage,
-} from '../../swarm-message-constructortypes';
+  ISwarmMessageInstance,
+} from '../../swarm-message-constructor.types';
 
 export interface ISwarmMessageSubclassParserUtils {
   messageParser: ISwarmMessageUtilsMessageParser;
@@ -31,5 +31,5 @@ export interface ISwarmMessageSubclassParser {
    * @memberof ISwarmMessageSubclassParser
    * @throws
    */
-  parse(message: TSwarmMessageSeriazlized): Promise<ISwarmMessage>;
+  parse(message: TSwarmMessageSeriazlized): Promise<ISwarmMessageInstance>;
 }

@@ -10,7 +10,7 @@ import {
   ISwarmMessageRaw,
   ISwarmMessage,
   ISwarmMessageBodyDeserialized,
-} from '../../swarm-message-constructortypes';
+} from '../../swarm-message-constructor.types';
 import assert from 'assert';
 
 export class SwarmMessageSubclassValidator

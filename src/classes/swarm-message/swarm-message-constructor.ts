@@ -7,6 +7,16 @@ import {
 import { SwarmMessageSubclassParser } from './swarm-message-subclasses/swarm-message-subclass-parser/swarm-message-subclass-parser';
 import { SwarmMessageSubclassValidator } from './swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator';
 import { SwarmMessageSerializer } from './swarm-message-subclasses/swarm-message-subclass-serializer/swarm-message-subclass-serializer';
+import { getDateNowInSeconds } from '../../utils/common-utils/common-utils-date-time-synced';
+import {
+  ISwarmMessageInstance,
+  TSwarmMessageConstructorArgumentBody,
+} from './swarm-message-constructor.types';
+import {
+  TSwarmMessageConstructorArgumentBody,
+  TSwarmMessageSeriazlized,
+  ISwarmMessage,
+} from './swarm-message-constructor.types';
 import {
   ISwarmMessageSubclassParserOptions,
   ISwarmMessageSubclassParser,
@@ -23,14 +33,14 @@ import {
   TSwarmMessageConstructorOptions,
   ISwarmMessageConstructorOptionsRequired,
   ISwarmMessageConstructor,
-} from './swarm-message-constructortypes';
+} from './swarm-message-constructor.types';
 
 export class SwarmMessageConstructor implements ISwarmMessageConstructor {
   protected constructorOptions?: ISwarmMessageConstructorOptionsRequired;
 
   protected validator?: ISwarmMessageSubclassValidator;
 
-  protected serizlizer?: ISwarmMessageSerializer;
+  protected serializer?: ISwarmMessageSerializer;
 
   protected parser?: ISwarmMessageSubclassParser;
 
@@ -112,6 +122,21 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
   constructor(options: TSwarmMessageConstructorOptions) {
     this.setOptions(options);
   }
+
+  /** */
+  public construct = <
+    T extends TSwarmMessageConstructorArgumentBody | TSwarmMessageSeriazlized
+  >(
+    message: T
+  ): Promise<ISwarmMessageInstance> => {
+    assert(message, 'Message must not be empty');
+    if (typeof message === 'string') {
+      return this.parse(message);
+    } else if (typeof message === 'object') {
+      return this.serialize(message as TSwarmMessageConstructorArgumentBody);
+    }
+    throw new Error('A message must be an object or a string');
+  };
 
   /**
    * Validates shallow the options used by
@@ -239,7 +264,7 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
     const { options } = this;
     const { instances } = options;
 
-    this.serizlizer =
+    this.serializer =
       instances && instances.serizlizer
         ? instances.serizlizer
         : new SwarmMessageSerializer(this.optionsForSwarmMessageSerizlizer);
@@ -260,5 +285,43 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
     this.runSwarmMessageValidator();
     this.runSwarmMessageSerizlizer();
     this.runSwarmMessageParser();
+  }
+
+  /**
+   * parse a message serialized
+   *
+   * @protected
+   * @param {string} msg
+   * @memberof SwarmMessageConstructor
+   * @throws
+   */
+  protected parse(
+    msg: TSwarmMessageSeriazlized
+  ): Promise<ISwarmMessageInstance> {
+    if (!this.parser) {
+      throw new Error('A swarm message parser instance is not defined');
+    }
+    return this.parser.parse(msg);
+  }
+
+  /**
+   * parse a message serialized
+   *
+   * @protected
+   * @param {string} msg
+   * @memberof SwarmMessageConstructor
+   * @throws
+   */
+  protected serialize(
+    msg: TSwarmMessageConstructorArgumentBody
+  ): Promise<ISwarmMessageInstance> {
+    if (!this.serializer) {
+      throw new Error('A swarm message serializer instance is not defined');
+    }
+
+    return this.serializer.serialize({
+      ...msg,
+      ts: getDateNowInSeconds(),
+    });
   }
 }

@@ -4,7 +4,7 @@ import {
   ISwarmMessage,
   ISwarmMessageRaw,
   ISwarmMessageBodyDeserialized,
-} from '../../swarm-message-constructortypes';
+} from '../../swarm-message-constructor.types';
 
 export type TPayload =
   | string

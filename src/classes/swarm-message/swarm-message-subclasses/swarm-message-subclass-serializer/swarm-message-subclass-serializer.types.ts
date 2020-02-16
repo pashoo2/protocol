@@ -6,11 +6,9 @@ import { IQueuedEncrypyionClassBaseOptions } from '../../../basic-classes/queued
 import { ISwarmMessageUtilsBodySerializer } from '../../swarm-message-utils/swarm-message-utils-body-serializer/swarm-message-utils-body-serializer.types';
 import { ISwarmMessageUtilsMessageSerializer } from '../../swarm-message-utils/swarm-message-utils-message-serializer/swarm-message-utils-message-serializer.types';
 import { ISwarmMessageSubclassValidator } from '../swarm-message-subclass-validators/swarm-message-subclass-validator.types';
-import { TSwarmMessageSignatureAlgorithm } from '../../swarm-message-constructortypes';
-import {
-  ISwarmMessageBodyDeserialized,
-  TSwarmMessageSerialized,
-} from '../../swarm-message-constructortypes';
+import { ISwarmMessageInstance } from '../../swarm-message-constructor.types';
+import { TSwarmMessageSignatureAlgorithm } from '../../swarm-message-constructor.types';
+import { ISwarmMessageBodyDeserialized } from '../../swarm-message-constructor.types';
 
 export interface ISwarmMessageSerializerUtils {
   getDataToSignBySwarmMsg: ISwarmMessageUtilSignatureGetStringForSignByMessageRaw;
@@ -111,5 +109,5 @@ export interface ISwarmMessageSerializer {
    */
   serialize(
     msgBody: ISwarmMessageBodyDeserialized
-  ): Promise<TSwarmMessageSerialized>;
+  ): Promise<ISwarmMessageInstance>;
 }

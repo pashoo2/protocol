@@ -16,7 +16,7 @@ import { ISwarmMessagePayloadValidationOptions } from './swarm-message-subclass-
 import { ISwarmMessageTimestampValidationOptions } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-timestamp/swarm-message-subclass-validator-fields-validator-validator-timestamp.types';
 import { TSwarmMessageUserIdentifierSerialized } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import { CA_USER_IDENTITY_VERSIONS_LIST } from '../../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
-import { ISwarmMessage } from '../../../swarm-message-constructortypes';
+import { ISwarmMessage } from '../../../swarm-message-constructor.types';
 import { validateMessageBodyRawFormat } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-body-raw/swarm-message-subclass-validator-fields-validator-body-raw';
 import { validateMessageSignatureFormat } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-signature/swarm-message-subclass-validator-fields-validator-signature';
 import {
@@ -26,7 +26,7 @@ import {
 import {
   ISwarmMessageBodyDeserialized,
   ISwarmMessageRaw,
-} from '../../../swarm-message-constructortypes';
+} from '../../../swarm-message-constructor.types';
 
 export class SwarmMessageSubclassFieldsValidator
   implements ISwarmMessageSubclassFieldsValidator {

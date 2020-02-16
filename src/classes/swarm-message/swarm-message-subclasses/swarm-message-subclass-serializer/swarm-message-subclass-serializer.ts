@@ -3,14 +3,15 @@ import { isCryptoKeyDataSign } from '../../../../utils/encryption-keys-utils/enc
 import { QueuedEncryptionClassBase } from '../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base';
 import { ISwarmMessageSerializerUser } from './swarm-message-subclass-serializer.types';
 import CentralAuthorityIdentity from '../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
+import { ISwarmMessageInstance } from '../../swarm-message-constructor.types';
 import {
   TSwarmMessageBodyRaw,
   ISwarmMessageRaw,
-} from '../../swarm-message-constructortypes';
+} from '../../swarm-message-constructor.types';
 import {
   ISwarmMessageBodyDeserialized,
   TSwarmMessageSerialized,
-} from '../../swarm-message-constructortypes';
+} from '../../swarm-message-constructor.types';
 import {
   IQueuedEncrypyionClassBase,
   IQueuedEncrypyionClassBaseOptions,
@@ -68,7 +69,7 @@ export class SwarmMessageSerializer implements ISwarmMessageSerializer {
    */
   public serialize = async (
     msgBody: ISwarmMessageBodyDeserialized
-  ): Promise<TSwarmMessageSerialized> => {
+  ): Promise<ISwarmMessageInstance> => {
     this.validateMessageBody(msgBody);
 
     const bodySeriazlized = this.getMessageBodySerialized(msgBody);
@@ -80,7 +81,11 @@ export class SwarmMessageSerializer implements ISwarmMessageSerializer {
     if (signature instanceof Error) {
       throw new Error('Failed to sign the message');
     }
-    return this.getMessageSignedSerialized(swarmMessageNotSigned, signature);
+    return this.getMessageSignedSerialized(
+      swarmMessageNotSigned,
+      msgBody,
+      signature
+    );
   };
 
   /**
@@ -287,13 +292,19 @@ export class SwarmMessageSerializer implements ISwarmMessageSerializer {
    */
   protected getMessageSignedSerialized(
     msgRawUnsigned: Omit<ISwarmMessageRaw, 'sig'>,
+    msgBody: ISwarmMessageBodyDeserialized,
     signature: ISwarmMessageRaw['sig']
-  ) {
+  ): ISwarmMessageInstance {
     const { utils } = this.options;
-
-    return utils.swarmMessageSerializer({
+    const swarmMessage = {
       ...msgRawUnsigned,
       sig: signature,
-    });
+    };
+
+    return {
+      ...swarmMessage,
+      bdy: msgBody,
+      toString: utils.swarmMessageSerializer.bind(undefined, swarmMessage),
+    };
   }
 }

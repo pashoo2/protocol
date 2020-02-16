@@ -119,6 +119,10 @@ export interface ISwarmMessage extends Omit<ISwarmMessageRaw, 'bdy'> {
   bdy: ISwarmMessageBodyDeserialized;
 }
 
+export interface ISwarmMessageInstance extends ISwarmMessage {
+  toString(): TSwarmMessageSeriazlized;
+}
+
 /**
  * utilities used for messages parsing,
  * serizlization and validation
@@ -158,13 +162,15 @@ export type TSwarmMessageConstructorOptions = ISwarmMessageConstructorOptionsReq
 };
 
 export interface ISwarmMessageConstructor {
-  construct(message: TSwarmMessageSeriazlized): ISwarmMessage;
+  construct(message: TSwarmMessageSeriazlized): Promise<ISwarmMessageInstance>;
 }
+
+export type TSwarmMessageConstructorArgumentBody = ISwarmMessageBodyDeserialized &
+  Omit<ISwarmMessageBodyDeserialized, 'ts'> &
+  Partial<ISwarmMessageBodyDeserialized>;
 
 export interface ISwarmMessageConstructor {
   construct(
-    messageBody: ISwarmMessageBodyDeserialized &
-      Omit<ISwarmMessageBodyDeserialized, 'ts'> &
-      Partial<ISwarmMessageBodyDeserialized>
-  ): TSwarmMessageSeriazlized;
+    messageBody: TSwarmMessageConstructorArgumentBody
+  ): Promise<ISwarmMessageInstance>;
 }
