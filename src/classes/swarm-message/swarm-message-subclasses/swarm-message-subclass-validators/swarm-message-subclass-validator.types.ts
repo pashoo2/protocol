@@ -1,6 +1,10 @@
 import { IMessageFieldsValidatorOptions } from './swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator.types';
 import { IMessageSignatureValidatorOptions } from './swarm-message-subclass-validator-signature-validator/swarm-message-subclass-validator-signature-validator.types';
-import { ISwarmMessage, ISwarmMessageRaw } from '../../swarm-message.types';
+import {
+  ISwarmMessage,
+  ISwarmMessageRaw,
+  ISwarmMessageBodyDeserialized,
+} from '../../swarm-message.types';
 
 export type TPayload =
   | string
@@ -43,4 +47,13 @@ export interface ISwarmMessageSubclassValidator {
    * @throws
    */
   valiadateSwarmMessage(msg: ISwarmMessage): void;
+
+  /**
+   * validate message's deserialized body object
+   *
+   * @param {ISwarmMessageBodyDeserialized} messageBody
+   * @memberof SwarmMessageSubclassFieldsValidator
+   * @throws
+   */
+  validateMessageBody(messageBody: ISwarmMessageBodyDeserialized): void;
 }

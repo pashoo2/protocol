@@ -1,4 +1,24 @@
 import { TSwarmMessageUserIdentifierSerialized } from './swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
+import { ownKeyOf } from '../../types/helper.types';
+
+export enum ESwarmMessageSignatureAlgorithmsDescription {
+  'ep256' = 'ECDSA_P-256',
+}
+
+export const SwarmMessageSignatureSupprotedAlgorithms = Object.keys(
+  ESwarmMessageSignatureAlgorithmsDescription
+);
+
+export type TSwarmMessageSignatureAlgorithm = ownKeyOf<
+  typeof ESwarmMessageSignatureAlgorithmsDescription
+>;
+
+/**
+ * message serizlized and ready to send
+ * into the swarm.
+ */
+export type TSwarmMessageSerialized = string;
+
 /**
  * message for sending an information in
  * the peer to peer decentralized system.
@@ -12,8 +32,6 @@ import { TSwarmMessageUserIdentifierSerialized } from './swarm-message-subclasse
  * @property {string} uid - an identity of the user which post the message
  * @property {string} tss - UNIX timestamp in UTC when the message was posted. In seconds
  * @property {string} iss - the service in which the message was generated
- * @property {string} alg - the algorythm used for the signature
- * @property {string} sig - a signature created with the user private key.
  *
  * The signature must sign all the fields, including
  * the algorithm it used.
@@ -23,7 +41,6 @@ export interface ISwarmMessageBodyDeserialized {
   pld: string | Buffer;
   ts: number;
   iss: string;
-  alg: string;
 }
 
 /**
@@ -62,7 +79,16 @@ export interface ISwarmMessageRaw {
    * @memberof ISwarmMessageRaw
    */
   sig: string;
+  /**
+   * the algorythm used for the signature
+   *
+   * @type {string}
+   * @memberof ISwarmMessageRaw
+   */
+  alg: ownKeyOf<typeof ESwarmMessageSignatureAlgorithmsDescription>;
 }
+
+export type TSwarmMessageSeriazlized = string;
 
 /**
  * this is representation of a message deserialized.

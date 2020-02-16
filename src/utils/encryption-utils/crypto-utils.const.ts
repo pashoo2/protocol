@@ -1,4 +1,5 @@
 import { ENCRYPTION_FORMAT_SUPPORTED } from '../data-sign-utils/main.data-sign-utils.const';
+import { HASH_CALCULATION_UTILS_HASH_ALHORITHM } from '../hash-calculation-utils/hash-calculation-utils.const';
 
 export const CRYPTO_UTIL_KEYS_EXTRACTABLE = true;
 
@@ -6,7 +7,11 @@ export const CRYPTO_UTIL_KEY_ALGORITHM = 'RSA-OAEP';
 
 export const CRYPTO_UTIL_KEY_DESC = {
   name: CRYPTO_UTIL_KEY_ALGORITHM,
-  hash: { name: ENCRYPTION_FORMAT_SUPPORTED || 'SHA-256' },
+  hash: {
+    name:
+      ENCRYPTION_FORMAT_SUPPORTED ||
+      HASH_CALCULATION_UTILS_HASH_ALHORITHM.SHA256,
+  },
 };
 
 export enum eCRYPTO_UTILS_KEYS_USAGES {

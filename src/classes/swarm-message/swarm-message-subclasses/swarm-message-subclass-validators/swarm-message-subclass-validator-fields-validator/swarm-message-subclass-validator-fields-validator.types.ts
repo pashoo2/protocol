@@ -42,6 +42,14 @@ export interface IMessageFieldsValidatorOptions {
  */
 export interface ISwarmMessageSubclassFieldsValidator {
   /**
+   * validate message's deserialized body object
+   *
+   * @param {ISwarmMessageBodyDeserialized} messageBody
+   * @memberof SwarmMessageSubclassFieldsValidator
+   * @throws
+   */
+  validateMessageBody(messageBody: ISwarmMessageBodyDeserialized): void;
+  /**
    * validate swarm message object
    * throw an error if the message
    * is not valid

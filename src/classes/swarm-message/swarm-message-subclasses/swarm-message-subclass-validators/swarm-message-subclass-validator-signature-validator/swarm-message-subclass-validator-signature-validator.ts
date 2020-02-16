@@ -6,16 +6,21 @@ import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message-subclass
 import { isCryptoKeyDataVerify } from '../../../../../utils/encryption-keys-utils/encryption-keys-utils';
 import { QueuedEncryptionClassBase } from '../../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base';
 import { IQueuedEncrypyionClassBase } from '../../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
-import { swarmMessageUtilSignatureGetStringForSignByMessageRaw } from '../../../swarm-message-utils/swarm-message-utils-signature';
+import { swarmMessageUtilSignatureGetStringForSignByMessageRaw } from '../../../swarm-message-utils/swarm-message-utils-signature/swarm-message-utils-signature';
+import { ISwarmMessageUtilSignatureGetStringForSignByMessageRaw } from '../../../swarm-message-utils/swarm-message-utils-signature/swarm-message-utils-signature.types';
 
 export class SwarmMessgeSubclassSignatureValidator {
+  protected algSupported?: IMessageSignatureValidatorOptions['algSupported'];
+
   protected queueOptions: IMessageSignatureValidatorOptions['queueOptions'];
 
   protected caConnection?: ICentralAuthority;
 
-  protected sigVerificationQueue?: IQueuedEncrypyionClassBase;
+  protected signVerificationQueue?: IQueuedEncrypyionClassBase;
 
-  constructor(options?: IMessageSignatureValidatorOptions) {
+  protected getDataToSignBySwarmMsg?: ISwarmMessageUtilSignatureGetStringForSignByMessageRaw;
+
+  constructor(options: IMessageSignatureValidatorOptions) {
     this.setOptions(options);
     this.startSignatureVerificationQueue();
   }
@@ -43,32 +48,41 @@ export class SwarmMessgeSubclassSignatureValidator {
     );
   };
 
-  protected setOptions(options?: IMessageSignatureValidatorOptions) {
-    if (options) {
-      assert(typeof options === 'object', 'The options must be an object');
+  protected setOptions(options: IMessageSignatureValidatorOptions) {
+    assert(options, 'An options must be defined');
+    assert(typeof options === 'object', 'The options must be an object');
 
-      const { queueOptions, caConnection } = options;
+    const { queueOptions, caConnection } = options;
 
+    assert(
+      !!caConnection,
+      'Central authority connection must be provided in options'
+    );
+    assert(
+      typeof caConnection.getSwarmUserSignPubKey === 'function',
+      'Central authority connection must have the method getSwarmUserSignPubKey'
+    );
+    if (queueOptions) {
       assert(
-        !!caConnection,
-        'Central authority connection must be provided in options'
+        typeof queueOptions === 'object',
+        'The queue options must be an object'
       );
-      assert(
-        typeof caConnection.getSwarmUserSignPubKey === 'function',
-        'Central authority connection must have the method getSwarmUserSignPubKey'
-      );
-      if (queueOptions) {
-        assert(
-          typeof queueOptions === 'object',
-          'The queue options must be an object'
-        );
-        this.queueOptions = queueOptions;
-      }
+      this.queueOptions = queueOptions;
     }
+    assert(options.utils, 'Utils must be provided in options');
+    assert(typeof options.utils === 'object', 'Utils must be an object');
+
+    const { getDataToSignBySwarmMsg } = options.utils;
+
+    assert(
+      typeof getDataToSignBySwarmMsg === 'function',
+      'getDataToSignBySwarmMsg must be provided'
+    );
+    this.getDataToSignBySwarmMsg = getDataToSignBySwarmMsg;
   }
 
   protected startSignatureVerificationQueue() {
-    this.sigVerificationQueue = new QueuedEncryptionClassBase({
+    this.signVerificationQueue = new QueuedEncryptionClassBase({
       queueOptions: this.queueOptions,
     });
   }
@@ -77,7 +91,7 @@ export class SwarmMessgeSubclassSignatureValidator {
     assert(!!messageRaw, 'Message is not defined');
     assert(typeof messageRaw === 'object', 'Message must be an object');
 
-    const { bdy, uid, sig } = messageRaw;
+    const { bdy, uid, sig, alg } = messageRaw;
 
     assert(!!bdy, 'A body of the message must be defined');
     assert(
@@ -94,6 +108,14 @@ export class SwarmMessgeSubclassSignatureValidator {
       typeof sig === 'string',
       'A signature of the message must be a string'
     );
+    assert(
+      typeof alg === 'string',
+      "Algorithm of the message's singature must be a string"
+    );
+    assert(
+      this.algSupported?.includes(alg),
+      "The algorithm of the message's signature is not supported"
+    );
   }
 
   protected getSenderSignPubKey(uid: TSwarmMessageUserIdentifierSerialized) {
@@ -108,6 +130,6 @@ export class SwarmMessgeSubclassSignatureValidator {
     const data = swarmMessageUtilSignatureGetStringForSignByMessageRaw(msgRaw);
     const sig = msgRaw.sig;
 
-    return this.sigVerificationQueue?.verifyData(data, sig, key);
+    return this.signVerificationQueue?.verifyData(data, sig, key);
   }
 }

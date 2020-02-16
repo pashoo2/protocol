@@ -6,7 +6,11 @@ import { ISwarmMessgeSubclassSignatureValidator } from './swarm-message-subclass
 import { ISwarmMessageSubclassFieldsValidator } from './swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator.types';
 import SwarmMessageSubclassFieldsValidator from './swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator';
 import { SwarmMessgeSubclassSignatureValidator } from './swarm-message-subclass-validator-signature-validator/swarm-message-subclass-validator-signature-validator';
-import { ISwarmMessageRaw, ISwarmMessage } from '../../swarm-message.types';
+import {
+  ISwarmMessageRaw,
+  ISwarmMessage,
+  ISwarmMessageBodyDeserialized,
+} from '../../swarm-message.types';
 import assert from 'assert';
 
 export class SwarmMessageSubclassValidator
@@ -50,6 +54,21 @@ export class SwarmMessageSubclassValidator
       return;
     }
     return messageFormatValidator.validateMessage(msg);
+  };
+
+  public validateMessageBody = (
+    msgBody: ISwarmMessageBodyDeserialized
+  ): void => {
+    const { messageFormatValidator } = this;
+
+    if (!messageFormatValidator) {
+      assert(
+        !!messageFormatValidator,
+        'Validator of a message fields format is not defined'
+      );
+      return;
+    }
+    return messageFormatValidator.validateMessageBody(msgBody);
   };
 
   /**

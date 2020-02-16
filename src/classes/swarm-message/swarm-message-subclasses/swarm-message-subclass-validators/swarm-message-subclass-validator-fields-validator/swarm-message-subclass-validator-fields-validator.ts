@@ -87,11 +87,29 @@ export class SwarmMessageSubclassFieldsValidator
   }
 
   /**
+   * validate message's deserialized body object
+   *
+   * @param {ISwarmMessageBodyDeserialized} messageBody
+   * @memberof SwarmMessageSubclassFieldsValidator
+   * @throws
+   */
+  public validateMessageBody(messageBody: ISwarmMessageBodyDeserialized): void {
+    assert(!!messageBody, 'Message body must be defined');
+    assert(typeof messageBody === 'object', 'Message body must be an object');
+    const { iss, pld, ts, typ } = messageBody;
+
+    this.validateType(typ);
+    this.validateIssuer(iss);
+    this.validatePayload(pld);
+    this.validateTimestamp(ts);
+  }
+
+  /**
    * validate swarm message object
    * throw an error if the message
    * is not valid
    *
-   * @param {ISwarmMessageBodyDeserialized} message
+   * @param {ISwarmMessage} message
    * @memberof SwarmMessageSubclassFieldsValidator
    * @throws
    */
@@ -101,8 +119,7 @@ export class SwarmMessageSubclassFieldsValidator
 
     const { bdy, uid, sig } = message;
 
-    assert(!!bdy, 'A body of the message must be defined');
-    assert(typeof bdy === 'object', 'A body of the message must be an object');
+    this.validateMessageBody(bdy);
     validateMessageSignatureFormat(sig);
     this.validateUserIdentifier(uid);
 
