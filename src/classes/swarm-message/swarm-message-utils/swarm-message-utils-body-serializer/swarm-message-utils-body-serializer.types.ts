@@ -1,7 +1,7 @@
 import {
-  ISwarmMessageBodyDeserialized,
+  ISwarmMessageBody,
   TSwarmMessageBodyRaw,
 } from '../../swarm-message-constructor.types';
 export interface ISwarmMessageUtilsBodySerializer {
-  (msgBody: ISwarmMessageBodyDeserialized): TSwarmMessageBodyRaw;
+  (msgBody: ISwarmMessageBody): TSwarmMessageBodyRaw;
 }

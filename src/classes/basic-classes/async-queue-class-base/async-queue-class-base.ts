@@ -96,15 +96,9 @@ export class AsyncQueueClassBase extends TAsyncQueueBaseClass {
       throw new Error('runPromiseProvider is not defined');
     }
     if (this.isBatch<T>(promiseProvider)) {
-      result = Promise.all(
-        (promiseProvider as TAsyncQueueBaseClassPromiseProviderBatch<T>).map(
-          this.runPromiseProvider
-        )
-      );
+      result = Promise.all(promiseProvider.map(this.runPromiseProvider));
     } else {
-      result = this.runPromiseProvider(
-        promiseProvider as TAsyncQueueBaseClassPromiseProvider<T>
-      );
+      result = this.runPromiseProvider(promiseProvider);
     }
     this.start();
     return result;

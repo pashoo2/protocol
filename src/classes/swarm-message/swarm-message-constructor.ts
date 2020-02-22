@@ -119,7 +119,7 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
   }
 
   /** */
-  public construct = <
+  public construct = async <
     T extends TSwarmMessageConstructorArgumentBody | TSwarmMessageSeriazlized
   >(
     message: T
@@ -298,7 +298,6 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
   protected setOptions(options: TSwarmMessageConstructorOptions) {
     this.validateOptions(options);
     this.constructorOptions = this.extendOptionsByDefaults(options);
-    debugger;
     // validator must runs at first cause
     // it used by another instances
     this.runSwarmMessageValidator();

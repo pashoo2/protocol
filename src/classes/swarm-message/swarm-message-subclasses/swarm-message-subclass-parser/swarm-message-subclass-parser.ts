@@ -42,7 +42,7 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
   protected validateOptions(options: ISwarmMessageSubclassParserOptions): void {
     assert(options, 'Options must be provided');
     assert(
-      typeof options !== 'object',
+      typeof options === 'object',
       'The options provided must be an object'
     );
 

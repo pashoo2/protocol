@@ -38,6 +38,11 @@ export type TSwarmMessageSignatureAlgorithm = ownKeyOf<
 export type TSwarmMessageSerialized = string;
 
 /**
+ * message payload deserialized
+ */
+export type TSwarmMessagePayloadDeserialized = string;
+
+/**
  * message for sending an information in
  * the peer to peer decentralized system.
  * This interface describes deserialized
@@ -46,7 +51,7 @@ export type TSwarmMessageSerialized = string;
  * @export
  * @interface ISwarmMessage
  * @property {string} typ - a type of the message
- * @property {string | Buffer} pld - payload of the message is a buffer or a string
+ * @property {string | ArrayBuffer} pld - payload of the message is a buffer or a string
  * @property {string} uid - an identity of the user which post the message
  * @property {string} tss - UNIX timestamp in UTC when the message was posted. In seconds
  * @property {string} iss - the service in which the message was generated
@@ -56,7 +61,7 @@ export type TSwarmMessageSerialized = string;
  */
 export interface ISwarmMessageBodyDeserialized {
   typ: string | number;
-  pld: string | Buffer;
+  pld: TSwarmMessagePayloadDeserialized | ArrayBuffer;
   ts: number;
   iss: string;
 }
@@ -109,6 +114,18 @@ export interface ISwarmMessageRaw {
 export type TSwarmMessageSeriazlized = string;
 
 /**
+ * body of a swarm message
+ *
+ * @export
+ * @interface ISwarmMessageBody
+ * @extends {Omit<ISwarmMessageBodyDeserialized, 'pld'>}
+ */
+export interface ISwarmMessageBody
+  extends Omit<ISwarmMessageBodyDeserialized, 'pld'> {
+  pld: TSwarmMessagePayloadDeserialized;
+}
+
+/**
  * this is representation of a message deserialized.
  *
  * @export
@@ -116,7 +133,7 @@ export type TSwarmMessageSeriazlized = string;
  * @extends {ISwarmMessageBodyDeserialized}
  */
 export interface ISwarmMessage extends Omit<ISwarmMessageRaw, 'bdy'> {
-  bdy: ISwarmMessageBodyDeserialized;
+  bdy: ISwarmMessageBody;
 }
 
 export interface ISwarmMessageInstance extends ISwarmMessage {
@@ -170,6 +187,7 @@ export type TSwarmMessageConstructorOptions = Omit<
   validation?: Partial<ISwarmMessageConstructorOptionsRequired['validation']>;
 };
 
+// construct message from a serialized
 export interface ISwarmMessageConstructor {
   construct(message: TSwarmMessageSeriazlized): Promise<ISwarmMessageInstance>;
 }
@@ -180,6 +198,7 @@ export type TSwarmMessageConstructorArgumentBody = Omit<
 > &
   Partial<ISwarmMessageBodyDeserialized>;
 
+// construct message from an object which represents message's body
 export interface ISwarmMessageConstructor {
   construct(
     messageBody: TSwarmMessageConstructorArgumentBody

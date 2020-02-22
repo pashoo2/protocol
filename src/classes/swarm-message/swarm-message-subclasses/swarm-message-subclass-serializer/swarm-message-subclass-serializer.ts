@@ -3,15 +3,17 @@ import { isCryptoKeyDataSign } from '../../../../utils/encryption-keys-utils/enc
 import { QueuedEncryptionClassBase } from '../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base';
 import { ISwarmMessageSerializerUser } from './swarm-message-subclass-serializer.types';
 import CentralAuthorityIdentity from '../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
-import { ISwarmMessageInstance } from '../../swarm-message-constructor.types';
+import { typedArrayToString } from '../../../../utils/typed-array-utils';
+import { ISwarmMessageBody } from '../../swarm-message-constructor.types';
+import {
+  ISwarmMessageInstance,
+  TSwarmMessagePayloadDeserialized,
+} from '../../swarm-message-constructor.types';
 import {
   TSwarmMessageBodyRaw,
   ISwarmMessageRaw,
 } from '../../swarm-message-constructor.types';
-import {
-  ISwarmMessageBodyDeserialized,
-  TSwarmMessageSerialized,
-} from '../../swarm-message-constructor.types';
+import { ISwarmMessageBodyDeserialized } from '../../swarm-message-constructor.types';
 import {
   IQueuedEncrypyionClassBase,
   IQueuedEncrypyionClassBaseOptions,
@@ -72,7 +74,8 @@ export class SwarmMessageSerializer implements ISwarmMessageSerializer {
   ): Promise<ISwarmMessageInstance> => {
     this.validateMessageBody(msgBody);
 
-    const bodySeriazlized = this.getMessageBodySerialized(msgBody);
+    const swarmMessageBody = this.serializeMessageBody(msgBody);
+    const bodySeriazlized = this.getMessageBodySerialized(swarmMessageBody);
     const swarmMessageNotSigned = this.getMessageRawWithoutSignature(
       bodySeriazlized
     );
@@ -83,7 +86,7 @@ export class SwarmMessageSerializer implements ISwarmMessageSerializer {
     }
     return this.getMessageSignedSerialized(
       swarmMessageNotSigned,
-      msgBody,
+      swarmMessageBody,
       signature
     );
   };
@@ -222,6 +225,38 @@ export class SwarmMessageSerializer implements ISwarmMessageSerializer {
   }
 
   /**
+   * serizlize message body to
+   * the SwarmMessage's instance format
+   *
+   * @protected
+   * @param {ISwarmMessageBodyDeserialized} msgBody
+   * @returns {ISwarmMessageBody}
+   * @memberof SwarmMessageSerializer
+   * @throws - throw an error is failed to serialize
+   * body
+   */
+  protected serializeMessageBody(
+    msgBody: ISwarmMessageBodyDeserialized
+  ): ISwarmMessageBody {
+    let msgPayload: TSwarmMessagePayloadDeserialized;
+    const { pld } = msgBody;
+
+    if (pld instanceof ArrayBuffer) {
+      msgPayload = typedArrayToString(pld) as string;
+      assert(
+        typeof msgPayload === 'string',
+        'Failed to convert message payload from Buffer to string'
+      );
+    } else {
+      msgPayload = pld;
+    }
+    return {
+      ...msgBody,
+      pld: msgPayload,
+    };
+  }
+
+  /**
    * seriazlize message body
    *
    * @protected
@@ -230,7 +265,7 @@ export class SwarmMessageSerializer implements ISwarmMessageSerializer {
    * @memberof SwarmMessageSerializer
    */
   protected getMessageBodySerialized(
-    msgBody: ISwarmMessageBodyDeserialized
+    msgBody: ISwarmMessageBody
   ): TSwarmMessageBodyRaw {
     const { utils } = this.options;
 
@@ -292,7 +327,7 @@ export class SwarmMessageSerializer implements ISwarmMessageSerializer {
    */
   protected getMessageSignedSerialized(
     msgRawUnsigned: Omit<ISwarmMessageRaw, 'sig'>,
-    msgBody: ISwarmMessageBodyDeserialized,
+    msgBody: ISwarmMessageBody,
     signature: ISwarmMessageRaw['sig']
   ): ISwarmMessageInstance {
     const { utils } = this.options;

@@ -3,6 +3,7 @@ import { lazyLoadScript } from 'utils/lazy-loading-utils/lazy-loading-utils';
 import Mocha from 'mocha';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
+import chaiSubset from 'chai-subset';
 
 const MOCHA_CDN_URL =
   'https://cdnjs.cloudflare.com/ajax/libs/mocha/6.2.1/mocha.min.js';
@@ -32,6 +33,7 @@ export async function initializeMocha() {
     `;
   document.body.append(mochaSetupScript);
   chai.use(chaiAsPromised);
+  chai.use(chaiSubset);
 }
 
 type TCallbackMochaRun = (failures: number) => void;
