@@ -329,7 +329,7 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
           }
         );
         await expect(
-          connection.closeDb(
+          connection.closeDatabase(
             SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_DB_NAME
           )
         ).to.eventually.eq(undefined);

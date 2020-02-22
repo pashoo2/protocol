@@ -1,14 +1,18 @@
 import { ISecretStoreCredentials } from '../secret-storage-class/secret-storage-class.types';
 import { ISwarmStoreConnectorOrbitDBConnectionOptions } from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.types';
 import { EventEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
+import { ESwarmStoreDbStatus as ESwarmStoreDatabaseStatus } from './swarm-store-class.const';
+import { SWARM_STORE_DATABASE_STATUS_ABSENT } from './swarm-store-class.const';
 import {
   TSwarmStoreConnectorOrbitDbDatabaseMethodNames,
   TSwarmStoreConnectorOrbitDbDatabaseMathodArgument,
 } from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import {
-  ESwarmStoreProvider,
+  ESwarmStoreConnector,
   ESwarmStoreEventNames,
 } from './swarm-store-class.const';
+
+export type TSwarmStoreConnectorEventRetransmitter = (...args: any[]) => void;
 
 export interface ISwarmStoreEvents {
   [ESwarmStoreEventNames.STATE_CHANGE]: boolean;
@@ -16,8 +20,28 @@ export interface ISwarmStoreEvents {
   [ESwarmStoreEventNames.CLOSE]: void;
   [ESwarmStoreEventNames.UPDATE]: string;
   [ESwarmStoreEventNames.LOADING]: number;
+  [ESwarmStoreEventNames.DB_LOADING]: [string, number];
   [ESwarmStoreEventNames.READY]: string;
 }
+
+// arguments avalilable for a database method
+export type TSwarmStoreDatabaseMethodArgument<
+  P extends ESwarmStoreConnector,
+  M
+> = P extends ESwarmStoreConnector.OrbitDB
+  ? TSwarmStoreConnectorOrbitDbDatabaseMathodArgument<M>
+  : never;
+
+// arguments avalilable for a database
+export type TSwarmStoreDatabaseMethodAnswer<
+  P extends ESwarmStoreConnector,
+  T
+> = P extends ESwarmStoreConnector.OrbitDB ? T : never;
+
+// a value can be stored
+export type TSwarmStoreValueTypes<
+  P extends ESwarmStoreConnector
+> = P extends ESwarmStoreConnector.OrbitDB ? any : never;
 
 /**
  * options of a swarm database
@@ -61,8 +85,8 @@ export interface ISwarmStoreUserOptions {
 }
 
 export type TSwarmStoreConnectorConnectionOptions<
-  P extends ESwarmStoreProvider
-> = P extends ESwarmStoreProvider.OrbitDB
+  P extends ESwarmStoreConnector
+> = P extends ESwarmStoreConnector.OrbitDB
   ? ISwarmStoreConnectorOrbitDBConnectionOptions
   : never;
 
@@ -72,7 +96,7 @@ export type TSwarmStoreConnectorConnectionOptions<
  * @export
  * @interface ISwarmStoreProviderOptions
  */
-export interface ISwarmStoreProviderOptions<P extends ESwarmStoreProvider> {
+export interface ISwarmStoreProviderOptions<P extends ESwarmStoreConnector> {
   provider: P;
   providerConnectionOptions: TSwarmStoreConnectorConnectionOptions<P>;
 }
@@ -98,9 +122,9 @@ export interface ISwarmStoreMainOptions
  * @extends {ISwarmStoreUserOptions}
  * @extends {ISwarmStoreDatabasesOptions}
  */
-export interface ISwarmStoreOptions<P extends ESwarmStoreProvider>
-  extends ISwarmStoreMainOptions,
-    ISwarmStoreProviderOptions<P> {}
+export interface ISwarmStoreOptions<P extends ESwarmStoreConnector>
+  extends Required<ISwarmStoreMainOptions>,
+    Required<ISwarmStoreProviderOptions<P>> {}
 
 /**
  * store a status of each database
@@ -110,37 +134,18 @@ export interface ISwarmStoreOptions<P extends ESwarmStoreProvider>
  * @export
  * @interface ISwarmStoreDatabasesStatus
  */
-export interface ISwarmStoreDatabasesStatus
+export interface ISwarmStoreDatabasesStatuses
   extends Record<
     ISwarmStoreDatabaseOptions['dbName'],
-    ESwarmStoreEventNames | undefined
+    ESwarmStoreDatabaseStatus | typeof SWARM_STORE_DATABASE_STATUS_ABSENT
   > {}
 
 // methods available for a database providers
 export type TSwarmStoreDatabaseMethod<
-  P extends ESwarmStoreProvider
-> = P extends ESwarmStoreProvider.OrbitDB
+  P extends ESwarmStoreConnector
+> = P extends ESwarmStoreConnector.OrbitDB
   ? TSwarmStoreConnectorOrbitDbDatabaseMethodNames
   : never;
-
-// arguments avalilable for a database method
-export type TSwarmStoreDatabaseMethodArgument<
-  P extends ESwarmStoreProvider,
-  M
-> = P extends ESwarmStoreProvider.OrbitDB
-  ? TSwarmStoreConnectorOrbitDbDatabaseMathodArgument<M>
-  : never;
-
-// arguments avalilable for a database
-export type TSwarmStoreDatabaseMethodAnswer<
-  P extends ESwarmStoreProvider,
-  T
-> = P extends ESwarmStoreProvider.OrbitDB ? T | Error : never;
-
-// a value can be stored
-export type TSwarmStoreValueTypes<
-  P extends ESwarmStoreProvider
-> = P extends ESwarmStoreProvider.OrbitDB ? any : never;
 
 /**
  * this interface must be implemented by a swarm storage connectors
@@ -150,8 +155,7 @@ export type TSwarmStoreValueTypes<
  * @extends {EventEmitter<ISwarmStoreEvents>}
  * @template P
  */
-export interface ISwarmStoreConnector<P extends ESwarmStoreProvider>
-  extends EventEmitter<ISwarmStoreEvents> {
+export interface ISwarmStoreConnectorBase<P extends ESwarmStoreConnector> {
   // ready to use
   isReady: boolean;
   // disconnected from the swarm
@@ -168,13 +172,19 @@ export interface ISwarmStoreConnector<P extends ESwarmStoreProvider>
   closeDatabase(
     dbName: ISwarmStoreDatabaseOptions['dbName']
   ): Promise<void | Error>;
-  // send request to a swarm database
+  // send request to a swarm database to perform
+  // an operation such as read or seta value
+  // on a database
   request<V extends TSwarmStoreValueTypes<P>, A>(
     dbName: ISwarmStoreDatabaseOptions['dbName'],
     dbMethod: TSwarmStoreDatabaseMethod<P>,
     arg: TSwarmStoreDatabaseMethodArgument<P, V>
-  ): Promise<TSwarmStoreDatabaseMethodAnswer<P, A>>;
+  ): Promise<TSwarmStoreDatabaseMethodAnswer<P, A> | Error>;
 }
+
+export interface ISwarmStoreConnector<P extends ESwarmStoreConnector>
+  extends EventEmitter<ISwarmStoreEvents>,
+    ISwarmStoreConnectorBase<P> {}
 
 /**
  * Implements connection to a swarm
@@ -189,10 +199,10 @@ export interface ISwarmStoreConnector<P extends ESwarmStoreProvider>
  * @export
  * @interface ISwarmStore
  */
-export interface ISwarmStore<P extends ESwarmStoreProvider>
-  extends Omit<ISwarmStoreConnector<P>, 'connect'> {
+export interface ISwarmStore<P extends ESwarmStoreConnector>
+  extends Omit<ISwarmStoreConnectorBase<P>, 'connect'> {
   // status of a database connected to
-  dbStatuses: ISwarmStoreDatabasesStatus;
+  dbStatuses: ISwarmStoreDatabasesStatuses;
   // open connection with all databases
   connect(options: ISwarmStoreOptions<P>): Promise<Error | void>;
 }

@@ -40,11 +40,11 @@ import { SwarmStorageConnectorOrbitDBSublassKeyStore } from './swarm-store-conne
 import { ISwarmStoreConnectorOrbitDBSubclassStorageFabric } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-storage-fabric/swarm-store-connector-orbit-db-subclass-storage-fabric.types';
 import { SwarmStoreConnectorOrbitDBSubclassStorageFabric } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-storage-fabric/swarm-store-connector-orbit-db-subclass-storage-fabric';
 import { ISwarmStoreConnector } from '../../swarm-store-class.types';
-import { ESwarmStoreProvider } from '../../swarm-store-class.const';
+import { ESwarmStoreConnector } from '../../swarm-store-class.const';
 
 export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
   extends EventEmitter<ISwarmStoreConnectorOrbitDBEvents>
-  implements ISwarmStoreConnector<ESwarmStoreProvider.OrbitDB> {
+  implements ISwarmStoreConnector<ESwarmStoreConnector.OrbitDB> {
   private static isLoadedCustomIdentityProvider: boolean = false;
 
   private static isLoadedCustomAccessController: boolean = false;
@@ -1046,6 +1046,10 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
       ESwarmStoreConnectorOrbitDBEventNames.LOADING,
       currentProgressInPercent
     );
+    this.emit(ESwarmStoreConnectorOrbitDBEventNames.DB_LOADING, [
+      dbName,
+      progress,
+    ]);
   };
 
   private handleDatabaseUpdated = (dbName: string) => {

@@ -1,11 +1,12 @@
 import { SwarmStoreConnectorOrbitDB } from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db';
+import { ISwarmStoreDatabasesStatuses } from './swarm-store-class.types';
 
-export enum ESwarmStoreProvider {
+export enum ESwarmStoreConnector {
   OrbitDB = 'OrbitDB',
 }
 
-export const SWARM_STORE_PROVIDERS = {
-  [ESwarmStoreProvider.OrbitDB]: SwarmStoreConnectorOrbitDB,
+export const SWARM_STORE_CONNECTORS = {
+  [ESwarmStoreConnector.OrbitDB]: SwarmStoreConnectorOrbitDB,
 };
 
 export enum ESwarmStoreEventNames {
@@ -50,14 +51,41 @@ export enum ESwarmStoreEventNames {
    */
   CLOSE_DATABASE = 'CLOSE_DATABASE',
   /**
-   * emitted when loading the database from the local data
+   * emitted when loading the a database from the local data
    * Arguments:
-   * 1) Number - percentage
+   * 1) Number - overall loaded data percentage for all databases
    */
   LOADING = 'LOADING',
+  /**
+   * emitted when loading the a database from the local data
+   * Arguments:
+   * 1) dbName - name of the database,
+   * 2) Number - loaded data percentage for the database.
+   */
+  DB_LOADING = 'DB_LOADING',
   /**
    * an error has occured on any operation
    * emits with the argument equals to an error
    */
   ERROR = 'ERROR',
 }
+
+export enum ESwarmStoreDbStatus {
+  // database updated from the swarm
+  UPDATE = 'UPDATE',
+  // database loaded
+  READY = 'READY',
+  // database closed
+  CLOSE = 'CLOSE_DATABASE',
+  // database data load in progress  from the local storage
+  LOADING = 'LOADING',
+  // all data of the database loaded from the local storage
+  LOADED = 'LOADED',
+  // means that database is exists in the list, but still not started
+  EMPTY = 'EMPTY',
+}
+
+// means that there is no status found for a database
+export const SWARM_STORE_DATABASE_STATUS_ABSENT = undefined;
+
+export const SWARM_STORE_DATABASES_STATUSES_EMPTY: ISwarmStoreDatabasesStatuses = {};
