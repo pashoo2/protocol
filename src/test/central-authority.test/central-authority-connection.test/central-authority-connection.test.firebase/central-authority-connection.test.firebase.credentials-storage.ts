@@ -10,6 +10,7 @@ import {
 import {
   CA_CONNECTION_FIREBASE_CONFIG,
   CA_CONNECTION_FIREBASE_CONFIG_WATCHA3,
+  CA_CONNECTION_FIREBASE_USER_CREDENTIALS_ANOTHER,
 } from './central-authority-connection.test.firebase.const';
 import { ICAUserUniqueIdentifierMetadata } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types';
 import { TCentralAuthorityUserCryptoCredentials } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
@@ -273,10 +274,7 @@ export const runTestFirebaseCredentialsStorage = async () => {
   // }
   if (
     !(await runTestFirebaseCredentialsStorageVersion(
-      {
-        login: 'yaxida4519@email1.pro',
-        password: '123456',
-      },
+      CA_CONNECTION_FIREBASE_USER_CREDENTIALS_ANOTHER,
       undefined,
       CA_CONNECTION_FIREBASE_CONFIG_WATCHA3
     ))

@@ -1,10 +1,17 @@
 import { expect } from 'chai';
 import { CentralAuthority } from '../../classes/central-authority-class/central-authority-class';
 import { ICentralAuthority } from '../../classes/central-authority-class/central-authority-class.types';
-import { CA_CLASS_OPTIONS_VALID_NO_PROFILE } from 'test/central-authority.test/central-authority-class.test/central-authority-class.test.const.shared';
+import {
+  CA_CLASS_OPTIONS_VALID_NO_PROFILE,
+  CA_CLASS_OPTIONS_VALID_NO_PROFILE_ANOTHER,
+} from 'test/central-authority.test/central-authority-class.test/central-authority-class.test.const.shared';
 import { SwarmMessageConstructor } from '../../classes/swarm-message/swarm-message-constructor';
 import { SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_SERIALIZER } from '../../classes/swarm-message/swarm-message-constructor.const';
 import { stringToTypedArray } from '../../utils/typed-array-utils';
+import {
+  ISwarmMessage,
+  ISwarmMessageRaw,
+} from '../../classes/swarm-message/swarm-message-constructor.types';
 
 export const runSwarmMessageConstructorTests = () => {
   describe('SwarmMessageConstructor class tests', async function() {
@@ -39,22 +46,109 @@ export const runSwarmMessageConstructorTests = () => {
       });
     });
 
-    describe('SwarmMessageConstructor class test methods', () => {
+    describe('class methods tests', () => {
+      let messagesConstructed: ISwarmMessage[] = [];
+      let messagesExpected: {}[] = [];
       let swarmMessageConstructor: SwarmMessageConstructor;
 
-      before(() => {
-        expect(caConnection).to.be.an.instanceof(CentralAuthority);
-        expect(() => {
-          swarmMessageConstructor = new SwarmMessageConstructor({
-            caConnection,
-          });
-        }).not.to.throw();
-        expect(swarmMessageConstructor).to.be.an.instanceof(
-          SwarmMessageConstructor
-        );
-      });
+      const testMessage = async (
+        messageConstructed: ISwarmMessage,
+        messageObjExpected: {},
+        swarmMessageConstructor: SwarmMessageConstructor
+      ) => {
+        // deserizlization should fail with a not valid message
 
-      describe('SwarmMessageConstructor class message serizalization tests', () => {
+        expect(messageConstructed).to.be.an('object');
+
+        const messageSerializedStringified = JSON.stringify(messageConstructed);
+
+        // should throw cause the body is object after JSON.parse, but must be a string
+        await expect(
+          swarmMessageConstructor.construct(messageSerializedStringified)
+        ).to.eventually.be.rejected;
+
+        const messageStringifiedParsed: ISwarmMessageRaw = JSON.parse(
+          String(messageConstructed)
+        );
+        const messageStringifiedParsedWrongAlg = {
+          ...messageStringifiedParsed,
+          alg: '1' as any,
+        };
+
+        await expect(
+          swarmMessageConstructor.construct(
+            JSON.stringify(messageStringifiedParsedWrongAlg)
+          )
+        ).to.eventually.be.rejected;
+
+        const uidWrong = `${messageStringifiedParsed.uid}`.replace('19', '20');
+        const messageStringifiedParsedWrongUid = {
+          ...messageStringifiedParsed,
+          uid: uidWrong,
+        };
+
+        await expect(
+          swarmMessageConstructor.construct(
+            JSON.stringify(messageStringifiedParsedWrongUid)
+          )
+        ).to.eventually.be.rejected;
+
+        const messageStringifiedParsedWrongSig = {
+          ...messageStringifiedParsed,
+          sig: `${messageStringifiedParsed.sig}1`,
+        };
+
+        await expect(
+          swarmMessageConstructor.construct(
+            JSON.stringify(messageStringifiedParsedWrongSig)
+          )
+        ).to.eventually.be.rejected;
+
+        const messageStringifiedParsedWrongBody = {
+          ...messageStringifiedParsed,
+          bdy: JSON.stringify(
+            Object.assign(JSON.parse(messageStringifiedParsed.bdy), {
+              fieldNotExists: '',
+            })
+          ),
+        };
+
+        await expect(
+          swarmMessageConstructor.construct(
+            JSON.stringify(messageStringifiedParsedWrongBody)
+          )
+        ).to.eventually.be.rejected;
+
+        //deserizlization should be fullfield with a valid message
+
+        expect(messageConstructed).to.be.an('object');
+        const messageStringified = String(messageConstructed);
+
+        await expect(
+          swarmMessageConstructor.construct(messageStringified)
+        ).to.eventually.be.fulfilled.with.an('object');
+
+        const swarmMessage = await swarmMessageConstructor.construct(
+          messageStringified
+        );
+
+        expect(swarmMessage).to.containSubset(messageObjExpected);
+        return true;
+      };
+
+      describe('construction tests', () => {
+        before(() => {
+          expect(caConnection).to.be.an.instanceof(CentralAuthority);
+          expect(() => {
+            swarmMessageConstructor = new SwarmMessageConstructor({
+              caConnection,
+            });
+          }).not.to.throw();
+          expect(swarmMessageConstructor).to.be.an.instanceof(
+            SwarmMessageConstructor
+          );
+        });
+
         it('serialize message without fields required should be rejected', async () => {
           expect(swarmMessageConstructor).to.be.an.instanceof(
             SwarmMessageConstructor
@@ -89,7 +183,7 @@ export const runSwarmMessageConstructorTests = () => {
           ).to.eventually.be.rejected;
         });
 
-        it('serialize message with all fields required as body as string should be fullfield with a valid message', async () => {
+        it('message with all fields required as body as string should be fullfield with a valid message', async () => {
           expect(swarmMessageConstructor).to.be.an.instanceof(
             SwarmMessageConstructor
           );
@@ -97,6 +191,18 @@ export const runSwarmMessageConstructorTests = () => {
           const messageIssuer = 'message_issuer';
           const messageType = 'message_type';
           const messagePayload = 'message_body';
+          const messageObjExpected = {
+            alg: SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_SERIALIZER.alg,
+            sig: (expectedValue) => typeof expectedValue === 'string',
+            toString: (expectedValue) => typeof expectedValue === 'function',
+            uid: String(caConnection.getUserIdentity()),
+            bdy: {
+              iss: messageIssuer,
+              pld: messagePayload,
+              typ: messageType,
+              ts: (ev) => typeof ev === 'number',
+            },
+          };
 
           await expect(
             swarmMessageConstructor.construct({
@@ -111,18 +217,6 @@ export const runSwarmMessageConstructorTests = () => {
             typ: messageType,
             pld: messagePayload,
           });
-          const messageObjExpected = {
-            alg: SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_SERIALIZER.alg,
-            sig: (expectedValue) => typeof expectedValue === 'string',
-            toString: (expectedValue) => typeof expectedValue === 'function',
-            uid: String(caConnection.getUserIdentity()),
-            bdy: {
-              iss: messageIssuer,
-              pld: messagePayload,
-              typ: messageType,
-              ts: (ev) => typeof ev === 'number',
-            },
-          };
 
           expect(message).to.containSubset(messageObjExpected);
 
@@ -133,6 +227,11 @@ export const runSwarmMessageConstructorTests = () => {
             ...parsedFromStringified,
             bdy: JSON.parse(parsedFromStringified.bdy),
           }).to.containSubset(messageObjExpected);
+          await expect(
+            testMessage(message, messageObjExpected, swarmMessageConstructor)
+          ).to.eventually.be.fulfilled.with.eq(true);
+          messagesConstructed.push(message);
+          messagesExpected.push(messageObjExpected);
         });
 
         it('serialize message with all fields required and body as ArrayBuffer should be fullfield with a valid message', async () => {
@@ -146,6 +245,18 @@ export const runSwarmMessageConstructorTests = () => {
           const messagePayload = stringToTypedArray(
             messagePayloadString
           ) as ArrayBuffer;
+          const messageObjExpected = {
+            alg: SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_SERIALIZER.alg,
+            sig: (expectedValue) => typeof expectedValue === 'string',
+            toString: (expectedValue) => typeof expectedValue === 'function',
+            uid: String(caConnection.getUserIdentity()),
+            bdy: {
+              iss: messageIssuer,
+              pld: messagePayloadString,
+              typ: messageType,
+              ts: (ev) => typeof ev === 'number',
+            },
+          };
 
           expect(messagePayload).not.to.be.an('Error');
           await expect(
@@ -161,18 +272,6 @@ export const runSwarmMessageConstructorTests = () => {
             typ: messageType,
             pld: messagePayload,
           });
-          const messageObjExpected = {
-            alg: SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_SERIALIZER.alg,
-            sig: (expectedValue) => typeof expectedValue === 'string',
-            toString: (expectedValue) => typeof expectedValue === 'function',
-            uid: String(caConnection.getUserIdentity()),
-            bdy: {
-              iss: messageIssuer,
-              pld: messagePayloadString,
-              typ: messageType,
-              ts: (ev) => typeof ev === 'number',
-            },
-          };
 
           expect(message).to.containSubset(messageObjExpected);
 
@@ -183,6 +282,11 @@ export const runSwarmMessageConstructorTests = () => {
             ...parsedFromStringified,
             bdy: JSON.parse(parsedFromStringified.bdy),
           }).to.containSubset(messageObjExpected);
+          await expect(
+            testMessage(message, messageObjExpected, swarmMessageConstructor)
+          ).to.eventually.be.fulfilled.with.eq(true);
+          messagesConstructed.push(message);
+          messagesExpected.push(messageObjExpected);
         });
 
         it('serialize message with all fields required and body object as ArrayBuffer should be fullfield with a valid message', async () => {
@@ -204,6 +308,18 @@ export const runSwarmMessageConstructorTests = () => {
           const messagePayload = stringToTypedArray(
             messagePayloadString
           ) as ArrayBuffer;
+          const messageObjExpected = {
+            alg: SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_SERIALIZER.alg,
+            sig: (expectedValue) => typeof expectedValue === 'string',
+            toString: (expectedValue) => typeof expectedValue === 'function',
+            uid: String(caConnection.getUserIdentity()),
+            bdy: {
+              iss: messageIssuer,
+              pld: messagePayloadString,
+              typ: messageType,
+              ts: (ev) => typeof ev === 'number',
+            },
+          };
 
           expect(messagePayload).not.to.be.an('Error');
           await expect(
@@ -219,18 +335,6 @@ export const runSwarmMessageConstructorTests = () => {
             typ: messageType,
             pld: messagePayload,
           });
-          const messageObjExpected = {
-            alg: SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_SERIALIZER.alg,
-            sig: (expectedValue) => typeof expectedValue === 'string',
-            toString: (expectedValue) => typeof expectedValue === 'function',
-            uid: String(caConnection.getUserIdentity()),
-            bdy: {
-              iss: messageIssuer,
-              pld: messagePayloadString,
-              typ: messageType,
-              ts: (ev) => typeof ev === 'number',
-            },
-          };
 
           expect(message).to.containSubset(messageObjExpected);
           expect(JSON.parse(message.bdy.pld)).containSubset(
@@ -244,10 +348,52 @@ export const runSwarmMessageConstructorTests = () => {
             ...parsedFromStringified,
             bdy: JSON.parse(parsedFromStringified.bdy),
           }).to.containSubset(messageObjExpected);
+          await expect(
+            testMessage(message, messageObjExpected, swarmMessageConstructor)
+          ).to.eventually.be.fulfilled.with.eq(true);
+          messagesConstructed.push(message);
+          messagesExpected.push(messageObjExpected);
         });
       });
 
-      describe('SwarmMessageConstructor class message parser tests', () => {});
+      describe("construction tests with another user's connection to the central authority", () => {
+        before(async () => {
+          if (caConnection) {
+            await expect(caConnection.disconnect()).to.eventually.not.rejected;
+            expect(caConnection.isRunning).to.be.equal(false);
+          }
+          const caConnectionNext = new CentralAuthority();
+          const result = await caConnectionNext.connect(
+            CA_CLASS_OPTIONS_VALID_NO_PROFILE_ANOTHER
+          );
+
+          expect(result).not.to.be.an.instanceof(Error);
+          expect(caConnectionNext).to.be.an.instanceof(CentralAuthority);
+          expect(caConnectionNext.isRunning).to.equal(true);
+          expect(() => {
+            swarmMessageConstructor = new SwarmMessageConstructor({
+              caConnection: caConnectionNext,
+            });
+          }).not.to.throw();
+          expect(swarmMessageConstructor).to.be.an.instanceof(
+            SwarmMessageConstructor
+          );
+        });
+
+        it('deserizlize and validate each message created on previous test', async () => {
+          let message: ISwarmMessage | undefined;
+          let expected: {} | undefined;
+
+          while (
+            (message = messagesConstructed.pop()) &&
+            (expected = messagesExpected.pop())
+          ) {
+            await expect(
+              testMessage(message, expected, swarmMessageConstructor)
+            ).to.eventually.be.fulfilled.with.eq(true);
+          }
+        });
+      });
     });
   });
 };

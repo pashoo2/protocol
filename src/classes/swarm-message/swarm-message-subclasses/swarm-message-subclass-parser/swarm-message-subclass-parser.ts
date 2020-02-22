@@ -14,10 +14,10 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
   protected constructorOptions?: ISwarmMessageSubclassParserOptions;
 
   protected get options(): ISwarmMessageSubclassParserOptions {
-    if (!this.options) {
+    if (!this.constructorOptions) {
       throw new Error('The options is not defined for the instance');
     }
-    return this.options;
+    return this.constructorOptions;
   }
 
   constructor(options: ISwarmMessageSubclassParserOptions) {

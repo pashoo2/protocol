@@ -36,7 +36,7 @@ export class SwarmMessgeSubclassSignatureValidator {
     const userSignPubKey = await this.getSenderSignPubKey(uid);
 
     assert(
-      !isCryptoKeyDataVerify(userSignPubKey),
+      isCryptoKeyDataVerify(userSignPubKey),
       'Failed to get a valid key for the signature verification'
     );
     assert(
@@ -85,11 +85,14 @@ export class SwarmMessgeSubclassSignatureValidator {
   protected setOptions(options: IMessageSignatureValidatorOptions) {
     this.validateOptions(options);
 
-    const { utils, queueOptions } = options;
+    const { utils, queueOptions, algSupported, caConnection } = options;
     const { getDataToSignBySwarmMsg } = utils;
 
+    this.caConnection = caConnection;
     this.queueOptions = queueOptions;
     this.getDataToSignBySwarmMsg = getDataToSignBySwarmMsg;
+    this.algSupported =
+      typeof algSupported === 'string' ? [algSupported] : algSupported;
   }
 
   protected startSignatureVerificationQueue() {

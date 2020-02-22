@@ -21,7 +21,7 @@ export const verifyNative = async (
   key: CryptoKey,
   data: TDATA_SIGN_UTIL_VERIFY_DATA_TYPES_NATIVE,
   signature: TDATA_SIGN_UTIL_VERIFY_DATA_TYPES_NATIVE
-): Promise<boolean | Error> => {
+): Promise<true | Error> => {
   if (key.type !== DATA_SIGN_CRYPTO_UTIL_VERIFY_KEY_TYPE) {
     return new Error(
       `The type of the key ${key.type} may not be used for data decryption`
@@ -38,7 +38,9 @@ export const verifyNative = async (
       data
     );
 
-    return res;
+    return res !== true
+      ? new Error('The signature for the data is not valid')
+      : true;
   } catch (err) {
     return err;
   }
@@ -48,7 +50,7 @@ export const verifyData = async (
   key: TDATA_SIGN_UTIL_VERIFY_KEY_TYPES,
   data: TDATA_SIGN_UTIL_VERIFY_DATA_TYPES_EXTENDED,
   signature: TDATA_SIGN_UTIL_VERIFY_DATA_TYPES
-): Promise<boolean | Error> => {
+): Promise<true | Error> => {
   const k = await getKeyOfType(key, DATA_SIGN_CRYPTO_UTIL_VERIFY_KEY_TYPE);
 
   if (k instanceof Error) {
@@ -81,6 +83,5 @@ export const verifyData = async (
   if (s instanceof Error) {
     return s;
   }
-
   return verifyNative(k, d, s);
 };

@@ -1,4 +1,5 @@
 export {
   CA_CLASS_OPTIONS_VALID_NO_PROFILE,
   CA_CLASS_OPTIONS_VALID_WITH_PROFILE,
+  CA_CLASS_OPTIONS_VALID_NO_PROFILE_ANOTHER,
 } from './central-authority-class.test.const';

@@ -7,6 +7,7 @@ import {
   CA_CONNECTOINS_CONNECTIONS_POOL_TEST_FIREBASE_AUTH_PROVIDERS_CONF,
   CA_CONNECTOINS_CONNECTIONS_POOL_TEST_FIREBASE_AUTH_PROVIDERS_CONF_INVALID,
 } from '../central-authority-connection.test/central-authority-connections-pool.test/central-authority-connections-pool.test.const';
+import { CA_CONNECTION_FIREBASE_USER_CREDENTIALS_ANOTHER } from '../central-authority-connection.test/central-authority-connection.test.firebase/central-authority-connection.test.firebase.const';
 export {
   CA_SWARM_CREDENTIALS_PROVIDER_TEST_USERIDENTITY,
   CA_SWARM_CREDENTIALS_PROVIDER_TEST_USERIDENTITY_SECOND,
@@ -20,6 +21,17 @@ export const CA_CLASS_OPTIONS_VALID_NO_PROFILE: ICentralAuthorityOptions = {
   user: {
     authProviderUrl: CA_CONNECTOINS_CONNECTIONS_POOL_TEST_FIREBASE_DB_WATCHA_AUTH_PROVIDER_URL,
     credentials: CA_CONNECTOINS_CONNECTIONS_POOL_TEST_FIREBASE_DB_WATCHA_AUTH_PROVIDER_CREDENTIALS,
+  },
+};
+
+export const CA_CLASS_OPTIONS_VALID_NO_PROFILE_ANOTHER: ICentralAuthorityOptions = {
+  authProvidersPool: {
+    providersConfigurations:
+      CA_CONNECTOINS_CONNECTIONS_POOL_TEST_FIREBASE_AUTH_PROVIDERS_CONF.providers,
+  },
+  user: {
+    authProviderUrl: CA_CONNECTOINS_CONNECTIONS_POOL_TEST_FIREBASE_DB_WATCHA_AUTH_PROVIDER_URL,
+    credentials: CA_CONNECTION_FIREBASE_USER_CREDENTIALS_ANOTHER,
   },
 };
 
