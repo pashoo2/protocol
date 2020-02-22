@@ -1,4 +1,5 @@
 import { ESwarmConnectorOrbitDbDatabaseEventNames } from './swarm-store-connector-orbit-db-subclass-database.const';
+import { ISwarmStoreDatabaseOptions } from '../../../../swarm-store-class.types';
 import {
   ISwarmStoreConnectorOrbitDbDatabaseAccessControlleGrantCallback,
   ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess,
@@ -8,12 +9,8 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseOptions<TFeedStoreType>
   extends ISwarmStoreConnectorOrbitDbDatabaseAccessControlleGrantCallback<
       TFeedStoreType
     >,
-    ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess {
-  // Database name
-  dbName: string;
-  // is a puclic database. Private by
-  isPublic?: boolean;
-}
+    ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess,
+    ISwarmStoreDatabaseOptions {}
 
 export interface ISwarmStoreConnectorOrbitDbDatabaseEvents<
   TSwarmStoreConnectorOrbitDBDatabase
@@ -66,7 +63,7 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions {
 
 export type TFeedStoreHash = string;
 
-export type TSwarmStoreConnectorOrbitDbDatabaseMathodNames =
+export type TSwarmStoreConnectorOrbitDbDatabaseMethodNames =
   | 'get'
   | 'add'
   | 'remove'

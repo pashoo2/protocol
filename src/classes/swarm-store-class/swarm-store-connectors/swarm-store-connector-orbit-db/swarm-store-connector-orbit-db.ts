@@ -19,13 +19,13 @@ import { SwarmStoreConnectorOrbitDBSubclassAccessController } from './swarm-stor
 import {
   ISwarmStoreConnectorOrbitDBOptions,
   ISwarmStoreConnectorOrbitDBConnectionOptions,
-  TESwarmStoreConnectorOrbitDBEvents,
+  ISwarmStoreConnectorOrbitDBEvents,
 } from './swarm-store-connector-orbit-db.types';
 import { timeout, delay } from 'utils/common-utils/common-utils-timer';
 import { SwarmStoreConnectorOrbitDBDatabase } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database';
 import {
   ISwarmStoreConnectorOrbitDbDatabaseOptions,
-  TSwarmStoreConnectorOrbitDbDatabaseMathodNames,
+  TSwarmStoreConnectorOrbitDbDatabaseMethodNames,
   TSwarmStoreConnectorOrbitDbDatabaseMathodArgument,
 } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import { ESwarmConnectorOrbitDbDatabaseEventNames } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
@@ -39,10 +39,12 @@ import { SecretStorage } from 'classes/secret-storage-class/secret-storage-class
 import { SwarmStorageConnectorOrbitDBSublassKeyStore } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-keystore/swarm-store-connector-orbit-db-subclass-keystore';
 import { ISwarmStoreConnectorOrbitDBSubclassStorageFabric } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-storage-fabric/swarm-store-connector-orbit-db-subclass-storage-fabric.types';
 import { SwarmStoreConnectorOrbitDBSubclassStorageFabric } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-storage-fabric/swarm-store-connector-orbit-db-subclass-storage-fabric';
+import { ISwarmStoreConnector } from '../../swarm-store-class.types';
+import { ESwarmStoreProvider } from '../../swarm-store-class.const';
 
-export class SwarmStoreConnectorOrbitDB<
-  ISwarmDatabaseValueTypes
-> extends EventEmitter<TESwarmStoreConnectorOrbitDBEvents> {
+export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
+  extends EventEmitter<ISwarmStoreConnectorOrbitDBEvents>
+  implements ISwarmStoreConnector<ESwarmStoreProvider.OrbitDB> {
   private static isLoadedCustomIdentityProvider: boolean = false;
 
   private static isLoadedCustomAccessController: boolean = false;
@@ -223,7 +225,7 @@ export class SwarmStoreConnectorOrbitDB<
     const databaseOpenResult = await this.waitDatabaseOpened(database);
 
     if (databaseOpenResult instanceof Error) {
-      await this.closeDatabase(database); // close the connection to the database
+      await this.closeDb(database); // close the connection to the database
       await delay(300);
       if (
         openAttempt >
@@ -248,11 +250,11 @@ export class SwarmStoreConnectorOrbitDB<
     this.emit(ESwarmStoreConnectorOrbitDBEventNames.READY, dbOptions.dbName);
   };
 
-  public async closeDb(dbName: string): Promise<Error | void> {
+  public async closeDatabase(dbName: string): Promise<Error | void> {
     const db = this.getDbConnection(dbName);
 
     if (db) {
-      return this.closeDatabase(db);
+      return this.closeDb(db);
     }
     return new Error(`The database named ${dbName} was not found`);
   }
@@ -264,7 +266,7 @@ export class SwarmStoreConnectorOrbitDB<
    */
   public request = async (
     dbName: string,
-    dbMethod: TSwarmStoreConnectorOrbitDbDatabaseMathodNames,
+    dbMethod: TSwarmStoreConnectorOrbitDbDatabaseMethodNames,
     arg: TSwarmStoreConnectorOrbitDbDatabaseMathodArgument<
       ISwarmDatabaseValueTypes
     >
@@ -315,6 +317,7 @@ export class SwarmStoreConnectorOrbitDB<
       );
     }
   };
+
   protected setIsClosed = () => {
     this.setNotReady();
     this.isClosed = true;
@@ -552,15 +555,14 @@ export class SwarmStoreConnectorOrbitDB<
     if (!options || typeof options !== 'object') {
       throw new Error('The options must be an object');
     }
-
     this.options = options;
 
-    const { id, credentials, directory } = options;
+    const { userId, credentials, directory } = options;
 
-    if (!id) {
+    if (!userId) {
       console.warn(new Error('The user id is not provided'));
     } else {
-      this.userId = id;
+      this.userId = userId;
     }
     if (typeof directory === 'string') {
       this.directory = directory;
@@ -774,7 +776,7 @@ export class SwarmStoreConnectorOrbitDB<
     if (!options) {
       this.applyOptions({
         ...this.options,
-        id: '',
+        userId: '',
         databases: [dbOptions],
       } as ISwarmStoreConnectorOrbitDBOptions<ISwarmDatabaseValueTypes>);
       return;
@@ -800,7 +802,7 @@ export class SwarmStoreConnectorOrbitDB<
     return this.setDbOptions(dbOptions, true);
   }
 
-  private async closeDatabase(
+  private async closeDb(
     database: SwarmStoreConnectorOrbitDBDatabase<ISwarmDatabaseValueTypes>
   ): Promise<Error | void> {
     this.unsetListenersDatabaseEvents(database);
@@ -1098,7 +1100,7 @@ export class SwarmStoreConnectorOrbitDB<
 
       for (; idx < len; idx += 1) {
         const db = databasesToClose[idx];
-        const dbCloseResult = await this.closeDatabase(db);
+        const dbCloseResult = await this.closeDb(db);
 
         if (dbCloseResult instanceof Error) {
           console.error(this.emitError(dbCloseResult));
