@@ -33,9 +33,10 @@ import {
  * @implements {ISwarmStore<P>}
  * @template P
  */
-export class SwarmStore<P extends ESwarmStoreConnector>
-  extends EventEmitter<ISwarmStoreEvents>
-  implements ISwarmStore<P> {
+export class SwarmStore<
+  P extends ESwarmStoreConnector,
+  E extends ISwarmStoreEvents = ISwarmStoreEvents
+> extends EventEmitter<E> implements ISwarmStore<P> {
   public get isReady(): boolean {
     return !!this.connector && this.connector.isReady;
   }

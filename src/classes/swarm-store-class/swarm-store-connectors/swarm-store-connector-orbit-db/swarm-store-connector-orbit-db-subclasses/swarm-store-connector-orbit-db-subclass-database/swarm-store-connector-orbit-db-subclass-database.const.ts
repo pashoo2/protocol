@@ -8,6 +8,10 @@ export enum EOrbidDBFeedSoreEvents {
   LOAD_PROGRESS = 'load.progress',
   READY = 'ready',
   CLOSE = 'closed',
+  // Emitted after an entry was added locally to the database.
+  // hash is the IPFS hash of the latest state of the database.
+  // entry is the added database op.
+  NEW_ENTRY = 'write',
 }
 
 export enum ESwarmConnectorOrbitDbDatabaseEventNames {
@@ -26,6 +30,8 @@ export enum ESwarmConnectorOrbitDbDatabaseEventNames {
   // a fatal error has occurred
   // the instance can't be used anymore
   FATAL = 'fatal',
+  // after a new entry stored locally
+  NEW_ENTRY = 'entry',
 }
 export const SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONFIGURATION: IStoreOptions = {
   localOnly: false,

@@ -1056,6 +1056,29 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
     this.emit(ESwarmConnectorOrbitDbDatabaseEventNames.UPDATE, dbName);
   };
 
+  /**
+   * write
+   * db.events.on('write', (address, entry, heads) => ... )
+   * Emitted after an entry was added locally to the database. hash is the IPFS hash of the latest state of the database.
+   * entry is the added database op.
+   *
+   * @private
+   * @memberof SwarmStoreConnectorOrbitDB
+   */
+  private handleNewEntryAddedToDatabase = ([dbName, entry, address, heads]: [
+    string,
+    LogEntry<ISwarmDatabaseValueTypes>,
+    string,
+    any
+  ]) => {
+    this.emit(ESwarmConnectorOrbitDbDatabaseEventNames.NEW_ENTRY, [
+      dbName,
+      entry,
+      address,
+      heads,
+    ]);
+  };
+
   private async setListenersDatabaseEvents(
     database: SwarmStoreConnectorOrbitDBDatabase<ISwarmDatabaseValueTypes>,
     isSet: boolean = true
@@ -1079,6 +1102,10 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
     database[methodName](
       ESwarmConnectorOrbitDbDatabaseEventNames.FATAL,
       this.handleDatabaseStoreClosed
+    );
+    database[methodName](
+      ESwarmConnectorOrbitDbDatabaseEventNames.NEW_ENTRY,
+      this.handleNewEntryAddedToDatabase
     );
   }
 

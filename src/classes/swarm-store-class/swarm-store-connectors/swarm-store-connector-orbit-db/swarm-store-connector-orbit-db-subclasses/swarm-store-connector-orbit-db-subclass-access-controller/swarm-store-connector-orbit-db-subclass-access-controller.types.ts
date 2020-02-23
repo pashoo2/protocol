@@ -20,7 +20,7 @@ export type TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<
   TFeedStoreType
 > = (
   payload: ISwarmStoreConnectorOrbitDBLogEntity<TFeedStoreType>,
-  id: string
+  userId: string
 ) => Promise<boolean>;
 
 export interface ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess {

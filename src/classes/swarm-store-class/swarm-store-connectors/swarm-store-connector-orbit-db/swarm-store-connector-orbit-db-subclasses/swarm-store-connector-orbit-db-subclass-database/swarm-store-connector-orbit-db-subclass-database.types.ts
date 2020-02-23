@@ -13,7 +13,8 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseOptions<TFeedStoreType>
     ISwarmStoreDatabaseOptions {}
 
 export interface ISwarmStoreConnectorOrbitDbDatabaseEvents<
-  TSwarmStoreConnectorOrbitDBDatabase
+  TSwarmStoreConnectorOrbitDBDatabase,
+  TFeedStoreType
 > {
   [ESwarmConnectorOrbitDbDatabaseEventNames.FATAL]: [
     string,
@@ -42,6 +43,13 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseEvents<
   ];
   [ESwarmConnectorOrbitDbDatabaseEventNames.READY]: [
     string,
+    TSwarmStoreConnectorOrbitDBDatabase
+  ];
+  [ESwarmConnectorOrbitDbDatabaseEventNames.NEW_ENTRY]: [
+    string, // database name
+    LogEntry<TFeedStoreType>, // entry added
+    string, // address of the entry,
+    any, // heads
     TSwarmStoreConnectorOrbitDBDatabase
   ];
 }

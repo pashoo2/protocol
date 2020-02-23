@@ -28,7 +28,8 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   TFeedStoreType
 > extends EventEmitter<
   ISwarmStoreConnectorOrbitDbDatabaseEvents<
-    SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType>
+    SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType>,
+    TFeedStoreType
   >
 > {
   // is loaded fully and ready to use
@@ -410,6 +411,20 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     this.logStore();
   };
 
+  private handleNewEntry = (
+    address: string,
+    entry: LogEntry<TFeedStoreType>,
+    heads: any
+  ) => {
+    this.emit(ESwarmConnectorOrbitDbDatabaseEventNames.NEW_ENTRY, [
+      this.dbName,
+      entry,
+      address,
+      heads,
+      this,
+    ]);
+  };
+
   private setFeedStoreEventListeners(
     feedStore: OrbitDbFeedStore<TFeedStoreType>,
     isSet = true
@@ -454,6 +469,10 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     feedStore.events[methodName](
       EOrbidDBFeedSoreEvents.REPLICATE_PROGRESS,
       this.handleFeedStoreReplicateInProgress
+    );
+    feedStore.events[methodName](
+      EOrbidDBFeedSoreEvents.NEW_ENTRY,
+      this.handleNewEntry
     );
   }
 

@@ -68,6 +68,15 @@ export enum ESwarmStoreEventNames {
    * emits with the argument equals to an error
    */
   ERROR = 'ERROR',
+  /**
+   * Emitted after an entry was added locally to the database. hash is the IPFS hash of the latest state of the database. entry is the added database op.
+   * args:
+   * 1) string - database name where the entry was added
+   * 2) any - entry
+   * 3) string - the global address of the entry in the swarm
+   * 4) any - heads
+   */
+  NEW_ENTRY = 'NEW_ENTRY',
 }
 
 export enum ESwarmStoreDbStatus {
