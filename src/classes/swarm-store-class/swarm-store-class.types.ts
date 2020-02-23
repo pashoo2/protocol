@@ -4,6 +4,10 @@ import { EventEmitter } from '../basic-classes/event-emitter-class-base/event-em
 import { ESwarmStoreDbStatus as ESwarmStoreDatabaseStatus } from './swarm-store-class.const';
 import { SWARM_STORE_DATABASE_STATUS_ABSENT } from './swarm-store-class.const';
 import {
+  ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions,
+  ISwarmStoreConnectorOrbitDbDatabaseIteratorAnswer,
+} from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
+import {
   TSwarmStoreConnectorOrbitDbDatabaseMethodNames,
   TSwarmStoreConnectorOrbitDbDatabaseMathodArgument,
 } from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
@@ -30,6 +34,21 @@ export type TSwarmStoreDatabaseMethodArgument<
   M
 > = P extends ESwarmStoreConnector.OrbitDB
   ? TSwarmStoreConnectorOrbitDbDatabaseMathodArgument<M>
+  : never;
+
+// arguments avalilable for a database method
+export type TSwarmStoreDatabaseIteratorMethodArgument<
+  P extends ESwarmStoreConnector
+> = P extends ESwarmStoreConnector.OrbitDB
+  ? ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions
+  : never;
+
+// arguments avalilable for a database
+export type TSwarmStoreDatabaseIteratorMethodAnswer<
+  P extends ESwarmStoreConnector,
+  T
+> = P extends ESwarmStoreConnector.OrbitDB
+  ? ISwarmStoreConnectorOrbitDbDatabaseIteratorAnswer<T>
   : never;
 
 // arguments avalilable for a database
@@ -179,7 +198,11 @@ export interface ISwarmStoreConnectorBase<P extends ESwarmStoreConnector> {
     dbName: ISwarmStoreDatabaseOptions['dbName'],
     dbMethod: TSwarmStoreDatabaseMethod<P>,
     arg: TSwarmStoreDatabaseMethodArgument<P, V>
-  ): Promise<TSwarmStoreDatabaseMethodAnswer<P, A> | Error>;
+  ): Promise<
+    | TSwarmStoreDatabaseMethodAnswer<P, A>
+    | TSwarmStoreDatabaseIteratorMethodAnswer<P, A>
+    | Error
+  >;
 }
 
 export interface ISwarmStoreConnector<P extends ESwarmStoreConnector>

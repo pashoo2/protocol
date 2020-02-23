@@ -1,7 +1,37 @@
 import assert from 'assert';
 import { SwarmStore } from '../swarm-store-class/swarm-store-class';
-import { ESwarmStoreConnector } from '../swarm-store-class/swarm-store-class.const';
+import {
+  ESwarmStoreConnector,
+  ESwarmStoreEventNames,
+} from '../swarm-store-class/swarm-store-class.const';
 import { swarmMessageStoreUtilsConnectorOptionsProvider } from './swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider';
+import {
+  ISwarmMessageStoreAccessControlOptions,
+  ISwarmMessageDatabaseConstructors,
+} from './swarm-message-store.types';
+import {
+  ISwarmMessageConstructor,
+  ISwarmMessageInstance,
+} from '../swarm-message/swarm-message-constructor.types';
+import {
+  ESwarmMessageStoreEventNames,
+  SWARM_MESSAGE_STORE_CONNECTOR_ORBIT_DB_ITERATOR_OPTIONS_DEFAULT,
+} from './swarm-message-store.const';
+import { extend } from '../../utils/common-utils/common-utils-objects';
+import { ISwarmStoreConnectorOrbitDbDatabaseIteratorAnswer } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
+import { TSwarmStoreDatabaseIteratorMethodAnswer } from '../swarm-store-class/swarm-store-class.types';
+import {
+  TSwarmStoreDatabaseMethodArgument,
+  TSwarmStoreDatabaseIteratorMethodArgument,
+} from '../swarm-store-class/swarm-store-class.types';
+import {
+  ESwarmStoreConnectorOrbitDbDatabaseMethodNames,
+  TSwarmStoreConnectorOrbitDbDatabaseMethodNames,
+} from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
+import {
+  TSwarmStoreValueTypes,
+  TSwarmStoreDatabaseMethod,
+} from '../swarm-store-class/swarm-store-class.types';
 import {
   TSwarmMessageStoreConnectReturnType,
   ISwarmMessageStoreOptions,
@@ -15,6 +45,49 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
   extends SwarmStore<P, ISwarmMessageStoreEvents>
   implements ISwarmMessageStore<P> {
   protected connectorType: P | undefined;
+
+  protected accessControl: ISwarmMessageStoreAccessControlOptions | undefined;
+
+  protected messageConstructors: ISwarmMessageDatabaseConstructors | undefined;
+
+  protected get dbMethodAddMessage(): TSwarmStoreDatabaseMethod<P> {
+    const { connectorType } = this;
+
+    switch (connectorType as P) {
+      case ESwarmStoreConnector.OrbitDB:
+        return (ESwarmStoreConnectorOrbitDbDatabaseMethodNames.add as TSwarmStoreConnectorOrbitDbDatabaseMethodNames) as TSwarmStoreDatabaseMethod<
+          P
+        >;
+      default:
+        throw new Error('Failed to define the method for adding message');
+    }
+  }
+
+  protected get dbMethodRemoveMessage(): TSwarmStoreDatabaseMethod<P> {
+    const { connectorType } = this;
+
+    switch (connectorType as P) {
+      case ESwarmStoreConnector.OrbitDB:
+        return (ESwarmStoreConnectorOrbitDbDatabaseMethodNames.remove as TSwarmStoreConnectorOrbitDbDatabaseMethodNames) as TSwarmStoreDatabaseMethod<
+          P
+        >;
+      default:
+        throw new Error('Failed to define the method for adding message');
+    }
+  }
+
+  protected get dbMethodIterator(): TSwarmStoreDatabaseMethod<P> {
+    const { connectorType } = this;
+
+    switch (connectorType as P) {
+      case ESwarmStoreConnector.OrbitDB:
+        return (ESwarmStoreConnectorOrbitDbDatabaseMethodNames.iterator as TSwarmStoreConnectorOrbitDbDatabaseMethodNames) as TSwarmStoreDatabaseMethod<
+          P
+        >;
+      default:
+        throw new Error('Failed to define the method for adding message');
+    }
+  }
 
   public async connect(
     options: ISwarmMessageStoreOptions<P>
@@ -34,38 +107,367 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
 
   public async addMessage(
     dbName: string,
-    message: ISwarmMessageStoreOptions<P>
+    message: ISwarmMessageInstance | string
   ): Promise<void> {
-    //TODO
+    assert(dbName, 'Database name must be provided');
+    this.validateMessageFormat(message);
+    this.request(
+      dbName,
+      this.dbMethodAddMessage,
+      this.serializeMessage(message)
+    );
+  }
+
+  public async deleteMessage(
+    dbName: string,
+    messageAddress: string,
+    message: ISwarmMessageInstance | string
+  ): Promise<void> {
+    assert(dbName, 'Database name must be provided');
+    assert(messageAddress, 'Message address must be provided');
+    this.request(
+      dbName,
+      this.dbMethodRemoveMessage,
+      this.getArgRemoveMessage(messageAddress, message)
+    );
+  }
+
+  public async collect(
+    dbName: string,
+    options: TSwarmStoreDatabaseIteratorMethodArgument<P>
+  ) {
+    assert(typeof dbName === 'string', '');
+
+    const iterator = await this.request(
+      dbName,
+      this.dbMethodIterator,
+      this.getArgIterateDb(dbName, options)
+    );
+
+    if (iterator instanceof Error) {
+      throw iterator;
+    }
+    return this.collectMessages(
+      dbName,
+      iterator as TSwarmStoreDatabaseIteratorMethodAnswer<P, any>
+    );
   }
 
   protected validateOptions(options: ISwarmMessageStoreOptions<P>): void {
     super.validateOptions(options);
 
-    const { grantAcess, allowedAccessFor } = options;
+    const { accessControl, messageConstructors } = options;
+
+    if (accessControl) {
+      const { grantAcess, allowAccessFor } = accessControl;
+
+      assert(
+        !grantAcess ||
+          (typeof grantAcess === 'function' && grantAcess.length === 3),
+        '"Grant access" callback must be a function which accepts a 3 arguments'
+      );
+      if (allowAccessFor) {
+        assert(
+          allowAccessFor instanceof Array,
+          'Users list for which access is uncinditionally granted for must be a function'
+        );
+        allowAccessFor.forEach((userId) =>
+          assert(
+            typeof userId === 'string',
+            'The user identity must be a string'
+          )
+        );
+      }
+    }
+    assert(messageConstructors, 'messages constructors must be specified');
+    assert(
+      typeof messageConstructors === 'object',
+      'messages constructors must an object'
+    );
+
+    const validateMessageConstructor = (mc: any) => {
+      assert(
+        typeof mc === 'object',
+        'the message constructor must be specified'
+      );
+      assert(
+        typeof mc.construct === 'function',
+        'the message constructor must have the "construct" method'
+      );
+    };
 
     assert(
-      !grantAcess ||
-        (typeof grantAcess === 'function' && grantAcess.length === 3),
-      '"Grant access" callback must be a function which accepts a 3 arguments'
+      typeof messageConstructors.default === 'object',
+      'the default message constructor must be cpecified'
     );
-    if (allowedAccessFor) {
-      assert(
-        allowedAccessFor instanceof Array,
-        'Users list for which access is uncinditionally granted for must be a function'
-      );
-      allowedAccessFor.forEach((userId) =>
-        assert(typeof userId === 'string', 'The user identity must be a string')
-      );
-    }
+    validateMessageConstructor(messageConstructors.default);
+    Object.values(messageConstructors).forEach(validateMessageConstructor);
   }
 
   protected setOptions(options: ISwarmMessageStoreOptions<P>): void {
     this.validateOptions(options);
     this.connectorType = options.provider;
+    this.accessControl = options.accessControl;
+    this.messageConstructors = options.messageConstructors;
   }
 
+  /**
+   * return the message constructor specified
+   * for the database
+   *
+   * @protected
+   * @param {string} dbName
+   * @returns {(ISwarmMessageConstructor | undefined)}
+   * @memberof SwarmMessageStore
+   */
+  protected getMessageConstructor(
+    dbName: string
+  ): ISwarmMessageConstructor | undefined {
+    if (!dbName) {
+      return;
+    }
+
+    const { messageConstructors } = this;
+
+    if (!messageConstructors) {
+      return;
+    }
+
+    const dbMessageConstructor = messageConstructors[dbName];
+
+    if (dbMessageConstructor) {
+      return dbMessageConstructor;
+    }
+    return messageConstructors.default;
+  }
+
+  /**
+   * emits error occurred on a message creation
+   *
+   * @protected
+   * @memberof SwarmMessageStore
+   */
+  protected emitMessageConstructionFails = (
+    dbName: string,
+    message: string,
+    messageAddr: string,
+    error: Error
+  ) => {
+    this.emit(ESwarmMessageStoreEventNames.NEW_MESSAGE_ERROR, [
+      dbName,
+      message,
+      error,
+      messageAddr,
+    ]);
+  };
+
+  /**
+   * new message incoming
+   *
+   * @protected
+   * @memberof SwarmMessageStore
+   */
+  protected emitMessageNew = (
+    dbName: string,
+    message: ISwarmMessageInstance,
+    messageAddr: string
+  ) => {
+    this.emit(ESwarmMessageStoreEventNames.NEW_MESSAGE, [
+      dbName,
+      message,
+      messageAddr,
+    ]);
+  };
+
+  /**
+   * handle a new message stored in the local database
+   *
+   * @memberof SwarmMessageStore
+   */
+  protected handleNewMessage = async ([dbName, message, messageAddress]: [
+    string,
+    string,
+    string
+  ]): Promise<void> => {
+    const messageConstructor = this.getMessageConstructor(dbName);
+
+    if (!messageConstructor) {
+      return this.emitMessageConstructionFails(
+        dbName,
+        message,
+        messageAddress,
+        new Error('There is no message constructor specified for the message')
+      );
+    }
+
+    try {
+      const swarmMessage = await messageConstructor.construct(message);
+
+      if (swarmMessage instanceof Error) {
+        return this.emitMessageConstructionFails(
+          dbName,
+          message,
+          messageAddress,
+          swarmMessage
+        );
+      }
+      return this.emitMessageNew(dbName, swarmMessage, messageAddress);
+    } catch (err) {
+      return this.emitMessageConstructionFails(
+        dbName,
+        message,
+        messageAddress,
+        err
+      );
+    }
+  };
+
   protected setListeners() {
-    //this.addListener(, listener)
+    this.addListener(ESwarmStoreEventNames.NEW_ENTRY, this.handleNewMessage);
+  }
+
+  /**
+   * validate format of a message to send
+   *
+   * @protected
+   * @param {(ISwarmMessageInstance | string)} message
+   * @memberof SwarmMessageStore
+   */
+  protected validateMessageFormat(message: ISwarmMessageInstance | string) {
+    assert(message, 'Message must be provided');
+    assert(
+      typeof message === 'string' || typeof message === 'object',
+      'Message must be a string or an object'
+    );
+  }
+
+  /**
+   * serizlize the message to a fromat
+   * to store it in the store with
+   * a type specified in the options
+   *
+   * @protected
+   * @returns {TSwarmStoreValueTypes<P>}
+   * @memberof SwarmMessageStore
+   */
+  protected serializeMessage(
+    message: ISwarmMessageInstance | string
+  ): TSwarmStoreValueTypes<P> {
+    const { connectorType } = this;
+
+    switch (connectorType) {
+      case ESwarmStoreConnector.OrbitDB:
+        return String(message) as TSwarmStoreValueTypes<P>;
+      default:
+        throw new Error(
+          'Failed to serizlize the message to the store connector compatible format'
+        );
+    }
+  }
+
+  /**
+   * returns the argument for a message removing request
+   * accepted by the connector type provided
+   *
+   * @protected
+   * @param {string} messageAddress
+   * @param {(ISwarmMessageInstance | string)} message
+   * @returns {TSwarmStoreDatabaseMethodArgument<P, TSwarmStoreValueTypes<P>>}
+   * @memberof SwarmMessageStore
+   */
+  protected getArgRemoveMessage(
+    messageAddress: string,
+    message: ISwarmMessageInstance | string
+  ): TSwarmStoreDatabaseMethodArgument<P, TSwarmStoreValueTypes<P>> {
+    const { connectorType } = this;
+
+    switch (connectorType) {
+      case ESwarmStoreConnector.OrbitDB:
+        return messageAddress as TSwarmStoreDatabaseMethodArgument<
+          P,
+          TSwarmStoreValueTypes<P>
+        >;
+      default:
+        throw new Error(
+          'Failed to define argument value for a swarm message removing'
+        );
+    }
+  }
+
+  /**
+   * returns argment for a database values iterator
+   *
+   * @protected
+   * @param {string} dbName
+   * @returns {TSwarmStoreDatabaseMethodArgument<P, TSwarmStoreValueTypes<P>>}
+   * @memberof SwarmMessageStore
+   */
+  protected getArgIterateDb(
+    dbName: string,
+    options: TSwarmStoreDatabaseIteratorMethodArgument<P>
+  ): TSwarmStoreDatabaseIteratorMethodArgument<P> {
+    const { connectorType } = this;
+
+    switch (connectorType) {
+      case ESwarmStoreConnector.OrbitDB:
+        assert(options, 'The iteratro opti');
+        return options
+          ? (extend(
+              options,
+              SWARM_MESSAGE_STORE_CONNECTOR_ORBIT_DB_ITERATOR_OPTIONS_DEFAULT
+            ) as TSwarmStoreDatabaseIteratorMethodArgument<P>)
+          : (SWARM_MESSAGE_STORE_CONNECTOR_ORBIT_DB_ITERATOR_OPTIONS_DEFAULT as TSwarmStoreDatabaseIteratorMethodArgument<
+              P
+            >);
+      default:
+        throw new Error(
+          'Failed to define argument value for a swarm message collecting'
+        );
+    }
+  }
+
+  protected collectMessagesFromOrbitDBIterator(
+    dbName: string,
+    iterator: ISwarmStoreConnectorOrbitDbDatabaseIteratorAnswer<string> // TODO - may be not a string
+  ): Promise<(ISwarmMessageInstance | Error)[]> {
+    const messageConstructor = this.getMessageConstructor(dbName);
+
+    if (!messageConstructor) {
+      throw new Error(
+        `Message constructor is not defined for the database "${dbName}"`
+      );
+    }
+
+    const collected = iterator.collect();
+
+    return Promise.all(
+      collected.map((messageSerialized) =>
+        messageConstructor.construct(messageSerialized).catch((err) => err)
+      )
+    );
+  }
+
+  /**
+   * collect messages from iterator
+   *
+   * @protected
+   * @param {TSwarmStoreDatabaseIteratorMethodAnswer<P, any>} iterator
+   * @returns {ISwarmMessageInstance[]}
+   * @memberof SwarmMessageStore
+   */
+  protected collectMessages(
+    dbName: string,
+    iterator: TSwarmStoreDatabaseIteratorMethodAnswer<P, any>
+  ): Promise<(ISwarmMessageInstance | Error)[]> {
+    const { connectorType } = this;
+
+    switch (connectorType) {
+      case ESwarmStoreConnector.OrbitDB:
+        return this.collectMessagesFromOrbitDBIterator(dbName, iterator);
+      default:
+        throw new Error(
+          'Failed to define argument value for a swarm message collecting'
+        );
+    }
   }
 }

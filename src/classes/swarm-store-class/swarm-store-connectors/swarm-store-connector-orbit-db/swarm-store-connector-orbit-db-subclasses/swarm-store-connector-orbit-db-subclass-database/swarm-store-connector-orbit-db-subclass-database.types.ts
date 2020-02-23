@@ -60,22 +60,38 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValueType> {
   hash: string;
 }
 
+export enum ESwarmStoreConnectorOrbitDbDatabaseIteratorOption {
+  gt = 'gt',
+  gte = 'gte',
+  lt = 'lt',
+  lte = 'lte',
+  limit = 'limit',
+  reverse = 'reverse',
+}
+
 export interface ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions {
-  gt?: string;
-  gte?: string;
-  lt?: string;
-  lte?: string;
-  limit?: number;
-  reverse?: boolean;
+  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.gt]?: string;
+  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.gte]?: string;
+  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.lt]?: string;
+  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.lte]?: string;
+  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.limit]?: number;
+  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.reverse]?: boolean;
+}
+
+export interface ISwarmStoreConnectorOrbitDbDatabaseIteratorAnswer<T> {
+  collect(): T[];
 }
 
 export type TFeedStoreHash = string;
 
-export type TSwarmStoreConnectorOrbitDbDatabaseMethodNames =
-  | 'get'
-  | 'add'
-  | 'remove'
-  | 'iterator';
+export enum ESwarmStoreConnectorOrbitDbDatabaseMethodNames {
+  'get' = 'get',
+  'add' = 'add',
+  'remove' = 'remove',
+  'iterator' = 'iterator',
+}
+
+export type TSwarmStoreConnectorOrbitDbDatabaseMethodNames = ESwarmStoreConnectorOrbitDbDatabaseMethodNames;
 
 export type TSwarmStoreConnectorOrbitDbDatabaseMathodArgument<TFeedStoreType> =
   | TFeedStoreHash
