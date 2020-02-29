@@ -4,7 +4,6 @@ import {
   ESwarmStoreConnector,
   ESwarmStoreEventNames,
 } from '../swarm-store-class/swarm-store-class.const';
-import { swarmMessageStoreUtilsConnectorOptionsProvider } from './swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider';
 import {
   ISwarmMessageStoreAccessControlOptions,
   ISwarmMessageDatabaseConstructors,
@@ -19,7 +18,10 @@ import {
 } from './swarm-message-store.const';
 import { extend } from '../../utils/common-utils/common-utils-objects';
 import { ISwarmStoreConnectorOrbitDbDatabaseIteratorAnswer } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
-import { TSwarmStoreDatabaseIteratorMethodAnswer } from '../swarm-store-class/swarm-store-class.types';
+import {
+  TSwarmStoreDatabaseIteratorMethodAnswer,
+  ISwarmStoreOptions,
+} from '../swarm-store-class/swarm-store-class.types';
 import {
   TSwarmStoreDatabaseMethodArgument,
   TSwarmStoreDatabaseIteratorMethodArgument,
@@ -40,6 +42,8 @@ import {
   ISwarmMessageStoreEvents,
   ISwarmMessageStore,
 } from './swarm-message-store.types';
+import { swarmMessageStoreUtilsConnectorOptionsProvider } from './swarm-message-store-utils/swarm-message-store-utils-connector-options-provider';
+import { getMessageConstructorForDatabase } from './swarm-message-store-utils/swarm-message-store-utils-common/swarm-message-store-utils-common';
 
 export class SwarmMessageStore<P extends ESwarmStoreConnector>
   extends SwarmStore<P, ISwarmMessageStoreEvents>
@@ -92,11 +96,12 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
   public async connect(
     options: ISwarmMessageStoreOptions<P>
   ): TSwarmMessageStoreConnectReturnType<P> {
-    this.setOptions(options);
-
-    const optionsSwarmStore = swarmMessageStoreUtilsConnectorOptionsProvider(
+    const optionsSwarmStore = await swarmMessageStoreUtilsConnectorOptionsProvider(
       options
     );
+
+    this.setOptions(optionsSwarmStore);
+
     const connectionResult = await super.connect(optionsSwarmStore);
 
     if (connectionResult instanceof Error) {
@@ -153,32 +158,11 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
     );
   }
 
-  protected validateOptions(options: ISwarmMessageStoreOptions<P>): void {
+  protected validateOpts(options: ISwarmMessageStoreOptions<P>): void {
     super.validateOptions(options);
 
-    const { accessControl, messageConstructors } = options;
+    const { messageConstructors } = options;
 
-    if (accessControl) {
-      const { grantAcess, allowAccessFor } = accessControl;
-
-      assert(
-        !grantAcess ||
-          (typeof grantAcess === 'function' && grantAcess.length === 3),
-        '"Grant access" callback must be a function which accepts a 3 arguments'
-      );
-      if (allowAccessFor) {
-        assert(
-          allowAccessFor instanceof Array,
-          'Users list for which access is uncinditionally granted for must be a function'
-        );
-        allowAccessFor.forEach((userId) =>
-          assert(
-            typeof userId === 'string',
-            'The user identity must be a string'
-          )
-        );
-      }
-    }
     assert(messageConstructors, 'messages constructors must be specified');
     assert(
       typeof messageConstructors === 'object',
@@ -205,7 +189,7 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
   }
 
   protected setOptions(options: ISwarmMessageStoreOptions<P>): void {
-    this.validateOptions(options);
+    this.validateOpts(options);
     this.connectorType = options.provider;
     this.accessControl = options.accessControl;
     this.messageConstructors = options.messageConstructors;
@@ -223,22 +207,10 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
   protected getMessageConstructor(
     dbName: string
   ): ISwarmMessageConstructor | undefined {
-    if (!dbName) {
+    if (!dbName || !this.messageConstructors) {
       return;
     }
-
-    const { messageConstructors } = this;
-
-    if (!messageConstructors) {
-      return;
-    }
-
-    const dbMessageConstructor = messageConstructors[dbName];
-
-    if (dbMessageConstructor) {
-      return dbMessageConstructor;
-    }
-    return messageConstructors.default;
+    return getMessageConstructorForDatabase(dbName, this.messageConstructors);
   }
 
   /**

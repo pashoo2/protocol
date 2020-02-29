@@ -494,7 +494,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       return resultedOptions;
     }
 
-    const { isPublic, write, grantAcess } = options;
+    const { isPublic, write, grantAccess } = options;
 
     if (isPublic) {
       resultedOptions.write = ['*'];
@@ -503,13 +503,13 @@ export class SwarmStoreConnectorOrbitDBDatabase<
         (identity) => identity && typeof identity === 'string'
       );
     }
-    if (typeof grantAcess === 'function') {
-      if (grantAcess.length !== 2) {
+    if (typeof grantAccess === 'function') {
+      if (grantAccess.length !== 2) {
         console.warn(
           'The grant access callback function must have 2 arguments'
         );
       }
-      resultedOptions.grantAcess = grantAcess;
+      resultedOptions.grantAccess = grantAccess;
     }
     return resultedOptions;
   }

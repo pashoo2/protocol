@@ -43,7 +43,7 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseAccessControlleGrantCallback
    * @memberof ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions
    * @returns boolean
    */
-  grantAcess?: TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<
+  grantAccess?: TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<
     TFeedStoreType
   >;
 }

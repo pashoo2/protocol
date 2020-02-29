@@ -12,6 +12,7 @@ import { EventEmitter } from '../basic-classes/event-emitter-class-base/event-em
 import { ESwarmMessageStoreEventNames } from './swarm-message-store.const';
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import { TSwarmStoreDatabaseIteratorMethodArgument } from '../swarm-store-class/swarm-store-class.types';
+import { TSwarmMessageSeriazlized } from '../swarm-message/swarm-message-constructor.types';
 
 export interface ISwarmMessageStoreEvents extends ISwarmStoreEvents {
   /**
@@ -70,7 +71,7 @@ export type TSwarmMessageStoreAccessControlGrantAccessCallback = (
  */
 export interface ISwarmMessageStoreAccessControlOptions {
   // async callback which is called each time before a new message will be wrote to the database
-  grantAcess?: TSwarmMessageStoreAccessControlGrantAccessCallback;
+  grantAccess?: TSwarmMessageStoreAccessControlGrantAccessCallback;
   // a list of the user identifiers for whom an unconditional write access will be given
   allowAccessFor?: TSwarmMessageUserIdentifierSerialized[];
 }
@@ -95,7 +96,7 @@ export interface ISwarmMessageStoreOptions<P extends ESwarmStoreConnector>
 
 export type TSwarmMessageStoreConnectReturnType<
   P extends ESwarmStoreConnector
-> = ReturnType<ISwarmStore<P>['connect']>;
+> = ReturnType<ISwarmStore<P, TSwarmMessageSeriazlized>['connect']>;
 
 /**
  * allows to write messages to the swarm storage
@@ -107,7 +108,7 @@ export type TSwarmMessageStoreConnectReturnType<
  * @template P
  */
 export interface ISwarmMessageStore<P extends ESwarmStoreConnector>
-  extends Omit<ISwarmStore<P>, 'connect'>,
+  extends ISwarmStore<P, TSwarmMessageSeriazlized>,
     EventEmitter<ISwarmMessageStoreEvents> {
   /**
    * connect to the swarm storage

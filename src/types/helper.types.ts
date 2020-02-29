@@ -25,3 +25,7 @@ export type OmitType<T, O> = T extends O ? never : T;
 export type ConstructorType<T> = new (...args: any[]) => T;
 
 export type ArrayFirst<T extends any[]> = T extends Array<infer F> ? F : never;
+
+export type Defined<T extends {}> = {
+  [k in keyof T]: T[k] extends undefined ? NonNullable<T[k]> : T[k];
+};

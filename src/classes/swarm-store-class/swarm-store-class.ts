@@ -1,5 +1,6 @@
 import { EventEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import assert from 'assert';
+import { TSwarmStoreDatabaseIteratorMethodAnswer } from './swarm-store-class.types';
 import {
   ESwarmStoreConnector,
   SWARM_STORE_CONNECTORS,
@@ -15,7 +16,7 @@ import {
   TSwarmStoreDatabaseMethodArgument,
   TSwarmStoreDatabaseMethodAnswer,
   TSwarmStoreConnectorEventRetransmitter,
-  ISwarmStoreDatabaseOptions,
+  TSwarmStoreDatabaseOptions,
   ISwarmStoreEvents,
   ISwarmStore,
   ISwarmStoreOptions,
@@ -35,8 +36,9 @@ import {
  */
 export class SwarmStore<
   P extends ESwarmStoreConnector,
+  ItemType extends any,
   E extends ISwarmStoreEvents = ISwarmStoreEvents
-> extends EventEmitter<E> implements ISwarmStore<P> {
+> extends EventEmitter<E> implements ISwarmStore<P, ItemType> {
   public get isReady(): boolean {
     return !!this.connector && this.connector.isReady;
   }
@@ -61,7 +63,9 @@ export class SwarmStore<
     | undefined;
 
   // open connection with all databases
-  public async connect(options: ISwarmStoreOptions<P>): Promise<Error | void> {
+  public async connect(
+    options: ISwarmStoreOptions<P, ItemType>
+  ): Promise<Error | void> {
     try {
       this.validateOptions(options);
 
@@ -99,12 +103,12 @@ export class SwarmStore<
   /**
    * open a new connection to the database specified
    *
-   * @param {ISwarmStoreDatabaseOptions} dbOptions
+   * @param {TSwarmStoreDatabaseOptions} dbOptions
    * @returns {(Promise<void | Error>)}
    * @memberof SwarmStore
    */
   public async openDatabase(
-    dbOptions: ISwarmStoreDatabaseOptions
+    dbOptions: TSwarmStoreDatabaseOptions<P, ItemType>
   ): Promise<void | Error> {
     const { connector } = this;
 
@@ -120,13 +124,11 @@ export class SwarmStore<
    * with the name specified
    * if exists
    *
-   * @param {ISwarmStoreDatabaseOptions} dbOptions
+   * @param {TSwarmStoreDatabaseOptions} dbOptions
    * @returns {(Promise<void | Error>)}
    * @memberof SwarmStore
    */
-  public async closeDatabase(
-    dbName: ISwarmStoreDatabaseOptions['dbName']
-  ): Promise<void | Error> {
+  public async closeDatabase(dbName: string): Promise<void | Error> {
     const { connector } = this;
 
     if (!connector) {
@@ -141,17 +143,21 @@ export class SwarmStore<
    *
    * @template V
    * @template A
-   * @param {ISwarmStoreDatabaseOptions['dbName']} dbName
+   * @param {TSwarmStoreDatabaseOptions['dbName']} dbName
    * @param {TSwarmStoreDatabaseMethod<P>} dbMethod
    * @param {TSwarmStoreDatabaseMethodArgument<P, V>} arg
    * @returns {(Promise<TSwarmStoreDatabaseMethodAnswer<P, A> | Error>)}
    * @memberof SwarmStore
    */
   public async request<V extends TSwarmStoreValueTypes<P>, A>(
-    dbName: ISwarmStoreDatabaseOptions['dbName'],
+    dbName: TSwarmStoreDatabaseOptions<P>['dbName'],
     dbMethod: TSwarmStoreDatabaseMethod<P>,
     arg: TSwarmStoreDatabaseMethodArgument<P, V>
-  ): Promise<TSwarmStoreDatabaseMethodAnswer<P, A> | Error> {
+  ): Promise<
+    | Error
+    | TSwarmStoreDatabaseMethodAnswer<P, A>
+    | TSwarmStoreDatabaseIteratorMethodAnswer<P, A>
+  > {
     const { connector } = this;
 
     if (!connector) {
@@ -170,7 +176,7 @@ export class SwarmStore<
    * @memberof SwarmStore
    * @throws
    */
-  protected validateOptions(options: ISwarmStoreOptions<P>): void {
+  protected validateOptions(options: ISwarmStoreOptions<P, ItemType>): void {
     assert(options, 'An options must be specified');
     assert(
       typeof options === 'object',
@@ -249,7 +255,7 @@ export class SwarmStore<
    * @memberof SwarmStore
    */
   protected createConnectionWithStorageConnector(
-    options: ISwarmStoreOptions<P>
+    options: ISwarmStoreOptions<P, ItemType>
   ): ISwarmStoreConnector<P> {
     const { provider } = options;
     const Constructor = this.getStorageConnector(options.provider);
@@ -277,7 +283,7 @@ export class SwarmStore<
    */
   protected startConnectionWithConnector(
     connector: ISwarmStoreConnector<P>,
-    options: ISwarmStoreOptions<P>
+    options: ISwarmStoreOptions<P, ItemType>
   ): void {
     const connectionResult = connector.connect(
       options.providerConnectionOptions
@@ -318,7 +324,7 @@ export class SwarmStore<
    * @param {ISwarmStoreOptions<P>} options
    * @memberof SwarmStore
    */
-  protected createStatusTable(options: ISwarmStoreOptions<P>) {
+  protected createStatusTable(options: ISwarmStoreOptions<P, ItemType>) {
     const { databases } = options;
     const { dbStatusesExisting } = this;
 

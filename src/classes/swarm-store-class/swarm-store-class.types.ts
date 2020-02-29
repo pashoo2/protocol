@@ -3,6 +3,7 @@ import { ISwarmStoreConnectorOrbitDBConnectionOptions } from './swarm-store-conn
 import { EventEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { ESwarmStoreDbStatus as ESwarmStoreDatabaseStatus } from './swarm-store-class.const';
 import { SWARM_STORE_DATABASE_STATUS_ABSENT } from './swarm-store-class.const';
+import { ISwarmStoreConnectorOrbitDbDatabaseOptions } from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import {
   ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions,
   ISwarmStoreConnectorOrbitDbDatabaseIteratorAnswer,
@@ -62,13 +63,7 @@ export type TSwarmStoreValueTypes<
   P extends ESwarmStoreConnector
 > = P extends ESwarmStoreConnector.OrbitDB ? any : never;
 
-/**
- * options of a swarm database
- *
- * @export
- * @interface ISwarmStoreDatabaseOptions
- */
-export interface ISwarmStoreDatabaseOptions {
+export interface ISwarmStoreDatabaseBaseOptions {
   // Database name
   dbName: string;
   // is a puclic database. Private by
@@ -76,15 +71,33 @@ export interface ISwarmStoreDatabaseOptions {
 }
 
 /**
+ * options of a swarm database
+ *
+ * @export
+ * @interface ISwarmStoreDatabaseOptions
+ */
+export type TSwarmStoreDatabaseOptions<
+  P extends ESwarmStoreConnector = never,
+  T extends any = never
+> = P extends ESwarmStoreConnector.OrbitDB
+  ? ISwarmStoreConnectorOrbitDbDatabaseOptions<T> &
+      ISwarmStoreDatabaseBaseOptions
+  : ISwarmStoreDatabaseBaseOptions;
+/**
  * options of swarm databases want to connect
  *
  * @export
  * @interface ISwarmStoreDatabasesOptions
  */
-export interface ISwarmStoreDatabasesOptions {
+export interface ISwarmStoreDatabasesOptions<
+  P extends ESwarmStoreConnector = never,
+  T extends any = never
+> {
   // databases which must be started when the orbit db
   // instance will be ready to use
-  databases: ISwarmStoreDatabaseOptions[];
+  databases: P extends never
+    ? ISwarmStoreDatabaseBaseOptions
+    : TSwarmStoreDatabaseOptions<P, T>[];
   // a virtual directory name where to store all the data received
   directory?: string;
 }
@@ -129,9 +142,10 @@ export interface ISwarmStoreProviderOptions<P extends ESwarmStoreConnector> {
  * @extends {ISwarmStoreUserOptions}
  * @extends {ISwarmStoreDatabasesOptions}
  */
-export interface ISwarmStoreMainOptions
-  extends ISwarmStoreUserOptions,
-    ISwarmStoreDatabasesOptions {}
+export interface ISwarmStoreMainOptions<
+  P extends ESwarmStoreConnector = never,
+  T extends any = never
+> extends ISwarmStoreUserOptions, ISwarmStoreDatabasesOptions<P, T> {}
 
 /**
  * options used for connection to a swarm databases
@@ -141,8 +155,11 @@ export interface ISwarmStoreMainOptions
  * @extends {ISwarmStoreUserOptions}
  * @extends {ISwarmStoreDatabasesOptions}
  */
-export interface ISwarmStoreOptions<P extends ESwarmStoreConnector>
-  extends Required<ISwarmStoreMainOptions>,
+export interface ISwarmStoreOptions<
+  P extends ESwarmStoreConnector,
+  T extends any = never
+>
+  extends Required<ISwarmStoreMainOptions<P, T>>,
     Required<ISwarmStoreProviderOptions<P>> {}
 
 /**
@@ -155,7 +172,7 @@ export interface ISwarmStoreOptions<P extends ESwarmStoreConnector>
  */
 export interface ISwarmStoreDatabasesStatuses
   extends Record<
-    ISwarmStoreDatabaseOptions['dbName'],
+    string,
     ESwarmStoreDatabaseStatus | typeof SWARM_STORE_DATABASE_STATUS_ABSENT
   > {}
 
@@ -186,22 +203,22 @@ export interface ISwarmStoreConnectorBase<P extends ESwarmStoreConnector> {
   // close all the existing connections
   close(): Promise<Error | void>;
   // open a new connection to the database specified
-  openDatabase(dbOptions: ISwarmStoreDatabaseOptions): Promise<void | Error>;
+  openDatabase(dbOptions: TSwarmStoreDatabaseOptions<P>): Promise<void | Error>;
   // close connection to a database specified
   closeDatabase(
-    dbName: ISwarmStoreDatabaseOptions['dbName']
+    dbName: TSwarmStoreDatabaseOptions<P>['dbName']
   ): Promise<void | Error>;
   // send request to a swarm database to perform
   // an operation such as read or seta value
   // on a database
   request<V extends TSwarmStoreValueTypes<P>, A>(
-    dbName: ISwarmStoreDatabaseOptions['dbName'],
+    dbName: TSwarmStoreDatabaseOptions<P>['dbName'],
     dbMethod: TSwarmStoreDatabaseMethod<P>,
     arg: TSwarmStoreDatabaseMethodArgument<P, V>
   ): Promise<
+    | Error
     | TSwarmStoreDatabaseMethodAnswer<P, A>
     | TSwarmStoreDatabaseIteratorMethodAnswer<P, A>
-    | Error
   >;
 }
 
@@ -222,10 +239,12 @@ export interface ISwarmStoreConnector<P extends ESwarmStoreConnector>
  * @export
  * @interface ISwarmStore
  */
-export interface ISwarmStore<P extends ESwarmStoreConnector>
-  extends Omit<ISwarmStoreConnectorBase<P>, 'connect'> {
+export interface ISwarmStore<
+  P extends ESwarmStoreConnector,
+  ItemType extends any
+> extends Omit<ISwarmStoreConnectorBase<P>, 'connect'> {
   // status of a database connected to
   dbStatuses: ISwarmStoreDatabasesStatuses;
   // open connection with all databases
-  connect(options: ISwarmStoreOptions<P>): Promise<Error | void>;
+  connect(options: ISwarmStoreOptions<P, ItemType>): Promise<Error | void>;
 }

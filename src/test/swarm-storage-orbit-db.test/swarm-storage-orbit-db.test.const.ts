@@ -25,7 +25,7 @@ export const SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_ACCESS_C
     {
       dbName: SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_DB_NAME,
       isPublic: true,
-      grantAcess: async (entity, id) => {
+      grantAccess: async (entity, id) => {
         return true;
       },
     },
@@ -107,7 +107,7 @@ export const SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_THREE_DATABASES_CUSTO
     {
       ...SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_DATABASE_THREE,
       isPublic: true,
-      grantAcess: async (entity, id): Promise<boolean> => {
+      grantAccess: async (entity, id): Promise<boolean> => {
         return !!entity && !!id;
       },
     },

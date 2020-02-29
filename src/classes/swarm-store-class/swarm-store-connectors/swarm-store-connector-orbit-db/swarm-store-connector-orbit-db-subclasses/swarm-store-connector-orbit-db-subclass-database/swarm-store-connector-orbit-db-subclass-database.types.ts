@@ -1,5 +1,5 @@
 import { ESwarmConnectorOrbitDbDatabaseEventNames } from './swarm-store-connector-orbit-db-subclass-database.const';
-import { ISwarmStoreDatabaseOptions } from '../../../../swarm-store-class.types';
+import { ISwarmStoreDatabaseBaseOptions } from '../../../../swarm-store-class.types';
 import {
   ISwarmStoreConnectorOrbitDbDatabaseAccessControlleGrantCallback,
   ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess,
@@ -10,7 +10,7 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseOptions<TFeedStoreType>
       TFeedStoreType
     >,
     ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess,
-    ISwarmStoreDatabaseOptions {}
+    ISwarmStoreDatabaseBaseOptions {}
 
 export interface ISwarmStoreConnectorOrbitDbDatabaseEvents<
   TSwarmStoreConnectorOrbitDBDatabase,

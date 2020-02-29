@@ -225,7 +225,7 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
     options: ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions<T>
   ) {
     if (options) {
-      const { write, grantAcess } = options;
+      const { write, grantAccess } = options;
 
       if (write instanceof Array) {
         if (write.includes('*')) {
@@ -236,13 +236,13 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
           `${SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_ACCESS_CONTROLLER_LOG_PREFIX}::Noone have access on the database`
         );
       }
-      if (typeof grantAcess === 'function') {
-        if (grantAcess.length !== 2) {
+      if (typeof grantAccess === 'function') {
+        if (grantAccess.length !== 2) {
           console.warn(
-            `${SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_ACCESS_CONTROLLER_LOG_PREFIX}::A grant access callback must receives 2 arguments generally, but receives ${grantAcess.length}`
+            `${SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_ACCESS_CONTROLLER_LOG_PREFIX}::A grant access callback must receives 2 arguments generally, but receives ${grantAccess.length}`
           );
         }
-        this._grantAccessCallback = grantAcess;
+        this._grantAccessCallback = grantAccess;
       }
       this._options = options;
     }
