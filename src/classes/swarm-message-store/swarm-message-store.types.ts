@@ -92,6 +92,7 @@ export interface ISwarmMessageStoreOptions<P extends ESwarmStoreConnector>
   extends ISwarmStoreOptions<P> {
   accessControl?: ISwarmMessageStoreAccessControlOptions;
   messageConstructors: ISwarmMessageDatabaseConstructors;
+  providerConnectionOptions: any;
 }
 
 export type TSwarmMessageStoreConnectReturnType<

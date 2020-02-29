@@ -5,10 +5,6 @@ export enum ESwarmStoreConnector {
   OrbitDB = 'OrbitDB',
 }
 
-export const SWARM_STORE_CONNECTORS = {
-  [ESwarmStoreConnector.OrbitDB]: SwarmStoreConnectorOrbitDB,
-};
-
 export enum ESwarmStoreEventNames {
   /**
    * fired before connecting to the swarm
@@ -98,3 +94,7 @@ export enum ESwarmStoreDbStatus {
 export const SWARM_STORE_DATABASE_STATUS_ABSENT = undefined;
 
 export const SWARM_STORE_DATABASES_STATUSES_EMPTY: ISwarmStoreDatabasesStatuses = {};
+
+export const SWARM_STORE_CONNECTORS = {
+  [ESwarmStoreConnector.OrbitDB]: SwarmStoreConnectorOrbitDB,
+};

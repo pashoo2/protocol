@@ -25,12 +25,15 @@ import {
 } from './swarm-message-subclasses/swarm-message-subclass-serializer/swarm-message-subclass-serializer.types';
 import { SwarmMessageSubclassValidator } from './swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator';
 import { SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_VALIDATION } from './swarm-message-constructor.const';
+import { ICentralAuthority } from '../central-authority-class/central-authority-class.types';
 import {
   IMessageValidatorOptions,
   ISwarmMessageSubclassValidator,
 } from './swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator.types';
 
 export class SwarmMessageConstructor implements ISwarmMessageConstructor {
+  public caConnection?: ICentralAuthority;
+
   protected constructorOptions?: ISwarmMessageConstructorOptionsRequired;
 
   protected validator?: ISwarmMessageSubclassValidator;
@@ -297,6 +300,7 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
    */
   protected setOptions(options: TSwarmMessageConstructorOptions) {
     this.validateOptions(options);
+    this.caConnection = options.caConnection;
     this.constructorOptions = this.extendOptionsByDefaults(options);
     // validator must runs at first cause
     // it used by another instances

@@ -4,11 +4,10 @@ import {
   ISwarmMessageStoreOptions,
   TSwarmMessageStoreAccessControlGrantAccessCallback,
 } from '../../swarm-message-store.types';
-import { ISwarmStoreOptions } from '../../../swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageSeriazlized } from '../../../swarm-message/swarm-message-constructor.types';
 import { TSwarmMessageUserIdentifierSerialized } from '../../../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import { ISwarmStoreConnectorOrbitDBConnectionOptions } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.types';
-import { swarmMesssageStoreUtilsIPFSConnect } from '../swarm-messge-store-utils-connector-ipfs/swarm-messge-store-utils-connector-ipfs';
+import { ipfsUtilsConnectBasic } from '../../../../utils/ipfs-utils/ipfs-utils';
 import { getMessageValidator } from '../swarm-message-store-utils-common/swarm-message-store-utils-common';
 import { ISwarmStoreConnectorOrbitDBOptions } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.types';
 import { TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types';
@@ -52,8 +51,9 @@ async function swarmMessageStoreUtilsConnectorOptionsProviderForOrbitDB(
   }
 
   const ipfsConnection =
-    options.providerConnectionOptions?.ipfs ||
-    (await swarmMesssageStoreUtilsIPFSConnect());
+    options.providerConnectionOptions && options.providerConnectionOptions.ipfs
+      ? options.providerConnectionOptions.ipfs
+      : await ipfsUtilsConnectBasic();
   const databases = options.databases.map((dbOptions) => {
     const grantAccess =
       (dbOptions.grantAccess as TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<

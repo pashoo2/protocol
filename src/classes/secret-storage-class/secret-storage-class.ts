@@ -210,9 +210,9 @@ export class SecretStorage
     super();
   }
 
-  public async connect(
+  public connect = async (
     options?: IStorageProviderOptions
-  ): Promise<boolean | Error> {
+  ): Promise<boolean | Error> => {
     this.clearState();
     this.setStatus(SECRET_STORAGE_STATUS.CONNECTING);
     this.setOptions(options);
@@ -239,7 +239,7 @@ export class SecretStorage
     }
     this.setStatus(SECRET_STORAGE_STATUS.RUNNING);
     return true;
-  }
+  };
 
   public async disconnect(): Promise<boolean | Error> {
     const resultDisconnectFromStorageProvider = await this.storageProviderDisconnect();
@@ -716,14 +716,14 @@ export class SecretStorage
     this.authStorageProvider = undefined;
   }
 
-  protected async storageProviderDisconnect(): Promise<boolean | Error> {
+  protected storageProviderDisconnect = async (): Promise<boolean | Error> => {
     const { authStorageProvider } = this;
 
     if (authStorageProvider) {
       return authStorageProvider.disconnect();
     }
     return new Error('There is no Auth storage provider defined');
-  }
+  };
 
   protected async getSaltValue(
     credentials: ISecretStoreCredentials

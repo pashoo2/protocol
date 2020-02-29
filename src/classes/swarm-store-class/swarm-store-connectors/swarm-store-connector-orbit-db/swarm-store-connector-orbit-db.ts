@@ -876,6 +876,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
         this.setNotReady();
         this.orbitDb = undefined;
       } catch (err) {
+        debugger;
         return this.emitError(err, 'stopOrbitDBInsance');
       }
     }
@@ -1172,7 +1173,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
         timeout = undefined;
       }
 
-      timeout = setTimeout(() => {
+      timeout = setTimeout(async () => {
         usetListeners();
         res(
           new Error('Failed to open the database cause the timeout has reached')
@@ -1221,10 +1222,12 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
     const { databases } = options;
     const databasesOptions = [...databases];
 
-    if (!(databasesOptions instanceof Array) || !databasesOptions.length) {
+    if (!(databasesOptions instanceof Array)) {
       return this.emitError('The options for databases must be specified');
     }
-
+    if (!databasesOptions.length) {
+      return;
+    }
     try {
       let idx = 0;
       const len = databasesOptions.length;

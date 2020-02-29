@@ -54,6 +54,8 @@ export class IPFS extends EventEmitter {
   once(event: string, callback: () => void): this;
 }
 
+export type InstanceIPFS = InstanceType<IPFS>;
+
 export interface Options {
   init?: boolean;
   start?: boolean;
@@ -433,6 +435,6 @@ export interface Bitswap {
   unwant(keys: KeyType | KeyType[]): Promise<any>;
 }
 
-export function create(options: Options): IPFS;
+export function create(options: Options): Promise<IPFS>;
 
 export as namespace Ipfs;

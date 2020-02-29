@@ -10,6 +10,7 @@ import {
 } from './swarm-message-subclasses/swarm-message-subclass-serializer/swarm-message-subclass-serializer.types';
 import { IMessageSignatureValidatorOptionsUtils } from './swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-signature-validator/swarm-message-subclass-validator-signature-validator.types';
 import { ICentralAuthority } from '../central-authority-class/central-authority-class.types';
+import { CentralAuthority } from '../central-authority-class/central-authority-class';
 import {
   IMessageValidatorOptions,
   ISwarmMessageSubclassValidator,
@@ -189,6 +190,7 @@ export type TSwarmMessageConstructorOptions = Omit<
 
 // construct message from a serialized
 export interface ISwarmMessageConstructor {
+  readonly caConnection?: ICentralAuthority;
   construct(message: TSwarmMessageSeriazlized): Promise<ISwarmMessageInstance>;
 }
 

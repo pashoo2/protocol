@@ -1,0 +1,4 @@
+{
+    "main": "ipfs-utils.ts",
+    "types": "ipfs-utils.ts"
+}

@@ -82,9 +82,11 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
     }
   }
 
-  public async close(cb?: TCallbackError): Promise<void> {
+  public close = async (cb?: TCallbackError): Promise<void> => {
+    if (!this.isOpen || this.isClose) {
+      return;
+    }
     this.setIsClose();
-
     const result = await this.disconnectSecretStorage();
 
     if (result instanceof Error) {
@@ -94,7 +96,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
     if (typeof cb === 'function') {
       cb(undefined);
     }
-  }
+  };
 
   public async get(
     k: string,

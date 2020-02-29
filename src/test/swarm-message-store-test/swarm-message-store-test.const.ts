@@ -3,20 +3,26 @@ import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-stor
 
 const SWARM_MESSAGE_STORE_TEST_OPTIONS_CREDENTIALS: ISwarmMessageStoreOptions<
   ESwarmStoreConnector.OrbitDB
->['credentials'] = {};
+>['credentials'] = {
+  login: 'test_login',
+  password: 'test_password_123456',
+};
 
 const SWARM_MESSAGE_STORE_TEST_OPTIONS_DATABASES: ISwarmMessageStoreOptions<
   ESwarmStoreConnector.OrbitDB
->['databases'] = {};
+>['databases'] = [
+  {
+    dbName: 'database_test',
+  },
+];
 
-const SWARM_MESSAGE_STORE_TEST_OPTIONS_MESSAGE_CONSTRUCTORS: ISwarmMessageStoreOptions<
-  ESwarmStoreConnector.OrbitDB
->['messageConstructors'] = {};
-
-export const SWARM_MESSAGE_STORE_TEST_OPTIONS_VALID: ISwarmMessageStoreOptions<ESwarmStoreConnector.OrbitDB> = {
+export const SWARM_MESSAGE_STORE_TEST_OPTIONS_VALID: Omit<
+  Omit<ISwarmMessageStoreOptions<ESwarmStoreConnector.OrbitDB>, 'userId'>,
+  'messageConstructors'
+> = {
   credentials: SWARM_MESSAGE_STORE_TEST_OPTIONS_CREDENTIALS,
   databases: SWARM_MESSAGE_STORE_TEST_OPTIONS_DATABASES,
   directory: 'dir',
-  messageConstructors: SWARM_MESSAGE_STORE_TEST_OPTIONS_MESSAGE_CONSTRUCTORS,
   provider: ESwarmStoreConnector.OrbitDB,
+  providerConnectionOptions: {},
 };

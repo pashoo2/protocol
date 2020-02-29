@@ -50,6 +50,7 @@ import { runTestCentralAuthorityUtils } from 'test/central-authority.test/centra
 import { runTestOpenStorageTest } from 'test/open-storage.test';
 import { runTestCentralAuthority } from './test/central-authority.test/central-authority-class.test/central-authority-class.test';
 import { runSwarmMessageConstructorTests } from './test/swarrm-message-constructor.test/swarrm-message-constructor.test';
+import { runSwarmMessageStoreTest } from './test/swarm-message-store-test/swarm-message-store-test.test';
 
 // runTest();
 // runTestsCredentialsStorage();
@@ -87,7 +88,8 @@ const runTest = async () => {
   // runTestCASwarmCredentilsProvider();
   // runTestCentralAuthorityUtils(); // TODO - necessary to test urls comparation
   // runTestCentralAuthority();
-  runSwarmMessageConstructorTests();
+  // runSwarmMessageConstructorTests();
+  runSwarmMessageStoreTest();
   runMocha();
 };
 

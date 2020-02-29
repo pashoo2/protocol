@@ -73,8 +73,8 @@ export class SwarmStore<
         options
       );
 
-      this.startConnectionWithConnector(connectionWithConnector, options);
       this.createStatusTable(options);
+      await this.startConnectionWithConnector(connectionWithConnector, options);
       this.subscribeOnConnector();
     } catch (err) {
       return err;
@@ -270,6 +270,7 @@ export class SwarmStore<
       connection instanceof Constructor,
       `Failed to create connection with the provider ${provider}`
     );
+
     return connection;
   }
 
@@ -281,16 +282,16 @@ export class SwarmStore<
    * @param {ISwarmStoreOptions<P>} options
    * @memberof SwarmStore
    */
-  protected startConnectionWithConnector(
+  protected async startConnectionWithConnector(
     connector: ISwarmStoreConnector<P>,
     options: ISwarmStoreOptions<P, ItemType>
-  ): void {
-    const connectionResult = connector.connect(
+  ): Promise<void> {
+    const connectionResult = await connector.connect(
       options.providerConnectionOptions
     );
 
     assert(
-      connectionResult instanceof Error,
+      !(connectionResult instanceof Error),
       `Failed to connect through the provider ${options.provider}`
     );
     this.connector = connector;
@@ -326,7 +327,6 @@ export class SwarmStore<
    */
   protected createStatusTable(options: ISwarmStoreOptions<P, ItemType>) {
     const { databases } = options;
-    const { dbStatusesExisting } = this;
 
     databases.forEach((dbOptions) => {
       this.setEmptyStatusForDb(dbOptions.dbName);

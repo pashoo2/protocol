@@ -18,10 +18,7 @@ import {
 } from './swarm-message-store.const';
 import { extend } from '../../utils/common-utils/common-utils-objects';
 import { ISwarmStoreConnectorOrbitDbDatabaseIteratorAnswer } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
-import {
-  TSwarmStoreDatabaseIteratorMethodAnswer,
-  ISwarmStoreOptions,
-} from '../swarm-store-class/swarm-store-class.types';
+import { TSwarmStoreDatabaseIteratorMethodAnswer } from '../swarm-store-class/swarm-store-class.types';
 import {
   TSwarmStoreDatabaseMethodArgument,
   TSwarmStoreDatabaseIteratorMethodArgument,
@@ -261,6 +258,7 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
     string,
     string
   ]): Promise<void> => {
+    debugger;
     const messageConstructor = this.getMessageConstructor(dbName);
 
     if (!messageConstructor) {

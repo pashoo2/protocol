@@ -230,7 +230,6 @@ export class CAConnectionWithFirebaseImplementation
       }
 
       // const user = await userLoggedPromise;
-      // debugger;
       // if (!user) {
       //   return new Error('Failed to get the user authorized');
       // }
