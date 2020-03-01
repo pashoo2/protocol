@@ -46,6 +46,7 @@ import { swarmMessageStoreUtilsConnectorOptionsProvider } from './swarm-message-
 import { getMessageConstructorForDatabase } from './swarm-message-store-utils/swarm-message-store-utils-common/swarm-message-store-utils-common';
 import { TSwarmMessageStoreMessageId } from './swarm-message-store.types';
 import { TSwarmMessageSeriazlized } from '../swarm-message/swarm-message-constructor.types';
+import { isDefined } from '../../utils/common-utils/common-utils-main';
 
 export class SwarmMessageStore<P extends ESwarmStoreConnector>
   extends SwarmStore<P, ISwarmMessageStoreEvents>
@@ -416,7 +417,10 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
 
   protected collectMessagesFromOrbitDBIterator(
     dbName: string,
-    iterator: ISwarmStoreConnectorOrbitDbDatabaseIteratorAnswer<string> // TODO - may be not a string
+    iteratorAnswer: TSwarmStoreDatabaseIteratorMethodAnswer<
+      ESwarmStoreConnector.OrbitDB,
+      string
+    > // TODO - may be not a string
   ): Promise<(ISwarmMessageInstance | Error)[]> {
     const messageConstructor = this.getMessageConstructor(dbName);
 
@@ -426,12 +430,27 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
       );
     }
 
-    const collected = iterator.collect();
-
+    if (iteratorAnswer instanceof Error) {
+      throw iteratorAnswer;
+    }
     return Promise.all(
-      collected.map((messageSerialized) =>
-        messageConstructor.construct(messageSerialized).catch((err) => err)
-      )
+      iteratorAnswer
+        .map((messageSerialized) => {
+          if (messageSerialized instanceof Error) {
+            return messageSerialized;
+          }
+          if (!messageSerialized) {
+            return messageSerialized;
+          }
+          try {
+            return messageConstructor
+              .construct(messageSerialized.value)
+              .catch((err: Error) => err);
+          } catch (err) {
+            return err;
+          }
+        })
+        .filter(isDefined)
     );
   }
 

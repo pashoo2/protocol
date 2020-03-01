@@ -176,9 +176,8 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     }
 
     const eqOperand =
-      options &&
-      typeof options[ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq];
-
+      options && options[ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq];
+    debugger;
     if (typeof eqOperand === 'string') {
       const val = database.get(eqOperand);
 

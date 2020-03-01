@@ -3,7 +3,10 @@ import { ISwarmStoreConnectorOrbitDBConnectionOptions } from './swarm-store-conn
 import { EventEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { ESwarmStoreDbStatus as ESwarmStoreDatabaseStatus } from './swarm-store-class.const';
 import { SWARM_STORE_DATABASE_STATUS_ABSENT } from './swarm-store-class.const';
-import { ISwarmStoreConnectorOrbitDbDatabaseOptions } from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
+import {
+  ISwarmStoreConnectorOrbitDbDatabaseOptions,
+  ISwarmStoreConnectorOrbitDbDatabaseValue,
+} from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import {
   ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions,
   ISwarmStoreConnectorOrbitDbDatabaseIteratorAnswer,
@@ -49,7 +52,9 @@ export type TSwarmStoreDatabaseIteratorMethodAnswer<
   P extends ESwarmStoreConnector,
   T
 > = P extends ESwarmStoreConnector.OrbitDB
-  ? ISwarmStoreConnectorOrbitDbDatabaseIteratorAnswer<T>
+  ?
+      | Error
+      | Array<ISwarmStoreConnectorOrbitDbDatabaseValue<T> | Error | undefined>
   : never;
 
 // arguments avalilable for a database

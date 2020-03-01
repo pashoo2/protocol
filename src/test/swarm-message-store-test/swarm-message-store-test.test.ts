@@ -10,9 +10,10 @@ import {
 } from './swarm-message-store-test.const';
 import { CentralAuthority } from '../../classes/central-authority-class/central-authority-class';
 import { ipfsUtilsConnectBasic } from '../../utils/ipfs-utils/ipfs-utils';
-import { TSwarmMessageConstructorArgumentBody } from '../../classes/swarm-message/swarm-message-constructor.types';
 import { SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONNECTION_TIMEOUT_MS } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.const';
+import { ESwarmStoreConnectorOrbitDbDatabaseIteratorOption } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import {
+  TSwarmMessageConstructorArgumentBody,
   ISwarmMessageConstructor,
   ISwarmMessage,
   ISwarmMessageInstance,
@@ -121,6 +122,9 @@ export const runSwarmMessageStoreTest = () => {
       SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONNECTION_TIMEOUT_MS + 10000;
 
     describe('"addMessage" method test', () => {
+      let messagesAdded: ISwarmMessageInstance[] = [];
+      let messagesAddedHashes: Record<string, ISwarmMessageInstance> = {};
+
       before(async function() {
         this.timeout(TIMEOUT);
         expect(swarmMessageStore).to.be.an('object');
@@ -149,28 +153,46 @@ export const runSwarmMessageStoreTest = () => {
             swarmMessage
           )
         ).to.eventually.be.a('string');
+        messagesAdded.push(swarmMessage);
       }).timeout(TIMEOUT);
 
-      it('expect to throw on add a not valid message', async () => {
-        await expect(
-          swarmMessageStore.addMessage(
-            SWARM_MESSAGE_STORE_TEST_DATABASE_ONE_NAME,
-            {} as any
-          )
-        ).to.eventually.to.be.rejected;
-      }).timeout(TIMEOUT);
-
-      it('expect to throw on add a valid message to a non-existing database', async () => {
-        const swarmMessage = await createMessageFromString('Hello');
+      it('expect not to throw on add a valid message from a long string with a special characters', async () => {
+        const swarmMessage = await createMessageFromString(`
+          ~!@##$%$&^(&^&&*^)P%&_*&*){}][]'d;f.ew'p;fl[,dm, vbf
+          ]**/*-/+jgifgfj[fшоплпоаплоёёёёё]
+        `);
 
         checkIsSwarmMessage(swarmMessage);
-        await expect(
-          swarmMessageStore.addMessage(
-            'non_existing_database_name',
-            swarmMessage
-          )
-        ).to.eventually.to.be.rejected;
+
+        const addedMessageHash = await swarmMessageStore.addMessage(
+          SWARM_MESSAGE_STORE_TEST_DATABASE_ONE_NAME,
+          swarmMessage
+        );
+
+        expect(addedMessageHash).to.be.a('string');
+        messagesAddedHashes[addedMessageHash] = swarmMessage;
       }).timeout(TIMEOUT);
+
+      // it('expect to throw on add a not valid message', async () => {
+      //   await expect(
+      //     swarmMessageStore.addMessage(
+      //       SWARM_MESSAGE_STORE_TEST_DATABASE_ONE_NAME,
+      //       {} as any
+      //     )
+      //   ).to.eventually.to.be.rejected;
+      // }).timeout(TIMEOUT);
+
+      // it('expect to throw on add a valid message to a non-existing database', async () => {
+      //   const swarmMessage = await createMessageFromString('Hello');
+
+      //   checkIsSwarmMessage(swarmMessage);
+      //   await expect(
+      //     swarmMessageStore.addMessage(
+      //       'non_existing_database_name',
+      //       swarmMessage
+      //     )
+      //   ).to.eventually.to.be.rejected;
+      // }).timeout(TIMEOUT);
 
       describe('test "collect" method', async () => {
         before(async function() {
@@ -183,60 +205,84 @@ export const runSwarmMessageStoreTest = () => {
             .which.is.a('function');
         });
 
-        it('iterate over all the existing messages', async () => {
+        it('iterate over all the existing messages should contain messages added before', async () => {
           const result = await swarmMessageStore.collect(
             SWARM_MESSAGE_STORE_TEST_DATABASE_ONE_NAME,
             {
-              limit: -1,
+              [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.limit]: -1,
             }
           );
-          debugger;
-        });
+
+          expect(result)
+            .to.be.an('array')
+            .which.containSubset([
+              ...messagesAdded,
+              ...Object.values(messagesAddedHashes),
+            ]);
+        }).timeout(TIMEOUT);
+
+        it('iterate with "eq" request should return the message added before', async () => {
+          const messageHashes = Object.keys(messagesAddedHashes);
+          const messageHash = messageHashes[0];
+
+          expect(messageHash).to.be.a('string');
+
+          const result = await swarmMessageStore.collect(
+            SWARM_MESSAGE_STORE_TEST_DATABASE_ONE_NAME,
+            {
+              [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq]: messageHash,
+            }
+          );
+
+          expect(result)
+            .to.be.an('array')
+            .which.containSubset([messagesAddedHashes[messageHash]]);
+        }).timeout(TIMEOUT);
       });
     });
 
-    describe('"addMessage" method test with non-public database', () => {
-      const DB_NAME = 'database_not_public';
+    // describe('"addMessage" method test with non-public database', () => {
+    //   const DB_NAME = 'database_not_public';
 
-      before(async function() {
-        this.timeout(TIMEOUT);
-        expect(swarmMessageStore).to.be.an('object');
-        expect(swarmMessageStore.addMessage).to.be.a('function');
-        expect(messageConstructor)
-          .to.be.an('object')
-          .which.have.property('construct')
-          .which.is.a('function');
-        await expect(
-          swarmMessageStore.connect({
-            ...options,
-            databases: options.databases.map((dbOptions) => ({
-              ...dbOptions,
-              dbName: DB_NAME,
-              isPublic: false,
-            })),
-          })
-        ).to.not.eventually.be.rejectedWith(Error);
-      });
+    //   before(async function() {
+    //     this.timeout(TIMEOUT);
+    //     expect(swarmMessageStore).to.be.an('object');
+    //     expect(swarmMessageStore.addMessage).to.be.a('function');
+    //     expect(messageConstructor)
+    //       .to.be.an('object')
+    //       .which.have.property('construct')
+    //       .which.is.a('function');
+    //     await expect(
+    //       swarmMessageStore.connect({
+    //         ...options,
+    //         databases: options.databases.map((dbOptions) => ({
+    //           ...dbOptions,
+    //           dbName: DB_NAME,
+    //           isPublic: false,
+    //         })),
+    //       })
+    //     ).to.not.eventually.be.rejectedWith(Error);
+    //   });
 
-      after(async function() {
-        this.timeout(TIMEOUT);
-        await swarmMessageStore.close();
-      });
+    //   after(async function() {
+    //     this.timeout(TIMEOUT);
+    //     await swarmMessageStore.close();
+    //   });
 
-      it("expect to throw on add a valid message cause the current user can't add a message", async () => {
-        const swarmMessage = await createMessageFromString('Hello');
+    //   it("expect to throw on add a valid message cause the current user can't add a message", async () => {
+    //     const swarmMessage = await createMessageFromString('Hello');
 
-        checkIsSwarmMessage(swarmMessage);
-        await expect(
-          swarmMessageStore.addMessage(DB_NAME, swarmMessage)
-        ).to.eventually.be.rejectedWith(Error);
-      }).timeout(TIMEOUT);
+    //     checkIsSwarmMessage(swarmMessage);
+    //     await expect(
+    //       swarmMessageStore.addMessage(DB_NAME, swarmMessage)
+    //     ).to.eventually.be.rejectedWith(Error);
+    //   }).timeout(TIMEOUT);
 
-      it('expect to throw on add a not valid message', async () => {
-        await expect(
-          swarmMessageStore.addMessage(DB_NAME, {} as any)
-        ).to.eventually.be.rejectedWith(Error);
-      }).timeout(TIMEOUT);
-    });
+    //   it('expect to throw on add a not valid message', async () => {
+    //     await expect(
+    //       swarmMessageStore.addMessage(DB_NAME, {} as any)
+    //     ).to.eventually.be.rejectedWith(Error);
+    //   }).timeout(TIMEOUT);
+    // });
   });
 };
