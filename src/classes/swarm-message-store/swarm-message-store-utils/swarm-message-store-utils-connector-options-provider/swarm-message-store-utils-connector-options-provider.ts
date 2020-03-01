@@ -60,9 +60,10 @@ async function swarmMessageStoreUtilsConnectorOptionsProviderForOrbitDB(
         TSwarmMessageSeriazlized
       >) ||
       getMessageValidator(
-        dbOptions.dbName,
+        dbOptions,
         options.messageConstructors,
-        grantAccessCallback
+        grantAccessCallback,
+        options.userId
       );
 
     return {

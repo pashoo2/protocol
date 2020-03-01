@@ -1,6 +1,8 @@
 import { ISwarmMessageStoreOptions } from '../../classes/swarm-message-store/swarm-message-store.types';
 import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
 
+export const SWARM_MESSAGE_STORE_TEST_DATABASE_ONE_NAME = 'database_test';
+
 const SWARM_MESSAGE_STORE_TEST_OPTIONS_CREDENTIALS: ISwarmMessageStoreOptions<
   ESwarmStoreConnector.OrbitDB
 >['credentials'] = {
@@ -12,7 +14,8 @@ const SWARM_MESSAGE_STORE_TEST_OPTIONS_DATABASES: ISwarmMessageStoreOptions<
   ESwarmStoreConnector.OrbitDB
 >['databases'] = [
   {
-    dbName: 'database_test',
+    dbName: SWARM_MESSAGE_STORE_TEST_DATABASE_ONE_NAME,
+    isPublic: true,
   },
 ];
 

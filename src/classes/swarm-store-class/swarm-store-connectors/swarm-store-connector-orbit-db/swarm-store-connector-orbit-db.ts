@@ -95,6 +95,8 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
 
   protected storage?: ISwarmStoreConnectorOrbitDBSubclassStorageFabric;
 
+  private dbCloseListeners: ((...args: any[]) => any)[] = [];
+
   public constructor(
     options: ISwarmStoreConnectorOrbitDBOptions<ISwarmDatabaseValueTypes>
   ) {
@@ -405,9 +407,12 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
   > {
     const { getDbConnection } = this;
     const db = getDbConnection(dbName);
+    const dbOptsIdx = this.getIdxDbOptions(dbName);
 
     if (db) {
       return db;
+    } else if (dbOptsIdx === -1) {
+      return new Error(`A database with the name ${dbName} was not found`);
     } else {
       const removeListener = this.removeListener.bind(this);
 
@@ -876,7 +881,6 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
         this.setNotReady();
         this.orbitDb = undefined;
       } catch (err) {
-        debugger;
         return this.emitError(err, 'stopOrbitDBInsance');
       }
     }
@@ -1000,13 +1004,14 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
   }
 
   private handleDatabaseStoreClosed = (
-    database: SwarmStoreConnectorOrbitDBDatabase<ISwarmDatabaseValueTypes>
+    database: SwarmStoreConnectorOrbitDBDatabase<ISwarmDatabaseValueTypes>,
+    error: Error
   ) => {
     if (database) {
       const { dbName } = database;
 
       this.emitError(
-        'Database closed unexpected',
+        `Database closed unexpected: ${error.message}`,
         `handleDatabaseStoreClosed::${dbName}`
       );
       this.handleDbClose(database);
@@ -1088,10 +1093,32 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
       ? COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_ON
       : COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_OFF;
 
-    database[methodName](
-      ESwarmConnectorOrbitDbDatabaseEventNames.CLOSE,
-      this.handleDatabaseStoreClosed
-    );
+    if (isSet) {
+      const dbCloseHandler = (err: Error) => {
+        this.handleDatabaseStoreClosed(database, err);
+      };
+
+      database[methodName](
+        ESwarmConnectorOrbitDbDatabaseEventNames.CLOSE,
+        dbCloseHandler
+      );
+      database[methodName](
+        ESwarmConnectorOrbitDbDatabaseEventNames.FATAL,
+        dbCloseHandler
+      );
+      this.dbCloseListeners.push(dbCloseHandler);
+    } else {
+      this.dbCloseListeners.forEach((dbCloseHandler) => {
+        database[methodName](
+          ESwarmConnectorOrbitDbDatabaseEventNames.CLOSE,
+          dbCloseHandler
+        );
+        database[methodName](
+          ESwarmConnectorOrbitDbDatabaseEventNames.FATAL,
+          dbCloseHandler
+        );
+      });
+    }
     database[methodName](
       ESwarmConnectorOrbitDbDatabaseEventNames.LOADING,
       this.handleLoadingProgress
@@ -1099,10 +1126,6 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
     database[methodName](
       ESwarmConnectorOrbitDbDatabaseEventNames.UPDATE,
       this.handleDatabaseUpdated
-    );
-    database[methodName](
-      ESwarmConnectorOrbitDbDatabaseEventNames.FATAL,
-      this.handleDatabaseStoreClosed
     );
     database[methodName](
       ESwarmConnectorOrbitDbDatabaseEventNames.NEW_ENTRY,

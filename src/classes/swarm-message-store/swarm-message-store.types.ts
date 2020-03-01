@@ -13,6 +13,12 @@ import { ESwarmMessageStoreEventNames } from './swarm-message-store.const';
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import { TSwarmStoreDatabaseIteratorMethodArgument } from '../swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageSeriazlized } from '../swarm-message/swarm-message-constructor.types';
+import { TCentralAuthorityUserIdentity } from '../central-authority-class/central-authority-class-types/central-authority-class-types-common';
+
+/**
+ * message unique identifier in the database
+ */
+export type TSwarmMessageStoreMessageId = string;
 
 export interface ISwarmMessageStoreEvents extends ISwarmStoreEvents {
   /**
@@ -56,7 +62,7 @@ export type TSwarmMessageStoreAccessControlGrantAccessCallback = (
   // swarm message
   message: ISwarmMessageInstance,
   // identifier of the user sender of the message
-  userId: string,
+  userId: TCentralAuthorityUserIdentity,
   // a name of the database from where the message is comming from
   // TODO - can it be gotten from the database entry??
   dbName: string
@@ -127,11 +133,14 @@ export interface ISwarmMessageStore<P extends ESwarmStoreConnector>
    *
    * @param {string} dbName - name of the database
    * @param {ISwarmMessageStoreOptions<P>} message - message to add
-   * @returns {Promise<void>}
+   * @returns {Promise<TSwarmMessageStoreMessageId>} - unique message's identifier in the database
    * @memberof ISwarmMessageStore
    * @throws
    */
-  addMessage(dbName: string, message: ISwarmMessageInstance): Promise<void>;
+  addMessage(
+    dbName: string,
+    message: ISwarmMessageInstance
+  ): Promise<TSwarmMessageStoreMessageId>;
   /**
    * delete a message by it's address from the database
    * @param dbName

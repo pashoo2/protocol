@@ -69,7 +69,7 @@ export enum ESwarmStoreConnectorOrbitDBEventNames {
 export const SWARM_STORE_CONNECTOR_ORBITDB_CONNECTION_TIMEOUT_MS = 120000;
 
 /**
- * timeout for open a single database
+ * timeout for a single database opening
  */
 export const SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONNECTION_TIMEOUT_MS = 30000;
 

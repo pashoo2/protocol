@@ -108,6 +108,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       }
       return hash;
     } catch (err) {
+      console.trace(err);
       return err;
     }
   }

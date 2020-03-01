@@ -18,7 +18,10 @@ import {
 } from './swarm-message-store.const';
 import { extend } from '../../utils/common-utils/common-utils-objects';
 import { ISwarmStoreConnectorOrbitDbDatabaseIteratorAnswer } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
-import { TSwarmStoreDatabaseIteratorMethodAnswer } from '../swarm-store-class/swarm-store-class.types';
+import {
+  TSwarmStoreDatabaseIteratorMethodAnswer,
+  TSwarmStoreDatabaseMethodAnswer,
+} from '../swarm-store-class/swarm-store-class.types';
 import {
   TSwarmStoreDatabaseMethodArgument,
   TSwarmStoreDatabaseIteratorMethodArgument,
@@ -41,6 +44,8 @@ import {
 } from './swarm-message-store.types';
 import { swarmMessageStoreUtilsConnectorOptionsProvider } from './swarm-message-store-utils/swarm-message-store-utils-connector-options-provider';
 import { getMessageConstructorForDatabase } from './swarm-message-store-utils/swarm-message-store-utils-common/swarm-message-store-utils-common';
+import { TSwarmMessageStoreMessageId } from './swarm-message-store.types';
+import { TSwarmMessageSeriazlized } from '../swarm-message/swarm-message-constructor.types';
 
 export class SwarmMessageStore<P extends ESwarmStoreConnector>
   extends SwarmStore<P, ISwarmMessageStoreEvents>
@@ -110,14 +115,21 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
   public async addMessage(
     dbName: string,
     message: ISwarmMessageInstance | string
-  ): Promise<void> {
+  ): Promise<TSwarmMessageStoreMessageId> {
     assert(dbName, 'Database name must be provided');
     this.validateMessageFormat(message);
-    this.request(
-      dbName,
-      this.dbMethodAddMessage,
-      this.serializeMessage(message)
-    );
+
+    const response = (await this.request<
+      TSwarmStoreValueTypes<P>,
+      TSwarmMessageStoreMessageId
+    >(dbName, this.dbMethodAddMessage, this.serializeMessage(message))) as
+      | TSwarmStoreDatabaseMethodAnswer<P, string>
+      | Error;
+
+    if (response instanceof Error) {
+      throw response;
+    }
+    return this.deserializeAddMessageResponse(response);
   }
 
   public async deleteMessage(
@@ -309,6 +321,12 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
       typeof message === 'string' || typeof message === 'object',
       'Message must be a string or an object'
     );
+    assert(
+      typeof (message as ISwarmMessageInstance).bdy === 'object' &&
+        typeof (message as ISwarmMessageInstance).uid === 'string' &&
+        typeof (message as ISwarmMessageInstance).sig === 'string',
+      'Message must be a string or an object'
+    );
   }
 
   /**
@@ -438,6 +456,37 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
         throw new Error(
           'Failed to define argument value for a swarm message collecting'
         );
+    }
+  }
+
+  /**
+   * transforms the result of a query for adding a message
+   * to the unique message's identifier in the database
+   *
+   * @protected
+   * @param {TSwarmStoreDatabaseMethodAnswer<
+   *       P,
+   *       TSwarmMessageSeriazlized
+   *     >} addMessageResponse
+   * @returns {TSwarmMessageStoreMessageId}
+   * @memberof SwarmMessageStore
+   */
+  protected deserializeAddMessageResponse(
+    addMessageResponse: TSwarmStoreDatabaseMethodAnswer<
+      P,
+      TSwarmMessageSeriazlized
+    >
+  ): TSwarmMessageStoreMessageId {
+    const { connectorType } = this;
+
+    switch (connectorType) {
+      case ESwarmStoreConnector.OrbitDB:
+        if (typeof addMessageResponse !== 'string') {
+          throw new Error('There is a wrong responce on add message request');
+        }
+        return addMessageResponse;
+      default:
+        return String(addMessageResponse);
     }
   }
 }

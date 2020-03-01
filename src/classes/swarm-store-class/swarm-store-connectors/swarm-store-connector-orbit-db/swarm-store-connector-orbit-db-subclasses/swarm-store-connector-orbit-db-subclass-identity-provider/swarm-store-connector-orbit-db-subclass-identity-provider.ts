@@ -30,8 +30,7 @@ export class SwarmStoreConnectorOrbitDBSubclassIdentityProvider extends Identity
   public static async verifyIdentity(
     identity: IdentityAsJson
   ): Promise<boolean> {
-    // TODO - may be verify the identityf with central authority
-    debugger;
+    // TODO - may be verify the identity with central authority
     const verifyResult = await KeystoreClass.verify(
       identity.signatures.publicKey,
       identity.publicKey,
