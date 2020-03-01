@@ -23,6 +23,7 @@ import {
 } from 'const/common-values/common-values';
 import { SwarmStoreConnectorOrbitDBSubclassAccessController } from '../swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller';
 import { ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions } from '../swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types';
+import { ESwarmStoreConnectorOrbitDbDatabaseIteratorOption } from './swarm-store-connector-orbit-db-subclass-database.types';
 
 export class SwarmStoreConnectorOrbitDBDatabase<
   TFeedStoreType
@@ -163,13 +164,25 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   ): Promise<
     | Error
     | Array<
-        ISwarmStoreConnectorOrbitDbDatabaseValue<TFeedStoreType> | Error | void
+        | ISwarmStoreConnectorOrbitDbDatabaseValue<TFeedStoreType>
+        | Error
+        | undefined
       >
   > {
     const database = this.getDbStoreInstance();
 
     if (database instanceof Error) {
       return database;
+    }
+
+    const eqOperand =
+      options &&
+      typeof options[ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq];
+
+    if (typeof eqOperand === 'string') {
+      const val = database.get(eqOperand);
+
+      return val instanceof Error ? [val] : [this.parseValueStored(val)];
     }
 
     const iteratorOptionsRes =
@@ -187,7 +200,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   ):
     | ISwarmStoreConnectorOrbitDbDatabaseValue<TFeedStoreType>
     | Error
-    | void => {
+    | undefined => {
     const { payload, identity, hash } = e;
 
     if (payload) {

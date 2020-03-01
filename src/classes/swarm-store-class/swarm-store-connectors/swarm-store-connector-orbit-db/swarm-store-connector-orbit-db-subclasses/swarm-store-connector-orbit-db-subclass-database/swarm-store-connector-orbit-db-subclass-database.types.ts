@@ -61,6 +61,7 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValueType> {
 }
 
 export enum ESwarmStoreConnectorOrbitDbDatabaseIteratorOption {
+  eq = 'eq',
   gt = 'gt',
   gte = 'gte',
   lt = 'lt',
@@ -70,6 +71,7 @@ export enum ESwarmStoreConnectorOrbitDbDatabaseIteratorOption {
 }
 
 export interface ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions {
+  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq]?: string;
   [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.gt]?: string;
   [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.gte]?: string;
   [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.lt]?: string;

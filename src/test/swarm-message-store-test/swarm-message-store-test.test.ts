@@ -171,6 +171,28 @@ export const runSwarmMessageStoreTest = () => {
           )
         ).to.eventually.to.be.rejected;
       }).timeout(TIMEOUT);
+
+      describe('test "collect" method', async () => {
+        before(async function() {
+          this.timeout(TIMEOUT);
+          expect(swarmMessageStore).to.be.an('object');
+          expect(swarmMessageStore.collect).to.be.a('function');
+          expect(messageConstructor)
+            .to.be.an('object')
+            .which.have.property('construct')
+            .which.is.a('function');
+        });
+
+        it('iterate over all the existing messages', async () => {
+          const result = await swarmMessageStore.collect(
+            SWARM_MESSAGE_STORE_TEST_DATABASE_ONE_NAME,
+            {
+              limit: -1,
+            }
+          );
+          debugger;
+        });
+      });
     });
 
     describe('"addMessage" method test with non-public database', () => {

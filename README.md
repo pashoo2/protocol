@@ -64,3 +64,13 @@ this version of the rules must be used if the user allowed only a one user ident
 The key for the credentials storage value is a crypto hash from the user login
 The value is salt which is encrypted by the crypto key produced by the login
 The crypto credentials are encrypted by the login + password
+
+### RESTRICTIONS FOR ORBIT DB
+
+Any database closed once can't be opened till the instance of the SwarmStorage not be reopened. The workaround for it may be
+the following:
+
+- do not close the databse till the user is logged in or not close a broser's tab.
+- all closed databases may be muted.
+- in the window.onbeforeunload or on the SwarmStorage 'close' event listener, close all the databases,
+  which were closed before.
