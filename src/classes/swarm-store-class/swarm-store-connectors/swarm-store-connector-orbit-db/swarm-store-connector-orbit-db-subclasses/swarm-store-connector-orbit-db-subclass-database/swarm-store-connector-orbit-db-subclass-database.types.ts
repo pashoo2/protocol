@@ -1,5 +1,5 @@
-import { ESwarmConnectorOrbitDbDatabaseEventNames } from './swarm-store-connector-orbit-db-subclass-database.const';
 import { ISwarmStoreDatabaseBaseOptions } from '../../../../swarm-store-class.types';
+import { ESwarmStoreEventNames } from '../../../../swarm-store-class.const';
 import {
   ISwarmStoreConnectorOrbitDbDatabaseAccessControlleGrantCallback,
   ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess,
@@ -16,36 +16,27 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseEvents<
   TSwarmStoreConnectorOrbitDBDatabase,
   TFeedStoreType
 > {
-  [ESwarmConnectorOrbitDbDatabaseEventNames.FATAL]: [
+  [ESwarmStoreEventNames.FATAL]: [
     string,
     Error,
     TSwarmStoreConnectorOrbitDBDatabase
   ];
 
-  [ESwarmConnectorOrbitDbDatabaseEventNames.ERROR]: [
+  [ESwarmStoreEventNames.ERROR]: [
     string,
     Error,
     TSwarmStoreConnectorOrbitDBDatabase
   ];
   // Database name and percents loaded
-  [ESwarmConnectorOrbitDbDatabaseEventNames.LOADING]: [
+  [ESwarmStoreEventNames.LOADING]: [
     string,
     number,
     TSwarmStoreConnectorOrbitDBDatabase
   ];
-  [ESwarmConnectorOrbitDbDatabaseEventNames.UPDATE]: [
-    string,
-    TSwarmStoreConnectorOrbitDBDatabase
-  ];
-  [ESwarmConnectorOrbitDbDatabaseEventNames.CLOSE]: [
-    string,
-    TSwarmStoreConnectorOrbitDBDatabase
-  ];
-  [ESwarmConnectorOrbitDbDatabaseEventNames.READY]: [
-    string,
-    TSwarmStoreConnectorOrbitDBDatabase
-  ];
-  [ESwarmConnectorOrbitDbDatabaseEventNames.NEW_ENTRY]: [
+  [ESwarmStoreEventNames.UPDATE]: [string, TSwarmStoreConnectorOrbitDBDatabase];
+  [ESwarmStoreEventNames.CLOSE]: [string, TSwarmStoreConnectorOrbitDBDatabase];
+  [ESwarmStoreEventNames.READY]: [string, TSwarmStoreConnectorOrbitDBDatabase];
+  [ESwarmStoreEventNames.NEW_ENTRY]: [
     string, // database name
     LogEntry<TFeedStoreType>, // entry added
     string, // address of the entry,
@@ -71,7 +62,8 @@ export enum ESwarmStoreConnectorOrbitDbDatabaseIteratorOption {
 }
 
 export interface ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions {
-  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq]?: string;
+  // if the equal operator applyied all other will not be applied
+  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq]?: string | string[];
   [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.gt]?: string;
   [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.gte]?: string;
   [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.lt]?: string;

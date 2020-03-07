@@ -105,6 +105,12 @@ export type TSwarmMessageStoreConnectReturnType<
   P extends ESwarmStoreConnector
 > = ReturnType<ISwarmStore<P, TSwarmMessageSeriazlized>['connect']>;
 
+export type ISwarmMessageStoreDeleteMessageArg<
+  P extends ESwarmStoreConnector
+> = P extends ESwarmStoreConnector.OrbitDB
+  ? string // swarm message address
+  : ISwarmMessageInstance; // instance of the message to remove
+
 /**
  * allows to write messages to the swarm storage
  *
@@ -142,7 +148,10 @@ export interface ISwarmMessageStore<P extends ESwarmStoreConnector>
     message: ISwarmMessageInstance
   ): Promise<TSwarmMessageStoreMessageId>;
   /**
-   * delete a message by it's address from the database
+   * Message removed from the database
+   * or marked as removed, It will not
+   * be accessed with iterator.
+   *
    * @param dbName
    * @param messageAddress
    * @returns {Promise<void>}
@@ -151,11 +160,10 @@ export interface ISwarmMessageStore<P extends ESwarmStoreConnector>
    */
   deleteMessage(
     dbName: string,
-    messageAddress: string,
-    message: ISwarmMessageInstance | string
+    messageAddress: ISwarmMessageStoreDeleteMessageArg<P>
   ): Promise<void>;
   /**
-   * read all messages existing in the database
+   * read all messages existing (not removed) in the database
    * with the name provided.
    *
    * @param dbName

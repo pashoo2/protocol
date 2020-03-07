@@ -66,17 +66,19 @@ export class SwarmStore<
   public async connect(
     options: ISwarmStoreOptions<P, ItemType>
   ): Promise<Error | void> {
+    let connectionWithConnector: ISwarmStoreConnector<P> | undefined;
     try {
       this.validateOptions(options);
-
-      const connectionWithConnector = this.createConnectionWithStorageConnector(
+      connectionWithConnector = this.createConnectionWithStorageConnector(
         options
       );
-
       this.createStatusTable(options);
+      this.subscribeOnConnector(connectionWithConnector);
       await this.startConnectionWithConnector(connectionWithConnector, options);
-      this.subscribeOnConnector();
     } catch (err) {
+      if (connectionWithConnector) {
+        this.unSubscribeFromConnector(connectionWithConnector);
+      }
       return err;
     }
   }
@@ -89,14 +91,18 @@ export class SwarmStore<
    */
   public async close(): Promise<Error | undefined> {
     let error: Error | undefined;
+    const { connector } = this;
 
     try {
-      this.closeConnector();
+      await this.closeConnector();
     } catch (err) {
       error = err;
     }
-    this.unSubscribeFromConnector();
     this.reset();
+    if (connector) {
+      this.unSubscribeFromConnector(connector);
+    }
+    // this.removeAllListeners();
     return error;
   }
 
@@ -333,8 +339,9 @@ export class SwarmStore<
     });
   }
 
-  protected dbReadyListener = (dbName: string) =>
-    (this.dbStatusesExisting[dbName] = ESwarmStoreDbStatus.READY);
+  protected dbReadyListener = (dbName: string) => {
+    this.dbStatusesExisting[dbName] = ESwarmStoreDbStatus.READY;
+  };
 
   protected dbUpdateListener = (dbName: string) =>
     (this.dbStatusesExisting[dbName] = ESwarmStoreDbStatus.UPDATE);
@@ -357,9 +364,10 @@ export class SwarmStore<
    * @param {boolean} [isSubscribe=true]
    * @memberof SwarmStore
    */
-  protected subscribeOnDbEvents(isSubscribe: boolean = true): void {
-    const { connector } = this;
-
+  protected subscribeOnDbEvents(
+    connector: ISwarmStoreConnector<P>,
+    isSubscribe: boolean = true
+  ): void {
     if (!connector) {
       if (isSubscribe) {
         throw new Error('There is no connection to a connector');
@@ -381,8 +389,8 @@ export class SwarmStore<
     );
   }
 
-  protected unsubscribeFromDbEvents() {
-    this.subscribeOnDbEvents(false);
+  protected unsubscribeFromDbEvents(connector: ISwarmStoreConnector<P>) {
+    this.subscribeOnDbEvents(connector, false);
   }
 
   /**
@@ -392,9 +400,7 @@ export class SwarmStore<
    * @protected
    * @memberof SwarmStore
    */
-  protected subscribeConnectorAllEvents() {
-    const { connector } = this;
-
+  protected subscribeConnectorAllEvents(connector: ISwarmStoreConnector<P>) {
     if (!connector) {
       throw new Error('There is no swarm connector');
     }
@@ -405,21 +411,24 @@ export class SwarmStore<
     >;
 
     Object.values(ESwarmStoreEventNames).forEach((eventName) => {
-      storeConnectorEventsHandlers[eventName] = (...args) =>
+      storeConnectorEventsHandlers[eventName] = (...args) => {
+        console.log(`${eventName} == event`); // TODO - remove
+        // this.emit.bind(this, eventName);
         this.emit(eventName, ...args);
+      };
       connector.addListener(eventName, storeConnectorEventsHandlers[eventName]);
     });
     this.storeConnectorEventsHandlers = storeConnectorEventsHandlers;
   }
 
-  protected unSubscribeConnectorAllEvents() {
-    const { storeConnectorEventsHandlers, connector } = this;
+  protected unSubscribeConnectorAllEvents(connector: ISwarmStoreConnector<P>) {
+    const { storeConnectorEventsHandlers } = this;
 
     if (storeConnectorEventsHandlers && connector) {
-      Object.keys(ESwarmStoreEventNames).forEach((eventName) => {
+      Object.values(ESwarmStoreEventNames).forEach((eventName) => {
         connector.removeListener(
           eventName,
-          storeConnectorEventsHandlers[eventName as ESwarmStoreEventNames]
+          storeConnectorEventsHandlers[eventName]
         );
       });
     }
@@ -431,9 +440,9 @@ export class SwarmStore<
    * @protected
    * @memberof SwarmStore
    */
-  protected subscribeOnConnector() {
-    this.subscribeOnDbEvents();
-    this.subscribeConnectorAllEvents();
+  protected subscribeOnConnector(connector: ISwarmStoreConnector<P>) {
+    this.subscribeOnDbEvents(connector);
+    this.subscribeConnectorAllEvents(connector);
   }
 
   /**
@@ -442,9 +451,9 @@ export class SwarmStore<
    * @protected
    * @memberof SwarmStore
    */
-  protected unSubscribeFromConnector() {
-    this.unsubscribeFromDbEvents();
-    this.unSubscribeConnectorAllEvents();
+  protected unSubscribeFromConnector(connector: ISwarmStoreConnector<P>) {
+    this.unsubscribeFromDbEvents(connector);
+    this.unSubscribeConnectorAllEvents(connector);
   }
 
   /**

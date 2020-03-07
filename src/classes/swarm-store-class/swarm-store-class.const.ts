@@ -63,7 +63,12 @@ export enum ESwarmStoreEventNames {
    * an error has occured on any operation
    * emits with the argument equals to an error
    */
-  ERROR = 'ERROR',
+  ERROR = 'error',
+  /**
+   * a fatal error has occurred
+   * caused the instance can't be used anymore
+   */
+  FATAL = 'fatal',
   /**
    * Emitted after an entry was added locally to the database. hash is the IPFS hash of the latest state of the database. entry is the added database op.
    * args:

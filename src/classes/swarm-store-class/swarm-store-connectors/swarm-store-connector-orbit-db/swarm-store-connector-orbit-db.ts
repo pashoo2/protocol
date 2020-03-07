@@ -28,7 +28,6 @@ import {
   TSwarmStoreConnectorOrbitDbDatabaseMethodNames,
   TSwarmStoreConnectorOrbitDbDatabaseMathodArgument,
 } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
-import { ESwarmConnectorOrbitDbDatabaseEventNames } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { commonUtilsArrayDeleteFromArray } from 'utils/common-utils/common-utils';
 import {
   COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_ON,
@@ -40,7 +39,10 @@ import { SwarmStorageConnectorOrbitDBSublassKeyStore } from './swarm-store-conne
 import { ISwarmStoreConnectorOrbitDBSubclassStorageFabric } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-storage-fabric/swarm-store-connector-orbit-db-subclass-storage-fabric.types';
 import { SwarmStoreConnectorOrbitDBSubclassStorageFabric } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-storage-fabric/swarm-store-connector-orbit-db-subclass-storage-fabric';
 import { ISwarmStoreConnector } from '../../swarm-store-class.types';
-import { ESwarmStoreConnector } from '../../swarm-store-class.const';
+import {
+  ESwarmStoreConnector,
+  ESwarmStoreEventNames,
+} from '../../swarm-store-class.const';
 
 export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
   extends EventEmitter<ISwarmStoreConnectorOrbitDBEvents>
@@ -175,7 +177,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
       return createDatabases;
     }
     // set the database is ready to query
-    this.setIsReady(true);
+    this.setReady();
   };
 
   public openDatabase = async (
@@ -323,7 +325,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
   protected setIsClosed = () => {
     this.setNotReady();
     this.isClosed = true;
-    this.emit(ESwarmStoreConnectorOrbitDBEventNames.CLOSE);
+    this.emit(ESwarmStoreConnectorOrbitDBEventNames.CLOSE, true);
   };
 
   /**
@@ -423,14 +425,8 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
             clearTimeout(timeout);
             timeout = undefined;
           }
-          removeListener(
-            ESwarmConnectorOrbitDbDatabaseEventNames.READY,
-            onReady
-          );
-          removeListener(
-            ESwarmConnectorOrbitDbDatabaseEventNames.CLOSE,
-            onClose
-          );
+          removeListener(ESwarmStoreEventNames.READY, onReady);
+          removeListener(ESwarmStoreEventNames.CLOSE, onClose);
         }
         function onReady(dbNameReady: string) {
           if (dbNameReady === dbName) {
@@ -451,8 +447,8 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
           removeListners();
           res(new Error());
         }, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONNECTION_TIMEOUT_MS);
-        this.once(ESwarmConnectorOrbitDbDatabaseEventNames.READY, onReady);
-        this.once(ESwarmConnectorOrbitDbDatabaseEventNames.CLOSE, onClose);
+        this.once(ESwarmStoreEventNames.READY, onReady);
+        this.once(ESwarmStoreEventNames.CLOSE, onClose);
       });
     }
   }
@@ -1059,7 +1055,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
   };
 
   private handleDatabaseUpdated = (dbName: string) => {
-    this.emit(ESwarmConnectorOrbitDbDatabaseEventNames.UPDATE, dbName);
+    this.emit(ESwarmStoreEventNames.UPDATE, dbName);
   };
 
   /**
@@ -1077,12 +1073,8 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
     string,
     any
   ]) => {
-    this.emit(ESwarmConnectorOrbitDbDatabaseEventNames.NEW_ENTRY, [
-      dbName,
-      entry,
-      address,
-      heads,
-    ]);
+    debugger;
+    this.emit(ESwarmStoreEventNames.NEW_ENTRY, [dbName, entry, address, heads]);
   };
 
   private async setListenersDatabaseEvents(
@@ -1098,37 +1090,25 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
         this.handleDatabaseStoreClosed(database, err);
       };
 
-      database[methodName](
-        ESwarmConnectorOrbitDbDatabaseEventNames.CLOSE,
-        dbCloseHandler
-      );
-      database[methodName](
-        ESwarmConnectorOrbitDbDatabaseEventNames.FATAL,
-        dbCloseHandler
-      );
+      database[methodName](ESwarmStoreEventNames.CLOSE, dbCloseHandler);
+      database[methodName](ESwarmStoreEventNames.FATAL, dbCloseHandler);
       this.dbCloseListeners.push(dbCloseHandler);
     } else {
       this.dbCloseListeners.forEach((dbCloseHandler) => {
-        database[methodName](
-          ESwarmConnectorOrbitDbDatabaseEventNames.CLOSE,
-          dbCloseHandler
-        );
-        database[methodName](
-          ESwarmConnectorOrbitDbDatabaseEventNames.FATAL,
-          dbCloseHandler
-        );
+        database[methodName](ESwarmStoreEventNames.CLOSE, dbCloseHandler);
+        database[methodName](ESwarmStoreEventNames.FATAL, dbCloseHandler);
       });
     }
     database[methodName](
-      ESwarmConnectorOrbitDbDatabaseEventNames.LOADING,
+      ESwarmStoreEventNames.LOADING,
       this.handleLoadingProgress
     );
     database[methodName](
-      ESwarmConnectorOrbitDbDatabaseEventNames.UPDATE,
+      ESwarmStoreEventNames.UPDATE,
       this.handleDatabaseUpdated
     );
     database[methodName](
-      ESwarmConnectorOrbitDbDatabaseEventNames.NEW_ENTRY,
+      ESwarmStoreEventNames.NEW_ENTRY,
       this.handleNewEntryAddedToDatabase
     );
   }
@@ -1178,18 +1158,9 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
       let timeout: NodeJS.Timer | undefined = undefined;
 
       function usetListeners() {
-        database.removeListener(
-          ESwarmConnectorOrbitDbDatabaseEventNames.READY,
-          res
-        );
-        database.removeListener(
-          ESwarmConnectorOrbitDbDatabaseEventNames.CLOSE,
-          res
-        );
-        database.removeListener(
-          ESwarmConnectorOrbitDbDatabaseEventNames.FATAL,
-          res
-        );
+        database.removeListener(ESwarmStoreEventNames.READY, res);
+        database.removeListener(ESwarmStoreEventNames.CLOSE, res);
+        database.removeListener(ESwarmStoreEventNames.FATAL, res);
         if (timeout) {
           clearTimeout(timeout);
         }
@@ -1203,15 +1174,15 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
         );
       }, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONNECTION_TIMEOUT_MS);
       try {
-        database.once(ESwarmConnectorOrbitDbDatabaseEventNames.CLOSE, () => {
+        database.once(ESwarmStoreEventNames.CLOSE, () => {
           usetListeners();
           res(new Error('Database was closed'));
         });
-        database.once(ESwarmConnectorOrbitDbDatabaseEventNames.FATAL, () => {
+        database.once(ESwarmStoreEventNames.FATAL, () => {
           usetListeners();
           res(new Error('A fatal error has occurred while open the database'));
         });
-        database.once(ESwarmConnectorOrbitDbDatabaseEventNames.READY, () => {
+        database.once(ESwarmStoreEventNames.READY, () => {
           usetListeners();
           res(true);
         });

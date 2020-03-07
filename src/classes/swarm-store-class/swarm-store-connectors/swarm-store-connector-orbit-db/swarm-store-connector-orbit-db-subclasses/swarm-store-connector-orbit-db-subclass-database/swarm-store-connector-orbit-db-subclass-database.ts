@@ -9,7 +9,6 @@ import {
 } from './swarm-store-connector-orbit-db-subclass-database.types';
 import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
 import {
-  ESwarmConnectorOrbitDbDatabaseEventNames,
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_LOG_PREFIX,
   EOrbidDBFeedSoreEvents,
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONFIGURATION,
@@ -24,6 +23,8 @@ import {
 import { SwarmStoreConnectorOrbitDBSubclassAccessController } from '../swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller';
 import { ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions } from '../swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseIteratorOption } from './swarm-store-connector-orbit-db-subclass-database.types';
+import { EOrbitDbFeedStoreOperation } from './swarm-store-connector-orbit-db-subclass-database.const';
+import { ESwarmStoreEventNames } from '../../../../swarm-store-class.const';
 
 export class SwarmStoreConnectorOrbitDBDatabase<
   TFeedStoreType
@@ -86,7 +87,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
 
     this.unsetReadyState();
     this.isClosed = true;
-    this.emitEvent(ESwarmConnectorOrbitDbDatabaseEventNames.CLOSE, this);
+    this.emitEvent(ESwarmStoreEventNames.CLOSE, this);
     this.unsetAllListenersForEvents();
     if (closeCurrentStoreResult instanceof Error) {
       return closeCurrentStoreResult;
@@ -117,7 +118,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   public async get(
     hash: TFeedStoreHash
   ): Promise<
-    Error | ISwarmStoreConnectorOrbitDbDatabaseValue<TFeedStoreType> | void
+    Error | ISwarmStoreConnectorOrbitDbDatabaseValue<TFeedStoreType> | undefined
   > {
     const database = this.getDbStoreInstance();
 
@@ -130,6 +131,9 @@ export class SwarmStoreConnectorOrbitDBDatabase<
 
       if (e instanceof Error) {
         return new Error('An error has occurred on get the data from the key');
+      }
+      if (e.hash !== hash) {
+        return undefined;
       }
       if (e) {
         return this.parseValueStored(e);
@@ -177,11 +181,9 @@ export class SwarmStoreConnectorOrbitDBDatabase<
 
     const eqOperand =
       options && options[ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq];
-    debugger;
-    if (typeof eqOperand === 'string') {
-      const val = database.get(eqOperand);
 
-      return val instanceof Error ? [val] : [this.parseValueStored(val)];
+    if (eqOperand) {
+      return this.getValues(eqOperand, database);
     }
 
     const iteratorOptionsRes =
@@ -203,6 +205,9 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     const { payload, identity, hash } = e;
 
     if (payload) {
+      if (payload.op === EOrbitDbFeedStoreOperation.DELETE) {
+        return undefined;
+      }
       return {
         id: identity.id,
         value: payload.value,
@@ -212,6 +217,24 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       return new Error('An unknown fromat of the data stored');
     }
   };
+
+  protected getValues(
+    hash: string | string[],
+    database: OrbitDbFeedStore<TFeedStoreType>
+  ): Promise<
+    Array<
+      | ISwarmStoreConnectorOrbitDbDatabaseValue<TFeedStoreType>
+      | Error
+      | undefined
+    >
+  > {
+    const pending =
+      typeof hash === 'string'
+        ? [this.get(hash)]
+        : hash.map((h) => this.get(h));
+
+    return Promise.all(pending);
+  }
 
   private getDbStoreInstance(): Error | OrbitDbFeedStore<TFeedStoreType> {
     const { isReady, database } = this;
@@ -248,8 +271,8 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   ): Error {
     const err = typeof error === 'string' ? new Error() : error;
     const eventName = isFatal
-      ? ESwarmConnectorOrbitDbDatabaseEventNames.FATAL
-      : ESwarmConnectorOrbitDbDatabaseEventNames.ERROR;
+      ? ESwarmStoreEventNames.FATAL
+      : ESwarmStoreEventNames.ERROR;
 
     console.error(
       `${SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_LOG_PREFIX}::error${
@@ -277,10 +300,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     );
   }
 
-  protected emitEvent(
-    event: ESwarmConnectorOrbitDbDatabaseEventNames,
-    ...args: any[]
-  ) {
+  protected emitEvent(event: ESwarmStoreEventNames, ...args: any[]) {
     const { options } = this;
     const { dbName } = options!;
 
@@ -294,7 +314,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   private emitFullyLoaded() {
     if (!this.isFullyLoaded) {
       this.isFullyLoaded = true;
-      this.emitEvent(ESwarmConnectorOrbitDbDatabaseEventNames.LOADING, 100);
+      this.emitEvent(ESwarmStoreEventNames.LOADING, 100);
     }
   }
 
@@ -314,7 +334,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   private handleFeedStoreReady = () => {
     this.emitFullyLoaded();
     this.setReadyState();
-    this.emitEvent(ESwarmConnectorOrbitDbDatabaseEventNames.READY);
+    this.emitEvent(ESwarmStoreEventNames.READY);
     this.logStore();
   };
 
@@ -331,7 +351,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     total: number
   ) => {
     // emit event database local copy loading progress
-    this.emitEvent(ESwarmConnectorOrbitDbDatabaseEventNames.LOADING, progress);
+    this.emitEvent(ESwarmStoreEventNames.LOADING, progress);
   };
 
   private handleFeedStoreReplicated = () => {
@@ -339,7 +359,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     // was replicated with another peer db copy
     const { dbName } = this;
 
-    this.emitEvent(ESwarmConnectorOrbitDbDatabaseEventNames.UPDATE, dbName);
+    this.emitEvent(ESwarmStoreEventNames.UPDATE, dbName);
     this.logStore();
   };
 
@@ -429,7 +449,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     entry: LogEntry<TFeedStoreType>,
     heads: any
   ) => {
-    this.emit(ESwarmConnectorOrbitDbDatabaseEventNames.NEW_ENTRY, [
+    this.emit(ESwarmStoreEventNames.NEW_ENTRY, [
       this.dbName,
       entry,
       address,

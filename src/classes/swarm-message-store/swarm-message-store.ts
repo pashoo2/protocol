@@ -44,7 +44,10 @@ import {
 } from './swarm-message-store.types';
 import { swarmMessageStoreUtilsConnectorOptionsProvider } from './swarm-message-store-utils/swarm-message-store-utils-connector-options-provider';
 import { getMessageConstructorForDatabase } from './swarm-message-store-utils/swarm-message-store-utils-common/swarm-message-store-utils-common';
-import { TSwarmMessageStoreMessageId } from './swarm-message-store.types';
+import {
+  TSwarmMessageStoreMessageId,
+  ISwarmMessageStoreDeleteMessageArg,
+} from './swarm-message-store.types';
 import { TSwarmMessageSeriazlized } from '../swarm-message/swarm-message-constructor.types';
 import { isDefined } from '../../utils/common-utils/common-utils-main';
 
@@ -135,16 +138,23 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
 
   public async deleteMessage(
     dbName: string,
-    messageAddress: string,
-    message: ISwarmMessageInstance | string
+    messageAddress: ISwarmMessageStoreDeleteMessageArg<P>
   ): Promise<void> {
     assert(dbName, 'Database name must be provided');
-    assert(messageAddress, 'Message address must be provided');
-    this.request(
+    assert(
+      messageAddress && typeof messageAddress === 'string',
+      'Message address must be a non empty string'
+    );
+
+    const result = await this.request(
       dbName,
       this.dbMethodRemoveMessage,
-      this.getArgRemoveMessage(messageAddress, message)
+      this.getArgRemoveMessage(messageAddress)
     );
+
+    if (result instanceof Error) {
+      throw result;
+    }
   }
 
   public async collect(
@@ -306,6 +316,7 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
   };
 
   protected setListeners() {
+    debugger;
     this.addListener(ESwarmStoreEventNames.NEW_ENTRY, this.handleNewMessage);
   }
 
@@ -365,8 +376,7 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
    * @memberof SwarmMessageStore
    */
   protected getArgRemoveMessage(
-    messageAddress: string,
-    message: ISwarmMessageInstance | string
+    messageAddress: string
   ): TSwarmStoreDatabaseMethodArgument<P, TSwarmStoreValueTypes<P>> {
     const { connectorType } = this;
 

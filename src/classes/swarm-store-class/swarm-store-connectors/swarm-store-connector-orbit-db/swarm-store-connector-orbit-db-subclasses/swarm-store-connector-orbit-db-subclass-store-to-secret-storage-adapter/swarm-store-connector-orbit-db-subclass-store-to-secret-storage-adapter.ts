@@ -131,6 +131,9 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
     v: string | Buffer,
     cb?: TCallbackError
   ): Promise<void> {
+    if (this.isClose) {
+      console.error('CLOSED');
+    }
     await this.openIfNecessary();
 
     const secretStorage = this.getSecretStorage();
