@@ -22,13 +22,13 @@ import {
 } from './swarm-storage-orbit-db.test.const';
 import { SWARM_CONNECTION_OPTIONS } from 'test/ipfs-swarm-connection.test/ipfs-swarm-connection.const';
 import { SwarmConnection } from 'classes/swarm-connection-class/swarm-connection-class';
-import { ESwarmStoreConnectorOrbitDBEventNames } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.const';
 import { ISwarmStoreConnectorOrbitDbDatabaseValue } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import { COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_ON } from 'const/common-values/common-values';
 import { SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter';
 import { SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.const';
 import { SecretStorage } from 'classes/secret-storage-class/secret-storage-class';
 import { SwarmStoreConnectorOrbitDBSubclassStorageFabric } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-storage-fabric/swarm-store-connector-orbit-db-subclass-storage-fabric';
+import { ESwarmStoreEventNames } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.const';
 
 export const testDatabase = async (
   connection: SwarmStoreConnectorOrbitDB<string>,
@@ -152,21 +152,18 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
         const readyEmitted: string[] = [];
 
         connection.on(
-          ESwarmStoreConnectorOrbitDBEventNames.LOADING,
+          ESwarmStoreEventNames.LOADING,
           (loadingProgress: number) => {
             if (loadingProgress === 100) {
               fullProgressEmitted = true;
             }
           }
         );
-        connection.on(
-          ESwarmStoreConnectorOrbitDBEventNames.READY,
-          (dbName: string) => {
-            if (dbName) {
-              readyEmitted.push(dbName);
-            }
+        connection.on(ESwarmStoreEventNames.READY, (dbName: string) => {
+          if (dbName) {
+            readyEmitted.push(dbName);
           }
-        );
+        });
 
         await expect(
           connection.connect({
@@ -204,7 +201,7 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
         let isCloseEmitted: boolean = false;
 
         connection[COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_ON](
-          ESwarmStoreConnectorOrbitDBEventNames.CLOSE,
+          ESwarmStoreEventNames.CLOSE,
           () => {
             isCloseEmitted = true;
           }
@@ -246,21 +243,18 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
         const readyEmitted: string[] = [];
 
         connection.on(
-          ESwarmStoreConnectorOrbitDBEventNames.LOADING,
+          ESwarmStoreEventNames.LOADING,
           (loadingProgress: number) => {
             if (loadingProgress === 100) {
               fullProgressEmitted = true;
             }
           }
         );
-        connection.on(
-          ESwarmStoreConnectorOrbitDBEventNames.READY,
-          (dbName: string) => {
-            if (dbName) {
-              readyEmitted.push(dbName);
-            }
+        connection.on(ESwarmStoreEventNames.READY, (dbName: string) => {
+          if (dbName) {
+            readyEmitted.push(dbName);
           }
-        );
+        });
 
         await expect(
           connection.connect({
@@ -318,7 +312,7 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
         let isEmitDbClose: boolean = false;
 
         connection.on(
-          ESwarmStoreConnectorOrbitDBEventNames.CLOSE_DATABASE,
+          ESwarmStoreEventNames.CLOSE_DATABASE,
           (dbName: string) => {
             if (
               dbName ===
@@ -345,7 +339,7 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
         let isCloseEmitted: boolean = false;
 
         connection[COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_ON](
-          ESwarmStoreConnectorOrbitDBEventNames.CLOSE,
+          ESwarmStoreEventNames.CLOSE,
           () => {
             isCloseEmitted = true;
           }
@@ -387,21 +381,18 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
         const readyEmitted: string[] = [];
 
         connection.on(
-          ESwarmStoreConnectorOrbitDBEventNames.LOADING,
+          ESwarmStoreEventNames.LOADING,
           (loadingProgress: number) => {
             if (loadingProgress === 100) {
               fullProgressEmitted = true;
             }
           }
         );
-        connection.on(
-          ESwarmStoreConnectorOrbitDBEventNames.READY,
-          (dbName: string) => {
-            if (dbName) {
-              readyEmitted.push(dbName);
-            }
+        connection.on(ESwarmStoreEventNames.READY, (dbName: string) => {
+          if (dbName) {
+            readyEmitted.push(dbName);
           }
-        );
+        });
 
         await expect(
           connection.connect({
@@ -449,21 +440,18 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
         const readyEmitted: string[] = [];
 
         connection.on(
-          ESwarmStoreConnectorOrbitDBEventNames.LOADING,
+          ESwarmStoreEventNames.LOADING,
           (loadingProgress: number) => {
             if (loadingProgress === 100) {
               fullProgressEmitted = true;
             }
           }
         );
-        connection.on(
-          ESwarmStoreConnectorOrbitDBEventNames.READY,
-          (dbName: string) => {
-            if (dbName) {
-              readyEmitted.push(dbName);
-            }
+        connection.on(ESwarmStoreEventNames.READY, (dbName: string) => {
+          if (dbName) {
+            readyEmitted.push(dbName);
           }
-        );
+        });
 
         await expect(
           connection.connect({
@@ -511,21 +499,18 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
         const readyEmitted: string[] = [];
 
         connection.on(
-          ESwarmStoreConnectorOrbitDBEventNames.LOADING,
+          ESwarmStoreEventNames.LOADING,
           (loadingProgress: number) => {
             if (loadingProgress === 100) {
               fullProgressEmitted = true;
             }
           }
         );
-        connection.on(
-          ESwarmStoreConnectorOrbitDBEventNames.READY,
-          (dbName: string) => {
-            if (dbName) {
-              readyEmitted.push(dbName);
-            }
+        connection.on(ESwarmStoreEventNames.READY, (dbName: string) => {
+          if (dbName) {
+            readyEmitted.push(dbName);
           }
-        );
+        });
 
         await expect(
           connection.connect({
@@ -563,7 +548,7 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
         let isCloseEmitted: boolean = false;
 
         connection[COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_ON](
-          ESwarmStoreConnectorOrbitDBEventNames.CLOSE,
+          ESwarmStoreEventNames.CLOSE,
           () => {
             isCloseEmitted = true;
           }
@@ -605,21 +590,18 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
         const readyEmitted: string[] = [];
 
         connection.on(
-          ESwarmStoreConnectorOrbitDBEventNames.LOADING,
+          ESwarmStoreEventNames.LOADING,
           (loadingProgress: number) => {
             if (loadingProgress === 100) {
               fullProgressEmitted = true;
             }
           }
         );
-        connection.on(
-          ESwarmStoreConnectorOrbitDBEventNames.READY,
-          (dbName: string) => {
-            if (dbName) {
-              readyEmitted.push(dbName);
-            }
+        connection.on(ESwarmStoreEventNames.READY, (dbName: string) => {
+          if (dbName) {
+            readyEmitted.push(dbName);
           }
-        );
+        });
 
         await expect(
           connection.connect({
@@ -657,7 +639,7 @@ export const runTestSwarmStoreOrbitDBConnection = async (name?: string) => {
         let isCloseEmitted: boolean = false;
 
         connection[COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_ON](
-          ESwarmStoreConnectorOrbitDBEventNames.CLOSE,
+          ESwarmStoreEventNames.CLOSE,
           () => {
             isCloseEmitted = true;
           }

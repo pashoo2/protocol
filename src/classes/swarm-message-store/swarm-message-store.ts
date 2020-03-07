@@ -48,7 +48,10 @@ import {
   TSwarmMessageStoreMessageId,
   ISwarmMessageStoreDeleteMessageArg,
 } from './swarm-message-store.types';
-import { TSwarmMessageSeriazlized } from '../swarm-message/swarm-message-constructor.types';
+import {
+  TSwarmMessageSeriazlized,
+  ISwarmMessage,
+} from '../swarm-message/swarm-message-constructor.types';
 import { isDefined } from '../../utils/common-utils/common-utils-main';
 
 export class SwarmMessageStore<P extends ESwarmStoreConnector>
@@ -278,45 +281,61 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
    */
   protected handleNewMessage = async ([dbName, message, messageAddress]: [
     string,
-    string,
+    P extends ESwarmStoreConnector.OrbitDB
+      ? LogEntry<TSwarmMessageSeriazlized>
+      : any,
     string
   ]): Promise<void> => {
-    debugger;
     const messageConstructor = this.getMessageConstructor(dbName);
+
+    if (
+      typeof message !== 'object' ||
+      typeof message.payload !== 'object' ||
+      typeof message.payload.value !== 'string'
+    ) {
+      return this.emitMessageConstructionFails(
+        dbName,
+        String(message),
+        messageAddress,
+        new Error('There is unknown message format')
+      );
+    }
+
+    const { hash: messageHash, payload } = message;
+    const { value: messageString } = payload;
 
     if (!messageConstructor) {
       return this.emitMessageConstructionFails(
         dbName,
-        message,
-        messageAddress,
+        messageString,
+        messageHash,
         new Error('There is no message constructor specified for the message')
       );
     }
 
     try {
-      const swarmMessage = await messageConstructor.construct(message);
+      const swarmMessage = await messageConstructor.construct(messageString);
 
       if (swarmMessage instanceof Error) {
         return this.emitMessageConstructionFails(
           dbName,
-          message,
-          messageAddress,
+          messageString,
+          messageHash,
           swarmMessage
         );
       }
-      return this.emitMessageNew(dbName, swarmMessage, messageAddress);
+      return this.emitMessageNew(dbName, swarmMessage, message.hash);
     } catch (err) {
       return this.emitMessageConstructionFails(
         dbName,
-        message,
-        messageAddress,
+        messageString,
+        messageHash,
         err
       );
     }
   };
 
   protected setListeners() {
-    debugger;
     this.addListener(ESwarmStoreEventNames.NEW_ENTRY, this.handleNewMessage);
   }
 

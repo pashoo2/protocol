@@ -4,7 +4,6 @@ import AccessControllers from 'orbit-db-access-controllers';
 import { Keystore } from 'orbit-db-keystore';
 import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
 import {
-  ESwarmStoreConnectorOrbitDBEventNames,
   SWARM_STORE_CONNECTOR_ORBITDB_CONNECTION_TIMEOUT_MS,
   SWARM_STORE_CONNECTOR_ORBITDB_LOG_PREFIX,
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONNECTION_TIMEOUT_MS,
@@ -251,7 +250,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
       }
     }
     this.databases.push(database);
-    this.emit(ESwarmStoreConnectorOrbitDBEventNames.READY, dbOptions.dbName);
+    this.emit(ESwarmStoreEventNames.READY, dbOptions.dbName);
   };
 
   public async closeDatabase(dbName: string): Promise<Error | void> {
@@ -325,7 +324,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
   protected setIsClosed = () => {
     this.setNotReady();
     this.isClosed = true;
-    this.emit(ESwarmStoreConnectorOrbitDBEventNames.CLOSE, true);
+    this.emit(ESwarmStoreEventNames.CLOSE, true);
   };
 
   /**
@@ -454,7 +453,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
   }
 
   protected unsetAllListenersForEvents = () => {
-    Object.values(ESwarmStoreConnectorOrbitDBEventNames).forEach(
+    Object.values(ESwarmStoreEventNames).forEach(
       this[COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_UNSET_ALL_LISTENERS].bind(
         this
       )
@@ -468,11 +467,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
       const { dbName } = database;
 
       console.warn(`Database named ${dbName} was closed`);
-      this.emit(
-        ESwarmStoreConnectorOrbitDBEventNames.CLOSE_DATABASE,
-        dbName,
-        database
-      );
+      this.emit(ESwarmStoreEventNames.CLOSE_DATABASE, dbName, database);
     }
   }
 
@@ -485,13 +480,13 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
       }`,
       err
     );
-    this.emit(ESwarmStoreConnectorOrbitDBEventNames.ERROR, err);
+    this.emit(ESwarmStoreEventNames.ERROR, err);
     return err;
   }
 
   private setIsReady(isReady: boolean = false) {
     this.isReady = isReady;
-    this.emit(ESwarmStoreConnectorOrbitDBEventNames.STATE_CHANGE, isReady);
+    this.emit(ESwarmStoreEventNames.STATE_CHANGE, isReady);
   }
 
   /**
@@ -1044,14 +1039,8 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
     console.log(
       `Swarm store connector::handleLoadingProgress::${dbName}::progress::${progress}`
     );
-    this.emit(
-      ESwarmStoreConnectorOrbitDBEventNames.LOADING,
-      currentProgressInPercent
-    );
-    this.emit(ESwarmStoreConnectorOrbitDBEventNames.DB_LOADING, [
-      dbName,
-      progress,
-    ]);
+    this.emit(ESwarmStoreEventNames.LOADING, currentProgressInPercent);
+    this.emit(ESwarmStoreEventNames.DB_LOADING, [dbName, progress]);
   };
 
   private handleDatabaseUpdated = (dbName: string) => {
@@ -1073,7 +1062,6 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
     string,
     any
   ]) => {
-    debugger;
     this.emit(ESwarmStoreEventNames.NEW_ENTRY, [dbName, entry, address, heads]);
   };
 

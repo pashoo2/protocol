@@ -411,11 +411,7 @@ export class SwarmStore<
     >;
 
     Object.values(ESwarmStoreEventNames).forEach((eventName) => {
-      storeConnectorEventsHandlers[eventName] = (...args) => {
-        console.log(`${eventName} == event`); // TODO - remove
-        // this.emit.bind(this, eventName);
-        this.emit(eventName, ...args);
-      };
+      storeConnectorEventsHandlers[eventName] = this.emit.bind(this, eventName);
       connector.addListener(eventName, storeConnectorEventsHandlers[eventName]);
     });
     this.storeConnectorEventsHandlers = storeConnectorEventsHandlers;

@@ -13,11 +13,9 @@ import {
 } from './swarm-message-store-test.const';
 import { CentralAuthority } from '../../classes/central-authority-class/central-authority-class';
 import { ipfsUtilsConnectBasic } from '../../utils/ipfs-utils/ipfs-utils';
-import {
-  SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONNECTION_TIMEOUT_MS,
-  ESwarmStoreConnectorOrbitDBEventNames,
-} from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.const';
+import { SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONNECTION_TIMEOUT_MS } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.const';
 import { ESwarmStoreConnectorOrbitDbDatabaseIteratorOption } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
+import { ESwarmMessageStoreEventNames } from '../../classes/swarm-message-store/swarm-message-store.const';
 import {
   TSwarmMessageConstructorArgumentBody,
   ISwarmMessageConstructor,
@@ -138,6 +136,7 @@ export const runSwarmMessageStoreTest = () => {
       let dbLoadingEvent = false;
       let errorEvent = false;
       let closeEvent = false;
+      let newMessageEvent = false;
 
       before(async function() {
         this.timeout(TIMEOUT);
@@ -148,6 +147,17 @@ export const runSwarmMessageStoreTest = () => {
           .which.have.property('construct')
           .which.is.a('function');
 
+        swarmMessageStore.on(
+          ESwarmMessageStoreEventNames.NEW_MESSAGE,
+          ([dbName, message, hash]) => {
+            if (
+              dbName === SWARM_MESSAGE_STORE_TEST_DATABASE_ONE_NAME &&
+              typeof hash === 'string'
+            ) {
+              newMessageEvent = true;
+            }
+          }
+        );
         swarmMessageStore.on(ESwarmStoreEventNames.ERROR, (err) => {
           if (err instanceof Error) {
             errorEvent = true;
@@ -192,10 +202,8 @@ export const runSwarmMessageStoreTest = () => {
       });
 
       after(async function() {
-        debugger;
         this.timeout(TIMEOUT);
         await swarmMessageStore.close();
-        debugger;
         expect(closeEvent).to.equal(true);
       });
 
@@ -455,6 +463,9 @@ export const runSwarmMessageStoreTest = () => {
         });
         it('error cause db not exists', () => {
           expect(errorEvent).to.equal(true);
+        });
+        it('new message cause a new message was added', () => {
+          expect(newMessageEvent).to.equal(true);
         });
       });
     });
