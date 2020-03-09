@@ -1,0 +1,4 @@
+{
+  "main": "connection-bridge.ts",
+  "types": "connection-bridge.ts"
+}
