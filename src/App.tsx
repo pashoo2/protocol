@@ -51,6 +51,7 @@ import { runTestOpenStorageTest } from 'test/open-storage.test';
 import { runTestCentralAuthority } from './test/central-authority.test/central-authority-class.test/central-authority-class.test';
 import { runSwarmMessageConstructorTests } from './test/swarrm-message-constructor.test/swarrm-message-constructor.test';
 import { runSwarmMessageStoreTest } from './test/swarm-message-store-test/swarm-message-store-test.test';
+import { runConnectionBridgeTests } from './utils/connection-bridge.test/connection-bridge.test';
 
 // runTest();
 // runTestsCredentialsStorage();
@@ -89,7 +90,8 @@ const runTest = async () => {
   // runTestCentralAuthorityUtils(); // TODO - necessary to test urls comparation
   // runTestCentralAuthority();
   // runSwarmMessageConstructorTests();
-  runSwarmMessageStoreTest();
+  // runSwarmMessageStoreTest();
+  runConnectionBridgeTests();
   runMocha();
 };
 

@@ -133,13 +133,16 @@ export class CentralAuthority implements ICentralAuthority {
     ]);
     let isError = false;
 
-    if (resultCAAuthProvidersConnectionsPool instanceof Error) {
-      console.error(resultCAAuthProvidersConnectionsPool);
-      isError = true;
-    }
     if (resultUserCredentialsStorage instanceof Error) {
       console.error(resultUserCredentialsStorage);
       isError = true;
+    }
+    if (resultCAAuthProvidersConnectionsPool instanceof Error) {
+      // TODO - this is important to preserve this error, to
+      // notify the users with the error same as returned by the
+      // central authority. Cause the user may need to verify
+      // his email address or make another action.
+      return this.handleFailAndClose(resultCAAuthProvidersConnectionsPool);
     }
     if (isError) {
       return this.handleFailAndClose(

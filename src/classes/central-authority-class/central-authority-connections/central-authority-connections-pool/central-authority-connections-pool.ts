@@ -250,10 +250,10 @@ export class CAConnectionsPool implements ICAConnectionPool {
           )
         );
       }
-      console.error(authResult);
-      return new Error(
+      console.error(
         `Failed to authorize with the auth provider ${authProviderUrl}`
       );
+      return authResult;
     }
     this.setAuthResult(authProviderUrl, authResult);
     return connectionWithAuthProvider;

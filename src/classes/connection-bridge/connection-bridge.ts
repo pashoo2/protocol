@@ -1,5 +1,8 @@
 import assert from 'assert';
-import { IConnectionBridgeOptions } from './connection-bridge.types';
+import {
+  IConnectionBridgeOptions,
+  IConnectionBridge,
+} from './connection-bridge.types';
 import { ESwarmStoreConnector } from '../swarm-store-class/swarm-store-class.const';
 import {
   ICentralAuthorityOptions,
@@ -32,10 +35,12 @@ import { SwarmMessageStore } from '../swarm-message-store/swarm-message-store';
  */
 export class ConnectionBridge<
   P extends ESwarmStoreConnector = ESwarmStoreConnector.OrbitDB
-> {
+> implements IConnectionBridge {
   public caConnection?: ICentralAuthority;
 
   public storage?: ISwarmMessageStore<P>;
+
+  public messageConstructor?: ISwarmMessageConstructor;
 
   protected options?: IConnectionBridgeOptions<P>;
 
@@ -46,8 +51,6 @@ export class ConnectionBridge<
   protected optionsSwarmConnection?: ISwarmConnectionOptions;
 
   protected optionsMessageStorage?: ISwarmMessageStoreOptions<P>;
-
-  protected messageConstructor?: ISwarmMessageConstructor;
 
   protected swarmConnection?: {
     getNativeConnection(): any;
@@ -64,10 +67,16 @@ export class ConnectionBridge<
    */
   public async connect(options: IConnectionBridgeOptions<P>): Promise<void> {
     this.setOptions(options);
-    await this.startCentralAuthorityConnection();
-    await this.createMessageConstructor();
-    await this.startSwarmConnection();
-    await this.startStorageConnection();
+    try {
+      await this.startCentralAuthorityConnection();
+      await this.createMessageConstructor();
+      await this.startSwarmConnection();
+      await this.startStorageConnection();
+    } catch (err) {
+      console.error('connection to the swarm failed', err);
+      await this.close();
+      throw err;
+    }
   }
 
   /**
@@ -155,7 +164,7 @@ export class ConnectionBridge<
    * @throws
    */
   protected setOptionsMessageStorage(): ISwarmMessageStoreOptions<P> {
-    const { messageConstructor, caConnection } = this;
+    const { messageConstructor, caConnection, swarmConnection } = this;
     const options = this.options!;
     const { auth: authOptions, storage: storageOptions } = options;
 
@@ -167,6 +176,9 @@ export class ConnectionBridge<
         'There is no message central authority connection defined'
       );
     }
+    if (!swarmConnection) {
+      throw new Error('There is no swarm connection provider');
+    }
 
     const userId = caConnection.getUserIdentity();
 
@@ -175,11 +187,14 @@ export class ConnectionBridge<
     }
 
     const messageStorageOptions: ISwarmMessageStoreOptions<P> = {
-      ...options.storage,
+      ...storageOptions,
       credentials: authOptions.credentials,
       userId,
       messageConstructors: {
         default: messageConstructor,
+      },
+      providerConnectionOptions: {
+        ipfs: swarmConnection.getNativeConnection(),
       },
     };
 
@@ -197,6 +212,7 @@ export class ConnectionBridge<
   protected setOptions(options: IConnectionBridgeOptions<P>) {
     assert(options, 'Options must be provided');
     assert(typeof options === 'object', 'Options must be an object');
+    this.options = options;
   }
 
   /**
@@ -209,8 +225,11 @@ export class ConnectionBridge<
   protected async startCentralAuthorityConnection(): Promise<void> {
     const optioinsCA = this.setOptionsCA();
     const centralAuthority = new CentralAuthority();
+    const connectionResult = await centralAuthority.connect(optioinsCA);
 
-    await centralAuthority.connect(optioinsCA);
+    if (connectionResult instanceof Error) {
+      throw connectionResult;
+    }
     this.caConnection = centralAuthority;
   }
 
@@ -258,8 +277,13 @@ export class ConnectionBridge<
   protected async startStorageConnection(): Promise<void> {
     const swarmMessageStorageOptions = this.setOptionsMessageStorage();
     const swarmMessageStorage = new SwarmMessageStore<P>();
+    const result = await swarmMessageStorage.connect(
+      swarmMessageStorageOptions
+    );
 
-    await swarmMessageStorage.connect(swarmMessageStorageOptions);
+    if (result instanceof Error) {
+      throw result;
+    }
     this.storage = swarmMessageStorage;
   }
 

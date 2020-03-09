@@ -6,6 +6,7 @@ import { ESwarmStoreConnector } from '../swarm-store-class/swarm-store-class.con
 import { ICentralAuthority } from '../central-authority-class/central-authority-class.types';
 import { ISwarmConnectionOptions } from '../swarm-connection-class/swarm-connection-class.types';
 import { ICentralAuthorityOptions } from '../central-authority-class/central-authority-class.types';
+import { ISwarmMessageConstructor } from '../swarm-message/swarm-message-constructor.types';
 
 export interface IConnectionBridgeOptions<
   P extends ESwarmStoreConnector = ESwarmStoreConnector.OrbitDB
@@ -50,7 +51,13 @@ export interface IConnectionBridgeOptions<
    * @type {ISwarmMessageStoreOptions<P>}
    * @memberof IConnectionBridgeOptions
    */
-  storage: Omit<Omit<ISwarmMessageStoreOptions<P>, 'userId'>, 'credentials'>;
+  storage: Omit<
+    Omit<
+      Omit<Omit<ISwarmMessageStoreOptions<P>, 'userId'>, 'credentials'>,
+      'messageConstructors'
+    >,
+    'providerConnectionOptions'
+  >;
   /**
    * specify options for the swarm connection provider
    *
@@ -74,8 +81,30 @@ export interface IConnectionBridgeOptions<
 export interface IConnectionBridge<
   P extends ESwarmStoreConnector = ESwarmStoreConnector.OrbitDB
 > {
+  /**
+   * used to authorize the user or get
+   * a common information about the users
+   * also connected to the swarm.
+   *
+   * @type {ICentralAuthority}
+   * @memberof IConnectionBridge
+   */
   caConnection?: ICentralAuthority;
+  /**
+   * storage allows to add or read messages from
+   * the swarm
+   *
+   * @type {ISwarmMessageStore<P>}
+   * @memberof IConnectionBridge
+   */
   storage?: ISwarmMessageStore<P>;
+  /**
+   * allows to create messages, which can be stored in the swarm
+   *
+   * @type {ISwarmMessageConstructor}
+   * @memberof IConnectionBridge
+   */
+  messageConstructor?: ISwarmMessageConstructor;
   /**
    * Connect to central authority and swarm. If the connection
    * will be succeed than the caConnection and storage

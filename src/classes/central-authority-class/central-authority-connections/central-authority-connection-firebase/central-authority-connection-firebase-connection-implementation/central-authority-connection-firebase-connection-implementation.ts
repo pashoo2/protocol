@@ -224,8 +224,8 @@ export class CAConnectionWithFirebaseImplementation
         const signUpResult = await this.signUp(firebaseCredentials);
 
         if (signUpResult instanceof Error) {
-          console.error(signUpResult);
-          return this.onAuthorizationFailed('The user was failed to sign up');
+          console.error('The user was failed to sign up');
+          return this.onAuthorizationFailed(signUpResult);
         }
       }
 
