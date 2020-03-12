@@ -17,7 +17,7 @@ export class ErrorExtendedBaseClass extends Error {
     this.code = code;
   }
 
-  toString(): string {
+  public toString(): string {
     const { code, message } = this;
 
     if (code) {

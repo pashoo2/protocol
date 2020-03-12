@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "amd",
+    "downlevelIteration": true,
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "jsx": "preserve",
+    "baseUrl": "src/",
+    "rootDirs": ["src/"],
+    "typeRoots": [
+      "types",
+      "**/types",
+      "**/node_modules/types",
+      "**/node_modules/@types"
+    ],
+    "experimentalDecorators": true,
+    "resolveJsonModule": true,
+    "noEmit": false,
+    "outFile": "./build/build.js",
+    "sourceMap": true,
+    "declaration": true
+  },
+  "include": ["src/index.ts", "src/**/*.d.ts", "src/**/*.json"],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts",
+    "**/*.js",
+    "node_modules*",
+    "build",
+    "**/*.test*",
+    "/src/test"
+  ]
+}

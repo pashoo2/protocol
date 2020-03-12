@@ -11,7 +11,7 @@ export const getStatusClass = <TStatus extends object>({
   initialStatus,
 }: TStatusClassBaseOptions<TStatus>) =>
   class StatusClassBase {
-    protected static error(err: string | Error): Error {
+    public static error(err: string | Error): Error {
       let errorInstance: Error;
 
       if (err instanceof Error) {
@@ -35,18 +35,18 @@ export const getStatusClass = <TStatus extends object>({
      * @memberof StatusClassBase
      */
     public statusEmitter = new EventEmitter<{
-      [STATUS_CLASS_STATUS_CHANGE_EVENT]: TStatus;
+      ['status']: TStatus;
     }>();
 
-    protected clearError() {
+    public clearError() {
       this.errorOccurred = undefined;
     }
 
-    protected clearStatus() {
+    public clearStatus() {
       this.status = undefined;
     }
 
-    protected clearState() {
+    public clearState() {
       this.clearStatus();
       this.clearError();
     }
@@ -56,17 +56,17 @@ export const getStatusClass = <TStatus extends object>({
      * @param status
      * @returns {Function} - function to set the previous status value
      */
-    protected setStatus = (status: ownValueOf<TStatus>): (() => void) => {
+    public setStatus = (status: ownValueOf<TStatus>): (() => void) => {
       const { statusEmitter, status: prevStatus } = this;
 
       this.status = status;
-      statusEmitter.emit(STATUS_CLASS_STATUS_CHANGE_EVENT, status);
+      statusEmitter.emit('status', status);
       return () => {
         this.status = prevStatus;
       };
     };
 
-    protected setErrorStatus = (err: Error | string): Error => {
+    public setErrorStatus = (err: Error | string): Error => {
       if (err) {
         const errorOccurred = StatusClassBase.error(err);
 

@@ -14,7 +14,7 @@ export const getErrorScopedClass = (errorScopeName: string) => {
     }
   }
 
-  return ErrorExtendedBaseScopedClass;
+  return ErrorExtendedBaseScopedClass as typeof ErrorExtendedBaseClass;
 };
 
 export default getErrorScopedClass;
