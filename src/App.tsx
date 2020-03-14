@@ -44,14 +44,14 @@ import { runTestCASwarmCredentilsProvider } from 'test/central-authority.test/ce
 import { runTestSaltUtils } from './test/salt-generation-utils.test/salt-generation-utils.test';
 import { testKeyGeneration } from 'test/password-key.test';
 import { runTestSecretStorage } from 'test/secret-storage.test';
-import { runTestEncryptionKeysUtils } from 'utils/encryption-keys-utils.test';
+import { runTestEncryptionKeysUtils } from 'test/encryption-keys-utils.test';
 import { runTestAuthorityStorageCurrentUser } from 'test/central-authority.test/central-authority-storage-current-user-credentials.test';
 import { runTestCentralAuthorityUtils } from 'test/central-authority.test/central-authority-utils.test';
 import { runTestOpenStorageTest } from 'test/open-storage.test';
 import { runTestCentralAuthority } from './test/central-authority.test/central-authority-class.test/central-authority-class.test';
 import { runSwarmMessageConstructorTests } from './test/swarrm-message-constructor.test/swarrm-message-constructor.test';
 import { runSwarmMessageStoreTest } from './test/swarm-message-store-test/swarm-message-store-test.test';
-import { runConnectionBridgeTests } from './utils/connection-bridge.test/connection-bridge.test';
+import { runConnectionBridgeTests } from './test/connection-bridge.test/connection-bridge.test';
 
 // runTest();
 // runTestsCredentialsStorage();

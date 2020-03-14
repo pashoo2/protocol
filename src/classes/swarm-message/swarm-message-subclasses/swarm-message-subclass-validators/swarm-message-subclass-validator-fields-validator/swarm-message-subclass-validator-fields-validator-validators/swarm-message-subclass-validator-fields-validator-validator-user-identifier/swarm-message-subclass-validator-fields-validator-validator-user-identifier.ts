@@ -13,7 +13,7 @@ import { CA_USER_IDENTITY_VERSION_PROP_NAME } from '../../../../../../central-au
  * @param {string} userId
  * @throws
  */
-function validateUserIdentifier(
+export function validateUserIdentifier(
   userId: TSwarmMessageUserIdentifierSerialized,
   validVersions?: TSwarmMessageUserIdentifierVersion[]
 ): void {

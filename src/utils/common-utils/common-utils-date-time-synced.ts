@@ -1,5 +1,5 @@
 import addSeconds from 'date-fns/addSeconds';
-import PseudoNTP from 'classes/pseudo-ntp-class';
+import { PseudoNTPClass as PseudoNTP } from 'classes/pseudo-ntp-class';
 import { COMMON_DATE_TIME_NTP_SERVERS_POOL } from 'const/common-date-time/common-date-time-ntp-servers.const';
 import { DATE_TIME_COMMON_CURRENT_DATE_UPDATE_INTERVAL_SECONDS } from 'const/common-date-time/common-date-time-main';
 import { CONST_VALUES_RESTRICTIONS_COMMON_CURRENT_DATE_MAX_ERROR_SECONDS } from 'const/const-values-restrictions-common';

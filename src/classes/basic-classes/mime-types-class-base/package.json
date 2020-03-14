@@ -1,8 +1,0 @@
-{
-  "main": "mime-types-class-base.ts",
-  "types": "mime-types-class-base.ts",
-  "dependencies": {
-    "@types/mime": "^2.0.1",
-    "mime": "^2.4.4"
-  }
-}

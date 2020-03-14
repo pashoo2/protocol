@@ -21,7 +21,7 @@ import {
 import { decodeDOMStringToArrayBuffer } from 'utils/string-encoding-utils';
 import {
   crypto,
-  cryptoModule,
+  cryptoModuleDataSign,
 } from '../data-sign-utils/main.data-sign-utils.const';
 
 export const generatePasswordKey = async (
@@ -31,7 +31,7 @@ export const generatePasswordKey = async (
     return new Error('The password must have a TypedArray type');
   }
   try {
-    return await cryptoModule.importKey(
+    return await cryptoModuleDataSign.importKey(
       PASSWORD_ENCRYPTION_UTILS_KEY_GENERATION_KEY_IMPORTED_FORMAT,
       password,
       PASSWORD_ENCRYPTION_UTILS_KEY_GENERATION_ALHORITHM,
@@ -105,7 +105,7 @@ export const exportPasswordKey = (
   | PromiseLike<TPASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_EXPORT_FORMAT>
   | Error => {
   try {
-    return cryptoModule.exportKey(
+    return cryptoModuleDataSign.exportKey(
       PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_EXPORT_FORMAT,
       passwordKey
     );
@@ -119,7 +119,7 @@ export const exportPasswordKeyAsString = async (
   passwordKey: CryptoKey
 ): Promise<string | Error> => {
   try {
-    const cryptoKey = await cryptoModule.exportKey(
+    const cryptoKey = await cryptoModuleDataSign.exportKey(
       PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_EXPORT_FORMAT,
       passwordKey
     );
@@ -172,7 +172,7 @@ export const importPasswordKey = async (
   passwordKey: TPASSWORD_ENCRYPTION_KEY_IMPORT_NATIVE_SUPPORTED_TYPES
 ): Promise<CryptoKey | Error> => {
   try {
-    return await cryptoModule.importKey(
+    return await cryptoModuleDataSign.importKey(
       PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_IMPORT_FORMAT,
       passwordKey,
       {

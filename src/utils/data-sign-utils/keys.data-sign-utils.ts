@@ -10,13 +10,13 @@ import {
   DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME,
   KEY_NOT_FOUND_ERROR_MESSAGE,
 } from './data-sign-utils.const';
-import { cryptoModule } from './main.data-sign-utils.const';
+import { cryptoModuleDataSign } from './main.data-sign-utils.const';
 import {
   TDATA_SIGN_UTIL_KEY_EXPORT_FORMAT_TYPE,
   TDATA_SIGN_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE,
   TDATA_SIGN_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE,
   TDATA_SIGN_UTIL_SIGN_KEY_TYPES,
-  TCRYPTO_UTIL_IMPORT_KEY_TYPES,
+  TDATA_SIGN_UTIL_IMPORT_KEY_TYPES,
 } from './data-sign-utils.types';
 import {
   isCryptoKeyPair,
@@ -28,7 +28,7 @@ import { TEncryptionKeyStoreFormatType } from 'types/encryption-keys.types';
 import { isTypedArray } from 'utils/typed-array-utils';
 import { stringify } from 'utils/main-utils';
 
-export const isCryptoKeyPairImported = (
+export const dataSignIsCryptoKeyPairImported = (
   key: any
 ): key is TDATA_SIGN_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE => {
   return (
@@ -38,18 +38,18 @@ export const isCryptoKeyPairImported = (
   );
 };
 
-export const generateKeyPair = (): PromiseLike<CryptoKeyPair> =>
-  cryptoModule.generateKey(
+export const dataSignGenerateKeyPair = (): PromiseLike<CryptoKeyPair> =>
+  cryptoModuleDataSign.generateKey(
     DATA_SIGN_CRYPTO_UTIL_GENERATE_KEYPAIR_OPTIONS,
     DATA_SIGN_CRYPTO_UTIL_KEYS_EXTRACTABLE,
     DATA_SIGN_CRYPTO_UTIL_KEYPAIR_USAGES
   );
 
-export const exportKey = async (
+export const dataSignExportKey = async (
   key: CryptoKey
 ): Promise<TDATA_SIGN_UTIL_KEY_EXPORT_FORMAT_TYPE | Error> => {
   try {
-    return cryptoModule.exportKey(
+    return cryptoModuleDataSign.exportKey(
       DATA_SIGN_CRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT,
       key
     );
@@ -58,10 +58,10 @@ export const exportKey = async (
   }
 };
 
-export const exportKeyAsString = async (
+export const dataSignExportKeyAsString = async (
   key: CryptoKey
 ): Promise<string | Error> => {
-  const keyExported = await exportKey(key);
+  const keyExported = await dataSignExportKey(key);
 
   if (keyExported instanceof Error) {
     return keyExported;
@@ -73,20 +73,20 @@ export const exportKeyAsString = async (
   }
 };
 
-export const exportPublicKey = async (
+export const dataSignExportPublicKey = async (
   keyPair: CryptoKeyPair
 ): Promise<TDATA_SIGN_UTIL_KEY_EXPORT_FORMAT_TYPE | Error> => {
   if (isCryptoKeyPair(keyPair)) {
-    return exportKey(keyPair.publicKey);
+    return dataSignExportKey(keyPair.publicKey);
   }
   return new Error('Argument must be a CryptoKeyPair');
 };
 
-export const exportPublicKeyAsString = async (
+export const dataSignExportPublicKeyAsString = async (
   keyPair: CryptoKeyPair
 ): Promise<Error | string> => {
   try {
-    const keyPublicExported = await exportPublicKey(keyPair);
+    const keyPublicExported = await dataSignExportPublicKey(keyPair);
 
     if (keyPublicExported instanceof Error) {
       return keyPublicExported;
@@ -97,15 +97,15 @@ export const exportPublicKeyAsString = async (
   }
 };
 
-export const exportKeyPair = async (
+export const dataSignExportKeyPair = async (
   keyPair: CryptoKeyPair
 ): Promise<TDATA_SIGN_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE | Error> => {
   try {
     if (isCryptoKeyPair(keyPair)) {
       // do it in parallel
       const [privateKey, publicKey] = await Promise.all([
-        exportKey(keyPair.privateKey),
-        exportKey(keyPair.publicKey),
+        dataSignExportKey(keyPair.privateKey),
+        dataSignExportKey(keyPair.publicKey),
       ]).catch((err) => [err, err]);
 
       if (privateKey instanceof Error) {
@@ -125,11 +125,11 @@ export const exportKeyPair = async (
   }
 };
 
-export const exportKeyPairAsString = async (
+export const dataSignExportKeyPairAsString = async (
   keyPair: CryptoKeyPair
 ): Promise<string | Error> => {
   try {
-    const res = await exportKeyPair(keyPair);
+    const res = await dataSignExportKeyPair(keyPair);
 
     if (res instanceof Error) {
       return res;
@@ -140,15 +140,15 @@ export const exportKeyPairAsString = async (
   }
 };
 
-export const importKey = async (
-  key: TCRYPTO_UTIL_IMPORT_KEY_TYPES,
+export const dataSignImportKey = async (
+  key: TDATA_SIGN_UTIL_IMPORT_KEY_TYPES,
   isPublic: boolean = true
 ): Promise<CryptoKey | Error> => {
   try {
     if (typeof key !== 'object') {
       return new Error('Unsupported argument type');
     }
-    const res = await cryptoModule.importKey(
+    const res = await cryptoModuleDataSign.importKey(
       DATA_SIGN_CRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT,
       key,
       DATA_SIGN_CRYPTO_UTIL_KEY_DESC,
@@ -169,22 +169,24 @@ export const importKey = async (
   }
 };
 
-export const importPublicKey = (
-  key: TCRYPTO_UTIL_IMPORT_KEY_TYPES
-): PromiseLike<CryptoKey | Error> => importKey(key, true);
+export const dataSignImportPublicKey = (
+  key: TDATA_SIGN_UTIL_IMPORT_KEY_TYPES
+): PromiseLike<CryptoKey | Error> => dataSignImportKey(key, true);
 
-export const importPrivateKey = (
-  key: TCRYPTO_UTIL_IMPORT_KEY_TYPES
-): PromiseLike<CryptoKey | Error> => importKey(key, false);
+export const dataSignImportPrivateKey = (
+  key: TDATA_SIGN_UTIL_IMPORT_KEY_TYPES
+): PromiseLike<CryptoKey | Error> => dataSignImportKey(key, false);
 
-export const importKeyPair = async (
+export const dataSignImportKeyPair = async (
   keyPair: TDATA_SIGN_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE
 ): Promise<TDATA_SIGN_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE | Error> => {
   try {
-    if (isCryptoKeyPairImported(keyPair)) {
+    if (dataSignIsCryptoKeyPairImported(keyPair)) {
       const [publicKey, privateKey] = await Promise.all([
-        importPublicKey(keyPair[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]),
-        importPrivateKey(
+        dataSignImportPublicKey(
+          keyPair[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]
+        ),
+        dataSignImportPrivateKey(
           keyPair[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]
         ),
       ]).catch((err) => [err, err]);
@@ -206,15 +208,15 @@ export const importKeyPair = async (
   }
 };
 
-export const importKeyPairFromString = (
+export const dataSignImportKeyPairFromString = (
   keyPairString: string
 ): Promise<TDATA_SIGN_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE | Error> | Error => {
   try {
     if (typeof keyPairString === 'string') {
       const keyPairObject = JSON.parse(keyPairString);
 
-      if (isCryptoKeyPairImported(keyPairObject)) {
-        return importKeyPair(keyPairObject);
+      if (dataSignIsCryptoKeyPairImported(keyPairObject)) {
+        return dataSignImportKeyPair(keyPairObject);
       }
       return new Error('There is a wrong format for the imported key pair');
     }
@@ -224,7 +226,7 @@ export const importKeyPairFromString = (
   }
 };
 
-export const importKeyFromString = (
+export const dataSignImportKeyFromString = (
   keyString: string,
   isPublic: boolean = true
 ): PromiseLike<CryptoKey | Error> | Error => {
@@ -235,46 +237,51 @@ export const importKeyFromString = (
 
     const parsedKey = JSON.parse(keyString);
 
-    return importKey(parsedKey, isPublic);
+    return dataSignImportKey(parsedKey, isPublic);
   } catch (err) {
     return err;
   }
 };
 
-export const importPublicKeyFromString = (
+export const dataSignImportPublicKeyFromString = (
   key: string
-): PromiseLike<CryptoKey | Error> | Error => importKeyFromString(key, true);
+): PromiseLike<CryptoKey | Error> | Error =>
+  dataSignImportKeyFromString(key, true);
 
-export const importPrivateKeyFromString = (
+export const dataSignImportPrivateKeyFromString = (
   key: string
-): PromiseLike<CryptoKey | Error> | Error => importKeyFromString(key, false);
+): PromiseLike<CryptoKey | Error> | Error =>
+  dataSignImportKeyFromString(key, false);
 
-export const checkIfStringIsKeyPair = (keyString: string): boolean => {
+export const dataSignCheckIfStringIsKeyPair = (keyString: string): boolean => {
   return (
     keyString.includes(DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME) &&
     keyString.includes(DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME)
   );
 };
 
-export const getKeyOfType = async (
+export const dataSignGetKeyOfType = async (
   key: TDATA_SIGN_UTIL_SIGN_KEY_TYPES,
   type: KeyType
 ): Promise<CryptoKey | Error> => {
   if (typeof key === 'string') {
-    if (checkIfStringIsKeyPair(key)) {
-      const keyPair = await importKeyPairFromString(key);
+    if (dataSignCheckIfStringIsKeyPair(key)) {
+      const keyPair = await dataSignImportKeyPairFromString(key);
 
       if (keyPair instanceof Error) {
         return keyPair;
       }
-      return getKeyOfType(keyPair, type);
+      return dataSignGetKeyOfType(keyPair, type);
     } else {
-      const keyFromString = await importKeyFromString(key, type === 'public');
+      const keyFromString = await dataSignImportKeyFromString(
+        key,
+        type === 'public'
+      );
 
       if (keyFromString instanceof Error) {
         return keyFromString;
       }
-      return getKeyOfType(keyFromString, type);
+      return dataSignGetKeyOfType(keyFromString, type);
     }
   }
   if (key instanceof CryptoKey) {
@@ -298,18 +305,18 @@ export const getKeyOfType = async (
  * format
  * @param {} key
  */
-export const importEncryptionKey = async (
+export const dataSignImportEncryptionKey = async (
   key: TEncryptionKeyStoreFormatType
 ): Promise<CryptoKey | Error> => {
   if (isTypedArray(key)) {
-    return importKey(key);
+    return dataSignImportKey(key);
   } else {
     const jwk = getJWKOrBool(key);
 
     if (typeof jwk === 'object') {
-      return importKey(jwk);
+      return dataSignImportKey(jwk);
     } else if (typeof key === 'string') {
-      return importKeyFromString(key);
+      return dataSignImportKeyFromString(key);
     }
   }
   return new Error('There is an unknown key format');
@@ -321,13 +328,13 @@ export const importEncryptionKey = async (
  * and returns a crypto key as a string
  * @param {} key
  */
-export const convertAndExportKeyAsString = async (
+export const dataSignConvertAndExportKeyAsString = async (
   key: TEncryptionKeyStoreFormatType
 ): Promise<string | Error> => {
-  const cryptoKeyImported = await importEncryptionKey(key);
+  const cryptoKeyImported = await dataSignImportEncryptionKey(key);
 
   if (cryptoKeyImported instanceof Error) {
     return cryptoKeyImported;
   }
-  return exportKeyAsString(cryptoKeyImported);
+  return dataSignExportKeyAsString(cryptoKeyImported);
 };

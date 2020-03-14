@@ -46,9 +46,9 @@ function validateTimestamp(
   );
 }
 
-export default (options?: ISwarmMessageTimestampValidationOptions) => (
-  timestamp: TSwarmMessageTimestampSerialized
-) =>
+export const createValidateTimestamp = (
+  options?: ISwarmMessageTimestampValidationOptions
+) => (timestamp: TSwarmMessageTimestampSerialized) =>
   validateTimestamp(
     timestamp,
     defaultsDeep(

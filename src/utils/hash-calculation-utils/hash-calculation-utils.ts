@@ -9,11 +9,11 @@ import {
   HASH_CALCULATION_UTILS_HASH_ALHORITHM,
 } from './hash-calculation-utils.const';
 import {
-  cryptoModule,
+  cryptoModuleDataSign,
   crypto,
 } from '../data-sign-utils/main.data-sign-utils.const';
 
-export const hashCalculator = cryptoModule.digest.bind(crypto.subtle);
+export const hashCalculator = cryptoModuleDataSign.digest.bind(crypto.subtle);
 
 export const calculateHashNative = async (
   data: TTypedArrays,

@@ -19,7 +19,7 @@ export const getCryptoKeysByCryptoCredentials = (
   return cryptoCredentials[CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME];
 };
 
-export const getUserIdentityByCryptoCredentials = (
+export const getUserIdentityFromCryptoCredentials = (
   cryptoCredentials: TCentralAuthorityUserCryptoCredentials | null
 ): TCentralAuthorityUserIdentity | null => {
   if (!cryptoCredentials) {

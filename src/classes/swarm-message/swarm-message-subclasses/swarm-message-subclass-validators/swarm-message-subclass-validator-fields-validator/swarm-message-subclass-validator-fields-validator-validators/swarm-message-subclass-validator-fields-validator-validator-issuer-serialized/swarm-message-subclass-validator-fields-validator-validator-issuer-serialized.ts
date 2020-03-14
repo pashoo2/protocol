@@ -1,4 +1,4 @@
-import validateIssuerDeserialized from '../swarm-message-subclass-validator-fields-validator-validator-issuer-deserizlied';
+import { validateIssuerDesirizlizedFormat } from '../swarm-message-subclass-validator-fields-validator-validator-issuer-deserizlied';
 import { TSwarmMessaggeIssuerSerialized } from './swarm-message-subclass-validator-fields-validator-validator-issuer-serialized.types';
 
 /**
@@ -7,10 +7,10 @@ import { TSwarmMessaggeIssuerSerialized } from './swarm-message-subclass-validat
  * @param {string} issuer
  * @throws
  */
-function validateIssuerSerializedFormat(
+export function validateIssuerSerializedFormat(
   issuer: TSwarmMessaggeIssuerSerialized
 ): void {
-  validateIssuerDeserialized(issuer);
+  validateIssuerDesirizlizedFormat(issuer);
 }
 
 export default validateIssuerSerializedFormat;

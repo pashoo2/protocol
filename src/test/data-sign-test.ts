@@ -1,14 +1,14 @@
 import {
-  generateKeyPair,
-  exportKeyPairAsString,
-  importKeyPairFromString,
+  dataSignGenerateKeyPair,
+  dataSignExportKeyPairAsString,
+  dataSignImportKeyPairFromString,
   signToString,
   verifyData,
 } from 'utils/data-sign-utils';
 import { calculateHash } from 'utils/hash-calculation-utils';
 
 const testDataSigning = async () => {
-  const keyPair = await generateKeyPair();
+  const keyPair = await dataSignGenerateKeyPair();
 
   if (keyPair instanceof Error) {
     console.error(keyPair);
@@ -16,7 +16,7 @@ const testDataSigning = async () => {
   }
   console.log('keyPair', keyPair);
 
-  const exportedKeyPair = await exportKeyPairAsString(keyPair);
+  const exportedKeyPair = await dataSignExportKeyPairAsString(keyPair);
 
   if (exportedKeyPair instanceof Error) {
     console.error(exportedKeyPair);
@@ -24,7 +24,9 @@ const testDataSigning = async () => {
   }
   console.log('exportedKeyPair', exportedKeyPair);
 
-  const keyPairImported = await importKeyPairFromString(exportedKeyPair);
+  const keyPairImported = await dataSignImportKeyPairFromString(
+    exportedKeyPair
+  );
 
   if (keyPairImported instanceof Error) {
     console.error(keyPairImported);
@@ -32,7 +34,7 @@ const testDataSigning = async () => {
   }
   console.log('keyPairImported', keyPairImported);
 
-  const exportedKeyPairByImported = await exportKeyPairAsString(
+  const exportedKeyPairByImported = await dataSignExportKeyPairAsString(
     keyPairImported
   );
 

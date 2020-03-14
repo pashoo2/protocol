@@ -3,8 +3,8 @@ import {
   exportKeyAsString as exportPublicKeyDataEncryptAsString,
 } from 'utils/encryption-utils';
 import {
-  exportKeyPairAsString as exportKeyPairDataSignAsString,
-  exportKeyAsString as exportPublicKeyDataSignAsString,
+  dataSignExportKeyPairAsString as exportKeyPairDataSignAsString,
+  dataSignExportKeyAsString as exportPublicKeyDataSignAsString,
 } from 'utils/data-sign-utils';
 import {
   TCACryptoKeyPairs,

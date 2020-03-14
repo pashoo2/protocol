@@ -3,8 +3,8 @@ import {
   importKeyFromString as importKeyEncryptionFromString,
 } from 'utils/encryption-utils';
 import {
-  importKeyPairFromString as importKeyPairDataSignFromString,
-  importKeyFromString as importKeySignFromString,
+  dataSignImportKeyPairFromString as importKeyPairDataSignFromString,
+  dataSignImportKeyFromString as importKeySignFromString,
 } from 'utils/data-sign-utils';
 import {
   TCACryptoKeyPairs,

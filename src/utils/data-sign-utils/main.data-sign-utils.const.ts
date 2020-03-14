@@ -8,4 +8,4 @@ export const ENCRYPTION_FORMAT_SUPPORTED = !window.crypto ? 'SHA-1' : undefined;
 
 export const crypto = window.crypto || require('@trust/webcrypto');
 
-export const cryptoModule = crypto.subtle;
+export const cryptoModuleDataSign = crypto.subtle;

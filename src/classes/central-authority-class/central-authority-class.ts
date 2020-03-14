@@ -52,7 +52,7 @@ import {
   getDataEncryptionPubKeyByCryptoCredentials,
   getDataSignKeyPairByCryptoCredentials,
   getDataSignPubKeyByCryptoCredentials,
-  getUserIdentityByCryptoCredentials,
+  getUserIdentityFromCryptoCredentials,
 } from './central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials-crypto-keys';
 import { checkIsValidCryptoCredentials } from './central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
 
@@ -293,7 +293,7 @@ export class CentralAuthority implements ICentralAuthority {
       return userCryptoCredentials;
     }
     return (
-      getUserIdentityByCryptoCredentials(userCryptoCredentials) ||
+      getUserIdentityFromCryptoCredentials(userCryptoCredentials) ||
       new CAError('there is no credentials of the current user')
     );
   }

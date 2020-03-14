@@ -17,7 +17,7 @@ import { SwarmMessagePayloadValidationOptionsDefault } from './swarm-message-sub
  * @param {} pld
  * @throws
  */
-function validatePayload(
+function validatePayloadFunc(
   pld: TSwarmMessagePayloadSerialized,
   options: Required<ISwarmMessagePayloadValidationOptions>
 ): void {
@@ -58,10 +58,10 @@ function validatePayload(
   assert(len >= payloadMinLengthBytes, 'The payload value is too small');
 }
 
-export default (opts?: ISwarmMessagePayloadValidationOptions) => (
-  pld: TSwarmMessagePayloadSerialized
-) =>
-  validatePayload(
+export const createValidatePayload = (
+  opts?: ISwarmMessagePayloadValidationOptions
+) => (pld: TSwarmMessagePayloadSerialized) =>
+  validatePayloadFunc(
     pld,
     defaultsDeep(opts, SwarmMessagePayloadValidationOptionsDefault)
   );

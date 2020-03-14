@@ -1,4 +1,0 @@
-{
-  "main": "secret-storage-local-storage-provider.ts",
-  "types": "secret-storage-local-storage-provider.ts"
-}

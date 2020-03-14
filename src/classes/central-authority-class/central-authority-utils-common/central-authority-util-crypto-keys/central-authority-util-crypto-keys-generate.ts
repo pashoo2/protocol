@@ -1,7 +1,7 @@
 import { CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME } from './../../central-authority-class-const/central-authority-class-const-auth-credentials';
 import { CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME } from 'classes/central-authority-class/central-authority-class-const/central-authority-class-const';
 import { generateKeyPair as generateKeyPairDataEncryption } from 'utils/encryption-utils';
-import { generateKeyPair as generateKeyPairSignData } from 'utils/data-sign-utils';
+import { dataSignGenerateKeyPair as generateKeyPairSignData } from 'utils/data-sign-utils';
 import { isCryptoKeyPair } from 'utils/encryption-keys-utils/encryption-keys-utils';
 import {
   TCACryptoKeyPairs,

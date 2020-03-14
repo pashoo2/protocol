@@ -4,7 +4,7 @@ import {
   typedArrayToString,
 } from 'utils/typed-array-utils';
 import { stringify } from 'utils/main-utils';
-import { cryptoModule } from './main.data-sign-utils.const';
+import { cryptoModuleDataSign } from './main.data-sign-utils.const';
 import {
   DATA_SIGN_CRYPTO_UTIL_VERIFY_KEY_TYPE,
   DATA_SIGN_CRYPTO_UTIL_DATA_SIGN_AND_VERIFY_PARAMS,
@@ -15,7 +15,7 @@ import {
   TDATA_SIGN_UTIL_VERIFY_DATA_TYPES_NATIVE,
   TDATA_SIGN_UTIL_VERIFY_KEY_TYPES,
 } from './data-sign-utils.types';
-import { getKeyOfType } from './keys.data-sign-utils';
+import { dataSignGetKeyOfType } from './keys.data-sign-utils';
 
 export const verifyNative = async (
   key: CryptoKey,
@@ -31,7 +31,7 @@ export const verifyNative = async (
     return new Error('The data type is not supported');
   }
   try {
-    const res = await cryptoModule.verify(
+    const res = await cryptoModuleDataSign.verify(
       { ...DATA_SIGN_CRYPTO_UTIL_DATA_SIGN_AND_VERIFY_PARAMS },
       key,
       signature,
@@ -51,7 +51,10 @@ export const verifyData = async (
   data: TDATA_SIGN_UTIL_VERIFY_DATA_TYPES_EXTENDED,
   signature: TDATA_SIGN_UTIL_VERIFY_DATA_TYPES
 ): Promise<true | Error> => {
-  const k = await getKeyOfType(key, DATA_SIGN_CRYPTO_UTIL_VERIFY_KEY_TYPE);
+  const k = await dataSignGetKeyOfType(
+    key,
+    DATA_SIGN_CRYPTO_UTIL_VERIFY_KEY_TYPE
+  );
 
   if (k instanceof Error) {
     return k;
