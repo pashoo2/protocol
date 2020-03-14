@@ -2,13 +2,104 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e70e70e3-e48a-4dfd-91a6-03818e8691f6" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/package.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-utils/swarm-messge-store-utils-connector-ipfs/package,json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-utils/swarm-messge-store-utils-connector-ipfs/swarm-messge-store-utils-connector-ipfs.const.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-utils/swarm-messge-store-utils-connector-ipfs/swarm-messge-store-utils-connector-ipfs.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.eslintcache" beforeDir="false" afterPath="$PROJECT_DIR$/.eslintcache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/backog-classes/channel-authority-class/channel-authority-connections/channel-authority-connection-with-server-api/index,ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/node_modules-local/orbit-db-types" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/patches/@types+orbit-db+1.0.0.old-patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/patches/@types+orbit-db+1.0.0.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/patches/libp2p-webrtc-star+0.16.1.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/patches/libp2p-websocket-star+0.10.2.patch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.test.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/backog-classes/channel-authority-class/channel-authority-connections/channel-authority-connection-with-server-api/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-connection-class/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-connection-class/swarm-connection-class-subclasses/swarm-connection-class-subclass-ipfs/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-connection-class/swarm-connection-class-subclasses/swarm-connection-class-subclass-ipfs/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-connection-class/swarm-connection-class.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-connection-class/swarm-connection-class.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/index.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/index.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/logo.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority-identity.test/central-authority-identity-v1.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority-identity.test/central-authority-identity-v2.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority-identity.test/central-authority-identity.utils.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority.test/central-aurhority.keys.common.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority.test/central-authority-class.test/central-authority-class.test.const.shared.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority.test/central-authority-class.test/central-authority-class.test.const.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority.test/central-authority-class.test/central-authority-class.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority.test/central-authority-connection.test/central-authority-connection.test.firebase/central-authority-connection.test.firebase.anonymousely.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority.test/central-authority-connection.test/central-authority-connection.test.firebase/central-authority-connection.test.firebase.const.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority.test/central-authority-connection.test/central-authority-connection.test.firebase/central-authority-connection.test.firebase.credentials-storage.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority.test/central-authority-connection.test/central-authority-connection.test.firebase/central-authority-connection.test.firebase.database.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority.test/central-authority-connection.test/central-authority-connection.test.firebase/central-authority-connection.test.firebase.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority.test/central-authority-connection.test/central-authority-connection.test.firebase/central-authority-connection.utils.firebase.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority.test/central-authority-connection.test/central-authority-connection.test.firebase/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority.test/central-authority-connection.test/central-authority-connection.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority.test/central-authority-connection.test/central-authority-connections-pool.test/central-authority-connections-pool.test.const.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority.test/central-authority-connection.test/central-authority-connections-pool.test/central-authority-connections-pool.test.shared.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority.test/central-authority-connection.test/central-authority-connections-pool.test/central-authority-connections-pool.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority.test/central-authority-connection.test/central-authority-connections-utils.validators.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority.test/central-authority-connection.test/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority.test/central-authority-storage-current-user-credentials.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority.test/central-authority-storage-identity-credentials.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority.test/central-authority-swarm-credentials-provider/central-authority-swarm-credentials-provider.const.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority.test/central-authority-swarm-credentials-provider/central-authority-swarm-credentials-provider.shared.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority.test/central-authority-swarm-credentials-provider/central-authority-swarm-credentials-provider.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority.test/central-authority-swarm-credentials-provider/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority.test/central-authority-utils.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority.test/central-authority.credentials-storage.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority.test/central-authority.keys.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority.test/central-authority.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/central-authority.test/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/common-utils-date-time-synced.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/common-utils.test/common-utils-url.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/common-utils.test/common-utils.caching-decorator.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/common-utils.test/common-utils.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/common-utils.test/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/connection-bridge.test/connection-bridge.test.const.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/connection-bridge.test/connection-bridge.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/data-sign-test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/encryption-keys-utils.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/encryption-test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/error-extended-class-test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/http-request-class-base.test/http-request-class-base.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/http-request-class-base.test/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/ipfs-swarm-connection.test/ipfs-swarm-connection-ipfs.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/ipfs-swarm-connection.test/ipfs-swarm-connection.const.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/ipfs-swarm-connection.test/ipfs-swarm-connection.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/ipfs-swarm-connection.test/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/mocha-chai-initialize.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/nodejs-helpers.test/nodejs-helpers.test.firebase/firebase.serviceKey.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/nodejs-helpers.test/nodejs-helpers.test.firebase/nodejs-helpers.test.firebase.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/nodejs-helpers.test/nodejs-helpers.test.firebase/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/nodejs-helpers.test/nodejs-helpers.test.firebase/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/open-storage.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/password-key.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/pseudo-ntp-class.test/pseudo-ntp-class.test.const.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/pseudo-ntp-class.test/pseudo-ntp-class.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/safe-storage.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/salt-generation-utils.test/salt-generation-utils.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/secret-storage.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/swarm-message-store-test/swarm-message-store-test.const.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/swarm-message-store-test/swarm-message-store-test.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/swarm-storage-orbit-db.test/swarm-storage-orbit-db.test.const.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/swarm-storage-orbit-db.test/swarm-storage-orbit-db.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/swarrm-message-constructor.test/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/swarrm-message-constructor.test/swarrm-message-constructor.const.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/swarrm-message-constructor.test/swarrm-message-constructor.shared.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/swarrm-message-constructor.test/swarrm-message-constructor.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/valiation-utils.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/validation-messaging.test/swarm-message.test/swarm-message-subclass-validator-fields-validator-body-raw.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/validation-messaging.test/swarm-message.test/swarm-message-subclass-validator-fields-validator-signature.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/validation-messaging.test/swarm-message.test/swarm-message-subclass-validator-fields-validator-validator-type.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/validation-messaging.test/swarm-message.test/swarm-message-subclass-validator-fields-validator-validator-user-identifier.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/validation-messaging.test/swarm-message.test/swarm-message.fields-validator.test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/validation-messaging.test/validate-messaging-timestamps-test.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/validation-messaging.test/validation-messaging.test.const.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tsconfig-module.json" beforeDir="false" afterPath="$PROJECT_DIR$/tsconfig-module.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -25,36 +116,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="swarm-message.fields-validator.test.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/validation-messaging.test/swarm-message.test/swarm-message.fields-validator.test.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="374">
-              <caret line="40" column="72" selection-start-line="40" selection-start-column="49" selection-end-line="40" selection-end-column="72" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="swarm-message-subclass-validator-fields-validator-validator-type.test.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/validation-messaging.test/swarm-message.test/swarm-message-subclass-validator-fields-validator-validator-type.test.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="561">
-              <caret line="33" column="63" selection-start-line="33" selection-start-column="63" selection-end-line="33" selection-end-column="63" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="validate-messaging-timestamps-test.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/validation-messaging.test/validate-messaging-timestamps-test.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="204">
-              <caret line="18" column="31" selection-start-line="18" selection-start-column="31" selection-end-line="18" selection-end-column="31" />
-              <folding>
-                <element signature="e#0#30#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="central-authority-class-user-identity.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.ts">
           <provider selected="true" editor-type-id="text-editor">
@@ -64,56 +125,32 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="central-authority-connection.test.firebase.credentials-storage.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/central-authority.test/central-authority-connection.test/central-authority-connection.test.firebase/central-authority-connection.test.firebase.credentials-storage.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="426">
-              <caret line="266" column="23" selection-start-line="266" selection-start-column="23" selection-end-line="266" selection-end-column="23" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="swarm-store-connector-orbit-db-subclass-database.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="476">
-              <caret line="52" column="37" selection-start-line="52" selection-start-column="37" selection-end-line="52" selection-end-column="37" />
+            <state relative-caret-position="731">
+              <caret line="54" column="37" selection-start-line="54" selection-start-column="37" selection-end-line="54" selection-end-column="37" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="swarm-store-connector-orbit-db-subclass-database.types.ts" pinned="false" current-in-tab="true">
+      <file leaf-file-name="swarm-store-connector-orbit-db-subclass-database.types.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="7" column="59" selection-start-line="7" selection-start-column="59" selection-end-line="7" selection-end-column="59" />
+            <state relative-caret-position="340">
+              <caret line="40" column="7" selection-start-line="40" selection-start-column="7" selection-end-line="40" selection-end-column="7" />
+              <folding>
+                <element signature="e#0#85#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="central-authority-connection.test.firebase.const.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/central-authority.test/central-authority-connection.test/central-authority-connection.test.firebase/central-authority-connection.test.firebase.const.ts">
+      <file leaf-file-name="index,ts" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/backog-classes/channel-authority-class/channel-authority-connections/channel-authority-connection-with-server-api/index,ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="459">
-              <caret line="27" selection-start-line="27" selection-end-line="30" selection-end-column="2" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="swarm-message-subclass-validator-fields-validator-body-raw.test.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/validation-messaging.test/swarm-message.test/swarm-message-subclass-validator-fields-validator-body-raw.test.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="459">
-              <caret line="31" column="10" selection-start-line="31" selection-start-column="10" selection-end-line="31" selection-end-column="19" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="swarm-message-subclass-validator-fields-validator-signature.test.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/validation-messaging.test/swarm-message.test/swarm-message-subclass-validator-fields-validator-signature.test.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="15" column="37" selection-start-line="15" selection-start-column="37" selection-end-line="15" selection-end-column="37" />
+            <state relative-caret-position="34">
+              <caret line="2" column="69" selection-start-line="2" selection-start-column="69" selection-end-line="2" selection-end-column="69" />
             </state>
           </provider>
         </entry>
@@ -122,8 +159,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>cryptoModule</find>
-      <find>window.crypto</find>
       <find>window.c</find>
       <find>crypto.</find>
       <find>instanceof CryptoKey</find>
@@ -152,7 +187,12 @@
       <find>options</find>
       <find>ISwarmStoreConnectorOrbitDbDatabaseOptions</find>
       <find>TFeedStoreType</find>
+      <find>*.json</find>
+      <find>&quot;main&quot;</find>
     </findStrings>
+    <dirStrings>
+      <dir>$PROJECT_DIR$</dir>
+    </dirStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -201,6 +241,7 @@
         <option value="$PROJECT_DIR$/src/test/central-authority.test/central-authority-connection.test/central-authority-connection.test.firebase/central-authority-connection.test.firebase.const.ts" />
         <option value="$PROJECT_DIR$/src/test/central-authority.test/central-authority-connection.test/central-authority-connection.test.firebase/central-authority-connection.test.firebase.credentials-storage.ts" />
         <option value="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types.ts" />
+        <option value="$PROJECT_DIR$/src/backog-classes/channel-authority-class/channel-authority-connections/channel-authority-connection-with-server-api/index,ts" />
       </list>
     </option>
   </component>
@@ -217,97 +258,15 @@
   </component>
   <component name="NodePackageJsonFileManager">
     <packageJsonPaths>
-      <path value="$PROJECT_DIR$/node_modules-local/orbit-db-types/package.json" />
       <path value="$PROJECT_DIR$/package.json" />
-      <path value="$PROJECT_DIR$/src/backog-classes/channel-authority-class/channel-authority-connections/channel-authority-connection-with-server-api/package.json" />
-      <path value="$PROJECT_DIR$/src/backog-classes/channel-authority-class/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/basic-classes/event-emitter-class-base/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/basic-classes/http-request-class-base/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/basic-classes/mime-types-class-base/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/basic-classes/queue-manager-class-base/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/basic-classes/status-class-base/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-types/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-formatters/central-authority-class-user-identity-formatters-formatter-v1/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-formatters/central-authority-class-user-identity-formatters-formatter-v2/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-formatters/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-parsers/central-authority-class-user-identity-parsers-parser-v1/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-parsers/central-authority-class-user-identity-parsers-parser-v2/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-parsers/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-class-user-identity-validator-v1/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-class-user-identity-validator-v2/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase-base/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase-connection-implementation/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase-utils/central-authority-connection-firebase-utils.credentials-storage/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase-utils/central-authority-connection-firebase-utils.database/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase-utils/central-authority-connection-firebase-utils.validators/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase.const/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connections-const/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connections-pool/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connections-utils/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-storage-local/central-authority-storage-current-user-auth/central-authority-storage-current-user-credentials/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-storage-local/central-authority-storage-swarm-users-auth/central-authority-storage-swarm-users-identity-credentials/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-validators/central-authority-validators-auth-credentials/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-validators/central-authority-validators-user/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/central-authority-class/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/open-storage/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/pseudo-ntp-class/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/safe-storage-class/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/secret-storage-class/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/secret-storage-class/secret-storage-class-utils/secret-storage-class-utils-login/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/secret-storage-class/secret-storage-class-utils/secret-storage-class-utils-main/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/secret-storage-class/secret-storage-class-utils/secret-storage-class-utils-password/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/storage-providers/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/storage-providers/storage-level-js-provider/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/storage-providers/storage-local-forage-provider/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/storage-providers/storage-local-storage-provider/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/storage-providers/storage-session-storage-provider/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/swarm-connection-class/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/swarm-connection-class/swarm-connection-class-subclasses/swarm-connection-class-subclass-ipfs/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/swarm-message/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-issuer-deserizlied/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-issuer-serialized/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-payload/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-timestamp/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-type/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-identity-provider/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-keystore/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-storage-cache/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-storage-fabric/package.json" />
-      <path value="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/package.json" />
-      <path value="$PROJECT_DIR$/src/const/common-values/package.json" />
-      <path value="$PROJECT_DIR$/src/const/const-crypto-keys/package.json" />
-      <path value="$PROJECT_DIR$/src/const/const-validation-schemes/package.json" />
-      <path value="$PROJECT_DIR$/src/const/const-validation-values/package.json" />
-      <path value="$PROJECT_DIR$/src/test/central-authority.test/central-authority-connection.test/central-authority-connection.test.firebase/package.json" />
-      <path value="$PROJECT_DIR$/src/test/central-authority.test/central-authority-connection.test/package.json" />
-      <path value="$PROJECT_DIR$/src/test/central-authority.test/central-authority-swarm-credentials-provider/package.json" />
-      <path value="$PROJECT_DIR$/src/test/central-authority.test/package.json" />
-      <path value="$PROJECT_DIR$/src/test/common-utils.test/package.json" />
-      <path value="$PROJECT_DIR$/src/test/http-request-class-base.test/package.json" />
-      <path value="$PROJECT_DIR$/src/test/ipfs-swarm-connection.test/package.json" />
-      <path value="$PROJECT_DIR$/src/test/nodejs-helpers.test/nodejs-helpers.test.firebase/package.json" />
-      <path value="$PROJECT_DIR$/src/utils/common-utils/package.json" />
-      <path value="$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/package.json" />
-      <path value="$PROJECT_DIR$/src/utils/data-cache-utils/package.json" />
-      <path value="$PROJECT_DIR$/src/utils/data-compression-utils/package.json" />
-      <path value="$PROJECT_DIR$/src/utils/data-sign-utils/package.json" />
-      <path value="$PROJECT_DIR$/src/utils/data-validators-utils/package.json" />
-      <path value="$PROJECT_DIR$/src/utils/encryption-utils/package.json" />
-      <path value="$PROJECT_DIR$/src/utils/firebase-utils/package.json" />
-      <path value="$PROJECT_DIR$/src/utils/hash-calculation-utils/package.json" />
-      <path value="$PROJECT_DIR$/src/utils/identity-utils/package.json" />
-      <path value="$PROJECT_DIR$/src/utils/lazy-loading-utils/package.json" />
-      <path value="$PROJECT_DIR$/src/utils/password-utils/package.json" />
-      <path value="$PROJECT_DIR$/src/utils/validation-utils/package.json" />
+      <path value="$PROJECT_DIR$/src/__test__/central-authority.test/central-authority-connection.test/central-authority-connection.test.firebase/package.json" />
+      <path value="$PROJECT_DIR$/src/__test__/central-authority.test/central-authority-connection.test/package.json" />
+      <path value="$PROJECT_DIR$/src/__test__/central-authority.test/central-authority-swarm-credentials-provider/package.json" />
+      <path value="$PROJECT_DIR$/src/__test__/central-authority.test/package.json" />
+      <path value="$PROJECT_DIR$/src/__test__/common-utils.test/package.json" />
+      <path value="$PROJECT_DIR$/src/__test__/http-request-class-base.test/package.json" />
+      <path value="$PROJECT_DIR$/src/__test__/ipfs-swarm-connection.test/package.json" />
+      <path value="$PROJECT_DIR$/src/__test__/nodejs-helpers.test/nodejs-helpers.test.firebase/package.json" />
     </packageJsonPaths>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
@@ -321,7 +280,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -333,6 +291,36 @@
               <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
               <item name="protocol" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
+              <item name="protocol" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="backog-classes" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
+              <item name="protocol" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="backog-classes" type="462c0819:PsiDirectoryNode" />
+              <item name="channel-authority-class" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
+              <item name="protocol" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="backog-classes" type="462c0819:PsiDirectoryNode" />
+              <item name="channel-authority-class" type="462c0819:PsiDirectoryNode" />
+              <item name="channel-authority-connections" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
+              <item name="protocol" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="backog-classes" type="462c0819:PsiDirectoryNode" />
+              <item name="channel-authority-class" type="462c0819:PsiDirectoryNode" />
+              <item name="channel-authority-connections" type="462c0819:PsiDirectoryNode" />
+              <item name="channel-authority-connection-with-server-api" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
@@ -359,27 +347,52 @@
               <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
               <item name="protocol" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="classes" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-store-class" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
               <item name="protocol" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-              <item name="validation-messaging.test" type="462c0819:PsiDirectoryNode" />
+              <item name="classes" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-store-class" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-store-connectors" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
               <item name="protocol" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-              <item name="validation-messaging.test" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-message.test" type="462c0819:PsiDirectoryNode" />
+              <item name="classes" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-store-class" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-store-connectors" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-store-connector-orbit-db" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
+              <item name="protocol" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="classes" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-store-class" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-store-connectors" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-store-connector-orbit-db" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-store-connector-orbit-db-subclasses" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
+              <item name="protocol" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="classes" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-store-class" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-store-connectors" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-store-connector-orbit-db" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-store-connector-orbit-db-subclasses" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-store-connector-orbit-db-subclass-database" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -541,6 +554,7 @@
       <workItem from="1581276866329" duration="743000" />
       <workItem from="1582387912109" duration="898000" />
       <workItem from="1582977726883" duration="1158000" />
+      <workItem from="1584219574575" duration="490000" />
     </task>
     <servers />
   </component>
@@ -577,19 +591,19 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="28346000" />
+    <option name="totallyTimeSpent" value="28836000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="27" width="1920" height="1007" extended-state="6" />
+    <frame x="0" y="0" width="1920" height="1034" extended-state="6" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="7" weight="0.2416953" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.28980526" />
       <window_info id="npm" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.28980526" />
       <window_info anchor="bottom" id="Terminal" order="7" weight="0.35666665" />
       <window_info anchor="bottom" id="TypeScript" order="7" weight="0.32875144" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.26750922" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.26750922" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32875144" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -647,20 +661,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/node_modules/jest/node_modules/jest-cli/build/index.d.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" column="19" selection-start-line="3" selection-start-column="19" selection-end-line="3" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/node_modules/jest/build/jest.d.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" column="26" selection-start-line="6" selection-start-column="26" selection-end-line="6" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/package.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1394">
@@ -910,22 +910,39 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/test/central-authority.test/central-authority-connection.test/central-authority-connection.test.firebase/central-authority-connection.test.firebase.credentials-storage.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="426">
+        <state relative-caret-position="4250">
           <caret line="266" column="23" selection-start-line="266" selection-start-column="23" selection-end-line="266" selection-end-column="23" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="476">
-          <caret line="52" column="37" selection-start-line="52" selection-start-column="37" selection-end-line="52" selection-end-column="37" />
+        <state relative-caret-position="731">
+          <caret line="54" column="37" selection-start-line="54" selection-start-column="37" selection-end-line="54" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/backog-classes/channel-authority-class/channel-authority-connections/channel-authority-connection-with-server-api/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="1" column="2" selection-start-line="1" selection-start-column="2" selection-end-line="1" selection-end-column="2" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="7" column="59" selection-start-line="7" selection-start-column="59" selection-end-line="7" selection-end-column="59" />
+        <state relative-caret-position="340">
+          <caret line="40" column="7" selection-start-line="40" selection-start-column="7" selection-end-line="40" selection-end-column="7" />
+          <folding>
+            <element signature="e#0#85#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/backog-classes/channel-authority-class/channel-authority-connections/channel-authority-connection-with-server-api/index,ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="69" selection-start-line="2" selection-start-column="69" selection-end-line="2" selection-end-column="69" />
         </state>
       </provider>
     </entry>

@@ -1,8 +1,8 @@
-import { isEqualArrayBufferNative } from './../utils/typed-array-utils';
+import { isEqualArrayBufferNative } from '../utils/typed-array-utils';
 import { assert } from 'chai';
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { STORAGE_PROVIDERS_NAME } from './../classes/storage-providers/storage-providers.const';
-import { OpenStorage } from './../classes/open-storage/open-storage';
+import { STORAGE_PROVIDERS_NAME } from '../classes/storage-providers/storage-providers.const';
+import { OpenStorage } from '../classes/open-storage/open-storage';
 import { expect } from 'chai';
 
 const configuration = {

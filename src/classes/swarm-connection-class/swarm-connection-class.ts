@@ -8,9 +8,9 @@ import {
   ESwarmConnectionSubclassStatus,
 } from './swarm-connection-class.types';
 import { SwarmConnectionSubclassIPFS } from './swarm-connection-class-subclasses/swarm-connection-class-subclass-ipfs/swarm-connection-class-subclass-ipfs';
-import { getStatusClass } from 'classes/basic-classes/status-class-base/status-class-base';
-import { STATUS_CLASS_STATUS_CHANGE_EVENT } from 'classes/basic-classes/status-class-base/status-class-base.const';
-import * as Ipfs from 'types/ipfs.types';
+import { getStatusClass } from '../basic-classes/status-class-base/status-class-base';
+import { STATUS_CLASS_STATUS_CHANGE_EVENT } from '../basic-classes/status-class-base/status-class-base.const';
+import * as Ipfs from '../../types/ipfs.types';
 
 export class SwarmConnection
   extends getStatusClass<typeof ESwarmConnectionClassStatus>({

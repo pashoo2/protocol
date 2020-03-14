@@ -11,5 +11,3 @@ export * from './swarm-connection-class-subclass-ipfs.libp2p.conf';
 export * from './swarm-connection-class-subclass-ipfs.signal-star.conf';
 
 export * from './swarm-connection-class-subclass-ipfs.types';
-
-export * from './types';

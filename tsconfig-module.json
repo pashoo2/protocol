@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
     "target": "ES6",
+    "removeComments": true,
+    "importHelpers": true,
     "module": "commonjs",
     "downlevelIteration": true,
     "lib": ["dom", "dom.iterable", "esnext"],
@@ -12,7 +14,6 @@
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
     "jsx": "preserve",
-    "baseUrl": "src/",
     "rootDirs": ["src/"],
     "typeRoots": [
       "types",
@@ -25,16 +26,10 @@
     "noEmit": false,
     "outDir": "./build",
     "sourceMap": true,
-    "declaration": true
+    "declaration": true,
+    "baseUrl": "./src",
+    "plugins": [{ "transform": "ts-transformer-imports" }]
   },
-  "include": ["src/index.ts", "src/**/*.d.ts", "src/**/*.json"],
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts",
-    "**/*.js",
-    "node_modules*",
-    "build",
-    "**/*.test*",
-    "/src/test"
-  ]
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.json"],
+  "exclude": ["**/*.spec.ts", "build", "**/*.test*", "/src/test"]
 }

@@ -1,19 +1,19 @@
 import {
   CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME,
   CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME,
-} from './../../classes/central-authority-class/central-authority-class-const/central-authority-class-const-auth-credentials';
+} from '../../classes/central-authority-class/central-authority-class-const/central-authority-class-const-auth-credentials';
 import {
   exportCryptoCredentialsToString,
   importCryptoCredentialsFromAString,
-} from './../../classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials';
+} from '../../classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials';
 import { TCentralAuthorityUserCryptoCredentials } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
-import { generateUUID } from './../../utils/identity-utils/identity-utils';
+import { generateUUID } from '../../utils/identity-utils/identity-utils';
 import {
   CA_USER_IDENTITY_VERSION_PROP_NAME,
   CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME,
   CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME,
   CA_USER_IDENTITY_VERSIONS,
-} from './../../classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
+} from '../../classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
 import {
   generateCryptoCredentialsWithUserIdentityV1,
   generateCryptoCredentialsWithUserIdentityV2,

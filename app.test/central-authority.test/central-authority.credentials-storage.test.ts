@@ -1,4 +1,4 @@
-import { CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME } from './../../classes/central-authority-class/central-authority-class-const/central-authority-class-const-auth-credentials';
+import { CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME } from '../../classes/central-authority-class/central-authority-class-const/central-authority-class-const-auth-credentials';
 import { generateKeyPairs } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
 import { runTestForKeyPairs } from './central-aurhority.keys.common.test';
 import {

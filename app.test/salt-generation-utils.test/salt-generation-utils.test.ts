@@ -1,10 +1,10 @@
-import { TSaltUtilsSaltType } from './../../utils/encryption-utils/salt-utils.types';
+import { TSaltUtilsSaltType } from '../../utils/encryption-utils/salt-utils.types';
 import {
   importSalt,
   generateSalt,
   generateSaltNative,
   generateSaltString,
-} from './../../utils/encryption-utils/salt-utils';
+} from '../../utils/encryption-utils/salt-utils';
 import { expect } from 'chai';
 import { isValidSalt } from '../../utils/encryption-utils/salt-utils';
 import {

@@ -4,7 +4,7 @@ import { ICentralAuthority } from '../../classes/central-authority-class/central
 import {
   CA_CLASS_OPTIONS_VALID_NO_PROFILE,
   CA_CLASS_OPTIONS_VALID_NO_PROFILE_ANOTHER,
-} from 'test/central-authority.test/central-authority-class.test/central-authority-class.test.const.shared';
+} from 'src/__test__/central-authority.test/central-authority-class.test/central-authority-class.test.const.shared';
 import { SwarmMessageConstructor } from '../../classes/swarm-message/swarm-message-constructor';
 import { SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_SERIALIZER } from '../../classes/swarm-message/swarm-message-constructor.const';
 import { stringToTypedArray } from '../../utils/typed-array-utils';

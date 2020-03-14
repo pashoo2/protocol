@@ -27,7 +27,8 @@
     "temp.js",
     "node_modules/",
     "node_modules-local/",
-    "*config.js"
+    "*config.js",
+    "app.test/"
   ],
   "rules": {
     "@typescript-eslint/no-empty-interface": "off",

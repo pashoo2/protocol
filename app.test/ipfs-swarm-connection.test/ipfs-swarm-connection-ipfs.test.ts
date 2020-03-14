@@ -1,5 +1,5 @@
 import { SwarmConnectionSubclassIPFS } from 'classes/swarm-connection-class/swarm-connection-class-subclasses/swarm-connection-class-subclass-ipfs/swarm-connection-class-subclass-ipfs';
-import { initializeMocha, runMocha } from 'test/mocha-chai-initialize';
+import { initializeMocha, runMocha } from 'src/__test__/mocha-chai-initialize';
 import { expect, assert } from 'chai';
 import { SWARM_CONNECTION_PASSWORD } from './ipfs-swarm-connection.const';
 

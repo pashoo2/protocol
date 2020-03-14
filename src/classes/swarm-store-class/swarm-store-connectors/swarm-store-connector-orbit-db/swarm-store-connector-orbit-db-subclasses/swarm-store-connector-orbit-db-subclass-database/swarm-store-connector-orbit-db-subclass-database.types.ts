@@ -38,7 +38,7 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseEvents<
   [ESwarmStoreEventNames.READY]: [string, TSwarmStoreConnectorOrbitDBDatabase];
   [ESwarmStoreEventNames.NEW_ENTRY]: [
     string, // database name
-    LogEntry<TFeedStoreType>, // entry added
+    any, // entry added
     string, // address of the entry,
     any, // heads
     TSwarmStoreConnectorOrbitDBDatabase

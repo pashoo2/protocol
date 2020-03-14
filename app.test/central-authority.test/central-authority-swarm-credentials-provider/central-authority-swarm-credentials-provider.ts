@@ -2,24 +2,24 @@ import 'mocha';
 import { compareCryptoCredentials } from 'classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials';
 import { TCentralAuthorityUserCryptoCredentials } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 import { checkIsValidCryptoCredentials } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
-import { decodeFromFirebaseKey } from './../../../utils/firebase-utils/firebase-utils';
-import { ICAConnection } from './../../../classes/central-authority-class/central-authority-connections/central-authority-connections.types';
+import { decodeFromFirebaseKey } from '../../../utils/firebase-utils/firebase-utils';
+import { ICAConnection } from '../../../classes/central-authority-class/central-authority-connections/central-authority-connections.types';
 import { CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
 import {
   TCAuthProviderIdentifier,
   TCAUserIdentityRawTypes,
-} from './../../../classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types';
+} from '../../../classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types';
 import { CentralAuthorityIdentity } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
 import { CAConnectionsPool } from 'classes/central-authority-class/central-authority-connections/central-authority-connections-pool/central-authority-connections-pool';
-import { ICASwarmCredentialsProviderOptions } from './../../../classes/central-authority-class/central-authority-swarm-credentials-provider/central-authority-swarm-credentials-provider.types';
+import { ICASwarmCredentialsProviderOptions } from '../../../classes/central-authority-class/central-authority-swarm-credentials-provider/central-authority-swarm-credentials-provider.types';
 import {
   CA_SWARM_CREDENTIALS_PROVIDER_TEST_OPTIONS,
   CA_SWARM_CREDENTIALS_PROVIDER_TEST_USERIDENTITY,
   CA_SWARM_CREDENTIALS_PROVIDER_TEST_USERIDENTITY_SECOND,
 } from './central-authority-swarm-credentials-provider.const';
-import { CASwarmCredentialsProvider } from './../../../classes/central-authority-class/central-authority-swarm-credentials-provider/central-authority-swarm-credentials-provider';
+import { CASwarmCredentialsProvider } from '../../../classes/central-authority-class/central-authority-swarm-credentials-provider/central-authority-swarm-credentials-provider';
 import { expect } from 'chai';
-import { createCAConnectionsPoolWithTwoProviders } from './../central-authority-connection.test/central-authority-connections-pool.test/central-authority-connections-pool.test.shared';
+import { createCAConnectionsPoolWithTwoProviders } from '../central-authority-connection.test/central-authority-connections-pool.test/central-authority-connections-pool.test.shared';
 import mocha from 'mocha';
 
 const it = mocha.it;

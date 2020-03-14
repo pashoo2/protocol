@@ -20,7 +20,7 @@ import {
   SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_THREE_DATABASES_WITH_IDENTITY_AND_ACCESS_CONTROLLER_SECRET_KEYSTORE,
   SWARM_STORE_CONNECTOR_TEST_SUBCLASS_CACHE_OPTIONS,
 } from './swarm-storage-orbit-db.test.const';
-import { SWARM_CONNECTION_OPTIONS } from 'test/ipfs-swarm-connection.test/ipfs-swarm-connection.const';
+import { SWARM_CONNECTION_OPTIONS } from 'src/__test__/ipfs-swarm-connection.test/ipfs-swarm-connection.const';
 import { SwarmConnection } from 'classes/swarm-connection-class/swarm-connection-class';
 import { ISwarmStoreConnectorOrbitDbDatabaseValue } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import { COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_ON } from 'const/common-values/common-values';
