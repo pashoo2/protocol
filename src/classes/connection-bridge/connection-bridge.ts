@@ -258,7 +258,9 @@ export class ConnectionBridge<
   protected async startSwarmConnection(): Promise<void> {
     this.setOptionsSwarmConnection();
 
-    const ipfs = await ipfsUtilsConnectBasic();
+    const ipfs = await ipfsUtilsConnectBasic(
+      this.options ? this.options.swarm : undefined
+    );
 
     this.swarmConnection = {
       getNativeConnection() {

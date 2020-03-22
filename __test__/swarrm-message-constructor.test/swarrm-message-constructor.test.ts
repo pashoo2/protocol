@@ -1,17 +1,17 @@
 import { expect } from 'chai';
-import { CentralAuthority } from '../../classes/central-authority-class/central-authority-class';
-import { ICentralAuthority } from '../../classes/central-authority-class/central-authority-class.types';
+import { CentralAuthority } from '../../src/classes/central-authority-class/central-authority-class';
+import { ICentralAuthority } from '../../src/classes/central-authority-class/central-authority-class.types';
 import {
   CA_CLASS_OPTIONS_VALID_NO_PROFILE,
   CA_CLASS_OPTIONS_VALID_NO_PROFILE_ANOTHER,
-} from 'src/__test__/central-authority.test/central-authority-class.test/central-authority-class.test.const.shared';
-import { SwarmMessageConstructor } from '../../classes/swarm-message/swarm-message-constructor';
-import { SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_SERIALIZER } from '../../classes/swarm-message/swarm-message-constructor.const';
-import { stringToTypedArray } from '../../utils/typed-array-utils';
+} from '__test__/central-authority.test/central-authority-class.test/central-authority-class.test.const.shared';
+import { SwarmMessageConstructor } from '../../src/classes/swarm-message/swarm-message-constructor';
+import { SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_SERIALIZER } from '../../src/classes/swarm-message/swarm-message-constructor.const';
+import { stringToTypedArray } from '../../src/utils/typed-array-utils';
 import {
   ISwarmMessage,
   ISwarmMessageRaw,
-} from '../../classes/swarm-message/swarm-message-constructor.types';
+} from '../../src/classes/swarm-message/swarm-message-constructor.types';
 
 export const runSwarmMessageConstructorTests = () => {
   describe('SwarmMessageConstructor class tests', async function() {

@@ -203,6 +203,6 @@ export type TSwarmMessageConstructorArgumentBody = Omit<
 // construct message from an object which represents message's body
 export interface ISwarmMessageConstructor {
   construct(
-    messageBody: TSwarmMessageConstructorArgumentBody
+    messageBody: TSwarmMessageConstructorArgumentBody | TSwarmMessageSeriazlized
   ): Promise<ISwarmMessageInstance>;
 }

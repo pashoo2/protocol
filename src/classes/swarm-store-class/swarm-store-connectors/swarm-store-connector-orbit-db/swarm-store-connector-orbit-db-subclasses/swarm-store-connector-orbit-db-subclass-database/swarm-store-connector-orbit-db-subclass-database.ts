@@ -101,8 +101,9 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       return database;
     }
     try {
+      debugger;
       const hash = await database.add(value);
-
+      debugger;
       if (typeof hash !== 'string') {
         return new Error(
           'An unknown type of hash was returned for the value stored'

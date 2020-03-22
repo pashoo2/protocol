@@ -4,6 +4,7 @@ export const IPFS_UTILS_DEFAULT_OPTIONS = {
   },
   init: true,
   start: true,
+  preload: { enabled: false },
 };
 
 export const IPFS_UTILS_DEFAULT_TIMEOUT_MS = 30000;

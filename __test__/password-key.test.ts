@@ -1,11 +1,11 @@
 import {
   SALT_GENERATION_UTILS_SALT_MAX_LENGTH_BYTES,
   SALT_GENERATION_UTILS_SALT_MIN_LENGTH_BYTES,
-} from '../utils/encryption-utils/salt-utils.const';
+} from '../src/utils/encryption-utils/salt-utils.const';
 import {
   generateSalt,
   generateSaltString,
-} from '../utils/encryption-utils/salt-utils';
+} from '../src/utils/encryption-utils/salt-utils';
 import {
   generatePasswordKeyAsString,
   importPasswordKeyFromString,
