@@ -1062,6 +1062,15 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
     string,
     any
   ]) => {
+    console.log(
+      `SwarmStoreConnectorOrbitDB::handleNewEntryAddedToDatabase:emit NEW_ENTRY`,
+      {
+        dbName,
+        entry,
+        address,
+        heads,
+      }
+    );
     this.emit(ESwarmStoreEventNames.NEW_ENTRY, [dbName, entry, address, heads]);
   };
 

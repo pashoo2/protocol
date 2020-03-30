@@ -248,12 +248,13 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
     messageAddr: string,
     error: Error
   ) => {
-    this.emit(ESwarmMessageStoreEventNames.NEW_MESSAGE_ERROR, [
+    this.emit(
+      ESwarmMessageStoreEventNames.NEW_MESSAGE_ERROR,
       dbName,
       message,
       error,
-      messageAddr,
-    ]);
+      messageAddr
+    );
   };
 
   /**
@@ -267,11 +268,17 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
     message: ISwarmMessageInstance,
     messageAddr: string
   ) => {
-    this.emit(ESwarmMessageStoreEventNames.NEW_MESSAGE, [
+    console.log('SwarmMessageStore::emitMessageNew', {
       dbName,
       message,
       messageAddr,
-    ]);
+    });
+    this.emit(
+      ESwarmMessageStoreEventNames.NEW_MESSAGE,
+      dbName,
+      message,
+      messageAddr
+    );
   };
 
   /**
@@ -286,6 +293,11 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
       : any,
     string
   ]): Promise<void> => {
+    console.log('SwarmMessageStore::handleNewMessage', {
+      dbName,
+      message,
+      messageAddress,
+    });
     const messageConstructor = this.getMessageConstructor(dbName);
 
     if (
