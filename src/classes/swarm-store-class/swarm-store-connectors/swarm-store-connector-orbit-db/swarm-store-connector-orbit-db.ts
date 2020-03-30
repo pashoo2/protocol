@@ -228,7 +228,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
     const databaseOpenResult = await this.waitDatabaseOpened(database);
 
     if (databaseOpenResult instanceof Error) {
-      await this.closeDb(database); // close the connection to the database
+      await this.closeDb(database, false); // close the connection to the database
       await delay(300);
       if (
         openAttempt >
@@ -249,6 +249,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
         return this.handleErrorOnDbOpen(database, openDatabaseResult);
       }
     }
+    console.log('openDatabase', dbName);
     this.databases.push(database);
     this.emit(ESwarmStoreEventNames.READY, dbOptions.dbName);
   };
@@ -798,8 +799,18 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
     return this.setDbOptions(dbOptions, true);
   }
 
+  /**
+   *
+   *
+   * @private
+   * @param {SwarmStoreConnectorOrbitDBDatabase<ISwarmDatabaseValueTypes>} database - db to close
+   * @param {boolean} [flEmit=true] - whether to emit an events during execution
+   * @returns {(Promise<Error | void>)}
+   * @memberof SwarmStoreConnectorOrbitDB
+   */
   private async closeDb(
-    database: SwarmStoreConnectorOrbitDBDatabase<ISwarmDatabaseValueTypes>
+    database: SwarmStoreConnectorOrbitDBDatabase<ISwarmDatabaseValueTypes>,
+    flEmit: boolean = true
   ): Promise<Error | void> {
     this.unsetListenersDatabaseEvents(database);
 
@@ -811,9 +822,14 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
     const closeDatabaseResult = await database.close();
 
     if (closeDatabaseResult instanceof Error) {
-      return this.emitError(closeDatabaseResult);
+      if (flEmit) {
+        return this.emitError(closeDatabaseResult);
+      }
+      return closeDatabaseResult;
     }
-    this.emitDatabaseClose(database);
+    if (flEmit) {
+      this.emitDatabaseClose(database);
+    }
   }
 
   private setConnectionOptions(
@@ -1181,6 +1197,7 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
         });
         database.once(ESwarmStoreEventNames.READY, () => {
           usetListeners();
+          console.log('dbReady', database.dbName);
           res(true);
         });
 
