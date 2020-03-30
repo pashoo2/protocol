@@ -51,6 +51,8 @@ export class SwarmStoreConnectorOrbitDBDatabase<
 
   protected database?: OrbitDbFeedStore<TFeedStoreType>;
 
+  protected newEntriesPending: [string, LogEntry<TFeedStoreType>, any][] = [];
+
   constructor(
     options: ISwarmStoreConnectorOrbitDbDatabaseOptions<TFeedStoreType>,
     orbitDb: orbitDbModule.OrbitDB
@@ -101,9 +103,8 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       return database;
     }
     try {
-      debugger;
       const hash = await database.add(value);
-      debugger;
+      console.log(`ADDED DATA WITH HASH -- ${hash}`);
       if (typeof hash !== 'string') {
         return new Error(
           'An unknown type of hash was returned for the value stored'
@@ -332,16 +333,57 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     console.log('--STORE::READY');
   };
 
+  private emitNewEntry = (
+    address: string,
+    entry: LogEntry<TFeedStoreType>,
+    heads: any
+  ) => {
+    console.log('emit new entry', {
+      address,
+      entry,
+      heads,
+    });
+    this.emit(ESwarmStoreEventNames.NEW_ENTRY, [
+      this.dbName,
+      entry,
+      address,
+      heads,
+      this,
+    ]);
+  };
+
+  private emitEmtriesPending() {
+    const newEntriesPending = this.newEntriesPending;
+
+    console.log('emitEmtriesPending');
+    newEntriesPending.forEach((newEntry) => this.emitNewEntry(...newEntry));
+    this.newEntriesPending.splice(0, newEntriesPending.length);
+  }
+
+  private handleNewEntry = (
+    address: string,
+    entry: LogEntry<TFeedStoreType>,
+    heads: any
+  ) => {
+    console.log('add entry pending', {
+      address,
+      entry,
+      heads,
+    });
+    this.newEntriesPending.push([address, entry, heads]);
+  };
+
   private handleFeedStoreReady = () => {
     this.emitFullyLoaded();
     this.setReadyState();
     this.emitEvent(ESwarmStoreEventNames.READY);
     this.logStore();
+    this.emitEmtriesPending();
   };
 
   private handleFeedStoreLoaded = () => {
     // emit event that the database local copy was fully loaded
-    this.emitFullyLoaded();
+    // this.emitFullyLoaded();
   };
 
   private handleFeedStoreLoadProgress = (
@@ -351,17 +393,26 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     progress: number,
     total: number
   ) => {
+    console.log('Log in progress', {
+      address,
+      hash,
+      entry,
+      progress,
+      total,
+    });
     // emit event database local copy loading progress
     this.emitEvent(ESwarmStoreEventNames.LOADING, progress);
+    this.handleNewEntry(address, entry, {});
   };
 
   private handleFeedStoreReplicated = () => {
     // emit event that the db updated, cause it
     // was replicated with another peer db copy
     const { dbName } = this;
-
+    console.log('REPLICATED', { dbName });
     this.emitEvent(ESwarmStoreEventNames.UPDATE, dbName);
     this.logStore();
+    this.emitEmtriesPending();
   };
 
   private handleFeedStoreClosed = () => {
@@ -438,25 +489,25 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     have: unknown
   ) => {
     console.warn(`handleFeedStoreReplicateInProgress::
-            addr: ${address}
-            hash: ${hash}
-            progress: ${progress}
-        `);
+      addr: ${address}
+      hash: ${hash}
+      progress: ${progress}
+    `);
     this.logStore();
+    this.handleNewEntry(address, entry, {});
   };
 
-  private handleNewEntry = (
+  private handleWrite = (
     address: string,
     entry: LogEntry<TFeedStoreType>,
     heads: any
   ) => {
-    this.emit(ESwarmStoreEventNames.NEW_ENTRY, [
-      this.dbName,
-      entry,
+    console.log('WRITE', {
       address,
+      entry,
       heads,
-      this,
-    ]);
+    });
+    this.emitNewEntry(address, entry, heads);
   };
 
   private setFeedStoreEventListeners(
@@ -505,8 +556,8 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       this.handleFeedStoreReplicateInProgress
     );
     feedStore.events[methodName](
-      EOrbidDBFeedSoreEvents.NEW_ENTRY,
-      this.handleNewEntry
+      EOrbidDBFeedSoreEvents.WRITE,
+      this.handleWrite
     );
   }
 

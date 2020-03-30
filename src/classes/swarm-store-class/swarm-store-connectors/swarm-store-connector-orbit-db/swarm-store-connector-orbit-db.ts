@@ -279,9 +279,9 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
     if (isClosed) {
       return new Error('The Swarm connection was closed');
     }
-
+    debugger;
     const dbConnection = await this.waitingDbOpened(dbName);
-
+    debugger;
     if (dbConnection instanceof Error) {
       console.error(dbConnection);
       return this.emitError(

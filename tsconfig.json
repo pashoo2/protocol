@@ -15,6 +15,7 @@
     "noEmit": true,
     "jsx": "preserve",
     "baseUrl": "./src",
+    "sourceMap": true,
     "plugins": [
       {
         "transform": "@zerollup/ts-transform-paths"
@@ -35,13 +36,8 @@
     "src/**/*.tsx",
     "src/**/*.json",
     "src/index.tsx",
-    "src/App.tsx"
+    "src/App.tsx",
+    "__test__/"
   ],
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts",
-    "**/*.js",
-    "node_modules*",
-    "__test__"
-  ]
+  "exclude": ["node_modules", "**/*.spec.ts", "**/*.js", "node_modules*"]
 }

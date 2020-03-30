@@ -12,7 +12,7 @@ export enum EOrbidDBFeedSoreEvents {
   // Emitted after an entry was added locally to the database.
   // hash is the IPFS hash of the latest state of the database.
   // entry is the added database op.
-  NEW_ENTRY = 'write',
+  WRITE = 'write',
 }
 
 export enum EOrbitDbFeedStoreOperation {

@@ -187,12 +187,11 @@ export class SwarmConnectionSubclassIPFS
     connection: Ipfs.IPFS,
     isSetListeners: boolean = true
   ) {
-    const methodName = isSetListeners ? 'on' : 'off';
-
-    connection[methodName]('start', this.handleStarted);
-    connection[methodName]('init', this.handleInitialized);
-    connection[methodName]('error', this.handleError);
-    connection[methodName]('stop', this.handleStop);
+    // const methodName = isSetListeners ? 'on' : 'off';
+    // connection[methodName]('start', this.handleStarted);
+    // connection[methodName]('init', this.handleInitialized);
+    // connection[methodName]('error', this.handleError);
+    // connection[methodName]('stop', this.handleStop);
   }
 
   protected unsetListeners = (connection: Ipfs.IPFS) => {

@@ -47,7 +47,7 @@ export const SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_API_PORT = '8080';
 // TODO - if it changes it must be copied from the output of the
 // delegate server console from a 'Swarm listening on *'
 export const SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_NODE_ID =
-  'QmWaHbjxSufXpC9fidr2Q24fjEZEAzXiGX4A1QXPA6BpEG';
+  'QmTBLWYaga41UGo2isbJNfXQCwYxwoeF2GuJX2ugCUUKMX';
 
 // TODO - this is fo go-ipfs daemon
 // export const SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DELEGATE_NODE_ID = 'QmdZCfnz1qcZiSER1w5pv4LU6kfdL6fX91ZkozUwSGTpnn'

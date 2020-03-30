@@ -34,7 +34,7 @@ export const SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_DEFALT = {
     sharding: true,
   },
   config: SWARM_CONNECTION_SUBCLASS_IPFS_CONFIG_FOR_BROWSER_DEFAULT,
-  libp2p: getLibPeerToPeer,
+  // libp2p: getLibPeerToPeer,
 };
 
 export const SWARM_CONNECTION_SUBCLASS_IPFS_NODE_START_TIMEOUT = 2000;
