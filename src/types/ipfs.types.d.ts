@@ -110,6 +110,18 @@ export interface RepoAPI {
   path(): string;
 }
 
+export type UnixTime = { secs: number; nsecs: number };
+
+export type FileObject = {
+  path?: string;
+  // The contents of the file (see below for definition)
+  content?: FileContent;
+  // File mode to store the entry with (see https://en.wikipedia.org/wiki/File_system_permissions#Numeric_notation)
+  mode?: number | string;
+  // The modification time of the entry (see below for definition)
+  mtime?: UnixTime;
+};
+
 export type FileContent = Record<string, any> | Blob | string;
 
 /** old version? */
@@ -136,10 +148,14 @@ export interface FilesAPI {
 
   createPullStream(options: any): any;
 
-  add(data: FileContent, options: any, callback: Callback<IPFSFile[]>): void;
-  add(data: FileContent, options: any): Promise<IPFSFile[]>;
-  add(data: FileContent, callback: Callback<IPFSFile[]>): void;
-  add(data: FileContent): Promise<IPFSFile[]>;
+  add(
+    data: FileContent | FileObject,
+    options: any,
+    callback: Callback<IPFSFile[]>
+  ): void;
+  add(data: FileContent | FileObject, options: any): Promise<IPFSFile[]>;
+  add(data: FileContent | FileObject, callback: Callback<IPFSFile[]>): void;
+  add(data: FileContent | FileObject): Promise<IPFSFile[]>;
 
   cat(hash: Multihash, callback: Callback<FileContent>): void;
   cat(hash: Multihash): Promise<FileContent>;
