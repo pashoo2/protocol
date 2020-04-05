@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { MouseEvent } from 'react';
 import { connectToFileStore } from './filestore-add-file.utils';
 import { FileStorageClassProviderIPFS } from 'classes/filestorage-class/filestorage-class-providers/filestorage-class-provider-ipfs/filestorage-class-provider-ipfs';
 import { FILE_STORAGE_SERVICE_STATUS } from 'classes/filestorage-class';
+import { downloadFile } from '../../utils/files-utils/files-utils-download';
 
 export class FileStoreAddFile extends React.Component {
   protected fileStore: FileStorageClassProviderIPFS | undefined;
@@ -49,6 +50,7 @@ export class FileStoreAddFile extends React.Component {
 
       this.loadingProgress = 0;
       try {
+        console.dir(file);
         const [loadedAddr] = await Promise.all([
           fileStore.add(file.name, file, {
             progress: (progress: number) => {
@@ -65,6 +67,21 @@ export class FileStoreAddFile extends React.Component {
         console.error(err);
       } finally {
         this.loadingProgress = undefined;
+        this.forceUpdate();
+      }
+    }
+  };
+
+  protected handleFileDownload = async (ev: MouseEvent<HTMLAnchorElement>) => {
+    const { target } = ev;
+    const { textContent } = target as HTMLAnchorElement;
+
+    ev.preventDefault();
+    if (textContent) {
+      const file = await this.fileStore?.get(textContent);
+
+      if (file) {
+        downloadFile(file);
       }
     }
   };
@@ -72,8 +89,18 @@ export class FileStoreAddFile extends React.Component {
   protected renderFilesLoadedList() {
     const { uploadedFiles } = this;
 
-    return uploadedFiles.map((fileAddr) => (
-      <div key={fileAddr}>{fileAddr}</div>
+    return uploadedFiles.map((fileAddr, idx) => (
+      <div key={fileAddr}>
+        <pre>{idx}. </pre>
+        <a
+          href="#"
+          role="button"
+          data-name={fileAddr}
+          onClick={this.handleFileDownload}
+        >
+          {fileAddr}
+        </a>
+      </div>
     ));
   }
 

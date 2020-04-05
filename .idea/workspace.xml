@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e70e70e3-e48a-4dfd-91a6-03818e8691f6" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-constructor.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-constructor.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.eslintignore" beforeDir="false" afterPath="$PROJECT_DIR$/.eslintignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/filestorage-class/filestorage-class-providers/filestorage-class-provider-ipfs/filestorage-class-provider-ipfs.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/filestorage-class/filestorage-class-providers/filestorage-class-provider-ipfs/filestorage-class-provider-ipfs.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/filestore-add-file/filestore-add-file.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/filestore-add-file/filestore-add-file.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/types/ipfs.types.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/ipfs.types.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/ipfs-utils/ipfs-utils.const.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/ipfs-utils/ipfs-utils.const.ts" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -31,8 +35,8 @@
       <file leaf-file-name="swarm-store-connector-orbit-db-subclass-database.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="476">
-              <caret line="54" column="37" selection-start-line="54" selection-start-column="37" selection-end-line="54" selection-end-column="37" />
+            <state relative-caret-position="510">
+              <caret line="56" column="37" selection-start-line="56" selection-start-column="37" selection-end-line="56" selection-end-column="37" />
             </state>
           </provider>
         </entry>
@@ -161,14 +165,14 @@
   </component>
   <component name="NodePackageJsonFileManager">
     <packageJsonPaths>
-      <path value="$PROJECT_DIR$/app.test/central-authority.test/central-authority-connection.test/central-authority-connection.test.firebase/package.json" />
-      <path value="$PROJECT_DIR$/app.test/central-authority.test/central-authority-connection.test/package.json" />
-      <path value="$PROJECT_DIR$/app.test/central-authority.test/central-authority-swarm-credentials-provider/package.json" />
-      <path value="$PROJECT_DIR$/app.test/central-authority.test/package.json" />
-      <path value="$PROJECT_DIR$/app.test/common-utils.test/package.json" />
-      <path value="$PROJECT_DIR$/app.test/http-request-class-base.test/package.json" />
-      <path value="$PROJECT_DIR$/app.test/ipfs-swarm-connection.test/package.json" />
-      <path value="$PROJECT_DIR$/app.test/nodejs-helpers.test/nodejs-helpers.test.firebase/package.json" />
+      <path value="$PROJECT_DIR$/__test__/central-authority.test/central-authority-connection.test/central-authority-connection.test.firebase/package.json" />
+      <path value="$PROJECT_DIR$/__test__/central-authority.test/central-authority-connection.test/package.json" />
+      <path value="$PROJECT_DIR$/__test__/central-authority.test/central-authority-swarm-credentials-provider/package.json" />
+      <path value="$PROJECT_DIR$/__test__/central-authority.test/package.json" />
+      <path value="$PROJECT_DIR$/__test__/common-utils.test/package.json" />
+      <path value="$PROJECT_DIR$/__test__/http-request-class-base.test/package.json" />
+      <path value="$PROJECT_DIR$/__test__/ipfs-swarm-connection.test/package.json" />
+      <path value="$PROJECT_DIR$/__test__/nodejs-helpers.test/nodejs-helpers.test.firebase/package.json" />
       <path value="$PROJECT_DIR$/node_modules-local/orbit-db-types/package.json" />
       <path value="$PROJECT_DIR$/package.json" />
     </packageJsonPaths>
@@ -191,107 +195,6 @@
             <path>
               <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
               <item name="protocol" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
-              <item name="protocol" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
-              <item name="protocol" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="backog-classes" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
-              <item name="protocol" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="backog-classes" type="462c0819:PsiDirectoryNode" />
-              <item name="channel-authority-class" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
-              <item name="protocol" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="backog-classes" type="462c0819:PsiDirectoryNode" />
-              <item name="channel-authority-class" type="462c0819:PsiDirectoryNode" />
-              <item name="channel-authority-connections" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
-              <item name="protocol" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="backog-classes" type="462c0819:PsiDirectoryNode" />
-              <item name="channel-authority-class" type="462c0819:PsiDirectoryNode" />
-              <item name="channel-authority-connections" type="462c0819:PsiDirectoryNode" />
-              <item name="channel-authority-connection-with-server-api" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
-              <item name="protocol" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="classes" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
-              <item name="protocol" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="classes" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-message" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
-              <item name="protocol" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="classes" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-message" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-message-subclasses" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
-              <item name="protocol" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="classes" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-store-class" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
-              <item name="protocol" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="classes" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-store-class" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-store-connectors" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
-              <item name="protocol" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="classes" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-store-class" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-store-connectors" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-store-connector-orbit-db" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
-              <item name="protocol" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="classes" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-store-class" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-store-connectors" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-store-connector-orbit-db" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-store-connector-orbit-db-subclasses" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
-              <item name="protocol" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="classes" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-store-class" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-store-connectors" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-store-connector-orbit-db" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-store-connector-orbit-db-subclasses" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-store-connector-orbit-db-subclass-database" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -460,6 +363,7 @@
       <workItem from="1582977726883" duration="1158000" />
       <workItem from="1584219574575" duration="490000" />
       <workItem from="1584878454333" duration="54000" />
+      <workItem from="1586107589214" duration="121000" />
     </task>
     <servers />
   </component>
@@ -496,29 +400,28 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="28890000" />
+    <option name="totallyTimeSpent" value="29011000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="1920" height="1007" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TypeScript" order="7" weight="0.32875144" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2672641" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2672641" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
-      <window_info anchor="bottom" id="Version Control" order="7" weight="0.2416953" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.28980526" />
+      <window_info active="true" anchor="bottom" id="Version Control" order="7" visible="true" weight="0.24106114" />
       <window_info id="npm" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.28980526" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="7" weight="0.35666665" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.35738832" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32875144" />
       <window_info anchor="right" id="Coverage" order="3" side_tool="true" weight="0.32960597" />
@@ -529,6 +432,16 @@
     <option name="exactExcludedFiles">
       <list>
         <option value="$PROJECT_DIR$/src/types/ipfs.types.d.ts" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ORDER">
+      <list>
+        <option value="0" />
+        <option value="2" />
+        <option value="3" />
+        <option value="1" />
       </list>
     </option>
   </component>
@@ -760,8 +673,8 @@
     <entry file="file://$PROJECT_DIR$/src/test/central-authority.test/central-authority-connection.test/central-authority-connection.test.firebase/central-authority-connection.test.firebase.credentials-storage.ts" />
     <entry file="file://$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="476">
-          <caret line="54" column="37" selection-start-line="54" selection-start-column="37" selection-end-line="54" selection-end-column="37" />
+        <state relative-caret-position="510">
+          <caret line="56" column="37" selection-start-line="56" selection-start-column="37" selection-end-line="56" selection-end-column="37" />
         </state>
       </provider>
     </entry>

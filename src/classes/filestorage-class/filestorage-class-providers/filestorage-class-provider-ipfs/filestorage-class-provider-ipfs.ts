@@ -26,7 +26,8 @@ import TypedEmitter from 'typed-emitter';
 import { TFileStorageEvents } from './filestorage-class-provider-ipfs.types';
 import { EventEmitter } from 'events';
 import { FILE_STORAGE_PROVIDER_ROOT_PATH_DEFAULT } from './filestorage-class-provider-ipfs.const';
-import { timeout } from '../../../../utils/common-utils/common-utils-timer';
+import { timeout } from 'utils/common-utils/common-utils-timer';
+import { UnixTime } from 'types/ipfs.types';
 
 export class FileStorageClassProviderIPFS implements IFileStorageService {
   public type = FILE_STORAGE_PROVIDER_IPFS_TYPE;
@@ -107,17 +108,15 @@ export class FileStorageClassProviderIPFS implements IFileStorageService {
     const opts = extend(
       options || {},
       {
-        chunker: `size-${fileSize}`, // only a one chunk must be
-        rawLeaves: true,
+        pin: false,
+        cidVersion: 1,
         progress: (bytes: number) => {
           const percent = (bytes / fileSize!) * 100;
 
           if (progressCallback) {
             progressCallback(percent);
           }
-          debugger;
           if (resolve && percent >= 100) {
-            debugger;
             resolve();
           }
         },
@@ -130,11 +129,8 @@ export class FileStorageClassProviderIPFS implements IFileStorageService {
         ipfs?.add(this.getFileObject(filename, file), opts),
         timeout(FILE_STORAGE_PROVIDER_IPFS_FILE_UPLOAD_TIMEOUT_MS),
       ]);
-      debugger;
       await pending;
-      debugger;
     } catch (err) {
-      debugger;
       console.error(err);
       throw err;
     }
@@ -145,7 +141,6 @@ export class FileStorageClassProviderIPFS implements IFileStorageService {
     if (files instanceof Error) {
       throw files;
     }
-    debugger;
     return this.getMultiaddr(files[0]);
   };
 
@@ -158,9 +153,10 @@ export class FileStorageClassProviderIPFS implements IFileStorageService {
 
     const ipfs = this._ipfs;
     const fileDesc = this.getFileDescription(addr);
-    const filesOrChunks = await ipfs!.files.get(addr);
+    const filesOrChunks = await ipfs!.get(fileDesc.cid);
     const content = new BufferList();
-    let fileBlob: ArrayBuffer;
+    let lastModified = 0;
+    let fileBlob: ArrayBuffer | Blob[];
 
     if (!filesOrChunks) {
       throw new Error('Failed to read the file');
@@ -170,27 +166,32 @@ export class FileStorageClassProviderIPFS implements IFileStorageService {
       let idx = 0;
 
       while (idx < chunksLen) {
-        content.append(filesOrChunks[idx++].content);
+        const chunk = filesOrChunks[idx++];
+        content.append(chunk.content);
+        lastModified = this.getMSByUnix(chunk.mtime);
       }
+      const buff = content.slice();
+      fileBlob = buff.buffer.slice(
+        buff.byteOffset,
+        buff.byteOffset + buff.byteLength
+      );
     } else {
       if (!filesOrChunks.content) {
         throw new Error("Failed to read the file's content");
       }
       if (filesOrChunks.content instanceof Blob) {
-        return new File([filesOrChunks.content], fileDesc.path);
+        fileBlob = [filesOrChunks.content];
+        if (filesOrChunks.mtime) {
+          lastModified = this.getMSByUnix(filesOrChunks.mtime);
+        }
       } else if (typeof filesOrChunks.content === 'string') {
         content.append(filesOrChunks.content);
       }
       throw new Error('Unknown content type');
     }
-
-    const buff = content.slice();
-    const fileArrayBuff = buff.buffer.slice(
-      buff.byteOffset,
-      buff.byteOffset + buff.byteLength
-    );
-
-    return new File([fileArrayBuff], fileDesc.path);
+    return new File([fileBlob], fileDesc.path, {
+      lastModified: lastModified ? lastModified : undefined,
+    });
   }
 
   protected setOptions(options: IFileStorageClassProviderIPFSOptions) {
@@ -209,6 +210,7 @@ export class FileStorageClassProviderIPFS implements IFileStorageService {
     return {
       path: filePath,
       content: file,
+      mtime: file instanceof File ? new Date(file.lastModified) : undefined,
     };
   }
 
@@ -217,7 +219,7 @@ export class FileStorageClassProviderIPFS implements IFileStorageService {
   }
 
   protected getFileDescription(addr: TFileStorageFileAddress) {
-    const [prefix, cid, path] = addr.split('/');
+    const [nothing, prefix, cid, path] = addr.split('/');
 
     assert(cid, 'Failed to get CID by the address');
     assert(path, 'Failed to get file path by the address');
@@ -225,5 +227,9 @@ export class FileStorageClassProviderIPFS implements IFileStorageService {
       cid,
       path,
     };
+  }
+
+  protected getMSByUnix(unix?: UnixTime): number {
+    return unix && unix.secs ? unix.secs : Date.now();
   }
 }

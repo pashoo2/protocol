@@ -23,6 +23,9 @@ export class IPFS extends EventEmitter {
   add(data: FileContent | FileObject, callback: Callback<IPFSFile[]>): void;
   add(data: FileContent | FileObject): Promise<IPFSFile[]>;
 
+  get(hash: Multihash, callback: Callback<IPFSFile | IPFSGetResult[]>): void;
+  get(hash: Multihash): Promise<IPFSFile | IPFSGetResult[]>;
+
   preStart(callback: Callback<any>): void;
   start(callback?: Callback<any>): void;
   stop(callback?: (error?: Error) => void): void;
@@ -128,7 +131,7 @@ export type FileObject = {
   // File mode to store the entry with (see https://en.wikipedia.org/wiki/File_system_permissions#Numeric_notation)
   mode?: number | string;
   // The modification time of the entry (see below for definition)
-  mtime?: UnixTime;
+  mtime?: UnixTime | Date;
 };
 
 export type FileContent = Record<string, any> | Blob | string;
@@ -139,6 +142,7 @@ export interface IPFSFile {
   hash: string;
   size: number;
   content?: FileContent;
+  mtime?: UnixTime;
 }
 
 export interface IPFSGetResult {
@@ -149,6 +153,7 @@ export interface IPFSGetResult {
   hash: Buffer;
   content: Buffer;
   type: 'file' | string;
+  mtime?: UnixTime;
 }
 
 export interface FilesAPI {
@@ -159,9 +164,6 @@ export interface FilesAPI {
 
   cat(hash: Multihash, callback: Callback<FileContent>): void;
   cat(hash: Multihash): Promise<FileContent>;
-
-  get(hash: Multihash, callback: Callback<IPFSFile | IPFSGetResult[]>): void;
-  get(hash: Multihash): Promise<IPFSFile | IPFSGetResult[]>;
 
   getPull(hash: Multihash, callback: Callback<any>): void;
 }
