@@ -7,7 +7,7 @@ import {
 export type TFileStorageServiceOptions = IFileStorageClassProviderIPFSOptions;
 
 export interface IFileStorageServiceFileAddOptions {
-  progressCallback?: (progress: number) => any;
+  progress?: (progress: number) => any;
 }
 
 export type TFileStorageFile = ArrayBuffer | Buffer | Blob | File;

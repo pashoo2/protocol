@@ -31,5 +31,11 @@
     "plugins": [{ "transform": "ts-transformer-imports" }]
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.json"],
-  "exclude": ["**/*.spec.ts", "build", "**/*.test*", "/src/test"]
+  "exclude": [
+    "**/*.spec.ts",
+    "build",
+    "**/*.test*",
+    "/src/test",
+    "src/app-render.tsx"
+  ]
 }

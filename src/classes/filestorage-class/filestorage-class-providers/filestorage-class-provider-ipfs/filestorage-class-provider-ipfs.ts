@@ -16,9 +16,17 @@ import { extend } from 'utils';
 import { getFileSize } from 'utils/files-utils';
 import assert from 'assert';
 import path from 'path';
-import { FILE_STORAGE_PROVIDER_IPFS_FILE_UPLOAD_TIMEOUT_MS } from './filestorage-class-provider-ipfs.const';
+import {
+  FILE_STORAGE_PROVIDER_IPFS_FILE_UPLOAD_TIMEOUT_MS,
+  FILE_STORAGE_PROVIDER_EVENTS,
+} from './filestorage-class-provider-ipfs.const';
 import { IPFS, FileObject, IPFSFile } from 'types/ipfs.types';
 import BufferList from 'bl';
+import TypedEmitter from 'typed-emitter';
+import { TFileStorageEvents } from './filestorage-class-provider-ipfs.types';
+import { EventEmitter } from 'events';
+import { FILE_STORAGE_PROVIDER_ROOT_PATH_DEFAULT } from './filestorage-class-provider-ipfs.const';
+import { timeout } from '../../../../utils/common-utils/common-utils-timer';
 
 export class FileStorageClassProviderIPFS implements IFileStorageService {
   public type = FILE_STORAGE_PROVIDER_IPFS_TYPE;
@@ -26,6 +34,8 @@ export class FileStorageClassProviderIPFS implements IFileStorageService {
   public readonly isSingleton = true;
 
   public readonly identifier = FILE_STORAGE_PROVIDER_IPFS_IDENTIFIER;
+
+  public emitter = new EventEmitter() as TypedEmitter<TFileStorageEvents>;
 
   public get status() {
     const { _ipfs: ipfs } = this;
@@ -39,6 +49,16 @@ export class FileStorageClassProviderIPFS implements IFileStorageService {
     return FILE_STORAGE_SERVICE_STATUS.READY;
   }
 
+  /**
+   * this is the prefix for path
+   * of each file uploaded
+   *
+   * @protected
+   * @type {string}
+   * @memberof FileStorageClassProviderIPFS
+   */
+  protected _rootPath: string = FILE_STORAGE_PROVIDER_ROOT_PATH_DEFAULT;
+
   protected _ipfs?: IPFS;
 
   protected _error?: Error;
@@ -48,7 +68,16 @@ export class FileStorageClassProviderIPFS implements IFileStorageService {
   }
 
   public async connect(options: IFileStorageClassProviderIPFSOptions) {
-    this.setOptions(options);
+    this.emitter.emit(FILE_STORAGE_PROVIDER_EVENTS.CONNECTING);
+    try {
+      this.setOptions(options);
+      await this._ipfs?.ready;
+    } catch (err) {
+      console.log(err);
+      this.emitter.emit(FILE_STORAGE_PROVIDER_EVENTS.CONENCTION_ERROR, err);
+      throw err;
+    }
+    this.emitter.emit(FILE_STORAGE_PROVIDER_EVENTS.CONNECTED);
     return FILE_STORAGE_PROVIDER_IPFS_IDENTIFIER;
   }
 
@@ -61,6 +90,7 @@ export class FileStorageClassProviderIPFS implements IFileStorageService {
     file: TFileStorageFile,
     options?: IFileStorageClassProviderIPFSFileAddOptions
   ): Promise<TFileStorageFileAddress> => {
+    const ipfs = this._ipfs;
     const fileSize = getFileSize(file);
 
     assert(
@@ -68,46 +98,54 @@ export class FileStorageClassProviderIPFS implements IFileStorageService {
       'Service is not ready to use'
     );
     assert(fileSize, 'Failed to get a size of the file');
-
-    const progressCallback = options?.progressCallback;
-    const files = await new Promise<IPFSFile[]>(async (res, rej) => {
-      let result: IPFSFile[];
-      const timeout = setTimeout(
-        rej,
-        FILE_STORAGE_PROVIDER_IPFS_FILE_UPLOAD_TIMEOUT_MS
-      );
-      const opts = extend(options || {}, {
+    let files: IPFSFile[] | Error | undefined;
+    const progressCallback = options?.progress;
+    let resolve: undefined | Function;
+    const pending = new Promise((res, rej) => {
+      resolve = res;
+    });
+    const opts = extend(
+      options || {},
+      {
         chunker: `size-${fileSize}`, // only a one chunk must be
         rawLeaves: true,
         progress: (bytes: number) => {
-          const percent = bytes / fileSize!;
+          const percent = (bytes / fileSize!) * 100;
 
           if (progressCallback) {
             progressCallback(percent);
           }
-          if (percent >= 100) {
-            clearTimeout(timeout);
-            res(result);
+          debugger;
+          if (resolve && percent >= 100) {
+            debugger;
+            resolve();
           }
         },
-      });
+      },
+      true
+    );
 
-      try {
-        const res = await this._ipfs?.files.add(
-          this.getFileObject(filename, file),
-          opts
-        );
+    try {
+      files = await Promise.race([
+        ipfs?.add(this.getFileObject(filename, file), opts),
+        timeout(FILE_STORAGE_PROVIDER_IPFS_FILE_UPLOAD_TIMEOUT_MS),
+      ]);
+      debugger;
+      await pending;
+      debugger;
+    } catch (err) {
+      debugger;
+      console.error(err);
+      throw err;
+    }
 
-        if (!res) {
-          throw new Error('The result is empty');
-        }
-        result = res;
-      } catch (err) {
-        console.error(err);
-        rej(err);
-      }
-    });
-
+    if (!files) {
+      throw new Error('Failed to upload for an unknown reason');
+    }
+    if (files instanceof Error) {
+      throw files;
+    }
+    debugger;
     return this.getMultiaddr(files[0]);
   };
 
@@ -158,14 +196,18 @@ export class FileStorageClassProviderIPFS implements IFileStorageService {
   protected setOptions(options: IFileStorageClassProviderIPFSOptions) {
     assert(options.ipfs, 'An instance of IPFS must be provided in the options');
     this._ipfs = options.ipfs;
+    this._rootPath =
+      options.rootPath || FILE_STORAGE_PROVIDER_ROOT_PATH_DEFAULT;
   }
 
   protected getFileObject(
     filename: string,
     file: TFileStorageFile
   ): FileObject {
+    const filePath = path.join('/', this._rootPath, filename);
+
     return {
-      path: path.join('/', filename),
+      path: filePath,
       content: file,
     };
   }

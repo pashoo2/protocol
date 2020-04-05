@@ -1,8 +1,28 @@
 import { IPFS } from 'types/ipfs.types';
 import { IFileStorageServiceFileAddOptions } from '../../filestorage-class.types';
-
+import { FILE_STORAGE_PROVIDER_EVENTS } from './filestorage-class-provider-ipfs.const';
+/**
+ * this is options used by the file storage class
+ *
+ * @export
+ * @interface IFileStorageClassProviderIPFSOptions
+ */
 export interface IFileStorageClassProviderIPFSOptions {
+  /**
+   * instance of the IPFS, running and
+   * ready to use
+   *
+   * @type {IPFS}
+   * @memberof IFileStorageClassProviderIPFSOptions
+   */
   ipfs: IPFS;
+  /**
+   * the prefix for each path of a file uploaded
+   *
+   * @type {string}
+   * @memberof IFileStorageClassProviderIPFSOptions
+   */
+  rootPath?: string;
 }
 
 export interface IFileStorageClassProviderIPFSFileAddOptions
@@ -28,3 +48,9 @@ export interface IFileStorageClassProviderIPFSFileAddOptions
    */
   wrapWithDirectory?: boolean;
 }
+
+export type TFileStorageEvents = {
+  [FILE_STORAGE_PROVIDER_EVENTS.CONNECTING]: () => any;
+  [FILE_STORAGE_PROVIDER_EVENTS.CONNECTED]: () => any;
+  [FILE_STORAGE_PROVIDER_EVENTS.CONENCTION_ERROR]: (err: Error) => any;
+};

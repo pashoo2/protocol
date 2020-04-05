@@ -14,6 +14,15 @@ export class IPFS extends EventEmitter {
   init(options: InitOptions, callback: Callback<boolean>): void;
   init(callback: Callback<boolean>): void;
 
+  add(
+    data: FileContent | FileObject,
+    options: any,
+    callback: Callback<IPFSFile[]>
+  ): void;
+  add(data: FileContent | FileObject, options: any): Promise<IPFSFile[]>;
+  add(data: FileContent | FileObject, callback: Callback<IPFSFile[]>): void;
+  add(data: FileContent | FileObject): Promise<IPFSFile[]>;
+
   preStart(callback: Callback<any>): void;
   start(callback?: Callback<any>): void;
   stop(callback?: (error?: Error) => void): void;
@@ -147,15 +156,6 @@ export interface FilesAPI {
   createAddStream(callback: Callback<any>): void;
 
   createPullStream(options: any): any;
-
-  add(
-    data: FileContent | FileObject,
-    options: any,
-    callback: Callback<IPFSFile[]>
-  ): void;
-  add(data: FileContent | FileObject, options: any): Promise<IPFSFile[]>;
-  add(data: FileContent | FileObject, callback: Callback<IPFSFile[]>): void;
-  add(data: FileContent | FileObject): Promise<IPFSFile[]>;
 
   cat(hash: Multihash, callback: Callback<FileContent>): void;
   cat(hash: Multihash): Promise<FileContent>;

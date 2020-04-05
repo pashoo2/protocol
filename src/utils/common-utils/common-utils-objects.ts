@@ -27,7 +27,8 @@ export const getObjectKeys = (o: object): Array<TObjectKeys> =>
  */
 export function extend<T extends TDictionary<any>, E extends TDictionary<any>>(
   o: T | undefined,
-  ext: E
+  ext: E,
+  replaceExisting?: boolean
 ): T & E {
   if (!o) {
     return ext;
@@ -44,7 +45,7 @@ export function extend<T extends TDictionary<any>, E extends TDictionary<any>>(
     if (!isDefined(ext[k])) {
       continue;
     }
-    if (!isDefined(o[k])) {
+    if (replaceExisting || !isDefined(o[k])) {
       o[k] = ext[k];
     } else if (typeof o[k] === 'object' && typeof ext[k] === 'object') {
       o[k] = extend(o[k], ext[k]);

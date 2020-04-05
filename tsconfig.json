@@ -31,13 +31,6 @@
     "experimentalDecorators": true,
     "resolveJsonModule": true
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.json",
-    "src/index.tsx",
-    "src/App.tsx",
-    "__test__/"
-  ],
+  "include": ["src/**/*.ts", "src/**/*.json", "src/app-render.tsx"],
   "exclude": ["node_modules", "**/*.spec.ts", "**/*.js", "node_modules*"]
 }

@@ -1,4 +1,3 @@
-import { FileStorageClassProviderIPFS } from './filestorage-class-providers/filestorage-class-provider-ipfs/filestorage-class-provider-ipfs';
 /**
  * status of a service
  *
@@ -40,6 +39,9 @@ export enum FILE_STORAGE_SERVICE_TYPE {
   AZUREBLOB = 'AZUREBLOB',
 }
 
+// implementations of the services.
+// will be loaded only if required
 export const FILE_STORAGE_SERVICES_IMPLEMENTATIONS = {
-  [FILE_STORAGE_SERVICE_TYPE.IPFS]: FileStorageClassProviderIPFS,
+  [FILE_STORAGE_SERVICE_TYPE.IPFS]: () =>
+    import('./filestorage-class-providers/filestorage-class-provider-ipfs'),
 };

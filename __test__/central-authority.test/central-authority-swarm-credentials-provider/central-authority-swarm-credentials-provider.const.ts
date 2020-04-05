@@ -1,4 +1,4 @@
-import { decodeFromFirebaseKey } from '../../../utils/firebase-utils/firebase-utils';
+import { decodeFromFirebaseKey } from 'utils/firebase-utils/firebase-utils';
 export const CA_SWARM_CREDENTIALS_PROVIDER_TEST_OPTIONS = {
   connections: {},
   storageDb: 'test',
