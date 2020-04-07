@@ -14,7 +14,7 @@ export enum HTTP_REQUEST_CONTENT_TYPE {
 
 export enum HTTP_REQUEST_MODE {
   CORS = 'cors',
-  CORS_FORCE_PREFLIGHT = 'cors-with-forced-preflight',
+  // CORS_FORCE_PREFLIGHT = 'cors-with-forced-preflight',
   SAME_ORIGIN = 'same-origin',
   NO_CORS = 'no-cors',
 }

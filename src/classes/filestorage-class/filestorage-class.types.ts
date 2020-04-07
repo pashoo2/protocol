@@ -1,22 +1,40 @@
 import { IFileStorageClassProviderIPFSOptions } from './filestorage-class-providers/filestorage-class-provider-ipfs';
 import {
+  IFileStorageClassProviderIPFSFileAddOptions,
+  IFileStorageClassProviderIPFSFileGetOptions,
+} from './filestorage-class-providers/filestorage-class-provider-ipfs/filestorage-class-provider-ipfs.types';
+import {
+  IFileStorageClassProviderHTTPFileGetOptions,
+  IFileStorageClassProviderHTTPFileAddOptions,
+} from './filestorage-class-providers/filestorage-class-provider-http/filestorage-class-provider-http.types';
+import {
   FILE_STORAGE_SERVICE_TYPE as FileStorageServiceType,
   FILE_STORAGE_SERVICE_STATUS as FileStorageServiceStatus,
 } from './filestorage-class.const';
 
 export type TFileStorageServiceOptions = IFileStorageClassProviderIPFSOptions;
 
-export interface IFileStorageServiceFileAddOptions {
+export type TFileStorageServiceFileAddOptions =
+  | IFileStorageClassProviderIPFSFileAddOptions
+  | IFileStorageClassProviderHTTPFileAddOptions;
+
+export type TFileStorageServiceFileGetOptions =
+  | IFileStorageClassProviderIPFSFileGetOptions
+  | IFileStorageClassProviderHTTPFileGetOptions;
+
+export interface IFileStorageServiceFileAddCommonOptions {
   progress?: (progress: number) => any;
 }
 
 export type TFileStorageFile = ArrayBuffer | Buffer | Blob | File;
 
 /**
- * multiaddr or address in the ipfs
- * '/ipfs/QmXEmhrMpbVvTh61FNAxP9nU7ygVtyvZA8HZDUaqQCAb66'
+ * multiaddr or address in the ipfs:
+ * '/ipfs/QmXEmhrMpbVvTh61FNAxP9nU7ygVtyvZA8HZDUaqQCAb66',
  * '/ipfs/QmXEmhrMpbVvTh61FNAxP9nU7ygVtyvZA8HZDUaqQCAb66/a.txt'
- * 'QmXEmhrMpbVvTh61FNAxP9nU7ygVtyvZA8HZDUaqQCAb66/a.txt'
+ * or if http file:
+ * '/http/server.com:3000/download/file.pdf',
+ * '/https/upload.com/?d=f'
  */
 export type TFileStorageFileAddress = string;
 
@@ -95,7 +113,7 @@ export interface IFileStorageService {
   add(
     filename: string,
     file: TFileStorageFile,
-    options?: IFileStorageServiceFileAddOptions
+    options?: IFileStorageServiceFileAddCommonOptions
   ): Promise<TFileStorageFileAddress>;
   /**
    * get the file
@@ -106,7 +124,10 @@ export interface IFileStorageService {
    * @memberof IFileStorageService
    * @throws
    */
-  get(addr: TFileStorageFileAddress, options?: {}): Promise<File>;
+  get(
+    addr: TFileStorageFileAddress,
+    options?: TFileStorageServiceFileGetOptions
+  ): Promise<File>; // TODO - add download progress callback
 }
 
 export interface IFileStorageServiceConnectOptions {
@@ -182,7 +203,7 @@ export interface IFileStorage {
     service: TFileStorageServiceIdentifier,
     filename: string,
     file: TFileStorageFile,
-    options?: IFileStorageServiceFileAddOptions
+    options?: TFileStorageServiceFileAddOptions
   ): Promise<TFileStorageFileAddress>;
   /**
    * get the file from the service

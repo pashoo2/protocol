@@ -16,15 +16,9 @@ import { extend } from 'utils';
 import { getFileSize } from 'utils/files-utils';
 import assert from 'assert';
 import path from 'path';
-import {
-  FILE_STORAGE_PROVIDER_IPFS_FILE_UPLOAD_TIMEOUT_MS,
-  FILE_STORAGE_PROVIDER_EVENTS,
-} from './filestorage-class-provider-ipfs.const';
+import { FILE_STORAGE_PROVIDER_IPFS_FILE_UPLOAD_TIMEOUT_MS } from './filestorage-class-provider-ipfs.const';
 import { IPFS, FileObject, IPFSFile } from 'types/ipfs.types';
 import BufferList from 'bl';
-import TypedEmitter from 'typed-emitter';
-import { TFileStorageEvents } from './filestorage-class-provider-ipfs.types';
-import { EventEmitter } from 'events';
 import { FILE_STORAGE_PROVIDER_ROOT_PATH_DEFAULT } from './filestorage-class-provider-ipfs.const';
 import { timeout } from 'utils/common-utils/common-utils-timer';
 import { UnixTime } from 'types/ipfs.types';
@@ -35,8 +29,6 @@ export class FileStorageClassProviderIPFS implements IFileStorageService {
   public readonly isSingleton = true;
 
   public readonly identifier = FILE_STORAGE_PROVIDER_IPFS_IDENTIFIER;
-
-  public emitter = new EventEmitter() as TypedEmitter<TFileStorageEvents>;
 
   public get status() {
     const { _ipfs: ipfs } = this;
@@ -69,16 +61,13 @@ export class FileStorageClassProviderIPFS implements IFileStorageService {
   }
 
   public async connect(options: IFileStorageClassProviderIPFSOptions) {
-    this.emitter.emit(FILE_STORAGE_PROVIDER_EVENTS.CONNECTING);
     try {
       this.setOptions(options);
       await this._ipfs?.ready;
     } catch (err) {
       console.log(err);
-      this.emitter.emit(FILE_STORAGE_PROVIDER_EVENTS.CONENCTION_ERROR, err);
       throw err;
     }
-    this.emitter.emit(FILE_STORAGE_PROVIDER_EVENTS.CONNECTED);
     return FILE_STORAGE_PROVIDER_IPFS_IDENTIFIER;
   }
 

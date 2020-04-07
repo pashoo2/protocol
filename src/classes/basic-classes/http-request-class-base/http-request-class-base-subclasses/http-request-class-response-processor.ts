@@ -6,9 +6,35 @@ import {
 } from '../http-request-class-base-utils';
 import { HTTP_RESPONSE_TYPES } from '../http-request-class-base.const';
 import { MimeTypeClass } from 'classes/basic-classes/mime-types-class-base/mime-types-class-base';
+import { getFilenameByUrl } from '../../../../utils/files-utils/files-utils-download';
 
 export class HttpRequestResponseProcessor {
   constructor(protected response: Response) {}
+
+  protected getHeader(name: string) {
+    return this.response.headers.get(name);
+  }
+
+  protected getFileNameByResponse(extension?: string | null) {
+    const contentDisposition = this.getHeader('content-disposition');
+    let fileName = '' as string | undefined;
+
+    if (contentDisposition) {
+      const fileNameMatch = /filename="(.+)"/.exec(contentDisposition);
+
+      if (fileNameMatch?.length === 2) fileName = fileNameMatch[1];
+    }
+    if (!fileName) {
+      fileName = getFilenameByUrl(this.response.url);
+    }
+
+    if (extension) {
+      return fileName && fileName.endsWith(extension)
+        ? fileName
+        : `${fileName}.${extension}`;
+    }
+    return fileName;
+  }
 
   protected logError(error: Error): Error {
     console.error(error);
@@ -65,9 +91,13 @@ export class HttpRequestResponseProcessor {
       const result = await response.blob();
 
       if (result instanceof Blob) {
-        return new File([result], extension || 'unknown', {
-          type: mimeType || undefined,
-        });
+        return new File(
+          [result],
+          this.getFileNameByResponse(extension) || 'unknown',
+          {
+            type: mimeType || undefined,
+          }
+        );
       }
       return new Error("Can't process the response as a file");
     } catch (err) {
@@ -96,7 +126,7 @@ export class HttpRequestResponseProcessor {
 
     if (contentType) {
       const mimeType = new MimeTypeClass(contentType);
-
+      debugger;
       if (mimeType.isBlob) {
         return this.processAsBlob();
       }
@@ -119,7 +149,7 @@ export class HttpRequestResponseProcessor {
     Error | HttpResponseError | THttpResponseResult
   > {
     const { response } = this;
-
+    debugger;
     if (response.type === HTTP_RESPONSE_TYPES.OPAQUE) {
       return undefined;
     }

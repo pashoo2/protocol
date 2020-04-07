@@ -1,11 +1,14 @@
 import React, { MouseEvent } from 'react';
-import { connectToFileStore } from './filestore-add-file.utils';
-import { FileStorageClassProviderIPFS } from 'classes/filestorage-class/filestorage-class-providers/filestorage-class-provider-ipfs/filestorage-class-provider-ipfs';
+import { connectToHTTPFileStore } from './filestore-add-file.utils';
 import { FILE_STORAGE_SERVICE_STATUS } from 'classes/filestorage-class';
-import { downloadFile } from '../../utils/files-utils/files-utils-download';
+import {
+  downloadFile,
+  downloadFileByUrl,
+} from '../../utils/files-utils/files-utils-download';
+import { IFileStorageService } from '../../classes/filestorage-class/filestorage-class.types';
 
 export class FileStoreAddFile extends React.Component {
-  protected fileStore: FileStorageClassProviderIPFS | undefined;
+  protected fileStore: IFileStorageService | undefined;
 
   protected loadingProgress: number | undefined = undefined;
 
@@ -25,13 +28,18 @@ export class FileStoreAddFile extends React.Component {
     const { fileStore } = this;
 
     if (fileStore?.status === FILE_STORAGE_SERVICE_STATUS.READY) {
-      return this.renderFileUpload();
+      return (
+        <>
+          {this.renderFileDownload()}
+          {this.renderFileUpload()}
+        </>
+      );
     }
     return <div>Not ready</div>;
   }
 
   protected async createFilestoreInstance() {
-    this.fileStore = await connectToFileStore();
+    this.fileStore = await connectToHTTPFileStore();
     this.forceUpdate();
   }
 
@@ -86,6 +94,29 @@ export class FileStoreAddFile extends React.Component {
     }
   };
 
+  protected handleFileDownloadByURL = async () => {
+    const inpEl = document.getElementById('fileDownload');
+    const url = (inpEl as HTMLInputElement)?.value;
+
+    if (url) {
+      try {
+        // TODO test with no-cors images
+        const result = await this.fileStore?.get(`/${url}`);
+        console.log(result);
+        debugger;
+        if (!(result instanceof File)) {
+          throw new Error('Failed to get the file');
+        }
+        downloadFile(result);
+      } catch (err) {
+        debugger;
+        console.error(err);
+        downloadFileByUrl(url);
+      }
+      debugger;
+    }
+  };
+
   protected renderFilesLoadedList() {
     const { uploadedFiles } = this;
 
@@ -115,6 +146,16 @@ export class FileStoreAddFile extends React.Component {
         </div>
         <label htmlFor="fileUpload">File: </label>
         <input id="fileUpload" type="file" onChange={this.handleFileChosen} />
+      </div>
+    );
+  }
+
+  protected renderFileDownload() {
+    return (
+      <div>
+        <label htmlFor="fileUpload">Url: </label>
+        <input id="fileDownload" type="text" />
+        <button onClick={this.handleFileDownloadByURL}>Download</button>
       </div>
     );
   }

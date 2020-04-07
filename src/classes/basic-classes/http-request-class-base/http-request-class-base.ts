@@ -103,7 +103,7 @@ export class HttpRequest extends HttpRequestBodyProcessor {
         method,
         credentials,
       });
-
+      debugger;
       return this.preProcessResponse(response);
     } catch (err) {
       console.error(`HttpRequest::${url}::send::failed`, err);
@@ -242,7 +242,12 @@ export class HttpRequest extends HttpRequestBodyProcessor {
       }
       this.baseUrl = baseUrl;
     } else if (!isURL(url)) {
-      return new Error('The url is not valid');
+      this.baseUrl = '';
+      try {
+        new URL(url); // maybe it's data url
+      } catch (err) {
+        return new Error('The url is not valid');
+      }
     }
     if (token) {
       this.token = token;

@@ -68,6 +68,9 @@ export const objectToFormData = (obj: IParamsObjectFormData): FormData => {
 export const prefixUrlWithHTTPProtocol = (urlString: string): string => {
   const urlTrimmed = urlString.trim().toLowerCase();
 
+  if (urlTrimmed.startsWith('data:')) {
+    return urlTrimmed;
+  }
   return urlTrimmed.startsWith('http://') || urlTrimmed.startsWith('https://')
     ? urlTrimmed
     : `${CONST_API_CONF_CURRENT_PROTOCOL_USED}//${urlTrimmed.replace(

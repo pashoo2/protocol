@@ -44,4 +44,6 @@ export enum FILE_STORAGE_SERVICE_TYPE {
 export const FILE_STORAGE_SERVICES_IMPLEMENTATIONS = {
   [FILE_STORAGE_SERVICE_TYPE.IPFS]: () =>
     import('./filestorage-class-providers/filestorage-class-provider-ipfs'),
+  [FILE_STORAGE_SERVICE_TYPE.HTTP]: () =>
+    import('./filestorage-class-providers/filestorage-class-provider-http'),
 };

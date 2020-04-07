@@ -1,6 +1,5 @@
 import { IPFS } from 'types/ipfs.types';
-import { IFileStorageServiceFileAddOptions } from '../../filestorage-class.types';
-import { FILE_STORAGE_PROVIDER_EVENTS } from './filestorage-class-provider-ipfs.const';
+import { IFileStorageServiceFileAddCommonOptions } from '../../filestorage-class.types';
 /**
  * this is options used by the file storage class
  *
@@ -26,7 +25,7 @@ export interface IFileStorageClassProviderIPFSOptions {
 }
 
 export interface IFileStorageClassProviderIPFSFileAddOptions
-  extends IFileStorageServiceFileAddOptions {
+  extends IFileStorageServiceFileAddCommonOptions {
   /**
    * hunking algorithm used to build ipfs DAGs. Available formats:
    * size-{size}
@@ -49,8 +48,4 @@ export interface IFileStorageClassProviderIPFSFileAddOptions
   wrapWithDirectory?: boolean;
 }
 
-export type TFileStorageEvents = {
-  [FILE_STORAGE_PROVIDER_EVENTS.CONNECTING]: () => any;
-  [FILE_STORAGE_PROVIDER_EVENTS.CONNECTED]: () => any;
-  [FILE_STORAGE_PROVIDER_EVENTS.CONENCTION_ERROR]: (err: Error) => any;
-};
+export interface IFileStorageClassProviderIPFSFileGetOptions {}
