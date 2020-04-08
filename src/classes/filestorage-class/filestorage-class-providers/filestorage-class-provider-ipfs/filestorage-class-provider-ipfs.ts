@@ -10,7 +10,10 @@ import {
   FILE_STORAGE_PROVIDER_IPFS_IDENTIFIER,
   FILE_STORAGE_PROVIDER_IPFS_TYPE,
 } from './filestorage-class-provider-ipfs.const';
-import { FILE_STORAGE_SERVICE_STATUS } from '../../filestorage-class.const';
+import {
+  FILE_STORAGE_SERVICE_STATUS,
+  FILE_STORAGE_SERVICE_TYPE,
+} from '../../filestorage-class.const';
 import { TFileStorageFile } from '../../filestorage-class.types';
 import { extend } from 'utils';
 import { getFileSize } from 'utils/files-utils';
@@ -28,7 +31,8 @@ import {
   IFileStorageClassProviderIPFSFileDownloadOptions,
 } from './filestorage-class-provider-ipfs.types';
 
-export class FileStorageClassProviderIPFS implements IFileStorageService {
+export class FileStorageClassProviderIPFS
+  implements IFileStorageService<FILE_STORAGE_SERVICE_TYPE.IPFS> {
   public type = FILE_STORAGE_PROVIDER_IPFS_TYPE;
 
   public readonly isSingleton = true;

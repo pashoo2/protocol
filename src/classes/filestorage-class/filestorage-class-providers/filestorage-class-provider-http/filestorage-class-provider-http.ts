@@ -3,7 +3,10 @@ import {
   TFileStorageFileAddress,
 } from '../../filestorage-class.types';
 import { TFileStorageFile } from '../../filestorage-class.types';
-import { FILE_STORAGE_SERVICE_STATUS } from '../../filestorage-class.const';
+import {
+  FILE_STORAGE_SERVICE_STATUS,
+  FILE_STORAGE_SERVICE_TYPE,
+} from '../../filestorage-class.const';
 import path from 'path';
 import HttpRequest from 'classes/basic-classes/http-request-class-base/http-request-class-base';
 import {
@@ -17,7 +20,8 @@ import {
 import { HTTP_REQUEST_MODE } from 'classes/basic-classes/http-request-class-base';
 import { downloadFileByUrl } from '../../../../utils/files-utils/files-utils-download';
 
-export class FileStorageClassProviderHTTP implements IFileStorageService {
+export class FileStorageClassProviderHTTP
+  implements IFileStorageService<FILE_STORAGE_SERVICE_TYPE.HTTP> {
   public type = FILE_STORAGE_PROVIDER_HTTP_TYPE;
 
   public readonly isSingleton = true;
