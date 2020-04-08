@@ -126,7 +126,7 @@ export class HttpRequestResponseProcessor {
 
     if (contentType) {
       const mimeType = new MimeTypeClass(contentType);
-      debugger;
+
       if (mimeType.isBlob) {
         return this.processAsBlob();
       }
@@ -149,7 +149,7 @@ export class HttpRequestResponseProcessor {
     Error | HttpResponseError | THttpResponseResult
   > {
     const { response } = this;
-    debugger;
+
     if (response.type === HTTP_RESPONSE_TYPES.OPAQUE) {
       return undefined;
     }

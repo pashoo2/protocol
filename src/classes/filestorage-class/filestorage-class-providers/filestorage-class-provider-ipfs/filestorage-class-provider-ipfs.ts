@@ -22,6 +22,11 @@ import BufferList from 'bl';
 import { FILE_STORAGE_PROVIDER_ROOT_PATH_DEFAULT } from './filestorage-class-provider-ipfs.const';
 import { timeout } from 'utils/common-utils/common-utils-timer';
 import { UnixTime } from 'types/ipfs.types';
+import { downloadFile } from '../../../../utils/files-utils/files-utils-download';
+import {
+  IFileStorageClassProviderIPFSFileGetOptions,
+  IFileStorageClassProviderIPFSFileDownloadOptions,
+} from './filestorage-class-provider-ipfs.types';
 
 export class FileStorageClassProviderIPFS implements IFileStorageService {
   public type = FILE_STORAGE_PROVIDER_IPFS_TYPE;
@@ -133,7 +138,10 @@ export class FileStorageClassProviderIPFS implements IFileStorageService {
     return this.getMultiaddr(files[0]);
   };
 
-  public async get(addr: TFileStorageFileAddress, options?: {}): Promise<File> {
+  public get = async (
+    addr: TFileStorageFileAddress,
+    options?: IFileStorageClassProviderIPFSFileGetOptions
+  ): Promise<File> => {
     assert(
       this.status === FILE_STORAGE_SERVICE_STATUS.READY,
       'Service is not ready to use'
@@ -181,7 +189,16 @@ export class FileStorageClassProviderIPFS implements IFileStorageService {
     return new File([fileBlob], fileDesc.path, {
       lastModified: lastModified ? lastModified : undefined,
     });
-  }
+  };
+
+  public download = async (
+    addr: TFileStorageFileAddress,
+    options?: IFileStorageClassProviderIPFSFileDownloadOptions
+  ) => {
+    const file = await this.get(addr, options);
+
+    downloadFile(file);
+  };
 
   protected setOptions(options: IFileStorageClassProviderIPFSOptions) {
     assert(options.ipfs, 'An instance of IPFS must be provided in the options');

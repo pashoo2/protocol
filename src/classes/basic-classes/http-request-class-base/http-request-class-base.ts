@@ -103,7 +103,7 @@ export class HttpRequest extends HttpRequestBodyProcessor {
         method,
         credentials,
       });
-      debugger;
+
       return this.preProcessResponse(response);
     } catch (err) {
       console.error(`HttpRequest::${url}::send::failed`, err);

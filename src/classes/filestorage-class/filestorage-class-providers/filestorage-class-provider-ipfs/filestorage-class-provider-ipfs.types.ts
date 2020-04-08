@@ -49,3 +49,6 @@ export interface IFileStorageClassProviderIPFSFileAddOptions
 }
 
 export interface IFileStorageClassProviderIPFSFileGetOptions {}
+
+export interface IFileStorageClassProviderIPFSFileDownloadOptions
+  extends IFileStorageClassProviderIPFSFileGetOptions {}

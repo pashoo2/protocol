@@ -1,4 +1,6 @@
 import { IFileStorageClassProviderIPFSOptions } from './filestorage-class-providers/filestorage-class-provider-ipfs';
+import { IFileStorageClassProviderHTTPFileDownloadOptions } from './filestorage-class-providers/filestorage-class-provider-http/filestorage-class-provider-http.types';
+import { IFileStorageClassProviderIPFSFileDownloadOptions } from './filestorage-class-providers/filestorage-class-provider-ipfs/filestorage-class-provider-ipfs.types';
 import {
   IFileStorageClassProviderIPFSFileAddOptions,
   IFileStorageClassProviderIPFSFileGetOptions,
@@ -21,6 +23,10 @@ export type TFileStorageServiceFileAddOptions =
 export type TFileStorageServiceFileGetOptions =
   | IFileStorageClassProviderIPFSFileGetOptions
   | IFileStorageClassProviderHTTPFileGetOptions;
+
+export type TFileStorageServiceFileDownloadOptions =
+  | IFileStorageClassProviderHTTPFileDownloadOptions
+  | IFileStorageClassProviderIPFSFileDownloadOptions;
 
 export interface IFileStorageServiceFileAddCommonOptions {
   progress?: (progress: number) => any;
@@ -117,7 +123,7 @@ export interface IFileStorageService {
   ): Promise<TFileStorageFileAddress>;
   /**
    * get the file
-   *
+   * TODO - add download progress callback
    * @param {TFileStorageFileAddress} addr - address of the file
    * @param {object} [undefined] options - options, not required, specific for the service
    * @returns {Promise<File>} - returns file itself
@@ -127,7 +133,19 @@ export interface IFileStorageService {
   get(
     addr: TFileStorageFileAddress,
     options?: TFileStorageServiceFileGetOptions
-  ): Promise<File>; // TODO - add download progress callback
+  ): Promise<File>;
+  /**
+   * download the file, do net necessary
+   * to read it's content
+   * @param {TFileStorageFileAddress} addr
+   * @param {TFileStorageServiceFileDownloadOptions} [options]
+   * @returns {Promise<void>}
+   * @memberof IFileStorageService
+   */
+  download(
+    addr: TFileStorageFileAddress,
+    options?: TFileStorageServiceFileDownloadOptions
+  ): Promise<void>;
 }
 
 export interface IFileStorageServiceConnectOptions {
@@ -219,12 +237,19 @@ export interface IFileStorage {
    */
   get(
     addr: TFileStorageFileAddress,
-    service?: TFileStorageServiceIdentifier,
-    options?: {}
+    options?: TFileStorageServiceFileGetOptions
   ): Promise<File>;
-  get(addr: TFileStorageFileAddress, options?: {}): Promise<File>;
-  get(
+  /**
+   * download the file, do net necessary
+   * to read it's content
+   *
+   * @param {TFileStorageFileAddress} addr
+   * @param {TFileStorageServiceFileDownloadOptions} [options]
+   * @returns {Promise<void>}
+   * @memberof IFileStorage
+   */
+  download(
     addr: TFileStorageFileAddress,
-    service?: TFileStorageServiceIdentifier
-  ): Promise<File>;
+    options?: TFileStorageServiceFileDownloadOptions
+  ): Promise<void>;
 }

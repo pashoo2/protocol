@@ -17,7 +17,8 @@
     "lint:file": "eslint --cache --ext .js,.jsx,.ts,.tsx --ignore-path .gitignore",
     "lint:quiet": "eslint --quiet --cache --ext .js,.jsx,.ts,.tsx --ignore-path .gitignore --ignore-pattern \"*.test.*\" src",
     "lint:quiet:fix": "eslint --quiet --fix --cache --ext .js,.jsx,.ts,.tsx --ignore-path .gitignore --ignore-pattern \"*.test.*\" src",
-    "lint:staged": "eslint . --quiet --ignore-path .gitignore --cache --ext .js,.jsx,.ts,.tsx --ignore-pattern \"*.test.*\" --ignore-pattern '/__test__/*'"
+    "lint:staged": "eslint . --quiet --ignore-path .gitignore --cache --ext .js,.jsx,.ts,.tsx --ignore-pattern \"*.test.*\" --ignore-pattern '/__test__/*'",
+    "launch:chromium:unsecure": "google-chrome --disable-web-security --allow-file-access-from-files --user-data-dir=\"/tmp/chromium_tmp\""
   },
   "main": "dist/lib.umd.js",
   "module": "dist/lib.modern.module.js",
