@@ -2,21 +2,28 @@ import { FileStorageClassProviderIPFS } from 'classes/filestorage-class/filestor
 import { ipfsUtilsConnectBasic } from 'utils/ipfs-utils/ipfs-utils';
 import { IFileStorageService } from '../../classes/filestorage-class/filestorage-class.types';
 import { FileStorageClassProviderHTTP } from '../../classes/filestorage-class/filestorage-class-providers/filestorage-class-provider-http/filestorage-class-provider-http';
+import {
+  FileStorage,
+  FILE_STORAGE_SERVICE_TYPE,
+} from 'classes/filestorage-class';
 
-export const connectToIPFSFileStore = async () => {
+export const connectToFileStorage = async () => {
   const ipfs = await ipfsUtilsConnectBasic();
-  const options = {
+  const optionsIpfs = {
     ipfs,
   };
-  const fileStoreProvider = new FileStorageClassProviderIPFS();
+  const optionsHTTP = {};
+  const fileStoreProvider = new FileStorage();
 
-  await fileStoreProvider.connect(options);
-  return fileStoreProvider;
-};
-
-export const connectToHTTPFileStore = async () => {
-  const fileStoreProvider = new FileStorageClassProviderHTTP();
-
-  await fileStoreProvider.connect({});
+  await fileStoreProvider.connect([
+    {
+      type: FILE_STORAGE_SERVICE_TYPE.IPFS,
+      options: optionsIpfs,
+    },
+    {
+      type: FILE_STORAGE_SERVICE_TYPE.HTTP,
+      options: optionsHTTP,
+    },
+  ]);
   return fileStoreProvider;
 };

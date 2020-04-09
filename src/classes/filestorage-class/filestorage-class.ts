@@ -166,8 +166,9 @@ export class FileStorage<T extends FILE_STORAGE_SERVICE_TYPE>
     const ServiceConstuctor = await this.getServiceConstructorByType(
       configuration.type
     );
-    const service = new ServiceConstuctor(options);
+    const service = new (ServiceConstuctor.default ?? ServiceConstuctor)();
 
+    await service.connect(options);
     this.addService(type as T, service);
     return service.identifier as string;
   };

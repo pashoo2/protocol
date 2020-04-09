@@ -1,14 +1,19 @@
 import React, { MouseEvent } from 'react';
-import { connectToHTTPFileStore } from './filestore-add-file.utils';
 import { FILE_STORAGE_SERVICE_STATUS } from 'classes/filestorage-class';
 import {
   downloadFile,
   downloadFileByUrl,
 } from '../../utils/files-utils/files-utils-download';
-import { IFileStorageService } from '../../classes/filestorage-class/filestorage-class.types';
+import { IFileStorage } from '../../classes/filestorage-class/filestorage-class.types';
+import { FILE_STORAGE_SERVICE_TYPE } from '../../classes/filestorage-class/filestorage-class.const';
+import { connectToFileStorage } from './filestore-add-file.utils';
 
 export class FileStoreAddFile extends React.Component {
-  protected fileStore: IFileStorageService | undefined;
+  protected fileStorage:
+    | IFileStorage<
+        FILE_STORAGE_SERVICE_TYPE.HTTP | FILE_STORAGE_SERVICE_TYPE.IPFS
+      >
+    | undefined;
 
   protected loadingProgress: number | undefined = undefined;
 
@@ -25,21 +30,21 @@ export class FileStoreAddFile extends React.Component {
   }
 
   public render() {
-    const { fileStore } = this;
+    const { fileStorage: fileStore } = this;
 
-    if (fileStore?.status === FILE_STORAGE_SERVICE_STATUS.READY) {
-      return (
-        <>
-          {this.renderFileDownload()}
-          {this.renderFileUpload()}
-        </>
-      );
+    if (!fileStore) {
+      return <div>Not ready</div>;
     }
-    return <div>Not ready</div>;
+    return (
+      <>
+        {this.renderFileDownload()}
+        {this.renderFileUpload()}
+      </>
+    );
   }
 
   protected async createFilestoreInstance() {
-    this.fileStore = await connectToHTTPFileStore();
+    this.fileStorage = await connectToFileStorage();
     this.forceUpdate();
   }
 
@@ -51,7 +56,7 @@ export class FileStoreAddFile extends React.Component {
     }
 
     const { target } = ev;
-    const { fileStore } = this;
+    const { fileStorage: fileStore } = this;
 
     if (fileStore && target.files) {
       const file = target.files[0];
@@ -60,7 +65,7 @@ export class FileStoreAddFile extends React.Component {
       try {
         console.dir(file);
         const [loadedAddr] = await Promise.all([
-          fileStore.add(file.name, file, {
+          fileStore.add(FILE_STORAGE_SERVICE_TYPE.IPFS, file.name, file, {
             progress: (progress: number) => {
               this.loadingProgress = progress;
               this.forceUpdate();
@@ -86,11 +91,8 @@ export class FileStoreAddFile extends React.Component {
 
     ev.preventDefault();
     if (textContent) {
-      const file = await this.fileStore?.get(textContent);
-
-      if (file) {
-        downloadFile(file);
-      }
+      debugger;
+      await this.fileStorage?.download(textContent);
     }
   };
 
@@ -101,7 +103,7 @@ export class FileStoreAddFile extends React.Component {
     if (url) {
       try {
         // TODO test with no-cors images
-        const result = await this.fileStore?.get(`/${url}`);
+        const result = await this.fileStorage?.get(`/file/${url}`);
         console.log(result);
         debugger;
         if (!(result instanceof File)) {
@@ -109,9 +111,7 @@ export class FileStoreAddFile extends React.Component {
         }
         downloadFile(result);
       } catch (err) {
-        debugger;
         console.error(err);
-        downloadFileByUrl(url);
       }
       debugger;
     }
