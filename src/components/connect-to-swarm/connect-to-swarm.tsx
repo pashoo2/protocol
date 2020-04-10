@@ -8,7 +8,11 @@ export class ConnectToSwarm extends React.PureComponent {
     error: undefined as Error | undefined,
   };
 
-  public componentDidMount() {}
+  public componentDidMount() {
+    const key = sessionStorage.getItem('key--');
+    console.log(key);
+    debugger;
+  }
 
   public render() {
     const { isConnected, isConnecting, error } = this.state;
