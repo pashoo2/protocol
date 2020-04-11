@@ -199,6 +199,7 @@ export class ConnectionBridge<
     if (typeof userId !== 'string') {
       throw new Error('Failed to get the user identity');
     }
+
     const authCredentials = {
       ...(authOptions.credentials as ISwarmMessageStoreOptions<
         P
@@ -273,9 +274,9 @@ export class ConnectionBridge<
    * @memberof ConnectionBridge
    * @throws
    */
-  protected async startSession(
-    sessionOptions?: ISensitiveDataSessionStorageOptions
-  ): Promise<void> {
+  protected async startSession(): Promise<void> {
+    const sessionOptions = this.options?.auth.session;
+
     if (sessionOptions) {
       const session = new SensitiveDataSessionStorage();
 

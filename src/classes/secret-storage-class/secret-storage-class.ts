@@ -85,8 +85,6 @@ export class SecretStorage
   private static AuthStorageProvider: IStorageProvider =
     STORAGE_PROVIDERS[STORAGE_PROVIDERS_NAME.SESSION_STORAGE];
 
-  private static PREFIX_KEY_IN_AUTH_STORAGE = '__SecretStorage__uk';
-
   private static PREFIX_KEY_IN_SECRET_STORAGE = '__SecretStorage__';
 
   private static PREFIX_FOR_SALT_VALUE = '__SecretStorage__s_uk';
@@ -237,13 +235,6 @@ export class SecretStorage
     if (resultRunAuthProvider instanceof Error) {
       this.setErrorStatus(resultRunAuthProvider);
       return resultRunAuthProvider;
-    }
-
-    const isKeyExists = await this.importCryptoKey();
-
-    if (isKeyExists instanceof Error) {
-      this.setErrorStatus(isKeyExists);
-      return isKeyExists;
     }
 
     const isStorageProviderStarted = await this.runStorageProvider();
@@ -609,58 +600,6 @@ export class SecretStorage
     return `${SecretStorage.PREFIX_KEY_IN_SECRET_STORAGE}_${this.keyHash}_${key}`;
   }
 
-  protected async setEncryptonKeyAuthInStorage(
-    key: string
-  ): Promise<boolean | Error> {
-    try {
-      const {
-        PREFIX_KEY_IN_AUTH_STORAGE: KEY_IN_SESSION_STORAGE,
-      } = SecretStorage;
-      const { authStorageProvider } = this;
-
-      if (!authStorageProvider) {
-        return new Error('There is no an auth storage running');
-      }
-      return authStorageProvider.set(KEY_IN_SESSION_STORAGE, key);
-    } catch (err) {
-      this.setErrorStatus(err);
-      return err;
-    }
-  }
-
-  protected async readEncryptionKeyFomAuthStorage(): Promise<
-    CryptoKey | Error
-  > {
-    try {
-      const {
-        PREFIX_KEY_IN_AUTH_STORAGE: KEY_IN_SESSION_STORAGE,
-      } = SecretStorage;
-      const { authStorageProvider } = this;
-
-      if (!authStorageProvider) {
-        return new Error('There is no an auth storage running');
-      }
-
-      const kFromStorage = await authStorageProvider.get(
-        KEY_IN_SESSION_STORAGE
-      );
-
-      if (typeof kFromStorage !== 'string') {
-        return new Error('There is no a valid user secret key was stored');
-      }
-
-      const cryptoKeyImported = await importPasswordKeyFromString(kFromStorage);
-
-      if (!(cryptoKeyImported instanceof CryptoKey)) {
-        return new Error("Can't import the key from the storage format");
-      }
-      return cryptoKeyImported;
-    } catch (err) {
-      this.setErrorStatus(err);
-      return err;
-    }
-  }
-
   protected async setEncryptionKey(
     key: TPASSWORD_ENCRYPTION_KEY_IMPORT_NATIVE_SUPPORTED_TYPES | CryptoKey
   ): Promise<boolean | Error> {
@@ -691,49 +630,9 @@ export class SecretStorage
       console.error(keyHash);
       return new Error('Failed to calculate hash value for the CryptoKey');
     }
-
-    const result = await this.setEncryptonKeyAuthInStorage(keyString);
-
-    if (result instanceof Error) {
-      return new Error("Can't save the key in storage");
-    }
     this.k = k;
     this.keyHash = keyHash;
     return true;
-  }
-
-  protected async importCryptoKey(): Promise<boolean | Error> {
-    const { k: cryptoKey } = this;
-
-    // check if already imported
-    if (cryptoKey instanceof CryptoKey) {
-      return true;
-    }
-
-    const importedCryptoKey = await this.readEncryptionKeyFomAuthStorage();
-
-    if (importedCryptoKey instanceof Error) {
-      this.setErrorStatus(importedCryptoKey);
-      return importedCryptoKey;
-    }
-
-    const resultSetImportKey = await this.setEncryptionKey(importedCryptoKey);
-
-    if (resultSetImportKey instanceof Error) {
-      this.setErrorStatus(resultSetImportKey);
-      return resultSetImportKey;
-    }
-    return true;
-  }
-
-  /**
-   * check if a crypto key is already exists
-   * in session storage or a cached in memory
-   */
-  protected async checkIsAuthorized(): Promise<boolean> {
-    const result = await this.importCryptoKey();
-
-    return result === true;
   }
 
   protected setOptions(options?: IStorageProviderOptions): void {

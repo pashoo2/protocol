@@ -91,7 +91,6 @@ export class FileStoreAddFile extends React.Component {
 
     ev.preventDefault();
     if (textContent) {
-      debugger;
       await this.fileStorage?.download(textContent);
     }
   };
@@ -102,10 +101,8 @@ export class FileStoreAddFile extends React.Component {
 
     if (url) {
       try {
-        // TODO test with no-cors images
         const result = await this.fileStorage?.get(`/file/${url}`);
-        console.log(result);
-        debugger;
+
         if (!(result instanceof File)) {
           throw new Error('Failed to get the file');
         }
@@ -113,7 +110,6 @@ export class FileStoreAddFile extends React.Component {
       } catch (err) {
         console.error(err);
       }
-      debugger;
     }
   };
 

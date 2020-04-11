@@ -6,8 +6,8 @@ import { SensitiveDataStorage } from 'components/sensitive-data-storage';
 export class App extends React.Component {
   render() {
     // return <FileStoreAddFile />;
-    return <SensitiveDataStorage />;
-    // return <ConnectToSwarm />;
+    // return <SensitiveDataStorage />;
+    return <ConnectToSwarm />;
   }
 }
 

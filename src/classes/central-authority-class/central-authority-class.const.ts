@@ -53,7 +53,7 @@ export const CENTRAL_AUTHORITY_CLASS_OPTIONS_SCHEMA = {
               type: 'object',
             },
           },
-          required: ['login', 'password'],
+          required: ['login'],
         },
         profile: {
           type: 'object',

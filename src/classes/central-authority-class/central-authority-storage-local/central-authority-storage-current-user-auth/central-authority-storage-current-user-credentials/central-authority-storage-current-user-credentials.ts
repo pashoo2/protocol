@@ -27,7 +27,7 @@ import {
   TCAStorageCurrentUserCredentials,
 } from './central-authority-storage-current-user-credentials.types';
 import { ISensitiveDataSessionStorage } from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
-import { exportPasswordKeyAsString } from 'utils';
+import { exportPasswordKeyAsString, importPasswordKeyFromString } from 'utils';
 
 /**
  * This storage is used to store the user's
@@ -471,7 +471,6 @@ export class CentralAuthorityStorageCurrentUserCredentials
     session?: ISensitiveDataSessionStorage
   ) {
     this.secretStorageEncryptionKey = key;
-
     if (session) {
       const result = await this.setSecretStorageCryptoKeyInSession(
         session,
@@ -507,11 +506,15 @@ export class CentralAuthorityStorageCurrentUserCredentials
 
   private async readSecretStorageCryptoKeyFromSession(
     session: ISensitiveDataSessionStorage
-  ) {
+  ): Promise<Error | CryptoKey | undefined> {
     try {
-      return await session.getItem(
+      const k = await session.getItem(
         CA_STORAGE_CURRENT_USER_CREDENTIALS_SESSION_KEY
       );
+
+      if (k) {
+        return await importPasswordKeyFromString(k);
+      }
     } catch (err) {
       return err;
     }
@@ -539,9 +542,13 @@ export class CentralAuthorityStorageCurrentUserCredentials
     const session = (credentials as ISecretStoreCredentialsSession).session;
 
     if (!secretStorageEncryptionKey && session) {
-      secretStorageEncryptionKey = await this.readSecretStorageCryptoKeyFromSession(
+      const k = await this.readSecretStorageCryptoKeyFromSession(
         (credentials as ISecretStoreCredentialsSession).session
       );
+
+      if (k && !(k instanceof Error)) {
+        secretStorageEncryptionKey = k;
+      }
     }
 
     const cryptoKey =
