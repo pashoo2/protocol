@@ -141,11 +141,16 @@ export class CAConnectionWithFirebaseImplementation
     if (resultConnection instanceof Error) {
       return resultConnection;
     }
+    return true;
+  }
+
+  public async signInAnonymousely(): Promise<Error | void> {
     try {
-      const connectAnonymouselyResult = await firebase
+      // may be authentificated with session
+      //await this.signInWithSessionPersisted();
+      const connectAnonymouselyResult = await this.app
         .auth()
         .signInAnonymously();
-
       if (connectAnonymouselyResult instanceof Error) {
         return connectAnonymouselyResult;
       }
@@ -161,7 +166,6 @@ export class CAConnectionWithFirebaseImplementation
       return new Error('Failed to connect to the credentials storage');
     }
     this.setIsAnonymousely();
-    return resultConnection;
   }
 
   /**
@@ -215,24 +219,25 @@ export class CAConnectionWithFirebaseImplementation
       // try to sign in with the credentials, then try to sign up
       // const userLoggedPromise = this.waitingUserInit();
       const signInResult = await this.signIn(firebaseCredentials);
+      debugger;
 
       if (signInResult instanceof Error) {
         console.warn('Failed to sign in with the credentials given');
 
+        if (!firebaseCredentials.password) {
+          // if there is no password provided, return the error
+          return signInResult;
+        }
+
         // if failed to sign in with the credentials
         // try to sign up
         const signUpResult = await this.signUp(firebaseCredentials);
-
+        debugger;
         if (signUpResult instanceof Error) {
           console.error('The user was failed to sign up');
           return this.onAuthorizationFailed(signUpResult);
         }
       }
-
-      if (firebaseCredentials.session) {
-        await this.setSessionPersistance();
-      }
-
       // const user = await userLoggedPromise;
       // if (!user) {
       //   return new Error('Failed to get the user authorized');

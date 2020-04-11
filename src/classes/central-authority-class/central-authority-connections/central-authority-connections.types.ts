@@ -77,6 +77,8 @@ export interface ICAConnection {
   connect(
     configuration: ICAConnectionConfigurationFirebase
   ): Promise<boolean | Error>;
+  /** sign in anonymousely to the database */
+  signInAnonymousely(): Promise<Error | void>;
   /**
    * authorize with the credentials on
    * the remote central authority.

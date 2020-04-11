@@ -131,7 +131,6 @@ export class SensitiveDataSessionStorage
   private subscribeOnWindowUnload() {
     window.onbeforeunload = async () => {
       const v = this._tempStringified;
-      console.log(v);
       if (v && typeof v === 'string') {
         sessionStorage.setItem(this.storageKeyValue, v);
       }

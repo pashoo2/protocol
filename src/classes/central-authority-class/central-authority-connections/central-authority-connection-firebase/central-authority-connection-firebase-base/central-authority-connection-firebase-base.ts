@@ -77,8 +77,6 @@ export class CAConnectionWithFirebaseBase {
     return this.valueofCredentialsSignUpOnAuthorizedSuccess;
   }
 
-  protected app?: firebase.app.App;
-
   protected configuration?: ICAConnectionConfigurationFirebase;
 
   protected isAuthorizedWithCredentials: boolean = false;
@@ -88,23 +86,26 @@ export class CAConnectionWithFirebaseBase {
   protected connectionWithCredentialsStorage?: CAConnectionFirestoreUtilsCredentialsStrorage;
 
   protected get currentUser(): firebase.User | null {
-    const { isConnected, app } = this;
+    const { isConnected } = this;
 
-    return isConnected ? app!!.auth().currentUser : null;
+    return isConnected ? this.app?.auth().currentUser : null;
   }
 
   protected get isVerifiedAccount(): boolean {
     const { isConnected, currentUser: currentUserData } = this;
-
+    debugger;
     if (!isConnected) {
       return false;
     }
+    debugger;
     if (!currentUserData) {
       return false;
     }
+    debugger;
     if (!currentUserData.emailVerified) {
       return false;
     }
+    debugger;
     return true;
   }
 
@@ -125,6 +126,10 @@ export class CAConnectionWithFirebaseBase {
     return new Error(
       'An invalid URL provided for the Firebase authority provider'
     );
+  }
+
+  protected get app(): firebase.app.App {
+    return firebase.app(this.databaseURL as string);
   }
 
   // return the firebase application
@@ -152,11 +157,8 @@ export class CAConnectionWithFirebaseBase {
     if (disconnectFromStorageResult instanceof Error) {
       return disconnectFromStorageResult;
     }
-
-    const { app } = this;
-
     try {
-      await app!!.auth().signOut();
+      await this.app.auth().signOut();
     } catch (err) {
       console.error(err);
       return new Error('Failed to sign out');
@@ -187,7 +189,10 @@ export class CAConnectionWithFirebaseBase {
     let app;
 
     try {
-      app = firebase.initializeApp(configuration, name);
+      const appName = name || configuration.databaseURL;
+      const existingApp = firebase.apps.find((app) => app.name);
+      debugger;
+      app = existingApp || firebase.initializeApp(configuration, appName);
       this.configuration = configuration;
     } catch (err) {
       console.error(err);
@@ -230,9 +235,6 @@ export class CAConnectionWithFirebaseBase {
 
   protected setConnectedStatus(isConnected: false | firebase.app.App) {
     this.isConnected = !!isConnected;
-    if (isConnected) {
-      this.app = isConnected;
-    }
   }
 
   protected setAuthorizedStatus(isAuthorized: boolean) {
@@ -332,7 +334,7 @@ export class CAConnectionWithFirebaseBase {
       return new Error('The Firebase app is not defined');
     }
     return new Promise((res) => {
-      this.app!!.auth().onAuthStateChanged((user) => {
+      this.app.auth().onAuthStateChanged((user) => {
         if (user && user.email) {
           res(user);
         }
@@ -370,7 +372,7 @@ export class CAConnectionWithFirebaseBase {
     const { login, password } = authCredentials;
 
     try {
-      await firebase
+      await this.app
         .auth()
         .createUserWithEmailAndPassword(login, password as string);
     } catch (err) {
@@ -397,7 +399,7 @@ export class CAConnectionWithFirebaseBase {
 
     try {
       if (password) {
-        signInResult = await firebase
+        signInResult = await this.app
           .auth()
           .signInWithEmailAndPassword(login, password);
       }
@@ -420,7 +422,7 @@ export class CAConnectionWithFirebaseBase {
    */
   protected async setSessionPersistance() {
     try {
-      await firebase
+      await this.app
         .auth()
         .setPersistence(firebase.auth.Auth.Persistence.SESSION);
     } catch (err) {
@@ -909,28 +911,43 @@ export class CAConnectionWithFirebaseBase {
     return newCredentialsGenerated;
   }
 
+  /**
+   * try to authorize with session saved in session storage
+   *
+   * @protected
+   * @returns
+   * @memberof CAConnectionWithFirebaseBase
+   */
+  protected async signInWithSessionPersisted() {
+    try {
+      await Promise.race([
+        timeout(CA_CONNECTION_FIREBASE_AUTH_WITH_SESSION_TOKEN_TIMEOUT_MS),
+        new Promise((res, rej) => {
+          const currentUser = this.app.auth().currentUser;
+          debugger;
+          this.app.auth().onAuthStateChanged(function(user) {
+            debugger;
+            if (user) {
+              res(user);
+            } else {
+              rej(user);
+            }
+          });
+        }),
+      ]);
+      return true;
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
+  }
+
   protected async signIn(
     firebaseCredentials: ICAConnectionSignUpCredentials
   ): Promise<boolean | Error> {
+    debugger;
     if (!firebaseCredentials.password && firebaseCredentials.session) {
-      try {
-        await Promise.race([
-          timeout(CA_CONNECTION_FIREBASE_AUTH_WITH_SESSION_TOKEN_TIMEOUT_MS),
-          new Promise((res, rej) => {
-            firebase.auth().onAuthStateChanged(function(user) {
-              if (user) {
-                res(user);
-              } else {
-                rej(user);
-              }
-            });
-          }),
-        ]);
-        return true;
-      } catch (err) {
-        console.error(err);
-        return err;
-      }
+      return this.signInWithSessionPersisted();
     }
 
     const checkSignUpCredentialsResult = this.checkSignUpCredentials(
@@ -943,7 +960,14 @@ export class CAConnectionWithFirebaseBase {
     }
 
     // try to sign in with the credentials, then try to sign up
-    return this.singInWithAuthCredentials(firebaseCredentials);
+    const authResult = await this.singInWithAuthCredentials(
+      firebaseCredentials
+    );
+
+    if (authResult === true && firebaseCredentials.session) {
+      await this.setSessionPersistance();
+    }
+    return authResult;
   }
 
   protected async signUp(

@@ -121,8 +121,10 @@ export class CAConnectionsPool implements ICAConnectionPool {
    * @memberof CAConnectionsPool
    */
   public async connect(
-    authProviderUrl: TCAAuthProviderIdentity
+    authProviderUrl: TCAAuthProviderIdentity,
+    isAuthentificateAnonymousely: boolean = true
   ): Promise<ICAConnection | Error> {
+    debugger;
     if (!validateCAConnectionAuthProviderUrl(authProviderUrl)) {
       return new Error(
         'The url provided as the auth provider service url is not valid'
@@ -150,21 +152,16 @@ export class CAConnectionsPool implements ICAConnectionPool {
     if (connectionWithAuthProvider instanceof Error) {
       return connectionWithAuthProvider;
     }
+    if (isAuthentificateAnonymousely) {
+      const ananymousResult = await connectionWithAuthProvider.signInAnonymousely();
 
-    const setConnectionInAuhProviderConnectionStatesStore = this.setConnectionWithAuthProvider(
-      authProviderUrl,
-      connectionWithAuthProvider
-    );
-
-    if (setConnectionInAuhProviderConnectionStatesStore instanceof Error) {
-      console.error(setConnectionInAuhProviderConnectionStatesStore);
-
-      const disconnectResult = await connectionWithAuthProvider.disconnect();
-
-      if (disconnectResult instanceof Error) {
-        console.error(disconnectResult);
+      if (ananymousResult instanceof Error) {
+        return ananymousResult;
       }
-      return new Error('Failed to set connection with auth provider');
+      return this.addConectionWithProvider(
+        authProviderUrl,
+        connectionWithAuthProvider
+      );
     }
     return connectionWithAuthProvider;
   }
@@ -184,6 +181,7 @@ export class CAConnectionsPool implements ICAConnectionPool {
     signUpCredentials: ICAConnectionSignUpCredentials,
     profile?: Partial<ICentralAuthorityUserProfile>
   ): Promise<Error | ICAConnection> {
+    debugger;
     if (!validateCAConnectionAuthProviderUrl(authProviderUrl)) {
       return new Error(
         'The url provided as the auth provider service url is not valid'
@@ -225,7 +223,10 @@ export class CAConnectionsPool implements ICAConnectionPool {
       return connection;
     }
 
-    const connectionWithAuthProvider = await this.connect(authProviderUrl);
+    const connectionWithAuthProvider = await this.connect(
+      authProviderUrl,
+      false
+    );
 
     if (connectionWithAuthProvider instanceof Error) {
       console.error(connectionWithAuthProvider);
@@ -233,6 +234,7 @@ export class CAConnectionsPool implements ICAConnectionPool {
         `Failed to connect with the auth provider ${authProviderUrl}`
       );
     }
+    debugger;
 
     const authResult = await connectionWithAuthProvider.authorize(
       signUpCredentials,
@@ -254,6 +256,19 @@ export class CAConnectionsPool implements ICAConnectionPool {
         `Failed to authorize with the auth provider ${authProviderUrl}`
       );
       return authResult;
+    }
+    const addConnectionResult = await this.addConectionWithProvider(
+      authProviderUrl,
+      connectionWithAuthProvider
+    );
+
+    if (addConnectionResult instanceof Error) {
+      try {
+        await connectionWithAuthProvider.disconnect();
+      } catch (err) {
+        console.error('Failed to disconnect', err);
+      }
+      return addConnectionResult;
     }
     this.setAuthResult(authProviderUrl, authResult);
     return connectionWithAuthProvider;
@@ -450,6 +465,28 @@ export class CAConnectionsPool implements ICAConnectionPool {
     const { providersConnectionState } = this;
 
     return providersConnectionState[normalizedUrl];
+  }
+
+  protected async addConectionWithProvider(
+    authProviderUrl: string,
+    connectionWithAuthProvider: ICAConnection
+  ): Promise<ICAConnection | Error> {
+    const setConnectionInAuhProviderConnectionStatesStore = this.setConnectionWithAuthProvider(
+      authProviderUrl,
+      connectionWithAuthProvider
+    );
+
+    if (setConnectionInAuhProviderConnectionStatesStore instanceof Error) {
+      console.error(setConnectionInAuhProviderConnectionStatesStore);
+
+      const disconnectResult = await connectionWithAuthProvider.disconnect();
+
+      if (disconnectResult instanceof Error) {
+        console.error(disconnectResult);
+      }
+      return new Error('Failed to set connection with auth provider');
+    }
+    return connectionWithAuthProvider;
   }
 
   /**
