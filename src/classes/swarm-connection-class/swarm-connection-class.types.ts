@@ -13,7 +13,7 @@ export interface IIPFSSpecificOptions {
     delegates?: string[];
     bootstrap?: string[];
   };
-  password: string;
+  password?: string;
 }
 
 export type TSwarmConnectionSubclassSpecificOptions = IIPFSSpecificOptions;

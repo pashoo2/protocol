@@ -229,6 +229,10 @@ export class CAConnectionWithFirebaseImplementation
         }
       }
 
+      if (firebaseCredentials.session) {
+        await this.setSessionPersistance();
+      }
+
       // const user = await userLoggedPromise;
       // if (!user) {
       //   return new Error('Failed to get the user authorized');

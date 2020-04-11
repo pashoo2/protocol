@@ -6,6 +6,7 @@ export interface ISensitiveDataSessionStorageOptions {
    * @memberof ISensitiveDataSessionStorageOptions
    */
   pinCode?: string;
+  storagePrefix?: string;
 }
 /**
  * used to store data in the session storage.

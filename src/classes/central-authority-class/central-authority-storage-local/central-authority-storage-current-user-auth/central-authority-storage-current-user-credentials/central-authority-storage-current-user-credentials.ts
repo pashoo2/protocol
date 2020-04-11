@@ -9,18 +9,25 @@ import { ICAUserUniqueIdentifierDescription } from './../../../central-authority
 import { CentralAuthorityIdentity } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
 import { checkIsValidCryptoCredentials } from './../../../central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
 import { TCentralAuthorityUserCryptoCredentials } from './../../../central-authority-class-types/central-authority-class-types-crypto-credentials';
-import { ISecretStoreCredentials } from 'classes/secret-storage-class/secret-storage-class.types';
+import {
+  ISecretStoreCredentials,
+  ISecretStoreCredentialsSession,
+} from 'classes/secret-storage-class/secret-storage-class.types';
 import {
   CA_STORAGE_CURRENT_USER_CREDENTIALS_SECRET_STORAGE_CONFIGURATION,
   CA_STORAGE_CURRENT_USER_CREDENTIALS_SECRET_STORAGE_DATABASE_NAME,
   CA_STORAGE_CURRENT_USER_CREDENTIALS_SECRET_STORAGE_OPTIONS,
+  CA_STORAGE_CURRENT_USER_CREDENTIALS_SESSION_KEY,
 } from './central-authority-storage-current-user-credentials.const';
 import { SecretStorage } from 'classes/secret-storage-class';
 import { TCAuthProviderIdentifier } from '../../../central-authority-class-user-identity/central-authority-class-user-identity.types';
 import {
   ICAStorageCurrentUserCredentials,
   ICAStorageCurrentUserCredentialsOptions,
+  TCAStorageCurrentUserCredentials,
 } from './central-authority-storage-current-user-credentials.types';
+import { ISensitiveDataSessionStorage } from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
+import { exportPasswordKeyAsString } from 'utils';
 
 /**
  * This storage is used to store the user's
@@ -459,8 +466,25 @@ export class CentralAuthorityStorageCurrentUserCredentials
     this.isDisconnected = false;
   }
 
-  private setSecretStorageCryptoKey(key: CryptoKey) {
+  private async setSecretStorageCryptoKey(
+    key: CryptoKey,
+    session?: ISensitiveDataSessionStorage
+  ) {
     this.secretStorageEncryptionKey = key;
+
+    if (session) {
+      const result = await this.setSecretStorageCryptoKeyInSession(
+        session,
+        key
+      );
+
+      if (result instanceof Error) {
+        console.error(
+          '"createSecretStorageConnection"::failed to set key in session',
+          result
+        );
+      }
+    }
   }
 
   private unsetSecretStorageCryptoKey() {
@@ -481,19 +505,57 @@ export class CentralAuthorityStorageCurrentUserCredentials
     );
   }
 
+  private async readSecretStorageCryptoKeyFromSession(
+    session: ISensitiveDataSessionStorage
+  ) {
+    try {
+      return await session.getItem(
+        CA_STORAGE_CURRENT_USER_CREDENTIALS_SESSION_KEY
+      );
+    } catch (err) {
+      return err;
+    }
+  }
+
+  private async setSecretStorageCryptoKeyInSession(
+    session: ISensitiveDataSessionStorage,
+    key: CryptoKey
+  ) {
+    try {
+      return await session.setItem(
+        CA_STORAGE_CURRENT_USER_CREDENTIALS_SESSION_KEY,
+        await exportPasswordKeyAsString(key)
+      );
+    } catch (err) {
+      return err;
+    }
+  }
+
   private async createSecretStorageConnection(
-    credentials: ISecretStoreCredentials
+    credentials: TCAStorageCurrentUserCredentials
   ): Promise<Error | void> {
-    const { secretStorageEncryptionKey } = this;
+    let { secretStorageEncryptionKey } = this;
     const secretStorageConnection = this.createConnectionToSecretStorage();
+    const session = (credentials as ISecretStoreCredentialsSession).session;
+
+    if (!secretStorageEncryptionKey && session) {
+      secretStorageEncryptionKey = await this.readSecretStorageCryptoKeyFromSession(
+        (credentials as ISecretStoreCredentialsSession).session
+      );
+    }
+
     const cryptoKey =
       secretStorageEncryptionKey ||
-      (await secretStorageConnection.generateCryptoKey(credentials));
+      (await secretStorageConnection.generateCryptoKey(
+        credentials as ISecretStoreCredentials
+      ));
 
     if (cryptoKey instanceof Error) {
       return new Error('Failed to generate crypto key by the credentials');
     }
-    this.setSecretStorageCryptoKey(cryptoKey);
+    if (!secretStorageEncryptionKey) {
+      await this.setSecretStorageCryptoKey(cryptoKey, session);
+    }
 
     const authToSecretStorageResult = await CentralAuthorityStorageCurrentUserCredentials.authorizeInStorage(
       secretStorageConnection,

@@ -10,6 +10,7 @@ import {
   TCentralAuthorityUserCryptoCredentials,
   TCentralAuthorityCredentialsStorageAuthCredentials,
 } from './central-authority-class-types-crypto-credentials';
+import { ISensitiveDataSessionStorage } from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
 
 export type TCentralAuthorityUserIdentity = string;
 
@@ -19,7 +20,8 @@ export type TCentralAuthorityUserPassword = string;
 
 export interface ICentralAuthorityUserAuthCredentials {
   login: TCentralAuthorityUserLogin;
-  password: TCentralAuthorityUserPassword;
+  password?: TCentralAuthorityUserPassword;
+  session?: ISensitiveDataSessionStorage;
 }
 
 /**

@@ -9,6 +9,7 @@ import {
   ICAConnectionSignUpCredentials,
 } from './central-authority-connections/central-authority-connections.types';
 import { IAuthProviderConnectionConfiguration } from 'classes/central-authority-class/central-authority-connections/central-authority-connections-pool/central-authority-connections-pool.types';
+import { ISecretStoreCredentialsSession } from 'classes/secret-storage-class';
 
 //CentralAuthorityStorageCurrentUserCredentials
 
@@ -27,6 +28,9 @@ export interface ICentralAuthorityAuthProvidersOptions {
   providersConfigurations: IAuthProviderConnectionConfiguration[];
 }
 
+export type ICentralAuthorityUserCredentials = ICAConnectionSignUpCredentials &
+  Partial<ISecretStoreCredentialsSession>;
+
 /**
  * This configuration determines the user's credentials
  * to register or authorize(if already register) on
@@ -44,7 +48,7 @@ export interface ICentralAuthorityAuthProvidersOptions {
  */
 export interface ICentralAuthorityUser {
   authProviderUrl: TCAAuthProviderIdentity;
-  credentials: ICAConnectionSignUpCredentials;
+  credentials: ICentralAuthorityUserCredentials;
   profile?: Partial<ICentralAuthorityUserProfile>;
 }
 

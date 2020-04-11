@@ -25,9 +25,26 @@ export class SensitiveDataSessionStorage
 
   private k?: CryptoKey;
 
+  private storagePrefix: string = '';
+
+  private get storageKeyValue() {
+    return `${this.storagePrefix}//${SENSITIVE_DATA_SESSION_STORAGE_STORAGE_KEY}`;
+  }
+
+  private get storageKeySalt() {
+    return `${this.storagePrefix}//${SENSITIVE_DATA_SESSION_STORAGE_STORAGE_KEY_SALT}`;
+  }
+
   public async connect(options?: ISensitiveDataSessionStorageOptions) {
     if (this.isConnected) {
       return;
+    }
+    if (options) {
+      const { storagePrefix } = options;
+
+      if (storagePrefix) {
+        this.storagePrefix = storagePrefix;
+      }
     }
     if (!this.connectingPromise) {
       this.connectingPromise = this.connectToStorage(options);
@@ -92,9 +109,7 @@ export class SensitiveDataSessionStorage
   }
 
   private readSalt() {
-    const salt = sessionStorage.getItem(
-      SENSITIVE_DATA_SESSION_STORAGE_STORAGE_KEY_SALT
-    );
+    const salt = sessionStorage.getItem(this.storageKeySalt);
 
     return salt;
   }
@@ -105,10 +120,7 @@ export class SensitiveDataSessionStorage
     if (typeof newSalt !== 'string') {
       throw new Error('Failed to generate a salt value');
     }
-    sessionStorage.setItem(
-      SENSITIVE_DATA_SESSION_STORAGE_STORAGE_KEY_SALT,
-      newSalt
-    );
+    sessionStorage.setItem(this.storageKeySalt, newSalt);
     return newSalt;
   }
 
@@ -121,15 +133,13 @@ export class SensitiveDataSessionStorage
       const v = this._tempStringified;
       console.log(v);
       if (v && typeof v === 'string') {
-        sessionStorage.setItem(SENSITIVE_DATA_SESSION_STORAGE_STORAGE_KEY, v);
+        sessionStorage.setItem(this.storageKeyValue, v);
       }
     };
   }
 
   private async readFromStorage(pinCode?: string) {
-    const v = sessionStorage.getItem(
-      SENSITIVE_DATA_SESSION_STORAGE_STORAGE_KEY
-    );
+    const v = sessionStorage.getItem(this.storageKeyValue);
 
     if (!v) {
       return;
@@ -145,11 +155,11 @@ export class SensitiveDataSessionStorage
   }
 
   protected clearSaltStorage() {
-    sessionStorage.removeItem(SENSITIVE_DATA_SESSION_STORAGE_STORAGE_KEY_SALT);
+    sessionStorage.removeItem(this.storageKeySalt);
   }
 
   protected clearValueStorage() {
-    sessionStorage.removeItem(SENSITIVE_DATA_SESSION_STORAGE_STORAGE_KEY);
+    sessionStorage.removeItem(this.storageKeyValue);
   }
 
   protected reset() {

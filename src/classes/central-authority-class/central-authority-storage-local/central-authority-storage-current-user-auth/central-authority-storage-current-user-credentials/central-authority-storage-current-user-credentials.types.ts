@@ -2,10 +2,17 @@ import {
   TCentralAuthorityUserCryptoCredentials,
   TCentralAuthorityUserIdentity,
 } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
-import { ISecretStoreCredentials } from 'classes/secret-storage-class/secret-storage-class.types';
+import {
+  ISecretStoreCredentials,
+  ISecretStoreCredentialsSession,
+} from 'classes/secret-storage-class/secret-storage-class.types';
+
+export type TCAStorageCurrentUserCredentials =
+  | ISecretStoreCredentials
+  | ISecretStoreCredentialsSession;
 
 export interface ICAStorageCurrentUserCredentialsOptions {
-  credentials: ISecretStoreCredentials;
+  credentials: TCAStorageCurrentUserCredentials;
 }
 
 /**

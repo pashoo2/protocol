@@ -620,7 +620,9 @@ export class CentralAuthority implements ICentralAuthority {
     return {
       credentials: {
         login: credentials.login,
-        password: credentials.password,
+        // TODO - may be add validation
+        password: credentials.password!,
+        session: credentials.session,
       },
     };
   }

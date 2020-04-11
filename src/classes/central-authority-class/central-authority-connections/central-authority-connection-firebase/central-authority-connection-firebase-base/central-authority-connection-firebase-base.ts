@@ -33,6 +33,8 @@ import {
   CA_CONNECTION_ERROR_ACCOUNT_CAN_NOT_BE_USED_ANYMORE,
 } from '../../central-authority-connections-const/central-authority-connections-const';
 import { valiateCAAuthConnectionFirebaseUtilsConnetionConfiguration } from '../central-authority-connection-firebase-utils/central-authority-connection-firebase-utils.validators';
+import { timeout } from 'utils';
+import { CA_CONNECTION_FIREBASE_AUTH_WITH_SESSION_TOKEN_TIMEOUT_MS } from '../central-authority-connection-firebase.const';
 
 /**
  *
@@ -368,7 +370,9 @@ export class CAConnectionWithFirebaseBase {
     const { login, password } = authCredentials;
 
     try {
-      await firebase.auth().createUserWithEmailAndPassword(login, password);
+      await firebase
+        .auth()
+        .createUserWithEmailAndPassword(login, password as string);
     } catch (err) {
       console.error(err);
       return new Error(
@@ -392,9 +396,11 @@ export class CAConnectionWithFirebaseBase {
     const { login, password } = authCredentials;
 
     try {
-      signInResult = await firebase
-        .auth()
-        .signInWithEmailAndPassword(login, password);
+      if (password) {
+        signInResult = await firebase
+          .auth()
+          .signInWithEmailAndPassword(login, password);
+      }
     } catch (err) {
       console.error(err);
       return new Error(
@@ -402,6 +408,24 @@ export class CAConnectionWithFirebaseBase {
       );
     }
     return true;
+  }
+
+  /**
+   * firebase.auth.Auth.Persistence.SESSION	'session'	Indicates that the state will only persist in the current session or tab, and will be cleared when the tab or window in which the user authenticated is closed. Applies only to web apps.
+   * firebase.auth.Auth.Persistence.LOCAL	'local'	Indicates that the state will be persisted even when the browser window is closed or the activity is destroyed in React Native. An explicit sign out is needed to clear that state. Note that Firebase Auth web sessions are single host origin and will be persisted for a single domain only.
+   * firebase.auth.Auth.Persistence.NONE	'none'	Indicates that the state will only be stored in memory and will be cleared when the window or activity is refreshed.
+   *
+   * @protected
+   * @memberof CAConnectionWithFirebaseBase
+   */
+  protected async setSessionPersistance() {
+    try {
+      await firebase
+        .auth()
+        .setPersistence(firebase.auth.Auth.Persistence.SESSION);
+    } catch (err) {
+      console.error('Failed to set Session persistance for the Firebase');
+    }
   }
 
   // TODO - add to the CentralAuthrotity methods
@@ -888,6 +912,27 @@ export class CAConnectionWithFirebaseBase {
   protected async signIn(
     firebaseCredentials: ICAConnectionSignUpCredentials
   ): Promise<boolean | Error> {
+    if (!firebaseCredentials.password && firebaseCredentials.session) {
+      try {
+        await Promise.race([
+          timeout(CA_CONNECTION_FIREBASE_AUTH_WITH_SESSION_TOKEN_TIMEOUT_MS),
+          new Promise((res, rej) => {
+            firebase.auth().onAuthStateChanged(function(user) {
+              if (user) {
+                res(user);
+              } else {
+                rej(user);
+              }
+            });
+          }),
+        ]);
+        return true;
+      } catch (err) {
+        console.error(err);
+        return err;
+      }
+    }
+
     const checkSignUpCredentialsResult = this.checkSignUpCredentials(
       firebaseCredentials
     );

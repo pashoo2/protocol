@@ -17,12 +17,20 @@ import {
   ISwarmMessageStore,
 } from '../swarm-message-store/swarm-message-store.types';
 import { extend } from '../../utils/common-utils/common-utils-objects';
-import { CONNECTION_BRIDGE_OPTIONS_DEFAULT_AUTH_PROVIDERS_POOL } from './connection-bridge.const';
+import {
+  CONNECTION_BRIDGE_OPTIONS_DEFAULT_AUTH_PROVIDERS_POOL,
+  CONNECTION_BRIDGE_SESSION_STORAGE_KEYS,
+} from './connection-bridge.const';
 import { CentralAuthority } from '../central-authority-class/central-authority-class';
 import { ISwarmConnectionOptions } from '../swarm-connection-class/swarm-connection-class.types';
 import { SwarmMessageConstructor } from '../swarm-message/swarm-message-constructor';
 import { ipfsUtilsConnectBasic } from '../../utils/ipfs-utils/ipfs-utils';
 import { SwarmMessageStore } from '../swarm-message-store/swarm-message-store';
+import {
+  ISensitiveDataSessionStorageOptions,
+  ISensitiveDataSessionStorage,
+} from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
+import { SensitiveDataSessionStorage } from 'classes/sensitive-data-session-storage';
 
 /**
  * this class used if front of connection
@@ -42,7 +50,7 @@ export class ConnectionBridge<
 
   public messageConstructor?: ISwarmMessageConstructor;
 
-  protected options?: IConnectionBridgeOptions<P>;
+  protected options?: IConnectionBridgeOptions<P, true>;
 
   protected optionsCA?: ICentralAuthorityOptions;
 
@@ -51,6 +59,8 @@ export class ConnectionBridge<
   protected optionsSwarmConnection?: ISwarmConnectionOptions;
 
   protected optionsMessageStorage?: ISwarmMessageStoreOptions<P>;
+
+  protected session?: ISensitiveDataSessionStorage;
 
   protected swarmConnection?: {
     getNativeConnection(): any;
@@ -68,6 +78,7 @@ export class ConnectionBridge<
   public async connect(options: IConnectionBridgeOptions<P>): Promise<void> {
     this.setOptions(options);
     try {
+      await this.startSession();
       await this.startCentralAuthorityConnection();
       await this.createMessageConstructor();
       await this.startSwarmConnection();
@@ -120,7 +131,10 @@ export class ConnectionBridge<
       user: {
         profile: userOptions.profile,
         authProviderUrl: authOptions.providerUrl,
-        credentials: authOptions.credentials,
+        credentials: {
+          ...authOptions.credentials,
+          session: this.session,
+        },
       },
       authProvidersPool,
     };
@@ -185,10 +199,15 @@ export class ConnectionBridge<
     if (typeof userId !== 'string') {
       throw new Error('Failed to get the user identity');
     }
-
+    const authCredentials = {
+      ...(authOptions.credentials as ISwarmMessageStoreOptions<
+        P
+      >['credentials']),
+      session: this.session,
+    };
     const messageStorageOptions: ISwarmMessageStoreOptions<P> = {
       ...storageOptions,
-      credentials: authOptions.credentials,
+      credentials: authCredentials,
       userId,
       messageConstructors: {
         default: messageConstructor,
@@ -212,7 +231,62 @@ export class ConnectionBridge<
   protected setOptions(options: IConnectionBridgeOptions<P>) {
     assert(options, 'Options must be provided');
     assert(typeof options === 'object', 'Options must be an object');
-    this.options = options;
+    if (options.auth.credentials?.login) {
+      sessionStorage.setItem(
+        CONNECTION_BRIDGE_SESSION_STORAGE_KEYS.USER_LOGIN,
+        options.auth.credentials.login
+      );
+      this.options = (options as unknown) as IConnectionBridgeOptions<P, true>;
+    } else {
+      assert(
+        options.auth.session,
+        'A session must be started if there is no credentials provided'
+      );
+
+      const login = sessionStorage.getItem(
+        CONNECTION_BRIDGE_SESSION_STORAGE_KEYS.USER_LOGIN
+      );
+
+      if (!login) {
+        throw new Error(
+          'There is no login provided in options and no session data found to get it'
+        );
+      }
+      this.options = {
+        ...options,
+        auth: {
+          ...options.auth,
+          credentials: {
+            ...options.auth.credentials,
+            login,
+          },
+        },
+      };
+    }
+  }
+
+  /**
+   * start session if options provided
+   *
+   * @protected
+   * @param {ISensitiveDataSessionStorageOptions} sessionOptions
+   * @memberof ConnectionBridge
+   * @throws
+   */
+  protected async startSession(
+    sessionOptions?: ISensitiveDataSessionStorageOptions
+  ): Promise<void> {
+    if (sessionOptions) {
+      const session = new SensitiveDataSessionStorage();
+
+      await session.connect({
+        ...sessionOptions,
+        storagePrefix: sessionOptions.storagePrefix
+          ? `${sessionOptions.storagePrefix}${this.options?.auth.credentials?.login}`
+          : undefined,
+      });
+      this.session = session;
+    }
   }
 
   /**

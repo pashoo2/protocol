@@ -1,6 +1,10 @@
 import { ICentralAuthorityOptions } from '../central-authority-class/central-authority-class.types';
 import { CA_CONNECTION_AUTH_PROVIDERS } from '../central-authority-class/central-authority-connections/central-authority-connections.const';
 
+export enum CONNECTION_BRIDGE_SESSION_STORAGE_KEYS {
+  USER_LOGIN = 'CONNECTION_BRIDGE_SESSION_STORAGE_KEYS_USER_LOGIN',
+}
+
 export const CONNECTION_BRIDGE_OPTIONS_DEFAULT_AUTH_PROVIDERS_POOL_FIREBASE_DB_PROTOCOL = {
   apiKey: 'AIzaSyCwmUlVklNmGZ0SD11NKT8gpvmZXbgbBRk',
   authDomain: 'protocol-f251b.firebaseapp.com',

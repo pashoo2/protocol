@@ -1,4 +1,9 @@
-import { ISecretStoreConfiguration } from 'classes/secret-storage-class/secret-storage-class.types';
+import {
+  ISecretStoreConfiguration,
+  ISecretStorageSessionInfo,
+  ISecretStorageSessionInfoStored,
+  ISecretStoreCredentialsSession,
+} from 'classes/secret-storage-class/secret-storage-class.types';
 import { ownValueOf } from 'types/helper.types';
 import {
   importPasswordKey,
@@ -45,6 +50,7 @@ import {
 import {
   SECRET_STORAGE_STATUS,
   SECRET_STORAGE_PASSWORD_MIN_LENGTH,
+  SECRET_STORAGE_SESSION_KEY,
 } from './secret-storage-class.const';
 import { getLoginHash } from './secret-storage-class-utils/secret-storage-class-utils-login';
 import {
@@ -52,6 +58,7 @@ import {
   SECRET_STORAGE_UNSET_MAX_ATTEMPTS,
 } from './secret-storage-class.const';
 import { IStorageProviderOptions } from 'classes/storage-providers/storage-providers.types';
+import { ISensitiveDataSessionStorage } from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
 
 /**
  * this classed used to store value in a
@@ -84,18 +91,7 @@ export class SecretStorage
 
   private static PREFIX_FOR_SALT_VALUE = '__SecretStorage__s_uk';
 
-  public static validateCredentials(
-    credentials?: ISecretStoreCredentials
-  ): void | Error {
-    if (!credentials) {
-      return new Error('validateCredentials::Credentials must not be empty');
-    }
-    if (typeof credentials !== 'object') {
-      return new Error('validateCredentials::Credentials must be an object');
-    }
-
-    const { password, login } = credentials;
-
+  public static validatePassword(password: any) {
     if (typeof password !== 'string') {
       return new Error(
         'validateCredentials::A password string must be provided to authorize'
@@ -111,6 +107,9 @@ export class SecretStorage
         `validateCredentials::The password string must be a ${SECRET_STORAGE_PASSWORD_MIN_LENGTH} characters ar least`
       );
     }
+  }
+
+  public static validateLogin(login: any) {
     if (typeof login !== 'string') {
       return new Error(
         'validateCredentials::A login string must be provided to authorize'
@@ -126,6 +125,21 @@ export class SecretStorage
         `validateCredentials::The login string must be a ${SECRET_STORAGE_LOGIN_MIN_LENGTH} characters ar least`
       );
     }
+  }
+
+  public static validateCredentials(
+    credentials?: ISecretStoreCredentials
+  ): void | Error {
+    if (!credentials) {
+      return new Error('validateCredentials::Credentials must not be empty');
+    }
+    if (typeof credentials !== 'object') {
+      return new Error('validateCredentials::Credentials must be an object');
+    }
+    return (
+      SecretStorage.validateLogin(credentials.login) ??
+      SecretStorage.validatePassword(credentials.password)
+    );
   }
 
   private static async saltKey(credentials: ISecretStoreCredentials) {
@@ -293,10 +307,28 @@ export class SecretStorage
   }
 
   public async authorize(
-    credentials: ISecretStoreCredentials,
+    credentials: ISecretStoreCredentials | ISecretStoreCredentialsSession,
     options?: IStorageProviderOptions
   ): Promise<boolean | Error> {
-    const cryptoKey = await this.generateCryptoKey(credentials);
+    const credentialsWithSession = credentials as ISecretStoreCredentialsSession;
+
+    if (credentialsWithSession && credentialsWithSession.session) {
+      const sessionInfo = await this.readLoginAndKeyFromSession(
+        credentialsWithSession.session
+      );
+
+      if (sessionInfo && !(sessionInfo instanceof Error)) {
+        return this.authorizeByKey(
+          {
+            key: sessionInfo.key,
+          },
+          options
+        );
+      }
+    }
+
+    const cred = credentials as ISecretStoreCredentials;
+    const cryptoKey = await this.generateCryptoKey(cred);
 
     if (cryptoKey instanceof Error) {
       console.error(cryptoKey);
@@ -315,6 +347,13 @@ export class SecretStorage
     if (setKeyResult instanceof Error) {
       this.setErrorStatus(setKeyResult);
       return setKeyResult;
+    }
+    if (credentialsWithSession.session) {
+      await this.saveLoginAndKeyToSession(
+        credentialsWithSession.session,
+        cred.login,
+        cryptoKey
+      );
     }
     return this.connect(options);
   }
@@ -1005,5 +1044,54 @@ export class SecretStorage
       return new Error('A wrong encryption result for the value');
     }
     return encryptedValue;
+  }
+
+  protected async readLoginAndKeyFromSession(
+    session: ISensitiveDataSessionStorage
+  ): Promise<ISecretStorageSessionInfo | Error | undefined> {
+    try {
+      const sessionInfo:
+        | ISecretStorageSessionInfoStored
+        | undefined = await session.getItem(SECRET_STORAGE_SESSION_KEY);
+
+      if (sessionInfo) {
+        const cryptoKey = await importPasswordKeyFromString(sessionInfo.key);
+
+        if (cryptoKey instanceof Error) {
+          return cryptoKey;
+        }
+        return {
+          key: cryptoKey,
+          login: sessionInfo.login,
+        };
+      }
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
+  }
+
+  protected async saveLoginAndKeyToSession(
+    session: ISensitiveDataSessionStorage,
+    login: string,
+    key: CryptoKey
+  ): Promise<Error | undefined> {
+    const keyExported = await exportPasswordKeyAsString(key);
+
+    if (keyExported instanceof Error) {
+      return keyExported;
+    }
+
+    const sessionInfo: ISecretStorageSessionInfoStored = {
+      login,
+      key: keyExported,
+    };
+
+    try {
+      await session.setItem(SECRET_STORAGE_SESSION_KEY, sessionInfo);
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
   }
 }

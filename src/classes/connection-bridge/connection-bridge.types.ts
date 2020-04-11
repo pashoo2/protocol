@@ -7,35 +7,48 @@ import { ICentralAuthority } from '../central-authority-class/central-authority-
 import { ISwarmConnectionOptions } from '../swarm-connection-class/swarm-connection-class.types';
 import { ICentralAuthorityOptions } from '../central-authority-class/central-authority-class.types';
 import { ISwarmMessageConstructor } from '../swarm-message/swarm-message-constructor.types';
+import { ISensitiveDataSessionStorageOptions } from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
+
+export type IConnectionBridgeOptionsAuthCredentials = Omit<
+  ICentralAuthorityOptions['user']['credentials'],
+  'session'
+>;
+
+export interface IConnectionBridgeOptionsAuth<CD extends boolean = false> {
+  /**
+   * url of an  auth provider from the auth providers pool
+   * on which the user will be authorized or registered
+   * if still had not.
+   *
+   * @type {ICentralAuthorityOptions['user']['authProviderUrl']}
+   */
+  providerUrl: ICentralAuthorityOptions['user']['authProviderUrl'];
+  /**
+   * credentials used to authorize or register on a credentials
+   * provider. If credentials are not provided, then session
+   * must be started before
+   *
+   * @type {ICentralAuthorityOptions['user']['credentials']}
+   */
+  credentials: CD extends true
+    ? IConnectionBridgeOptionsAuthCredentials
+    : IConnectionBridgeOptionsAuthCredentials | undefined | never;
+  session?: ISensitiveDataSessionStorageOptions;
+  /**
+   * this is list of auth providers will be used to authorize
+   * the user and a keys of another users connected to the
+   * swarm
+   *
+   * @type {ICentralAuthorityOptions['authProvidersPool']}
+   */
+  authProvidersPool?: ICentralAuthorityOptions['authProvidersPool'];
+}
 
 export interface IConnectionBridgeOptions<
-  P extends ESwarmStoreConnector = ESwarmStoreConnector.OrbitDB
+  P extends ESwarmStoreConnector = ESwarmStoreConnector.OrbitDB,
+  CD extends boolean = false
 > {
-  auth: {
-    /**
-     * url of an  auth provider from the auth providers pool
-     * on which the user will be authorized or registered
-     * if still had not.
-     *
-     * @type {ICentralAuthorityOptions['user']['authProviderUrl']}
-     */
-    providerUrl: ICentralAuthorityOptions['user']['authProviderUrl'];
-    /**
-     * credentials used to authorize or register on a credentials
-     * provider or
-     *
-     * @type {ICentralAuthorityOptions['user']['credentials']}
-     */
-    credentials: ICentralAuthorityOptions['user']['credentials'];
-    /**
-     * this is list of auth providers will be used to authorize
-     * the user and a keys of another users connected to the
-     * swarm
-     *
-     * @type {ICentralAuthorityOptions['authProvidersPool']}
-     */
-    authProvidersPool?: ICentralAuthorityOptions['authProvidersPool'];
-  };
+  auth: IConnectionBridgeOptionsAuth<CD>;
   user: {
     /**
      * profile of the user for the central auth provider
@@ -71,6 +84,7 @@ export interface IConnectionBridgeOptions<
    */
   // TODO - at now the default IPFS connection will be used
   swarm?: Omit<ISwarmConnectionOptions, 'subclassOptions'> & {
+    // TODO - do not set a password, otherwise the session persistence is not guaranteed
     subclassOptions: Omit<
       ISwarmConnectionOptions['subclassOptions'],
       'password'

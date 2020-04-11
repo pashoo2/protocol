@@ -48,7 +48,7 @@ export interface ICAConnectionSignUpCredentials
  */
 export interface ICAConnectionSignInCredentials {
   login: string;
-  password: string;
+  password?: string;
 }
 
 export interface ICAConnection {

@@ -1,5 +1,7 @@
 import { ESwarmStoreConnector } from 'classes/swarm-store-class/swarm-store-class.const';
 
+export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY = 'key';
+
 export const CONNECT_TO_SWARM_AUTH_CREDENTIALS = {
   login: 'lewey74533@provamail.com',
   password: 'qawsde1234',
@@ -41,5 +43,7 @@ export const CONNECT_TO_SWARM_CONNECTION_OPTIONS = {
       login: CONNECT_TO_SWARM_AUTH_CREDENTIALS.login,
       password: CONNECT_TO_SWARM_AUTH_CREDENTIALS.password,
     },
+    // use session persistanse
+    session: {},
   },
 };

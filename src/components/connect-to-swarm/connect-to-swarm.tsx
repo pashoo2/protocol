@@ -1,17 +1,25 @@
 import React from 'react';
 import { connectToSwarmUtil } from './connect-to-swarm.utils';
+import { CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY } from './connect-to-swarm.const';
 
 export class ConnectToSwarm extends React.PureComponent {
   public state = {
     isConnected: false,
     isConnecting: false,
     error: undefined as Error | undefined,
+    useSession: false,
   };
 
   public componentDidMount() {
-    const key = sessionStorage.getItem('key--');
-    console.log(key);
-    debugger;
+    const key = sessionStorage.getItem(
+      CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY
+    );
+
+    if (key) {
+      this.setState({
+        useSession: true,
+      });
+    }
   }
 
   public render() {
@@ -34,7 +42,11 @@ export class ConnectToSwarm extends React.PureComponent {
       isConnecting: true,
     });
     try {
-      await connectToSwarmUtil();
+      await connectToSwarmUtil(this.state.useSession);
+      sessionStorage.setItem(
+        CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY,
+        'true'
+      );
     } catch (error) {
       this.setState({
         error,
