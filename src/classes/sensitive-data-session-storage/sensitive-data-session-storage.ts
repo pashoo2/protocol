@@ -11,40 +11,28 @@ import {
   generatePasswordKeyByPasswordSalt,
   generateSaltForPassword,
 } from 'classes/secret-storage-class';
-import { encryptDataToString, decryptDataWithKey } from 'utils';
+import { encryptDataToString, decryptDataByPassword } from 'utils';
 
 export class SensitiveDataSessionStorage
   implements ISensitiveDataSessionStorage {
   protected isConnected: boolean = false;
 
+  protected connectingPromise: undefined | Promise<void> = undefined;
+
   protected _temp: Record<string, any> = {};
 
-  protected _tempStringified: string | undefined = undefined;
+  private _tempStringified: string | undefined = undefined;
+
+  private k?: CryptoKey;
 
   public async connect(options?: ISensitiveDataSessionStorageOptions) {
-    let k: CryptoKey | undefined;
-    if (options?.pinCode) {
-      const { pinCode } = options;
-
-      assert(typeof pinCode === 'string', 'Pin code must be a string');
-      const salt = this.getSalt();
-      const pinCodeCryptoKey = await generatePasswordKeyByPasswordSalt(
-        pinCode,
-        salt
-      );
-
-      if (pinCodeCryptoKey instanceof Error) {
-        throw pinCodeCryptoKey;
-      }
-      k = pinCodeCryptoKey;
+    if (this.isConnected) {
+      return;
     }
-    this.subscribeOnWindowUnload(k);
-
-    const stored = await this.read(k);
-
-    if (stored) {
-      this._temp = stored;
+    if (!this.connectingPromise) {
+      this.connectingPromise = this.connectToStorage(options);
     }
+    await this.connectingPromise;
   }
 
   public getItem = async (key: string) => {
@@ -54,8 +42,7 @@ export class SensitiveDataSessionStorage
 
   public setItem = async (key: string, v: any) => {
     assert(typeof key === 'string', 'Key must be a string');
-
-    if (v === undefined) {
+    if (v == null) {
       delete this._temp[key];
     } else {
       this._temp[key] = v;
@@ -63,15 +50,56 @@ export class SensitiveDataSessionStorage
     this.stringifyTemp();
   };
 
-  private getSalt() {
+  private async connectToStorage(
+    options?: ISensitiveDataSessionStorageOptions
+  ) {
+    let error: Error | undefined;
+    try {
+      let k: CryptoKey | undefined;
+      const pinCode = options?.pinCode;
+
+      try {
+        this._temp = (await this.readFromStorage(pinCode)) ?? {};
+      } catch (err) {
+        error = err;
+      }
+      this.subscribeOnWindowUnload();
+      if (pinCode) {
+        assert(typeof pinCode === 'string', 'Pin code must be a string');
+        const pinCodeNewCryptoKey = await generatePasswordKeyByPasswordSalt(
+          pinCode,
+          this.generateSalt()
+        );
+
+        if (pinCodeNewCryptoKey instanceof Error) {
+          throw pinCodeNewCryptoKey;
+        }
+        k = pinCodeNewCryptoKey;
+      }
+      this.k = k;
+      this.stringifyTemp();
+    } catch (err) {
+      this.reset();
+      console.error(err);
+      throw err;
+    } finally {
+      this.clearValueStorage();
+      this.isConnected = true;
+    }
+    if (error) {
+      throw error;
+    }
+  }
+
+  private readSalt() {
     const salt = sessionStorage.getItem(
       SENSITIVE_DATA_SESSION_STORAGE_STORAGE_KEY_SALT
     );
 
-    if (salt) {
-      return salt;
-    }
+    return salt;
+  }
 
+  private generateSalt() {
     const newSalt = generateSaltForPassword();
 
     if (typeof newSalt !== 'string') {
@@ -88,29 +116,17 @@ export class SensitiveDataSessionStorage
     return this._tempStringified ?? '';
   }
 
-  private subscribeOnWindowUnload(k?: CryptoKey) {
-    const getValue = async () => {
-      const str = String(this);
-
-      if (!str) {
-        return;
-      }
-      if (k) {
-        return await encryptDataToString(k, str);
-      }
-      return str;
-    };
-
+  private subscribeOnWindowUnload() {
     window.onbeforeunload = async () => {
-      const v = await getValue();
-
+      const v = this._tempStringified;
+      console.log(v);
       if (v && typeof v === 'string') {
         sessionStorage.setItem(SENSITIVE_DATA_SESSION_STORAGE_STORAGE_KEY, v);
       }
     };
   }
 
-  private async read(k?: CryptoKey) {
+  private async readFromStorage(pinCode?: string) {
     const v = sessionStorage.getItem(
       SENSITIVE_DATA_SESSION_STORAGE_STORAGE_KEY
     );
@@ -118,7 +134,9 @@ export class SensitiveDataSessionStorage
     if (!v) {
       return;
     }
-    const decrypted = k ? await decryptDataWithKey(k, v) : v;
+    const salt = !!pinCode && this.readSalt();
+    const decrypted =
+      salt && pinCode ? await decryptDataByPassword(pinCode, salt, v) : v;
 
     if (decrypted instanceof Error) {
       throw decrypted;
@@ -126,9 +144,39 @@ export class SensitiveDataSessionStorage
     return JSON.parse(decrypted);
   }
 
-  private stringifyTemp = () => {
-    this._tempStringified = Object.keys(this._temp).length
-      ? JSON.stringify(this._temp)
-      : undefined;
+  protected clearSaltStorage() {
+    sessionStorage.removeItem(SENSITIVE_DATA_SESSION_STORAGE_STORAGE_KEY_SALT);
+  }
+
+  protected clearValueStorage() {
+    sessionStorage.removeItem(SENSITIVE_DATA_SESSION_STORAGE_STORAGE_KEY);
+  }
+
+  protected reset() {
+    this.clearSaltStorage();
+    this.clearValueStorage();
+    this.k = undefined;
+    this._temp = {};
+    this._tempStringified = undefined;
+  }
+
+  private stringifyTemp = async () => {
+    const k = this.k;
+    const v = this._temp;
+    let stringified = undefined as string | undefined;
+
+    if (!Object.keys(v).length) {
+      stringified = undefined;
+    } else if (k) {
+      const encrypted = await encryptDataToString(k, v);
+
+      if (encrypted instanceof Error) {
+        return;
+      }
+      stringified = encrypted;
+    } else {
+      stringified = JSON.stringify(v);
+    }
+    this._tempStringified = stringified;
   };
 }
