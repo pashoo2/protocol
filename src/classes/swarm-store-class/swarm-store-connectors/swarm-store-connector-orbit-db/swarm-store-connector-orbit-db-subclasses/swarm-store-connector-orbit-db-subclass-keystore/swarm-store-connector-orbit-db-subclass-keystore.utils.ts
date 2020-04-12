@@ -22,14 +22,6 @@ export const extendsOptionsWithStore = (
   }
 
   const { credentials } = options;
-  const validateCredentialsResult = SecretStorage.validateCredentials(
-    credentials
-  );
-
-  if (validateCredentialsResult instanceof Error) {
-    throw validateCredentialsResult;
-  }
-
   let dbName: string = SWARM_STORAGE_CONNECTOR_ORBIT_DB_SUBLASS_KEY_STORE_DEFAULT_DB_NAME;
 
   if (typeof options.store === 'string') {

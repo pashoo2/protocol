@@ -45,14 +45,6 @@ export class SwarmStoreConnectorOrbitDBSubclassStorageFabric
   }
 
   protected applyCredentials(credentials: ISecretStoreCredentials): void {
-    const validateCredentialsResult = SecretStorage.validateCredentials(
-      credentials
-    );
-
-    if (validateCredentialsResult instanceof Error) {
-      console.error(`applyCredentials::${validateCredentialsResult}`);
-      throw new Error('The credentials provided are not valid');
-    }
     this.ready = this.createKey(credentials);
   }
 

@@ -588,17 +588,6 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
       ISwarmDatabaseValueTypes
     >['credentials']
   ): void {
-    const validateCredentialsResult = SecretStorage.validateCredentials(
-      credentials
-    );
-
-    if (validateCredentialsResult instanceof Error) {
-      console.error(validateCredentialsResult);
-      throw new Error(
-        'createIdentityKeystores::credentials provided are not valid'
-      );
-    }
-
     const { directory, userId } = this;
     const identityKeystorePrefix = `${directory}/${userId}`;
     const identityKeystore = this.createKeystore(
@@ -631,17 +620,9 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
       ISwarmDatabaseValueTypes
     >['credentials']
   ): void {
-    const validateCredentialsResult = SecretStorage.validateCredentials(
-      credentials
-    );
-
-    if (!credentials || validateCredentialsResult instanceof Error) {
-      console.error(validateCredentialsResult);
-      throw new Error(
-        'createIdentityKeystores::credentials provided are not valid'
-      );
+    if (!credentials) {
+      throw new Error('createIdentityKeystores::credentials must be provided');
     }
-
     this.storage = new SwarmStoreConnectorOrbitDBSubclassStorageFabric(
       credentials
     );

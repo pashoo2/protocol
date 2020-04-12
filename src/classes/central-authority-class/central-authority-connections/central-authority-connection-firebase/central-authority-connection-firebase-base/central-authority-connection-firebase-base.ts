@@ -93,19 +93,15 @@ export class CAConnectionWithFirebaseBase {
 
   protected get isVerifiedAccount(): boolean {
     const { isConnected, currentUser: currentUserData } = this;
-    debugger;
     if (!isConnected) {
       return false;
     }
-    debugger;
     if (!currentUserData) {
       return false;
     }
-    debugger;
     if (!currentUserData.emailVerified) {
       return false;
     }
-    debugger;
     return true;
   }
 
@@ -191,7 +187,7 @@ export class CAConnectionWithFirebaseBase {
     try {
       const appName = name || configuration.databaseURL;
       const existingApp = firebase.apps.find((app) => app.name);
-      debugger;
+
       app = existingApp || firebase.initializeApp(configuration, appName);
       this.configuration = configuration;
     } catch (err) {
@@ -923,10 +919,7 @@ export class CAConnectionWithFirebaseBase {
       await Promise.race([
         timeout(CA_CONNECTION_FIREBASE_AUTH_WITH_SESSION_TOKEN_TIMEOUT_MS),
         new Promise((res, rej) => {
-          const currentUser = this.app.auth().currentUser;
-          debugger;
           this.app.auth().onAuthStateChanged(function(user) {
-            debugger;
             if (user) {
               res(user);
             } else {
@@ -945,7 +938,6 @@ export class CAConnectionWithFirebaseBase {
   protected async signIn(
     firebaseCredentials: ICAConnectionSignUpCredentials
   ): Promise<boolean | Error> {
-    debugger;
     if (!firebaseCredentials.password && firebaseCredentials.session) {
       return this.signInWithSessionPersisted();
     }

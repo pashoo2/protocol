@@ -231,10 +231,6 @@ export class SwarmStore<
       options.credentials.login,
       "User's login must be provided in the credentials to access on an encrypyted data"
     );
-    assert(
-      options.credentials.password,
-      'A password must be provided in the credentials to access on an encrypyted data'
-    );
   }
 
   /**

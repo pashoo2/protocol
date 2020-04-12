@@ -124,7 +124,6 @@ export class CAConnectionsPool implements ICAConnectionPool {
     authProviderUrl: TCAAuthProviderIdentity,
     isAuthentificateAnonymousely: boolean = true
   ): Promise<ICAConnection | Error> {
-    debugger;
     if (!validateCAConnectionAuthProviderUrl(authProviderUrl)) {
       return new Error(
         'The url provided as the auth provider service url is not valid'
@@ -181,7 +180,6 @@ export class CAConnectionsPool implements ICAConnectionPool {
     signUpCredentials: ICAConnectionSignUpCredentials,
     profile?: Partial<ICentralAuthorityUserProfile>
   ): Promise<Error | ICAConnection> {
-    debugger;
     if (!validateCAConnectionAuthProviderUrl(authProviderUrl)) {
       return new Error(
         'The url provided as the auth provider service url is not valid'
@@ -234,7 +232,6 @@ export class CAConnectionsPool implements ICAConnectionPool {
         `Failed to connect with the auth provider ${authProviderUrl}`
       );
     }
-    debugger;
 
     const authResult = await connectionWithAuthProvider.authorize(
       signUpCredentials,

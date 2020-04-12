@@ -219,7 +219,6 @@ export class CAConnectionWithFirebaseImplementation
       // try to sign in with the credentials, then try to sign up
       // const userLoggedPromise = this.waitingUserInit();
       const signInResult = await this.signIn(firebaseCredentials);
-      debugger;
 
       if (signInResult instanceof Error) {
         console.warn('Failed to sign in with the credentials given');
@@ -232,7 +231,7 @@ export class CAConnectionWithFirebaseImplementation
         // if failed to sign in with the credentials
         // try to sign up
         const signUpResult = await this.signUp(firebaseCredentials);
-        debugger;
+
         if (signUpResult instanceof Error) {
           console.error('The user was failed to sign up');
           return this.onAuthorizationFailed(signUpResult);
