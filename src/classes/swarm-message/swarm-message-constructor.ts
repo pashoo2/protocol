@@ -26,6 +26,7 @@ import {
 import { SwarmMessageSubclassValidator } from './swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator';
 import { SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_VALIDATION } from './swarm-message-constructor.const';
 import { ICentralAuthority } from '../central-authority-class/central-authority-class.types';
+import { TSwarmMessageConstructorArgumentBodyPrivate } from './swarm-message-constructor.types';
 import {
   IMessageValidatorOptions,
   ISwarmMessageSubclassValidator,
@@ -131,7 +132,11 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
     if (typeof message === 'string') {
       return this.parse(message);
     } else if (typeof message === 'object') {
-      return this.serialize(message as TSwarmMessageConstructorArgumentBody);
+      return this.serialize(
+        message as
+          | TSwarmMessageConstructorArgumentBody
+          | TSwarmMessageConstructorArgumentBodyPrivate
+      );
     }
     throw new Error('A message must be an object or a string');
   };
@@ -334,16 +339,43 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
    * @memberof SwarmMessageConstructor
    * @throws
    */
-  protected serialize(
-    msg: TSwarmMessageConstructorArgumentBody
+  protected async serialize(
+    msg:
+      | TSwarmMessageConstructorArgumentBody
+      | TSwarmMessageConstructorArgumentBodyPrivate
   ): Promise<ISwarmMessageInstance> {
     if (!this.serializer) {
       throw new Error('A swarm message serializer instance is not defined');
     }
 
-    return this.serializer.serialize({
-      ...msg,
-      ts: getDateNowInSeconds(),
-    });
+    const receiverId = (msg as TSwarmMessageConstructorArgumentBodyPrivate)
+      .receiverId;
+    let cryptoKey: CryptoKey | undefined;
+
+    if (receiverId) {
+      if (!this.caConnection) {
+        throw new Error('There is no connection with the CentralAuthority');
+      }
+
+      const receiverPubKey = await this.caConnection.getSwarmUserEncryptionPubKey(
+        receiverId
+      );
+
+      if (receiverPubKey instanceof Error) {
+        console.error("Failed to get the user's public key");
+        throw receiverPubKey;
+      }
+      if (!receiverPubKey) {
+        throw new Error('There is no public crypto key of the receiver');
+      }
+      cryptoKey = receiverPubKey;
+    }
+    return this.serializer.serialize(
+      {
+        ...msg,
+        ts: getDateNowInSeconds(),
+      },
+      cryptoKey
+    );
   }
 }

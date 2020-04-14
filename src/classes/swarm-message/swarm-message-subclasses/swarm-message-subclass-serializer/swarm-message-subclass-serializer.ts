@@ -4,7 +4,10 @@ import { QueuedEncryptionClassBase } from '../../../basic-classes/queued-encrypt
 import { ISwarmMessageSerializerUser } from './swarm-message-subclass-serializer.types';
 import CentralAuthorityIdentity from '../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
 import { typedArrayToString } from '../../../../utils/typed-array-utils';
-import { ISwarmMessageBody } from '../../swarm-message-constructor.types';
+import {
+  ISwarmMessageBody,
+  TSwarmMessageBodyRawEncrypted,
+} from '../../swarm-message-constructor.types';
 import {
   ISwarmMessageInstance,
   TSwarmMessagePayloadDeserialized,
@@ -24,7 +27,7 @@ import {
 } from './swarm-message-subclass-serializer.types';
 
 export class SwarmMessageSerializer implements ISwarmMessageSerializer {
-  protected msgSignQueue?: IQueuedEncrypyionClassBase;
+  protected msgSignEncryptQueue?: IQueuedEncrypyionClassBase;
 
   protected constructorOptions?: ISwarmMessageSerializerConstructorOptions;
 
@@ -46,7 +49,7 @@ export class SwarmMessageSerializer implements ISwarmMessageSerializer {
    * @type {IQueuedEncrypyionClassBaseOptions}
    * @memberof SwarmMessageSerializer
    */
-  protected get messageSignQueueOptions(): IQueuedEncrypyionClassBaseOptions {
+  protected get messageEncryptAndSignQueueOptions(): IQueuedEncrypyionClassBaseOptions {
     const { user } = this;
 
     if (!user) {
@@ -70,15 +73,20 @@ export class SwarmMessageSerializer implements ISwarmMessageSerializer {
    * @memberof SwarmMessageSerializer
    */
   public serialize = async (
-    msgBody: ISwarmMessageBodyDeserialized
+    msgBody: ISwarmMessageBodyDeserialized,
+    encryptWithKey?: CryptoKey
   ): Promise<ISwarmMessageInstance> => {
     this.validateMessageBody(msgBody);
 
     const swarmMessageBody = this.serializeMessageBody(msgBody);
-    const bodySeriazlized = this.getMessageBodySerialized(swarmMessageBody);
+    const bodySeriazlized = await this.getMessageBodySerialized(
+      swarmMessageBody,
+      encryptWithKey
+    );
     const swarmMessageNotSigned = this.getMessageRawWithoutSignature(
       bodySeriazlized
     );
+
     const signature = await this.signSwarmMessageRaw(swarmMessageNotSigned);
 
     if (signature instanceof Error) {
@@ -189,8 +197,8 @@ export class SwarmMessageSerializer implements ISwarmMessageSerializer {
    * @memberof SwarmMessageSerializer
    */
   protected startMessagesSigningQueue() {
-    this.msgSignQueue = new QueuedEncryptionClassBase(
-      this.messageSignQueueOptions
+    this.msgSignEncryptQueue = new QueuedEncryptionClassBase(
+      this.messageEncryptAndSignQueueOptions
     );
   }
 
@@ -264,12 +272,46 @@ export class SwarmMessageSerializer implements ISwarmMessageSerializer {
    * @returns {TSwarmMessageBodyRaw}
    * @memberof SwarmMessageSerializer
    */
-  protected getMessageBodySerialized(
-    msgBody: ISwarmMessageBody
-  ): TSwarmMessageBodyRaw {
+  protected async getMessageBodySerialized(
+    msgBody: ISwarmMessageBody,
+    encryptWithKey?: CryptoKey
+  ): Promise<TSwarmMessageBodyRaw> {
     const { utils } = this.options;
+    const bodyRaw = utils.swarmMessageBodySerializer(msgBody);
 
-    return utils.swarmMessageBodySerializer(msgBody);
+    return encryptWithKey
+      ? this.encryptMessageBodyRaw(bodyRaw, encryptWithKey)
+      : bodyRaw;
+  }
+
+  /**
+   * encrypt the message's body with the key provided
+   *
+   * @protected
+   * @param {TSwarmMessageBodyRaw} msgBody
+   * @param {CryptoKey} [encryptWithKey]
+   * @returns {Promise<>}
+   * @memberof SwarmMessageSerializer
+   */
+  protected async encryptMessageBodyRaw(
+    msgBody: TSwarmMessageBodyRaw,
+    encryptWithKey: CryptoKey
+  ): Promise<TSwarmMessageBodyRawEncrypted> {
+    const encrypted = await this.msgSignEncryptQueue?.encryptData(
+      msgBody,
+      encryptWithKey
+    );
+
+    if (encrypted instanceof Error) {
+      console.error('Failed to encrypt the message body');
+      throw encrypted;
+    }
+    if (!encrypted) {
+      throw new Error(
+        'Failed to encrype the message body cause an unknown error'
+      );
+    }
+    return encrypted;
   }
 
   /**
@@ -306,14 +348,14 @@ export class SwarmMessageSerializer implements ISwarmMessageSerializer {
     if (!this.user) {
       throw new Error('The user info is not defined');
     }
-    if (!this.msgSignQueue) {
+    if (!this.msgSignEncryptQueue) {
       throw new Error('The messages sign queue was not started');
     }
 
     const { utils } = this.options;
     const dataToSign = utils.getDataToSignBySwarmMsg(msgRawUnsigned);
 
-    return this.msgSignQueue.signData(dataToSign, this.user.dataSignKey);
+    return this.msgSignEncryptQueue.signData(dataToSign, this.user.dataSignKey);
   }
 
   /**

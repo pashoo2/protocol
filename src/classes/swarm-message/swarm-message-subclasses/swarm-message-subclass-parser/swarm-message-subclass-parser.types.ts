@@ -1,6 +1,7 @@
 import { ISwarmMessageSubclassValidator } from '../swarm-message-subclass-validators/swarm-message-subclass-validator.types';
 import { ISwarmMessageUtilsMessageParser } from '../../swarm-message-utils/swarm-message-utils-message-parser/swarm-message-utils-message-parser.types';
 import { ISwarmMessageUtilsBodyParser } from '../../swarm-message-utils/swarm-message-utils-body-parser';
+import { IQueuedEncrypyionClassBaseOptions } from '../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
 import {
   TSwarmMessageSeriazlized,
   ISwarmMessageInstance,
@@ -14,6 +15,11 @@ export interface ISwarmMessageSubclassParserUtils {
 export interface ISwarmMessageSubclassParserOptions {
   validator: ISwarmMessageSubclassValidator;
   utils: ISwarmMessageSubclassParserUtils;
+  queueOptions?: IQueuedEncrypyionClassBaseOptions['queueOptions'];
+  /**
+   * this is a key used to decrypt private messages
+   */
+  decryptionKey?: CryptoKey;
 }
 
 /**

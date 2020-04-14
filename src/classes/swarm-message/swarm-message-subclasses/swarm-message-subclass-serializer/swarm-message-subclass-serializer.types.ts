@@ -110,4 +110,18 @@ export interface ISwarmMessageSerializer {
   serialize(
     msgBody: ISwarmMessageBodyDeserialized
   ): Promise<ISwarmMessageInstance>;
+  /**
+   * serialize the message as a private and
+   * encrypt it's body with the key provided.
+   *
+   * @param {ISwarmMessageBodyDeserialized} msgBody
+   * @param {CryptoKey} encryptWithKey - user's public key to encrypt
+   * the message as a private
+   * @returns {Promise<ISwarmMessageInstance>}
+   * @memberof ISwarmMessageSerializer
+   */
+  serialize(
+    msgBody: ISwarmMessageBodyDeserialized,
+    encryptWithKey?: CryptoKey
+  ): Promise<ISwarmMessageInstance>;
 }

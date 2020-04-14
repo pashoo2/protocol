@@ -65,6 +65,7 @@ async function swarmMessageGrantValidator(
   const messageSerialized = payload.value;
 
   try {
+    // TODO - add private messages sent storage to get decrypted messages from it
     const swarmMessage = await messageConstructor.construct(messageSerialized);
 
     if (swarmMessage.uid !== userId) {

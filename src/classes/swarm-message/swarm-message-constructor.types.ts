@@ -51,7 +51,7 @@ export type TSwarmMessagePayloadDeserialized = string;
  *
  * @export
  * @interface ISwarmMessage
- * @property {string} typ - a type of the message
+ * @property {string} typ - a type of the message.
  * @property {string | ArrayBuffer} pld - payload of the message is a buffer or a string
  * @property {string} uid - an identity of the user which post the message
  * @property {string} tss - UNIX timestamp in UTC when the message was posted. In seconds
@@ -72,6 +72,18 @@ export interface ISwarmMessageBodyDeserialized {
  * serialized.
  */
 export type TSwarmMessageBodyRaw = string;
+
+/**
+ * body encrypted with a private of the user,
+ * who will be receiver of the message
+ */
+export type TSwarmMessageBodyRawEncrypted = string;
+
+/**
+ * this is message body of a private body
+ * which is encrypted for the receiver user.
+ */
+export type TSwarmMessageBodyEncrypted = string;
 
 /**
  * This interface represents a message
@@ -110,7 +122,20 @@ export interface ISwarmMessageRaw {
    * @memberof ISwarmMessageRaw
    */
   alg: ownKeyOf<typeof ESwarmMessageSignatureAlgorithmsDescription>;
+  /**
+   * is this is private message, may be for this user
+   *
+   * @type {boolean}
+   * @memberof ISwarmMessageRaw
+   */
+  isPrivate?: boolean;
 }
+
+// this is for a private messages construction. Message body will be encrypted
+// with the public key of the user with id = receiverId
+export type TSwarmMessageConstructorArgumentBodyPrivate = TSwarmMessageConstructorArgumentBody & {
+  receiverId: TSwarmMessageUserIdentifierSerialized;
+};
 
 export type TSwarmMessageSeriazlized = string;
 
@@ -134,7 +159,7 @@ export interface ISwarmMessageBody
  * @extends {ISwarmMessageBodyDeserialized}
  */
 export interface ISwarmMessage extends Omit<ISwarmMessageRaw, 'bdy'> {
-  bdy: ISwarmMessageBody;
+  bdy: ISwarmMessageBody | TSwarmMessageBodyEncrypted;
 }
 
 export interface ISwarmMessageInstance extends ISwarmMessage {
@@ -203,6 +228,20 @@ export type TSwarmMessageConstructorArgumentBody = Omit<
 // construct message from an object which represents message's body
 export interface ISwarmMessageConstructor {
   construct(
-    messageBody: TSwarmMessageConstructorArgumentBody | TSwarmMessageSeriazlized
+    messageBody: TSwarmMessageConstructorArgumentBody
+  ): Promise<ISwarmMessageInstance>;
+}
+
+/**
+ * This signature constructs a private message for the user with
+ * id === receiverId. The message's body will be encrypted
+ * with a public key of the receiver.
+ *
+ * @export
+ * @interface ISwarmMessageConstructor
+ */
+export interface ISwarmMessageConstructor {
+  construct(
+    messageBody: TSwarmMessageConstructorArgumentBodyPrivate
   ): Promise<ISwarmMessageInstance>;
 }

@@ -16,7 +16,11 @@ import { ISwarmMessagePayloadValidationOptions } from './swarm-message-subclass-
 import { ISwarmMessageTimestampValidationOptions } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-timestamp/swarm-message-subclass-validator-fields-validator-validator-timestamp.types';
 import { TSwarmMessageUserIdentifierSerialized } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import { CA_USER_IDENTITY_VERSIONS_LIST } from '../../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
-import { ISwarmMessage } from '../../../swarm-message-constructor.types';
+import {
+  ISwarmMessage,
+  ISwarmMessageBody,
+  TSwarmMessageBodyEncrypted,
+} from '../../../swarm-message-constructor.types';
 import { validateMessageBodyRawFormat } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-body-raw/swarm-message-subclass-validator-fields-validator-body-raw';
 import { validateMessageSignatureFormat } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-signature/swarm-message-subclass-validator-fields-validator-signature';
 import {
@@ -27,6 +31,10 @@ import {
   ISwarmMessageBodyDeserialized,
   ISwarmMessageRaw,
 } from '../../../swarm-message-constructor.types';
+import {
+  SWARM_MESSAGE_SUBCLASS_VALIDATOR_BODY_ENCRYPTED_MAX_LENGTH_BYTES,
+  SWARM_MESSAGE_SUBCLASS_VALIDATOR_BODY_ENCRYPTED_MIN_LENGTH_BYTES,
+} from '../swarm-message-subclass-validator.const';
 
 export class SwarmMessageSubclassFieldsValidator
   implements ISwarmMessageSubclassFieldsValidator {
@@ -104,6 +112,26 @@ export class SwarmMessageSubclassFieldsValidator
     this.validateTimestamp(ts);
   }
 
+  public validateMessageBodyEncrypted(
+    messsageBodyEncrypted: TSwarmMessageBodyEncrypted
+  ): void {
+    assert(!!messsageBodyEncrypted, 'Message body must be specefied');
+    assert(
+      typeof messsageBodyEncrypted === 'string',
+      'Message body must be a string for a private messages'
+    );
+    assert(
+      messsageBodyEncrypted.length <
+        SWARM_MESSAGE_SUBCLASS_VALIDATOR_BODY_ENCRYPTED_MAX_LENGTH_BYTES,
+      'Private message body is increased the maximum length'
+    );
+    assert(
+      messsageBodyEncrypted.length >
+        SWARM_MESSAGE_SUBCLASS_VALIDATOR_BODY_ENCRYPTED_MIN_LENGTH_BYTES,
+      'Private message body is less then the minimal length'
+    );
+  }
+
   /**
    * validate swarm message object
    * throw an error if the message
@@ -117,18 +145,16 @@ export class SwarmMessageSubclassFieldsValidator
     assert(!!message, 'Message must be defined');
     assert(typeof message === 'object', 'Message must be an object');
 
-    const { bdy, uid, sig } = message;
+    const { bdy, uid, sig, isPrivate } = message;
 
-    this.validateMessageBody(bdy);
     validateMessageSignatureFormat(sig);
     this.validateUserIdentifier(uid);
-
-    const { iss, pld, ts, typ } = bdy;
-
-    this.validateType(typ);
-    this.validateIssuer(iss);
-    this.validatePayload(pld);
-    this.validateTimestamp(ts);
+    this.validateIsPrivateField(isPrivate);
+    if (!isPrivate) {
+      this.validateMessageBody(bdy as ISwarmMessageBodyDeserialized);
+    } else {
+      this.validateMessageBodyEncrypted(bdy as TSwarmMessageBodyEncrypted);
+    }
   }
 
   /**
@@ -201,6 +227,12 @@ export class SwarmMessageSubclassFieldsValidator
       !issuersList.length || issuersList.includes(issuer),
       'The issuer is not into the list of the valid issuers'
     );
+  }
+
+  protected validateIsPrivateField(isPrivateField?: any) {
+    if (isPrivateField != null) {
+      assert(isPrivateField === true, 'Is private value must be a "true"');
+    }
   }
 
   /**
