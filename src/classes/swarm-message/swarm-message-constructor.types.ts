@@ -11,6 +11,7 @@ import {
 import { IMessageSignatureValidatorOptionsUtils } from './swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-signature-validator/swarm-message-subclass-validator-signature-validator.types';
 import { ICentralAuthority } from '../central-authority-class/central-authority-class.types';
 import { CentralAuthority } from '../central-authority-class/central-authority-class';
+import { ISwarmMessgaeEncryptedCache } from './swarm-message-subclasses/swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import {
   IMessageValidatorOptions,
   ISwarmMessageSubclassValidator,
@@ -27,6 +28,10 @@ export enum ESwarmMessageSignatureAlgorithmsDescription {
 export const SwarmMessageSignatureSupprotedAlgorithms = Object.keys(
   ESwarmMessageSignatureAlgorithmsDescription
 );
+
+export interface ISwarmMessageReceiver {
+  receiverId: TSwarmMessageUserIdentifierSerialized;
+}
 
 export type TSwarmMessageSignatureAlgorithm = ownKeyOf<
   typeof ESwarmMessageSignatureAlgorithmsDescription
@@ -133,9 +138,8 @@ export interface ISwarmMessageRaw {
 
 // this is for a private messages construction. Message body will be encrypted
 // with the public key of the user with id = receiverId
-export type TSwarmMessageConstructorArgumentBodyPrivate = TSwarmMessageConstructorArgumentBody & {
-  receiverId: TSwarmMessageUserIdentifierSerialized;
-};
+export type TSwarmMessageConstructorArgumentBodyPrivate = TSwarmMessageConstructorArgumentBody &
+  ISwarmMessageReceiver;
 
 export type TSwarmMessageSeriazlized = string;
 
@@ -147,7 +151,8 @@ export type TSwarmMessageSeriazlized = string;
  * @extends {Omit<ISwarmMessageBodyDeserialized, 'pld'>}
  */
 export interface ISwarmMessageBody
-  extends Omit<ISwarmMessageBodyDeserialized, 'pld'> {
+  extends Omit<ISwarmMessageBodyDeserialized, 'pld'>,
+    Partial<ISwarmMessageReceiver> {
   pld: TSwarmMessagePayloadDeserialized;
 }
 
@@ -185,6 +190,16 @@ export interface ISwarmMessageConstructorOptionsInstances {
   parser: ISwarmMessageSubclassParser;
   serizlizer: ISwarmMessageSerializer;
   validator: ISwarmMessageSubclassValidator;
+  /**
+   * used to store private messages
+   * in decrypted form, cause there is
+   * no way to decrypt private message
+   * which was sent to another user.
+   *
+   * @type {ISwarmMessgaeEncryptedCache}
+   * @memberof ISwarmMessageConstructorOptionsInstances
+   */
+  encryptedCache: ISwarmMessgaeEncryptedCache;
 }
 
 export interface ISwarmMessageConstructorOptionsRequired {
@@ -196,7 +211,7 @@ export interface ISwarmMessageConstructorOptionsRequired {
       'caConnection'
     >;
   };
-  instances?: Partial<ISwarmMessageConstructorOptionsInstances>;
+  instances: Partial<ISwarmMessageConstructorOptionsInstances>;
 }
 
 /**

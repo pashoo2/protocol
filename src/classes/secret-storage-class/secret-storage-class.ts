@@ -392,26 +392,28 @@ export class SecretStorage
     return this.connect(options);
   }
 
-  public get = async (
-    keyForValue: string
-  ): Promise<string | Error | undefined> => {
-    const { isRunning } = this;
+  public has = async (key: string): Promise<boolean | Error> => {
+    const valueEncrypted = await this.readValueForKey(key);
 
-    if (!isRunning) {
-      return new Error('There is no connection with storage or not authorized');
+    if (valueEncrypted instanceof Error) {
+      return valueEncrypted;
     }
+    return this.isValueDefined(valueEncrypted);
+  };
 
-    const key = this.storageKey(keyForValue);
-    const { isStorageProviderSupportUInt8Array } = this;
-    const valueEncrypted = await (isStorageProviderSupportUInt8Array
-      ? this.getWithStorageProviderUint8Array(key)
-      : this.getWithStorageProvider(key));
+  public get = async (
+    key: string
+  ): Promise<string | Error | undefined | null> => {
+    const valueEncrypted = await this.readValueForKey(key);
 
     if (!valueEncrypted) {
       return valueEncrypted;
     }
     if (valueEncrypted instanceof Error) {
       return SecretStorage.error(valueEncrypted);
+    }
+    if (this.isNullishValue(valueEncrypted)) {
+      return null;
     }
 
     const decryptResult = await (valueEncrypted instanceof Uint8Array
@@ -426,21 +428,25 @@ export class SecretStorage
 
   public async set(
     keyForValue: string,
-    value: string
+    value: string | null
   ): Promise<boolean | Error> {
-    const { isRunning } = this;
+    let encryptedValue: Uint8Array | Error | string;
 
-    if (!isRunning) {
+    if (!this.isRunning) {
       return SecretStorage.error(
         'The instance of SecretStorage is not connected to the storage provider or there is no an encryption key'
       );
     }
-
-    //value - must be an escaped sctring
-    const encryptedValue = this.isStorageProviderSupportUInt8Array
-      ? await this.encryptValueAsInt8Array(value)
-      : await this.encryptValue(value);
-
+    if (value === null) {
+      encryptedValue = this.isStorageProviderSupportUInt8Array
+        ? new Uint8Array()
+        : '';
+    } else {
+      //value - must be an escaped sctring
+      encryptedValue = this.isStorageProviderSupportUInt8Array
+        ? await this.encryptValueAsInt8Array(value)
+        : await this.encryptValue(value);
+    }
     if (encryptedValue instanceof Error) {
       return SecretStorage.error(encryptedValue);
     }
@@ -454,6 +460,16 @@ export class SecretStorage
       return SecretStorage.error(storeValueResult);
     }
     return storeValueResult;
+  }
+
+  public async insert(
+    keyForValue: string,
+    value: string | null
+  ): Promise<boolean | Error> {
+    if (await this.has(keyForValue)) {
+      return false;
+    }
+    return this.set(keyForValue, value);
   }
 
   public async unset(
@@ -658,6 +674,13 @@ export class SecretStorage
         this.dbName = dbName;
       }
     }
+  }
+
+  protected isNullishValue(value: any): boolean {
+    return (
+      (typeof value === 'string' && value === '') ||
+      (value instanceof Uint8Array && value.byteLength === 0)
+    );
   }
 
   protected reset() {
@@ -1005,5 +1028,28 @@ export class SecretStorage
       console.error(err);
       return err;
     }
+  }
+
+  protected readValueForKey = async (key: string) => {
+    if (!this.isRunning) {
+      return new Error('There is no connection with storage or not authorized');
+    }
+
+    const k = this.storageKey(key);
+    const { isStorageProviderSupportUInt8Array } = this;
+
+    return isStorageProviderSupportUInt8Array
+      ? this.getWithStorageProviderUint8Array(k)
+      : this.getWithStorageProvider(k);
+  };
+
+  protected isValueDefined(valueEncrypted: any): boolean {
+    if (this.isNullishValue(valueEncrypted)) {
+      return true;
+    }
+    if (!valueEncrypted) {
+      return false;
+    }
+    return true;
   }
 }

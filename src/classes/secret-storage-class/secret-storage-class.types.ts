@@ -55,6 +55,48 @@ export interface ISecretStorage {
   ): Promise<boolean | Error>;
   // disconnect from the storage
   disconnect(): Promise<boolean | Error>;
-  set(key: string, value: string): Promise<boolean | Error>;
-  get(key: string): Promise<string | undefined | Error>;
+  /**
+   * for the null value the null value will be set in the storage
+   *
+   * @param {string} key
+   * @param {(string | null)} value
+   * @returns {(Promise<boolean | Error>)}
+   * @memberof ISecretStorage
+   */
+  set(key: string, value: string | null): Promise<boolean | Error>;
+  /**
+   * insert value only if there is no value or value.
+   * Nullish value is considered to be existing.
+   *
+   * @param {string} key
+   * @param {(string | null)} value
+   * @returns {(Promise<boolean | Error>)} - return false if the value was not inserted, true otherwise
+   * @memberof ISecretStorage
+   */
+  insert(key: string, value: string | null): Promise<boolean | Error>;
+  /**
+   * if the null value was set before, null will be returned
+   */
+  get(key: string): Promise<string | undefined | null | Error>;
+
+  /**
+   * check if a value exists in the storage for
+   * the key given
+   *
+   * @param {string} key
+   * @returns {(Promise<boolean | Error>)}
+   * @memberof ISecretStorage
+   */
+  has(key: string): Promise<boolean | Error>;
+
+  /**
+   * unset a record with the key
+   * provided or a list of records
+   * with have the keys provided
+   *
+   * @param {(string | string[])} key
+   * @returns {(Promise<Error | void>)}
+   * @memberof ISecretStorage
+   */
+  unset(key: string | string[]): Promise<Error | void>;
 }

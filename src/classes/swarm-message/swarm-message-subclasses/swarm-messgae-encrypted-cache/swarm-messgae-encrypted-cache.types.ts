@@ -1,4 +1,13 @@
 import { TSwarmMessageBodyRaw } from '../../swarm-message-constructor.types';
+import {
+  ISecretStorage,
+  IISecretStorageOptions,
+} from '../../../secret-storage-class/secret-storage-class.types';
+
+export interface ISwarmMessgaeEncryptedCacheOptions {
+  storageProvider?: ISecretStorage;
+  storageProviderOptions?: IISecretStorageOptions;
+}
 
 /**
  * This is a cache of the messages decrypted
@@ -16,6 +25,57 @@ import { TSwarmMessageBodyRaw } from '../../swarm-message-constructor.types';
  * @interface ISwarmMessgaeEncryptedCache
  */
 export interface ISwarmMessgaeEncryptedCache {
+  /**
+   * is the instance running
+   *
+   * @type {boolean}
+   * @memberof ISwarmMessgaeEncryptedCache
+   */
+  isRunning: boolean;
+  connect(options?: ISwarmMessgaeEncryptedCacheOptions): Promise<void>;
+  /**
+   * get body decrypted for the message with the signature
+   *
+   * @param {string} sig
+   * @returns {(Promise<TSwarmMessageBodyRaw | undefined>)}
+   * @memberof ISwarmMessgaeEncryptedCache
+   * @throws
+   */
   get(sig: string): Promise<TSwarmMessageBodyRaw | undefined>;
-  isValid(sig: boolean): Promise<boolean>;
+  /**
+   * returns true if the signature is exists in the storage
+   * or undefined otherwise.
+   *
+   * @param {boolean} sig
+   * @returns {Promise<boolean>}
+   * @memberof ISwarmMessgaeEncryptedCache
+   * @throws
+   */
+  isValid(sig: string): Promise<true | undefined>;
+
+  /**
+   * add message body to the storage or simply
+   * add mark that the signature is valid.
+   *
+   * If a record(mark as valid or a full body)
+   * for the signature is already
+   * existing in the storage, it will not
+   * be overwritten with a new value.
+   *
+   * @param {string} sig
+   * @param {TSwarmMessageBodyRaw} [message]
+   * @returns {Promise<void>}
+   * @memberof ISwarmMessgaeEncryptedCache
+   * @throws
+   */
+  add(sig: string, message?: TSwarmMessageBodyRaw): Promise<boolean>;
+  /**
+   * unset mark or body for the messge signature
+   *
+   * @param {string} sig
+   * @returns {Promise<void>}
+   * @memberof ISwarmMessgaeEncryptedCache
+   * @throws
+   */
+  unset(sig: string): Promise<void>;
 }

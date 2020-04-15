@@ -27,6 +27,8 @@ import { SwarmMessageSubclassValidator } from './swarm-message-subclasses/swarm-
 import { SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_VALIDATION } from './swarm-message-constructor.const';
 import { ICentralAuthority } from '../central-authority-class/central-authority-class.types';
 import { TSwarmMessageConstructorArgumentBodyPrivate } from './swarm-message-constructor.types';
+import { ISwarmMessgaeEncryptedCache } from './swarm-message-subclasses/swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { SwarmMessageEncryptedCache } from './swarm-message-subclasses/swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache';
 import {
   IMessageValidatorOptions,
   ISwarmMessageSubclassValidator,
@@ -42,6 +44,8 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
   protected serializer?: ISwarmMessageSerializer;
 
   protected parser?: ISwarmMessageSubclassParser;
+
+  protected encryptedCache?: ISwarmMessgaeEncryptedCache;
 
   /**
    * return full object with options
@@ -193,6 +197,9 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
         );
       }
     }
+
+    let warnAboutNoCryptoCache = true;
+
     if (instances) {
       assert(typeof instances === 'object', 'The instances must be an object');
       if (instances.parser) {
@@ -213,6 +220,26 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
           'A validator instance must be an object'
         );
       }
+      if (instances.encryptedCache) {
+        assert(
+          typeof instances.encryptedCache === 'object',
+          'Encrypted cache storage must be an object'
+        );
+        assert(
+          typeof instances.encryptedCache.connect === 'function' &&
+            typeof instances.encryptedCache.add === 'function' &&
+            typeof instances.encryptedCache.get === 'function' &&
+            typeof instances.encryptedCache.isValid === 'function',
+          'Encrypted cache storage have a wrong implementation'
+        );
+        this.encryptedCache = instances.encryptedCache;
+        warnAboutNoCryptoCache = false;
+      }
+    }
+    if (warnAboutNoCryptoCache) {
+      console.warn(
+        'The encrypted cache must be provided to support private messages as decrypted'
+      );
     }
   }
 
@@ -370,12 +397,47 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
       }
       cryptoKey = receiverPubKey;
     }
-    return this.serializer.serialize(
-      {
-        ...msg,
-        ts: getDateNowInSeconds(),
-      },
+
+    const bodyWithTs = {
+      ...msg,
+      ts: getDateNowInSeconds(),
+    };
+    const swarmMessageSerialized = await this.serializer.serialize(
+      bodyWithTs,
       cryptoKey
     );
+    const { sig } = swarmMessageSerialized;
+
+    if (swarmMessageSerialized.isPrivate && receiverId) {
+      await this.addPrivateMessageBodyToEncryptedStorage(sig, {
+        ...bodyWithTs,
+        receiverId,
+      });
+    } else {
+      await this.addToCacheMessageSignature(sig);
+    }
+    return swarmMessageSerialized;
+  }
+
+  /**
+   * add private message body decrypted to the encrypted
+   * cache to restore the body in the feature.
+   *
+   * @private
+   * @memberof SwarmMessageConstructor
+   */
+  private async addPrivateMessageBodyToEncryptedStorage(
+    sig: string,
+    msgBody: TSwarmMessageConstructorArgumentBodyPrivate
+  ) {
+    if (this.encryptedCache && this.encryptedCache.isRunning) {
+      await this.encryptedCache.add(sig, JSON.stringify(msgBody));
+    }
+  }
+
+  private async addToCacheMessageSignature(sig: string) {
+    if (this.encryptedCache && this.encryptedCache.isRunning) {
+      await this.encryptedCache.add(sig);
+    }
   }
 }

@@ -446,7 +446,7 @@ export class SafeStorage<
 
       setPreviousStatus();
 
-      const parsedDate = this.parseDataFromStorage(data);
+      const parsedDate = this.parseDataFromStorage(data || undefined);
 
       if (parsedDate instanceof Error) {
         return this.setErrorStatus(parsedDate);
