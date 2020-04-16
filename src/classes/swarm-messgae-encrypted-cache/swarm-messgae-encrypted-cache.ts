@@ -1,20 +1,24 @@
 import {
-  ISwarmMessgaeEncryptedCacheOptions,
+  TSwarmMessgaeEncryptedCacheOptions,
   ISwarmMessgaeEncryptedCache,
 } from './swarm-messgae-encrypted-cache.types';
 import assert from 'assert';
 import { ISecretStorage } from '../secret-storage-class/secret-storage-class.types';
 import { SecretStorage } from '../secret-storage-class/secret-storage-class';
 import { TSwarmMessageBodyRaw } from '../swarm-message/swarm-message-constructor.types';
+import {
+  ISwarmMessgaeEncryptedCacheOptionsStorageProvider,
+  ISwarmMessgaeEncryptedCacheOptionsForStorageProvider,
+} from './swarm-messgae-encrypted-cache.types';
 
 export class SwarmMessageEncryptedCache implements ISwarmMessgaeEncryptedCache {
-  protected options?: ISwarmMessgaeEncryptedCacheOptions = undefined;
+  protected options?: TSwarmMessgaeEncryptedCacheOptions = undefined;
 
   protected storageProvider?: ISecretStorage = undefined;
 
   public isRunning: boolean = false;
 
-  public async connect(options: ISwarmMessgaeEncryptedCacheOptions) {
+  public async connect(options: TSwarmMessgaeEncryptedCacheOptions) {
     this.setOptions(options);
     await this.runStorageConnection();
     this.setIsRunning();
@@ -50,24 +54,33 @@ export class SwarmMessageEncryptedCache implements ISwarmMessgaeEncryptedCache {
     }
   };
 
-  protected setOptions(options: ISwarmMessgaeEncryptedCacheOptions) {
+  protected setOptions(options: TSwarmMessgaeEncryptedCacheOptions) {
     assert(options, 'Options must be provided');
     assert(typeof options === 'object', 'Options must be an object');
-    if (options.storageProvider) {
+
+    const optsWithStorageProvider = options as ISwarmMessgaeEncryptedCacheOptionsStorageProvider;
+
+    if (optsWithStorageProvider.storageProvider) {
       assert(
-        typeof options.storageProvider === 'object',
+        typeof optsWithStorageProvider.storageProvider === 'object',
         'Storage provider must be an object'
       );
       assert(
-        typeof options.storageProvider.connect === 'function' &&
-          typeof options.storageProvider.get === 'function' &&
-          typeof options.storageProvider.get === 'function',
+        typeof optsWithStorageProvider.storageProvider.connect === 'function' &&
+          typeof optsWithStorageProvider.storageProvider.get === 'function' &&
+          typeof optsWithStorageProvider.storageProvider.get === 'function',
         'Storage provider provided is not valid'
       );
     } else {
+      const optsWithConfForStorageProviderConnection = options as ISwarmMessgaeEncryptedCacheOptionsForStorageProvider;
+
       assert(
-        options.storageProviderOptions,
+        optsWithConfForStorageProviderConnection.storageProviderOptions,
         'Options for connection to the storage provider must be provided'
+      );
+      assert(
+        optsWithConfForStorageProviderConnection.storageProviderAuthOptions,
+        'Options for authorization to the storage provider must be provided'
       );
     }
 
@@ -80,15 +93,27 @@ export class SwarmMessageEncryptedCache implements ISwarmMessgaeEncryptedCache {
 
   protected async runStorageConnection() {
     const { options } = this;
+    const optsWithStorageProvider = options as ISwarmMessgaeEncryptedCacheOptionsStorageProvider;
 
-    if (options?.storageProvider) {
-      this.setStorageProvider(options?.storageProvider);
+    if (optsWithStorageProvider.storageProvider) {
+      this.setStorageProvider(optsWithStorageProvider.storageProvider);
       return;
+    }
+
+    const optsWithConfForStorageProviderConnection = options as ISwarmMessgaeEncryptedCacheOptionsForStorageProvider;
+
+    if (!optsWithConfForStorageProviderConnection.storageProviderAuthOptions) {
+      throw new Error(
+        'Auth options was not provided to connect with the secret storage provider'
+      );
     }
 
     const storageProvider = new SecretStorage();
 
-    await storageProvider.connect(options?.storageProviderOptions);
+    await storageProvider.authorize(
+      optsWithConfForStorageProviderConnection.storageProviderAuthOptions,
+      optsWithConfForStorageProviderConnection.storageProviderOptions
+    );
     this.setStorageProvider(storageProvider);
   }
 

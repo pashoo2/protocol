@@ -1,13 +1,22 @@
 import { TSwarmMessageBodyRaw } from '../swarm-message/swarm-message-constructor.types';
+import { TSecretStorageAuthOptions } from '../secret-storage-class/secret-storage-class.types';
 import {
   ISecretStorage,
   IISecretStorageOptions,
 } from '../secret-storage-class/secret-storage-class.types';
 
-export interface ISwarmMessgaeEncryptedCacheOptions {
-  storageProvider?: ISecretStorage;
-  storageProviderOptions?: IISecretStorageOptions;
+export interface ISwarmMessgaeEncryptedCacheOptionsStorageProvider {
+  storageProvider: ISecretStorage;
 }
+
+export interface ISwarmMessgaeEncryptedCacheOptionsForStorageProvider {
+  storageProviderOptions: IISecretStorageOptions;
+  storageProviderAuthOptions: TSecretStorageAuthOptions;
+}
+
+export type TSwarmMessgaeEncryptedCacheOptions =
+  | ISwarmMessgaeEncryptedCacheOptionsStorageProvider
+  | ISwarmMessgaeEncryptedCacheOptionsForStorageProvider;
 
 /**
  * This is a cache of the messages decrypted
@@ -32,7 +41,7 @@ export interface ISwarmMessgaeEncryptedCache {
    * @memberof ISwarmMessgaeEncryptedCache
    */
   isRunning: boolean;
-  connect(options?: ISwarmMessgaeEncryptedCacheOptions): Promise<void>;
+  connect(options?: TSwarmMessgaeEncryptedCacheOptions): Promise<void>;
   /**
    * get body decrypted for the message with the signature
    *

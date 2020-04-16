@@ -8,6 +8,7 @@ import { ISwarmConnectionOptions } from '../swarm-connection-class/swarm-connect
 import { ICentralAuthorityOptions } from '../central-authority-class/central-authority-class.types';
 import { ISwarmMessageConstructor } from '../swarm-message/swarm-message-constructor.types';
 import { ISensitiveDataSessionStorageOptions } from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
+import { ISwarmMessgaeEncryptedCache } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 
 export type IConnectionBridgeOptionsAuthCredentials = Omit<
   ICentralAuthorityOptions['user']['credentials'],
@@ -119,6 +120,15 @@ export interface IConnectionBridge<
    * @memberof IConnectionBridge
    */
   messageConstructor?: ISwarmMessageConstructor;
+
+  /**
+   * used to store decrypted bodies of a private
+   * messages sent to another users.
+   *
+   * @type {ISwarmMessgaeEncryptedCache}
+   * @memberof IConnectionBridge
+   */
+  swarmMessageEncryptedCache?: ISwarmMessgaeEncryptedCache;
   /**
    * Connect to central authority and swarm. If the connection
    * will be succeed than the caConnection and storage

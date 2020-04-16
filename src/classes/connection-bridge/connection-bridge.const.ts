@@ -1,9 +1,17 @@
 import { ICentralAuthorityOptions } from '../central-authority-class/central-authority-class.types';
 import { CA_CONNECTION_AUTH_PROVIDERS } from '../central-authority-class/central-authority-connections/central-authority-connections.const';
+import { HASH_CALCULATION_UTILS_HASH_ALHORITHM } from '../../utils/hash-calculation-utils/hash-calculation-utils.const';
 
 export enum CONNECTION_BRIDGE_SESSION_STORAGE_KEYS {
   USER_LOGIN = 'CONNECTION_BRIDGE_SESSION_STORAGE_KEYS_USER_LOGIN',
 }
+
+export enum CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX {
+  MESSAGE_CACHE_STORAGE = '__MESSAGE_CACHE_STORAGE',
+}
+
+export const CONNECTION_BRIDGE_HASH_ALG =
+  HASH_CALCULATION_UTILS_HASH_ALHORITHM.SHA256;
 
 export const CONNECTION_BRIDGE_OPTIONS_DEFAULT_AUTH_PROVIDERS_POOL_FIREBASE_DB_PROTOCOL = {
   apiKey: 'AIzaSyCwmUlVklNmGZ0SD11NKT8gpvmZXbgbBRk',

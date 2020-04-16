@@ -254,15 +254,11 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
   }
 
   private createSecretStorage() {
-    if (this.options?.secretStorage) {
-      this.secretStorage = this.options.secretStorage;
-    } else {
-      const secretStorage = new SecretStorage(
-        SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_DEFAULT_OPTIONS_SECRET_STORAGE
-      );
+    const secretStorage = new SecretStorage(
+      SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_DEFAULT_OPTIONS_SECRET_STORAGE
+    );
 
-      this.secretStorage = secretStorage;
-    }
+    this.secretStorage = secretStorage;
   }
 
   private unsetSecretStorage() {

@@ -39,6 +39,10 @@ export interface ISecretStoreCredentialsCryptoKey {
   key: CryptoKey;
 }
 
+export type TSecretStorageAuthOptions =
+  | ISecretStoreCredentials
+  | ISecretStoreCredentialsSession;
+
 export interface ISecretStorage {
   // returns true if connected succesfully to
   // a storage and have a vaild crypto key

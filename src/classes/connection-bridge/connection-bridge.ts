@@ -20,17 +20,22 @@ import { extend } from '../../utils/common-utils/common-utils-objects';
 import {
   CONNECTION_BRIDGE_OPTIONS_DEFAULT_AUTH_PROVIDERS_POOL,
   CONNECTION_BRIDGE_SESSION_STORAGE_KEYS,
+  CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX,
 } from './connection-bridge.const';
 import { CentralAuthority } from '../central-authority-class/central-authority-class';
 import { ISwarmConnectionOptions } from '../swarm-connection-class/swarm-connection-class.types';
 import { SwarmMessageConstructor } from '../swarm-message/swarm-message-constructor';
 import { ipfsUtilsConnectBasic } from '../../utils/ipfs-utils/ipfs-utils';
 import { SwarmMessageStore } from '../swarm-message-store/swarm-message-store';
-import {
-  ISensitiveDataSessionStorageOptions,
-  ISensitiveDataSessionStorage,
-} from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
+import { ISensitiveDataSessionStorage } from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
 import { SensitiveDataSessionStorage } from 'classes/sensitive-data-session-storage';
+import { ISwarmMessgaeEncryptedCacheOptionsForStorageProvider } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { calculateHash } from '../../utils/hash-calculation-utils/hash-calculation-utils';
+import { CONNECTION_BRIDGE_HASH_ALG } from './connection-bridge.const';
+import {
+  SwarmMessageEncryptedCache,
+  ISwarmMessgaeEncryptedCache,
+} from '../swarm-messgae-encrypted-cache';
 
 /**
  * this class used if front of connection
@@ -49,6 +54,8 @@ export class ConnectionBridge<
   public storage?: ISwarmMessageStore<P>;
 
   public messageConstructor?: ISwarmMessageConstructor;
+
+  public swarmMessageEncryptedCache?: ISwarmMessgaeEncryptedCache;
 
   protected options?: IConnectionBridgeOptions<P, true>;
 
@@ -80,6 +87,7 @@ export class ConnectionBridge<
     try {
       await this.startSession();
       await this.startCentralAuthorityConnection();
+      await this.startSwarmMessageEncryptedCache();
       await this.createMessageConstructor();
       await this.startSwarmConnection();
       await this.startStorageConnection();
@@ -159,6 +167,9 @@ export class ConnectionBridge<
     }
     return {
       caConnection,
+      instances: {
+        encryptedCache: this.swarmMessageEncryptedCache,
+      },
     };
   }
 
@@ -342,6 +353,38 @@ export class ConnectionBridge<
         return ipfs;
       },
     };
+  }
+
+  protected calcStringHash(str: string) {
+    return calculateHash(str, CONNECTION_BRIDGE_HASH_ALG);
+  }
+
+  protected async startSwarmMessageEncryptedCache(): Promise<void> {
+    const login = this.options!.auth.credentials.login;
+    const swarmMessageEncryptedCache = new SwarmMessageEncryptedCache();
+    const dbName = await this.calcStringHash(
+      `__${CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX.MESSAGE_CACHE_STORAGE}_//_${login}`
+    );
+    debugger;
+    if (dbName instanceof Error) {
+      console.error('Failed to calculate hash for the Encrypted cache');
+      throw dbName;
+    }
+
+    const cacheStorageProviderOptions: ISwarmMessgaeEncryptedCacheOptionsForStorageProvider = {
+      storageProviderAuthOptions: {
+        login,
+        password: this.options!.auth.credentials.password!,
+        session: this.session,
+      },
+      storageProviderOptions: {
+        dbName,
+      },
+    };
+
+    await swarmMessageEncryptedCache.connect(cacheStorageProviderOptions);
+    debugger;
+    this.swarmMessageEncryptedCache = swarmMessageEncryptedCache;
   }
 
   /**

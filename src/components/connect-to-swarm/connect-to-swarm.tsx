@@ -1,6 +1,10 @@
 import React from 'react';
 import { connectToSwarmUtil } from './connect-to-swarm.utils';
-import { CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY } from './connect-to-swarm.const';
+import {
+  CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY,
+  CONNECT_TO_SWARM_AUTH_CREDENTIALS_1,
+  CONNECT_TO_SWARM_AUTH_CREDENTIALS_2,
+} from './connect-to-swarm.const';
 
 export class ConnectToSwarm extends React.PureComponent {
   public state = {
@@ -32,17 +36,27 @@ export class ConnectToSwarm extends React.PureComponent {
       return <span>Is connected</span>;
     }
     if (!isConnected && !isConnecting) {
-      return <button onClick={this.connectToSwarm}>Connect</button>;
+      return (
+        <div>
+          <button onClick={() => this.connectToSwarm()}>Connect cred 1</button>
+          <button onClick={() => this.connectToSwarm(2)}>Connect cred 2</button>
+        </div>
+      );
     }
     return <span>Connecting...</span>;
   }
 
-  protected connectToSwarm = async () => {
+  protected connectToSwarm = async (credentialsVariant: 1 | 2 = 1) => {
     this.setState({
       isConnecting: true,
     });
     try {
-      await connectToSwarmUtil(this.state.useSession);
+      await connectToSwarmUtil(
+        this.state.useSession,
+        credentialsVariant === 1
+          ? CONNECT_TO_SWARM_AUTH_CREDENTIALS_1
+          : CONNECT_TO_SWARM_AUTH_CREDENTIALS_2
+      );
       sessionStorage.setItem(
         CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY,
         'true'
