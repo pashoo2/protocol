@@ -53,6 +53,11 @@ export interface ISecretStorage {
     credentials: ISecretStoreCredentialsSession,
     options?: IISecretStorageOptions
   ): Promise<boolean | Error>;
+  // authorize by the crypto key provided
+  authorizeByKey(
+    credentials: ISecretStoreCredentialsCryptoKey,
+    options?: IStorageProviderOptions
+  ): Promise<boolean | Error>;
   // disconnect from the storage
   disconnect(): Promise<boolean | Error>;
   /**
@@ -99,4 +104,18 @@ export interface ISecretStorage {
    * @memberof ISecretStorage
    */
   unset(key: string | string[]): Promise<Error | void>;
+  /**
+   * generates crypto key by the credentials provided.
+   * it may be used to authorize to the storage
+   *
+   * @param {(ISecretStoreCredentials
+   *       | ISecretStoreCredentialsSession)} credentialsOrSession
+   * @returns {(Promise<CryptoKey | Error>)}
+   * @memberof ISecretStorage
+   */
+  generateCryptoKey(
+    credentialsOrSession:
+      | ISecretStoreCredentials
+      | ISecretStoreCredentialsSession
+  ): Promise<CryptoKey | Error>;
 }

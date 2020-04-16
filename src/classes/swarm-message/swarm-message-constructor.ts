@@ -27,8 +27,8 @@ import { SwarmMessageSubclassValidator } from './swarm-message-subclasses/swarm-
 import { SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_VALIDATION } from './swarm-message-constructor.const';
 import { ICentralAuthority } from '../central-authority-class/central-authority-class.types';
 import { TSwarmMessageConstructorArgumentBodyPrivate } from './swarm-message-constructor.types';
-import { ISwarmMessgaeEncryptedCache } from './swarm-message-subclasses/swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
-import { SwarmMessageEncryptedCache } from './swarm-message-subclasses/swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache';
+import { ISwarmMessgaeEncryptedCache } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { SwarmMessageEncryptedCache } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache';
 import {
   IMessageValidatorOptions,
   ISwarmMessageSubclassValidator,
@@ -81,6 +81,7 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
     return {
       validator,
       utils: options.utils,
+      encryptedCache: this.encryptedCache,
     };
   }
 
@@ -228,8 +229,7 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
         assert(
           typeof instances.encryptedCache.connect === 'function' &&
             typeof instances.encryptedCache.add === 'function' &&
-            typeof instances.encryptedCache.get === 'function' &&
-            typeof instances.encryptedCache.isValid === 'function',
+            typeof instances.encryptedCache.get === 'function',
           'Encrypted cache storage have a wrong implementation'
         );
         this.encryptedCache = instances.encryptedCache;
@@ -413,8 +413,6 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
         ...bodyWithTs,
         receiverId,
       });
-    } else {
-      await this.addToCacheMessageSignature(sig);
     }
     return swarmMessageSerialized;
   }
@@ -432,12 +430,6 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
   ) {
     if (this.encryptedCache && this.encryptedCache.isRunning) {
       await this.encryptedCache.add(sig, JSON.stringify(msgBody));
-    }
-  }
-
-  private async addToCacheMessageSignature(sig: string) {
-    if (this.encryptedCache && this.encryptedCache.isRunning) {
-      await this.encryptedCache.add(sig);
     }
   }
 }

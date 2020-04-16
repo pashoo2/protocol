@@ -3,9 +3,9 @@ import {
   ISwarmMessgaeEncryptedCache,
 } from './swarm-messgae-encrypted-cache.types';
 import assert from 'assert';
-import { ISecretStorage } from '../../../secret-storage-class/secret-storage-class.types';
-import { SecretStorage } from '../../../secret-storage-class/secret-storage-class';
-import { TSwarmMessageBodyRaw } from '../../swarm-message-constructor.types';
+import { ISecretStorage } from '../secret-storage-class/secret-storage-class.types';
+import { SecretStorage } from '../secret-storage-class/secret-storage-class';
+import { TSwarmMessageBodyRaw } from '../swarm-message/swarm-message-constructor.types';
 
 export class SwarmMessageEncryptedCache implements ISwarmMessgaeEncryptedCache {
   protected options?: ISwarmMessgaeEncryptedCacheOptions = undefined;
@@ -20,7 +20,7 @@ export class SwarmMessageEncryptedCache implements ISwarmMessgaeEncryptedCache {
     this.setIsRunning();
   }
 
-  public add = async (sig: string, message?: TSwarmMessageBodyRaw) => {
+  public add = async (sig: string, message: TSwarmMessageBodyRaw) => {
     this.checkIsActive();
 
     const value = message || null;
@@ -38,14 +38,6 @@ export class SwarmMessageEncryptedCache implements ISwarmMessgaeEncryptedCache {
       return undefined;
     }
     return result;
-  };
-
-  public isValid = async (sig: string) => {
-    const result = await this.readValue(sig);
-
-    if (result === null || typeof result === 'string') {
-      return true;
-    }
   };
 
   public unset = async (sig: string) => {

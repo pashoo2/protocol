@@ -6,6 +6,7 @@ import {
 } from '../../swarm-message-constructor.types';
 import { isCryptoKeyDataDecryption } from '../../../../utils/encryption-keys-utils/encryption-keys-utils';
 import { QueuedEncryptionClassBase } from '../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base';
+import { ISwarmMessgaeEncryptedCache } from '../../../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import {
   IQueuedEncrypyionClassBaseOptions,
   IQueuedEncrypyionClassBase,
@@ -24,6 +25,8 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
   protected constructorOptions?: ISwarmMessageSubclassParserOptions;
 
   protected msgDecryptQueue?: IQueuedEncrypyionClassBase;
+
+  protected encryptedCache?: ISwarmMessgaeEncryptedCache;
 
   protected get options(): ISwarmMessageSubclassParserOptions {
     if (!this.constructorOptions) {
@@ -113,6 +116,7 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
   protected setOptions(options: ISwarmMessageSubclassParserOptions): void {
     this.validateOptions(options);
     this.constructorOptions = options;
+    this.encryptedCache = options.encryptedCache;
   }
 
   protected startMessageDecryptQueue() {
@@ -158,8 +162,20 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
     const { utils, validator } = this.options;
     const { messageBodyRawParser } = utils;
     const { bdy: bodyRaw, isPrivate } = messageRaw;
+    let bodyRawDecrypted;
+
+    if (isPrivate) {
+      const msgBody = await this.readMessgeBody(messageRaw.sig);
+
+      if (typeof msgBody === 'string') {
+        // if the message's body decrypted found
+        bodyRawDecrypted = msgBody;
+      }
+    }
+
     const bodyRawParsed = messageBodyRawParser(
-      isPrivate ? await this.decryptMessageBodyRaw(bodyRaw) : bodyRaw
+      bodyRawDecrypted ||
+        (!isPrivate ? await this.decryptMessageBodyRaw(bodyRaw) : bodyRaw)
     );
     const swarmMessage: ISwarmMessage = {
       ...messageRaw,
@@ -200,5 +216,19 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
         return a;
       }.bind(undefined, msgSerizlized),
     };
+  }
+
+  /**
+   * read a message's body decrypted.
+   *
+   * @protected
+   * @param {string} sig
+   * @returns
+   * @memberof SwarmMessageSubclassParser
+   */
+  protected async readMessgeBody(sig: string) {
+    if (this.encryptedCache) {
+      return this.encryptedCache.get(sig);
+    }
   }
 }

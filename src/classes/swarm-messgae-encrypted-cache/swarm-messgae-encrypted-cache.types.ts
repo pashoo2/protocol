@@ -1,8 +1,8 @@
-import { TSwarmMessageBodyRaw } from '../../swarm-message-constructor.types';
+import { TSwarmMessageBodyRaw } from '../swarm-message/swarm-message-constructor.types';
 import {
   ISecretStorage,
   IISecretStorageOptions,
-} from '../../../secret-storage-class/secret-storage-class.types';
+} from '../secret-storage-class/secret-storage-class.types';
 
 export interface ISwarmMessgaeEncryptedCacheOptions {
   storageProvider?: ISecretStorage;
@@ -41,18 +41,7 @@ export interface ISwarmMessgaeEncryptedCache {
    * @memberof ISwarmMessgaeEncryptedCache
    * @throws
    */
-  get(sig: string): Promise<TSwarmMessageBodyRaw | undefined>;
-  /**
-   * returns true if the signature is exists in the storage
-   * or undefined otherwise.
-   *
-   * @param {boolean} sig
-   * @returns {Promise<boolean>}
-   * @memberof ISwarmMessgaeEncryptedCache
-   * @throws
-   */
-  isValid(sig: string): Promise<true | undefined>;
-
+  get(sig: string): Promise<TSwarmMessageBodyRaw | null | undefined>;
   /**
    * add message body to the storage or simply
    * add mark that the signature is valid.
@@ -68,7 +57,7 @@ export interface ISwarmMessgaeEncryptedCache {
    * @memberof ISwarmMessgaeEncryptedCache
    * @throws
    */
-  add(sig: string, message?: TSwarmMessageBodyRaw): Promise<boolean>;
+  add(sig: string, message: TSwarmMessageBodyRaw): Promise<boolean>;
   /**
    * unset mark or body for the messge signature
    *
