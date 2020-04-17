@@ -59,6 +59,7 @@ import {
 } from './secret-storage-class.const';
 import { IStorageProviderOptions } from 'classes/storage-providers/storage-providers.types';
 import { ISensitiveDataSessionStorage } from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
+import { isCryptoKeyDataEncryption } from '../../utils/encryption-keys-utils/encryption-keys-utils';
 
 /**
  * this classed used to store value in a
@@ -311,9 +312,22 @@ export class SecretStorage
   }
 
   public async authorize(
-    credentials: ISecretStoreCredentials | ISecretStoreCredentialsSession,
+    credentials:
+      | ISecretStoreCredentials
+      | ISecretStoreCredentialsSession
+      | ISecretStoreCredentialsCryptoKey,
     options?: IStorageProviderOptions
   ): Promise<boolean | Error> {
+    const credentialsWithKey = credentials as ISecretStoreCredentialsCryptoKey;
+
+    if (
+      credentialsWithKey.key &&
+      isCryptoKeyDataEncryption(credentialsWithKey.key) &&
+      isCryptoKeyDataEncryption(credentialsWithKey.key)
+    ) {
+      return this.authorizeByKey(credentialsWithKey, options);
+    }
+
     const credentialsWithSession = credentials as ISecretStoreCredentialsSession;
 
     if (credentialsWithSession && credentialsWithSession.session) {

@@ -39,9 +39,13 @@ export interface ISecretStoreCredentialsCryptoKey {
   key: CryptoKey;
 }
 
-export type TSecretStorageAuthOptions =
+export type TSecretStorageAuthOptionsCredentials =
   | ISecretStoreCredentials
   | ISecretStoreCredentialsSession;
+
+export type TSecretStorageAuthOptions =
+  | TSecretStorageAuthOptionsCredentials
+  | ISecretStoreCredentialsCryptoKey;
 
 export interface ISecretStorage {
   // returns true if connected succesfully to
@@ -55,6 +59,10 @@ export interface ISecretStorage {
   ): Promise<boolean | Error>;
   authorize(
     credentials: ISecretStoreCredentialsSession,
+    options?: IISecretStorageOptions
+  ): Promise<boolean | Error>;
+  authorize(
+    credentials: ISecretStoreCredentialsCryptoKey,
     options?: IISecretStorageOptions
   ): Promise<boolean | Error>;
   // authorize by the crypto key provided

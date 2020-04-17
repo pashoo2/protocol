@@ -14,6 +14,7 @@ import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-me
 import { TSwarmStoreDatabaseIteratorMethodArgument } from '../swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageSeriazlized } from '../swarm-message/swarm-message-constructor.types';
 import { TCentralAuthorityUserIdentity } from '../central-authority-class/central-authority-class-types/central-authority-class-types-common';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 
 /**
  * message unique identifier in the database
@@ -83,8 +84,11 @@ export interface ISwarmMessageStoreAccessControlOptions {
 }
 
 /**
- * swarm message constructors,specified for a databases
- * and the default constructor for a messages
+ * Swarm message constructors,specified for a databases
+ * and the default constructor for a messages.
+ * Each private database must have it's own
+ * message constructor with it's own instance of the swarm message
+ * swarm message encrypted cache.
  *
  * @export
  * @interface ISwarmMessageDatabaseConstructors
@@ -99,6 +103,7 @@ export interface ISwarmMessageStoreOptions<P extends ESwarmStoreConnector>
   accessControl?: ISwarmMessageStoreAccessControlOptions;
   messageConstructors: ISwarmMessageDatabaseConstructors;
   providerConnectionOptions: any;
+  swarmMessageConstructorFabric?: ISwarmMessageConstructorWithEncryptedCacheFabric;
 }
 
 export type TSwarmMessageStoreConnectReturnType<

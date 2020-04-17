@@ -1,5 +1,9 @@
-import { TSwarmMessageBodyRaw } from '../swarm-message/swarm-message-constructor.types';
+import {
+  TSwarmMessageBodyRaw,
+  ISwarmMessageConstructor,
+} from '../swarm-message/swarm-message-constructor.types';
 import { TSecretStorageAuthOptions } from '../secret-storage-class/secret-storage-class.types';
+import { TSwarmMessageConstructorOptions } from '../swarm-message/swarm-message-constructor.types';
 import {
   ISecretStorage,
   IISecretStorageOptions,
@@ -10,7 +14,8 @@ export interface ISwarmMessgaeEncryptedCacheOptionsStorageProvider {
 }
 
 export interface ISwarmMessgaeEncryptedCacheOptionsForStorageProvider {
-  storageProviderOptions: IISecretStorageOptions;
+  dbNamePrefix?: string;
+  storageProviderOptions?: IISecretStorageOptions;
   storageProviderAuthOptions: TSecretStorageAuthOptions;
 }
 
@@ -76,4 +81,32 @@ export interface ISwarmMessgaeEncryptedCache {
    * @throws
    */
   unset(sig: string): Promise<void>;
+}
+
+/**
+ * fabric which produces an instance of the SwarmMessageEncryptedStorage
+ * connected to the secret storage and ready to use.
+ *
+ * @export
+ * @interface ISwarmMessageEncryptedCacheFabric
+ * @throws
+ */
+export interface ISwarmMessageEncryptedCacheFabric {
+  (storageProviderOptions?: IISecretStorageOptions): Promise<
+    ISwarmMessgaeEncryptedCache
+  >;
+}
+
+/**
+ * Returns a fabric provides messages consturctors
+ * with encrypted cache support.
+ *
+ * @export
+ * @interface ISwarmMessageConstructorWithEncryptedCacheFabric
+ */
+export interface ISwarmMessageConstructorWithEncryptedCacheFabric {
+  (
+    swarmMessageConstructorOptions: Partial<TSwarmMessageConstructorOptions>,
+    storageProviderOptions?: IISecretStorageOptions
+  ): Promise<ISwarmMessageConstructor>;
 }

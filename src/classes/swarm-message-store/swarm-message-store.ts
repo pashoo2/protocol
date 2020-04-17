@@ -53,15 +53,20 @@ import {
   ISwarmMessage,
 } from '../swarm-message/swarm-message-constructor.types';
 import { isDefined } from '../../utils/common-utils/common-utils-main';
+import { SwarmMessageConstructor } from '../swarm-message/swarm-message-constructor';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessgaeEncryptedCache } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 
 export class SwarmMessageStore<P extends ESwarmStoreConnector>
   extends SwarmStore<P, ISwarmMessageStoreEvents>
   implements ISwarmMessageStore<P> {
   protected connectorType: P | undefined;
 
-  protected accessControl: ISwarmMessageStoreAccessControlOptions | undefined;
+  protected accessControl?: ISwarmMessageStoreAccessControlOptions;
 
-  protected messageConstructors: ISwarmMessageDatabaseConstructors | undefined;
+  protected messageConstructors?: ISwarmMessageDatabaseConstructors;
+
+  protected swarmMessageConstructorFabric?: ISwarmMessageConstructorWithEncryptedCacheFabric;
 
   protected get dbMethodAddMessage(): TSwarmStoreDatabaseMethod<P> {
     const { connectorType } = this;
@@ -216,6 +221,7 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
     this.connectorType = options.provider;
     this.accessControl = options.accessControl;
     this.messageConstructors = options.messageConstructors;
+    this.swarmMessageConstructorFabric = options.swarmMessageConstructorFabric;
   }
 
   /**
@@ -227,13 +233,20 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
    * @returns {(ISwarmMessageConstructor | undefined)}
    * @memberof SwarmMessageStore
    */
-  protected getMessageConstructor(
+  protected async getMessageConstructor(
     dbName: string
-  ): ISwarmMessageConstructor | undefined {
-    if (!dbName || !this.messageConstructors) {
+  ): Promise<ISwarmMessageConstructor | undefined> {
+    if (!dbName) {
       return;
     }
-    return getMessageConstructorForDatabase(dbName, this.messageConstructors);
+    const messageConstructor =
+      this.messageConstructors &&
+      getMessageConstructorForDatabase(dbName, this.messageConstructors);
+
+    if (!messageConstructor) {
+      return this.createMessageConstructorForDb(dbName);
+    }
+    return messageConstructor;
   }
 
   /**
@@ -298,7 +311,7 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
       message,
       messageAddress,
     });
-    const messageConstructor = this.getMessageConstructor(dbName);
+    const messageConstructor = await this.getMessageConstructor(dbName);
 
     if (
       typeof message !== 'object' ||
@@ -456,14 +469,14 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
     }
   }
 
-  protected collectMessagesFromOrbitDBIterator(
+  protected async collectMessagesFromOrbitDBIterator(
     dbName: string,
     iteratorAnswer: TSwarmStoreDatabaseIteratorMethodAnswer<
       ESwarmStoreConnector.OrbitDB,
       string
     > // TODO - may be not a string
   ): Promise<(ISwarmMessageInstance | Error)[]> {
-    const messageConstructor = this.getMessageConstructor(dbName);
+    const messageConstructor = await this.getMessageConstructor(dbName);
 
     if (!messageConstructor) {
       throw new Error(
@@ -548,5 +561,14 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
       default:
         return String(addMessageResponse);
     }
+  }
+
+  protected async createMessageConstructorForDb(
+    dbName: string
+  ): Promise<ISwarmMessageConstructor | undefined> {
+    if (!this.swarmMessageConstructorFabric) {
+      return;
+    }
+    return this.swarmMessageConstructorFabric({}, { dbName });
   }
 }

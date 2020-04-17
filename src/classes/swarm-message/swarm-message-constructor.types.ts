@@ -221,8 +221,8 @@ export interface ISwarmMessageConstructorOptionsRequired {
  * @interface ISwarmMessageConstructorOptions
  */
 export type TSwarmMessageConstructorOptions = Omit<
-  Omit<ISwarmMessageConstructorOptionsRequired, 'utils'>,
-  'validation'
+  ISwarmMessageConstructorOptionsRequired,
+  'utils' | 'validation'
 > & {
   utils?: Partial<ISwarmMessageConstructorOptionsRequired['utils']>;
   validation?: Partial<ISwarmMessageConstructorOptionsRequired['validation']>;

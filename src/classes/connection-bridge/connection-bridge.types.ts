@@ -8,7 +8,11 @@ import { ISwarmConnectionOptions } from '../swarm-connection-class/swarm-connect
 import { ICentralAuthorityOptions } from '../central-authority-class/central-authority-class.types';
 import { ISwarmMessageConstructor } from '../swarm-message/swarm-message-constructor.types';
 import { ISensitiveDataSessionStorageOptions } from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
-import { ISwarmMessgaeEncryptedCache } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import {
+  ISwarmMessgaeEncryptedCache,
+  ISwarmMessageEncryptedCacheFabric,
+} from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 
 export type IConnectionBridgeOptionsAuthCredentials = Omit<
   ICentralAuthorityOptions['user']['credentials'],
@@ -122,13 +126,23 @@ export interface IConnectionBridge<
   messageConstructor?: ISwarmMessageConstructor;
 
   /**
-   * used to store decrypted bodies of a private
-   * messages sent to another users.
+   * Fabric which provides instances of SwarmMessageEncryptedCache,
+   * already connected to the storage and ready to use.
    *
-   * @type {ISwarmMessgaeEncryptedCache}
+   * @type {ISwarmMessageEncryptedCacheFabric}
    * @memberof IConnectionBridge
    */
-  swarmMessageEncryptedCache?: ISwarmMessgaeEncryptedCache;
+  swarmMessageEncryptedCacheFabric?: ISwarmMessageEncryptedCacheFabric;
+
+  /**
+   * allows to construct SwarmMessagesConstructor with support of
+   * encrypted cache storage and ready to use.
+   *
+   * @type {ISwarmMessageConstructorWithEncryptedCacheFabric}
+   * @memberof IConnectionBridge
+   */
+  swarmMessageConstructorFabric?: ISwarmMessageConstructorWithEncryptedCacheFabric;
+
   /**
    * Connect to central authority and swarm. If the connection
    * will be succeed than the caConnection and storage

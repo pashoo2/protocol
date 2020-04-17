@@ -10,13 +10,32 @@ import {
   ISwarmMessgaeEncryptedCacheOptionsStorageProvider,
   ISwarmMessgaeEncryptedCacheOptionsForStorageProvider,
 } from './swarm-messgae-encrypted-cache.types';
+import {
+  SWARM_MESSGAE_ENCRYPTED_CACHE_DEFAULT_STORAGE_DATABASE_NAME,
+  SWARM_MESSGAE_ENCRYPTED_CACHE_DEFAULT_STORAGE_DATABASE_NAME_HASH,
+} from './swarm-messgae-encrypted-cache.const';
+import { calculateHash } from '../../utils/hash-calculation-utils/hash-calculation-utils';
 
 export class SwarmMessageEncryptedCache implements ISwarmMessgaeEncryptedCache {
+  public isRunning: boolean = false;
+
   protected options?: TSwarmMessgaeEncryptedCacheOptions = undefined;
 
   protected storageProvider?: ISecretStorage = undefined;
 
-  public isRunning: boolean = false;
+  protected get dbNamePrefix() {
+    return (
+      (this.options as ISwarmMessgaeEncryptedCacheOptionsForStorageProvider)
+        ?.dbNamePrefix || ''
+    );
+  }
+
+  protected get dbName() {
+    return `${(this
+      .options as ISwarmMessgaeEncryptedCacheOptionsForStorageProvider)
+      ?.storageProviderOptions?.dbName ||
+      SWARM_MESSGAE_ENCRYPTED_CACHE_DEFAULT_STORAGE_DATABASE_NAME}`;
+  }
 
   public async connect(options: TSwarmMessgaeEncryptedCacheOptions) {
     this.setOptions(options);
@@ -75,10 +94,6 @@ export class SwarmMessageEncryptedCache implements ISwarmMessgaeEncryptedCache {
       const optsWithConfForStorageProviderConnection = options as ISwarmMessgaeEncryptedCacheOptionsForStorageProvider;
 
       assert(
-        optsWithConfForStorageProviderConnection.storageProviderOptions,
-        'Options for connection to the storage provider must be provided'
-      );
-      assert(
         optsWithConfForStorageProviderConnection.storageProviderAuthOptions,
         'Options for authorization to the storage provider must be provided'
       );
@@ -108,12 +123,27 @@ export class SwarmMessageEncryptedCache implements ISwarmMessgaeEncryptedCache {
       );
     }
 
-    const storageProvider = new SecretStorage();
+    const {
+      storageProviderOptions,
+      storageProviderAuthOptions,
+    } = optsWithConfForStorageProviderConnection;
 
-    await storageProvider.authorize(
-      optsWithConfForStorageProviderConnection.storageProviderAuthOptions,
-      optsWithConfForStorageProviderConnection.storageProviderOptions
+    const storageProvider = new SecretStorage();
+    const dbName = await calculateHash(
+      this.dbName,
+      SWARM_MESSGAE_ENCRYPTED_CACHE_DEFAULT_STORAGE_DATABASE_NAME_HASH
     );
+
+    if (dbName instanceof Error) {
+      console.error(
+        `Failed to calculate hash for the database name ${this.dbName}`
+      );
+      throw dbName;
+    }
+    await storageProvider.authorize(storageProviderAuthOptions, {
+      ...storageProviderOptions,
+      dbName,
+    });
     this.setStorageProvider(storageProvider);
   }
 

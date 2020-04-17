@@ -29,13 +29,16 @@ import { ipfsUtilsConnectBasic } from '../../utils/ipfs-utils/ipfs-utils';
 import { SwarmMessageStore } from '../swarm-message-store/swarm-message-store';
 import { ISensitiveDataSessionStorage } from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
 import { SensitiveDataSessionStorage } from 'classes/sensitive-data-session-storage';
-import { ISwarmMessgaeEncryptedCacheOptionsForStorageProvider } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
-import { calculateHash } from '../../utils/hash-calculation-utils/hash-calculation-utils';
-import { CONNECTION_BRIDGE_HASH_ALG } from './connection-bridge.const';
 import {
-  SwarmMessageEncryptedCache,
-  ISwarmMessgaeEncryptedCache,
-} from '../swarm-messgae-encrypted-cache';
+  ISwarmMessageEncryptedCacheFabric,
+  ISwarmMessageConstructorWithEncryptedCacheFabric,
+} from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { CONNECTION_BRIDGE_STORAGE_DATABASE_NAME } from './connection-bridge.const';
+import {
+  getSwarmMessageEncryptedCacheFabric,
+  getSwarmMessageConstructorWithCacheFabric,
+} from '../swarm-messgae-encrypted-cache/swarm-message-encrypted-cache.utils';
+import { ISwarmMessgaeEncryptedCache } from '../swarm-messgae-encrypted-cache';
 
 /**
  * this class used if front of connection
@@ -55,7 +58,9 @@ export class ConnectionBridge<
 
   public messageConstructor?: ISwarmMessageConstructor;
 
-  public swarmMessageEncryptedCache?: ISwarmMessgaeEncryptedCache;
+  public swarmMessageEncryptedCacheFabric?: ISwarmMessageEncryptedCacheFabric;
+
+  public swarmMessageConstructorFabric?: ISwarmMessageConstructorWithEncryptedCacheFabric;
 
   protected options?: IConnectionBridgeOptions<P, true>;
 
@@ -68,6 +73,8 @@ export class ConnectionBridge<
   protected optionsMessageStorage?: ISwarmMessageStoreOptions<P>;
 
   protected session?: ISensitiveDataSessionStorage;
+
+  protected swarmMessageEncryptedCache?: ISwarmMessgaeEncryptedCache;
 
   protected swarmConnection?: {
     getNativeConnection(): any;
@@ -87,6 +94,8 @@ export class ConnectionBridge<
     try {
       await this.startSession();
       await this.startCentralAuthorityConnection();
+      await this.createSwarmMessageEncryptedCacheFabric();
+      await this.createSwarmMessageConstructorFabric();
       await this.startSwarmMessageEncryptedCache();
       await this.createMessageConstructor();
       await this.startSwarmConnection();
@@ -109,6 +118,8 @@ export class ConnectionBridge<
     await this.closeStorage();
     await this.closeMessageConstructor();
     await this.closeSwarmConnection();
+    await this.closeSwarmMessageEncryptedCacheFabric();
+    await this.closeSwarmMessageConstructorFabric();
     await this.closeCentralAuthorityConnection();
   }
 
@@ -221,6 +232,7 @@ export class ConnectionBridge<
       ...storageOptions,
       credentials: authCredentials,
       userId,
+      swarmMessageConstructorFabric: this.swarmMessageConstructorFabric,
       messageConstructors: {
         default: messageConstructor,
       },
@@ -328,9 +340,13 @@ export class ConnectionBridge<
    */
   protected async createMessageConstructor(): Promise<void> {
     const options = this.setOptionsMessageConstructor();
-    const messageConstructor = new SwarmMessageConstructor(options);
 
-    this.messageConstructor = messageConstructor;
+    if (!this.swarmMessageConstructorFabric) {
+      throw new Error(
+        'Swarm message constructor fabric must be created before'
+      );
+    }
+    this.messageConstructor = await this.swarmMessageConstructorFabric(options);
   }
 
   /**
@@ -355,36 +371,45 @@ export class ConnectionBridge<
     };
   }
 
-  protected calcStringHash(str: string) {
-    return calculateHash(str, CONNECTION_BRIDGE_HASH_ALG);
+  protected getOptionsSwarmMessageEncryptedCache() {
+    const login = this.options!.auth.credentials.login;
+
+    return {
+      login,
+      password: this.options!.auth.credentials.password!,
+      session: this.session,
+    };
+  }
+
+  protected async createSwarmMessageEncryptedCacheFabric(): Promise<void> {
+    const login = this.options!.auth.credentials.login;
+    this.swarmMessageEncryptedCacheFabric = await getSwarmMessageEncryptedCacheFabric(
+      this.getOptionsSwarmMessageEncryptedCache(),
+      `__${CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX.MESSAGE_CACHE_STORAGE}_//_${login}`
+    );
+  }
+
+  protected async createSwarmMessageConstructorFabric(): Promise<void> {
+    const login = this.options!.auth.credentials.login;
+    this.swarmMessageConstructorFabric = await getSwarmMessageConstructorWithCacheFabric(
+      this.getOptionsSwarmMessageEncryptedCache(),
+      {
+        caConnection: this.caConnection!,
+        instances: {},
+      },
+      `__${CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX.MESSAGE_CACHE_STORAGE}_//_${login}`
+    );
   }
 
   protected async startSwarmMessageEncryptedCache(): Promise<void> {
-    const login = this.options!.auth.credentials.login;
-    const swarmMessageEncryptedCache = new SwarmMessageEncryptedCache();
-    const dbName = await this.calcStringHash(
-      `__${CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX.MESSAGE_CACHE_STORAGE}_//_${login}`
-    );
-    debugger;
-    if (dbName instanceof Error) {
-      console.error('Failed to calculate hash for the Encrypted cache');
-      throw dbName;
+    if (!this.swarmMessageEncryptedCacheFabric) {
+      throw new Error('Encrypted cache fabric must be started before');
     }
-
-    const cacheStorageProviderOptions: ISwarmMessgaeEncryptedCacheOptionsForStorageProvider = {
-      storageProviderAuthOptions: {
-        login,
-        password: this.options!.auth.credentials.password!,
-        session: this.session,
-      },
-      storageProviderOptions: {
-        dbName,
-      },
-    };
-
-    await swarmMessageEncryptedCache.connect(cacheStorageProviderOptions);
-    debugger;
-    this.swarmMessageEncryptedCache = swarmMessageEncryptedCache;
+    this.swarmMessageEncryptedCache = await this.swarmMessageEncryptedCacheFabric(
+      {
+        dbName: CONNECTION_BRIDGE_STORAGE_DATABASE_NAME.MESSAGE_CACHE_STORAGE,
+      }
+    );
   }
 
   /**
@@ -471,6 +496,26 @@ export class ConnectionBridge<
     }
     this.swarmConnection = undefined;
     this.optionsSwarmConnection = undefined;
+  }
+
+  /**
+   * close the instance of the fabric
+   *
+   * @protected
+   * @memberof ConnectionBridge
+   */
+  protected async closeSwarmMessageEncryptedCacheFabric() {
+    this.swarmMessageEncryptedCacheFabric = undefined;
+  }
+
+  /**
+   * close the instance of the fabric
+   *
+   * @protected
+   * @memberof ConnectionBridge
+   */
+  protected async closeSwarmMessageConstructorFabric() {
+    this.swarmMessageConstructorFabric = undefined;
   }
 
   /**
