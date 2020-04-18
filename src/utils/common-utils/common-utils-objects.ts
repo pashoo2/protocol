@@ -14,6 +14,9 @@ export const getObjectKeys = (o: object): Array<TObjectKeys> =>
     Object.getOwnPropertySymbols(o)
   );
 
+export const isSimpleObject = (o: any): o is object =>
+  typeof o === 'object' && Object.getPrototypeOf(o) === Object.prototype;
+
 /**
  * extends object with another object if the object
  * have no properties
@@ -32,6 +35,12 @@ export function extend<T extends TDictionary<any>, E extends TDictionary<any>>(
 ): T & E {
   if (!o) {
     return ext;
+  }
+  if (!isSimpleObject(o) || !isSimpleObject(ext)) {
+    if (replaceExisting && ext) {
+      return ext;
+    }
+    return (!o || isEmptyObject(o)) && ext ? ext : o;
   }
 
   const keys = getObjectKeys(ext);

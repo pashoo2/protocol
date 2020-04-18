@@ -66,7 +66,9 @@ export const getSwarmMessageConstructorWithCacheFabric = async (
     swarmMessageConstructorOptions: Partial<TSwarmMessageConstructorOptions>,
     storageProviderOptions?: IISecretStorageOptions
   ) => {
-    const encryptedCache = await encryptedCacheFabric(storageProviderOptions);
+    const encryptedCache =
+      swarmMessageConstructorOptions.instances?.encryptedCache ||
+      (await encryptedCacheFabric(storageProviderOptions));
     const options = extend(swarmMessageConstructorOptions, {
       ...constructorOptions,
       instances: {

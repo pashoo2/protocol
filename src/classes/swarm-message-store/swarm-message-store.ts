@@ -589,6 +589,7 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
     if (!this.swarmMessageConstructorFabric) {
       return;
     }
+    debugger;
     return this.swarmMessageConstructorFabric({}, { dbName });
   }
 }

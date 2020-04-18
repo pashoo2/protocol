@@ -129,12 +129,12 @@ export class SensitiveDataSessionStorage
   }
 
   private subscribeOnWindowUnload() {
-    window.onbeforeunload = async () => {
+    window.addEventListener('beforeunload', () => {
       const v = this._tempStringified;
       if (v && typeof v === 'string') {
         sessionStorage.setItem(this.storageKeyValue, v);
       }
-    };
+    });
   }
 
   private async readFromStorage(pinCode?: string) {

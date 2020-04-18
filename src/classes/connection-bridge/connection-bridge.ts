@@ -24,7 +24,6 @@ import {
 } from './connection-bridge.const';
 import { CentralAuthority } from '../central-authority-class/central-authority-class';
 import { ISwarmConnectionOptions } from '../swarm-connection-class/swarm-connection-class.types';
-import { SwarmMessageConstructor } from '../swarm-message/swarm-message-constructor';
 import { ipfsUtilsConnectBasic } from '../../utils/ipfs-utils/ipfs-utils';
 import { SwarmMessageStore } from '../swarm-message-store/swarm-message-store';
 import { ISensitiveDataSessionStorage } from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
@@ -74,6 +73,8 @@ export class ConnectionBridge<
 
   protected session?: ISensitiveDataSessionStorage;
 
+  protected userDataStore?: ISensitiveDataSessionStorage;
+
   protected swarmMessageEncryptedCache?: ISwarmMessgaeEncryptedCache;
 
   protected swarmConnection?: {
@@ -90,7 +91,7 @@ export class ConnectionBridge<
    * @throws
    */
   public async connect(options: IConnectionBridgeOptions<P>): Promise<void> {
-    this.setOptions(options);
+    await this.setOptions(options);
     try {
       await this.startSession();
       await this.startCentralAuthorityConnection();
@@ -244,6 +245,16 @@ export class ConnectionBridge<
     return messageStorageOptions;
   }
 
+  protected async startUserDataStore() {
+    const userDataStore = new SensitiveDataSessionStorage();
+
+    await userDataStore.connect({
+      storagePrefix:
+        CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX.USER_DATA_STORAGE,
+    });
+    this.userDataStore = userDataStore;
+  }
+
   /**
    *
    *
@@ -252,11 +263,12 @@ export class ConnectionBridge<
    * @memberof ConnectionBridge
    * @throws
    */
-  protected setOptions(options: IConnectionBridgeOptions<P>) {
+  protected async setOptions(options: IConnectionBridgeOptions<P>) {
+    await this.startUserDataStore();
     assert(options, 'Options must be provided');
     assert(typeof options === 'object', 'Options must be an object');
     if (options.auth.credentials?.login) {
-      sessionStorage.setItem(
+      await this.userDataStore?.setItem(
         CONNECTION_BRIDGE_SESSION_STORAGE_KEYS.USER_LOGIN,
         options.auth.credentials.login
       );
@@ -267,7 +279,7 @@ export class ConnectionBridge<
         'A session must be started if there is no credentials provided'
       );
 
-      const login = sessionStorage.getItem(
+      const login = await this.userDataStore?.getItem(
         CONNECTION_BRIDGE_SESSION_STORAGE_KEYS.USER_LOGIN
       );
 
@@ -391,6 +403,7 @@ export class ConnectionBridge<
 
   protected async createSwarmMessageConstructorFabric(): Promise<void> {
     const login = this.options!.auth.credentials.login;
+
     this.swarmMessageConstructorFabric = await getSwarmMessageConstructorWithCacheFabric(
       this.getOptionsSwarmMessageEncryptedCache(),
       {
@@ -402,12 +415,14 @@ export class ConnectionBridge<
   }
 
   protected async startSwarmMessageEncryptedCache(): Promise<void> {
+    const login = this.options!.auth.credentials.login;
+
     if (!this.swarmMessageEncryptedCacheFabric) {
       throw new Error('Encrypted cache fabric must be started before');
     }
     this.swarmMessageEncryptedCache = await this.swarmMessageEncryptedCacheFabric(
       {
-        dbName: CONNECTION_BRIDGE_STORAGE_DATABASE_NAME.MESSAGE_CACHE_STORAGE,
+        dbName: `${CONNECTION_BRIDGE_STORAGE_DATABASE_NAME.MESSAGE_CACHE_STORAGE}_//_${login}`,
       }
     );
   }
