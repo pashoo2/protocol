@@ -1,15 +1,37 @@
 import { ownValueOf } from './../../types/helper.types';
 import { STORAGE_PROVIDERS_NAME } from './storage-providers.const';
+
 export interface IStorageProviderOptions {
   dbName?: string;
 }
 
 export abstract class StorageProvider {
+  /**
+   * connect to the database specified
+   *
+   * @abstract
+   * @param {IStorageProviderOptions} [options]
+   * @returns {(Promise<boolean | Error>)}
+   * @memberof StorageProvider
+   */
   public abstract connect(
     options?: IStorageProviderOptions
   ): Promise<boolean | Error>;
   public abstract disconnect(): Promise<boolean | Error>;
+  /**
+   * remove the database connected to with all content of it.
+   * If not connected to a database, an error will be returned.
+   * It may be very expensive operation, dependently on a
+   * storage provider connected with.
+   *
+   * @abstract
+   * @returns {(Promise<boolean | Error>)}
+   * @memberof StorageProvider
+   */
+  public abstract removeDb(): Promise<boolean | Error>;
   public abstract set(key: string, value?: string): Promise<boolean | Error>;
+
+  public abstract unset(key: string): Promise<boolean | Error>;
 
   public abstract setUInt8Array?(
     key: string,

@@ -1,4 +1,5 @@
 import localforage from 'localforage';
+import assert from 'assert';
 import {
   StorageProvider,
   IStorageProviderOptions,
@@ -41,7 +42,6 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
           'The instance of the SecretStorageProvider was closed before'
         );
       }
-
       this.setOptions(options);
 
       const res = await this.createInstanceOfLocalforage();
@@ -65,13 +65,13 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
         return true;
       }
       this.setIsDisconnected();
+      this.localForage = undefined;
       if (localForage) {
-        await localForage.ready();
-
-        return true;
+        await localForage.dropInstance();
       }
     } catch (err) {
       console.error(err);
+      return err;
     }
     return true;
   }
@@ -85,7 +85,7 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
    * @returns {(Promise<Error | true>)}
    * @memberof SecretStorageProviderLevelJS
    */
-  public async set(key: string, value?: string): Promise<Error | true> {
+  public async set(key: string, value?: string): Promise<Error | boolean> {
     try {
       const isDisconnected = this.checkIsReady();
 
@@ -99,7 +99,7 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
         return new Error('There is no storage connected');
       }
       if (!value) {
-        await levelStorage.removeItem(key);
+        return this.unset(key);
       } else {
         await levelStorage.setItem(key, value);
       }
@@ -121,7 +121,7 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
   public async setUInt8Array(
     key: string,
     value?: Uint8Array
-  ): Promise<Error | true> {
+  ): Promise<Error | boolean> {
     try {
       const isDisconnected = this.checkIsReady();
 
@@ -135,10 +135,9 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
         return new Error('There is no storage connected');
       }
       if (!value) {
-        await levelStorage.removeItem(key);
-      } else {
-        await levelStorage.setItem(key, value);
+        return this.unset(key);
       }
+      await levelStorage.setItem(key, value);
       return true;
     } catch (err) {
       return err;
@@ -163,6 +162,48 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
         return undefined;
       }
       return item;
+    } catch (err) {
+      return err;
+    }
+  }
+
+  public async unset(key: string): Promise<Error | boolean> {
+    try {
+      const isDisconnected = this.checkIsReady();
+      const { localForage } = this;
+
+      if (isDisconnected instanceof Error) {
+        return isDisconnected;
+      }
+      if (!localForage) {
+        return new Error('There is no connection to the local forage');
+      }
+      await localForage.removeItem(key);
+      return true;
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
+  }
+
+  public async removeDb(): Promise<Error | boolean> {
+    try {
+      const isDisconnected = this.checkIsReady();
+      const { localForage } = this;
+
+      if (isDisconnected instanceof Error) {
+        return isDisconnected;
+      }
+      if (!localForage) {
+        return new Error('There is no connection to the local forage');
+      }
+      if (
+        this.dbName === SECRET_STORAGE_LOCAL_FORAGE_PROVIDER_DEFAULTS_DB_NAME
+      ) {
+        return new Error("The DEFAULT database can't be removed");
+      }
+      await localForage.clear();
+      return true;
     } catch (err) {
       return err;
     }
@@ -201,7 +242,11 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
 
       const { dbName } = options;
 
-      if (dbName && typeof dbName === 'string') {
+      if (dbName) {
+        assert(
+          typeof dbName === 'string',
+          'A name of the database must be a string'
+        );
         this.dbName = dbName;
       }
     }
@@ -224,12 +269,10 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
 
   protected async createInstanceOfLocalforage(): Promise<void | Error> {
     const { dbName } = this;
-    const dbNameRes =
-      dbName || SECRET_STORAGE_LOCAL_FORAGE_PROVIDER_DEFAULTS_DB_NAME;
 
     const localForage = localforage.createInstance({
-      name: dbNameRes,
-      storeName: dbNameRes,
+      name: dbName,
+      storeName: dbName,
       driver: SECRET_STORAGE_LOCAL_FORAGE_PROVIDER_DRIVER,
     });
 

@@ -130,4 +130,10 @@ export interface ISecretStorage {
       | ISecretStoreCredentials
       | ISecretStoreCredentialsSession
   ): Promise<CryptoKey | Error>;
+  /**
+   *
+   *
+   * @returns {(Promise<boolean | Error>)}
+   * @memberof ISecretStorage
+   */
 }

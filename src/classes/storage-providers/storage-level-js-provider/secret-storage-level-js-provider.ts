@@ -54,11 +54,10 @@ export class SecretStorageProviderLevelJS implements StorageProvider {
       this.setIsDisconnected();
       if (levelStorage) {
         await levelStorage.close();
-
-        return true;
       }
     } catch (err) {
       console.error(err);
+      return err;
     }
     return true;
   }
@@ -86,10 +85,56 @@ export class SecretStorageProviderLevelJS implements StorageProvider {
         return new Error('There is no storage connected');
       }
       if (!value) {
-        await levelStorage.del(key);
+        return this.unset(key);
       } else {
         await levelStorage.put(key, value);
       }
+      return true;
+    } catch (err) {
+      return err;
+    }
+  }
+
+  public async unset(key: string): Promise<Error | true> {
+    try {
+      const isDisconnected = this.checkIsReady();
+
+      if (isDisconnected instanceof Error) {
+        return isDisconnected;
+      }
+
+      const { levelStorage } = this;
+
+      if (!levelStorage) {
+        return new Error('There is no storage connected');
+      }
+      await levelStorage.del(key);
+      return true;
+    } catch (err) {
+      return err;
+    }
+  }
+
+  public async removeDb(): Promise<Error | boolean> {
+    try {
+      const isDisconnected = this.checkIsReady();
+      const { levelStorage } = this;
+
+      if (isDisconnected instanceof Error) {
+        return isDisconnected;
+      }
+      if (!levelStorage) {
+        return new Error('There is no connection to the local forage');
+      }
+      if (this.dbName === SECRET_STORAGE_LEVELJS_PROVIDER_DEFAULTS_DB_NAME) {
+        return new Error("The DEFAULT database can't be removed");
+      }
+      if (!(levelStorage as any).clear) {
+        return new Error(
+          'The version of the library does not supports for a db clearing'
+        );
+      }
+      await (levelStorage as any).clear();
       return true;
     } catch (err) {
       return err;
@@ -122,10 +167,9 @@ export class SecretStorageProviderLevelJS implements StorageProvider {
         return new Error('There is no storage connected');
       }
       if (!value) {
-        await levelStorage.del(key);
-      } else {
-        await levelStorage.put(key, value);
+        return this.unset(key);
       }
+      await levelStorage.put(key, value);
       return true;
     } catch (err) {
       return err;
@@ -202,16 +246,13 @@ export class SecretStorageProviderLevelJS implements StorageProvider {
 
   protected async createInstanceOfLevelDB(): Promise<void | Error> {
     const { dbName } = this;
-    const dbNameRes =
-      dbName || SECRET_STORAGE_LEVELJS_PROVIDER_DEFAULTS_DB_NAME;
-
-    const levelStorage = levelup(leveljs(dbNameRes));
+    const levelStorage = levelup(leveljs(dbName));
 
     try {
       await levelStorage.open();
     } catch (err) {
       return err;
     }
-    this.levelStorage = levelup(leveljs(dbNameRes));
+    this.levelStorage = levelStorage;
   }
 }
