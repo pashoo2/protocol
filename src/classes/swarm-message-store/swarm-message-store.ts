@@ -186,6 +186,26 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
     );
   }
 
+  public async dropDatabase(dbName: string): Promise<void | Error> {
+    const dropDbResult = await super.dropDatabase(dbName);
+
+    if (dropDbResult instanceof Error) {
+      return dropDbResult;
+    }
+    const messageConstructor = await this.getMessageConstructor(dbName);
+
+    try {
+      if (messageConstructor?.encryptedCache) {
+        await messageConstructor.encryptedCache.clearDb();
+      }
+    } catch (err) {
+      console.error(
+        `Failed to clear messages encrypted cache for the database ${dbName}`
+      );
+      return err;
+    }
+  }
+
   protected validateOpts(options: ISwarmMessageStoreOptions<P>): void {
     super.validateOptions(options);
 

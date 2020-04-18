@@ -144,6 +144,21 @@ export class SwarmStore<
     return connector.closeDatabase(dbName);
   }
 
+  public async dropDatabase(dbName: string): Promise<void | Error> {
+    const { connector } = this;
+
+    if (!connector) {
+      return new Error('Connector is not exists');
+    }
+    this.setClosedStatusForDb(dbName);
+
+    const dropDatabaseResult = await connector.dropDatabase(dbName);
+
+    if (dropDatabaseResult instanceof Error) {
+      return dropDatabaseResult;
+    }
+  }
+
   /**
    * send request (get, set and so on) to a swarm database
    *
@@ -272,7 +287,6 @@ export class SwarmStore<
       connection instanceof Constructor,
       `Failed to create connection with the provider ${provider}`
     );
-
     return connection;
   }
 

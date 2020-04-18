@@ -198,6 +198,20 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       .map(this.parseValueStored);
   }
 
+  public async drop() {
+    const database = this.getDbStoreInstance();
+
+    if (database instanceof Error) {
+      return database;
+    }
+    try {
+      await database.drop();
+      // TODO drop the database in the storage
+      debugger;
+    } catch (err) {
+      return err;
+    }
+  }
   protected parseValueStored = (
     e: LogEntry<TFeedStoreType>
   ):

@@ -73,6 +73,14 @@ export class SwarmMessageEncryptedCache implements ISwarmMessgaeEncryptedCache {
     }
   };
 
+  public async clearDb() {
+    const clearDbResult = await this.storageProvider?.clearDb();
+
+    if (clearDbResult instanceof Error) {
+      throw clearDbResult;
+    }
+  }
+
   protected setOptions(options: TSwarmMessgaeEncryptedCacheOptions) {
     assert(options, 'Options must be provided');
     assert(typeof options === 'object', 'Options must be an object');

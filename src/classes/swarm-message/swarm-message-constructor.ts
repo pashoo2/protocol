@@ -37,6 +37,8 @@ import {
 export class SwarmMessageConstructor implements ISwarmMessageConstructor {
   public caConnection?: ICentralAuthority;
 
+  public encryptedCache?: ISwarmMessgaeEncryptedCache;
+
   protected constructorOptions?: ISwarmMessageConstructorOptionsRequired;
 
   protected validator?: ISwarmMessageSubclassValidator;
@@ -44,8 +46,6 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
   protected serializer?: ISwarmMessageSerializer;
 
   protected parser?: ISwarmMessageSubclassParser;
-
-  protected encryptedCache?: ISwarmMessgaeEncryptedCache;
 
   /**
    * return full object with options

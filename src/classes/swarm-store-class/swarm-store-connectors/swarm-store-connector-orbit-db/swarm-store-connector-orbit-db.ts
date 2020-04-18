@@ -253,6 +253,21 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
     this.emit(ESwarmStoreEventNames.READY, dbOptions.dbName);
   };
 
+  public async dropDatabase(dbName: string) {
+    const db = this.getDbConnection(dbName);
+
+    if (db) {
+      try {
+        await db.drop();
+        await this.closeDb(db);
+      } catch (err) {
+        console.error(err);
+        return err;
+      }
+    }
+    return new Error(`The database named ${dbName} was not found`);
+  }
+
   public async closeDatabase(dbName: string): Promise<Error | void> {
     const db = this.getDbConnection(dbName);
 

@@ -81,6 +81,14 @@ export interface ISwarmMessgaeEncryptedCache {
    * @throws
    */
   unset(sig: string): Promise<void>;
+
+  /**
+   * clear the database and all of it's content
+   *
+   * @returns {Promise<void>}
+   * @memberof ISwarmMessgaeEncryptedCache
+   */
+  clearDb(): Promise<void>;
 }
 
 /**

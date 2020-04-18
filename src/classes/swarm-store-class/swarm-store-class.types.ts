@@ -213,6 +213,15 @@ export interface ISwarmStoreConnectorBase<P extends ESwarmStoreConnector> {
   closeDatabase(
     dbName: TSwarmStoreDatabaseOptions<P>['dbName']
   ): Promise<void | Error>;
+  /**
+   * drop the local copy of the database connected to
+   * and close connection with the database.
+   *
+   * @param {string} dbName
+   * @returns {(Promise<Error | boolean>)}
+   * @memberof ISwarmStoreConnectorBase
+   */
+  dropDatabase(dbName: string): Promise<void | Error>;
   // send request to a swarm database to perform
   // an operation such as read or seta value
   // on a database

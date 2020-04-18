@@ -231,6 +231,7 @@ export type TSwarmMessageConstructorOptions = Omit<
 // construct message from a serialized
 export interface ISwarmMessageConstructor {
   readonly caConnection?: ICentralAuthority;
+  readonly encryptedCache?: ISwarmMessgaeEncryptedCache;
   construct(message: TSwarmMessageSeriazlized): Promise<ISwarmMessageInstance>;
 }
 
