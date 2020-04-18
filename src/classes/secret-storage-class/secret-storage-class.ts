@@ -520,6 +520,23 @@ export class SecretStorage
     }
   }
 
+  public async clearDb() {
+    if (!this.isRunning) {
+      return SecretStorage.error(
+        'The instance of SecretStorage is not connected to the storage provider or there is no an encryption key'
+      );
+    }
+    const result = await this.storageProvider?.clearDb();
+
+    if (result instanceof Error) {
+      console.error(result);
+      return SecretStorage.error(
+        'Failed to clear the database with the storage provider'
+      );
+    }
+    return true;
+  }
+
   private setStorageProviderName(
     storageProviderName: string = STORAGE_PROVIDERS_NAME.LOCAL_STORAGE
   ): boolean {

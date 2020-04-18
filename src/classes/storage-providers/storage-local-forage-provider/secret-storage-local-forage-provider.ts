@@ -186,7 +186,7 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
     }
   }
 
-  public async removeDb(): Promise<Error | boolean> {
+  public async clearDb(): Promise<Error | boolean> {
     try {
       const isDisconnected = this.checkIsReady();
       const { localForage } = this;

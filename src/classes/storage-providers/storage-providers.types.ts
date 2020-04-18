@@ -19,7 +19,7 @@ export abstract class StorageProvider {
   ): Promise<boolean | Error>;
   public abstract disconnect(): Promise<boolean | Error>;
   /**
-   * remove the database connected to with all content of it.
+   * remove all content of the database connected to.
    * If not connected to a database, an error will be returned.
    * It may be very expensive operation, dependently on a
    * storage provider connected with.
@@ -28,7 +28,7 @@ export abstract class StorageProvider {
    * @returns {(Promise<boolean | Error>)}
    * @memberof StorageProvider
    */
-  public abstract removeDb(): Promise<boolean | Error>;
+  public abstract clearDb(): Promise<boolean | Error>;
   public abstract set(key: string, value?: string): Promise<boolean | Error>;
 
   public abstract unset(key: string): Promise<boolean | Error>;

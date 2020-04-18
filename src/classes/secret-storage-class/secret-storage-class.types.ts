@@ -131,9 +131,11 @@ export interface ISecretStorage {
       | ISecretStoreCredentialsSession
   ): Promise<CryptoKey | Error>;
   /**
-   *
+   * remove all content withting the database
+   * connected to.
    *
    * @returns {(Promise<boolean | Error>)}
    * @memberof ISecretStorage
    */
+  clearDb(): Promise<Error | boolean>;
 }

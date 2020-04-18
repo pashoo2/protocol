@@ -29,7 +29,7 @@ export class SecretStorageProviderLocalStorage implements StorageProvider {
     return true;
   }
 
-  public async removeDb() {
+  public async clearDb() {
     try {
       const { dbName, localStorage } = this;
 
