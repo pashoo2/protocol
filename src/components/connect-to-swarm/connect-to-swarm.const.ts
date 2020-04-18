@@ -1,6 +1,14 @@
 import { ESwarmStoreConnector } from 'classes/swarm-store-class/swarm-store-class.const';
+import { ISwarmMessageBodyDeserialized } from '../../classes/swarm-message/swarm-message-constructor.types';
 
 export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY = 'key';
+
+export const CONNECT_TO_SWARM_STORAGE_DEFAULT_MESSAGE_BODY: ISwarmMessageBodyDeserialized = {
+  iss: 'test connection',
+  typ: 1,
+  pld: 'Hello',
+  ts: 0,
+};
 
 export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_1 = {
   login: 'lewey74533@provamail.com',
@@ -22,7 +30,7 @@ export const CONNECT_TO_SWARM_STORAGE_PROVIDER_DEFAULT =
 
 const CONNECT_TO_SWARM_DATABASE_PREFIX = 'chat/test';
 
-const CONNECT_TO_SWARM_DATABASE_MAIN_NAME = `${CONNECT_TO_SWARM_DATABASE_PREFIX}/database_main`;
+export const CONNECT_TO_SWARM_DATABASE_MAIN_NAME = `${CONNECT_TO_SWARM_DATABASE_PREFIX}/database_main`;
 
 export const CONNECT_TO_SWARM_DATABASE_MAIN = {
   dbName: CONNECT_TO_SWARM_DATABASE_MAIN_NAME,

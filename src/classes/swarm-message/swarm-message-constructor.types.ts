@@ -241,6 +241,10 @@ export type TSwarmMessageConstructorArgumentBody = Omit<
 > &
   Partial<ISwarmMessageBodyDeserialized>;
 
+export type TSwarmMessageConstructorBodyMessage =
+  | TSwarmMessageConstructorArgumentBodyPrivate
+  | TSwarmMessageConstructorArgumentBody;
+
 // construct message from an object which represents message's body
 export interface ISwarmMessageConstructor {
   construct(

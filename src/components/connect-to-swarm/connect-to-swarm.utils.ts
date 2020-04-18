@@ -14,4 +14,5 @@ export const connectToSwarmUtil = async (
       credentials: useSessionAuth ? undefined : credentials,
     },
   });
+  return connectionBridge;
 };

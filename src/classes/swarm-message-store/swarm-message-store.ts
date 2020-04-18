@@ -56,6 +56,7 @@ import { isDefined } from '../../utils/common-utils/common-utils-main';
 import { SwarmMessageConstructor } from '../swarm-message/swarm-message-constructor';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { ISwarmMessgaeEncryptedCache } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { TSwarmMessageConstructorBodyMessage } from '../swarm-message/swarm-message-constructor.types';
 
 export class SwarmMessageStore<P extends ESwarmStoreConnector>
   extends SwarmStore<P, ISwarmMessageStoreEvents>
@@ -126,8 +127,11 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
 
   public async addMessage(
     dbName: string,
-    message: ISwarmMessageInstance | string
+    msg: ISwarmMessageInstance | TSwarmMessageConstructorBodyMessage | string
   ): Promise<TSwarmMessageStoreMessageId> {
+    const message: ISwarmMessageInstance | string =
+      typeof msg === 'string' ? msg : await this.constructMessage(dbName, msg);
+
     assert(dbName, 'Database name must be provided');
     this.validateMessageFormat(message);
 
@@ -591,5 +595,40 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
     }
     debugger;
     return this.swarmMessageConstructorFabric({}, { dbName });
+  }
+
+  /**
+   * construct message for the database by a constructor,
+   * specified for the database,
+   * or return itself if a SwarmMessageInstance
+   * given.
+   *
+   * @protected
+   * @param {string} dbName
+   * @param {(ISwarmMessageInstance | TSwarmMessageConstructorBodyMessage)} message
+   * @returns {Promise<ISwarmMessageInstance>}
+   * @memberof SwarmMessageStore
+   */
+  protected async constructMessage(
+    dbName: string,
+    message: ISwarmMessageInstance | TSwarmMessageConstructorBodyMessage
+  ): Promise<ISwarmMessageInstance> {
+    if (
+      (message as ISwarmMessageInstance).bdy &&
+      (message as ISwarmMessageInstance).sig
+    ) {
+      return message as ISwarmMessageInstance;
+    }
+
+    const messageConsturctor = await this.getMessageConstructor(dbName);
+    debugger;
+    if (!messageConsturctor) {
+      throw new Error(
+        `A message consturctor is not specified for the database ${dbName}`
+      );
+    }
+    return await messageConsturctor.construct(
+      message as TSwarmMessageConstructorBodyMessage
+    );
   }
 }

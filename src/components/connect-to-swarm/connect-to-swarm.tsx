@@ -1,5 +1,10 @@
 import React from 'react';
 import { connectToSwarmUtil } from './connect-to-swarm.utils';
+import { IConnectionBridge } from 'classes/connection-bridge/connection-bridge.types';
+import {
+  CONNECT_TO_SWARM_DATABASE_MAIN_NAME,
+  CONNECT_TO_SWARM_STORAGE_DEFAULT_MESSAGE_BODY,
+} from './connect-to-swarm.const';
 import {
   CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY,
   CONNECT_TO_SWARM_AUTH_CREDENTIALS_1,
@@ -8,10 +13,40 @@ import {
 
 export class ConnectToSwarm extends React.PureComponent {
   public state = {
-    isConnected: false,
     isConnecting: false,
+    messagingSending: undefined as NodeJS.Timeout | undefined,
     error: undefined as Error | undefined,
     useSession: false,
+    connectionBridge: undefined as IConnectionBridge | undefined,
+  };
+
+  protected sendSwarmMessage = async () => {
+    try {
+      await this.state.connectionBridge?.storage?.addMessage(
+        CONNECT_TO_SWARM_DATABASE_MAIN_NAME,
+        {
+          ...CONNECT_TO_SWARM_STORAGE_DEFAULT_MESSAGE_BODY,
+        }
+      );
+      debugger;
+    } catch (err) {
+      console.error(err);
+      debugger;
+    }
+  };
+
+  protected toggleMessagesSending = () => {
+    this.setState((state: any) => {
+      if (state.messagingSending) {
+        clearInterval(state.messagingSending);
+        return {
+          messagingSending: undefined,
+        };
+      }
+      return {
+        messagingSending: setInterval(this.sendSwarmMessage, 1000),
+      };
+    });
   };
 
   public componentDidMount() {
@@ -26,16 +61,29 @@ export class ConnectToSwarm extends React.PureComponent {
     }
   }
 
+  public renderConnectedState() {
+    const { messagingSending } = this.state;
+
+    return (
+      <div>
+        <div>Is connected</div>
+        <button onClick={this.toggleMessagesSending}>
+          {messagingSending ? 'Stop' : 'Start'} message sending
+        </button>
+      </div>
+    );
+  }
+
   public render() {
-    const { isConnected, isConnecting, error } = this.state;
+    const { connectionBridge, isConnecting, error } = this.state;
 
     if (error) {
       return <span>Error: {error.message}</span>;
     }
-    if (isConnected) {
-      return <span>Is connected</span>;
+    if (connectionBridge) {
+      return this.renderConnectedState();
     }
-    if (!isConnected && !isConnecting) {
+    if (!connectionBridge && !isConnecting) {
       return (
         <div>
           <button onClick={() => this.connectToSwarm()}>Connect cred 1</button>
@@ -51,23 +99,24 @@ export class ConnectToSwarm extends React.PureComponent {
       isConnecting: true,
     });
     try {
-      await connectToSwarmUtil(
+      const connectionBridge = await connectToSwarmUtil(
         this.state.useSession,
         credentialsVariant === 1
           ? CONNECT_TO_SWARM_AUTH_CREDENTIALS_1
           : CONNECT_TO_SWARM_AUTH_CREDENTIALS_2
       );
+
       sessionStorage.setItem(
         CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY,
         'true'
       );
+      this.setState({
+        connectionBridge,
+      });
     } catch (error) {
       this.setState({
         error,
       });
     }
-    this.setState({
-      isConnected: true,
-    });
   };
 }

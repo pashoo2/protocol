@@ -12,7 +12,10 @@ import { EventEmitter } from '../basic-classes/event-emitter-class-base/event-em
 import { ESwarmMessageStoreEventNames } from './swarm-message-store.const';
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import { TSwarmStoreDatabaseIteratorMethodArgument } from '../swarm-store-class/swarm-store-class.types';
-import { TSwarmMessageSeriazlized } from '../swarm-message/swarm-message-constructor.types';
+import {
+  TSwarmMessageSeriazlized,
+  TSwarmMessageConstructorBodyMessage,
+} from '../swarm-message/swarm-message-constructor.types';
 import { TCentralAuthorityUserIdentity } from '../central-authority-class/central-authority-class-types/central-authority-class-types-common';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 
@@ -152,6 +155,35 @@ export interface ISwarmMessageStore<P extends ESwarmStoreConnector>
     dbName: string,
     message: ISwarmMessageInstance
   ): Promise<TSwarmMessageStoreMessageId>;
+
+  /**
+   * add message serialized to a database with the given name
+   *
+   * @param {string} dbName - name of the database
+   * @param {ISwarmMessageStoreOptions<P>} message - message to add
+   * @returns {Promise<TSwarmMessageStoreMessageId>} - unique message's identifier in the database
+   * @memberof ISwarmMessageStore
+   * @throws
+   */
+  addMessage(
+    dbName: string,
+    message: string
+  ): Promise<TSwarmMessageStoreMessageId>;
+
+  /**
+   * construct and add message to a database with the given name.
+   *
+   * @param {string} dbName - name of the database
+   * @param {ISwarmMessageStoreOptions<P>} message - message to add
+   * @returns {Promise<TSwarmMessageStoreMessageId>} - unique message's identifier in the database
+   * @memberof ISwarmMessageStore
+   * @throws
+   */
+  addMessage(
+    dbName: string,
+    message: TSwarmMessageConstructorBodyMessage
+  ): Promise<TSwarmMessageStoreMessageId>;
+
   /**
    * Message removed from the database
    * or marked as removed, It will not
