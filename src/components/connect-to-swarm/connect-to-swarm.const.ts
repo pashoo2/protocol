@@ -15,10 +15,16 @@ export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_1 = {
   password: 'qawsde1234',
 };
 
+export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_1 =
+  '02https://watcha3-191815.firebaseio.com|nRCitpXVIwXsDPciNAovIP6I2hr1';
+
 export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_2 = {
   login: 'gocibaw838@hxqmail.com',
   password: 'qawsde1234',
 };
+
+export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_2 =
+  '02https://watcha3-191815.firebaseio.com|l4xgNzmSsOOr2jAM7aVpnAF7S0j2';
 
 export enum CONNECT_TO_SWARM_AUTH_PROVIDERS {
   FIREBASE_WATCHA = 'https://watcha3-191815.firebaseio.com',

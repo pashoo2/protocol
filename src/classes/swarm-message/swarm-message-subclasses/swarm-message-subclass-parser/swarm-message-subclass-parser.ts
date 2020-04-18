@@ -175,7 +175,7 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
 
     const bodyRawParsed = messageBodyRawParser(
       bodyRawDecrypted ||
-        (!isPrivate ? await this.decryptMessageBodyRaw(bodyRaw) : bodyRaw)
+        (isPrivate ? await this.decryptMessageBodyRaw(bodyRaw) : bodyRaw)
     );
     const swarmMessage: ISwarmMessage = {
       ...messageRaw,

@@ -43,8 +43,9 @@ export class ConnectToSwarm extends React.PureComponent {
           messagingSending: undefined,
         };
       }
+      this.sendSwarmMessage();
       return {
-        messagingSending: setInterval(this.sendSwarmMessage, 1000),
+        messagingSending: setInterval(this.sendSwarmMessage, 20000),
       };
     });
   };
