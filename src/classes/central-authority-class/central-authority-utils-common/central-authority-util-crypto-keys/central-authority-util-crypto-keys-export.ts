@@ -31,7 +31,8 @@ import { stringify } from 'utils/main-utils';
  * @returns {Promise<string | Error>}
  */
 export const exportKeyPairsAsString = async (
-  cryptoKeyPairs: TCACryptoKeyPairs
+  cryptoKeyPairs: TCACryptoKeyPairs,
+  password?: string
 ): Promise<string | Error> => {
   if (!checkIsCryptoKeyPairs(cryptoKeyPairs)) {
     return new Error('The keypair is not valid');
@@ -42,8 +43,8 @@ export const exportKeyPairsAsString = async (
     [CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME]: signDataKeyPair,
   } = cryptoKeyPairs;
   const [encryptionKeyPairString, signDataKeyPairString] = await Promise.all([
-    exportKeyPairDataEncryptAsString(encryptionKeyPair),
-    exportKeyPairDataSignAsString(signDataKeyPair),
+    exportKeyPairDataEncryptAsString(encryptionKeyPair, password),
+    exportKeyPairDataSignAsString(signDataKeyPair, password),
   ]);
 
   if (encryptionKeyPairString instanceof Error) {
@@ -57,7 +58,7 @@ export const exportKeyPairsAsString = async (
       [CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME]: encryptionKeyPairString,
       [CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME]: signDataKeyPairString,
     });
-
+    debugger;
     if (stringifyResult instanceof Error) {
       return stringifyResult;
     }

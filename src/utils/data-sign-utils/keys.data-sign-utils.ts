@@ -28,6 +28,9 @@ import { TEncryptionKeyStoreFormatType } from 'types/encryption-keys.types';
 import { isTypedArray } from 'utils/typed-array-utils';
 import { stringify } from 'utils/main-utils';
 import { decryptDataByPassword } from '../password-utils/decrypt.password-utils';
+import { DATA_SIGN_CRYPTO_UTIL_KEYPAIR_SALT_KEY_NAME } from './data-sign-utils.const';
+import { generateSalt } from '../encryption-utils/salt-utils';
+import { encryptDataWithPasswordToArrayBuffer } from '../password-utils/encrypt.password-utils';
 
 export const dataSignIsCryptoKeyPairImported = (
   key: any
@@ -99,7 +102,8 @@ export const dataSignExportPublicKeyAsString = async (
 };
 
 export const dataSignExportKeyPair = async (
-  keyPair: CryptoKeyPair
+  keyPair: CryptoKeyPair,
+  password?: string
 ): Promise<TDATA_SIGN_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE | Error> => {
   try {
     if (isCryptoKeyPair(keyPair)) {
@@ -115,10 +119,39 @@ export const dataSignExportKeyPair = async (
       if (publicKey instanceof Error) {
         return publicKey;
       }
-      return {
+
+      const result: TDATA_SIGN_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE = {
         [DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]: publicKey,
         [DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]: privateKey,
       };
+
+      if (password) {
+        debugger;
+        const salt = generateSalt();
+
+        if (salt instanceof Error) {
+          return new Error('Failed to generate a unique salt value');
+        }
+        debugger;
+        const encryptedPrivateKey = await encryptDataWithPasswordToArrayBuffer(
+          password,
+          salt,
+          privateKey
+        );
+
+        if (encryptedPrivateKey instanceof Error) {
+          return new Error(
+            'Failed to encrypt private key with password provided'
+          );
+        }
+
+        result[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_SALT_KEY_NAME] = salt;
+        result[
+          DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME
+        ] = encryptedPrivateKey;
+      }
+      debugger;
+      return result;
     }
     return new Error('Argument given must be a CryptoKeyPair');
   } catch (err) {
@@ -127,10 +160,11 @@ export const dataSignExportKeyPair = async (
 };
 
 export const dataSignExportKeyPairAsString = async (
-  keyPair: CryptoKeyPair
+  keyPair: CryptoKeyPair,
+  password?: string
 ): Promise<string | Error> => {
   try {
-    const res = await dataSignExportKeyPair(keyPair);
+    const res = await dataSignExportKeyPair(keyPair, password);
 
     if (res instanceof Error) {
       return res;
@@ -217,22 +251,30 @@ export const dataSignImportKeyPairFromString = async (
     if (typeof keyPairString === 'string') {
       const keyPairObject = JSON.parse(keyPairString);
 
-      if (password && keyPairObject.salt) {
+      if (
+        password &&
+        keyPairObject[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_SALT_KEY_NAME]
+      ) {
         debugger;
-        if (typeof keyPairObject.salt !== 'string') {
+        if (
+          typeof keyPairObject[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_SALT_KEY_NAME] !==
+          'string'
+        ) {
           return new Error('A salt value must be a string');
         }
 
         const decryptedPrivateKey = await decryptDataByPassword(
           password,
-          keyPairObject.salt,
-          keyPairObject.privateKey
+          keyPairObject[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_SALT_KEY_NAME],
+          keyPairObject[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]
         );
 
         if (decryptedPrivateKey instanceof Error) {
           return decryptedPrivateKey;
         }
-        keyPairObject.privateKey = decryptedPrivateKey;
+        keyPairObject[
+          DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME
+        ] = decryptedPrivateKey;
         debugger;
       }
       if (dataSignIsCryptoKeyPairImported(keyPairObject)) {

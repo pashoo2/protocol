@@ -92,3 +92,17 @@ export const encryptDataWithPassword = async (
 
   return encryptDataToString(key, data);
 };
+
+export const encryptDataWithPasswordToArrayBuffer = async (
+  password: string,
+  salt: TSaltUtilsSaltType,
+  data: TCRYPTO_UTIL_ENCRYPT_DATA_TYPES
+): Promise<Error | ArrayBuffer> => {
+  const key = await generatePasswordKeyByPasswordString(password, salt);
+
+  if (key instanceof Error) {
+    console.error(key);
+    return key;
+  }
+  return encryptDataToArrayBuffer(key, data);
+};

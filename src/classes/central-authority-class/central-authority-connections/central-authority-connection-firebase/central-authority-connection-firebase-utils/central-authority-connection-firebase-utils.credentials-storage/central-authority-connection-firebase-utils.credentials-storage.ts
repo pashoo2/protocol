@@ -18,7 +18,6 @@ import { validateUserIdentity } from 'classes/central-authority-class/central-au
 import { TCentralAuthorityUserCryptoCredentials } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 import { checkIsValidExportedCryptoCredentialsToString } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
 import { ICAConnectionSignUpCredentials } from '../../../central-authority-connections.types';
-import { TCentralAuthorityUserAuthCredentialsWithPwd } from '../../../../central-authority-class-types/central-authority-class-types-common';
 
 /**
  * This class is used for storing
@@ -188,7 +187,7 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
 
   protected async getCredentialsByValueStored(
     storedCredentialsValue: any,
-    signUpCredentials: ICAConnectionSignUpCredentials
+    signUpCredentials?: ICAConnectionSignUpCredentials
   ): Promise<TCentralAuthorityUserCryptoCredentials | null | Error> {
     if (storedCredentialsValue == null) {
       return null;
@@ -202,7 +201,7 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
 
     const { credentials: exportedCredentials } = storedCredentialsValue;
 
-    if (!signUpCredentials.password) {
+    if (signUpCredentials?.password) {
       return new Error(
         'A password must provided to decrypt the credentials imported from the server'
       );
@@ -210,7 +209,7 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
 
     const importedCredentials = await importCryptoCredentialsFromAString(
       exportedCredentials,
-      signUpCredentials.password
+      signUpCredentials?.password
     );
 
     if (importedCredentials instanceof Error) {
@@ -326,7 +325,8 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
   // store the credentials value
   // for the current user
   public async setUserCredentials(
-    credentials: TCentralAuthorityUserCryptoCredentials
+    credentials: TCentralAuthorityUserCryptoCredentials,
+    signUpCredentials: ICAConnectionSignUpCredentials
   ): Promise<Error | TCentralAuthorityUserCryptoCredentials> {
     const isAuthorizedResult = this.checkIsAuthorized();
 
@@ -344,7 +344,9 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
 
     // check if a credentials value is
     // already exists for the user
-    const credentialsForTheCurrentUser = await this.getCredentialsForTheCurrentUser();
+    const credentialsForTheCurrentUser = await this.getCredentialsForTheCurrentUser(
+      signUpCredentials
+    );
 
     if (
       credentialsForTheCurrentUser != null &&
@@ -361,11 +363,16 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
       console.error(userId);
       return new Error("Failed to get a user's identity from the credentials");
     }
+    if (!signUpCredentials.password) {
+      return new Error('The password is required to encrypt the private keys');
+    }
 
     const exportedCryptoCredentials = await exportCryptoCredentialsToString(
-      credentials
+      credentials,
+      undefined,
+      signUpCredentials.password
     );
-
+    debugger;
     if (exportedCryptoCredentials instanceof Error) {
       console.error(exportedCryptoCredentials);
       return new Error('Failed to export the crypto credentials value');

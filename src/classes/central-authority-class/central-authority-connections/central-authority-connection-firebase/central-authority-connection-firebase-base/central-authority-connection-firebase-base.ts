@@ -226,7 +226,7 @@ export class CAConnectionWithFirebaseBase {
       return credentialsProvidedCheckResult;
     }
 
-    return this.createOrSetCredentialsInDB(signUpCredentials.cryptoCredentials);
+    return this.createOrSetCredentialsInDB(signUpCredentials);
   }
 
   protected setConnectedStatus(isConnected: false | firebase.app.App) {
@@ -732,7 +732,8 @@ export class CAConnectionWithFirebaseBase {
   }
 
   protected setCryptoCredentialsForTheUserToDatabase = async (
-    cryptoCredentials: TCentralAuthorityUserCryptoCredentials
+    cryptoCredentials: TCentralAuthorityUserCryptoCredentials,
+    signUpCredentials: ICAConnectionSignUpCredentials
   ): Promise<Error | TCentralAuthorityUserCryptoCredentials> => {
     const isConnected = this.checkIfConnected();
     const { connectionWithCredentialsStorage } = this;
@@ -746,7 +747,8 @@ export class CAConnectionWithFirebaseBase {
     // and rewrite the existing
     // cause it is not valid
     const setCredentialsResult = await connectionWithCredentialsStorage!!.setUserCredentials(
-      cryptoCredentials
+      cryptoCredentials,
+      signUpCredentials
     );
 
     if (setCredentialsResult instanceof Error) {
@@ -758,12 +760,13 @@ export class CAConnectionWithFirebaseBase {
   };
 
   protected async createOrSetCredentialsInDB(
-    credentialsGiven?: TCentralAuthorityUserCryptoCredentials,
+    signUpCredentials: ICAConnectionSignUpCredentials,
     generateNewCryptoCredentialsForConfigurationProvided: () => Promise<
       Error | TCentralAuthorityUserCryptoCredentials
     > = this.generateNewCryptoCredentialsForConfigurationProvided,
     setCryptoCredentialsForTheUserToDatabase: (
-      cryptoCredentials: TCentralAuthorityUserCryptoCredentials
+      cryptoCredentials: TCentralAuthorityUserCryptoCredentials,
+      signUpCredentials: ICAConnectionSignUpCredentials
     ) => Promise<Error | TCentralAuthorityUserCryptoCredentials> = this
       .setCryptoCredentialsForTheUserToDatabase
   ): Promise<Error | TCentralAuthorityUserCryptoCredentials> {
@@ -787,6 +790,7 @@ export class CAConnectionWithFirebaseBase {
         'The setCryptoCredentialsForTheUserToDatabase argument must be a function'
       );
     }
+    const credentialsGiven = signUpCredentials.cryptoCredentials;
 
     // try a multiple times cause may be
     // a network errors or user id
@@ -806,7 +810,8 @@ export class CAConnectionWithFirebaseBase {
         console.error(cryptoCredentials);
       } else {
         const setCredentialsResult = await setCryptoCredentialsForTheUserToDatabase(
-          cryptoCredentials
+          cryptoCredentials,
+          signUpCredentials
         );
 
         if (setCredentialsResult instanceof Error) {

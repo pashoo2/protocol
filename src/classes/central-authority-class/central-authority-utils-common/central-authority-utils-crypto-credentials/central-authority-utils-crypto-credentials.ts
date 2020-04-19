@@ -28,7 +28,8 @@ import { CA_UTILS_CRYPTO_CREDENTIALS_NORMALIZE_URL_OPTIONS } from './central-aut
 
 export const exportCryptoCredentialsToString = async (
   userCryptoCredentials: TCentralAuthorityUserCryptoCredentials,
-  withoutIdentityVersion: boolean = false
+  withoutIdentityVersion: boolean = false,
+  password?: string
 ): Promise<Error | string> => {
   if (!checkIsValidCryptoCredentials(userCryptoCredentials)) {
     return new Error('The given value is not a valid crypto credentials');
@@ -38,7 +39,7 @@ export const exportCryptoCredentialsToString = async (
     [CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeys,
     [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: userIdentity,
   } = userCryptoCredentials;
-  const exportedCryptoKeys = await exportKeyPairsAsString(cryptoKeys);
+  const exportedCryptoKeys = await exportKeyPairsAsString(cryptoKeys, password);
 
   if (exportedCryptoKeys instanceof Error) {
     return exportedCryptoKeys;

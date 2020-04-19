@@ -544,13 +544,13 @@ export class CAConnectionWithFirebaseImplementation
       }
       // if a credentials for the V1 must be generated and set
       if (credentialsForV1 === true) {
-        return this.createOrSetCredentialsInDB(cryptoCredentials);
+        return this.createOrSetCredentialsInDB(signUpCredentials);
       }
     }
     // if the version is not 01, then provide another implementations
     // of the methods to generate and set the crypto credentials
     return this.createOrSetCredentialsInDB(
-      cryptoCredentials,
+      signUpCredentials,
       this.generateNewCryptoCredentialsForConfigurationProvidedV2
     );
   }
