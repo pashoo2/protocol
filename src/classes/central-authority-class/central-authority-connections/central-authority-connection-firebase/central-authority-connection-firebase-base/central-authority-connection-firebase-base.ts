@@ -708,9 +708,9 @@ export class CAConnectionWithFirebaseBase {
     return cryptoCredentials;
   }
 
-  protected async readCryptoCredentialsForTheUserFromDatabase(): Promise<
-    Error | TCentralAuthorityUserCryptoCredentials | null
-  > {
+  protected async readCryptoCredentialsForTheUserFromDatabase(
+    signUpCredentials: ICAConnectionSignUpCredentials
+  ): Promise<Error | TCentralAuthorityUserCryptoCredentials | null> {
     const isConnected = this.checkIfConnected();
 
     if (!isConnected) {
@@ -720,8 +720,10 @@ export class CAConnectionWithFirebaseBase {
     }
 
     const { connectionWithCredentialsStorage } = this;
-    const credentialsForTheCurrentUser = await connectionWithCredentialsStorage!!.getCredentialsForTheCurrentUser();
-
+    const credentialsForTheCurrentUser = await connectionWithCredentialsStorage!!.getCredentialsForTheCurrentUser(
+      signUpCredentials
+    );
+    debugger;
     if (credentialsForTheCurrentUser instanceof Error) {
       console.error(credentialsForTheCurrentUser);
       return new Error('Failed to read credentials of the current user');
@@ -830,11 +832,13 @@ export class CAConnectionWithFirebaseBase {
    * @returns
    * @memberof CAConnectionWithFirebaseBase
    */
-  protected async checkIfCredentialsExistsForTheUser(): Promise<
-    Error | void | TCentralAuthorityUserCryptoCredentials
-  > {
-    const credentialsExistingForTheCurrentUser = await this.readCryptoCredentialsForTheUserFromDatabase();
-
+  protected async checkIfCredentialsExistsForTheUser(
+    signUpCredentials: ICAConnectionSignUpCredentials
+  ): Promise<Error | void | TCentralAuthorityUserCryptoCredentials> {
+    const credentialsExistingForTheCurrentUser = await this.readCryptoCredentialsForTheUserFromDatabase(
+      signUpCredentials
+    );
+    debugger;
     if (credentialsExistingForTheCurrentUser instanceof Error) {
       // if something was going wrong when reading
       // a credentials for the current user
@@ -879,8 +883,11 @@ export class CAConnectionWithFirebaseBase {
   protected async createOrReturnExistingCredentialsForUser(
     signUpCredentials: ICAConnectionSignUpCredentials
   ): Promise<Error | TCentralAuthorityUserCryptoCredentials> {
-    const credentialsExistingForTheCurrentUser = await this.checkIfCredentialsExistsForTheUser();
-
+    debugger;
+    const credentialsExistingForTheCurrentUser = await this.checkIfCredentialsExistsForTheUser(
+      signUpCredentials
+    );
+    debugger;
     if (credentialsExistingForTheCurrentUser instanceof Error) {
       return credentialsExistingForTheCurrentUser;
     }

@@ -2,6 +2,10 @@ import React from 'react';
 import { connectToSwarmUtil } from './connect-to-swarm.utils';
 import { IConnectionBridge } from 'classes/connection-bridge/connection-bridge.types';
 import {
+  CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_1,
+  CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_2,
+} from './connect-to-swarm.const';
+import {
   CONNECT_TO_SWARM_DATABASE_MAIN_NAME,
   CONNECT_TO_SWARM_STORAGE_DEFAULT_MESSAGE_BODY,
 } from './connect-to-swarm.const';
@@ -18,6 +22,7 @@ export class ConnectToSwarm extends React.PureComponent {
     error: undefined as Error | undefined,
     useSession: false,
     connectionBridge: undefined as IConnectionBridge | undefined,
+    userId: undefined as string | undefined,
   };
 
   protected sendSwarmMessage = async () => {
@@ -28,14 +33,29 @@ export class ConnectToSwarm extends React.PureComponent {
           ...CONNECT_TO_SWARM_STORAGE_DEFAULT_MESSAGE_BODY,
         }
       );
-      debugger;
     } catch (err) {
       console.error(err);
-      debugger;
     }
   };
 
-  protected toggleMessagesSending = () => {
+  protected sendPrivateSwarmMessage = async () => {
+    try {
+      await this.state.connectionBridge?.storage?.addMessage(
+        CONNECT_TO_SWARM_DATABASE_MAIN_NAME,
+        {
+          ...CONNECT_TO_SWARM_STORAGE_DEFAULT_MESSAGE_BODY,
+          receiverId:
+            this.state.userId === CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_1
+              ? CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_2
+              : CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_1,
+        }
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  protected toggleMessagesSending = (isPrivate: boolean = false) => {
     this.setState((state: any) => {
       if (state.messagingSending) {
         clearInterval(state.messagingSending);
@@ -43,9 +63,14 @@ export class ConnectToSwarm extends React.PureComponent {
           messagingSending: undefined,
         };
       }
-      this.sendSwarmMessage();
+
+      const method = isPrivate
+        ? this.sendPrivateSwarmMessage
+        : this.sendSwarmMessage;
+
+      method();
       return {
-        messagingSending: setInterval(this.sendSwarmMessage, 20000),
+        messagingSending: setInterval(method, 20000),
       };
     });
   };
@@ -63,13 +88,16 @@ export class ConnectToSwarm extends React.PureComponent {
   }
 
   public renderConnectedState() {
-    const { messagingSending } = this.state;
+    const { messagingSending, userId } = this.state;
 
     return (
       <div>
-        <div>Is connected</div>
-        <button onClick={this.toggleMessagesSending}>
-          {messagingSending ? 'Stop' : 'Start'} message sending
+        <div>Is connected with user identity ${userId}</div>
+        <button onClick={() => this.toggleMessagesSending()}>
+          {messagingSending ? 'Stop' : 'Start'} messages sending
+        </button>
+        <button onClick={() => this.toggleMessagesSending(true)}>
+          {messagingSending ? 'Stop' : 'Start'} private messages sending
         </button>
       </div>
     );
@@ -113,6 +141,10 @@ export class ConnectToSwarm extends React.PureComponent {
       );
       this.setState({
         connectionBridge,
+        userId:
+          credentialsVariant === 1
+            ? CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_1
+            : CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_2,
       });
     } catch (error) {
       this.setState({

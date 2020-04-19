@@ -18,6 +18,8 @@ import {
   TCRYPTO_UTIL_ENCRYPT_KEY_TYPES,
 } from './crypto-utils.types';
 import { stringify } from 'utils/main-utils';
+import { TCentralAuthorityUserAuthCredentialsWithPwd } from '../../classes/central-authority-class/central-authority-class-types/central-authority-class-types-common';
+import { decryptDataByPassword } from 'utils';
 
 export const isCryptoKeyPairImported = (
   key: any
@@ -155,13 +157,32 @@ export const importKeyPair = async (
   }
 };
 
-export const importKeyPairFromString = (
-  keyPairString: string
-): Promise<TCRYPTO_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE | Error> | Error => {
+export const importKeyPairFromString = async (
+  keyPairString: string,
+  password?: string
+): Promise<TCRYPTO_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE | Error> => {
   try {
     if (typeof keyPairString === 'string') {
       const keyPairObject = JSON.parse(keyPairString);
 
+      if (password && keyPairObject.salt) {
+        debugger;
+        if (typeof keyPairObject.salt !== 'string') {
+          return new Error('A salt value must be a string');
+        }
+
+        const decryptedPrivateKey = await decryptDataByPassword(
+          password,
+          keyPairObject.salt,
+          keyPairObject.privateKey
+        );
+
+        if (decryptedPrivateKey instanceof Error) {
+          return decryptedPrivateKey;
+        }
+        keyPairObject.privateKey = decryptedPrivateKey;
+        debugger;
+      }
       return importKeyPair(keyPairObject);
     }
     return new Error('A key pair must be a string');

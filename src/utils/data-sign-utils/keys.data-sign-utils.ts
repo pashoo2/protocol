@@ -27,6 +27,7 @@ import {
 import { TEncryptionKeyStoreFormatType } from 'types/encryption-keys.types';
 import { isTypedArray } from 'utils/typed-array-utils';
 import { stringify } from 'utils/main-utils';
+import { decryptDataByPassword } from '../password-utils/decrypt.password-utils';
 
 export const dataSignIsCryptoKeyPairImported = (
   key: any
@@ -208,13 +209,32 @@ export const dataSignImportKeyPair = async (
   }
 };
 
-export const dataSignImportKeyPairFromString = (
-  keyPairString: string
-): Promise<TDATA_SIGN_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE | Error> | Error => {
+export const dataSignImportKeyPairFromString = async (
+  keyPairString: string,
+  password?: string
+): Promise<TDATA_SIGN_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE | Error> => {
   try {
     if (typeof keyPairString === 'string') {
       const keyPairObject = JSON.parse(keyPairString);
 
+      if (password && keyPairObject.salt) {
+        debugger;
+        if (typeof keyPairObject.salt !== 'string') {
+          return new Error('A salt value must be a string');
+        }
+
+        const decryptedPrivateKey = await decryptDataByPassword(
+          password,
+          keyPairObject.salt,
+          keyPairObject.privateKey
+        );
+
+        if (decryptedPrivateKey instanceof Error) {
+          return decryptedPrivateKey;
+        }
+        keyPairObject.privateKey = decryptedPrivateKey;
+        debugger;
+      }
       if (dataSignIsCryptoKeyPairImported(keyPairObject)) {
         return dataSignImportKeyPair(keyPairObject);
       }

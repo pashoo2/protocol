@@ -7,6 +7,7 @@ import {
 import { isCryptoKeyDataDecryption } from '../../../../utils/encryption-keys-utils/encryption-keys-utils';
 import { QueuedEncryptionClassBase } from '../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base';
 import { ISwarmMessgaeEncryptedCache } from '../../../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageBody } from '../../swarm-message-constructor.types';
 import {
   IQueuedEncrypyionClassBaseOptions,
   IQueuedEncrypyionClassBase,
@@ -48,7 +49,7 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
     return {
       ...this.options.queueOptions,
       keys: {
-        signKey: this.options.decryptionKey,
+        decryptKey: this.options.decryptionKey,
       },
     };
   }
@@ -172,16 +173,19 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
         bodyRawDecrypted = msgBody;
       }
     }
-
-    const bodyRawParsed = messageBodyRawParser(
-      bodyRawDecrypted ||
-        (isPrivate ? await this.decryptMessageBodyRaw(bodyRaw) : bodyRaw)
-    );
+    if (!bodyRawDecrypted) {
+      bodyRawDecrypted = isPrivate
+        ? await this.decryptMessageBodyRaw(bodyRaw)
+        : bodyRaw;
+    }
+    debugger;
+    const bodyRawParsed = messageBodyRawParser(bodyRawDecrypted);
+    debugger;
     const swarmMessage: ISwarmMessage = {
       ...messageRaw,
       bdy: bodyRawParsed,
     };
-
+    debugger;
     validator.valiadateSwarmMessage(swarmMessage);
     return swarmMessage;
   }

@@ -28,7 +28,7 @@ import { SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_VALIDATION } from './swarm-m
 import { ICentralAuthority } from '../central-authority-class/central-authority-class.types';
 import { TSwarmMessageConstructorArgumentBodyPrivate } from './swarm-message-constructor.types';
 import { ISwarmMessgaeEncryptedCache } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
-import { SwarmMessageEncryptedCache } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache';
+import { getPublicKeysFromCryptoKeyPairs } from '../central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys-common';
 import {
   IMessageValidatorOptions,
   ISwarmMessageSubclassValidator,
@@ -296,14 +296,25 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
    * @memberof SwarmMessageConstructor
    * @throws
    */
-  protected runSwarmMessageParser() {
+  protected async runSwarmMessageParser() {
     const { options } = this;
     const { instances } = options;
+    const userRncryptionKeyPair = this.caConnection?.getUserEncryptionKeyPair();
 
+    if (!userRncryptionKeyPair) {
+      throw new Error("Failed to get user's crypto key pair");
+    }
+    if (userRncryptionKeyPair instanceof Error) {
+      throw userRncryptionKeyPair;
+    }
+    debugger;
     this.parser =
       instances && instances.parser
         ? instances.parser
-        : new SwarmMessageSubclassParser(this.optionsForSwarmMessageParser);
+        : new SwarmMessageSubclassParser({
+            ...this.optionsForSwarmMessageParser,
+            decryptionKey: userRncryptionKeyPair.privateKey,
+          });
   }
 
   /**
@@ -387,7 +398,7 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
       const receiverPubKey = await this.caConnection.getSwarmUserEncryptionPubKey(
         receiverId
       );
-      debugger;
+
       if (receiverPubKey instanceof Error) {
         console.error("Failed to get the user's public key");
         throw receiverPubKey;
@@ -406,10 +417,9 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
       bodyWithTs,
       cryptoKey
     );
-    const { sig } = swarmMessageSerialized;
+    const { sig, isPrivate } = swarmMessageSerialized;
 
-    if (swarmMessageSerialized.isPrivate) {
-      debugger;
+    if (isPrivate) {
       await this.addPrivateMessageBodyToCache(
         sig,
         bodyWithTs as TSwarmMessageConstructorArgumentBodyPrivate
@@ -429,10 +439,8 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
     sig: string,
     msgBody: TSwarmMessageConstructorArgumentBodyPrivate
   ) {
-    debugger;
     if (this.encryptedCache && this.encryptedCache.isRunning) {
       await this.encryptedCache.add(sig, JSON.stringify(msgBody));
     }
-    debugger;
   }
 }

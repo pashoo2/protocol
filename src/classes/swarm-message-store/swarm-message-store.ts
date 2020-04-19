@@ -593,7 +593,6 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
     if (!this.swarmMessageConstructorFabric) {
       return;
     }
-    debugger;
     return this.swarmMessageConstructorFabric({}, { dbName });
   }
 
@@ -621,7 +620,7 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
     }
 
     const messageConsturctor = await this.getMessageConstructor(dbName);
-    debugger;
+
     if (!messageConsturctor) {
       throw new Error(
         `A message consturctor is not specified for the database ${dbName}`

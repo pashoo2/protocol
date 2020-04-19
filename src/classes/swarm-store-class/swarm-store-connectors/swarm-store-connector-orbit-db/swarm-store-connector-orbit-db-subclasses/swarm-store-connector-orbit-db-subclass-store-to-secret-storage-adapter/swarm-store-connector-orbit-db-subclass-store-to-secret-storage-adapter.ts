@@ -236,17 +236,8 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
         throw new Error('setCredentials::crypto credentials not valid');
       }
       this.credentialsCryptoKey = credentials as ISecretStoreCredentialsCryptoKey;
-    } else if ((credentials as ISecretStoreCredentials).password) {
-      const credentialsValidationResult = SecretStorage.validateCredentials(
-        credentials as ISecretStoreCredentials
-      );
-
-      if (credentialsValidationResult instanceof Error) {
-        console.error(credentialsValidationResult);
-        throw new Error('setCredentials::credentials not valid');
-      }
-      this.credentials = credentials as ISecretStoreCredentials;
     }
+    this.credentials = credentials as ISecretStoreCredentials;
   }
 
   protected unsetCredentials() {

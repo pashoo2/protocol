@@ -39,7 +39,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStorageFabric
       { key },
       { dbName: path }
     );
-
+    debugger;
     await cache.open();
     return cache;
   }

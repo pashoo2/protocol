@@ -32,7 +32,8 @@ import { decompressString } from 'utils/data-compression-utils/data-compression-
  * @returns {Promise<Error | object>}
  */
 export const importKeyPairsFromString = async (
-  keyPairsString: string
+  keyPairsString: string,
+  password?: string
 ): Promise<TCACryptoKeyPairs | Error> => {
   if (!checkIsCryptoKeyPairsExportedAsString(keyPairsString)) {
     return new Error('This is a wrong type of exported crypto keys');
@@ -61,8 +62,8 @@ export const importKeyPairsFromString = async (
     [CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME]: signDataKeyPairString,
   } = parsedKeyPairsObject;
   const [encryptionKeyPair, dataSignKeyPair] = await Promise.all([
-    importKeyPairDataEncryptionFromString(encryptionKeyPairString),
-    importKeyPairDataSignFromString(signDataKeyPairString),
+    importKeyPairDataEncryptionFromString(encryptionKeyPairString, password),
+    importKeyPairDataSignFromString(signDataKeyPairString, password),
   ]);
 
   if (encryptionKeyPair instanceof Error) {

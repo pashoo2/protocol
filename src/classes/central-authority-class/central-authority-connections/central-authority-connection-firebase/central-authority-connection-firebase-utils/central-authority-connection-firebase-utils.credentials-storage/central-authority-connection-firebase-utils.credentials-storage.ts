@@ -17,6 +17,8 @@ import { encodeForFirebaseKey } from 'utils/firebase-utils/firebase-utils';
 import { validateUserIdentity } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-auth-credentials/central-authority-validators-auth-credentials';
 import { TCentralAuthorityUserCryptoCredentials } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 import { checkIsValidExportedCryptoCredentialsToString } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
+import { ICAConnectionSignUpCredentials } from '../../../central-authority-connections.types';
+import { TCentralAuthorityUserAuthCredentialsWithPwd } from '../../../../central-authority-class-types/central-authority-class-types-common';
 
 /**
  * This class is used for storing
@@ -185,7 +187,8 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
   }
 
   protected async getCredentialsByValueStored(
-    storedCredentialsValue: any
+    storedCredentialsValue: any,
+    signUpCredentials: ICAConnectionSignUpCredentials
   ): Promise<TCentralAuthorityUserCryptoCredentials | null | Error> {
     if (storedCredentialsValue == null) {
       return null;
@@ -198,8 +201,16 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
     }
 
     const { credentials: exportedCredentials } = storedCredentialsValue;
+
+    if (!signUpCredentials.password) {
+      return new Error(
+        'A password must provided to decrypt the credentials imported from the server'
+      );
+    }
+
     const importedCredentials = await importCryptoCredentialsFromAString(
-      exportedCredentials
+      exportedCredentials,
+      signUpCredentials.password
     );
 
     if (importedCredentials instanceof Error) {
@@ -221,9 +232,10 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
    * @returns {(Promise<TCentralAuthorityUserCryptoCredentials | null | Error>)}
    * @memberof CAConnectionFirestoreUtilsCredentialsStrorage
    */
-  protected async filterCredentialsValues(valueStored?: {
-    [key: string]: any;
-  }): Promise<TCentralAuthorityUserCryptoCredentials | null | Error> {
+  protected async filterCredentialsValues(
+    valueStored: Record<string, any>,
+    signUpCredentials: ICAConnectionSignUpCredentials
+  ): Promise<TCentralAuthorityUserCryptoCredentials | null | Error> {
     if (!valueStored) {
       return null;
     }
@@ -254,7 +266,8 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
       keyValueStored = keys[idx];
       valueValueStored = valueStored[keyValueStored];
       credentialsImported = await this.getCredentialsByValueStored(
-        valueValueStored
+        valueValueStored,
+        signUpCredentials
       );
 
       if (!(credentialsImported instanceof Error)) {
@@ -266,9 +279,9 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
 
   // check if there is a credentials for the current user is exists
   // and return it if exists
-  public async getCredentialsForTheCurrentUser(): Promise<
-    Error | null | TCentralAuthorityUserCryptoCredentials
-  > {
+  public async getCredentialsForTheCurrentUser(
+    signUpCredentials: ICAConnectionSignUpCredentials
+  ): Promise<Error | null | TCentralAuthorityUserCryptoCredentials> {
     const isAuthorizedResult = this.checkIsAuthorized();
 
     if (isAuthorizedResult instanceof Error) {
@@ -301,7 +314,7 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
 
       if (snapshot.exists()) {
         const valueStored = snapshot.val();
-        return this.filterCredentialsValues(valueStored);
+        return this.filterCredentialsValues(valueStored, signUpCredentials);
       }
     } catch (err) {
       console.error(err);

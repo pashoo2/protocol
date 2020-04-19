@@ -95,7 +95,8 @@ export class SwarmMessageSerializer implements ISwarmMessageSerializer {
     return this.getMessageSignedSerialized(
       swarmMessageNotSigned,
       swarmMessageBody,
-      signature
+      signature,
+      !!encryptWithKey
     );
   };
 
@@ -370,7 +371,8 @@ export class SwarmMessageSerializer implements ISwarmMessageSerializer {
   protected getMessageSignedSerialized(
     msgRawUnsigned: Omit<ISwarmMessageRaw, 'sig'>,
     msgBody: ISwarmMessageBody,
-    signature: ISwarmMessageRaw['sig']
+    signature: ISwarmMessageRaw['sig'],
+    isPrivate: boolean
   ): ISwarmMessageInstance {
     const { utils } = this.options;
     const swarmMessage = {
@@ -378,6 +380,9 @@ export class SwarmMessageSerializer implements ISwarmMessageSerializer {
       sig: signature,
     };
 
+    if (isPrivate) {
+      swarmMessage.isPrivate = isPrivate;
+    }
     return {
       ...swarmMessage,
       bdy: msgBody,
