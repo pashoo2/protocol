@@ -18,11 +18,13 @@ import {
   TCRYPTO_UTIL_ENCRYPT_KEY_TYPES,
 } from './crypto-utils.types';
 import { stringify } from 'utils/main-utils';
-import { TCentralAuthorityUserAuthCredentialsWithPwd } from '../../classes/central-authority-class/central-authority-class-types/central-authority-class-types-common';
 import { decryptDataByPassword } from 'utils';
-import { generateSalt, generateSaltString } from './salt-utils';
+import { generateSalt } from './salt-utils';
 import { CRYPTO_UTIL_KEYPAIR_SALT_KEY_NAME } from './crypto-utils.const';
-import { encryptDataWithPasswordToArrayBuffer } from '../password-utils/encrypt.password-utils';
+import { encryptDataWithPassword } from '../password-utils/encrypt.password-utils';
+import { encodeArrayBufferToDOMString } from '../string-encoding-utils';
+import { TCRYPTO_UTIL_KEYPAIR_PREIMPORT_FORMAT_TYPE } from './crypto-utils.types';
+import { typedArrayToString } from '../typed-array-utils';
 
 export const isCryptoKeyPairImported = (
   key: any
@@ -102,7 +104,7 @@ export const exportKeyPair = async (
           return new Error('Failed to generate a unique salt value');
         }
 
-        const encryptedPrivateKey = await encryptDataWithPasswordToArrayBuffer(
+        const encryptedPrivateKey = await encryptDataWithPassword(
           password,
           salt,
           privateKey
@@ -114,9 +116,27 @@ export const exportKeyPair = async (
           );
         }
 
-        result[CRYPTO_UTIL_KEYPAIR_SALT_KEY_NAME] = salt;
+        const saltStringified = typedArrayToString(salt);
+
+        if (saltStringified instanceof Error) {
+          return new Error(
+            'Failed to stringify the salt for the encryption private key'
+          );
+        }
+
+        const decryptedPrivateKey = await decryptDataByPassword(
+          password,
+          saltStringified,
+          encryptedPrivateKey
+        );
+        debugger;
+        if (decryptedPrivateKey instanceof Error) {
+          return new Error('Failed to decrypt private key for data encryption');
+        }
+        result[CRYPTO_UTIL_KEYPAIR_SALT_KEY_NAME] = saltStringified;
         result[CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME] = encryptedPrivateKey;
       }
+      debugger;
       return result;
     }
     return new Error('Argument given must be a CryptoKeyPair');
@@ -161,7 +181,7 @@ export const importPrivateKey = (key: object): PromiseLike<CryptoKey> =>
   importKey(key, false);
 
 export const importKeyPair = async (
-  keyPair: TCRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE
+  keyPair: TCRYPTO_UTIL_KEYPAIR_PREIMPORT_FORMAT_TYPE
 ): Promise<TCRYPTO_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE | Error> => {
   try {
     if (isCryptoKeyPairImported(keyPair)) {
@@ -210,11 +230,19 @@ export const importKeyPairFromString = async (
         );
 
         if (decryptedPrivateKey instanceof Error) {
+          console.error('Failed to decrypt the data encryption private key');
           return decryptedPrivateKey;
         }
-        keyPairObject[
-          CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME
-        ] = decryptedPrivateKey;
+        try {
+          keyPairObject[CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME] = JSON.parse(
+            decryptedPrivateKey
+          );
+        } catch (err) {
+          console.error(err);
+          return new Error(
+            'Failed to parse dataencryption Private key from the string decrypted'
+          );
+        }
         debugger;
       }
       return importKeyPair(keyPairObject);

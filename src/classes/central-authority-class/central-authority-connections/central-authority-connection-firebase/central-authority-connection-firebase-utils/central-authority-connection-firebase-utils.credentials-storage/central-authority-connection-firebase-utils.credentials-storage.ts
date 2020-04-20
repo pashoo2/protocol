@@ -200,13 +200,6 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
     }
 
     const { credentials: exportedCredentials } = storedCredentialsValue;
-
-    if (signUpCredentials?.password) {
-      return new Error(
-        'A password must provided to decrypt the credentials imported from the server'
-      );
-    }
-
     const importedCredentials = await importCryptoCredentialsFromAString(
       exportedCredentials,
       signUpCredentials?.password
@@ -264,6 +257,7 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
     for (; idx < len; idx++) {
       keyValueStored = keys[idx];
       valueValueStored = valueStored[keyValueStored];
+      debugger;
       credentialsImported = await this.getCredentialsByValueStored(
         valueValueStored,
         signUpCredentials
@@ -310,7 +304,6 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
         )
         .equalTo(firebaseUserId)
         .once('value');
-
       if (snapshot.exists()) {
         const valueStored = snapshot.val();
         return this.filterCredentialsValues(valueStored, signUpCredentials);

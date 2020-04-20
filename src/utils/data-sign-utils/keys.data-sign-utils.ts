@@ -20,8 +20,6 @@ import {
 } from './data-sign-utils.types';
 import {
   isCryptoKeyPair,
-  isJWK,
-  getJWK,
   getJWKOrBool,
 } from 'utils/encryption-keys-utils/encryption-keys-utils';
 import { TEncryptionKeyStoreFormatType } from 'types/encryption-keys.types';
@@ -30,7 +28,9 @@ import { stringify } from 'utils/main-utils';
 import { decryptDataByPassword } from '../password-utils/decrypt.password-utils';
 import { DATA_SIGN_CRYPTO_UTIL_KEYPAIR_SALT_KEY_NAME } from './data-sign-utils.const';
 import { generateSalt } from '../encryption-utils/salt-utils';
-import { encryptDataWithPasswordToArrayBuffer } from '../password-utils/encrypt.password-utils';
+import { encryptDataWithPassword } from '../password-utils/encrypt.password-utils';
+import { TDATA_SIGN_UTIL_KEYPAIR_IMPORT_TYPE } from './data-sign-utils.types';
+import { typedArrayToString } from '../typed-array-utils';
 
 export const dataSignIsCryptoKeyPairImported = (
   key: any
@@ -126,14 +126,13 @@ export const dataSignExportKeyPair = async (
       };
 
       if (password) {
-        debugger;
         const salt = generateSalt();
 
         if (salt instanceof Error) {
           return new Error('Failed to generate a unique salt value');
         }
-        debugger;
-        const encryptedPrivateKey = await encryptDataWithPasswordToArrayBuffer(
+
+        const encryptedPrivateKey = await encryptDataWithPassword(
           password,
           salt,
           privateKey
@@ -145,7 +144,24 @@ export const dataSignExportKeyPair = async (
           );
         }
 
-        result[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_SALT_KEY_NAME] = salt;
+        const saltStringified = typedArrayToString(salt);
+
+        if (saltStringified instanceof Error) {
+          return new Error(
+            'Failed to stringify the salt value for the private data sign key'
+          );
+        }
+
+        const decryptedPrivateKey = await decryptDataByPassword(
+          password,
+          saltStringified,
+          encryptedPrivateKey
+        );
+        debugger;
+        if (decryptedPrivateKey instanceof Error) {
+          return new Error('Failed to decrypt private key for data encryption');
+        }
+        result[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_SALT_KEY_NAME] = saltStringified;
         result[
           DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME
         ] = encryptedPrivateKey;
@@ -213,7 +229,7 @@ export const dataSignImportPrivateKey = (
 ): PromiseLike<CryptoKey | Error> => dataSignImportKey(key, false);
 
 export const dataSignImportKeyPair = async (
-  keyPair: TDATA_SIGN_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE
+  keyPair: TDATA_SIGN_UTIL_KEYPAIR_IMPORT_TYPE
 ): Promise<TDATA_SIGN_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE | Error> => {
   try {
     if (dataSignIsCryptoKeyPairImported(keyPair)) {
@@ -270,15 +286,25 @@ export const dataSignImportKeyPairFromString = async (
         );
 
         if (decryptedPrivateKey instanceof Error) {
+          console.error('Failed to decrypt the data sign private key');
           return decryptedPrivateKey;
         }
-        keyPairObject[
-          DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME
-        ] = decryptedPrivateKey;
+        try {
+          keyPairObject[
+            DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME
+          ] = JSON.parse(decryptedPrivateKey);
+        } catch (err) {
+          console.error(err);
+          return new Error(
+            'Failed to parse datasign Private key from the string decrypted'
+          );
+        }
         debugger;
       }
       if (dataSignIsCryptoKeyPairImported(keyPairObject)) {
-        return dataSignImportKeyPair(keyPairObject);
+        return dataSignImportKeyPair(
+          keyPairObject as TDATA_SIGN_UTIL_KEYPAIR_IMPORT_TYPE
+        );
       }
       return new Error('There is a wrong format for the imported key pair');
     }

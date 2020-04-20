@@ -712,7 +712,7 @@ export class CAConnectionWithFirebaseBase {
     signUpCredentials: ICAConnectionSignUpCredentials
   ): Promise<Error | TCentralAuthorityUserCryptoCredentials | null> {
     const isConnected = this.checkIfConnected();
-
+    debugger;
     if (!isConnected) {
       return new Error(
         'There is no active connection to the Firebase auth provider'
@@ -791,7 +791,7 @@ export class CAConnectionWithFirebaseBase {
       );
     }
     const credentialsGiven = signUpCredentials.cryptoCredentials;
-
+    debugger;
     // try a multiple times cause may be
     // a network errors or user id
     // is already exists in the database

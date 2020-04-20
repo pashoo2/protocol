@@ -46,7 +46,7 @@ export const exportKeyPairsAsString = async (
     exportKeyPairDataEncryptAsString(encryptionKeyPair, password),
     exportKeyPairDataSignAsString(signDataKeyPair, password),
   ]);
-
+  debugger;
   if (encryptionKeyPairString instanceof Error) {
     return encryptionKeyPairString;
   }

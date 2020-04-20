@@ -68,7 +68,7 @@ export const exportCryptoCredentialsToString = async (
     const exportedCryptoCredentialsAsString = stringify(
       cryptoCredentialsExported
     );
-
+    debugger;
     if (
       !checkIsValidExportedCryptoCredentialsToString(
         exportedCryptoCredentialsAsString
@@ -230,7 +230,7 @@ export const importCryptoCredentialsFromExportedFromat = async (
     cryptoKeysExported,
     password
   );
-
+  debugger;
   if (cryptoKeysImported instanceof Error) {
     console.error(cryptoKeysImported);
     return new Error(
@@ -265,7 +265,7 @@ export const importCryptoCredentialsFromAString = async (
   if (!checkIsValidExportedCryptoCredentialsToString(cryptoCredentialsString)) {
     return new Error('The cryptoCredentials value have a wrong format');
   }
-
+  debugger;
   let cryptoCredentialsExported;
   try {
     cryptoCredentialsExported = JSON.parse(cryptoCredentialsString);
