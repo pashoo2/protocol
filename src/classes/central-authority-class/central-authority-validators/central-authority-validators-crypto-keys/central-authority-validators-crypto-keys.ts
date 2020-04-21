@@ -24,7 +24,8 @@ export const caValidateCryptoKeyPairExportedObject = (value: any): boolean =>
  * @param {any} cryptoCredentials
  */
 export const checkIsValidCryptoCredentials = (
-  cryptoCredentials: any
+  cryptoCredentials: any,
+  checkPrivateKey: boolean = true
 ): cryptoCredentials is TCentralAuthorityUserCryptoCredentials => {
   if (!cryptoCredentials || typeof cryptoCredentials !== 'object') {
     return false;
@@ -53,7 +54,7 @@ export const checkIsValidCryptoCredentials = (
     );
     return false;
   }
-  if (!checkIsCryptoKeyPairs(cryptoKeys)) {
+  if (!checkIsCryptoKeyPairs(cryptoKeys, checkPrivateKey)) {
     console.error(
       'There is a wrong format of the crypto credentials value, case the crypto keys value have a wrong type'
     );

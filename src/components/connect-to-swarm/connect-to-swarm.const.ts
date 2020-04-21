@@ -29,7 +29,7 @@ export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_2 = {
 };
 
 export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_2 =
-  '02https://watcha3-191815.firebaseio.com|l4xgNzmSsOOr2jAM7aVpnAF7S0j2';
+  '02https://watcha3-191815.firebaseio.com|LS3zLYp9PFR4877Zes1IfawKIVN2';
 
 export enum CONNECT_TO_SWARM_AUTH_PROVIDERS {
   FIREBASE_WATCHA = 'https://watcha3-191815.firebaseio.com',

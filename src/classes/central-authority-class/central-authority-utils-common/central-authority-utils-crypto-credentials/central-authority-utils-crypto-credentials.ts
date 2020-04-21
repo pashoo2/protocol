@@ -243,7 +243,7 @@ export const importCryptoCredentialsFromExportedFromat = async (
     [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: userIdentityExported,
   };
 
-  if (!checkIsValidCryptoCredentials(cryptoCredentials)) {
+  if (!checkIsValidCryptoCredentials(cryptoCredentials, !!password)) {
     return new Error(
       'Failed to return the crypto credentials imorted in the valid format'
     );

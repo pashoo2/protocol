@@ -139,12 +139,12 @@ export class ConnectToSwarm extends React.PureComponent {
         CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY,
         'true'
       );
+
+      const userId = connectionBridge?.caConnection?.getUserIdentity();
+
       this.setState({
         connectionBridge,
-        userId:
-          credentialsVariant === 1
-            ? CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_1
-            : CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_2,
+        userId,
       });
     } catch (error) {
       this.setState({

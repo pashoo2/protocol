@@ -254,6 +254,7 @@ export class CAConnectionsPool implements ICAConnectionPool {
       );
       return authResult;
     }
+
     const addConnectionResult = await this.addConectionWithProvider(
       authProviderUrl,
       connectionWithAuthProvider

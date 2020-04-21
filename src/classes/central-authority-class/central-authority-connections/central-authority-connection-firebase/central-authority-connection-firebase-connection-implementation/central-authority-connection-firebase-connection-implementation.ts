@@ -265,15 +265,34 @@ export class CAConnectionWithFirebaseImplementation
       // crypto credentials
       this.setUserLogin(firebaseCredentials.login);
 
+      let cryptoCredentials:
+        | TCentralAuthorityUserCryptoCredentials
+        | Error
+        | undefined;
+
+      if (firebaseCredentials.session) {
+        const sessionCryptoCredentials = await this.readCryptoCrdentialsFromSession(
+          firebaseCredentials.session
+        );
+
+        if (sessionCryptoCredentials instanceof Error) {
+          console.error(
+            'Failed to get credentials from the session cause the error',
+            sessionCryptoCredentials
+          );
+        }
+        cryptoCredentials = sessionCryptoCredentials;
+      }
       // create a new credentnials for the user or return
       // an existing.
       // if a crytpto credentials provided in signUpCredentials
       // it will be used to set in the Firebase credentials
       // storage
-      const cryptoCredentials = await this.createOrReturnExistingCredentialsForUser(
-        firebaseCredentials
-      );
-
+      if (!cryptoCredentials || cryptoCredentials instanceof Error) {
+        cryptoCredentials = await this.createOrReturnExistingCredentialsForUser(
+          firebaseCredentials
+        );
+      }
       if (cryptoCredentials instanceof Error) {
         console.error('Failed to get a crypto credentials valid for the user');
         return this.onAuthorizationFailed(cryptoCredentials);
@@ -282,6 +301,19 @@ export class CAConnectionWithFirebaseImplementation
       // give user's profile
       // with a credentials
       authHandleResult = await this.returnOnAuthorizedResult(cryptoCredentials);
+      if (firebaseCredentials.session) {
+        const setCredentialsInSessionResult = await this.setCurrentUserCryptoCredentialsInSession(
+          firebaseCredentials.session,
+          cryptoCredentials
+        );
+
+        if (setCredentialsInSessionResult instanceof Error) {
+          console.error(
+            'Failed to set the credentials in the user session',
+            setCredentialsInSessionResult
+          );
+        }
+      }
     }
 
     if (authHandleResult instanceof Error) {

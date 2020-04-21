@@ -23,11 +23,14 @@ import { crypto } from '../data-sign-utils/main.data-sign-utils.const';
 
 export const isCryptoKey = (v: any): v is CryptoKey => v instanceof CryptoKey;
 
-export const isCryptoKeyPair = (keyPair: any): keyPair is CryptoKeyPair => {
+export const isCryptoKeyPair = (
+  keyPair: any,
+  checkPrivateKeys: boolean = true
+): keyPair is CryptoKeyPair => {
   return (
     typeof keyPair === 'object' &&
     isCryptoKey(keyPair.publicKey) &&
-    isCryptoKey(keyPair.privateKey)
+    (!checkPrivateKeys || isCryptoKey(keyPair.privateKey))
   );
 };
 

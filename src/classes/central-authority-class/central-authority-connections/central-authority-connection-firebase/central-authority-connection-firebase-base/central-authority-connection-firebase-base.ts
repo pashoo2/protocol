@@ -35,6 +35,14 @@ import {
 import { valiateCAAuthConnectionFirebaseUtilsConnetionConfiguration } from '../central-authority-connection-firebase-utils/central-authority-connection-firebase-utils.validators';
 import { timeout } from 'utils';
 import { CA_CONNECTION_FIREBASE_AUTH_WITH_SESSION_TOKEN_TIMEOUT_MS } from '../central-authority-connection-firebase.const';
+import { ISensitiveDataSessionStorage } from '../../../../sensitive-data-session-storage/sensitive-data-session-storage.types';
+import { CENTRAL_AUTHORITY_CONNECTION_FIREBASE_BASE_SESSION_KEY } from './central-authority-connection-firebase-base.const';
+import { ICAConnectionFirebaseBaseSessionData } from './central-authority-connection-firebase-base.types';
+import assert from 'assert';
+import {
+  importCryptoCredentialsFromAString,
+  exportCryptoCredentialsToString,
+} from '../../../central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials';
 
 /**
  *
@@ -712,7 +720,7 @@ export class CAConnectionWithFirebaseBase {
     signUpCredentials: ICAConnectionSignUpCredentials
   ): Promise<Error | TCentralAuthorityUserCryptoCredentials | null> {
     const isConnected = this.checkIfConnected();
-    debugger;
+
     if (!isConnected) {
       return new Error(
         'There is no active connection to the Firebase auth provider'
@@ -723,7 +731,7 @@ export class CAConnectionWithFirebaseBase {
     const credentialsForTheCurrentUser = await connectionWithCredentialsStorage!!.getCredentialsForTheCurrentUser(
       signUpCredentials
     );
-    debugger;
+
     if (credentialsForTheCurrentUser instanceof Error) {
       console.error(credentialsForTheCurrentUser);
       return new Error('Failed to read credentials of the current user');
@@ -791,7 +799,7 @@ export class CAConnectionWithFirebaseBase {
       );
     }
     const credentialsGiven = signUpCredentials.cryptoCredentials;
-    debugger;
+
     // try a multiple times cause may be
     // a network errors or user id
     // is already exists in the database
@@ -843,7 +851,7 @@ export class CAConnectionWithFirebaseBase {
     const credentialsExistingForTheCurrentUser = await this.readCryptoCredentialsForTheUserFromDatabase(
       signUpCredentials
     );
-    debugger;
+
     if (credentialsExistingForTheCurrentUser instanceof Error) {
       // if something was going wrong when reading
       // a credentials for the current user
@@ -885,14 +893,101 @@ export class CAConnectionWithFirebaseBase {
     }
   }
 
+  protected async setSessionData(
+    session: ISensitiveDataSessionStorage,
+    sessionData: object
+  ): Promise<Error | undefined> {
+    try {
+      assert(sessionData, 'A session data must not be empty');
+      assert(typeof sessionData === 'object', 'A session data must an object');
+      await session.setItem(
+        CENTRAL_AUTHORITY_CONNECTION_FIREBASE_BASE_SESSION_KEY,
+        sessionData
+      );
+    } catch (err) {
+      return err;
+    }
+  }
+
+  protected async setCurrentUserCryptoCredentialsInSession(
+    session: ISensitiveDataSessionStorage,
+    cryptoCredentials: TCentralAuthorityUserCryptoCredentials
+  ): Promise<Error | undefined> {
+    try {
+      assert(cryptoCredentials, 'Crypto credenitials must be provided');
+      assert(
+        typeof cryptoCredentials === 'object',
+        'Crypto credentials must be an object'
+      );
+
+      const credentialsExported = await exportCryptoCredentialsToString(
+        cryptoCredentials
+      );
+
+      if (credentialsExported instanceof Error) {
+        throw credentialsExported;
+      }
+      return await this.setSessionData(session, {
+        credentials: credentialsExported,
+      });
+    } catch (err) {
+      return err;
+    }
+  }
+
+  protected async readSessionData(
+    session: ISensitiveDataSessionStorage
+  ): Promise<Error | undefined | ICAConnectionFirebaseBaseSessionData> {
+    try {
+      const sessionData = await session.getItem(
+        CENTRAL_AUTHORITY_CONNECTION_FIREBASE_BASE_SESSION_KEY
+      );
+
+      if (sessionData) {
+        assert(
+          typeof sessionData === 'object',
+          'session data is not an object'
+        );
+        return sessionData;
+      }
+    } catch (err) {
+      return err;
+    }
+  }
+
+  protected async readCryptoCrdentialsFromSession(
+    session: ISensitiveDataSessionStorage
+  ): Promise<undefined | Error | TCentralAuthorityUserCryptoCredentials> {
+    const sessionData = await this.readSessionData(session);
+
+    if (!sessionData) {
+      return;
+    }
+    if (sessionData instanceof Error) {
+      return sessionData;
+    }
+
+    const { credentials } = sessionData;
+
+    if (credentials) {
+      try {
+        if (typeof credentials !== 'string') {
+          return new Error('Credentials stored in session have a wrong format');
+        }
+        return await importCryptoCredentialsFromAString(credentials);
+      } catch (err) {
+        return err;
+      }
+    }
+  }
+
   protected async createOrReturnExistingCredentialsForUser(
     signUpCredentials: ICAConnectionSignUpCredentials
   ): Promise<Error | TCentralAuthorityUserCryptoCredentials> {
-    debugger;
     const credentialsExistingForTheCurrentUser = await this.checkIfCredentialsExistsForTheUser(
       signUpCredentials
     );
-    debugger;
+
     if (credentialsExistingForTheCurrentUser instanceof Error) {
       return credentialsExistingForTheCurrentUser;
     }

@@ -229,11 +229,12 @@ export const dataSignImportPrivateKey = (
 ): PromiseLike<CryptoKey | Error> => dataSignImportKey(key, false);
 
 export const dataSignImportKeyPair = async (
-  keyPair: TDATA_SIGN_UTIL_KEYPAIR_IMPORT_TYPE
+  keyPair: TDATA_SIGN_UTIL_KEYPAIR_IMPORT_TYPE,
+  checkPrivateKey: boolean = true
 ): Promise<TDATA_SIGN_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE | Error> => {
   try {
     if (dataSignIsCryptoKeyPairImported(keyPair)) {
-      const [publicKey, privateKey] = await Promise.all([
+      let [publicKey, privateKey] = await Promise.all([
         dataSignImportPublicKey(
           keyPair[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]
         ),
@@ -246,11 +247,14 @@ export const dataSignImportKeyPair = async (
         return publicKey;
       }
       if (privateKey instanceof Error) {
-        return privateKey;
+        if (checkPrivateKey) {
+          return privateKey;
+        }
+        privateKey = undefined;
       }
       return {
         [DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]: publicKey,
-        [DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]: privateKey,
+        [DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]: privateKey as any, // TODO
       };
     }
     return new Error('The argument must be an instance of CryptoKeyPair');
@@ -303,7 +307,8 @@ export const dataSignImportKeyPairFromString = async (
       }
       if (dataSignIsCryptoKeyPairImported(keyPairObject)) {
         return dataSignImportKeyPair(
-          keyPairObject as TDATA_SIGN_UTIL_KEYPAIR_IMPORT_TYPE
+          keyPairObject as TDATA_SIGN_UTIL_KEYPAIR_IMPORT_TYPE,
+          !!password
         );
       }
       return new Error('There is a wrong format for the imported key pair');

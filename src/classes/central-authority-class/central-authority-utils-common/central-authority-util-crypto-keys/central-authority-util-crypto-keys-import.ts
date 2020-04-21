@@ -78,7 +78,7 @@ export const importKeyPairsFromString = async (
     [CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME]: dataSignKeyPair,
   };
 
-  if (checkIsCryptoKeyPairs(encryptionKeyPairs)) {
+  if (checkIsCryptoKeyPairs(encryptionKeyPairs, !!password)) {
     return encryptionKeyPairs;
   }
   return new Error('Failed to import key pairs');

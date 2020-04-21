@@ -181,24 +181,45 @@ export const importPrivateKey = (key: object): PromiseLike<CryptoKey> =>
   importKey(key, false);
 
 export const importKeyPair = async (
-  keyPair: TCRYPTO_UTIL_KEYPAIR_PREIMPORT_FORMAT_TYPE
+  keyPair: TCRYPTO_UTIL_KEYPAIR_PREIMPORT_FORMAT_TYPE,
+  checkPrivateKey: boolean = true
 ): Promise<TCRYPTO_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE | Error> => {
   try {
+    debugger;
     if (isCryptoKeyPairImported(keyPair)) {
-      const [publicKey, privateKey] = await Promise.all([
-        importPublicKey(keyPair[CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]),
-        importPrivateKey(keyPair[CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]),
-      ]).catch((err) => [err, err]);
-
+      let [publicKey, privateKey] = await Promise.all([
+        (async () => {
+          try {
+            return await importPublicKey(
+              keyPair[CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]
+            );
+          } catch (err) {
+            return err;
+          }
+        })(),
+        (async () => {
+          try {
+            return await importPrivateKey(
+              keyPair[CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]
+            );
+          } catch (err) {
+            return err;
+          }
+        })(),
+      ]);
+      debugger;
       if (publicKey instanceof Error) {
         return publicKey;
       }
       if (privateKey instanceof Error) {
-        return privateKey;
+        if (checkPrivateKey) {
+          return privateKey;
+        }
+        privateKey = undefined;
       }
       return {
         [CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]: publicKey,
-        [CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]: privateKey,
+        [CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]: privateKey as any, // TODO
       };
     }
     return new Error('The argument must be an instance of CryptoKeyPair');
@@ -216,7 +237,6 @@ export const importKeyPairFromString = async (
       const keyPairObject = JSON.parse(keyPairString);
 
       if (password && keyPairObject[CRYPTO_UTIL_KEYPAIR_SALT_KEY_NAME]) {
-        debugger;
         if (
           typeof keyPairObject[CRYPTO_UTIL_KEYPAIR_SALT_KEY_NAME] !== 'string'
         ) {
@@ -243,9 +263,8 @@ export const importKeyPairFromString = async (
             'Failed to parse dataencryption Private key from the string decrypted'
           );
         }
-        debugger;
       }
-      return importKeyPair(keyPairObject);
+      return importKeyPair(keyPairObject, !!password);
     }
     return new Error('A key pair must be a string');
   } catch (err) {

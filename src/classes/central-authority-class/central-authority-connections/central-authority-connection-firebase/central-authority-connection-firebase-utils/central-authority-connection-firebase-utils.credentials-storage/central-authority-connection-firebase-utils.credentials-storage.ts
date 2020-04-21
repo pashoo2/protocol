@@ -257,7 +257,6 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
     for (; idx < len; idx++) {
       keyValueStored = keys[idx];
       valueValueStored = valueStored[keyValueStored];
-      debugger;
       credentialsImported = await this.getCredentialsByValueStored(
         valueValueStored,
         signUpCredentials
@@ -365,7 +364,7 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
       undefined,
       signUpCredentials.password
     );
-    debugger;
+
     if (exportedCryptoCredentials instanceof Error) {
       console.error(exportedCryptoCredentials);
       return new Error('Failed to export the crypto credentials value');
