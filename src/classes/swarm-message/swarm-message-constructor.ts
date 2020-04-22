@@ -307,7 +307,7 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
     if (userRncryptionKeyPair instanceof Error) {
       throw userRncryptionKeyPair;
     }
-    debugger;
+
     this.parser =
       instances && instances.parser
         ? instances.parser

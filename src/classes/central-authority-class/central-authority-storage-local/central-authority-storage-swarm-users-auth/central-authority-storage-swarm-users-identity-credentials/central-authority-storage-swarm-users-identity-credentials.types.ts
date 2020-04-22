@@ -92,4 +92,26 @@ export interface ICAIdentityCredentialsStorage {
   setCredentials(
     cryptoCredentialsExportedAsString: string
   ): Promise<boolean | Error>;
+  /**
+   * save credentials in the storage and do not validate
+   * the private key if not exists.
+   *
+   * @param {(TCAUserIdentityRawTypes | string)} cryptoCredentials
+   * @returns {(Promise<boolean | Error>)}
+   * @memberof ICAIdentityCredentialsStorage
+   */
+  setCredentialsNoCheckPrivateKey(
+    cryptoCredentials: TCAUserIdentityRawTypes | string
+  ): Promise<boolean | Error>;
+  /**
+   * save credentials in the storage and do not validate
+   * the private key if not exists.
+   *
+   * @param {(TCAUserIdentityRawTypes | string)} cryptoCredentials
+   * @returns {(Promise<boolean | Error>)}
+   * @memberof ICAIdentityCredentialsStorage
+   */
+  setCredentialsNoCheckPrivateKey(
+    cryptoCredentials: TCAUserIdentityRawTypes | string
+  ): Promise<boolean | Error>;
 }

@@ -407,16 +407,12 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     progress: number,
     total: number
   ) => {
-    console.log('Log in progress', {
-      address,
-      hash,
-      entry,
-      progress,
-      total,
-    });
-    // emit event database local copy loading progress
-    this.emitEvent(ESwarmStoreEventNames.LOADING, progress);
     this.handleNewEntry(address, entry, {});
+    // emit event database local copy loading progress
+    this.emitEvent(
+      ESwarmStoreEventNames.LOADING,
+      (progress / (total || 1)) * 100
+    );
   };
 
   private handleFeedStoreReplicated = () => {

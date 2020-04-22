@@ -135,21 +135,35 @@ export class CentralAuthorityIdentityCredentialsStorage
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async setCredentials(...args: any[]): Promise<boolean | Error> {
     const argsLenght = args.length;
+    const withCheckPrivateFlag = typeof args[1] === 'boolean';
+    const checkPrivateKey = !withCheckPrivateFlag || args[1] !== false;
 
-    if (argsLenght === 2) {
-      return this.setCredentialsByIdentity(args[0], args[1]);
-    } else if (argsLenght === 1) {
+    if (argsLenght === 2 && !withCheckPrivateFlag) {
+      return this.setCredentialsByIdentity(args[0], args[1], checkPrivateKey);
+    } else if (argsLenght === 1 || withCheckPrivateFlag) {
       const caCryptoCredentials = args[0];
 
       if (checkIsValidExportedCryptoCredentialsToString(caCryptoCredentials)) {
         return this.setCredentialsByCACryptoCredentialsExportedToString(
-          caCryptoCredentials
+          caCryptoCredentials,
+          checkPrivateKey
         );
-      } else if (checkIsValidCryptoCredentials(caCryptoCredentials)) {
-        return this.setCredentialsByCACryptoCredentials(caCryptoCredentials);
+      } else if (
+        checkIsValidCryptoCredentials(caCryptoCredentials, checkPrivateKey)
+      ) {
+        return this.setCredentialsByCACryptoCredentials(
+          caCryptoCredentials,
+          checkPrivateKey
+        );
       }
     }
     return new Error('An unknown arguments');
+  }
+
+  public setCredentialsNoCheckPrivateKey(
+    cryptoCredentials: TCAUserIdentityRawTypes | string
+  ) {
+    return this.setCredentials(cryptoCredentials, false);
   }
 
   /**
@@ -298,7 +312,8 @@ export class CentralAuthorityIdentityCredentialsStorage
 
   protected setCredentialsByIdentity = async (
     identity: TCAUserIdentityRawTypes,
-    cryptoKeyPairs: TCACryptoKeyPairs
+    cryptoKeyPairs: TCACryptoKeyPairs,
+    checkPrivateKey: boolean = true
   ): Promise<boolean | Error> => {
     const { isActive, storageConnection } = this;
     if (!isActive || !storageConnection) {
@@ -316,7 +331,8 @@ export class CentralAuthorityIdentityCredentialsStorage
 
       const cryptoCredentialsExported = await getExportedCryptoCredentialsByCAIdentity(
         caIdentity,
-        cryptoKeyPairs
+        cryptoKeyPairs,
+        checkPrivateKey
       );
 
       if (cryptoCredentialsExported instanceof Error) {
@@ -354,7 +370,8 @@ export class CentralAuthorityIdentityCredentialsStorage
   };
 
   protected async setCredentialsByCACryptoCredentials(
-    caCryptoCredentials: TCentralAuthorityUserCryptoCredentials
+    caCryptoCredentials: TCentralAuthorityUserCryptoCredentials,
+    checkPrivateKey: boolean = true
   ): Promise<boolean | Error> {
     const identity = getUserIdentityByCryptoCredentials(caCryptoCredentials);
 
@@ -366,7 +383,8 @@ export class CentralAuthorityIdentityCredentialsStorage
     }
 
     const cryptoKeyPairs = getCryptoKeyPairsByCryptoCredentials(
-      caCryptoCredentials
+      caCryptoCredentials,
+      checkPrivateKey
     );
 
     if (cryptoKeyPairs instanceof Error) {
@@ -376,11 +394,16 @@ export class CentralAuthorityIdentityCredentialsStorage
       );
     }
 
-    return this.setCredentialsByIdentity(identity, cryptoKeyPairs);
+    return this.setCredentialsByIdentity(
+      identity,
+      cryptoKeyPairs,
+      checkPrivateKey
+    );
   }
 
   protected async setCredentialsByCACryptoCredentialsExportedToString(
-    caCryptoCredentialsExportedToString: string
+    caCryptoCredentialsExportedToString: string,
+    checkPrivateKey: boolean = true
   ): Promise<boolean | Error> {
     const cryptoCredentials = await importCryptoCredentialsFromAString(
       caCryptoCredentialsExportedToString
@@ -390,7 +413,10 @@ export class CentralAuthorityIdentityCredentialsStorage
       console.error(cryptoCredentials);
       return new Error('Failed to import crypto credentials from the string');
     }
-    return this.setCredentialsByCACryptoCredentials(cryptoCredentials);
+    return this.setCredentialsByCACryptoCredentials(
+      cryptoCredentials,
+      checkPrivateKey
+    );
   }
 
   @caching(CA_IDENTITY_CREDENTIALS_STORAGE_READ_CACHE_CAPACITY)
@@ -435,7 +461,8 @@ export class CentralAuthorityIdentityCredentialsStorage
       // cause an unexpected issues
       const resultedValue = replaceCryptoCredentialsIdentity(
         importedCryptoCredentials,
-        String(caIdentity)
+        String(caIdentity),
+        false
       );
 
       if (resultedValue instanceof Error) {

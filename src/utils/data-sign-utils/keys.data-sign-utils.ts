@@ -33,12 +33,13 @@ import { TDATA_SIGN_UTIL_KEYPAIR_IMPORT_TYPE } from './data-sign-utils.types';
 import { typedArrayToString } from '../typed-array-utils';
 
 export const dataSignIsCryptoKeyPairImported = (
-  key: any
+  key: any,
+  checkPrivateKey: boolean = true
 ): key is TDATA_SIGN_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE => {
   return (
     typeof key === 'object' &&
     !!key[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME] &&
-    !!key[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]
+    (!checkPrivateKey || !!key[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME])
   );
 };
 
@@ -106,10 +107,12 @@ export const dataSignExportKeyPair = async (
   password?: string
 ): Promise<TDATA_SIGN_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE | Error> => {
   try {
-    if (isCryptoKeyPair(keyPair)) {
+    if (isCryptoKeyPair(keyPair, !!password)) {
       // do it in parallel
       const [privateKey, publicKey] = await Promise.all([
-        dataSignExportKey(keyPair.privateKey),
+        password || keyPair.privateKey
+          ? dataSignExportKey(keyPair.privateKey)
+          : Promise.resolve(undefined),
         dataSignExportKey(keyPair.publicKey),
       ]).catch((err) => [err, err]);
 
@@ -157,7 +160,7 @@ export const dataSignExportKeyPair = async (
           saltStringified,
           encryptedPrivateKey
         );
-        debugger;
+
         if (decryptedPrivateKey instanceof Error) {
           return new Error('Failed to decrypt private key for data encryption');
         }
@@ -166,7 +169,6 @@ export const dataSignExportKeyPair = async (
           DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME
         ] = encryptedPrivateKey;
       }
-      debugger;
       return result;
     }
     return new Error('Argument given must be a CryptoKeyPair');
@@ -233,15 +235,22 @@ export const dataSignImportKeyPair = async (
   checkPrivateKey: boolean = true
 ): Promise<TDATA_SIGN_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE | Error> => {
   try {
-    if (dataSignIsCryptoKeyPairImported(keyPair)) {
-      let [publicKey, privateKey] = await Promise.all([
+    if (dataSignIsCryptoKeyPairImported(keyPair, checkPrivateKey)) {
+      const privateKeyToImport =
+        keyPair[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME];
+      if (checkPrivateKey && !privateKeyToImport) {
+        return new Error('The private key is empty');
+      }
+      const importResult = await Promise.all([
         dataSignImportPublicKey(
           keyPair[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]
         ),
-        dataSignImportPrivateKey(
-          keyPair[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]
-        ),
+        checkPrivateKey || privateKeyToImport
+          ? dataSignImportPrivateKey(privateKeyToImport!)
+          : (Promise.resolve(undefined) as any),
       ]).catch((err) => [err, err]);
+      const publicKey = importResult[0];
+      let privateKey = importResult[1];
 
       if (publicKey instanceof Error) {
         return publicKey;
@@ -254,7 +263,7 @@ export const dataSignImportKeyPair = async (
       }
       return {
         [DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]: publicKey,
-        [DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]: privateKey as any, // TODO
+        [DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]: privateKey,
       };
     }
     return new Error('The argument must be an instance of CryptoKeyPair');
@@ -275,7 +284,6 @@ export const dataSignImportKeyPairFromString = async (
         password &&
         keyPairObject[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_SALT_KEY_NAME]
       ) {
-        debugger;
         if (
           typeof keyPairObject[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_SALT_KEY_NAME] !==
           'string'
@@ -303,9 +311,8 @@ export const dataSignImportKeyPairFromString = async (
             'Failed to parse datasign Private key from the string decrypted'
           );
         }
-        debugger;
       }
-      if (dataSignIsCryptoKeyPairImported(keyPairObject)) {
+      if (dataSignIsCryptoKeyPairImported(keyPairObject, !!password)) {
         return dataSignImportKeyPair(
           keyPairObject as TDATA_SIGN_UTIL_KEYPAIR_IMPORT_TYPE,
           !!password

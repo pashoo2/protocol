@@ -167,7 +167,7 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
 
     if (isPrivate) {
       const msgBody = await this.readMessgeBodyFromCache(messageRaw.sig);
-      debugger;
+
       if (typeof msgBody === 'string') {
         // if the message's body decrypted found
         bodyRawDecrypted = msgBody;
@@ -178,14 +178,13 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
         ? await this.decryptMessageBodyRaw(bodyRaw)
         : bodyRaw;
     }
-    debugger;
+
     const bodyRawParsed = messageBodyRawParser(bodyRawDecrypted);
-    debugger;
     const swarmMessage: ISwarmMessage = {
       ...messageRaw,
       bdy: bodyRawParsed,
     };
-    debugger;
+
     validator.valiadateSwarmMessage(swarmMessage);
     return swarmMessage;
   }
@@ -199,7 +198,7 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
       );
     }
     const decryptedBody = await this.msgDecryptQueue.decryptData(bodyRaw);
-    debugger;
+
     if (decryptedBody instanceof Error) {
       console.error('Failed to decrypt the private message');
       throw decryptedBody;

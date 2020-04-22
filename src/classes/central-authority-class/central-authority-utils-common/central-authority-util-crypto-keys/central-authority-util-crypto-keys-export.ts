@@ -34,7 +34,7 @@ export const exportKeyPairsAsString = async (
   cryptoKeyPairs: TCACryptoKeyPairs,
   password?: string
 ): Promise<string | Error> => {
-  if (!checkIsCryptoKeyPairs(cryptoKeyPairs)) {
+  if (!checkIsCryptoKeyPairs(cryptoKeyPairs, !!password)) {
     return new Error('The keypair is not valid');
   }
 
@@ -46,7 +46,7 @@ export const exportKeyPairsAsString = async (
     exportKeyPairDataEncryptAsString(encryptionKeyPair, password),
     exportKeyPairDataSignAsString(signDataKeyPair, password),
   ]);
-  debugger;
+
   if (encryptionKeyPairString instanceof Error) {
     return encryptionKeyPairString;
   }
@@ -58,7 +58,7 @@ export const exportKeyPairsAsString = async (
       [CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME]: encryptionKeyPairString,
       [CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME]: signDataKeyPairString,
     });
-    debugger;
+
     if (stringifyResult instanceof Error) {
       return stringifyResult;
     }

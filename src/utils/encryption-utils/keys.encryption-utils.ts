@@ -27,12 +27,13 @@ import { TCRYPTO_UTIL_KEYPAIR_PREIMPORT_FORMAT_TYPE } from './crypto-utils.types
 import { typedArrayToString } from '../typed-array-utils';
 
 export const isCryptoKeyPairImported = (
-  key: any
+  key: any,
+  checkPrivateKey: boolean = true
 ): key is TCRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE => {
   return (
     typeof key === 'object' &&
     !!key[CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME] &&
-    !!key[CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]
+    (!checkPrivateKey || !!key[CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME])
   );
 };
 
@@ -78,10 +79,12 @@ export const exportKeyPair = async (
   password?: string
 ): Promise<TCRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE | Error> => {
   try {
-    if (isCryptoKeyPair(keyPair)) {
+    if (isCryptoKeyPair(keyPair, !!password)) {
       // do it in parallel
       const [privateKey, publicKey] = await Promise.all([
-        exportKey(keyPair.privateKey),
+        password || keyPair.privateKey
+          ? exportKey(keyPair.privateKey)
+          : Promise.resolve(undefined),
         exportKey(keyPair.publicKey),
       ]).catch((err) => [err, err]);
 
@@ -129,14 +132,13 @@ export const exportKeyPair = async (
           saltStringified,
           encryptedPrivateKey
         );
-        debugger;
+
         if (decryptedPrivateKey instanceof Error) {
           return new Error('Failed to decrypt private key for data encryption');
         }
         result[CRYPTO_UTIL_KEYPAIR_SALT_KEY_NAME] = saltStringified;
         result[CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME] = encryptedPrivateKey;
       }
-      debugger;
       return result;
     }
     return new Error('Argument given must be a CryptoKeyPair');
@@ -185,9 +187,8 @@ export const importKeyPair = async (
   checkPrivateKey: boolean = true
 ): Promise<TCRYPTO_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE | Error> => {
   try {
-    debugger;
-    if (isCryptoKeyPairImported(keyPair)) {
-      let [publicKey, privateKey] = await Promise.all([
+    if (isCryptoKeyPairImported(keyPair, checkPrivateKey)) {
+      const importResult = await Promise.all([
         (async () => {
           try {
             return await importPublicKey(
@@ -199,15 +200,22 @@ export const importKeyPair = async (
         })(),
         (async () => {
           try {
-            return await importPrivateKey(
+            if (
+              checkPrivateKey ||
               keyPair[CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]
-            );
+            ) {
+              return await importPrivateKey(
+                keyPair[CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]
+              );
+            }
           } catch (err) {
             return err;
           }
         })(),
       ]);
-      debugger;
+      const publicKey = importResult[0];
+      let privateKey = importResult[1];
+
       if (publicKey instanceof Error) {
         return publicKey;
       }
@@ -219,7 +227,7 @@ export const importKeyPair = async (
       }
       return {
         [CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]: publicKey,
-        [CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]: privateKey as any, // TODO
+        [CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]: privateKey,
       };
     }
     return new Error('The argument must be an instance of CryptoKeyPair');

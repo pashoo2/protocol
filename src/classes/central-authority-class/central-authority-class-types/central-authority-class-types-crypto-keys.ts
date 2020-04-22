@@ -6,8 +6,12 @@ import {
 } from '../central-authority-utils-common/central-authority-util-crypto-keys';
 
 export type TCACryptoKeyPairs = {
-  [CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME]: CryptoKeyPair;
-  [CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME]: CryptoKeyPair;
+  [CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME]: CryptoKeyPair & {
+    privateKey: CryptoKeyPair['privateKey'] | undefined;
+  };
+  [CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME]: CryptoKeyPair & {
+    privateKey: CryptoKeyPair['privateKey'] | undefined;
+  };
 };
 
 export type TCACryptoKeyPairsExported = {

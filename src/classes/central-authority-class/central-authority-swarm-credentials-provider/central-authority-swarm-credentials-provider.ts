@@ -149,7 +149,7 @@ export class CASwarmCredentialsProvider implements ICASwarmCredentialsProvider {
     }
     // set the crdentials read from the swarm in the local credentials storage
     if (crdentialsFromSwarm) {
-      const result = await this.setCredentialsInCredentialsStorage(
+      const result = await this.setCredentialsInCredentialsStorageNoCheckPrivateKey(
         crdentialsFromSwarm
       );
 
@@ -460,7 +460,8 @@ export class CASwarmCredentialsProvider implements ICASwarmCredentialsProvider {
    * @memberof CASwarmCredentialsProvider
    */
   protected async setCredentialsInCredentialsStorage(
-    credentials: TCentralAuthorityUserCryptoCredentials
+    credentials: TCentralAuthorityUserCryptoCredentials,
+    isCheckPrivateKey: boolean = true
   ): Promise<void | Error> {
     if (!this.connectionLocalCredentialsStorage) {
       console.warn(
@@ -479,7 +480,7 @@ export class CASwarmCredentialsProvider implements ICASwarmCredentialsProvider {
       }
     }
 
-    const setCredntialsResult = await this.connectionLocalCredentialsStorage.setCredentials(
+    const setCredntialsResult = await this.connectionLocalCredentialsStorage.setCredentialsNoCheckPrivateKey(
       credentials
     );
 
@@ -487,5 +488,11 @@ export class CASwarmCredentialsProvider implements ICASwarmCredentialsProvider {
       console.error(setCredntialsResult);
       return new Error('Failed to store crdentials got from the swarm');
     }
+  }
+
+  protected setCredentialsInCredentialsStorageNoCheckPrivateKey(
+    credentials: TCentralAuthorityUserCryptoCredentials
+  ) {
+    return this.setCredentialsInCredentialsStorage(credentials, false);
   }
 }
