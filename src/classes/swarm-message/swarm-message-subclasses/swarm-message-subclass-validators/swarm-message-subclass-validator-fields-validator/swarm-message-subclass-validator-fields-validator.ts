@@ -150,11 +150,7 @@ export class SwarmMessageSubclassFieldsValidator
     validateMessageSignatureFormat(sig);
     this.validateUserIdentifier(uid);
     this.validateIsPrivateField(isPrivate);
-    if (!isPrivate) {
-      this.validateMessageBody(bdy as ISwarmMessageBodyDeserialized);
-    } else {
-      this.validateMessageBodyEncrypted(bdy as TSwarmMessageBodyEncrypted);
-    }
+    this.validateMessageBody(bdy as ISwarmMessageBodyDeserialized);
   }
 
   /**

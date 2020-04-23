@@ -166,6 +166,8 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
     let bodyRawDecrypted;
 
     if (isPrivate) {
+      validator.validateMessageBodyEncrypted(messageRaw.bdy);
+
       const msgBody = await this.readMessgeBodyFromCache(messageRaw.sig);
 
       if (typeof msgBody === 'string') {
@@ -180,12 +182,14 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
     }
 
     const bodyRawParsed = messageBodyRawParser(bodyRawDecrypted);
+
     const swarmMessage: ISwarmMessage = {
       ...messageRaw,
       bdy: bodyRawParsed,
     };
 
     validator.valiadateSwarmMessage(swarmMessage);
+
     return swarmMessage;
   }
 

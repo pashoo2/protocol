@@ -3,7 +3,10 @@ import { TSwarmMessageType } from './swarm-message-subclass-validator-fields-val
 import { ISwarmMessagePayloadValidationOptions } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-payload/swarm-message-subclass-validator-fields-validator-validator-payload.types';
 import { ISwarmMessageTimestampValidationOptions } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-timestamp/swarm-message-subclass-validator-fields-validator-validator-timestamp.types';
 import { TSwarmMessageUserIdentifierVersion } from '../swarm-message-subclass-validator.types';
-import { ISwarmMessage } from '../../../swarm-message-constructor.types';
+import {
+  ISwarmMessage,
+  TSwarmMessageBodyEncrypted,
+} from '../../../swarm-message-constructor.types';
 import {
   ISwarmMessageBodyDeserialized,
   ISwarmMessageRaw,
@@ -41,6 +44,15 @@ export interface IMessageFieldsValidatorOptions {
  * @interface ISwarmMessageSubclassFieldsValidator
  */
 export interface ISwarmMessageSubclassFieldsValidator {
+  /**
+   * validate body encrypted
+   *
+   * @param {TSwarmMessageBodyEncrypted} messsageBodyEncrypted
+   * @memberof ISwarmMessageSubclassFieldsValidator
+   */
+  validateMessageBodyEncrypted(
+    messsageBodyEncrypted: TSwarmMessageBodyEncrypted
+  ): void;
   /**
    * validate message's deserialized body object
    *

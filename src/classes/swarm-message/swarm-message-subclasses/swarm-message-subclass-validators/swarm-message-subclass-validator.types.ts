@@ -1,5 +1,6 @@
 import { IMessageFieldsValidatorOptions } from './swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator.types';
 import { IMessageSignatureValidatorOptions } from './swarm-message-subclass-validator-signature-validator/swarm-message-subclass-validator-signature-validator.types';
+import { TSwarmMessageBodyEncrypted } from '../../swarm-message-constructor.types';
 import {
   ISwarmMessage,
   ISwarmMessageRaw,
@@ -28,6 +29,14 @@ export interface IMessageValidatorOptions {
  * @interface ISwarmMessageSubclassValidator
  */
 export interface ISwarmMessageSubclassValidator {
+  /**
+   * validates a message body encrypted.
+   *
+   * @param {TSwarmMessageBodyEncrypted} bdy
+   * @returns {Promise<void>}
+   * @memberof ISwarmMessageSubclassValidator
+   */
+  validateMessageBodyEncrypted(bdy: TSwarmMessageBodyEncrypted): void;
   /**
    * validates swarm messge with body serialized
    * and also validates a signature of the message.

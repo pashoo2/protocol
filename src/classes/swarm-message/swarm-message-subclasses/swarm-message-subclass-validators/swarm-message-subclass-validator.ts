@@ -12,6 +12,7 @@ import {
   ISwarmMessageBodyDeserialized,
 } from '../../swarm-message-constructor.types';
 import assert from 'assert';
+import { TSwarmMessageBodyEncrypted } from '../../swarm-message-constructor.types';
 
 export class SwarmMessageSubclassValidator
   implements ISwarmMessageSubclassValidator {
@@ -54,6 +55,21 @@ export class SwarmMessageSubclassValidator
       return;
     }
     return messageFormatValidator.validateMessage(msg);
+  };
+
+  public validateMessageBodyEncrypted = (
+    bdy: TSwarmMessageBodyEncrypted
+  ): void => {
+    const { messageFormatValidator } = this;
+
+    if (!messageFormatValidator) {
+      assert(
+        !!messageFormatValidator,
+        'Validator of a message fields format is not defined'
+      );
+      return;
+    }
+    return messageFormatValidator.validateMessageBodyEncrypted(bdy);
   };
 
   public validateMessageBody = (

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build:module": "ttsc -p tsconfig-module.json",
-    "start": "react-scripts start & npm run start:wrtc-star",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
