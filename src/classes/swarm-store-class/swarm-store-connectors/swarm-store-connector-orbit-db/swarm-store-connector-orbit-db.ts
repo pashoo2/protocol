@@ -256,16 +256,17 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
   public async dropDatabase(dbName: string) {
     const db = this.getDbConnection(dbName);
 
-    if (db) {
-      try {
-        await db.drop();
-        await this.closeDb(db);
-      } catch (err) {
-        console.error(err);
-        return err;
-      }
+    if (!db) {
+      return new Error(`The database named ${dbName} was not found`);
     }
-    return new Error(`The database named ${dbName} was not found`);
+    try {
+      this.unsetListenersDatabaseEvents(db);
+      await db.drop();
+      await this.closeDb(db);
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
   }
 
   public async closeDatabase(dbName: string): Promise<Error | void> {

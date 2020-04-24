@@ -65,10 +65,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
   public async open(cb?: TCallbackError): Promise<void> {
     const { isClose, isOpen } = this;
 
-    if (isClose) {
-      throw new Error('The instance was closed before');
-    }
-    if (isOpen) {
+    if (!isClose && isOpen) {
       return;
     }
 
@@ -78,6 +75,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
       throw result;
     }
     this.setIsOpen();
+    this.unsetIsClose();
     if (typeof cb === 'function') {
       cb(undefined);
     }
@@ -88,6 +86,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
       return;
     }
     this.setIsClose();
+    this.unsetIsOpen();
     const result = await this.disconnectSecretStorage();
 
     if (result instanceof Error) {
@@ -156,28 +155,69 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
     }
   }
 
-  public del(key: string, cb?: TCallbackError) {
-    return this.put(key, '', cb);
-  }
+  public del = async (key: string, cb?: TCallbackError) => {
+    await this.openIfNecessary();
+
+    const secretStorage = this.getSecretStorage();
+
+    if (secretStorage instanceof Error) {
+      console.error(secretStorage);
+      throw secretStorage;
+    }
+
+    const result = await secretStorage.unset(key);
+
+    if (result instanceof Error) {
+      console.error(result);
+      throw result;
+    }
+    if (typeof cb === 'function') {
+      cb(undefined);
+    }
+  };
+
+  public dropDb = async () => {
+    await this.openIfNecessary();
+
+    const secretStorage = this.getSecretStorage();
+
+    if (secretStorage instanceof Error) {
+      console.error(secretStorage);
+      throw secretStorage;
+    }
+
+    const result = await secretStorage.clearDb();
+
+    if (result instanceof Error) {
+      console.error(result);
+      throw new Error('Failed to drop the database');
+    }
+  };
 
   // TODO - not implemented in ocrbit-db-cache
   public async load() {}
 
   // TODO - not implemented in ocrbit-db-cache
   public async destroy() {
-    const { secretStorage } = this;
-
-    if (secretStorage) {
-      await this.disconnectSecretStorage();
-    }
+    await this.dropDb();
+    await this.close();
+    this.unsetSecretStorage();
   }
 
   protected setIsOpen() {
     this.isOpen = true;
   }
 
+  protected unsetIsOpen() {
+    this.isOpen = false;
+  }
+
   protected setIsClose() {
     this.isClose = true;
+  }
+
+  protected unsetIsClose() {
+    this.isClose = false;
   }
 
   protected getSecretStorage(): Error | ISecretStorage {
@@ -287,7 +327,6 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
     } catch (err) {
       return err;
     }
-    this.unsetSecretStorage();
   }
 
   protected async openIfNecessary(): Promise<void> {

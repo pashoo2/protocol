@@ -1,6 +1,7 @@
 import React from 'react';
 import { connectToSwarmUtil } from './connect-to-swarm.utils';
 import { IConnectionBridge } from 'classes/connection-bridge/connection-bridge.types';
+import { CONNECT_TO_SWARM_DATABASE_MAIN } from './connect-to-swarm.const';
 import {
   CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_1,
   CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_2,
@@ -23,6 +24,9 @@ export class ConnectToSwarm extends React.PureComponent {
     useSession: false,
     connectionBridge: undefined as IConnectionBridge | undefined,
     userId: undefined as string | undefined,
+    // was the database main removed by the user
+    dbRemoved: false,
+    dbRemoving: false,
   };
 
   protected sendSwarmMessage = async () => {
@@ -87,9 +91,54 @@ export class ConnectToSwarm extends React.PureComponent {
     }
   }
 
-  public renderConnectedState() {
-    const { messagingSending, userId } = this.state;
+  public handleDatabaseRemove = async () => {
+    const { connectionBridge } = this.state;
 
+    if (connectionBridge) {
+      this.setState({
+        dbRemoving: true,
+      });
+      await connectionBridge.storage?.dropDatabase(
+        CONNECT_TO_SWARM_DATABASE_MAIN_NAME
+      );
+      this.setState({
+        dbRemoved: true,
+        dbRemoving: false,
+      });
+    }
+  };
+
+  protected renderConnectToDatabase() {
+    return (
+      <div>
+        <h2>Database connection</h2>
+        <button onClick={this.handleDatabaseRemove}>Remove the database</button>
+      </div>
+    );
+  }
+
+  public connectToDb = async () => {
+    const { connectionBridge } = this.state;
+
+    if (connectionBridge) {
+      await connectionBridge.storage?.openDatabase(
+        CONNECT_TO_SWARM_DATABASE_MAIN
+      );
+      this.setState({
+        dbRemoved: false,
+      });
+    }
+  };
+
+  public renderConnectedState() {
+    const { messagingSending, userId, dbRemoved, dbRemoving } = this.state;
+
+    if (dbRemoved) {
+      return <div onClick={this.connectToDb}>Connect to database</div>;
+    }
+    if (dbRemoving) {
+      return <span>Database removing...</span>;
+    }
     return (
       <div>
         <div>Is connected with user identity ${userId}</div>
@@ -99,6 +148,7 @@ export class ConnectToSwarm extends React.PureComponent {
         <button onClick={() => this.toggleMessagesSending(true)}>
           {messagingSending ? 'Stop' : 'Start'} private messages sending
         </button>
+        {this.renderConnectToDatabase()}
       </div>
     );
   }

@@ -85,15 +85,23 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   }
 
   public async close(): Promise<Error | void> {
-    const closeCurrentStoreResult = await this.closeCurrentStore();
-
+    this.unsetAllListenersForEvents();
     this.unsetReadyState();
     this.isClosed = true;
-    this.emitEvent(ESwarmStoreEventNames.CLOSE, this);
-    this.unsetAllListenersForEvents();
-    if (closeCurrentStoreResult instanceof Error) {
-      return closeCurrentStoreResult;
+
+    let result: undefined | Error;
+
+    try {
+      const closeCurrentStoreResult = await this.closeCurrentStore();
+
+      if (closeCurrentStoreResult instanceof Error) {
+        result = closeCurrentStoreResult;
+      }
+    } catch (err) {
+      result = err;
     }
+    this.emitEvent(ESwarmStoreEventNames.CLOSE, this);
+    return result;
   }
 
   public async add(value: TFeedStoreType): Promise<string | Error> {
@@ -204,10 +212,10 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     if (database instanceof Error) {
       return database;
     }
+    this.unsetAllListenersForEvents();
     try {
       await database.drop();
-      // TODO drop the database in the storage
-      debugger;
+      // TODO drop the database in the secret storage
     } catch (err) {
       return err;
     }
@@ -273,11 +281,9 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   }
 
   protected unsetAllListenersForEvents = () => {
-    Object.values(EOrbidDBFeedSoreEvents).forEach(
-      this[COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_UNSET_ALL_LISTENERS].bind(
-        this
-      )
-    );
+    if (this.database) {
+      this.unsetFeedStoreEventListeners(this.database);
+    }
   };
 
   protected emitError(
