@@ -11,7 +11,10 @@ import {
 import { EventEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { ESwarmMessageStoreEventNames } from './swarm-message-store.const';
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
-import { TSwarmStoreDatabaseIteratorMethodArgument } from '../swarm-store-class/swarm-store-class.types';
+import {
+  TSwarmStoreDatabaseIteratorMethodArgument,
+  TSwarmStoreDatabaseEntityKey,
+} from '../swarm-store-class/swarm-store-class.types';
 import {
   TSwarmMessageSeriazlized,
   TSwarmMessageConstructorBodyMessage,
@@ -116,7 +119,7 @@ export type TSwarmMessageStoreConnectReturnType<
 export type ISwarmMessageStoreDeleteMessageArg<
   P extends ESwarmStoreConnector
 > = P extends ESwarmStoreConnector.OrbitDB
-  ? string // swarm message address
+  ? TSwarmStoreDatabaseEntityKey<P> // swarm message address
   : ISwarmMessageInstance; // instance of the message to remove
 
 /**
@@ -147,13 +150,15 @@ export interface ISwarmMessageStore<P extends ESwarmStoreConnector>
    *
    * @param {string} dbName - name of the database
    * @param {ISwarmMessageStoreOptions<P>} message - message to add
+   * @param {TSwarmStoreDatabaseEntityKey<P>} key - key for the message under which the message will be stored
    * @returns {Promise<TSwarmMessageStoreMessageId>} - unique message's identifier in the database
    * @memberof ISwarmMessageStore
    * @throws
    */
   addMessage(
     dbName: string,
-    message: ISwarmMessageInstance
+    message: ISwarmMessageInstance,
+    key?: TSwarmStoreDatabaseEntityKey<P>
   ): Promise<TSwarmMessageStoreMessageId>;
 
   /**
@@ -167,7 +172,8 @@ export interface ISwarmMessageStore<P extends ESwarmStoreConnector>
    */
   addMessage(
     dbName: string,
-    message: string
+    message: string,
+    key?: TSwarmStoreDatabaseEntityKey<P>
   ): Promise<TSwarmMessageStoreMessageId>;
 
   /**
@@ -181,7 +187,8 @@ export interface ISwarmMessageStore<P extends ESwarmStoreConnector>
    */
   addMessage(
     dbName: string,
-    message: TSwarmMessageConstructorBodyMessage
+    message: TSwarmMessageConstructorBodyMessage,
+    key?: TSwarmStoreDatabaseEntityKey<P>
   ): Promise<TSwarmMessageStoreMessageId>;
 
   /**

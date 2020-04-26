@@ -27,16 +27,31 @@ export class ConnectToSwarm extends React.PureComponent {
     // was the database main removed by the user
     dbRemoved: false,
     dbRemoving: false,
+    messages: [] as any[],
   };
 
   protected sendSwarmMessage = async () => {
     try {
-      await this.state.connectionBridge?.storage?.addMessage(
+      const key = 'test_message';
+      const hash = await this.state.connectionBridge?.storage?.addMessage(
         CONNECT_TO_SWARM_DATABASE_MAIN_NAME,
         {
           ...CONNECT_TO_SWARM_STORAGE_DEFAULT_MESSAGE_BODY,
-        }
+        },
+        key
       );
+      const message = await this.state.connectionBridge?.storage?.collect(
+        CONNECT_TO_SWARM_DATABASE_MAIN_NAME,
+        { eq: key }
+      );
+
+      if (message instanceof Error) {
+        this.setState({
+          messages: this.state.messages
+            .concat(message.filter((msg) => !(msg instanceof Error)))
+            .map((m) => m),
+        });
+      }
     } catch (err) {
       console.error(err);
     }

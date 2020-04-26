@@ -25,7 +25,7 @@ import { SwarmStoreConnectorOrbitDBDatabase } from './swarm-store-connector-orbi
 import {
   ISwarmStoreConnectorOrbitDbDatabaseOptions,
   TSwarmStoreConnectorOrbitDbDatabaseMethodNames,
-  TSwarmStoreConnectorOrbitDbDatabaseMathodArgument,
+  TSwarmStoreConnectorOrbitDbDatabaseMethodArgument,
 } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import { commonUtilsArrayDeleteFromArray } from 'utils/common-utils/common-utils';
 import {
@@ -36,14 +36,20 @@ import {
 import { SwarmStorageConnectorOrbitDBSublassKeyStore } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-keystore/swarm-store-connector-orbit-db-subclass-keystore';
 import { ISwarmStoreConnectorOrbitDBSubclassStorageFabric } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-storage-fabric/swarm-store-connector-orbit-db-subclass-storage-fabric.types';
 import { SwarmStoreConnectorOrbitDBSubclassStorageFabric } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-storage-fabric/swarm-store-connector-orbit-db-subclass-storage-fabric';
-import { ISwarmStoreConnector } from '../../swarm-store-class.types';
+import {
+  ISwarmStoreConnector,
+  TSwarmStoreValueTypes,
+} from '../../swarm-store-class.types';
 import {
   ESwarmStoreConnector,
   ESwarmStoreEventNames,
 } from '../../swarm-store-class.const';
 
-export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
-  extends EventEmitter<ISwarmStoreConnectorOrbitDBEvents>
+export class SwarmStoreConnectorOrbitDB<
+  ISwarmDatabaseValueTypes extends TSwarmStoreValueTypes<
+    ESwarmStoreConnector.OrbitDB
+  >
+> extends EventEmitter<ISwarmStoreConnectorOrbitDBEvents>
   implements ISwarmStoreConnector<ESwarmStoreConnector.OrbitDB> {
   private static isLoadedCustomIdentityProvider: boolean = false;
 
@@ -283,10 +289,10 @@ export class SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes>
    * and a method to execute
    * @memberof SwarmStoreConnctotOrbitDB
    */
-  public request = async (
+  public request = async <ISwarmDatabaseValueTypes>(
     dbName: string,
     dbMethod: TSwarmStoreConnectorOrbitDbDatabaseMethodNames,
-    arg: TSwarmStoreConnectorOrbitDbDatabaseMathodArgument<
+    arg: TSwarmStoreConnectorOrbitDbDatabaseMethodArgument<
       ISwarmDatabaseValueTypes
     >
   ): Promise<Error | any> => {

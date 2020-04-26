@@ -1,8 +1,12 @@
 import { IPFS } from 'types/ipfs.types';
-import { ISwarmStoreConnectorOrbitDbDatabaseOptions } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
+import {
+  ISwarmStoreConnectorOrbitDbDatabaseOptions,
+  TSwarmStoreConnectorOrbitDbDatabaseStoreKey,
+} from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import { ISwarmStoreMainOptions } from '../../swarm-store-class.types';
 import { ISwarmStoreEvents } from '../../swarm-store-class.types';
 import { ESwarmStoreConnector } from '../../swarm-store-class.const';
+import { TSwarmStoreConnectorOrbitDbDatabaseKey } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 
 export interface ISwarmStoreConnectorOrbitDBEvents extends ISwarmStoreEvents {}
 
@@ -34,3 +38,5 @@ export interface ISwarmStoreConnectorOrbitDBLogEntity<T> {
   key?: string;
   value: T;
 }
+
+export type TSwarmStoreConnectorOrbitDBEnityKey = TSwarmStoreConnectorOrbitDbDatabaseKey;

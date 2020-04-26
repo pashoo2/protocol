@@ -57,6 +57,7 @@ import { SwarmMessageConstructor } from '../swarm-message/swarm-message-construc
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { ISwarmMessgaeEncryptedCache } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { TSwarmMessageConstructorBodyMessage } from '../swarm-message/swarm-message-constructor.types';
+import { TSwarmStoreDatabaseEntityKey } from '../swarm-store-class/swarm-store-class.types';
 
 export class SwarmMessageStore<P extends ESwarmStoreConnector>
   extends SwarmStore<P, ISwarmMessageStoreEvents>
@@ -127,7 +128,8 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
 
   public async addMessage(
     dbName: string,
-    msg: ISwarmMessageInstance | TSwarmMessageConstructorBodyMessage | string
+    msg: ISwarmMessageInstance | TSwarmMessageConstructorBodyMessage | string,
+    key?: TSwarmStoreDatabaseEntityKey<P>
   ): Promise<TSwarmMessageStoreMessageId> {
     const message: ISwarmMessageInstance | string =
       typeof msg === 'string' ? msg : await this.constructMessage(dbName, msg);
@@ -135,10 +137,14 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
     assert(dbName, 'Database name must be provided');
     this.validateMessageFormat(message);
 
+    const requestAddArgument = {
+      value: this.serializeMessage(message),
+      key,
+    } as TSwarmStoreDatabaseMethodArgument<P, TSwarmStoreValueTypes<P>>;
     const response = (await this.request<
       TSwarmStoreValueTypes<P>,
       TSwarmMessageStoreMessageId
-    >(dbName, this.dbMethodAddMessage, this.serializeMessage(message))) as
+    >(dbName, this.dbMethodAddMessage, requestAddArgument)) as
       | TSwarmStoreDatabaseMethodAnswer<P, string>
       | Error;
 

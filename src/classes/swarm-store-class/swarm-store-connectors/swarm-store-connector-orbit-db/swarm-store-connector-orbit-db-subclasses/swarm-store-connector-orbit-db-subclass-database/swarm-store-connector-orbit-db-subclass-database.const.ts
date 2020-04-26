@@ -22,6 +22,7 @@ export enum EOrbidDBFeedSoreEvents {
 export enum EOrbitDbFeedStoreOperation {
   DELETE = 'DEL',
   ADD = 'ADD',
+  PUT = 'PUT',
 }
 
 export const SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONFIGURATION: IStoreOptions = {

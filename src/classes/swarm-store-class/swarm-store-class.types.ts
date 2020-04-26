@@ -1,20 +1,22 @@
 import { ISecretStoreCredentials } from '../secret-storage-class/secret-storage-class.types';
-import { ISwarmStoreConnectorOrbitDBConnectionOptions } from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.types';
+import {
+  ISwarmStoreConnectorOrbitDBConnectionOptions,
+  TSwarmStoreConnectorOrbitDBEnityKey,
+} from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.types';
 import { EventEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { ESwarmStoreDbStatus as ESwarmStoreDatabaseStatus } from './swarm-store-class.const';
 import { SWARM_STORE_DATABASE_STATUS_ABSENT } from './swarm-store-class.const';
-import { ESwarmStoreConnectorOrbitDbDatabaseType } from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import {
   ISwarmStoreConnectorOrbitDbDatabaseOptions,
   ISwarmStoreConnectorOrbitDbDatabaseValue,
 } from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import {
   ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions,
-  ISwarmStoreConnectorOrbitDbDatabaseIteratorAnswer,
+  TSwarmStoreConnectorOrbitDbDatabaseKey,
 } from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import {
   TSwarmStoreConnectorOrbitDbDatabaseMethodNames,
-  TSwarmStoreConnectorOrbitDbDatabaseMathodArgument,
+  TSwarmStoreConnectorOrbitDbDatabaseMethodArgument,
 } from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import {
   ESwarmStoreConnector,
@@ -38,7 +40,7 @@ export type TSwarmStoreDatabaseMethodArgument<
   P extends ESwarmStoreConnector,
   M
 > = P extends ESwarmStoreConnector.OrbitDB
-  ? TSwarmStoreConnectorOrbitDbDatabaseMathodArgument<M>
+  ? TSwarmStoreConnectorOrbitDbDatabaseMethodArgument<M>
   : never;
 
 // arguments avalilable for a database method
@@ -77,6 +79,12 @@ export interface ISwarmStoreDatabaseBaseOptions {
   // how many records to preload
   preloadCount?: number;
 }
+
+export type TSwarmStoreDatabaseEntityKey<
+  P extends ESwarmStoreConnector = never
+> = P extends ESwarmStoreConnector.OrbitDB
+  ? TSwarmStoreConnectorOrbitDBEnityKey
+  : never;
 
 /**
  * options of a swarm database

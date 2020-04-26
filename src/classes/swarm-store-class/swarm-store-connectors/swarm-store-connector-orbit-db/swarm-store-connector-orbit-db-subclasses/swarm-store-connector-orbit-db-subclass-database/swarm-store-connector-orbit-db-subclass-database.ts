@@ -31,6 +31,10 @@ import {
   ESwarmStoreConnectorOrbitDbDatabaseType,
 } from './swarm-store-connector-orbit-db-subclass-database.const';
 import { ESwarmStoreEventNames } from '../../../../swarm-store-class.const';
+import {
+  TSwarmStoreConnectorOrbitDbDatabaseAddMethodArgument,
+  TSwarmStoreConnectorOrbitDbDatabaseStoreKey,
+} from './swarm-store-connector-orbit-db-subclass-database.types';
 
 export class SwarmStoreConnectorOrbitDBDatabase<
   TStoreValue
@@ -117,7 +121,10 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     return result;
   }
 
-  public async add(value: TStoreValue, key?: string): Promise<string | Error> {
+  public async add(
+    addArg: TSwarmStoreConnectorOrbitDbDatabaseAddMethodArgument<TStoreValue>
+  ): Promise<string | Error> {
+    const { value, key } = addArg;
     const database = this.getDbStoreInstance();
 
     if (database instanceof Error) {
@@ -143,13 +150,17 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     }
   }
 
+  /**
+   * for the key value store a key must be used.
+   * for the feed store a hash of the value
+   * must be used.
+   *
+   * @memberof SwarmStoreConnectorOrbitDBDatabase
+   */
   public get = async (
-    hash: TSwarmStoreConnectorOrbitDbDatabaseKey
+    keyOrHash: TSwarmStoreConnectorOrbitDbDatabaseKey
   ): Promise<
-    | Error
-    | ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue>
-    | TStoreValue
-    | undefined
+    Error | ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue> | undefined
   > => {
     const database = this.getDbStoreInstance();
 
@@ -158,18 +169,27 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     }
 
     try {
-      const e = database.get(hash);
+      let e:
+        | TStoreValue
+        | LogEntry<TStoreValue>
+        | Error
+        | undefined = database.get(keyOrHash);
 
       if (e instanceof Error) {
         return new Error('An error has occurred on get the data from the key');
       }
-      if (!this.isKVStore) {
-        if ((e as LogEntry<TStoreValue>).hash !== hash) {
-          return undefined;
-        }
-        if (e) {
-          return this.parseValueStored(e as LogEntry<TStoreValue>);
-        }
+      if (e && this.isKVStore) {
+        e = this.findInOplog(keyOrHash, e as TStoreValue);
+      } else if ((e as LogEntry<TStoreValue>).hash !== keyOrHash) {
+        return undefined;
+      }
+      if (e instanceof Error) {
+        return new Error(
+          'An error has occurred when finding value in the oplog'
+        );
+      }
+      if (e) {
+        return this.parseValueStored(e as LogEntry<TStoreValue>);
       }
     } catch (err) {
       return err;
@@ -206,7 +226,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     | Error
     | Array<
         | ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue>
-        | TStoreValue
         | Error
         | undefined
       >
@@ -231,6 +250,26 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     }
   }
 
+  protected findInOplog(
+    key: TSwarmStoreConnectorOrbitDbDatabaseStoreKey,
+    value: TStoreValue
+  ): LogEntry<TStoreValue> | undefined | Error {
+    const db = this.getDbStoreInstance();
+
+    if (db instanceof Error) {
+      return db;
+    }
+
+    return ((db as any)._oplog.values as LogEntry<TStoreValue>[]).find(
+      (entry) => {
+        const pld = entry?.payload;
+        return (
+          pld?.op === EOrbitDbFeedStoreOperation.PUT && pld?.value === value
+        );
+      }
+    );
+  }
+
   protected async iteratorFeedStore(
     options?: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions
   ): Promise<
@@ -238,7 +277,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     | Array<
         | ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue>
         | Error
-        | TStoreValue
         | undefined
       >
   > {
@@ -271,7 +309,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     | Error
     | Array<
         | ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue>
-        | TStoreValue
         | Error
         | undefined
       >
@@ -345,10 +382,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     database: OrbitDbFeedStore<TStoreValue>
   ): Promise<
     Array<
-      | ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue>
-      | TStoreValue
-      | Error
-      | undefined
+      ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue> | Error | undefined
     >
   > {
     const pending =
@@ -747,16 +781,14 @@ export class SwarmStoreConnectorOrbitDBDatabase<
         );
       }
 
+      const storeOptions = {
+        ...SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONFIGURATION,
+        accessController: this.getAccessControllerOptions(),
+      };
       const db: Error | TSwarmStoreConnectorOrbitDbDatabase<TStoreValue> = this
         .isKVStore
-        ? await orbitDb.keyvalue(dbName, {
-            ...SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONFIGURATION,
-            accessController: this.getAccessControllerOptions(),
-          })
-        : await orbitDb.feed(dbName, {
-            ...SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONFIGURATION,
-            accessController: this.getAccessControllerOptions(),
-          });
+        ? await orbitDb.keyvalue(dbName, storeOptions)
+        : await orbitDb.feed(dbName, storeOptions);
 
       if (db instanceof Error) {
         return this.onFatalError(db, 'createDbInstance::feed store creation');

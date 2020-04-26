@@ -1,5 +1,6 @@
 import { ESwarmStoreConnector } from 'classes/swarm-store-class/swarm-store-class.const';
 import { ISwarmMessageBodyDeserialized } from '../../classes/swarm-message/swarm-message-constructor.types';
+import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 
 export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY = 'key';
 
@@ -41,7 +42,8 @@ export const CONNECT_TO_SWARM_DATABASE_MAIN_NAME = `${CONNECT_TO_SWARM_DATABASE_
 export const CONNECT_TO_SWARM_DATABASE_MAIN = {
   dbName: CONNECT_TO_SWARM_DATABASE_MAIN_NAME,
   isPublic: true,
-  preloadCount: 1,
+  preloadCount: 40,
+  dbType: ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
 };
 
 export const CONNECT_TO_SWARM_DATABASES_DEFAULT = [

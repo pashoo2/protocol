@@ -8,7 +8,13 @@ import {
 import OrbitDbFeedStore from 'orbit-db-feedstore';
 import OrbitDbKeyValueStore from 'orbit-db-kvstore';
 
-export type TSwarmStoreConnectorOrbitDbDatabaseKey = TFeedStoreHash | TStoreKey;
+export type TSwarmStoreConnectorOrbitDbDatabaseStoreHash = string;
+
+export type TSwarmStoreConnectorOrbitDbDatabaseStoreKey = string;
+
+export type TSwarmStoreConnectorOrbitDbDatabaseKey =
+  | TSwarmStoreConnectorOrbitDbDatabaseStoreHash
+  | TSwarmStoreConnectorOrbitDbDatabaseStoreKey;
 
 export type TSwarmStoreConnectorOrbitDbDatabase<V> =
   | OrbitDbFeedStore<V>
@@ -66,9 +72,9 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseEvents<
 export type ISwarmStoreConnectorOrbitDbDatabaseKey = string;
 
 export interface ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValueType> {
-  id: string; // id of the user who is store the event
+  id: string; // id of the user who stores the value
   value: TStoreValueType;
-  hash: string;
+  hash: TSwarmStoreConnectorOrbitDbDatabaseStoreHash;
 }
 
 export enum ESwarmStoreConnectorOrbitDbDatabaseIteratorOption {
@@ -96,10 +102,6 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseIteratorAnswer<T> {
   collect(): T[];
 }
 
-export type TFeedStoreHash = string;
-
-export type TStoreKey = string;
-
 export enum ESwarmStoreConnectorOrbitDbDatabaseMethodNames {
   'get' = 'get',
   'add' = 'add',
@@ -109,7 +111,15 @@ export enum ESwarmStoreConnectorOrbitDbDatabaseMethodNames {
 
 export type TSwarmStoreConnectorOrbitDbDatabaseMethodNames = ESwarmStoreConnectorOrbitDbDatabaseMethodNames;
 
-export type TSwarmStoreConnectorOrbitDbDatabaseMathodArgument<TFeedStoreType> =
-  | TFeedStoreHash
-  | TFeedStoreType
+export type TSwarmStoreConnectorOrbitDbDatabaseAddMethodArgument<
+  TStoreValue
+> = {
+  value: TStoreValue;
+  key?: TSwarmStoreConnectorOrbitDbDatabaseStoreKey;
+};
+
+export type TSwarmStoreConnectorOrbitDbDatabaseMethodArgument<TStoreValue> =
+  | TSwarmStoreConnectorOrbitDbDatabaseStoreHash
+  | TStoreValue
+  | TSwarmStoreConnectorOrbitDbDatabaseAddMethodArgument<TStoreValue>
   | ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions;
