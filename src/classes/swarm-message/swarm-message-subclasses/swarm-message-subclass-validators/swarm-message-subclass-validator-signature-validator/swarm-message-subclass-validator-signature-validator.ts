@@ -22,6 +22,15 @@ export class SwarmMessgeSubclassSignatureValidator {
 
   protected getDataToSignBySwarmMsg?: ISwarmMessageUtilSignatureGetStringForSignByMessageRaw;
 
+  /**
+   * this is a cache of signatures already validated
+   *
+   * @protected
+   * @type {Record<string, string>}
+   * @memberof SwarmMessgeSubclassSignatureValidator
+   */
+  protected signaturesValidatedCache: Record<string, string> = {};
+
   constructor(options: IMessageSignatureValidatorOptions) {
     this.setOptions(options);
     this.startSignatureVerificationQueue();
@@ -140,14 +149,34 @@ export class SwarmMessgeSubclassSignatureValidator {
     return !!this.caConnection && this.caConnection.getSwarmUserSignPubKey(uid);
   }
 
-  protected validateSig(msgRaw: ISwarmMessageRaw, key: CryptoKey) {
+  protected getHashForSignature(sig: string): string {
+    return this.signaturesValidatedCache[sig];
+  }
+
+  protected addHashForSignature(sig: string, hash: string): void {
+    this.signaturesValidatedCache[sig] = hash;
+  }
+
+  protected async validateSig(msgRaw: ISwarmMessageRaw, key: CryptoKey) {
     const data = swarmMessageUtilSignatureGetStringForSignByMessageRaw(msgRaw);
     const sig = msgRaw.sig;
+    const hashFromCache = !!sig && this.getHashForSignature(sig);
 
+    if (hashFromCache) {
+      if (hashFromCache === data) {
+        return true;
+      }
+      return new Error('Signature from the cache is not the same as provided');
+    }
     assert(this.signVerificationQueue, 'signVerificationQueue is not started');
-    return (
+    const result =
       !!this.signVerificationQueue &&
-      this.signVerificationQueue.verifyData(data, sig, key)
-    );
+      (await this.signVerificationQueue.verifyData(data, sig, key));
+
+    if (result instanceof Error) {
+      return result;
+    }
+    this.addHashForSignature(sig, data);
+    return result;
   }
 }

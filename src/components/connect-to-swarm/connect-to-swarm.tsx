@@ -74,7 +74,7 @@ export class ConnectToSwarm extends React.PureComponent {
 
       method();
       return {
-        messagingSending: setInterval(method, 20000),
+        messagingSending: setInterval(method, 1000),
       };
     });
   };

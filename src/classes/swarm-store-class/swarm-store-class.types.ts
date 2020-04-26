@@ -73,6 +73,8 @@ export interface ISwarmStoreDatabaseBaseOptions {
   dbName: string;
   // is a puclic database. Private by
   isPublic?: boolean;
+  // how many records to preload
+  preloadCount?: number;
 }
 
 /**

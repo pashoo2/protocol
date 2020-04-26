@@ -33,7 +33,7 @@ export class SafeStorage<
   TYPE extends ESAFE_STORAGE_STORAGE_TYPE
 > extends getStatusClass<typeof ESAFE_STORAGE_PROVIDER_STATUS>({
   errorStatus: ESAFE_STORAGE_PROVIDER_STATUS.ERROR,
-  instanceName: 'SecretStorage',
+  instanceName: 'SafeStorage',
 }) {
   static storagesNames: string[] = []; // exists storages names, put it from constructor
 

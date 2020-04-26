@@ -12,13 +12,12 @@ import {
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_LOG_PREFIX,
   EOrbidDBFeedSoreEvents,
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONFIGURATION,
-  SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ENTITIES_LOAD_COUNT,
+  SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ENTITIES_LOAD_COUNT_DEFAULT,
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ITERATOR_OPTIONS_DEFAULT,
 } from './swarm-store-connector-orbit-db-subclass-database.const';
 import {
   COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_ON,
   COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_OFF,
-  COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_UNSET_ALL_LISTENERS,
 } from 'const/common-values/common-values';
 import { SwarmStoreConnectorOrbitDBSubclassAccessController } from '../swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller';
 import { ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions } from '../swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types';
@@ -51,6 +50,8 @@ export class SwarmStoreConnectorOrbitDBDatabase<
 
   protected database?: OrbitDbFeedStore<TFeedStoreType>;
 
+  protected preloadCount: number = SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ENTITIES_LOAD_COUNT_DEFAULT;
+
   protected newEntriesPending: [string, LogEntry<TFeedStoreType>, any][] = [];
 
   constructor(
@@ -71,9 +72,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       return dbStoreCreationResult;
     }
 
-    const loadDbResult = await dbStoreCreationResult.load(
-      SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ENTITIES_LOAD_COUNT
-    );
+    const loadDbResult = await dbStoreCreationResult.load(this.preloadCount);
 
     if ((loadDbResult as unknown) instanceof Error) {
       console.error(loadDbResult);
@@ -385,7 +384,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     entry: LogEntry<TFeedStoreType>,
     heads: any
   ) => {
-    console.log('add entry pending', {
+    console.trace('add entry pending', {
       address,
       entry,
       heads,
@@ -417,7 +416,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     // emit event database local copy loading progress
     this.emitEvent(
       ESwarmStoreEventNames.LOADING,
-      (progress / (total || 1)) * 100
+      (progress / this.preloadCount) * 100
     );
   };
 
@@ -677,13 +676,18 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       return this.onFatalError('Options must be specified', 'setOptions');
     }
 
-    const { dbName } = options;
+    const { dbName, preloadCount } = options;
 
     if (typeof dbName !== 'string') {
       return this.onFatalError(
         'A name of the database must be specified',
         'setOptions'
       );
+    }
+    if (typeof preloadCount === 'number') {
+      this.preloadCount = preloadCount;
+    } else if (preloadCount) {
+      return this.onFatalError('Preload count must be number', 'setOptions');
     }
     this.options = options;
     this.dbName = dbName;
