@@ -1,37 +1,43 @@
 import * as orbitDbModule from 'orbit-db';
 import OrbitDbFeedStore from 'orbit-db-feedstore';
+import OrbitDbKeyValueStore from 'orbit-db-kvstore';
 import {
   ISwarmStoreConnectorOrbitDbDatabaseOptions,
   ISwarmStoreConnectorOrbitDbDatabaseEvents,
   ISwarmStoreConnectorOrbitDbDatabaseValue,
   ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions,
-  TFeedStoreHash,
+  TSwarmStoreConnectorOrbitDbDatabaseKey,
 } from './swarm-store-connector-orbit-db-subclass-database.types';
 import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
 import {
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_LOG_PREFIX,
   EOrbidDBFeedSoreEvents,
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONFIGURATION,
-  SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ENTITIES_LOAD_COUNT,
+  SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ENTITIES_LOAD_COUNT_DEFAULT,
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ITERATOR_OPTIONS_DEFAULT,
 } from './swarm-store-connector-orbit-db-subclass-database.const';
 import {
   COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_ON,
   COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_OFF,
-  COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_UNSET_ALL_LISTENERS,
 } from 'const/common-values/common-values';
 import { SwarmStoreConnectorOrbitDBSubclassAccessController } from '../swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller';
 import { ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions } from '../swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types';
-import { ESwarmStoreConnectorOrbitDbDatabaseIteratorOption } from './swarm-store-connector-orbit-db-subclass-database.types';
-import { EOrbitDbFeedStoreOperation } from './swarm-store-connector-orbit-db-subclass-database.const';
+import {
+  ESwarmStoreConnectorOrbitDbDatabaseIteratorOption,
+  TSwarmStoreConnectorOrbitDbDatabase,
+} from './swarm-store-connector-orbit-db-subclass-database.types';
+import {
+  EOrbitDbFeedStoreOperation,
+  ESwarmStoreConnectorOrbitDbDatabaseType,
+} from './swarm-store-connector-orbit-db-subclass-database.const';
 import { ESwarmStoreEventNames } from '../../../../swarm-store-class.const';
 
 export class SwarmStoreConnectorOrbitDBDatabase<
-  TFeedStoreType
+  TStoreValue
 > extends EventEmitter<
   ISwarmStoreConnectorOrbitDbDatabaseEvents<
-    SwarmStoreConnectorOrbitDBDatabase<TFeedStoreType>,
-    TFeedStoreType
+    SwarmStoreConnectorOrbitDBDatabase<TStoreValue>,
+    TStoreValue
   >
 > {
   // is loaded fully and ready to use
@@ -45,16 +51,25 @@ export class SwarmStoreConnectorOrbitDBDatabase<
 
   private isFullyLoaded: boolean = false;
 
-  private options?: ISwarmStoreConnectorOrbitDbDatabaseOptions<TFeedStoreType>;
+  private options?: ISwarmStoreConnectorOrbitDbDatabaseOptions<TStoreValue>;
 
   protected orbitDb?: orbitDbModule.OrbitDB;
 
-  protected database?: OrbitDbFeedStore<TFeedStoreType>;
+  protected database?: TSwarmStoreConnectorOrbitDbDatabase<TStoreValue>;
 
-  protected newEntriesPending: [string, LogEntry<TFeedStoreType>, any][] = [];
+  protected preloadCount: number = SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ENTITIES_LOAD_COUNT_DEFAULT;
+
+  protected newEntriesPending: [string, LogEntry<TStoreValue>, any][] = [];
+
+  protected dbType: ESwarmStoreConnectorOrbitDbDatabaseType =
+    ESwarmStoreConnectorOrbitDbDatabaseType.FEED;
+
+  protected get isKVStore() {
+    return this.dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE;
+  }
 
   constructor(
-    options: ISwarmStoreConnectorOrbitDbDatabaseOptions<TFeedStoreType>,
+    options: ISwarmStoreConnectorOrbitDbDatabaseOptions<TStoreValue>,
     orbitDb: orbitDbModule.OrbitDB
   ) {
     super();
@@ -71,9 +86,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       return dbStoreCreationResult;
     }
 
-    const loadDbResult = await dbStoreCreationResult.load(
-      SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ENTITIES_LOAD_COUNT
-    );
+    const loadDbResult = await dbStoreCreationResult.load(this.preloadCount);
 
     if ((loadDbResult as unknown) instanceof Error) {
       console.error(loadDbResult);
@@ -104,14 +117,19 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     return result;
   }
 
-  public async add(value: TFeedStoreType): Promise<string | Error> {
+  public async add(value: TStoreValue, key?: string): Promise<string | Error> {
     const database = this.getDbStoreInstance();
 
     if (database instanceof Error) {
       return database;
     }
     try {
-      const hash = await database.add(value);
+      if (this.isKVStore && !key) {
+        return new Error('Key must be provided for the key-value storage');
+      }
+      const hash = await (this.isKVStore
+        ? (database as OrbitDbKeyValueStore<TStoreValue>).set(key!, value)
+        : (database as OrbitDbFeedStore<TStoreValue>).add(value));
       console.log(`ADDED DATA WITH HASH -- ${hash}`);
       if (typeof hash !== 'string') {
         return new Error(
@@ -125,11 +143,14 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     }
   }
 
-  public async get(
-    hash: TFeedStoreHash
+  public get = async (
+    hash: TSwarmStoreConnectorOrbitDbDatabaseKey
   ): Promise<
-    Error | ISwarmStoreConnectorOrbitDbDatabaseValue<TFeedStoreType> | undefined
-  > {
+    | Error
+    | ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue>
+    | TStoreValue
+    | undefined
+  > => {
     const database = this.getDbStoreInstance();
 
     if (database instanceof Error) {
@@ -142,26 +163,32 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       if (e instanceof Error) {
         return new Error('An error has occurred on get the data from the key');
       }
-      if (e.hash !== hash) {
-        return undefined;
-      }
-      if (e) {
-        return this.parseValueStored(e);
+      if (!this.isKVStore) {
+        if ((e as LogEntry<TStoreValue>).hash !== hash) {
+          return undefined;
+        }
+        if (e) {
+          return this.parseValueStored(e as LogEntry<TStoreValue>);
+        }
       }
     } catch (err) {
       return err;
     }
     return undefined;
-  }
+  };
 
-  public async remove(hash: TFeedStoreHash): Promise<Error | void> {
+  public async remove(
+    hash: TSwarmStoreConnectorOrbitDbDatabaseKey
+  ): Promise<Error | void> {
     const database = this.getDbStoreInstance();
 
     if (database instanceof Error) {
       return database;
     }
     try {
-      const hashRemoved = await database.remove(hash);
+      const hashRemoved = this.isKVStore
+        ? (database as OrbitDbKeyValueStore<TStoreValue>).del(hash)
+        : (database as OrbitDbFeedStore<TStoreValue>).remove(hash);
 
       if (typeof hashRemoved !== 'string') {
         return new Error(
@@ -178,12 +205,44 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   ): Promise<
     | Error
     | Array<
-        | ISwarmStoreConnectorOrbitDbDatabaseValue<TFeedStoreType>
+        | ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue>
+        | TStoreValue
         | Error
         | undefined
       >
   > {
+    return this.isKVStore
+      ? this.iteratorKeyValueStore(options)
+      : this.iteratorFeedStore(options);
+  }
+
+  public async drop() {
     const database = this.getDbStoreInstance();
+
+    if (database instanceof Error) {
+      return database;
+    }
+    this.unsetAllListenersForEvents();
+    try {
+      await database.drop();
+      // TODO drop the database in the secret storage
+    } catch (err) {
+      return err;
+    }
+  }
+
+  protected async iteratorFeedStore(
+    options?: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions
+  ): Promise<
+    | Error
+    | Array<
+        | ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue>
+        | Error
+        | TStoreValue
+        | undefined
+      >
+  > {
+    const database = this.getDbStoreInstance() as OrbitDbFeedStore<TStoreValue>;
 
     if (database instanceof Error) {
       return database;
@@ -206,24 +265,63 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       .map(this.parseValueStored);
   }
 
-  public async drop() {
-    const database = this.getDbStoreInstance();
+  protected async iteratorKeyValueStore(
+    options?: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions
+  ): Promise<
+    | Error
+    | Array<
+        | ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue>
+        | TStoreValue
+        | Error
+        | undefined
+      >
+  > {
+    const database = this.getDbStoreInstance() as OrbitDbKeyValueStore<
+      TStoreValue
+    >;
 
     if (database instanceof Error) {
       return database;
     }
-    this.unsetAllListenersForEvents();
-    try {
-      await database.drop();
-      // TODO drop the database in the secret storage
-    } catch (err) {
-      return err;
+
+    const eqOperand =
+      options && options[ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq];
+
+    if (eqOperand) {
+      if (eqOperand instanceof Array) {
+        return Promise.all(eqOperand.map(this.get));
+      }
+      return [await this.get(eqOperand)];
     }
+
+    const iteratorOptionsRes =
+      options ||
+      SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ITERATOR_OPTIONS_DEFAULT;
+    const keys = (database as any).all as string[];
+    let limit = (iteratorOptionsRes as any).limit;
+
+    if (limit < 0 || typeof limit !== 'number') {
+      limit = undefined;
+    }
+    return Promise.all(
+      keys
+        .slice(0, limit)
+        .filter((key) => {
+          const { gt, gte } = iteratorOptionsRes as any;
+          const isInclusive = !!gte;
+
+          if (!gt || !gte || (isInclusive ? key >= gte : key > gt)) {
+            return true;
+          }
+          return false;
+        })
+        .map(this.get)
+    );
   }
   protected parseValueStored = (
-    e: LogEntry<TFeedStoreType>
+    e: LogEntry<TStoreValue>
   ):
-    | ISwarmStoreConnectorOrbitDbDatabaseValue<TFeedStoreType>
+    | ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue>
     | Error
     | undefined => {
     const { payload, identity, hash } = e;
@@ -244,10 +342,11 @@ export class SwarmStoreConnectorOrbitDBDatabase<
 
   protected getValues(
     hash: string | string[],
-    database: OrbitDbFeedStore<TFeedStoreType>
+    database: OrbitDbFeedStore<TStoreValue>
   ): Promise<
     Array<
-      | ISwarmStoreConnectorOrbitDbDatabaseValue<TFeedStoreType>
+      | ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue>
+      | TStoreValue
       | Error
       | undefined
     >
@@ -260,7 +359,9 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     return Promise.all(pending);
   }
 
-  private getDbStoreInstance(): Error | OrbitDbFeedStore<TFeedStoreType> {
+  private getDbStoreInstance():
+    | Error
+    | TSwarmStoreConnectorOrbitDbDatabase<TStoreValue> {
     const { isReady, database } = this;
 
     if (!isReady) {
@@ -282,7 +383,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
 
   protected unsetAllListenersForEvents = () => {
     if (this.database) {
-      this.unsetFeedStoreEventListeners(this.database);
+      this.unsetStoreEventListeners(this.database);
     }
   };
 
@@ -329,7 +430,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     this.emit(event, dbName, ...args);
   }
 
-  private getFeedStoreOptions(): IStoreOptions | undefined | Error {
+  private getStoreOptions(): IStoreOptions | undefined | Error {
     return SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONFIGURATION;
   }
 
@@ -341,21 +442,21 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   }
 
   protected logStore = () => {
-    const { database } = this;
-    const posts = database!.iterator({ limit: -1 }).collect();
-
-    console.log('STORE::READY--');
-    posts.forEach((post: any) => {
-      if (post && post.identity) {
-        console.log(post.identity.id);
-      }
-    });
-    console.log('--STORE::READY');
+    // TODO
+    // const database = this.getDbStoreInstance();
+    // const posts = database!.iterator({ limit: -1 }).collect();
+    // console.log('STORE::READY--');
+    // posts.forEach((post: any) => {
+    //   if (post && post.identity) {
+    //     console.log(post.identity.id);
+    //   }
+    // });
+    // console.log('--STORE::READY');
   };
 
   private emitNewEntry = (
     address: string,
-    entry: LogEntry<TFeedStoreType>,
+    entry: LogEntry<TStoreValue>,
     heads: any
   ) => {
     console.log('emit new entry', {
@@ -382,10 +483,10 @@ export class SwarmStoreConnectorOrbitDBDatabase<
 
   private handleNewEntry = (
     address: string,
-    entry: LogEntry<TFeedStoreType>,
+    entry: LogEntry<TStoreValue>,
     heads: any
   ) => {
-    console.log('add entry pending', {
+    console.trace('add entry pending', {
       address,
       entry,
       heads,
@@ -409,7 +510,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   private handleFeedStoreLoadProgress = (
     address: string,
     hash: string,
-    entry: LogEntry<TFeedStoreType>,
+    entry: LogEntry<TStoreValue>,
     progress: number,
     total: number
   ) => {
@@ -417,7 +518,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     // emit event database local copy loading progress
     this.emitEvent(
       ESwarmStoreEventNames.LOADING,
-      (progress / (total || 1)) * 100
+      (progress / this.preloadCount) * 100
     );
   };
 
@@ -445,12 +546,12 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   };
 
   private async closeInstanceOfStore(
-    storeInstance: OrbitDbFeedStore<TFeedStoreType>
+    storeInstance: TSwarmStoreConnectorOrbitDbDatabase<TStoreValue>
   ): Promise<Error | void> {
     if (!storeInstance) {
       return new Error('An instance of the store must be specified');
     }
-    this.unsetFeedStoreEventListeners(storeInstance);
+    this.unsetStoreEventListeners(storeInstance);
     try {
       await storeInstance.close();
     } catch (err) {
@@ -500,7 +601,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   private handleFeedStoreReplicateInProgress = (
     address: string,
     hash: string,
-    entry: LogEntry<TFeedStoreType>,
+    entry: LogEntry<TStoreValue>,
     progress: number,
     have: unknown
   ) => {
@@ -515,7 +616,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
 
   private handleWrite = (
     address: string,
-    entry: LogEntry<TFeedStoreType>,
+    entry: LogEntry<TStoreValue>,
     heads: any
   ) => {
     console.log('WRITE', {
@@ -527,7 +628,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   };
 
   private setFeedStoreEventListeners(
-    feedStore: OrbitDbFeedStore<TFeedStoreType>,
+    feedStore: TSwarmStoreConnectorOrbitDbDatabase<TStoreValue>,
     isSet = true
   ): Error | void {
     if (!feedStore) {
@@ -577,17 +678,17 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     );
   }
 
-  private unsetFeedStoreEventListeners(
-    feedStore: OrbitDbFeedStore<TFeedStoreType>
+  private unsetStoreEventListeners(
+    feedStore: TSwarmStoreConnectorOrbitDbDatabase<TStoreValue>
   ) {
     this.setFeedStoreEventListeners(feedStore, false);
   }
 
   private getAccessControllerOptions(): ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions<
-    TFeedStoreType
+    TStoreValue
   > {
     const { options } = this;
-    const resultedOptions: ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions<TFeedStoreType> = {
+    const resultedOptions: ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions<TStoreValue> = {
       type: SwarmStoreConnectorOrbitDBSubclassAccessController.type,
     };
 
@@ -616,7 +717,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   }
 
   private async createDbInstance(): Promise<
-    Error | OrbitDbFeedStore<TFeedStoreType>
+    Error | TSwarmStoreConnectorOrbitDbDatabase<TStoreValue>
   > {
     try {
       const { orbitDb, options } = this;
@@ -637,19 +738,25 @@ export class SwarmStoreConnectorOrbitDBDatabase<
         );
       }
 
-      const dbFeedStoreOptions = this.getFeedStoreOptions();
+      const dbStoreOptions = this.getStoreOptions();
 
-      if (dbFeedStoreOptions instanceof Error) {
+      if (dbStoreOptions instanceof Error) {
         return this.onFatalError(
-          dbFeedStoreOptions,
-          'createDbInstance::getFeedStoreOptions'
+          dbStoreOptions,
+          'createDbInstance::getStoreOptions'
         );
       }
 
-      const db = await orbitDb.feed<TFeedStoreType>(dbName, {
-        ...SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONFIGURATION,
-        accessController: this.getAccessControllerOptions(),
-      });
+      const db: Error | TSwarmStoreConnectorOrbitDbDatabase<TStoreValue> = this
+        .isKVStore
+        ? await orbitDb.keyvalue(dbName, {
+            ...SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONFIGURATION,
+            accessController: this.getAccessControllerOptions(),
+          })
+        : await orbitDb.feed(dbName, {
+            ...SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONFIGURATION,
+            accessController: this.getAccessControllerOptions(),
+          });
 
       if (db instanceof Error) {
         return this.onFatalError(db, 'createDbInstance::feed store creation');
@@ -671,19 +778,32 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   }
 
   private setOptions(
-    options: ISwarmStoreConnectorOrbitDbDatabaseOptions<TFeedStoreType>
+    options: ISwarmStoreConnectorOrbitDbDatabaseOptions<TStoreValue>
   ): void | Error {
     if (!options) {
       return this.onFatalError('Options must be specified', 'setOptions');
     }
 
-    const { dbName } = options;
+    const { dbName, preloadCount, dbType } = options;
 
     if (typeof dbName !== 'string') {
       return this.onFatalError(
         'A name of the database must be specified',
         'setOptions'
       );
+    }
+    if (typeof preloadCount === 'number') {
+      this.preloadCount = preloadCount;
+    } else if (preloadCount) {
+      return this.onFatalError('Preload count must be number', 'setOptions');
+    }
+    if (dbType) {
+      if (
+        !Object.values(ESwarmStoreConnectorOrbitDbDatabaseType).includes(dbType)
+      ) {
+        return this.onFatalError('An unknown db store type', 'setOptions');
+      }
+      this.dbType = dbType;
     }
     this.options = options;
     this.dbName = dbName;

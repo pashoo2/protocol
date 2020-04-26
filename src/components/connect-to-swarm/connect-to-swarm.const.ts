@@ -11,7 +11,7 @@ export const CONNECT_TO_SWARM_STORAGE_DEFAULT_MESSAGE_BODY: ISwarmMessageBodyDes
 };
 
 export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_1 = {
-  login: 'lewey74533@provamail.com',
+  login: 'mohiwas553@homedepinst.com',
   password: 'qawsde1234',
 };
 
@@ -19,7 +19,7 @@ export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_1 =
   '02https://watcha3-191815.firebaseio.com|nRCitpXVIwXsDPciNAovIP6I2hr1';
 
 export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_2 = {
-  login: 'bopekar178@johnderasia.com',
+  login: 'cecaye9745@emailhost99.com',
   password: 'sdfwmfgjk12kH',
 };
 
@@ -41,6 +41,7 @@ export const CONNECT_TO_SWARM_DATABASE_MAIN_NAME = `${CONNECT_TO_SWARM_DATABASE_
 export const CONNECT_TO_SWARM_DATABASE_MAIN = {
   dbName: CONNECT_TO_SWARM_DATABASE_MAIN_NAME,
   isPublic: true,
+  preloadCount: 1,
 };
 
 export const CONNECT_TO_SWARM_DATABASES_DEFAULT = [

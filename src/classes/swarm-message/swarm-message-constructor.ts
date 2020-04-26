@@ -28,7 +28,6 @@ import { SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_VALIDATION } from './swarm-m
 import { ICentralAuthority } from '../central-authority-class/central-authority-class.types';
 import { TSwarmMessageConstructorArgumentBodyPrivate } from './swarm-message-constructor.types';
 import { ISwarmMessgaeEncryptedCache } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
-import { getPublicKeysFromCryptoKeyPairs } from '../central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys-common';
 import {
   IMessageValidatorOptions,
   ISwarmMessageSubclassValidator,
@@ -353,6 +352,23 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
   }
 
   /**
+   * add message to the cache if it's a private
+   * message
+   *
+   * @protected
+   * @param {ISwarmMessageInstance} msg
+   * @memberof SwarmMessageConstructor
+   */
+  protected async addPrivateMessageToCache(msg: ISwarmMessageInstance) {
+    if (msg.isPrivate) {
+      await this.addPrivateMessageBodyToCache(
+        msg.sig,
+        msg.bdy as TSwarmMessageConstructorArgumentBodyPrivate
+      );
+    }
+  }
+
+  /**
    * parse a message serialized
    *
    * @protected
@@ -360,13 +376,20 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
    * @memberof SwarmMessageConstructor
    * @throws
    */
-  protected parse(
+  protected async parse(
     msg: TSwarmMessageSeriazlized
   ): Promise<ISwarmMessageInstance> {
     if (!this.parser) {
       throw new Error('A swarm message parser instance is not defined');
     }
-    return this.parser.parse(msg);
+
+    const messageParsed = await this.parser.parse(msg);
+
+    if (messageParsed instanceof Error) {
+      return messageParsed;
+    }
+    await this.addPrivateMessageToCache(messageParsed);
+    return messageParsed;
   }
 
   /**

@@ -2,6 +2,10 @@ import { ESwarmStoreEventNames } from '../../../../swarm-store-class.const';
 export const SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_LOG_PREFIX =
   'SwarmStoreConnectorOrbitDBDatabase';
 
+export enum ESwarmStoreConnectorOrbitDbDatabaseType {
+  FEED = 'feed_store',
+  KEY_VALUE = 'key_value',
+}
 export enum EOrbidDBFeedSoreEvents {
   REPLICATED = 'replicated',
   REPLICATE_PROGRESS = 'replicate.progress',
@@ -26,8 +30,8 @@ export const SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONFIGURATION: IStoreOptions
   replicate: true,
 };
 
-export const SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ENTITIES_LOAD_COUNT = 500;
+export const SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ENTITIES_LOAD_COUNT_DEFAULT = 100;
 
 export const SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ITERATOR_OPTIONS_DEFAULT = {
-  limit: SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ENTITIES_LOAD_COUNT,
+  limit: SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ENTITIES_LOAD_COUNT_DEFAULT,
 };

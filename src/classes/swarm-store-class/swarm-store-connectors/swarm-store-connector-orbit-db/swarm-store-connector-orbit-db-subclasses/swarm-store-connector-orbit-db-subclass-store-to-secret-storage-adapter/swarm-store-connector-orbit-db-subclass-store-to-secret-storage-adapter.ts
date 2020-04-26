@@ -102,6 +102,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
     k: string,
     cb?: TCallbackErrorValue
   ): Promise<string | undefined> {
+    debugger;
     // open connection to the secret storage
     // before any operations
     await this.openIfNecessary();

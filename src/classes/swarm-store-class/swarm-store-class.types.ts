@@ -3,6 +3,7 @@ import { ISwarmStoreConnectorOrbitDBConnectionOptions } from './swarm-store-conn
 import { EventEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { ESwarmStoreDbStatus as ESwarmStoreDatabaseStatus } from './swarm-store-class.const';
 import { SWARM_STORE_DATABASE_STATUS_ABSENT } from './swarm-store-class.const';
+import { ESwarmStoreConnectorOrbitDbDatabaseType } from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import {
   ISwarmStoreConnectorOrbitDbDatabaseOptions,
   ISwarmStoreConnectorOrbitDbDatabaseValue,
@@ -73,6 +74,8 @@ export interface ISwarmStoreDatabaseBaseOptions {
   dbName: string;
   // is a puclic database. Private by
   isPublic?: boolean;
+  // how many records to preload
+  preloadCount?: number;
 }
 
 /**

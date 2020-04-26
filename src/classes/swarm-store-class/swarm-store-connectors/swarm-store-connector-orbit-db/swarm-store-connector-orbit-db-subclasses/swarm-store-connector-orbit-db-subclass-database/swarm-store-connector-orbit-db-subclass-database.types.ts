@@ -1,16 +1,34 @@
 import { ISwarmStoreDatabaseBaseOptions } from '../../../../swarm-store-class.types';
 import { ESwarmStoreEventNames } from '../../../../swarm-store-class.const';
+import { ESwarmStoreConnectorOrbitDbDatabaseType } from './swarm-store-connector-orbit-db-subclass-database.const';
 import {
   ISwarmStoreConnectorOrbitDbDatabaseAccessControlleGrantCallback,
   ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess,
 } from '../swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types';
+import OrbitDbFeedStore from 'orbit-db-feedstore';
+import OrbitDbKeyValueStore from 'orbit-db-kvstore';
+
+export type TSwarmStoreConnectorOrbitDbDatabaseKey = TFeedStoreHash | TStoreKey;
+
+export type TSwarmStoreConnectorOrbitDbDatabase<V> =
+  | OrbitDbFeedStore<V>
+  | OrbitDbKeyValueStore<V>;
 
 export interface ISwarmStoreConnectorOrbitDbDatabaseOptions<TFeedStoreType>
   extends ISwarmStoreConnectorOrbitDbDatabaseAccessControlleGrantCallback<
       TFeedStoreType
     >,
     ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess,
-    ISwarmStoreDatabaseBaseOptions {}
+    ISwarmStoreDatabaseBaseOptions {
+  /**
+   * Datatbase type, may be feed store or key-value store.
+   * By default the feed store type is used.
+   *
+   * @type {ESwarmStoreConnectorOrbitDbDatabaseType}
+   * @memberof ISwarmStoreConnectorOrbitDbDatabaseOptions
+   */
+  dbType?: ESwarmStoreConnectorOrbitDbDatabaseType;
+}
 
 export interface ISwarmStoreConnectorOrbitDbDatabaseEvents<
   TSwarmStoreConnectorOrbitDBDatabase,
@@ -45,6 +63,8 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseEvents<
   ];
 }
 
+export type ISwarmStoreConnectorOrbitDbDatabaseKey = string;
+
 export interface ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValueType> {
   id: string; // id of the user who is store the event
   value: TStoreValueType;
@@ -77,6 +97,8 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseIteratorAnswer<T> {
 }
 
 export type TFeedStoreHash = string;
+
+export type TStoreKey = string;
 
 export enum ESwarmStoreConnectorOrbitDbDatabaseMethodNames {
   'get' = 'get',
