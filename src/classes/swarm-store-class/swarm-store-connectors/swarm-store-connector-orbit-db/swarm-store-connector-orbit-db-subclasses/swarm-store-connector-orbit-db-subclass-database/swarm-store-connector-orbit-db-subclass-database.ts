@@ -32,6 +32,10 @@ import {
 } from './swarm-store-connector-orbit-db-subclass-database.const';
 import { ESwarmStoreEventNames } from '../../../../swarm-store-class.const';
 import {
+  SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_EMIT_BATCH_INT_MS,
+  SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_EMIT_BATCH_SIZE,
+} from './swarm-store-connector-orbit-db-subclass-database.const';
+import {
   TSwarmStoreConnectorOrbitDbDatabaseAddMethodArgument,
   TSwarmStoreConnectorOrbitDbDatabaseStoreKey,
 } from './swarm-store-connector-orbit-db-subclass-database.types';
@@ -67,6 +71,8 @@ export class SwarmStoreConnectorOrbitDBDatabase<
 
   protected dbType: ESwarmStoreConnectorOrbitDbDatabaseType =
     ESwarmStoreConnectorOrbitDbDatabaseType.FEED;
+
+  protected emitBatchesInterval?: NodeJS.Timer;
 
   protected get isKVStore() {
     return this.dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE;
@@ -104,6 +110,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   public async close(): Promise<Error | void> {
     this.unsetAllListenersForEvents();
     this.unsetReadyState();
+    this.unsetEmithBatchInterval();
     this.isClosed = true;
 
     let result: undefined | Error;
@@ -508,11 +515,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   };
 
   private emitEmtriesPending() {
-    const newEntriesPending = this.newEntriesPending;
-
-    console.log('emitEmtriesPending');
-    newEntriesPending.forEach((newEntry) => this.emitNewEntry(...newEntry));
-    this.newEntriesPending.splice(0, newEntriesPending.length);
+    this.startEmitBatchesInterval();
   }
 
   private handleNewEntry = (
@@ -844,5 +847,28 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       );
     }
     this.orbitDb = orbitDb;
+  }
+
+  private emitBatch = () => {
+    console.log('emitEmtriesPending');
+    if (this.newEntriesPending.length) {
+      debugger;
+      this.newEntriesPending
+        .splice(0, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_EMIT_BATCH_SIZE)
+        .forEach((newEntry) => newEntry && this.emitNewEntry(...newEntry));
+    }
+  };
+
+  private startEmitBatchesInterval() {
+    this.emitBatchesInterval = setInterval(
+      this.emitBatch,
+      SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_EMIT_BATCH_INT_MS
+    );
+  }
+
+  private unsetEmithBatchInterval() {
+    if (this.emitBatchesInterval) {
+      clearInterval(this.emitBatchesInterval);
+    }
   }
 }
