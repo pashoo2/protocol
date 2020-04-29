@@ -216,12 +216,20 @@ export class SwarmStoreConnectorOrbitDB<
       return checkDbOptionsResult;
     }
 
-    const { dbName } = dbOptions;
+    const { dbName, useEncryptedStorage } = dbOptions;
     const db = this.getDbConnectionExists(dbName);
 
     if (db) {
       this.unsetOptionsForDatabase(dbName);
       return new Error(`A database named as ${dbName} is already exists`);
+    }
+
+    if (useEncryptedStorage) {
+      // Add the database name in the Storage fabric
+      // as the enctypted db. The storage fabric
+      // will create the encrypted storage
+      // for this database
+      this.storage?.addSecretDatabaseName(dbName);
     }
 
     const database = new SwarmStoreConnectorOrbitDBDatabase<

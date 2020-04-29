@@ -1,8 +1,5 @@
 import { IPFS } from 'types/ipfs.types';
-import {
-  ISwarmStoreConnectorOrbitDbDatabaseOptions,
-  TSwarmStoreConnectorOrbitDbDatabaseStoreKey,
-} from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
+import { ISwarmStoreConnectorOrbitDbDatabaseOptions } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import { ISwarmStoreMainOptions } from '../../swarm-store-class.types';
 import { ISwarmStoreEvents } from '../../swarm-store-class.types';
 import { ESwarmStoreConnector } from '../../swarm-store-class.const';

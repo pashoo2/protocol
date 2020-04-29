@@ -78,6 +78,8 @@ export interface ISwarmStoreDatabaseBaseOptions {
   isPublic?: boolean;
   // how many records to preload
   preloadCount?: number;
+  // use encrypted storage for the database
+  useEncryptedStorage?: boolean;
 }
 
 export type TSwarmStoreDatabaseEntityKey<

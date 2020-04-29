@@ -3,16 +3,28 @@ import { ISecretStoreCredentials } from 'classes/secret-storage-class/secret-sto
 import { SecretStorage } from 'classes/secret-storage-class/secret-storage-class';
 import { ISwarmStoreConnectorOrbitDBSubclassStorageFabric } from './swarm-store-connector-orbit-db-subclass-storage-fabric.types';
 import { SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter } from '../swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter';
-
+import Storage from 'orbit-db-storage-adapter';
 export class SwarmStoreConnectorOrbitDBSubclassStorageFabric
   implements ISwarmStoreConnectorOrbitDBSubclassStorageFabric {
   private key?: CryptoKey;
 
   private ready?: Promise<void>;
 
+  // names of databases which must be encrypted
+  protected secretDatabasesNames: string[] = [];
+
+  protected storage: any;
+
   constructor(credentials: ISecretStoreCredentials) {
     this.applyCredentials(credentials);
+    this.storage = Storage();
   }
+
+  public addSecretDatabaseName = (dbName: string) => {
+    if (!this.secretDatabasesNames.includes(dbName)) {
+      this.secretDatabasesNames.push(dbName);
+    }
+  };
 
   /**
    * create an instance of OrbitDB Cache
@@ -25,6 +37,9 @@ export class SwarmStoreConnectorOrbitDBSubclassStorageFabric
    */
   public async createStore(path: string): Promise<IStore> {
     await this.ready;
+    if (!this.isSecretPath(path)) {
+      return this.storage.createStore(path);
+    }
 
     const { key } = this;
 
@@ -42,6 +57,24 @@ export class SwarmStoreConnectorOrbitDBSubclassStorageFabric
 
     await cache.open();
     return cache;
+  }
+
+  protected getDBNameByPath(path: string): undefined | string {
+    let idx = 0;
+    let matches = 0;
+    while (matches < 2 && idx < path.length) {
+      if (path[idx++] === '/') {
+        matches++;
+      }
+      if (matches === 2) {
+        return path.slice(idx);
+      }
+    }
+  }
+
+  protected isSecretPath(path: string): boolean {
+    const dbName = this.getDBNameByPath(path);
+    return !!dbName && this.secretDatabasesNames.includes(dbName);
   }
 
   protected applyCredentials(credentials: ISecretStoreCredentials): void {

@@ -33,25 +33,14 @@ export class ConnectToSwarm extends React.PureComponent {
   protected sendSwarmMessage = async () => {
     try {
       const key = 'test_message';
-      const hash = await this.state.connectionBridge?.storage?.addMessage(
+
+      await this.state.connectionBridge?.storage?.addMessage(
         CONNECT_TO_SWARM_DATABASE_MAIN_NAME,
         {
           ...CONNECT_TO_SWARM_STORAGE_DEFAULT_MESSAGE_BODY,
         },
         key
       );
-      const message = await this.state.connectionBridge?.storage?.collect(
-        CONNECT_TO_SWARM_DATABASE_MAIN_NAME,
-        { eq: key }
-      );
-
-      if (message instanceof Error) {
-        this.setState({
-          messages: this.state.messages
-            .concat(message.filter((msg) => !(msg instanceof Error)))
-            .map((m) => m),
-        });
-      }
     } catch (err) {
       console.error(err);
     }
@@ -139,12 +128,20 @@ export class ConnectToSwarm extends React.PureComponent {
       await connectionBridge.storage?.openDatabase(
         CONNECT_TO_SWARM_DATABASE_MAIN
       );
+      debugger;
       this.setState({
         dbRemoved: false,
       });
     }
   };
 
+  public renderLoadMessages() {
+    return (
+      <div>
+        <button>Load next 10 messages</button>
+      </div>
+    );
+  }
   public renderConnectedState() {
     const { messagingSending, userId, dbRemoved, dbRemoving } = this.state;
 
@@ -164,6 +161,7 @@ export class ConnectToSwarm extends React.PureComponent {
           {messagingSending ? 'Stop' : 'Start'} private messages sending
         </button>
         {this.renderConnectToDatabase()}
+        {this.renderLoadMessages()}
       </div>
     );
   }

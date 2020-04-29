@@ -520,11 +520,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     entry: LogEntry<TStoreValue>,
     heads: any
   ) => {
-    console.trace('add entry pending', {
-      address,
-      entry,
-      heads,
-    });
     this.newEntriesPending.push([address, entry, heads]);
   };
 
@@ -552,7 +547,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     // emit event database local copy loading progress
     this.emitEvent(
       ESwarmStoreEventNames.LOADING,
-      (progress / this.preloadCount) * 100
+      (progress / (this.preloadCount <= 0 ? total : this.preloadCount)) * 100
     );
   };
 
