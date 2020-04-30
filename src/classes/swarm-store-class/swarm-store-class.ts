@@ -1,6 +1,10 @@
 import { EventEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import assert from 'assert';
-import { TSwarmStoreDatabaseIteratorMethodAnswer } from './swarm-store-class.types';
+import { TSwarmStoreDatabaseRequestMethodReturnType } from './swarm-store-class.types';
+import {
+  TSwarmStoreDatabaseIteratorMethodAnswer,
+  ISwarmStoreConnectorBase,
+} from './swarm-store-class.types';
 import {
   ESwarmStoreConnector,
   SWARM_STORE_CONNECTORS,
@@ -174,11 +178,7 @@ export class SwarmStore<
     dbName: TSwarmStoreDatabaseOptions<P>['dbName'],
     dbMethod: TSwarmStoreDatabaseMethod<P>,
     arg: TSwarmStoreDatabaseMethodArgument<P, V>
-  ): Promise<
-    | Error
-    | TSwarmStoreDatabaseMethodAnswer<P, A>
-    | TSwarmStoreDatabaseIteratorMethodAnswer<P, A>
-  > {
+  ): Promise<TSwarmStoreDatabaseRequestMethodReturnType<P, V>> {
     const { connector } = this;
 
     if (!connector) {

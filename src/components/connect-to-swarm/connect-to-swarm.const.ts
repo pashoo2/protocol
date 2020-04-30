@@ -43,7 +43,7 @@ export const CONNECT_TO_SWARM_DATABASE_MAIN = {
   dbName: CONNECT_TO_SWARM_DATABASE_MAIN_NAME,
   isPublic: true,
   useEncryptedStorage: true,
-  preloadCount: -1,
+  preloadCount: 10,
   // dbType: ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
 };
 

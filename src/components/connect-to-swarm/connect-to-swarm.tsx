@@ -15,6 +15,7 @@ import {
   CONNECT_TO_SWARM_AUTH_CREDENTIALS_1,
   CONNECT_TO_SWARM_AUTH_CREDENTIALS_2,
 } from './connect-to-swarm.const';
+import { ESwarmStoreConnectorOrbitDbDatabaseMethodNames } from 'classes';
 
 export class ConnectToSwarm extends React.PureComponent {
   public state = {
@@ -135,10 +136,25 @@ export class ConnectToSwarm extends React.PureComponent {
     }
   };
 
+  public loadNextMessgaes = async () => {
+    const { connectionBridge } = this.state;
+
+    if (connectionBridge) {
+      debugger;
+      const result = await connectionBridge.storage?.request(
+        CONNECT_TO_SWARM_DATABASE_MAIN_NAME,
+        ESwarmStoreConnectorOrbitDbDatabaseMethodNames.load,
+        10
+      );
+      console.log(result);
+      debugger;
+    }
+  };
+
   public renderLoadMessages() {
     return (
       <div>
-        <button>Load next 10 messages</button>
+        <button onClick={this.loadNextMessgaes}>Load next 10 messages</button>
       </div>
     );
   }

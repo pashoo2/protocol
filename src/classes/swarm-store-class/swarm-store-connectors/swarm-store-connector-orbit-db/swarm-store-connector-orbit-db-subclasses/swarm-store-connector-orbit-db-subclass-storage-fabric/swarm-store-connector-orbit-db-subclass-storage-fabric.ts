@@ -4,6 +4,8 @@ import { SecretStorage } from 'classes/secret-storage-class/secret-storage-class
 import { ISwarmStoreConnectorOrbitDBSubclassStorageFabric } from './swarm-store-connector-orbit-db-subclass-storage-fabric.types';
 import { SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter } from '../swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter';
 import Storage from 'orbit-db-storage-adapter';
+import OrbitDB from 'orbit-db';
+
 export class SwarmStoreConnectorOrbitDBSubclassStorageFabric
   implements ISwarmStoreConnectorOrbitDBSubclassStorageFabric {
   private key?: CryptoKey;
@@ -59,7 +61,25 @@ export class SwarmStoreConnectorOrbitDBSubclassStorageFabric
     return cache;
   }
 
+  protected getValidPath(path: string): string {
+    return path.startsWith('/') ? path : `/${path}`;
+  }
+
+  protected getDBNameByAddress(path: string): undefined | string {
+    try {
+      return OrbitDB.parseAddress(this.getValidPath(path)).path;
+    } catch (err) {
+      console.error('Cant parse the path', err);
+    }
+  }
+
   protected getDBNameByPath(path: string): undefined | string {
+    const dbName = this.getDBNameByAddress(path);
+
+    if (dbName) {
+      return dbName;
+    }
+
     let idx = 0;
     let matches = 0;
     while (matches < 2 && idx < path.length) {

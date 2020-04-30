@@ -31,6 +31,8 @@ import {
   ESwarmStoreConnectorOrbitDbDatabaseType,
 } from './swarm-store-connector-orbit-db-subclass-database.const';
 import { ESwarmStoreEventNames } from '../../../../swarm-store-class.const';
+import { TSwarmStoreConnectorOrbitDbDatabaseMethodArgumentDbLoad } from './swarm-store-connector-orbit-db-subclass-database.types';
+import { delay } from 'utils/common-utils/common-utils-timer';
 import {
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_EMIT_BATCH_INT_MS,
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_EMIT_BATCH_SIZE,
@@ -69,6 +71,33 @@ export class SwarmStoreConnectorOrbitDBDatabase<
 
   protected newEntriesPending: [string, LogEntry<TStoreValue>, any][] = [];
 
+  /**
+   * set items overall count
+   *
+   * @protected
+   * @type {number}
+   * @memberof SwarmStoreConnectorOrbitDBDatabase
+   */
+  protected itemsOverallCountInStorage: number = 0;
+
+  /**
+   * entries already received and emitted.
+   * { hash: signature }
+   *
+   * @protected
+   * @type {Record<string, string>}
+   * @memberof SwarmStoreConnectorOrbitDBDatabase
+   */
+  protected entriesReceived: Record<string, string> = {};
+
+  protected get itemsCurrentlyLoaded() {
+    return Object.keys(this.entriesReceived).length;
+  }
+
+  protected get itemsOverallCount() {
+    return Math.max(this.itemsOverallCountInStorage, this.itemsCurrentlyLoaded);
+  }
+
   protected dbType: ESwarmStoreConnectorOrbitDbDatabaseType =
     ESwarmStoreConnectorOrbitDbDatabaseType.FEED;
 
@@ -87,16 +116,15 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     this.setOrbitDbInstance(orbitDb);
   }
 
-  public async connect(): Promise<Error | void> {
-    this.unsetReadyState();
+  public connect = async (): Promise<Error | void> => {
+    const dbStore = await this.createDb();
 
-    const dbStoreCreationResult = await this.createDbInstance();
-
-    if (dbStoreCreationResult instanceof Error) {
-      return dbStoreCreationResult;
+    if (dbStore instanceof Error) {
+      console.error(dbStore);
+      return new Error('Failed to create a new database instance');
     }
 
-    const loadDbResult = await dbStoreCreationResult.load(this.preloadCount);
+    const loadDbResult = await dbStore.load(this.preloadCount);
 
     if ((loadDbResult as unknown) instanceof Error) {
       console.error(loadDbResult);
@@ -105,12 +133,15 @@ export class SwarmStoreConnectorOrbitDBDatabase<
         'connect'
       );
     }
-  }
+  };
 
-  public async close(): Promise<Error | void> {
+  public close = async (opt?: any): Promise<Error | void> => {
     this.unsetAllListenersForEvents();
     this.unsetReadyState();
+    this.resetEntriesPending();
+    this.resetEntriesReceived();
     this.unsetEmithBatchInterval();
+    this.resetItemsOverall();
     this.isClosed = true;
 
     let result: undefined | Error;
@@ -126,11 +157,11 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     }
     this.emitEvent(ESwarmStoreEventNames.CLOSE, this);
     return result;
-  }
+  };
 
-  public async add(
+  public add = async (
     addArg: TSwarmStoreConnectorOrbitDbDatabaseAddMethodArgument<TStoreValue>
-  ): Promise<string | Error> {
+  ): Promise<string | Error> => {
     const { value, key } = addArg;
     const database = this.getDbStoreInstance();
 
@@ -155,7 +186,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       console.trace(err);
       return err;
     }
-  }
+  };
 
   /**
    * for the key value store a key must be used.
@@ -227,7 +258,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     }
   }
 
-  public async iterator(
+  public iterator = async (
     options?: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions
   ): Promise<
     | Error
@@ -236,13 +267,13 @@ export class SwarmStoreConnectorOrbitDBDatabase<
         | Error
         | undefined
       >
-  > {
+  > => {
     return this.isKVStore
       ? this.iteratorKeyValueStore(options)
       : this.iteratorFeedStore(options);
-  }
+  };
 
-  public async drop() {
+  public drop = async () => {
     const database = this.getDbStoreInstance();
 
     if (database instanceof Error) {
@@ -251,10 +282,72 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     this.unsetAllListenersForEvents();
     try {
       await database.drop();
-      // TODO drop the database in the secret storage
     } catch (err) {
       return err;
     }
+  };
+
+  /**
+   * returns a count of an items loaded or Error
+   *
+   * @memberof SwarmStoreConnectorOrbitDBDatabase
+   */
+  public load = async (
+    count: TSwarmStoreConnectorOrbitDbDatabaseMethodArgumentDbLoad
+  ): Promise<number | Error> => {
+    const itemsLoaded = this.itemsCurrentlyLoaded;
+    const newDbInstance = await this.restartDbInstanceSilent();
+
+    if (newDbInstance instanceof Error) {
+      console.error('Failed to restart the database');
+      return newDbInstance;
+    }
+
+    const countToLoad = this.itemsCurrentlyLoaded + count;
+    await newDbInstance.load(countToLoad);
+    await delay(1);
+    return this.itemsCurrentlyLoaded - itemsLoaded;
+  };
+
+  protected createDb(): Promise<
+    Error | TSwarmStoreConnectorOrbitDbDatabase<TStoreValue>
+  > {
+    this.unsetReadyState();
+    return this.createDbInstance();
+  }
+
+  protected async restartDbInstanceSilent(): Promise<
+    Error | TSwarmStoreConnectorOrbitDbDatabase<TStoreValue>
+  > {
+    const db = this.getDbStoreInstance();
+
+    if (!db) {
+      return new Error('There is no an active database instance');
+    }
+    if (db instanceof Error) {
+      return db;
+    }
+    this.unsetAllListenersForEvents();
+
+    const result = await this.closeInstanceOfStore(db);
+
+    if (result instanceof Error) {
+      console.error('Failed to close the instance of store');
+      return result;
+    }
+    return this.createDbInstance();
+  }
+
+  protected setItemsOverallCount(total: number) {
+    this.itemsOverallCountInStorage = Math.max(
+      this.itemsOverallCountInStorage,
+      total
+    );
+    console.log('total number of entries', total);
+  }
+
+  protected resetItemsOverall() {
+    this.itemsOverallCountInStorage = 0;
   }
 
   protected findInOplog(
@@ -504,6 +597,8 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       address,
       entry,
       heads,
+      itemsCurrentlyLoaded: this.itemsCurrentlyLoaded,
+      itemsOverallCount: this.itemsOverallCount,
     });
     this.emit(ESwarmStoreEventNames.NEW_ENTRY, [
       this.dbName,
@@ -518,12 +613,41 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     this.startEmitBatchesInterval();
   }
 
+  /**
+   * check was the message received
+   *
+   * @private
+   * @param {LogEntry<TStoreValue>} entry
+   * @returns
+   * @memberof SwarmStoreConnectorOrbitDBDatabase
+   */
+  private checkWasEntryReceived(entry: LogEntry<TStoreValue>) {
+    return this.entriesReceived[entry.hash] === entry.sig;
+  }
+
+  private addMessageToReceivedMessages(entry: LogEntry<TStoreValue>) {
+    if (!this.checkWasEntryReceived(entry)) {
+      this.entriesReceived[entry.hash] = entry.sig;
+    }
+  }
+
+  private resetEntriesReceived() {
+    this.entriesReceived = {};
+  }
+
+  private resetEntriesPending() {
+    this.newEntriesPending = [];
+  }
+
   private handleNewEntry = (
     address: string,
     entry: LogEntry<TStoreValue>,
     heads: any
   ) => {
-    this.newEntriesPending.push([address, entry, heads]);
+    if (!this.checkWasEntryReceived(entry)) {
+      this.newEntriesPending.push([address, entry, heads]);
+      this.addMessageToReceivedMessages(entry);
+    }
   };
 
   private handleFeedStoreReady = () => {
@@ -546,6 +670,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     progress: number,
     total: number
   ) => {
+    this.setItemsOverallCount(total);
     this.handleNewEntry(address, entry, {});
     // emit event database local copy loading progress
     this.emitEvent(
@@ -651,12 +776,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     entry: LogEntry<TStoreValue>,
     heads: any
   ) => {
-    console.log('WRITE', {
-      address,
-      entry,
-      heads,
-    });
-    this.emitNewEntry(address, entry, heads);
+    this.handleNewEntry(address, entry, heads);
   };
 
   private setFeedStoreEventListeners(
@@ -849,14 +969,22 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     this.orbitDb = orbitDb;
   }
 
-  private emitBatch = () => {
-    console.log('emitEmtriesPending');
+  private emitEntries = (
+    batchSize: number = SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_EMIT_BATCH_SIZE
+  ) => {
+    console.log('newEntriesPending count', this.newEntriesPending.length, {
+      itemsCurrentlyLoaded: this.itemsCurrentlyLoaded,
+      itemsOverallCount: this.itemsOverallCount,
+    });
     if (this.newEntriesPending.length) {
-      debugger;
       this.newEntriesPending
-        .splice(0, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_EMIT_BATCH_SIZE)
+        .splice(0, batchSize)
         .forEach((newEntry) => newEntry && this.emitNewEntry(...newEntry));
     }
+  };
+
+  private emitBatch = () => {
+    this.emitEntries();
   };
 
   private startEmitBatchesInterval() {

@@ -50,6 +50,14 @@ export type TSwarmStoreDatabaseIteratorMethodArgument<
   ? ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions
   : never;
 
+export type TSwarmStoreDatabaseLoadMethodAnswer<
+  P extends ESwarmStoreConnector.OrbitDB
+> = P extends ESwarmStoreConnector.OrbitDB ? number : never;
+
+export type TSwarmStoreDatabaseCloseMethodAnswer<
+  P extends ESwarmStoreConnector.OrbitDB
+> = P extends ESwarmStoreConnector.OrbitDB ? void : never;
+
 // arguments avalilable for a database
 export type TSwarmStoreDatabaseIteratorMethodAnswer<
   P extends ESwarmStoreConnector,
@@ -201,6 +209,16 @@ export type TSwarmStoreDatabaseMethod<
   ? TSwarmStoreConnectorOrbitDbDatabaseMethodNames
   : never;
 
+export type TSwarmStoreDatabaseRequestMethodReturnType<
+  P extends ESwarmStoreConnector,
+  A
+> =
+  | Error
+  | TSwarmStoreDatabaseLoadMethodAnswer<P>
+  | TSwarmStoreDatabaseCloseMethodAnswer<P>
+  | TSwarmStoreDatabaseMethodAnswer<P, A>
+  | TSwarmStoreDatabaseIteratorMethodAnswer<P, A>;
+
 /**
  * this interface must be implemented by a swarm storage connectors
  *
@@ -242,11 +260,7 @@ export interface ISwarmStoreConnectorBase<P extends ESwarmStoreConnector> {
     dbName: TSwarmStoreDatabaseOptions<P>['dbName'],
     dbMethod: TSwarmStoreDatabaseMethod<P>,
     arg: TSwarmStoreDatabaseMethodArgument<P, V>
-  ): Promise<
-    | Error
-    | TSwarmStoreDatabaseMethodAnswer<P, A>
-    | TSwarmStoreDatabaseIteratorMethodAnswer<P, A>
-  >;
+  ): Promise<TSwarmStoreDatabaseRequestMethodReturnType<P, A>>;
 }
 
 export interface ISwarmStoreConnector<P extends ESwarmStoreConnector>

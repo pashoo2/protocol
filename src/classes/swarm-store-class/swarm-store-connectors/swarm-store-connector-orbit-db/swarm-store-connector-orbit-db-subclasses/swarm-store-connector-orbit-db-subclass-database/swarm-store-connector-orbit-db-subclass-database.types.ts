@@ -107,6 +107,8 @@ export enum ESwarmStoreConnectorOrbitDbDatabaseMethodNames {
   'add' = 'add',
   'remove' = 'remove',
   'iterator' = 'iterator',
+  'close' = 'close',
+  'load' = 'load',
 }
 
 export type TSwarmStoreConnectorOrbitDbDatabaseMethodNames = ESwarmStoreConnectorOrbitDbDatabaseMethodNames;
@@ -118,8 +120,14 @@ export type TSwarmStoreConnectorOrbitDbDatabaseAddMethodArgument<
   key?: TSwarmStoreConnectorOrbitDbDatabaseStoreKey;
 };
 
+export type TSwarmStoreConnectorOrbitDbDatabaseMethodArgumentDbClose = void;
+
+export type TSwarmStoreConnectorOrbitDbDatabaseMethodArgumentDbLoad = number;
+
 export type TSwarmStoreConnectorOrbitDbDatabaseMethodArgument<TStoreValue> =
   | TSwarmStoreConnectorOrbitDbDatabaseStoreHash
   | TStoreValue
   | TSwarmStoreConnectorOrbitDbDatabaseAddMethodArgument<TStoreValue>
-  | ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions;
+  | ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions
+  | TSwarmStoreConnectorOrbitDbDatabaseMethodArgumentDbClose
+  | TSwarmStoreConnectorOrbitDbDatabaseMethodArgumentDbLoad;
