@@ -5,6 +5,7 @@ if (!window.crypto) {
 }
 
 export const ENCRYPTION_FORMAT_SUPPORTED = !window.crypto ? 'SHA-1' : undefined;
+// TODO - check isomorphic-webcrypto to use
 
 export const crypto = window.crypto || require('@trust/webcrypto');
 
