@@ -33,6 +33,7 @@ import {
 import { ESwarmStoreEventNames } from '../../../../swarm-store-class.const';
 import { TSwarmStoreConnectorOrbitDbDatabaseMethodArgumentDbLoad } from './swarm-store-connector-orbit-db-subclass-database.types';
 import { delay } from 'utils/common-utils/common-utils-timer';
+import { ISwarmStoreConnectorRequestLoadAnswer } from '../../../../swarm-store-class.types';
 import {
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_EMIT_BATCH_INT_MS,
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_EMIT_BATCH_SIZE,
@@ -294,7 +295,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
    */
   public load = async (
     count: TSwarmStoreConnectorOrbitDbDatabaseMethodArgumentDbLoad
-  ): Promise<number | Error> => {
+  ): Promise<ISwarmStoreConnectorRequestLoadAnswer | Error> => {
     const itemsLoaded = this.itemsCurrentlyLoaded;
     const newDbInstance = await this.restartDbInstanceSilent();
 
@@ -305,8 +306,11 @@ export class SwarmStoreConnectorOrbitDBDatabase<
 
     const countToLoad = this.itemsCurrentlyLoaded + count;
     await newDbInstance.load(countToLoad);
-    await delay(1);
-    return this.itemsCurrentlyLoaded - itemsLoaded;
+    return {
+      count: this.itemsCurrentlyLoaded - itemsLoaded,
+      loadedCount: this.itemsCurrentlyLoaded,
+      overallCount: this.itemsOverallCount,
+    };
   };
 
   protected createDb(): Promise<
@@ -344,6 +348,16 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       total
     );
     console.log('total number of entries', total);
+  }
+
+  /**
+   * increment the overall count by 1
+   *
+   * @protected
+   * @memberof SwarmStoreConnectorOrbitDBDatabase
+   */
+  protected incItemsOverallCount() {
+    this.itemsOverallCountInStorage++;
   }
 
   protected resetItemsOverall() {
@@ -776,6 +790,8 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     entry: LogEntry<TStoreValue>,
     heads: any
   ) => {
+    this.incItemsOverallCount(); // this must be called before the handleNewEntry,
+    // otherwise doubling of the overall count will be caused
     this.handleNewEntry(address, entry, heads);
   };
 

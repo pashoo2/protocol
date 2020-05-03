@@ -122,6 +122,7 @@ export type TSwarmStoreConnectorOrbitDbDatabaseAddMethodArgument<
 
 export type TSwarmStoreConnectorOrbitDbDatabaseMethodArgumentDbClose = void;
 
+// how many items to load
 export type TSwarmStoreConnectorOrbitDbDatabaseMethodArgumentDbLoad = number;
 
 export type TSwarmStoreConnectorOrbitDbDatabaseMethodArgument<TStoreValue> =

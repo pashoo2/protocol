@@ -25,6 +25,30 @@ import {
 
 export type TSwarmStoreConnectorEventRetransmitter = (...args: any[]) => void;
 
+export interface ISwarmStoreConnectorRequestLoadAnswer {
+  /**
+   * how many new items loaded during the request
+   *
+   * @type {number}
+   * @memberof ISwarmStoreConnectorLoadAnswer
+   */
+  count: number;
+  /**
+   * overall items loaded
+   *
+   * @type {number}
+   * @memberof ISwarmStoreConnectorRequestLoadAnswer
+   */
+  loadedCount: number;
+  /**
+   * how many overall items exists in the database
+   *
+   * @type {number}
+   * @memberof ISwarmStoreConnectorLoadAnswer
+   */
+  overallCount: number;
+}
+
 export interface ISwarmStoreEvents {
   [ESwarmStoreEventNames.STATE_CHANGE]: boolean;
   [ESwarmStoreEventNames.ERROR]: Error;
@@ -52,7 +76,9 @@ export type TSwarmStoreDatabaseIteratorMethodArgument<
 
 export type TSwarmStoreDatabaseLoadMethodAnswer<
   P extends ESwarmStoreConnector.OrbitDB
-> = P extends ESwarmStoreConnector.OrbitDB ? number : never;
+> = P extends ESwarmStoreConnector.OrbitDB
+  ? ISwarmStoreConnectorRequestLoadAnswer
+  : never;
 
 export type TSwarmStoreDatabaseCloseMethodAnswer<
   P extends ESwarmStoreConnector.OrbitDB

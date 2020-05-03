@@ -136,7 +136,7 @@ export class ConnectToSwarm extends React.PureComponent {
     }
   };
 
-  public loadNextMessgaes = async () => {
+  public loadNextMessages = async () => {
     const { connectionBridge } = this.state;
 
     if (connectionBridge) {
@@ -154,7 +154,7 @@ export class ConnectToSwarm extends React.PureComponent {
   public renderLoadMessages() {
     return (
       <div>
-        <button onClick={this.loadNextMessgaes}>Load next 10 messages</button>
+        <button onClick={this.loadNextMessages}>Load next 10 messages</button>
       </div>
     );
   }
