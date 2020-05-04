@@ -23,7 +23,6 @@ import {
   CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX,
 } from './connection-bridge.const';
 import { CentralAuthority } from '../central-authority-class/central-authority-class';
-import { ISwarmConnectionOptions } from '../swarm-connection-class/swarm-connection-class.types';
 import { ipfsUtilsConnectBasic } from '../../utils/ipfs-utils/ipfs-utils';
 import { SwarmMessageStore } from '../swarm-message-store/swarm-message-store';
 import { ISensitiveDataSessionStorage } from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
@@ -67,7 +66,7 @@ export class ConnectionBridge<
 
   protected optionsMessageConstructor?: TSwarmMessageConstructorOptions;
 
-  protected optionsSwarmConnection?: ISwarmConnectionOptions;
+  protected optionsSwarmConnection?: any;
 
   protected optionsMessageStorage?: ISwarmMessageStoreOptions<P>;
 

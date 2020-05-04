@@ -4,7 +4,6 @@ import {
 } from '../swarm-message-store/swarm-message-store.types';
 import { ESwarmStoreConnector } from '../swarm-store-class/swarm-store-class.const';
 import { ICentralAuthority } from '../central-authority-class/central-authority-class.types';
-import { ISwarmConnectionOptions } from '../swarm-connection-class/swarm-connection-class.types';
 import { ICentralAuthorityOptions } from '../central-authority-class/central-authority-class.types';
 import { ISwarmMessageConstructor } from '../swarm-message/swarm-message-constructor.types';
 import { ISensitiveDataSessionStorageOptions } from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
@@ -79,22 +78,10 @@ export interface IConnectionBridgeOptions<
   /**
    * specify options for the swarm connection provider
    *
-   * @type {(Omit<ISwarmConnectionOptions, 'subclassOptions'> & {
-   *     subclassOptions: Omit<
-   *       ISwarmConnectionOptions['subclassOptions'],
-   *       'password'
-   *     >;
-   *   })}
    * @memberof IConnectionBridgeOptions
    */
   // TODO - at now the default IPFS connection will be used
-  swarm?: Omit<ISwarmConnectionOptions, 'subclassOptions'> & {
-    // TODO - do not set a password, otherwise the session persistence is not guaranteed
-    subclassOptions: Omit<
-      ISwarmConnectionOptions['subclassOptions'],
-      'password'
-    >;
-  };
+  swarm?: any;
 }
 
 export interface IConnectionBridge<

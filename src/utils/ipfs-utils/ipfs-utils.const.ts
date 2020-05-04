@@ -51,7 +51,8 @@ export const IPFS_UTILS_DEFAULT_OPTIONS = {
     },
   },
   preload: {
-    enabled: true,
+    // TODO - caused errors https://github.com/ipfs/go-ipfs/issues/6204
+    enabled: false,
     addresses: [`/ip4/${API_SERVER.host}/tcp/${API_SERVER.port}`],
   },
   dht: {
