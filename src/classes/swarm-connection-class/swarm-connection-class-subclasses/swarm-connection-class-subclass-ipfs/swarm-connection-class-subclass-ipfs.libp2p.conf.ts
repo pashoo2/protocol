@@ -5,7 +5,6 @@
 // about libp2p-secio https://github.com/auditdrivencrypto/secure-channel/blob/master/prior-art.md#ipfss-secure-channel
 import * as Libp2p from 'libp2p';
 import * as KadDHT from 'libp2p-kad-dht';
-import * as WebSocketStar from 'libp2p-websocket-star';
 import * as SPDY from 'libp2p-spdy';
 import * as MPLEX from 'pull-mplex';
 import * as Bootstrap from 'libp2p-bootstrap';
@@ -30,9 +29,6 @@ export const getLibPeerToPeer = (opts: any) => {
 
   // Create our WebSocketStar transport and give it our PeerId, straight from the ipfs node
   const wstar = new WStar({
-    id: peerInfo.id,
-  });
-  const wsstar = new WebSocketStar({
     id: peerInfo.id,
   });
   // Content and peer routing
@@ -88,10 +84,10 @@ export const getLibPeerToPeer = (opts: any) => {
       pollInterval: 5000,
     },
     modules: {
-      transport: [wstar, wsstar],
+      transport: [wstar],
       streamMuxer: [MPLEX, SPDY],
       connEncryption: [SECIO],
-      peerDiscovery: [Bootstrap, wstar.discovery, wsstar.discovery],
+      peerDiscovery: [Bootstrap, wstar.discovery],
       dht: KadDHT,
       // https://github.com/libp2p/specs/tree/master/pubsub/gossipsub
       pubsub: PubSubGossip,

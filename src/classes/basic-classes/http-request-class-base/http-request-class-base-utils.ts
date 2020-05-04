@@ -5,7 +5,6 @@ import {
   HTTP_REQUEST_CONTENT_TYPES_KNOWN,
   HTTP_RESPONSE_TYPES,
 } from './http-request-class-base.const';
-import { ownValueOf } from 'types/helper.types';
 import {
   TQueryStringParamsObject,
   TQueryStringAllowedParamValue,

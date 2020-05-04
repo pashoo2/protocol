@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "declaration": true,
     "target": "ES6",
     "module": "esnext",
     "downlevelIteration": true,
@@ -23,7 +24,7 @@
     ],
     "rootDirs": ["src/"],
     "typeRoots": [
-      "types",
+      "src/types",
       "**/types",
       "**/node_modules/types",
       "**/node_modules/@types"

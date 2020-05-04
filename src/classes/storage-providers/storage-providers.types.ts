@@ -1,4 +1,4 @@
-import { ownValueOf } from './../../types/helper.types';
+import { ownValueOf } from 'types/helper.types';
 import { STORAGE_PROVIDERS_NAME } from './storage-providers.const';
 
 export interface IStorageProviderOptions {

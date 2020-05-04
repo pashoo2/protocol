@@ -1,5 +1,5 @@
 import { TSwarmMessageUserIdentifierSerialized } from './swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
-import { ownKeyOf } from '../../types/helper.types';
+import { ownKeyOf } from 'types/helper.types';
 import {
   ISwarmMessageSubclassParserUtils,
   ISwarmMessageSubclassParser,

@@ -1,4 +1,4 @@
-import { TTypedArraysNative } from './../types/main.types';
+import { TTypedArraysNative } from 'types/main.types';
 import { TTypedArrays, TMainDataTypes } from 'types/main.types';
 import { stringify, TStringifyData } from './main-utils';
 import {

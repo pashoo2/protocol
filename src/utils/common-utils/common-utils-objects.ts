@@ -1,4 +1,4 @@
-import { TObjectKeys, TDictionary } from '../../types/common.types';
+import { TObjectKeys, TDictionary } from 'types/common.types';
 import { isDefined } from './common-utils-main';
 
 export const isNotEmptyObject = (o: any): o is object => {

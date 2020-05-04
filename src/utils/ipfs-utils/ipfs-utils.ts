@@ -3,6 +3,7 @@ import {
   IPFS_UTILS_DEFAULT_OPTIONS,
   IPFS_UTILS_DEFAULT_TIMEOUT_MS,
 } from './ipfs-utils.const';
+import { getLibPeerToPeer } from './ipfs-utils-libp2p/ipfs-utils-libp2p';
 
 /**
  * create a ready to use connection to IPFS with a basis default options
@@ -19,6 +20,7 @@ export const ipfsUtilsConnectBasic = async (
     return await IPFS.create({
       ...IPFS_UTILS_DEFAULT_OPTIONS,
       ...options,
+      // TODO - https://github.com/ipfs/go-ipfs/issues/6204 - try when resolved libp2p: getLibPeerToPeer,
     });
   } finally {
     clearTimeout(timer!);

@@ -12,8 +12,6 @@ export * from './secret-storage-class';
 
 export * from './storage-providers';
 
-export * from './swarm-connection-class';
-
 export * from './swarm-message';
 
 export * from './swarm-message-store';
