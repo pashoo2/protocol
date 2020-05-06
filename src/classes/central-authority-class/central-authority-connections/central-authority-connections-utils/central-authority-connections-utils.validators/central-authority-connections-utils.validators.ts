@@ -3,7 +3,7 @@ import {
   CA_CONNECTIONS_POOL_AUTH_PROVIDERS_CONNECTION_CONSTRUCTORS,
 } from '../../central-authority-connections.const';
 import { CA_CONNECTIONS_AUTH_PROVIDERS_VALUES } from './central-authority-connections-utils.validators.const';
-import { isURL } from 'validator';
+import validator from 'validator';
 import { TCAAuthProviderIdentity } from '../../central-authority-connections.types';
 
 export const validateCAConnectionAuthProviderType = (
@@ -15,7 +15,7 @@ export const validateCAConnectionAuthProviderUrl = (
   caAuthProviderUrl: string
 ): caAuthProviderUrl is TCAAuthProviderIdentity => {
   try {
-    return isURL(caAuthProviderUrl);
+    return validator.isURL(caAuthProviderUrl);
   } catch {
     return false;
   }

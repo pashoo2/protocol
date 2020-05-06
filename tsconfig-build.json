@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
+    "declarationMap": true,
     "target": "ES6",
     "removeComments": true,
     "importHelpers": true,
-    "module": "commonjs",
+    "module": "amd",
     "downlevelIteration": true,
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
@@ -24,7 +25,8 @@
     "experimentalDecorators": true,
     "resolveJsonModule": true,
     "noEmit": false,
-    "outDir": "./build",
+    "build": true,
+    "outFile": "./build/bundle.js",
     "sourceMap": true,
     "declaration": true,
     "baseUrl": "./src",

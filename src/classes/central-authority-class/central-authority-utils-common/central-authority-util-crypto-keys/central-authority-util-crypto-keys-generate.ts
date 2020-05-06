@@ -24,7 +24,7 @@ import {
   CA_USER_IDENTITY_VERSIONS,
 } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
 import CentralAuthorityIdentity from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
-import { isUUID } from 'validator';
+import validator from 'validator';
 import { dataValidatorUtilSafeLogin } from 'utils/data-validators-utils/data-validators-utils';
 
 /**
@@ -124,7 +124,7 @@ export const generateCryptoCredentialsWithUserIdentityV1 = async (
   const uuidProvided =
     identityMetadata[CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME];
   const userUUID =
-    typeof uuidProvided === 'string' && isUUID(uuidProvided)
+    typeof uuidProvided === 'string' && validator.isUUID(uuidProvided)
       ? uuidProvided
       : generateUUID();
   const userUniqueIdentityDescription: ICAUserUniqueIdentifierDescriptionWithOptionalVersion = {

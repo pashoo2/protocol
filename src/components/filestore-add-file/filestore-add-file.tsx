@@ -85,7 +85,7 @@ export class FileStoreAddFile extends React.Component {
     }
   };
 
-  protected handleFileDownload = async (ev: MouseEvent<HTMLAnchorElement>) => {
+  private handleFileDownload = async (ev: MouseEvent<HTMLAnchorElement>) => {
     const { target } = ev;
     const { textContent } = target as HTMLAnchorElement;
 

@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "declaration": true,
+    "declarationDir": "./build",
     "target": "ES6",
     "module": "esnext",
     "downlevelIteration": true,
@@ -32,6 +33,6 @@
     "experimentalDecorators": true,
     "resolveJsonModule": true
   },
-  "include": ["src/**/*.ts", "src/**/*.json", "src/app-render.tsx"],
+  "include": ["src/**/*.ts", "src/**/*.json"],
   "exclude": ["node_modules", "**/*.spec.ts", "**/*.js", "node_modules*"]
 }

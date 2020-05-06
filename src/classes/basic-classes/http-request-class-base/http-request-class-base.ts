@@ -1,4 +1,4 @@
-import { isURL } from 'validator';
+import validator from 'validator';
 import { HttpRequestBodyProcessor } from './http-request-class-base-subclasses/http-request-class-base-body-processor';
 import {
   IHttpRequestOptions,
@@ -34,7 +34,7 @@ export class HttpRequest extends HttpRequestBodyProcessor {
   private static token?: THttpRequestToken;
 
   public static setBaseUrl(baseUrl: string): void | Error {
-    if (!isURL(baseUrl)) {
+    if (!validator.isURL(baseUrl)) {
       return new Error('This is not a valid url');
     }
     HttpRequest.baseUrl = baseUrl;
@@ -237,11 +237,11 @@ export class HttpRequest extends HttpRequestBodyProcessor {
       return new Error('The url must be defined in options');
     }
     if (typeof baseUrl === 'string') {
-      if (!isURL(baseUrl)) {
+      if (!validator.isURL(baseUrl)) {
         return new Error('The baseUrl is not valid');
       }
       this.baseUrl = baseUrl;
-    } else if (!isURL(url)) {
+    } else if (!validator.isURL(url)) {
       this.baseUrl = '';
       try {
         new URL(url); // maybe it's data url
