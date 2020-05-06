@@ -17,7 +17,7 @@ export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_1 = {
 };
 
 export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_1 =
-  '02https://watcha3-191815.firebaseio.com|nRCitpXVIwXsDPciNAovIP6I2hr1';
+  '02https://watcha3-191815.firebaseio.com|sgFtcpibSAaMUwNZwR88jLD7uF82';
 
 export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_2 = {
   login: 'cecaye9745@emailhost99.com',
@@ -25,7 +25,7 @@ export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_2 = {
 };
 
 export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_2 =
-  '02https://watcha3-191815.firebaseio.com|LS3zLYp9PFR4877Zes1IfawKIVN2';
+  '02https://watcha3-191815.firebaseio.com|c2wDISuQVBaVANDrTdTWGVi5F0C3';
 
 export enum CONNECT_TO_SWARM_AUTH_PROVIDERS {
   FIREBASE_WATCHA = 'https://watcha3-191815.firebaseio.com',

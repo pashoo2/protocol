@@ -129,7 +129,6 @@ export class ConnectToSwarm extends React.PureComponent {
       await connectionBridge.storage?.openDatabase(
         CONNECT_TO_SWARM_DATABASE_MAIN
       );
-      debugger;
       this.setState({
         dbRemoved: false,
       });
@@ -140,14 +139,12 @@ export class ConnectToSwarm extends React.PureComponent {
     const { connectionBridge } = this.state;
 
     if (connectionBridge) {
-      debugger;
       const result = await connectionBridge.storage?.request(
         CONNECT_TO_SWARM_DATABASE_MAIN_NAME,
         ESwarmStoreConnectorOrbitDbDatabaseMethodNames.load,
         10
       );
       console.log(result);
-      debugger;
     }
   };
 

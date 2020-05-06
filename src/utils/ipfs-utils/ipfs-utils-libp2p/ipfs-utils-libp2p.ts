@@ -33,13 +33,12 @@ const upgrader = {
 // libp2p configuration for browsers
 // https://github.com/ipfs/js-ipfs/blob/master/src/core/runtime/libp2p-browser.js
 export const getLibPeerToPeer = (opts: any) => {
-  debugger;
   // Set convenience variables to clearly showcase some of the useful things that are available
   const peerInfo = opts.peerInfo;
   const peerBook = opts.peerBook;
   // bootstrap peers in the main configuration
   const bootstrapList = opts.config.Bootstrap;
-  debugger;
+
   // Create our WebRTC transport and give it our PeerId, straight from the ipfs node
   peerInfo.multiaddrs.add(
     multiaddr(
