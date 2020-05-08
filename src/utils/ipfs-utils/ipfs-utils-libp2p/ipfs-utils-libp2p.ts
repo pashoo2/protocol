@@ -12,7 +12,7 @@ import * as SPDY from 'libp2p-spdy';
 import * as MPLEX from 'pull-mplex';
 import * as SECIO from 'libp2p-secio';
 import * as WRTCStar from 'libp2p-webrtc-star';
-import Stardust from 'libp2p-stardust';
+// import Stardust from 'libp2p-stardust';
 import * as Bootstrap from 'libp2p-bootstrap';
 import * as PubSubGossip from 'libp2p-gossipsub';
 import DelegatedPeerRouter from 'libp2p-delegated-peer-routing';

@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationDir": "./build/src",
+    "module": "CommonJS",
+    "noEmit": false,
+    "importHelpers": false,
+    "skipLibCheck": true
+  }
+}

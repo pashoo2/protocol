@@ -1,43 +1,20 @@
 {
+  "extends": "./tsconfig",
   "compilerOptions": {
+    "declaration": true,
     "declarationMap": true,
-    "target": "ES6",
+    "declarationDir": "./build",
+    "noEmit": false,
+    "target": "es2015",
+    "module": "esnext",
+    "isolatedModules": true,
     "removeComments": true,
     "importHelpers": true,
-    "module": "amd",
-    "downlevelIteration": true,
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node",
-    "jsx": "preserve",
     "rootDirs": ["src/"],
-    "typeRoots": [
-      "types",
-      "**/types",
-      "**/node_modules/types",
-      "**/node_modules/@types"
-    ],
-    "experimentalDecorators": true,
-    "resolveJsonModule": true,
-    "noEmit": false,
-    "build": true,
-    "outFile": "./build/bundle.js",
-    "sourceMap": true,
-    "declaration": true,
-    "baseUrl": "./src",
+    "outDir": "./build",
+    "skipLibCheck": true,
     "plugins": [{ "transform": "ts-transformer-imports" }]
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.json"],
-  "exclude": [
-    "**/*.spec.ts",
-    "build",
-    "**/*.test*",
-    "/src/test",
-    "src/app-render.tsx"
-  ]
+  "exclude": ["./build", "src/app-render.tsx"]
 }

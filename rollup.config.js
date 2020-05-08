@@ -3,11 +3,12 @@ import resolve from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
-
-import packageJson from './package.json';
+import builtins from 'rollup-plugin-node-builtins';
+import globals from 'rollup-plugin-node-globals';
 
 export default {
-  input: 'src/build.ts',
+  preserveModules: false, // TODO build emits in the ./build/src directory, but must be in the root of ./build
+  input: './src/index.ts',
   output: [
     {
       format: 'cjs',
@@ -16,7 +17,10 @@ export default {
     },
   ],
   plugins: [
-    resolve(),
+    builtins(),
+    resolve({
+      preferBuiltins: false,
+    }),
     json({
       namedExports: false,
     }),
@@ -31,6 +35,7 @@ export default {
     }),
     typescript({
       exclude: '**/*.tsx',
+      tsconfig: 'tsconfig-rollup.json',
     }),
     peerDepsExternal(),
   ],

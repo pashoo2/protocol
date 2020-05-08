@@ -1,2 +1,2 @@
-export * from './build';
-import('./app-render');
+export * from './classes';
+//import('./app-render');
