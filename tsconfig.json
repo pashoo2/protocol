@@ -32,5 +32,11 @@
     "resolveJsonModule": true
   },
   "include": ["src/**/*.ts", "src/**/*.json"],
-  "exclude": ["node_modules", "**/*.spec.ts", "**/*.js", "node_modules*"]
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts",
+    "**/*.js",
+    "node_modules*",
+    "./decentrilized-protocol"
+  ]
 }

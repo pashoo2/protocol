@@ -3,7 +3,6 @@
   "compilerOptions": {
     "declaration": true,
     "declarationMap": true,
-    "declarationDir": "./build",
     "noEmit": false,
     "target": "es2015",
     "module": "esnext",
@@ -11,7 +10,7 @@
     "removeComments": true,
     "importHelpers": true,
     "rootDirs": ["src/"],
-    "outDir": "./build",
+    "outDir": "./decentralized-protocol",
     "skipLibCheck": true,
     "plugins": [{ "transform": "ts-transformer-imports" }]
   },

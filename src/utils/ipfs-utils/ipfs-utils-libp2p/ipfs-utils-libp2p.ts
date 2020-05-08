@@ -7,7 +7,7 @@ import * as Libp2p from 'libp2p';
 import * as KadDHT from 'libp2p-kad-dht';
 import * as TCP from 'libp2p-tcp';
 import * as WS from 'libp2p-websockets';
-import * as WRTCDirect from 'libp2p-webrtc-direct';
+// import * as WRTCDirect from 'libp2p-webrtc-direct';
 import * as SPDY from 'libp2p-spdy';
 import * as MPLEX from 'pull-mplex';
 import * as SECIO from 'libp2p-secio';
@@ -88,7 +88,7 @@ export const getLibPeerToPeer = (opts: any) => {
         transport: [
           TCP,
           WS,
-          WRTCDirect,
+          // TODO - WRTCDirect, depending on webrtc nodejs lib which is not necessary
           WRTCStar,
           // TODO - when the module will be stable use it
           // Stardust,
