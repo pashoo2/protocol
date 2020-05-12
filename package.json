@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "prebuild": "cp src/prod.ts src/index.ts",
     "build:module:script": "node ./module-build",
-    "build:module": "./node_modules/.bin/ttsc -p tsconfig-build.json && npm run build:module:script",
+    "build:module": "npm run prebuild && ./node_modules/.bin/ttsc -p tsconfig-build.json && npm run build:module:script",
     "build:declaration": "./node_modules/.bin/ttsc -p tsconfig-build.json --emitDeclarationOnly",
-    "build:rollup": "rollup -c",
+    "build:rollup": "npm run prebuild && rollup -c",
     "build:bundle": "./node_modules/.bin/cross-env-shell NODE_OPTIONS=--max_old_space_size=4096 npm run build:rollup && npm run build:declaration",
-    "start": "./node_modules/.bin/cross-env-shell NODE_ENV=\"production\" react-scripts start",
-    "build": "react-scripts build",
+    "start": "cp src/dev.ts src/index.ts && react-scripts start",
+    "build": "npm run prebuild && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "postinstall": "patch-package",
@@ -25,7 +26,7 @@
     "lint:staged": "eslint . --quiet --ignore-path .gitignore --cache --ext .js,.jsx,.ts,.tsx --ignore-pattern \"*.test.*\" --ignore-pattern '/__test__/*'",
     "launch:chromium:unsecure": "google-chrome --disable-web-security --allow-file-access-from-files --user-data-dir=\"/tmp/chromium_tmp\""
   },
-  "main": "src/index.js",
+  "main": "src/index.ts",
   "lint-staged": {
     "src/**/*.{ts,tsx}": [
       "npm run lint:staged",

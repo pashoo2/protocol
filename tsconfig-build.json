@@ -9,11 +9,18 @@
     "isolatedModules": true,
     "removeComments": true,
     "importHelpers": true,
-    "rootDirs": ["src/"],
     "outDir": "./decentralized-protocol",
     "skipLibCheck": true,
     "plugins": [{ "transform": "ts-transformer-imports" }]
   },
+  "files": ["src/index.ts"],
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.json"],
-  "exclude": ["./build", "src/**/*.tsx", "src/app-render.tsx"]
+  "exclude": [
+    "./build",
+    "src/dev.ts",
+    "src/prod.ts",
+    "src/**/*.tsx",
+    "src/**/*.jsx",
+    "src/components"
+  ]
 }
