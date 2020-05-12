@@ -6,7 +6,7 @@ import { IQueuedEncrypyionClassBaseOptions } from '../../../basic-classes/queued
 import { ISwarmMessageUtilsBodySerializer } from '../../swarm-message-utils/swarm-message-utils-body-serializer/swarm-message-utils-body-serializer.types';
 import { ISwarmMessageUtilsMessageSerializer } from '../../swarm-message-utils/swarm-message-utils-message-serializer/swarm-message-utils-message-serializer.types';
 import { ISwarmMessageSubclassValidator } from '../swarm-message-subclass-validators/swarm-message-subclass-validator.types';
-import { ISwarmMessageInstance } from '../../swarm-message-constructor.types';
+import { TSwarmMessageInstance } from '../../swarm-message-constructor.types';
 import { TSwarmMessageSignatureAlgorithm } from '../../swarm-message-constructor.types';
 import { ISwarmMessageBodyDeserialized } from '../../swarm-message-constructor.types';
 
@@ -109,7 +109,7 @@ export interface ISwarmMessageSerializer {
    */
   serialize(
     msgBody: ISwarmMessageBodyDeserialized
-  ): Promise<ISwarmMessageInstance>;
+  ): Promise<TSwarmMessageInstance>;
   /**
    * serialize the message as a private and
    * encrypt it's body with the key provided.
@@ -117,11 +117,11 @@ export interface ISwarmMessageSerializer {
    * @param {ISwarmMessageBodyDeserialized} msgBody
    * @param {CryptoKey} encryptWithKey - user's public key to encrypt
    * the message as a private
-   * @returns {Promise<ISwarmMessageInstance>}
+   * @returns {Promise<TSwarmMessageInstance>}
    * @memberof ISwarmMessageSerializer
    */
   serialize(
     msgBody: ISwarmMessageBodyDeserialized,
     encryptWithKey?: CryptoKey
-  ): Promise<ISwarmMessageInstance>;
+  ): Promise<TSwarmMessageInstance>;
 }

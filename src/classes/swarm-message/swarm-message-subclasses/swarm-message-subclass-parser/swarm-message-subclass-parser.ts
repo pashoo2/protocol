@@ -1,6 +1,6 @@
 import assert from 'assert';
 import {
-  ISwarmMessageInstance,
+  TSwarmMessageInstance,
   TSwarmMessageBodyRaw,
   TSwarmMessageBodyRawEncrypted,
 } from '../../swarm-message-constructor.types';
@@ -14,7 +14,7 @@ import {
 } from '../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
 import {
   ISwarmMessageRaw,
-  ISwarmMessage,
+  TSwarmMessage,
   TSwarmMessageSeriazlized,
 } from '../../swarm-message-constructor.types';
 import {
@@ -67,7 +67,7 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
    */
   public parse = async (
     message: TSwarmMessageSeriazlized
-  ): Promise<ISwarmMessageInstance> => {
+  ): Promise<TSwarmMessageInstance> => {
     const messageRaw = await this.parseMessageToRaw(message);
     const messageParsed = await this.parseMessageRaw(messageRaw);
 
@@ -153,13 +153,13 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
    *
    * @protected
    * @param {ISwarmMessageRaw} messageRaw
-   * @returns {ISwarmMessage}
+   * @returns {TSwarmMessage}
    * @memberof SwarmMessageSubclassParser
    * @throws
    */
   protected async parseMessageRaw(
     messageRaw: ISwarmMessageRaw
-  ): Promise<ISwarmMessage> {
+  ): Promise<TSwarmMessage> {
     const { utils, validator } = this.options;
     const { messageBodyRawParser } = utils;
     const { bdy: bodyRaw, isPrivate } = messageRaw;
@@ -183,7 +183,7 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
 
     const bodyRawParsed = messageBodyRawParser(bodyRawDecrypted);
 
-    const swarmMessage: ISwarmMessage = {
+    const swarmMessage: TSwarmMessage = {
       ...messageRaw,
       bdy: bodyRawParsed,
     };
@@ -214,9 +214,9 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
   }
 
   protected getSwarmMessageInstance(
-    msg: ISwarmMessage,
+    msg: TSwarmMessage,
     msgSerizlized: TSwarmMessageSeriazlized
-  ): ISwarmMessageInstance {
+  ): TSwarmMessageInstance {
     return {
       ...msg,
       toString: function(a: TSwarmMessageSeriazlized) {

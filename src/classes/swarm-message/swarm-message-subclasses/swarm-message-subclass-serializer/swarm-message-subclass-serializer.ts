@@ -9,7 +9,7 @@ import {
   TSwarmMessageBodyRawEncrypted,
 } from '../../swarm-message-constructor.types';
 import {
-  ISwarmMessageInstance,
+  TSwarmMessageInstance,
   TSwarmMessagePayloadDeserialized,
 } from '../../swarm-message-constructor.types';
 import {
@@ -75,7 +75,7 @@ export class SwarmMessageSerializer implements ISwarmMessageSerializer {
   public serialize = async (
     msgBody: ISwarmMessageBodyDeserialized,
     encryptWithKey?: CryptoKey
-  ): Promise<ISwarmMessageInstance> => {
+  ): Promise<TSwarmMessageInstance> => {
     this.validateMessageBody(msgBody);
 
     const swarmMessageBody = this.serializeMessageBody(msgBody);
@@ -373,7 +373,7 @@ export class SwarmMessageSerializer implements ISwarmMessageSerializer {
     msgBody: ISwarmMessageBody,
     signature: ISwarmMessageRaw['sig'],
     isPrivate: boolean
-  ): ISwarmMessageInstance {
+  ): TSwarmMessageInstance {
     const { utils } = this.options;
     const swarmMessage = {
       ...msgRawUnsigned,

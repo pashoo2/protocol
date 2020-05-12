@@ -8,7 +8,7 @@ import {
 import {
   ISwarmMessageConstructor,
   ISwarmMessageConstructorOptionsRequired,
-  ISwarmMessageInstance,
+  TSwarmMessageInstance,
   TSwarmMessageConstructorArgumentBody,
   TSwarmMessageConstructorOptions,
   TSwarmMessageSeriazlized,
@@ -131,7 +131,7 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
     T extends TSwarmMessageConstructorArgumentBody | TSwarmMessageSeriazlized
   >(
     message: T
-  ): Promise<ISwarmMessageInstance> => {
+  ): Promise<TSwarmMessageInstance> => {
     assert(message, 'Message must not be empty');
     if (typeof message === 'string') {
       return this.parse(message);
@@ -356,10 +356,10 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
    * message
    *
    * @protected
-   * @param {ISwarmMessageInstance} msg
+   * @param {TSwarmMessageInstance} msg
    * @memberof SwarmMessageConstructor
    */
-  protected async addPrivateMessageToCache(msg: ISwarmMessageInstance) {
+  protected async addPrivateMessageToCache(msg: TSwarmMessageInstance) {
     if (msg.isPrivate) {
       await this.addPrivateMessageBodyToCache(
         msg.sig,
@@ -378,7 +378,7 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
    */
   protected async parse(
     msg: TSwarmMessageSeriazlized
-  ): Promise<ISwarmMessageInstance> {
+  ): Promise<TSwarmMessageInstance> {
     if (!this.parser) {
       throw new Error('A swarm message parser instance is not defined');
     }
@@ -404,7 +404,7 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
     msg:
       | TSwarmMessageConstructorArgumentBody
       | TSwarmMessageConstructorArgumentBodyPrivate
-  ): Promise<ISwarmMessageInstance> {
+  ): Promise<TSwarmMessageInstance> {
     if (!this.serializer) {
       throw new Error('A swarm message serializer instance is not defined');
     }

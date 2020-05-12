@@ -5,7 +5,7 @@ import {
 } from '../swarm-store-class/swarm-store-class.types';
 import { ESwarmStoreConnector } from '../swarm-store-class/swarm-store-class.const';
 import {
-  ISwarmMessageInstance,
+  TSwarmMessageInstance,
   ISwarmMessageConstructor,
 } from '../swarm-message/swarm-message-constructor.types';
 import { EventEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
@@ -36,14 +36,14 @@ export interface ISwarmMessageStoreEvents extends ISwarmStoreEvents {
    *
    * @type {[
    *     string,
-   *     ISwarmMessageInstance,
+   TSwarmMessageInstance,
    *     string
    *   ]}
    * @memberof ISwarmMessageStoreEvents
    */
   [ESwarmMessageStoreEventNames.NEW_MESSAGE]: [
     string,
-    ISwarmMessageInstance,
+    TSwarmMessageInstance,
     string
   ];
   /**
@@ -67,7 +67,7 @@ export interface ISwarmMessageStoreEvents extends ISwarmStoreEvents {
 
 export type TSwarmMessageStoreAccessControlGrantAccessCallback = (
   // swarm message
-  message: ISwarmMessageInstance,
+  message: TSwarmMessageInstance,
   // identifier of the user sender of the message
   userId: TCentralAuthorityUserIdentity,
   // a name of the database from where the message is comming from
@@ -120,7 +120,7 @@ export type ISwarmMessageStoreDeleteMessageArg<
   P extends ESwarmStoreConnector
 > = P extends ESwarmStoreConnector.OrbitDB
   ? TSwarmStoreDatabaseEntityKey<P> // swarm message address
-  : ISwarmMessageInstance; // instance of the message to remove
+  : TSwarmMessageInstance; // instance of the message to remove
 
 /**
  * allows to write messages to the swarm storage
@@ -157,7 +157,7 @@ export interface ISwarmMessageStore<P extends ESwarmStoreConnector>
    */
   addMessage(
     dbName: string,
-    message: ISwarmMessageInstance,
+    message: TSwarmMessageInstance,
     key?: TSwarmStoreDatabaseEntityKey<P>
   ): Promise<TSwarmMessageStoreMessageId>;
 
@@ -219,5 +219,5 @@ export interface ISwarmMessageStore<P extends ESwarmStoreConnector>
   collect(
     dbName: string,
     options: TSwarmStoreDatabaseIteratorMethodArgument<P>
-  ): Promise<(ISwarmMessageInstance | Error)[]>;
+  ): Promise<(TSwarmMessageInstance | Error)[]>;
 }

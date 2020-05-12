@@ -157,19 +157,49 @@ export interface ISwarmMessageBody
 }
 
 /**
- * this is representation of a message deserialized.
+ * this is representation of a message deserialized
+ * and fully decrypted.
  *
  * @export
  * @interface ISwarmMessage
  * @extends {ISwarmMessageBodyDeserialized}
  */
-export interface ISwarmMessage extends Omit<ISwarmMessageRaw, 'bdy'> {
-  bdy: ISwarmMessageBody | TSwarmMessageBodyEncrypted;
+export interface ISwarmMessageDecrypted extends Omit<ISwarmMessageRaw, 'bdy'> {
+  bdy: ISwarmMessageBody;
 }
 
-export interface ISwarmMessageInstance extends ISwarmMessage {
+/**
+ * this is representation of a message deserialized
+ * and private with encrypted body.
+ *
+ * @export
+ * @interface ISwarmMessage
+ * @extends {ISwarmMessageBodyDeserialized}
+ */
+export interface ISwarmMessageEncrypted extends Omit<ISwarmMessageRaw, 'bdy'> {
+  bdy: ISwarmMessageBody;
+}
+
+export type TSwarmMessage = ISwarmMessageEncrypted | ISwarmMessageDecrypted;
+
+export interface ISwarmMessageInstanceBase
+  extends Omit<ISwarmMessageRaw, 'bdy'> {
   toString(): TSwarmMessageSeriazlized;
 }
+
+export interface ISwarmMessageInstanceDecrypted
+  extends Omit<ISwarmMessageInstanceBase, 'bdy'> {
+  bdy: ISwarmMessageBody;
+}
+
+export interface ISwarmMessageInstanceEncrypted
+  extends Omit<ISwarmMessageInstanceBase, 'bdy'> {
+  bdy: TSwarmMessageBodyEncrypted;
+}
+
+export type TSwarmMessageInstance =
+  | ISwarmMessageInstanceDecrypted
+  | ISwarmMessageInstanceEncrypted;
 
 /**
  * utilities used for messages parsing,
@@ -232,7 +262,7 @@ export type TSwarmMessageConstructorOptions = Omit<
 export interface ISwarmMessageConstructor {
   readonly caConnection?: ICentralAuthority;
   readonly encryptedCache?: ISwarmMessgaeEncryptedCache;
-  construct(message: TSwarmMessageSeriazlized): Promise<ISwarmMessageInstance>;
+  construct(message: TSwarmMessageSeriazlized): Promise<TSwarmMessageInstance>;
 }
 
 export type TSwarmMessageConstructorArgumentBody = Omit<
@@ -249,7 +279,7 @@ export type TSwarmMessageConstructorBodyMessage =
 export interface ISwarmMessageConstructor {
   construct(
     messageBody: TSwarmMessageConstructorArgumentBody
-  ): Promise<ISwarmMessageInstance>;
+  ): Promise<TSwarmMessageInstance>;
 }
 
 /**
@@ -263,5 +293,5 @@ export interface ISwarmMessageConstructor {
 export interface ISwarmMessageConstructor {
   construct(
     messageBody: TSwarmMessageConstructorArgumentBodyPrivate
-  ): Promise<ISwarmMessageInstance>;
+  ): Promise<TSwarmMessageInstance>;
 }

@@ -10,7 +10,7 @@ import {
 } from './swarm-message-store.types';
 import {
   ISwarmMessageConstructor,
-  ISwarmMessageInstance,
+  TSwarmMessageInstance,
 } from '../swarm-message/swarm-message-constructor.types';
 import {
   ESwarmMessageStoreEventNames,
@@ -128,10 +128,10 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
 
   public async addMessage(
     dbName: string,
-    msg: ISwarmMessageInstance | TSwarmMessageConstructorBodyMessage | string,
+    msg: TSwarmMessageInstance | TSwarmMessageConstructorBodyMessage | string,
     key?: TSwarmStoreDatabaseEntityKey<P>
   ): Promise<TSwarmMessageStoreMessageId> {
-    const message: ISwarmMessageInstance | string =
+    const message: TSwarmMessageInstance | string =
       typeof msg === 'string' ? msg : await this.constructMessage(dbName, msg);
 
     assert(dbName, 'Database name must be provided');
@@ -308,7 +308,7 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
    */
   protected emitMessageNew = (
     dbName: string,
-    message: ISwarmMessageInstance,
+    message: TSwarmMessageInstance,
     messageAddr: string
   ) => {
     console.log('SwarmMessageStore::emitMessageNew', {
@@ -398,19 +398,19 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
    * validate format of a message to send
    *
    * @protected
-   * @param {(ISwarmMessageInstance | string)} message
+   * @param {(TSwarmMessageInstance | string)} message
    * @memberof SwarmMessageStore
    */
-  protected validateMessageFormat(message: ISwarmMessageInstance | string) {
+  protected validateMessageFormat(message: TSwarmMessageInstance | string) {
     assert(message, 'Message must be provided');
     assert(
       typeof message === 'string' || typeof message === 'object',
       'Message must be a string or an object'
     );
     assert(
-      typeof (message as ISwarmMessageInstance).bdy === 'object' &&
-        typeof (message as ISwarmMessageInstance).uid === 'string' &&
-        typeof (message as ISwarmMessageInstance).sig === 'string',
+      typeof (message as TSwarmMessageInstance).bdy === 'object' &&
+        typeof (message as TSwarmMessageInstance).uid === 'string' &&
+        typeof (message as TSwarmMessageInstance).sig === 'string',
       'Message must be a string or an object'
     );
   }
@@ -425,7 +425,7 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
    * @memberof SwarmMessageStore
    */
   protected serializeMessage(
-    message: ISwarmMessageInstance | string
+    message: TSwarmMessageInstance | string
   ): TSwarmStoreValueTypes<P> {
     const { connectorType } = this;
 
@@ -445,7 +445,7 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
    *
    * @protected
    * @param {string} messageAddress
-   * @param {(ISwarmMessageInstance | string)} message
+   * @param {(TSwarmMessageInstance | string)} message
    * @returns {TSwarmStoreDatabaseMethodArgument<P, TSwarmStoreValueTypes<P>>}
    * @memberof SwarmMessageStore
    */
@@ -505,7 +505,7 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
       ESwarmStoreConnector.OrbitDB,
       string
     > // TODO - may be not a string
-  ): Promise<(ISwarmMessageInstance | Error)[]> {
+  ): Promise<(TSwarmMessageInstance | Error)[]> {
     const messageConstructor = await this.getMessageConstructor(dbName);
 
     if (!messageConstructor) {
@@ -543,13 +543,13 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
    *
    * @protected
    * @param {TSwarmStoreDatabaseIteratorMethodAnswer<P, any>} iterator
-   * @returns {ISwarmMessageInstance[]}
+   * @returns {TSwarmMessageInstance[]}
    * @memberof SwarmMessageStore
    */
   protected collectMessages(
     dbName: string,
     iterator: TSwarmStoreDatabaseIteratorMethodAnswer<P, any>
-  ): Promise<(ISwarmMessageInstance | Error)[]> {
+  ): Promise<(TSwarmMessageInstance | Error)[]> {
     const { connectorType } = this;
 
     switch (connectorType) {
@@ -610,19 +610,19 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
    *
    * @protected
    * @param {string} dbName
-   * @param {(ISwarmMessageInstance | TSwarmMessageConstructorBodyMessage)} message
-   * @returns {Promise<ISwarmMessageInstance>}
+   * @param {(TSwarmMessageInstance | TSwarmMessageConstructorBodyMessage)} message
+   * @returns {Promise<TSwarmMessageInstance>}
    * @memberof SwarmMessageStore
    */
   protected async constructMessage(
     dbName: string,
-    message: ISwarmMessageInstance | TSwarmMessageConstructorBodyMessage
-  ): Promise<ISwarmMessageInstance> {
+    message: TSwarmMessageInstance | TSwarmMessageConstructorBodyMessage
+  ): Promise<TSwarmMessageInstance> {
     if (
-      (message as ISwarmMessageInstance).bdy &&
-      (message as ISwarmMessageInstance).sig
+      (message as TSwarmMessageInstance).bdy &&
+      (message as TSwarmMessageInstance).sig
     ) {
-      return message as ISwarmMessageInstance;
+      return message as TSwarmMessageInstance;
     }
 
     const messageConsturctor = await this.getMessageConstructor(dbName);

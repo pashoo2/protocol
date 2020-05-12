@@ -6,7 +6,7 @@ import { ISwarmMessgaeEncryptedCache } from '../../../swarm-messgae-encrypted-ca
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import {
   TSwarmMessageSeriazlized,
-  ISwarmMessageInstance,
+  TSwarmMessageInstance,
 } from '../../swarm-message-constructor.types';
 
 export interface ISwarmMessageSubclassParserUtils {
@@ -51,5 +51,5 @@ export interface ISwarmMessageSubclassParser {
    * @memberof ISwarmMessageSubclassParser
    * @throws
    */
-  parse(message: TSwarmMessageSeriazlized): Promise<ISwarmMessageInstance>;
+  parse(message: TSwarmMessageSeriazlized): Promise<TSwarmMessageInstance>;
 }
