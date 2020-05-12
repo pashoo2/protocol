@@ -1,2 +1,5 @@
 export * from './classes';
-//import('./app-render');
+
+if (process.env.NODE_ENV === 'development') {
+  import('./app-render');
+}

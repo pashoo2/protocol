@@ -2,7 +2,7 @@ import { IMessageFieldsValidatorOptions } from './swarm-message-subclass-validat
 import { IMessageSignatureValidatorOptions } from './swarm-message-subclass-validator-signature-validator/swarm-message-subclass-validator-signature-validator.types';
 import { TSwarmMessageBodyEncrypted } from '../../swarm-message-constructor.types';
 import {
-  ISwarmMessage,
+  TSwarmMessage,
   ISwarmMessageRaw,
   ISwarmMessageBodyDeserialized,
 } from '../../swarm-message-constructor.types';
@@ -52,11 +52,11 @@ export interface ISwarmMessageSubclassValidator {
    * validates swarm messge desirialized format
    * only. Does not verifies the signature
    *
-   * @param {ISwarmMessage} msg
+   * @param {TSwarmMessage} msg
    * @memberof ISwarmMessageSubclassValidator
    * @throws
    */
-  valiadateSwarmMessage(msg: ISwarmMessage): void;
+  valiadateSwarmMessage(msg: TSwarmMessage): void;
 
   /**
    * validate message's deserialized body object

@@ -50,7 +50,7 @@ import {
 } from './swarm-message-store.types';
 import {
   TSwarmMessageSeriazlized,
-  ISwarmMessage,
+  TSwarmMessage,
 } from '../swarm-message/swarm-message-constructor.types';
 import { isDefined } from '../../utils/common-utils/common-utils-main';
 import { SwarmMessageConstructor } from '../swarm-message/swarm-message-constructor';

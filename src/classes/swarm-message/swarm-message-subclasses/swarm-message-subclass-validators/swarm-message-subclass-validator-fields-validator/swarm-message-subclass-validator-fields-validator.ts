@@ -17,7 +17,7 @@ import { ISwarmMessageTimestampValidationOptions } from './swarm-message-subclas
 import { TSwarmMessageUserIdentifierSerialized } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import { CA_USER_IDENTITY_VERSIONS_LIST } from '../../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
 import {
-  ISwarmMessage,
+  TSwarmMessage,
   ISwarmMessageBody,
   TSwarmMessageBodyEncrypted,
 } from '../../../swarm-message-constructor.types';
@@ -137,11 +137,11 @@ export class SwarmMessageSubclassFieldsValidator
    * throw an error if the message
    * is not valid
    *
-   * @param {ISwarmMessage} message
+   * @param {TSwarmMessage} message
    * @memberof SwarmMessageSubclassFieldsValidator
    * @throws
    */
-  public validateMessage(message: ISwarmMessage): void {
+  public validateMessage(message: TSwarmMessage): void {
     assert(!!message, 'Message must be defined');
     assert(typeof message === 'object', 'Message must be an object');
 

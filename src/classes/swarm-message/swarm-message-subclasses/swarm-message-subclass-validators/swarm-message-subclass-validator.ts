@@ -8,7 +8,7 @@ import SwarmMessageSubclassFieldsValidator from './swarm-message-subclass-valida
 import { SwarmMessgeSubclassSignatureValidator } from './swarm-message-subclass-validator-signature-validator/swarm-message-subclass-validator-signature-validator';
 import {
   ISwarmMessageRaw,
-  ISwarmMessage,
+  TSwarmMessage,
   ISwarmMessageBodyDeserialized,
 } from '../../swarm-message-constructor.types';
 import assert from 'assert';
@@ -44,7 +44,7 @@ export class SwarmMessageSubclassValidator
     return signatureValidator.validateSignature(msgRaw);
   };
 
-  public valiadateSwarmMessage = (msg: ISwarmMessage): void => {
+  public valiadateSwarmMessage = (msg: TSwarmMessage): void => {
     const { messageFormatValidator } = this;
 
     if (!messageFormatValidator) {

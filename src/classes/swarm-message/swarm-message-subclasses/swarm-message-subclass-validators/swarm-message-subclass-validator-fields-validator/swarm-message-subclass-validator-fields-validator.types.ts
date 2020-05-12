@@ -4,7 +4,7 @@ import { ISwarmMessagePayloadValidationOptions } from './swarm-message-subclass-
 import { ISwarmMessageTimestampValidationOptions } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-timestamp/swarm-message-subclass-validator-fields-validator-validator-timestamp.types';
 import { TSwarmMessageUserIdentifierVersion } from '../swarm-message-subclass-validator.types';
 import {
-  ISwarmMessage,
+  TSwarmMessage,
   TSwarmMessageBodyEncrypted,
 } from '../../../swarm-message-constructor.types';
 import {
@@ -66,11 +66,11 @@ export interface ISwarmMessageSubclassFieldsValidator {
    * throw an error if the message
    * is not valid
    *
-   * @param {ISwarmMessage} message
+   * @param {TSwarmMessage} message
    * @memberof SwarmMessageSubclassFieldsValidator
    * @throws
    */
-  validateMessage(message: ISwarmMessage): void;
+  validateMessage(message: TSwarmMessage): void;
   /**
    * validate a serialized message's field format.
    *
