@@ -37,6 +37,7 @@ import {
   getSwarmMessageConstructorWithCacheFabric,
 } from '../swarm-messgae-encrypted-cache/swarm-message-encrypted-cache.utils';
 import { ISwarmMessgaeEncryptedCache } from '../swarm-messgae-encrypted-cache';
+import { ISensitiveDataSessionStorageOptions } from '../sensitive-data-session-storage/sensitive-data-session-storage.types';
 
 /**
  * this class used if front of connection
@@ -100,11 +101,46 @@ export class ConnectionBridge<
       await this.createMessageConstructor();
       await this.startSwarmConnection();
       await this.startStorageConnection();
+      await this.setSessionExists();
     } catch (err) {
       console.error('connection to the swarm failed', err);
       await this.close();
       throw err;
     }
+  }
+
+  /**
+   * @param {ISensitiveDataSessionStorageOptions} sessionParams
+   * @returns
+   * @memberof ConnectionBridge
+   */
+  public async checkSessionAvailable(
+    options?: ISensitiveDataSessionStorageOptions | IConnectionBridgeOptions<P>
+  ) {
+    const sessionParams = (options as IConnectionBridgeOptions<P>)?.auth
+      ? (options as IConnectionBridgeOptions<P>)?.auth.session
+      : (options as ISensitiveDataSessionStorageOptions | undefined);
+
+    if (!sessionParams) {
+      return false;
+    }
+    await this.startUserDataStore();
+    if (
+      !(await this.userDataStore?.getItem(
+        CONNECTION_BRIDGE_SESSION_STORAGE_KEYS.USER_LOGIN
+      ))
+    ) {
+      return false;
+    }
+
+    const session = await this.createSession({
+      ...sessionParams,
+      clearStorageAfterConnect: false,
+    });
+
+    return !!(await session.getItem(
+      CONNECTION_BRIDGE_SESSION_STORAGE_KEYS.SESSION_DATA_AVAILABLE
+    ));
   }
 
   /**
@@ -245,13 +281,15 @@ export class ConnectionBridge<
   }
 
   protected async startUserDataStore() {
-    const userDataStore = new SensitiveDataSessionStorage();
+    if (!this.userDataStore) {
+      const userDataStore = new SensitiveDataSessionStorage();
 
-    await userDataStore.connect({
-      storagePrefix:
-        CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX.USER_DATA_STORAGE,
-    });
-    this.userDataStore = userDataStore;
+      await userDataStore.connect({
+        storagePrefix:
+          CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX.USER_DATA_STORAGE,
+      });
+      this.userDataStore = userDataStore;
+    }
   }
 
   /**
@@ -300,27 +338,33 @@ export class ConnectionBridge<
     }
   }
 
+  protected async createSession(
+    sessionParams: ISensitiveDataSessionStorageOptions
+  ): Promise<ISensitiveDataSessionStorage> {
+    const session = new SensitiveDataSessionStorage();
+
+    await session.connect({
+      ...sessionParams,
+      storagePrefix: sessionParams.storagePrefix
+        ? `${sessionParams.storagePrefix}${this.options?.auth.credentials?.login}`
+        : undefined,
+    });
+    return session;
+  }
+
   /**
    * start session if options provided
    *
    * @protected
-   * @param {ISensitiveDataSessionStorageOptions} sessionOptions
+   * @param {ISensitiveDataSessionStorageOptions} sessionParams
    * @memberof ConnectionBridge
    * @throws
    */
   protected async startSession(): Promise<void> {
-    const sessionOptions = this.options?.auth.session;
+    const sessionParams = this.options?.auth.session;
 
-    if (sessionOptions) {
-      const session = new SensitiveDataSessionStorage();
-
-      await session.connect({
-        ...sessionOptions,
-        storagePrefix: sessionOptions.storagePrefix
-          ? `${sessionOptions.storagePrefix}${this.options?.auth.credentials?.login}`
-          : undefined,
-      });
-      this.session = session;
+    if (sessionParams) {
+      this.session = await this.createSession(sessionParams);
     }
   }
 
@@ -554,5 +598,19 @@ export class ConnectionBridge<
     }
     this.caConnection = undefined;
     this.optionsCA = undefined;
+  }
+
+  /**
+   * set that authorized before in the session
+   * data, if it's available
+   *
+   * @protected
+   * @memberof ConnectionBridge
+   */
+  protected async setSessionExists() {
+    await this.session?.setItem(
+      CONNECTION_BRIDGE_SESSION_STORAGE_KEYS.SESSION_DATA_AVAILABLE,
+      true
+    );
   }
 }

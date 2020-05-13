@@ -7,6 +7,14 @@ export interface ISensitiveDataSessionStorageOptions {
    */
   pinCode?: string;
   storagePrefix?: string;
+  /**
+   * clear values in the session storage
+   * after connection to it.
+   *
+   * @type {boolean}
+   * @memberof ISensitiveDataSessionStorageOptions
+   */
+  clearStorageAfterConnect?: boolean;
 }
 /**
  * used to store data in the session storage.

@@ -22,7 +22,6 @@ export class ConnectToSwarm extends React.PureComponent {
     isConnecting: false,
     messagingSending: undefined as NodeJS.Timeout | undefined,
     error: undefined as Error | undefined,
-    useSession: false,
     connectionBridge: undefined as IConnectionBridge | undefined,
     userId: undefined as string | undefined,
     // was the database main removed by the user
@@ -83,18 +82,6 @@ export class ConnectToSwarm extends React.PureComponent {
       };
     });
   };
-
-  public componentDidMount() {
-    const key = sessionStorage.getItem(
-      CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY
-    );
-
-    if (key) {
-      this.setState({
-        useSession: true,
-      });
-    }
-  }
 
   public handleDatabaseRemove = async () => {
     const { connectionBridge } = this.state;
@@ -205,7 +192,6 @@ export class ConnectToSwarm extends React.PureComponent {
     });
     try {
       const connectionBridge = await connectToSwarmUtil(
-        this.state.useSession,
         credentialsVariant === 1
           ? CONNECT_TO_SWARM_AUTH_CREDENTIALS_1
           : CONNECT_TO_SWARM_AUTH_CREDENTIALS_2

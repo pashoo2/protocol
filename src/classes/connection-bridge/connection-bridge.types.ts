@@ -143,6 +143,20 @@ export interface IConnectionBridge<
    * @memberof IConnectionBridge
    */
   connect(options: IConnectionBridgeOptions<P>): Promise<Error | void>;
+
+  /**
+   * checks was a session started before and
+   * if it's data is available for now.
+   * If a session is availablr, the user
+   * can try to connect without credentials.
+   *
+   * @param {(ISensitiveDataSessionStorageOptions | IConnectionBridgeOptions<P>)} [options]
+   * @returns {Promise<boolean>}
+   * @memberof IConnectionBridge
+   */
+  checkSessionAvailable(
+    options?: ISensitiveDataSessionStorageOptions | IConnectionBridgeOptions<P>
+  ): Promise<boolean>;
   /**
    * Close all connections and release the options.
    * The connection can't be used anymore.

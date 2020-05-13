@@ -100,7 +100,9 @@ export class SensitiveDataSessionStorage
       console.error(err);
       throw err;
     } finally {
-      this.clearValueStorage();
+      if (options?.clearStorageAfterConnect !== false) {
+        this.clearValueStorage();
+      }
       this.isConnected = true;
     }
     if (error) {
