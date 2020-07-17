@@ -1,7 +1,7 @@
 import { TOrbitDBKeystoreOptions } from 'orbit-db-keystore';
 import { SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter } from '../swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter';
 import { SWARM_STORAGE_CONNECTOR_ORBIT_DB_SUBLASS_KEY_STORE_DEFAULT_DB_NAME } from './swarm-store-connector-orbit-db-subclass-keystore.const';
-import { SecretStorage } from 'classes/secret-storage-class/secret-storage-class';
+import { ISecretStoreCredentials } from '../../../../../secret-storage-class/secret-storage-class.types';
 
 /**
  * extends the options provided to the OrbitDBKeystore by
@@ -31,7 +31,7 @@ export const extendsOptionsWithStore = (
   }
 
   const adapterToSecretStore = new SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter(
-    credentials,
+    credentials as ISecretStoreCredentials,
     { dbName }
   );
 

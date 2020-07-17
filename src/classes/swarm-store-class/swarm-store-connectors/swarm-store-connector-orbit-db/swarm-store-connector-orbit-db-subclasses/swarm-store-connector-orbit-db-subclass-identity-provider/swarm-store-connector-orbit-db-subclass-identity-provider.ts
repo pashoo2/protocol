@@ -4,6 +4,7 @@ import {
   IdentityProviderOptions,
   IdentityAsJson,
 } from 'orbit-db-identity-provider';
+import { IOrbitDBKeystoreStoreCustom } from 'types';
 import { SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_IDENTITY_PROVIDER_TYPE } from './swarm-store-connector-orbit-db-subclass-identity-provider.const';
 
 export class SwarmStoreConnectorOrbitDBSubclassIdentityProvider extends IdentityProvider {
@@ -31,7 +32,7 @@ export class SwarmStoreConnectorOrbitDBSubclassIdentityProvider extends Identity
     identity: IdentityAsJson
   ): Promise<boolean> {
     // TODO - may be verify the identity with central authority
-    const verifyResult = await KeystoreClass.verify(
+    const verifyResult = await (KeystoreClass as unknown as IOrbitDBKeystoreStoreCustom).verify(
       identity.signatures.publicKey,
       identity.publicKey,
       identity.publicKey + identity.signatures.id

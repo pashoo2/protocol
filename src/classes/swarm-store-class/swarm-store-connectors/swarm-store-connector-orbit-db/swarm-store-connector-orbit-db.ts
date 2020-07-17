@@ -49,7 +49,7 @@ export class SwarmStoreConnectorOrbitDB<
   ISwarmDatabaseValueTypes extends TSwarmStoreValueTypes<
     ESwarmStoreConnector.OrbitDB
   >
-> extends EventEmitter<ISwarmStoreConnectorOrbitDBEvents>
+  > extends EventEmitter<ISwarmStoreConnectorOrbitDBEvents>
   implements ISwarmStoreConnector<ESwarmStoreConnector.OrbitDB> {
   private static isLoadedCustomIdentityProvider: boolean = false;
 
@@ -506,7 +506,7 @@ export class SwarmStoreConnectorOrbitDB<
 
     console.error(
       `${SWARM_STORE_CONNECTOR_ORBITDB_LOG_PREFIX}::error${
-        mehodName ? `::${mehodName}` : ''
+      mehodName ? `::${mehodName}` : ''
       }`,
       err
     );
@@ -670,9 +670,9 @@ export class SwarmStoreConnectorOrbitDB<
       return this.emitError('createKeystore::A Credentials must be provided');
     }
     return new SwarmStorageConnectorOrbitDBSublassKeyStore({
-      credentials,
+      credentials, // TODO - why does the credentials without login
       store: keystoreName,
-    });
+    }) as Keystore;
   }
 
   /**
@@ -923,7 +923,7 @@ export class SwarmStoreConnectorOrbitDB<
       const instanceOfOrbitDB = await OrbitDB.createInstance(ipfs, {
         identity,
         storage,
-      });
+      } as any); // TODO - correct typing must be specified
 
       if (instanceOfOrbitDB instanceof Error) {
         return this.emitError(

@@ -3,7 +3,11 @@
     "target": "ES6",
     "module": "esnext",
     "downlevelIteration": true,
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -21,7 +25,9 @@
         "transform": "@zerollup/ts-transform-paths"
       }
     ],
-    "rootDirs": ["src/"],
+    "rootDirs": [
+      "src/"
+    ],
     "typeRoots": [
       "src/types",
       "**/types",
@@ -31,12 +37,19 @@
     "experimentalDecorators": true,
     "resolveJsonModule": true
   },
-  "include": ["src/**/*.ts", "src/**/*.json"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.json"
+  ],
   "exclude": [
     "node_modules",
     "**/*.spec.ts",
     "**/*.js",
     "node_modules*",
     "./decentrilized-protocol"
-  ]
+  ],
+  "typedocOptions": {
+    "mode": "modules",
+    "out": "docs"
+  }
 }

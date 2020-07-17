@@ -67,7 +67,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStorageFabric
 
   protected getDBNameByAddress(path: string): undefined | string {
     try {
-      return OrbitDB.parseAddress(this.getValidPath(path)).path;
+      return (OrbitDB as any).parseAddress(this.getValidPath(path)).path;
     } catch (err) {
       console.error('Cant parse the path', err);
     }

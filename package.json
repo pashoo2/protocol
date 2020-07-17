@@ -24,7 +24,8 @@
     "lint:quiet": "eslint --quiet --cache --ext .js,.jsx,.ts,.tsx --ignore-path .gitignore --ignore-pattern \"*.test.*\" src",
     "lint:quiet:fix": "eslint --quiet --fix --cache --ext .js,.jsx,.ts,.tsx --ignore-path .gitignore --ignore-pattern \"*.test.*\" src",
     "lint:staged": "eslint . --quiet --ignore-path .gitignore --cache --ext .js,.jsx,.ts,.tsx --ignore-pattern \"*.test.*\" --ignore-pattern '/__test__/*'",
-    "launch:chromium:unsecure": "google-chrome --disable-web-security --allow-file-access-from-files --user-data-dir=\"/tmp/chromium_tmp\""
+    "launch:chromium:unsecure": "google-chrome --disable-web-security --allow-file-access-from-files --user-data-dir=\"/tmp/chromium_tmp\"",
+    "docs:generate": "typedoc --out docs src"
   },
   "main": "src/index.ts",
   "lint-staged": {
@@ -97,12 +98,6 @@
     "validator": "^12.1.0"
   },
   "devDependencies": {
-    "react": "^16.13.0",
-    "react-dom": "^16.13.0",
-    "jest": "^24.9.0",
-    "patch-package": "^6.2.0",
-    "ts-transformer-imports": "^0.4.3",
-    "@types/chai-subset": "^1.3.3",
     "@rollup/plugin-commonjs": "^11.1.0",
     "@rollup/plugin-json": "^4.0.3",
     "@rollup/plugin-node-resolve": "^7.1.3",
@@ -111,6 +106,7 @@
     "@types/bl": "^2.1.0",
     "@types/chai": "^4.2.4",
     "@types/chai-as-promised": "^7.1.2",
+    "@types/chai-subset": "^1.3.3",
     "@types/date-fns": "^2.6.0",
     "@types/encoding-down": "^5.0.0",
     "@types/firebase": "^3.2.1",
@@ -125,7 +121,7 @@
     "@types/mocha": "^5.2.7",
     "@types/multiaddr": "^7.2.0",
     "@types/node": "12.0.12",
-    "@types/orbit-db": "file:node_modules-local/orbit-db-types",
+    "@types/orbit-db": "git+https://github.com/orbitdb/orbit-db-types.git",
     "@types/react": "16.8.23",
     "@types/react-dom": "16.8.4",
     "@types/uuid": "^3.4.5",
@@ -138,15 +134,21 @@
     "eslint-config-prettier": "^6.7.0",
     "eslint-plugin-react": "^7.16.0",
     "husky": "^3.1.0",
+    "jest": "^24.9.0",
     "lint-staged": "^9.4.3",
+    "patch-package": "^6.2.0",
     "prettier": "^1.19.1",
     "pretty-quick": "^2.0.1",
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0",
     "react-scripts": "^3.4.0",
     "rollup": "^2.8.0",
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-peer-deps-external": "^2.2.2",
     "ts-jest": "^25.1.0",
+    "ts-transformer-imports": "^0.4.3",
     "ttypescript": "^1.5.10",
+    "typedoc": "^0.16.11",
     "typescript": "^3.7.2"
   }
 }

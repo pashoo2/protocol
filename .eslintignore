@@ -1,2 +1,5 @@
 /__test__/
 /decentralized-protocol/
+*.htm
+*.html
+/node_modules

@@ -74,3 +74,18 @@ the following:
 - all closed databases may be muted.
 - in the window.onbeforeunload or on the SwarmStorage 'close' event listener, close all the databases,
   which were closed before.
+
+### TODO
+
+# for performance reason it's necessary to implement in-memory (or not encrypted) storage for databases
+
+which are like pubsub channels (for example this kind of storage must be used for geolocation sharing
+or collaborative document editing).
+
+# for performance reason it's necessary to improve the performance of the secret storage
+
+to do not encrypt each key - value, but encrypt all data when loading or closing. All
+data must be stored in-memory and then replicated to any storage? encrypted. And when a data loaded
+from the storage it's necessary to ecrypt it.
+
+# for video-chat hypervision-browser must be used as the library for sharing video data from peer to peer.
