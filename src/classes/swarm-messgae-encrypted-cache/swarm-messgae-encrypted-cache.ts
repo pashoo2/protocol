@@ -43,6 +43,15 @@ export class SwarmMessageEncryptedCache implements ISwarmMessgaeEncryptedCache {
     this.setIsRunning();
   }
 
+  /**
+   * just an alias for the add method
+   *
+   * @memberof SwarmMessageEncryptedCache
+   */
+  public set = (sig: string, message: TSwarmMessageBodyRaw) => {
+    return this.add(sig, message);
+  };
+
   public add = async (sig: string, message: TSwarmMessageBodyRaw) => {
     this.checkIsActive();
 

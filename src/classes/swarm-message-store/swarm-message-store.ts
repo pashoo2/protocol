@@ -17,7 +17,6 @@ import {
   SWARM_MESSAGE_STORE_CONNECTOR_ORBIT_DB_ITERATOR_OPTIONS_DEFAULT,
 } from './swarm-message-store.const';
 import { extend } from '../../utils/common-utils/common-utils-objects';
-import { ISwarmStoreConnectorOrbitDbDatabaseIteratorAnswer } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import {
   TSwarmStoreDatabaseIteratorMethodAnswer,
   TSwarmStoreDatabaseMethodAnswer,
@@ -48,14 +47,9 @@ import {
   TSwarmMessageStoreMessageId,
   ISwarmMessageStoreDeleteMessageArg,
 } from './swarm-message-store.types';
-import {
-  TSwarmMessageSeriazlized,
-  TSwarmMessage,
-} from '../swarm-message/swarm-message-constructor.types';
+import { TSwarmMessageSeriazlized } from '../swarm-message/swarm-message-constructor.types';
 import { isDefined } from '../../utils/common-utils/common-utils-main';
-import { SwarmMessageConstructor } from '../swarm-message/swarm-message-constructor';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
-import { ISwarmMessgaeEncryptedCache } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { TSwarmMessageConstructorBodyMessage } from '../swarm-message/swarm-message-constructor.types';
 import { TSwarmStoreDatabaseEntityKey } from '../swarm-store-class/swarm-store-class.types';
 
@@ -118,7 +112,10 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
 
     this.setOptions(optionsSwarmStore);
 
-    const connectionResult = await super.connect(optionsSwarmStore);
+    const connectionResult = await super.connect(
+      optionsSwarmStore,
+      optionsSwarmStore.databasesListStorage
+    );
 
     if (connectionResult instanceof Error) {
       throw connectionResult;

@@ -3,3 +3,6 @@
 *.htm
 *.html
 /node_modules
+/src/types/libp2p-mdns.d.ts
+/module-build
+/docs

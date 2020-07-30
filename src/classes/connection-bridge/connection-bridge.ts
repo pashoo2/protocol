@@ -235,7 +235,9 @@ export class ConnectionBridge<
    * @memberof ConnectionBridge
    * @throws
    */
-  protected setOptionsMessageStorage(): ISwarmMessageStoreOptions<P> {
+  protected async setOptionsMessageStorage(): Promise<
+    ISwarmMessageStoreOptions<P>
+  > {
     const { messageConstructor, caConnection, swarmConnection } = this;
     const options = this.options!;
     const { auth: authOptions, storage: storageOptions } = options;
@@ -268,6 +270,9 @@ export class ConnectionBridge<
       ...storageOptions,
       credentials: authCredentials,
       userId,
+      databasesListStorage: await this.startEncryptedCache(
+        CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX.DATABASE_LIST_STORAGE
+      ),
       swarmMessageConstructorFabric: this.swarmMessageConstructorFabric,
       messageConstructors: {
         default: messageConstructor,
@@ -457,16 +462,27 @@ export class ConnectionBridge<
     );
   }
 
+  protected startEncryptedCache(
+    dbNamePrefix: string
+  ): Promise<ISwarmMessgaeEncryptedCache> {
+    const login = this.options!.auth.credentials.login;
+
+    if (!this.swarmMessageEncryptedCacheFabric) {
+      throw new Error('Encrypted cache fabric must be started before');
+    }
+    return this.swarmMessageEncryptedCacheFabric({
+      dbName: `${dbNamePrefix}_//_${login}`,
+    });
+  }
+
   protected async startSwarmMessageEncryptedCache(): Promise<void> {
     const login = this.options!.auth.credentials.login;
 
     if (!this.swarmMessageEncryptedCacheFabric) {
       throw new Error('Encrypted cache fabric must be started before');
     }
-    this.swarmMessageEncryptedCache = await this.swarmMessageEncryptedCacheFabric(
-      {
-        dbName: `${CONNECTION_BRIDGE_STORAGE_DATABASE_NAME.MESSAGE_CACHE_STORAGE}_//_${login}`,
-      }
+    this.swarmMessageEncryptedCache = await this.startEncryptedCache(
+      CONNECTION_BRIDGE_STORAGE_DATABASE_NAME.MESSAGE_CACHE_STORAGE
     );
   }
 
@@ -478,7 +494,7 @@ export class ConnectionBridge<
    * @throws
    */
   protected async startStorageConnection(): Promise<void> {
-    const swarmMessageStorageOptions = this.setOptionsMessageStorage();
+    const swarmMessageStorageOptions = await this.setOptionsMessageStorage();
     const swarmMessageStorage = new SwarmMessageStore<P>();
     const result = await swarmMessageStorage.connect(
       swarmMessageStorageOptions

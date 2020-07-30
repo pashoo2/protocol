@@ -21,6 +21,7 @@ import {
 } from '../swarm-message/swarm-message-constructor.types';
 import { TCentralAuthorityUserIdentity } from '../central-authority-class/central-authority-class-types/central-authority-class-types-common';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { IStorageCommon } from 'types/storage.types';
 
 /**
  * message unique identifier in the database
@@ -109,6 +110,7 @@ export interface ISwarmMessageStoreOptions<P extends ESwarmStoreConnector>
   accessControl?: ISwarmMessageStoreAccessControlOptions;
   messageConstructors: ISwarmMessageDatabaseConstructors;
   providerConnectionOptions: any;
+  databasesListStorage: IStorageCommon;
   swarmMessageConstructorFabric?: ISwarmMessageConstructorWithEncryptedCacheFabric;
 }
 

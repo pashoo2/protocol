@@ -1,3 +1,4 @@
+import { IStorageCommon } from '../../types/storage.types';
 import {
   IStorageProviderOptions,
   TStorageProviderName,
@@ -8,7 +9,7 @@ export interface IOpenStorageConfiguration {
   storageProviderName?: TStorageProviderName;
 }
 
-export abstract class OpenStorageClass {
+export abstract class OpenStorageClass implements IStorageCommon {
   public isActive: boolean = false;
 
   public isBufferSupported: boolean = false;

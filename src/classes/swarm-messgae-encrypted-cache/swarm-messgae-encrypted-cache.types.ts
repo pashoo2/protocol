@@ -4,6 +4,7 @@ import {
 } from '../swarm-message/swarm-message-constructor.types';
 import { TSecretStorageAuthOptions } from '../secret-storage-class/secret-storage-class.types';
 import { TSwarmMessageConstructorOptions } from '../swarm-message/swarm-message-constructor.types';
+import { IStorageCommon } from 'types/storage.types';
 import {
   ISecretStorage,
   IISecretStorageOptions,
@@ -35,10 +36,13 @@ export type TSwarmMessgaeEncryptedCacheOptions =
  * Also it may be usefull to store messages signatures
  * already validated.
  *
+ * Also it used as a database list.
+ * // TODO - rename it
+ *
  * @export
  * @interface ISwarmMessgaeEncryptedCache
  */
-export interface ISwarmMessgaeEncryptedCache {
+export interface ISwarmMessgaeEncryptedCache extends IStorageCommon {
   /**
    * is the instance running
    *

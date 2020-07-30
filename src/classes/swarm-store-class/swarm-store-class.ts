@@ -1,9 +1,10 @@
 import { EventEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import assert from 'assert';
-import { TSwarmStoreDatabaseRequestMethodReturnType } from './swarm-store-class.types';
 import {
-  TSwarmStoreDatabaseIteratorMethodAnswer,
-  ISwarmStoreConnectorBase,
+  TSwarmStoreDatabaseRequestMethodReturnType,
+  ISwarmStoreOptionsOfDatabasesKnownList,
+  ISwarmStoreDatabaseBaseOptions,
+  ISwarmStoreDatabasesList,
 } from './swarm-store-class.types';
 import {
   ESwarmStoreConnector,
@@ -12,13 +13,13 @@ import {
   ESwarmStoreDbStatus,
   SWARM_STORE_DATABASES_STATUSES_EMPTY,
 } from './swarm-store-class.const';
+import { IStorageCommon } from 'types/storage.types';
 import {
   ISwarmStoreConnector,
   ISwarmStoreDatabasesStatuses,
   TSwarmStoreValueTypes,
   TSwarmStoreDatabaseMethod,
   TSwarmStoreDatabaseMethodArgument,
-  TSwarmStoreDatabaseMethodAnswer,
   TSwarmStoreConnectorEventRetransmitter,
   TSwarmStoreDatabaseOptions,
   ISwarmStoreEvents,
@@ -58,6 +59,19 @@ export class SwarmStore<
     return SWARM_STORE_DATABASES_STATUSES_EMPTY;
   }
 
+  public get databases(): ISwarmStoreDatabasesList {
+    const { databasesKnownOptionsList, databasesOpenedList } = this;
+
+    return {
+      get options() {
+        return databasesKnownOptionsList;
+      },
+      get opened() {
+        return databasesOpenedList;
+      },
+    };
+  }
+
   protected connector: ISwarmStoreConnector<P> | undefined;
 
   protected dbStatusesExisting: ISwarmStoreDatabasesStatuses = SWARM_STORE_DATABASES_STATUSES_EMPTY;
@@ -66,13 +80,81 @@ export class SwarmStore<
     | Record<ESwarmStoreEventNames, TSwarmStoreConnectorEventRetransmitter>
     | undefined;
 
-  // open connection with all databases
+  /**
+   * List of databases options opened during this session
+   * or during previous sessions
+   * (if an instanceof databasePersistantListStorage provided)
+   * and which were not dropped.
+   * If a database not opened because it's failed,
+   * then it's options won't be added to the list.
+   *
+   * @protected
+   * @type {ISwarmStoreOptionsOfDatabasesKnownList}
+   * @memberof SwarmStore
+   */
+  protected databasesKnownOptionsList: ISwarmStoreOptionsOfDatabasesKnownList = {};
+
+  /**
+   * Databases opened during this session.
+   *
+   * @protected
+   * @type {Record<string, boolean>}
+   * @memberof SwarmStore
+   */
+  protected databasesOpenedList: Record<string, boolean> = {};
+
+  /**
+   * storage with list of all databases opened and not dropped.
+   *
+   * @protected
+   * @type {IStorageCommon}
+   * @memberof SwarmStore
+   */
+  protected databasePersistantListStorage?: IStorageCommon;
+
+  /**
+   * A directory name under which all the databases
+   * will be listed.
+   *
+   * @protected
+   * @type {string} []
+   * @memberof SwarmStore
+   */
+  protected databasesLisPersistanttKey?: string;
+
+  /**
+   * returns a key of opened databases list
+   * options
+   *
+   * @protected
+   * @param {string} [directory]
+   * @returns {string}
+   * @memberof SwarmStore
+   */
+  protected getDatabasesListKey(directory?: string): string {
+    return `${directory || ''}__databases_opened_list`;
+  }
+
+  /**
+   * Open connection with all databases listed in the options.
+   * If a databasePersistantListStorage provided, then a list with
+   * all databases opened and not dropped will be saved.
+   *
+   * @param {ISwarmStoreOptions<P, ItemType>} options
+   * @param {IStorageCommon} [databasePersistantListStorage]
+   * @returns {(Promise<Error | void>)}
+   * @memberof SwarmStore
+   */
   public async connect(
-    options: ISwarmStoreOptions<P, ItemType>
+    options: ISwarmStoreOptions<P, ItemType>,
+    databasePersistantListStorage?: IStorageCommon
   ): Promise<Error | void> {
     let connectionWithConnector: ISwarmStoreConnector<P> | undefined;
     try {
       this.validateOptions(options);
+      if (databasePersistantListStorage) {
+        this.databasePersistantListStorage = databasePersistantListStorage;
+      }
       connectionWithConnector = this.createConnectionWithStorageConnector(
         options
       );
@@ -260,6 +342,187 @@ export class SwarmStore<
    */
   protected getStorageConnector(connectorName: ESwarmStoreConnector) {
     return SWARM_STORE_CONNECTORS[connectorName];
+  }
+
+  /**
+   * Preload the databases list.
+   *
+   * @protected
+   * @param {IStorageCommon} databasePersistantListStorage
+   * @param {string} ['' = directory] - will be used as a key for the databasePersistantListStorage storage
+   * @memberof SwarmStore
+   * @returns Promise<void>
+   * @throws
+   */
+  protected async handleDatabasePersistentList(
+    databasePersistantListStorage: IStorageCommon,
+    directory?: string
+  ): Promise<void> {
+    this.databasePersistantListStorage = databasePersistantListStorage;
+
+    const key = this.getDatabasesListKey(directory);
+
+    this.databasesLisPersistanttKey = key;
+    await this.preloadOpenedDatabasesList();
+  }
+
+  /**
+   * Stringify list of databases options
+   * known
+   *
+   * @protected
+   * @param {ISwarmStoreOptionsOfDatabasesKnownList} databasesKnownOptionsList
+   * @returns {string}
+   * @memberof SwarmStore
+   * @throws
+   */
+  protected stringifyDatabaseOptionsList(
+    databasesKnownOptionsList: ISwarmStoreOptionsOfDatabasesKnownList
+  ): string {
+    return JSON.stringify(databasesKnownOptionsList);
+  }
+
+  /**
+   * Parse databases list loaded from storage
+   *
+   * @protected
+   * @param {string} databasesKnownOptionsList
+   * @returns {ISwarmStoreOptionsOfDatabasesKnownList}
+   * @memberof SwarmStore
+   * @throws
+   */
+  protected parseDatabaseOptionsList(
+    databasesKnownOptionsList: string
+  ): ISwarmStoreOptionsOfDatabasesKnownList {
+    return JSON.parse(databasesKnownOptionsList);
+  }
+
+  /**
+   * preload a list of databases opened
+   * during previous sessions.
+   *
+   * @protected
+   * @memberof SwarmStore
+   * @returns Promise<void>
+   * @throws
+   */
+  protected async preloadOpenedDatabasesList(): Promise<void> {
+    const databasesOptionsList =
+      this.databasesLisPersistanttKey &&
+      (await this.databasePersistantListStorage?.get(
+        this.databasesLisPersistanttKey
+      ));
+
+    if (databasesOptionsList) {
+      if (databasesOptionsList instanceof Error) {
+        throw databasesOptionsList;
+      }
+      this.databasesKnownOptionsList = this.parseDatabaseOptionsList(
+        databasesOptionsList
+      );
+    }
+  }
+
+  /**
+   * Add a database opened to lists.
+   *
+   * @protected
+   * @param {ISwarmStoreDatabaseBaseOptions} dbOpenedOptions
+   * @memberof SwarmStore
+   * @returns {(Promise<void>)}
+   * @throws
+   */
+  protected async handleDatabaseOpened(
+    dbOpenedOptions: ISwarmStoreDatabaseBaseOptions
+  ): Promise<void> {
+    this.databasesOpenedList[dbOpenedOptions.dbName] = true;
+    await this.addDatabaseOpenedOptions(dbOpenedOptions);
+  }
+
+  /**
+   * Delete a database dropped from lists
+   * of opened during the session databases.
+   *
+   * @protected
+   * @param {ISwarmStoreDatabaseBaseOptions} dbOpenedOptions
+   * @memberof SwarmStore
+   * @returns {(Promise<void>)}
+   * @throws
+   */
+  protected async handleDatabaseClosed(
+    dbOpenedOptions: ISwarmStoreDatabaseBaseOptions
+  ): Promise<void> {
+    delete this.databasesOpenedList[dbOpenedOptions.dbName];
+  }
+
+  /**
+   * Delete a database dropped from lists.
+   *
+   * @protected
+   * @param {ISwarmStoreDatabaseBaseOptions} dbOpenedOptions
+   * @memberof SwarmStore
+   * @returns {(Promise<void>)}
+   * @throws
+   */
+  protected async handleDatabaseDropped(
+    dbOpenedOptions: ISwarmStoreDatabaseBaseOptions
+  ): Promise<void> {
+    delete this.databasesOpenedList[dbOpenedOptions.dbName];
+    await this.removeDatabaseOpenedOptions(dbOpenedOptions);
+  }
+
+  /**
+   * add a database opened options to the list
+   * of known databases options and store it
+   * if a storage instance was provided.
+   *
+   * @protected
+   * @param {ISwarmStoreDatabaseBaseOptions} dbOpenedOptions
+   * @memberof SwarmStore
+   */
+  protected async addDatabaseOpenedOptions(
+    dbOpenedOptions: ISwarmStoreDatabaseBaseOptions
+  ) {
+    this.databasesKnownOptionsList[dbOpenedOptions.dbName] = dbOpenedOptions;
+    await this.storeDatabasesKnownOptionsList();
+  }
+
+  /**
+   * Remove a database options from the list
+   * of known databases options and store it
+   * if a persistant storage instance was provided.
+   *
+   * @protected
+   * @param {ISwarmStoreDatabaseBaseOptions} dbOpenedOptions
+   * @memberof SwarmStore
+   */
+  protected async removeDatabaseOpenedOptions(
+    dbOpenedOptions: ISwarmStoreDatabaseBaseOptions
+  ) {
+    delete this.databasesKnownOptionsList[dbOpenedOptions.dbName];
+    await this.storeDatabasesKnownOptionsList();
+  }
+
+  /**
+   * Store options of databases known to the storage
+   * if it was provided for the connect.
+   *
+   * @protected
+   * @memberof SwarmStore
+   */
+  protected async storeDatabasesKnownOptionsList() {
+    const {
+      databasesKnownOptionsList,
+      databasesLisPersistanttKey,
+      databasePersistantListStorage,
+    } = this;
+
+    if (databasePersistantListStorage && databasesLisPersistanttKey) {
+      await databasePersistantListStorage.set(
+        databasesLisPersistanttKey,
+        this.stringifyDatabaseOptionsList(databasesKnownOptionsList)
+      );
+    }
   }
 
   /**

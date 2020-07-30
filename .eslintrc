@@ -22,7 +22,9 @@
     "prettier",
     "prettier/@typescript-eslint"
   ],
-  "plugins": ["@typescript-eslint/eslint-plugin"],
+  "plugins": [
+    "@typescript-eslint/eslint-plugin"
+  ],
   "ignorePatterns": [
     "temp.js",
     "node_modules/",
@@ -31,6 +33,7 @@
     "app.test/"
   ],
   "rules": {
+    "@typescript-eslint/class-name-casing": "off",
     "@typescript-eslint/no-empty-interface": "off",
     "@typescript-eslint/camelcase": "off",
     "@typescript-eslint/explicit-function-return-type": "off",

@@ -1,11 +1,12 @@
 import { ownValueOf } from 'types/helper.types';
 import { STORAGE_PROVIDERS_NAME } from './storage-providers.const';
+import { IStorageCommon } from '../../types/storage.types';
 
 export interface IStorageProviderOptions {
   dbName?: string;
 }
 
-export abstract class StorageProvider {
+export abstract class StorageProvider implements IStorageCommon {
   /**
    * connect to the database specified
    *

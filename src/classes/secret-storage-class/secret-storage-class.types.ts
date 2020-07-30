@@ -3,6 +3,7 @@ import {
   TStorageProviderName,
 } from './../storage-providers/storage-providers.types';
 import { ISensitiveDataSessionStorage } from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
+import { IStorageCommon } from '../../types/storage.types';
 export * from 'classes/storage-providers/storage-providers.types';
 
 export interface ISecretStoreConfiguration {
@@ -47,7 +48,7 @@ export type TSecretStorageAuthOptions =
   | TSecretStorageAuthOptionsCredentials
   | ISecretStoreCredentialsCryptoKey;
 
-export interface ISecretStorage {
+export interface ISecretStorage extends IStorageCommon {
   // returns true if connected succesfully to
   // a storage and have a vaild crypto key
   isActive: boolean;
