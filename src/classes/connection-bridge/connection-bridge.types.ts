@@ -69,11 +69,12 @@ export interface IConnectionBridgeOptions<
    * @memberof IConnectionBridgeOptions
    */
   storage: Omit<
-    Omit<
-      Omit<Omit<ISwarmMessageStoreOptions<P>, 'userId'>, 'credentials'>,
-      'messageConstructors'
-    >,
-    'providerConnectionOptions'
+    ISwarmMessageStoreOptions<P>,
+    | 'userId'
+    | 'credentials'
+    | 'messageConstructors'
+    | 'providerConnectionOptions'
+    | 'databasesListStorage'
   >;
   /**
    * specify options for the swarm connection provider
