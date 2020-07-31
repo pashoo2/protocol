@@ -55,6 +55,7 @@ export interface ISwarmStoreEvents {
   [ESwarmStoreEventNames.LOADING]: number;
   [ESwarmStoreEventNames.DB_LOADING]: [string, number];
   [ESwarmStoreEventNames.READY]: string;
+  [ESwarmStoreEventNames.DATABASES_LIST_UPDATED]: ISwarmStoreDatabasesList;
 }
 
 // arguments avalilable for a database method
@@ -311,6 +312,16 @@ export interface ISwarmStore<
 > extends Omit<ISwarmStoreConnectorBase<P>, 'connect'> {
   // status of a database connected to
   dbStatuses: ISwarmStoreDatabasesStatuses;
+  /**
+   * List with all databases opened any time.
+   * It is persistant only if
+   * a databasePersistantListStorage instance
+   * provided while connecting.
+   *
+   * @type {ISwarmStoreDatabasesList}
+   * @memberof ISwarmStore
+   */
+  databases?: ISwarmStoreDatabasesList;
   // open connection with all databases
   connect(options: ISwarmStoreOptions<P, ItemType>): Promise<Error | void>;
 }

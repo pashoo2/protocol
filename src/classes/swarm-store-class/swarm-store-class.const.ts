@@ -78,6 +78,16 @@ export enum ESwarmStoreEventNames {
    * 4) any - heads
    */
   NEW_ENTRY = 'NEW_ENTRY',
+  /**
+   * Fired when updated list with options of a known databases
+   * or opened databases list.
+   * args:
+   * 1) { options, opened },
+   *  where:
+   *    - options is options of a databases known(Were opened any time before and wasn't dropped)
+   *    - opened - list of databases names opened within the current session
+   */
+  DATABASES_LIST_UPDATED = 'DATABASES_LIST_UPDATED',
 }
 
 export enum ESwarmStoreDbStatus {

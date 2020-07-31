@@ -123,19 +123,6 @@ export class SwarmStore<
   protected databasesLisPersistanttKey?: string;
 
   /**
-   * returns a key of opened databases list
-   * options
-   *
-   * @protected
-   * @param {string} [directory]
-   * @returns {string}
-   * @memberof SwarmStore
-   */
-  protected getDatabasesListKey(directory?: string): string {
-    return `${directory || ''}__databases_opened_list`;
-  }
-
-  /**
    * Open connection with all databases listed in the options.
    * If a databasePersistantListStorage provided, then a list with
    * all databases opened and not dropped will be saved.
@@ -208,7 +195,15 @@ export class SwarmStore<
       return new Error('Connector is not exists');
     }
     this.setEmptyStatusForDb(dbOptions.dbName);
-    return connector.openDatabase(dbOptions);
+
+    const result = await connector.openDatabase(dbOptions);
+
+    if (!(result instanceof Error)) {
+      this.handleDatabaseOpened(dbOptions);
+    } else {
+      this.handleDatabaseClosed(dbOptions);
+    }
+    return result;
   }
 
   /**
@@ -227,7 +222,17 @@ export class SwarmStore<
       return new Error('Connector is not exists');
     }
     this.setClosedStatusForDb(dbName);
-    return connector.closeDatabase(dbName);
+
+    const result = connector.closeDatabase(dbName);
+
+    if (!(result instanceof Error)) {
+      const dbOptions = this.getDatabaseOptions(dbName);
+
+      if (dbOptions) {
+        this.handleDatabaseClosed(dbOptions);
+      }
+    }
+    return result;
   }
 
   public async dropDatabase(dbName: string): Promise<void | Error> {
@@ -242,6 +247,12 @@ export class SwarmStore<
 
     if (dropDatabaseResult instanceof Error) {
       return dropDatabaseResult;
+    } else {
+      const dbOptions = this.getDatabaseOptions(dbName);
+
+      if (dbOptions) {
+        this.handleDatabaseDropped(dbOptions);
+      }
     }
   }
 
@@ -331,6 +342,19 @@ export class SwarmStore<
   }
 
   /**
+   * returns a key of opened databases list
+   * options
+   *
+   * @protected
+   * @param {string} [directory]
+   * @returns {string}
+   * @memberof SwarmStore
+   */
+  protected getDatabasesListKey(directory?: string): string {
+    return `${directory || ''}__databases_opened_list`;
+  }
+
+  /**
    * returns a connector constructor specified
    * or undefined if there is no constructor
    * for for a connector with a name provided
@@ -342,6 +366,20 @@ export class SwarmStore<
    */
   protected getStorageConnector(connectorName: ESwarmStoreConnector) {
     return SWARM_STORE_CONNECTORS[connectorName];
+  }
+
+  /**
+   * returns options of a database if opened before
+   *
+   * @protected
+   * @param {string} dbName - name of a database
+   * @returns {ISwarmStoreDatabaseBaseOptions | undefined}
+   * @memberof SwarmStore
+   */
+  protected getDatabaseOptions(
+    dbName: string
+  ): undefined | ISwarmStoreDatabaseBaseOptions {
+    return this.databases?.options[dbName];
   }
 
   /**
@@ -424,6 +462,16 @@ export class SwarmStore<
   }
 
   /**
+   * emit event with a databases list
+   *
+   * @protected
+   * @memberof SwarmStore
+   */
+  protected emitDatabasesListUpdated() {
+    this.emit(ESwarmStoreEventNames.DATABASES_LIST_UPDATED, this.databases);
+  }
+
+  /**
    * Add a database opened to lists.
    *
    * @protected
@@ -437,6 +485,7 @@ export class SwarmStore<
   ): Promise<void> {
     this.databasesOpenedList[dbOpenedOptions.dbName] = true;
     await this.addDatabaseOpenedOptions(dbOpenedOptions);
+    this.emitDatabasesListUpdated();
   }
 
   /**
@@ -453,6 +502,7 @@ export class SwarmStore<
     dbOpenedOptions: ISwarmStoreDatabaseBaseOptions
   ): Promise<void> {
     delete this.databasesOpenedList[dbOpenedOptions.dbName];
+    this.emitDatabasesListUpdated();
   }
 
   /**
@@ -469,6 +519,7 @@ export class SwarmStore<
   ): Promise<void> {
     delete this.databasesOpenedList[dbOpenedOptions.dbName];
     await this.removeDatabaseOpenedOptions(dbOpenedOptions);
+    this.emitDatabasesListUpdated();
   }
 
   /**

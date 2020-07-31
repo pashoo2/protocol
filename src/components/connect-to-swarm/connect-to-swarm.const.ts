@@ -55,7 +55,7 @@ export const CONNECT_TO_SWARM_CONNECTION_OPTIONS = {
   storage: {
     provider: CONNECT_TO_SWARM_STORAGE_PROVIDER_DEFAULT,
     directory: CONNECT_TO_SWARM_DATABASE_PREFIX,
-    databases: CONNECT_TO_SWARM_DATABASES_DEFAULT,
+    databases: [],
   },
   user: {
     profile: {},
