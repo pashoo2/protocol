@@ -233,7 +233,6 @@ export class ConnectToSwarm extends React.PureComponent {
     message: TSwarmMessageInstance,
     id: string
   ) => {
-    debugger;
     const { messagesReceived } = this.state;
     const messagesMap = messagesReceived.get(dbName) || new Map();
 
@@ -338,7 +337,7 @@ export class ConnectToSwarm extends React.PureComponent {
               const databaseOptions = dbsOptions[databaseName];
               const isOpened = databasesList.opened[databaseName];
               const dbMessages = this.state.messagesReceived.get(databaseName);
-              debugger;
+
               return (
                 <DatabaseComponent
                   key={databaseName}

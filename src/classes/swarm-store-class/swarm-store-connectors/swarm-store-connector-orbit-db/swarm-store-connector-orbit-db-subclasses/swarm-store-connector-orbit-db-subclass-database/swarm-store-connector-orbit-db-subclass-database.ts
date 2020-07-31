@@ -176,6 +176,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       const hash = await (this.isKVStore
         ? (database as OrbitDbKeyValueStore<TStoreValue>).set(key!, value)
         : (database as OrbitDbFeedStore<TStoreValue>).add(value));
+      debugger;
       console.log(`ADDED DATA WITH HASH -- ${hash}`);
       if (typeof hash !== 'string') {
         return new Error(

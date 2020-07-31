@@ -17,11 +17,7 @@ export const ipfsUtilsConnectBasic = async (
     timer = setTimeout(() => {
       throw new Error('Connection timed out');
     }, timeoutMs);
-    return await IPFS.create({
-      ...IPFS_UTILS_DEFAULT_OPTIONS,
-      ...options,
-      // TODO - https://github.com/ipfs/go-ipfs/issues/6204 - try when resolved libp2p: getLibPeerToPeer,
-    });
+    return await IPFS.create();
   } finally {
     clearTimeout(timer!);
   }
