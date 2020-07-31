@@ -3,6 +3,7 @@ import { ISwarmMessageInstanceDecrypted } from '../../../classes/swarm-message/s
 
 export interface IMessageComponentProps {
   id: string;
+  k?: string;
   dbName: string;
   message: ISwarmMessageInstanceDecrypted;
 }
@@ -19,11 +20,11 @@ export class MessageComponent extends React.PureComponent<
   }
 
   render() {
-    const { id } = this.props;
+    const { id, k } = this.props;
     return (
       <div style={{ border: '1px solid black' }}>
         <span>
-          {id}; From: {this.senderId}
+          {id}; {k && `Key: ${k}`}; From: {this.senderId}
         </span>
         <div>{this.payload}</div>
       </div>

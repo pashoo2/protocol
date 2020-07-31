@@ -65,6 +65,7 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseEvents<
     any, // entry added
     string, // address of the entry,
     any, // heads
+    ESwarmStoreConnectorOrbitDbDatabaseType,
     TSwarmStoreConnectorOrbitDBDatabase
   ];
 }

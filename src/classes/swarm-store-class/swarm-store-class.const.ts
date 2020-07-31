@@ -75,7 +75,9 @@ export enum ESwarmStoreEventNames {
    * 1) string - database name where the entry was added
    * 2) any - entry
    * 3) string - the global address of the entry in the swarm
-   * 4) any - heads
+   * 4) any - heads,
+   * 5) ESwarmStoreConnectorOrbitDbDatabaseType - type of the database
+   * 6) instanceof - db connection instance
    */
   NEW_ENTRY = 'NEW_ENTRY',
   /**

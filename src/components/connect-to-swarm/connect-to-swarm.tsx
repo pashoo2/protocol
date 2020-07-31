@@ -32,6 +32,7 @@ import { ISwarmMessageInstanceDecrypted } from '../../classes/swarm-message/swar
 
 export interface IMessageDescription {
   id: string;
+  key?: string;
   message: ISwarmMessageInstanceDecrypted;
 }
 
@@ -231,15 +232,22 @@ export class ConnectToSwarm extends React.PureComponent {
   protected handleMessage = (
     dbName: string,
     message: TSwarmMessageInstance,
-    id: string
+    id: string,
+    key: string
   ) => {
     const { messagesReceived } = this.state;
     const messagesMap = messagesReceived.get(dbName) || new Map();
+    // TODO - to get all of actual values for KV-store it is necessary
+    // to iterate overall database. Cause for a KV store implemented
+    // by the OrbitDB only the "db.all" method returns all keys, so
+    // in this implementation only thught the iterate method of a db
+    // this is able to iterate over all items(db.all)
 
     if (!messagesMap.get(id)) {
       messagesMap.set(id, {
         message,
         id,
+        key,
       });
       messagesReceived.set(dbName, messagesMap);
       this.forceUpdate();

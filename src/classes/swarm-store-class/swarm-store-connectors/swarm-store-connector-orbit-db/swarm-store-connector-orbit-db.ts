@@ -36,6 +36,7 @@ import {
 import { SwarmStorageConnectorOrbitDBSublassKeyStore } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-keystore/swarm-store-connector-orbit-db-subclass-keystore';
 import { ISwarmStoreConnectorOrbitDBSubclassStorageFabric } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-storage-fabric/swarm-store-connector-orbit-db-subclass-storage-fabric.types';
 import { SwarmStoreConnectorOrbitDBSubclassStorageFabric } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-storage-fabric/swarm-store-connector-orbit-db-subclass-storage-fabric';
+import { ESwarmStoreConnectorOrbitDbDatabaseType } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import {
   ISwarmStoreConnector,
   TSwarmStoreValueTypes,
@@ -49,7 +50,7 @@ export class SwarmStoreConnectorOrbitDB<
   ISwarmDatabaseValueTypes extends TSwarmStoreValueTypes<
     ESwarmStoreConnector.OrbitDB
   >
-  > extends EventEmitter<ISwarmStoreConnectorOrbitDBEvents>
+> extends EventEmitter<ISwarmStoreConnectorOrbitDBEvents>
   implements ISwarmStoreConnector<ESwarmStoreConnector.OrbitDB> {
   private static isLoadedCustomIdentityProvider: boolean = false;
 
@@ -506,7 +507,7 @@ export class SwarmStoreConnectorOrbitDB<
 
     console.error(
       `${SWARM_STORE_CONNECTOR_ORBITDB_LOG_PREFIX}::error${
-      mehodName ? `::${mehodName}` : ''
+        mehodName ? `::${mehodName}` : ''
       }`,
       err
     );
@@ -1082,12 +1083,23 @@ export class SwarmStoreConnectorOrbitDB<
    * @private
    * @memberof SwarmStoreConnectorOrbitDB
    */
-  private handleNewEntryAddedToDatabase = ([dbName, entry, address, heads]: [
+  private handleNewEntryAddedToDatabase = ([
+    dbName,
+    entry,
+    address,
+    heads,
+    dbType,
+  ]: [
     string,
     LogEntry<ISwarmDatabaseValueTypes>,
     string,
-    any
+    any,
+    ESwarmStoreConnectorOrbitDbDatabaseType
   ]) => {
+    // TODO - FOR KEY VALUE STOE. If added two different values for the same key,
+    // then two messages related to this values will be emitted anyway
+    // not just one, which is the latest one, but both messages.
+    // Both two messages will be emitted after the instance was preloaded
     console.log(
       `SwarmStoreConnectorOrbitDB::handleNewEntryAddedToDatabase:emit NEW_ENTRY`,
       {
@@ -1097,7 +1109,13 @@ export class SwarmStoreConnectorOrbitDB<
         heads,
       }
     );
-    this.emit(ESwarmStoreEventNames.NEW_ENTRY, [dbName, entry, address, heads]);
+    this.emit(ESwarmStoreEventNames.NEW_ENTRY, [
+      dbName,
+      entry,
+      address,
+      heads,
+      dbType,
+    ]);
   };
 
   private async setListenersDatabaseEvents(

@@ -444,7 +444,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       }
       return [await this.get(eqOperand)];
     }
-
+    // TODO - check it works
     const iteratorOptionsRes =
       options ||
       SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ITERATOR_OPTIONS_DEFAULT;
@@ -619,6 +619,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       entry,
       address,
       heads,
+      this.dbType,
       this,
     ]);
   };

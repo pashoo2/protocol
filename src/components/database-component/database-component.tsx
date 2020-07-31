@@ -119,6 +119,7 @@ export class DatabaseComponent extends React.PureComponent<IProps> {
                 key={message.id}
                 dbName={dbName}
                 id={message.id}
+                k={message.key}
                 message={message.message}
               />
             );

@@ -18,18 +18,10 @@ export const ipfsUtilsConnectBasic = async (
       throw new Error('Connection timed out');
     }, timeoutMs);
     const ipfs = await IPFS.create({
-      config: {
-        Bootstrap: [],
-        Addresses: {
-          // TODO - it works for now, only for test purposes
-          Swarm: [
-            '/dns4/p2p.3box.io/tcp/9091/wss/p2p-webrtc-star/',
-            '/dns4/stardust.mkg20001.io/tcp/443/wss/p2p-stardust/',
-          ],
-        },
-      },
+      ...IPFS_UTILS_DEFAULT_OPTIONS,
     });
 
+    // TODO can test that the pubsub works well. OrbitDB fully depended on it
     let idx = Math.random() * 100;
     const topicName = 'TEST_TOPIC_TEST_______';
     await ipfs.pubsub.subscribe(

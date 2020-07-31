@@ -286,6 +286,7 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
     dbName: string,
     message: string,
     messageAddr: string,
+    key: string | undefined, // message key
     error: Error
   ) => {
     this.emit(
@@ -293,7 +294,8 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
       dbName,
       message,
       error,
-      messageAddr
+      messageAddr,
+      key
     );
   };
 
@@ -306,18 +308,21 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
   protected emitMessageNew = (
     dbName: string,
     message: TSwarmMessageInstance,
-    messageAddr: string
+    messageAddr: string,
+    messageKey?: string
   ) => {
     console.log('SwarmMessageStore::emitMessageNew', {
       dbName,
       message,
       messageAddr,
+      messageKey,
     });
     this.emit(
       ESwarmMessageStoreEventNames.NEW_MESSAGE,
       dbName,
       message,
-      messageAddr
+      messageAddr,
+      messageKey
     );
   };
 
@@ -326,12 +331,20 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
    *
    * @memberof SwarmMessageStore
    */
-  protected handleNewMessage = async ([dbName, message, messageAddress]: [
+  protected handleNewMessage = async ([
+    dbName,
+    message,
+    messageAddress,
+    heads,
+    dbType,
+  ]: [
     string,
     P extends ESwarmStoreConnector.OrbitDB
       ? LogEntry<TSwarmMessageSeriazlized>
       : any,
-    string
+    string,
+    any,
+    any
   ]): Promise<void> => {
     console.log('SwarmMessageStore::handleNewMessage', {
       dbName,
@@ -349,18 +362,21 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
         dbName,
         String(message),
         messageAddress,
+        message.payload.key,
         new Error('There is unknown message format')
       );
     }
 
     const { hash: messageHash, payload } = message;
-    const { value: messageString } = payload;
+    // TODO - handle dbType before adding "key" to the event emitted
+    const { value: messageString, key } = payload;
 
     if (!messageConstructor) {
       return this.emitMessageConstructionFails(
         dbName,
         messageString,
         messageHash,
+        key,
         new Error('There is no message constructor specified for the message')
       );
     }
@@ -373,15 +389,17 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
           dbName,
           messageString,
           messageHash,
+          key,
           swarmMessage
         );
       }
-      return this.emitMessageNew(dbName, swarmMessage, message.hash);
+      return this.emitMessageNew(dbName, swarmMessage, message.hash, key);
     } catch (err) {
       return this.emitMessageConstructionFails(
         dbName,
         messageString,
         messageHash,
+        key,
         err
       );
     }
