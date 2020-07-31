@@ -140,7 +140,7 @@ export class SwarmStore<
     try {
       this.validateOptions(options);
       if (databasePersistantListStorage) {
-        this.databasePersistantListStorage = databasePersistantListStorage;
+        await this.handleDatabasePersistentList(databasePersistantListStorage);
       }
       connectionWithConnector = this.createConnectionWithStorageConnector(
         options

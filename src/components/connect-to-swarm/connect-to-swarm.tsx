@@ -20,6 +20,7 @@ import {
   ISwarmStoreDatabasesList,
   ESwarmStoreEventNames,
 } from 'classes';
+import { DatabaseComponent } from '../database-component/database-component';
 
 export class ConnectToSwarm extends React.PureComponent {
   public state = {
@@ -253,26 +254,36 @@ export class ConnectToSwarm extends React.PureComponent {
   };
 
   protected renderDatabasesList() {
-    const { databasesList, databaseOpeningStatus } = this.state;
+    const {
+      databasesList,
+      connectionBridge,
+      databaseOpeningStatus,
+    } = this.state;
+    const dbsOptions = databasesList?.options;
+
     return (
       <div>
         <div>
           <h4>List of databases:</h4>
-          {databasesList &&
-            Object.keys(databasesList.options).map((databaseName) => {
-              const databaseOptions = databasesList.options[databaseName];
-              const isDbOpened = databasesList.opened[databaseName];
+          {!!databasesList &&
+            !!dbsOptions &&
+            Object.keys(dbsOptions).map((databaseName) => {
+              const databaseOptions = dbsOptions[databaseName];
+              const isOpened = databasesList.opened[databaseName];
 
               return (
-                <div key={databaseName}>
-                  Database: {databaseName},{isDbOpened ? 'opened' : 'closed'},
-                  {databaseOptions.isPublic ? 'is public' : ''};
-                </div>
+                <DatabaseComponent
+                  key={databaseName}
+                  databaseOptions={databaseOptions}
+                  isOpened={isOpened}
+                  connectionBridge={connectionBridge}
+                />
               );
             })}
         </div>
         {(!databaseOpeningStatus &&
-          databasesList?.opened[CONNECT_TO_SWARM_DATABASE_MAIN.dbName]) ?? (
+          (!dbsOptions ||
+            !!dbsOptions[CONNECT_TO_SWARM_DATABASE_MAIN.dbName])) ?? (
           <button onClick={this.handleOpenDefaultDatabase}>
             Open default database
           </button>
