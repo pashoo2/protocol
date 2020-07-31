@@ -55,7 +55,7 @@ export interface ISwarmStoreEvents {
   [ESwarmStoreEventNames.LOADING]: number;
   [ESwarmStoreEventNames.DB_LOADING]: [string, number];
   [ESwarmStoreEventNames.READY]: string;
-  [ESwarmStoreEventNames.DATABASES_LIST_UPDATED]: ISwarmStoreDatabasesList;
+  [ESwarmStoreEventNames.DATABASES_LIST_UPDATED]: ISwarmStoreDatabasesCommonStatusList;
 }
 
 // arguments avalilable for a database method
@@ -318,10 +318,10 @@ export interface ISwarmStore<
    * a databasePersistantListStorage instance
    * provided while connecting.
    *
-   * @type {ISwarmStoreDatabasesList}
+   * @type {ISwarmStoreDatabasesCommonStatusList}
    * @memberof ISwarmStore
    */
-  databases?: ISwarmStoreDatabasesList;
+  databases?: ISwarmStoreDatabasesCommonStatusList;
   // open connection with all databases
   connect(options: ISwarmStoreOptions<P, ItemType>): Promise<Error | void>;
 }
@@ -332,7 +332,7 @@ export interface ISwarmStoreOptionsOfDatabasesKnownList
     ISwarmStoreDatabaseBaseOptions
   > {}
 
-export interface ISwarmStoreDatabasesList {
+export interface ISwarmStoreDatabasesCommonStatusList {
   readonly options: ISwarmStoreOptionsOfDatabasesKnownList;
   readonly opened: Record<string, boolean>;
 }

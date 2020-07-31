@@ -77,6 +77,18 @@ export interface ISwarmMessgaeEncryptedCache extends IStorageCommon {
    */
   add(sig: string, message: TSwarmMessageBodyRaw): Promise<boolean>;
   /**
+   * Add or replace message in a storage
+   * TODO - It's added only to the instance be capatible with IStorageCommon interface
+   * This method may be used if the instance is used not for the messages.
+   *
+   * @param {string} sig
+   * @param {TSwarmMessageBodyRaw} [message]
+   * @returns {Promise<void>}
+   * @memberof ISwarmMessgaeEncryptedCache
+   * @throws
+   */
+  set(sig: string, message: TSwarmMessageBodyRaw): Promise<void>;
+  /**
    * unset mark or body for the messge signature
    *
    * @param {string} sig

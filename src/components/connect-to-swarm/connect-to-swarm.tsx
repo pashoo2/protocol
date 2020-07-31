@@ -1,7 +1,10 @@
 import React from 'react';
 import { connectToSwarmUtil } from './connect-to-swarm.utils';
 import { IConnectionBridge } from 'classes/connection-bridge/connection-bridge.types';
-import { CONNECT_TO_SWARM_DATABASE_MAIN } from './connect-to-swarm.const';
+import {
+  CONNECT_TO_SWARM_DATABASE_MAIN,
+  CONNECT_TO_SWARM_DATABASE_MAIN_2,
+} from './connect-to-swarm.const';
 import {
   CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_1,
   CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_2,
@@ -17,10 +20,20 @@ import {
 } from './connect-to-swarm.const';
 import {
   ESwarmStoreConnectorOrbitDbDatabaseMethodNames,
-  ISwarmStoreDatabasesList,
+  ISwarmStoreDatabasesCommonStatusList,
   ESwarmStoreEventNames,
 } from 'classes';
 import { DatabaseComponent } from '../database-component/database-component';
+import { ESwarmMessageStoreEventNames } from '../../classes/swarm-message-store/swarm-message-store.const';
+import { ConnectionBridge } from '../../classes/connection-bridge/connection-bridge';
+import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
+import { TSwarmMessageInstance } from '../../classes/swarm-message/swarm-message-constructor.types';
+import { ISwarmMessageInstanceDecrypted } from '../../classes/swarm-message/swarm-message-constructor.types';
+
+export interface IMessageDescription {
+  id: string;
+  message: ISwarmMessageInstanceDecrypted;
+}
 
 export class ConnectToSwarm extends React.PureComponent {
   public state = {
@@ -33,9 +46,22 @@ export class ConnectToSwarm extends React.PureComponent {
     dbRemoved: false,
     dbRemoving: false,
     messages: [] as any[],
-    databasesList: undefined as ISwarmStoreDatabasesList | undefined,
+    messagesReceived: new Map() as Map<
+      string,
+      Map<string, IMessageDescription>
+    >,
+    databasesList: undefined as
+      | ISwarmStoreDatabasesCommonStatusList
+      | undefined,
     databaseOpeningStatus: false as boolean,
+    credentialsVariant: undefined as undefined | number,
   };
+
+  protected get defaultDbOptions() {
+    return this.state.credentialsVariant === 1
+      ? CONNECT_TO_SWARM_DATABASE_MAIN
+      : CONNECT_TO_SWARM_DATABASE_MAIN_2;
+  }
 
   protected sendSwarmMessage = async () => {
     try {
@@ -195,16 +221,49 @@ export class ConnectToSwarm extends React.PureComponent {
   }
 
   protected handleDatabasesListUpdate = (
-    databasesList: ISwarmStoreDatabasesList
+    databasesList: ISwarmStoreDatabasesCommonStatusList
   ) => {
     this.setState({
       databasesList: { ...databasesList },
     });
   };
 
+  protected handleMessage = (
+    dbName: string,
+    message: TSwarmMessageInstance,
+    id: string
+  ) => {
+    debugger;
+    const { messagesReceived } = this.state;
+    const messagesMap = messagesReceived.get(dbName) || new Map();
+
+    if (!messagesMap.get(id)) {
+      messagesMap.set(id, {
+        message,
+        id,
+      });
+      messagesReceived.set(dbName, messagesMap);
+      this.forceUpdate();
+    }
+  };
+
+  protected setListenersConnectionBridge(
+    connectionBridge: ConnectionBridge<ESwarmStoreConnector>
+  ) {
+    connectionBridge.storage?.addListener(
+      ESwarmStoreEventNames.DATABASES_LIST_UPDATED,
+      this.handleDatabasesListUpdate
+    );
+    connectionBridge.storage?.addListener(
+      ESwarmMessageStoreEventNames.NEW_MESSAGE,
+      this.handleMessage
+    );
+  }
+
   protected connectToSwarm = async (credentialsVariant: 1 | 2 = 1) => {
     this.setState({
       isConnecting: true,
+      credentialsVariant,
     });
     try {
       const connectionBridge = await connectToSwarmUtil(
@@ -225,10 +284,7 @@ export class ConnectToSwarm extends React.PureComponent {
         userId,
         databasesList: connectionBridge.storage?.databases,
       });
-      connectionBridge.storage?.addListener(
-        ESwarmStoreEventNames.DATABASES_LIST_UPDATED,
-        this.handleDatabasesListUpdate
-      );
+      this.setListenersConnectionBridge(connectionBridge);
     } catch (error) {
       this.setState({
         error,
@@ -236,20 +292,29 @@ export class ConnectToSwarm extends React.PureComponent {
     }
   };
 
-  public handleOpenDefaultDatabase = async () => {
+  public handleOpenDatabase = async (dbName?: string) => {
     try {
       this.setState({
         databaseOpeningStatus: true,
       });
-      await this.state.connectionBridge?.storage?.openDatabase(
-        CONNECT_TO_SWARM_DATABASE_MAIN
-      );
+      await this.state.connectionBridge?.storage?.openDatabase({
+        ...this.defaultDbOptions,
+        dbName: dbName || this.defaultDbOptions.dbName,
+      });
     } catch (err) {
       console.error(err);
     } finally {
       this.setState({
         databaseOpeningStatus: false,
       });
+    }
+  };
+
+  public handleOpenNewDatabase = async () => {
+    const dbName = window.prompt('Enter database name', '');
+
+    if (dbName) {
+      await this.handleOpenDatabase(dbName);
     }
   };
 
@@ -260,6 +325,8 @@ export class ConnectToSwarm extends React.PureComponent {
       databaseOpeningStatus,
     } = this.state;
     const dbsOptions = databasesList?.options;
+    const isDefaultDatabaseWasOpenedBeforeOrOpening =
+      !databaseOpeningStatus && !dbsOptions?.[this.defaultDbOptions.dbName];
 
     return (
       <div>
@@ -270,22 +337,26 @@ export class ConnectToSwarm extends React.PureComponent {
             Object.keys(dbsOptions).map((databaseName) => {
               const databaseOptions = dbsOptions[databaseName];
               const isOpened = databasesList.opened[databaseName];
-
+              const dbMessages = this.state.messagesReceived.get(databaseName);
+              debugger;
               return (
                 <DatabaseComponent
                   key={databaseName}
                   databaseOptions={databaseOptions}
                   isOpened={isOpened}
                   connectionBridge={connectionBridge}
+                  messages={Array.from(dbMessages?.values() || [])}
                 />
               );
             })}
         </div>
-        {(!databaseOpeningStatus &&
-          (!dbsOptions ||
-            !!dbsOptions[CONNECT_TO_SWARM_DATABASE_MAIN.dbName])) ?? (
-          <button onClick={this.handleOpenDefaultDatabase}>
+        {!!isDefaultDatabaseWasOpenedBeforeOrOpening ? (
+          <button onClick={() => this.handleOpenDatabase()}>
             Open default database
+          </button>
+        ) : (
+          <button onClick={this.handleOpenNewDatabase}>
+            Open new database
           </button>
         )}
       </div>

@@ -1,4 +1,3 @@
-import { ESwarmStoreEventNames } from '../../../../swarm-store-class.const';
 export const SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_LOG_PREFIX =
   'SwarmStoreConnectorOrbitDBDatabase';
 

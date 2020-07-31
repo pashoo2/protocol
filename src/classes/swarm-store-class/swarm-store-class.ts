@@ -4,16 +4,18 @@ import {
   TSwarmStoreDatabaseRequestMethodReturnType,
   ISwarmStoreOptionsOfDatabasesKnownList,
   ISwarmStoreDatabaseBaseOptions,
-  ISwarmStoreDatabasesList,
+  ISwarmStoreDatabasesCommonStatusList,
 } from './swarm-store-class.types';
 import {
   ESwarmStoreConnector,
-  SWARM_STORE_CONNECTORS,
   ESwarmStoreEventNames,
   ESwarmStoreDbStatus,
+  SWARM_STORE_CONNECTORS,
   SWARM_STORE_DATABASES_STATUSES_EMPTY,
+  SWARM_STORE_DATABASES_PERSISTENT_LIST_DIRECTORY_DEFAULT,
 } from './swarm-store-class.const';
 import { IStorageCommon } from 'types/storage.types';
+import { calculateHash } from 'utils/hash-calculation-utils';
 import {
   ISwarmStoreConnector,
   ISwarmStoreDatabasesStatuses,
@@ -59,7 +61,7 @@ export class SwarmStore<
     return SWARM_STORE_DATABASES_STATUSES_EMPTY;
   }
 
-  public get databases(): ISwarmStoreDatabasesList {
+  public get databases(): ISwarmStoreDatabasesCommonStatusList {
     const { databasesKnownOptionsList, databasesOpenedList } = this;
 
     return {
@@ -120,7 +122,7 @@ export class SwarmStore<
    * @type {string} []
    * @memberof SwarmStore
    */
-  protected databasesLisPersistanttKey?: string;
+  protected databasesLisPersistantKey?: string;
 
   /**
    * Open connection with all databases listed in the options.
@@ -140,7 +142,10 @@ export class SwarmStore<
     try {
       this.validateOptions(options);
       if (databasePersistantListStorage) {
-        await this.handleDatabasePersistentList(databasePersistantListStorage);
+        await this.handleDatabasePersistentList(
+          databasePersistantListStorage,
+          this.getDatabasePersistentListDirectory(options)
+        );
       }
       connectionWithConnector = this.createConnectionWithStorageConnector(
         options
@@ -347,11 +352,19 @@ export class SwarmStore<
    *
    * @protected
    * @param {string} [directory]
-   * @returns {string}
+   * @returns {Promise<string>}
    * @memberof SwarmStore
+   * @throws
    */
-  protected getDatabasesListKey(directory?: string): string {
-    return `${directory || ''}__databases_opened_list`;
+  protected async getDatabasesListKey(directory?: string): Promise<string> {
+    const hash = await calculateHash(
+      `${directory || ''}/databases_opened_list`
+    );
+
+    if (hash instanceof Error) {
+      throw hash;
+    }
+    return `${hash}/`;
   }
 
   /**
@@ -383,6 +396,22 @@ export class SwarmStore<
   }
 
   /**
+   * Directry for the database persistent list.
+   * Better if it will be uniq per users
+   *
+   * @protected
+   * @param {ISwarmStoreOptions<P, ItemType>} options
+   * @returns {string}
+   * @memberof SwarmStore
+   */
+  protected getDatabasePersistentListDirectory(
+    options: ISwarmStoreOptions<P, ItemType>
+  ): string {
+    return `${options.userId}/${options.directory ||
+      SWARM_STORE_DATABASES_PERSISTENT_LIST_DIRECTORY_DEFAULT}`;
+  }
+
+  /**
    * Preload the databases list.
    *
    * @protected
@@ -398,9 +427,8 @@ export class SwarmStore<
   ): Promise<void> {
     this.databasePersistantListStorage = databasePersistantListStorage;
 
-    const key = this.getDatabasesListKey(directory);
-
-    this.databasesLisPersistanttKey = key;
+    const key = await this.getDatabasesListKey(directory);
+    this.databasesLisPersistantKey = key;
     await this.preloadOpenedDatabasesList();
   }
 
@@ -446,11 +474,10 @@ export class SwarmStore<
    */
   protected async preloadOpenedDatabasesList(): Promise<void> {
     const databasesOptionsList =
-      this.databasesLisPersistanttKey &&
+      this.databasesLisPersistantKey &&
       (await this.databasePersistantListStorage?.get(
-        this.databasesLisPersistanttKey
+        this.databasesLisPersistantKey
       ));
-
     if (databasesOptionsList) {
       if (databasesOptionsList instanceof Error) {
         throw databasesOptionsList;
@@ -564,15 +591,13 @@ export class SwarmStore<
   protected async storeDatabasesKnownOptionsList() {
     const {
       databasesKnownOptionsList,
-      databasesLisPersistanttKey,
+      databasesLisPersistantKey,
       databasePersistantListStorage,
     } = this;
 
-    if (databasePersistantListStorage && databasesLisPersistanttKey) {
-      await databasePersistantListStorage.set(
-        databasesLisPersistanttKey,
-        this.stringifyDatabaseOptionsList(databasesKnownOptionsList)
-      );
+    if (databasePersistantListStorage && databasesLisPersistantKey) {
+      const list = this.stringifyDatabaseOptionsList(databasesKnownOptionsList);
+      await databasePersistantListStorage.set(databasesLisPersistantKey, list);
     }
   }
 

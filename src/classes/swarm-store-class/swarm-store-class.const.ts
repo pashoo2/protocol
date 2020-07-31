@@ -113,3 +113,6 @@ export const SWARM_STORE_DATABASES_STATUSES_EMPTY: ISwarmStoreDatabasesStatuses 
 export const SWARM_STORE_CONNECTORS = {
   [ESwarmStoreConnector.OrbitDB]: SwarmStoreConnectorOrbitDB,
 };
+
+export const SWARM_STORE_DATABASES_PERSISTENT_LIST_DIRECTORY_DEFAULT =
+  'persistent_databases_list';

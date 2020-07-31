@@ -44,14 +44,10 @@ export class SwarmMessageEncryptedCache implements ISwarmMessgaeEncryptedCache {
   }
 
   /**
-   * just an alias for the add method
+   * Add value only if not exists in the storage
    *
    * @memberof SwarmMessageEncryptedCache
    */
-  public set = (sig: string, message: TSwarmMessageBodyRaw) => {
-    return this.add(sig, message);
-  };
-
   public add = async (sig: string, message: TSwarmMessageBodyRaw) => {
     this.checkIsActive();
 
@@ -89,6 +85,25 @@ export class SwarmMessageEncryptedCache implements ISwarmMessgaeEncryptedCache {
       throw clearDbResult;
     }
   }
+
+  /**
+   * Set value INDEPENDENTLY whether it's exists or not.
+   * WARNING!. The 'add' method should be used for storing messages.
+   * This method may be used if the instance is used not for the messages.
+   * TODO - It's added only to the instance be capatible with IStorageCommon interface
+   *
+   * @memberof SwarmMessageEncryptedCache
+   */
+  public set = async (sig: string, message: TSwarmMessageBodyRaw) => {
+    this.checkIsActive();
+
+    const value = message || null;
+    const result = await this.storageProvider!.set(sig, value);
+
+    if (result instanceof Error) {
+      throw result;
+    }
+  };
 
   protected setOptions(options: TSwarmMessgaeEncryptedCacheOptions) {
     assert(options, 'Options must be provided');
