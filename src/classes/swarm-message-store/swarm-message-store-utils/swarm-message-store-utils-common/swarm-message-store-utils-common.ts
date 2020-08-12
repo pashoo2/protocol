@@ -62,7 +62,7 @@ async function swarmMessageGrantValidator(
     return true;
   }
 
-  const messageSerialized = payload.value;
+  const { value: messageSerialized, key } = payload;
 
   try {
     const swarmMessage = await messageConstructor.construct(messageSerialized);
@@ -71,7 +71,7 @@ async function swarmMessageGrantValidator(
       return false;
     }
     if (grantAccessCb) {
-      return grantAccessCb(swarmMessage, userId, dbName);
+      return grantAccessCb(swarmMessage, userId, dbName, key);
     }
     return true;
   } catch (err) {

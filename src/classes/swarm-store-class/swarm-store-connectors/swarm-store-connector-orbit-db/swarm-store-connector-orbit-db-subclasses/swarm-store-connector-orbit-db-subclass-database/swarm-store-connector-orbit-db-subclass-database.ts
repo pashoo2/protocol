@@ -32,7 +32,6 @@ import {
 } from './swarm-store-connector-orbit-db-subclass-database.const';
 import { ESwarmStoreEventNames } from '../../../../swarm-store-class.const';
 import { TSwarmStoreConnectorOrbitDbDatabaseMethodArgumentDbLoad } from './swarm-store-connector-orbit-db-subclass-database.types';
-import { delay } from 'utils/common-utils/common-utils-timer';
 import { ISwarmStoreConnectorRequestLoadAnswer } from '../../../../swarm-store-class.types';
 import {
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_EMIT_BATCH_INT_MS,

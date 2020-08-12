@@ -51,7 +51,11 @@ import { TSwarmMessageSeriazlized } from '../swarm-message/swarm-message-constru
 import { isDefined } from '../../utils/common-utils/common-utils-main';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { TSwarmMessageConstructorBodyMessage } from '../swarm-message/swarm-message-constructor.types';
-import { TSwarmStoreDatabaseEntityKey } from '../swarm-store-class/swarm-store-class.types';
+import {
+  TSwarmStoreDatabaseEntityKey,
+  TSwarmStoreDatabaseOptions,
+} from '../swarm-store-class/swarm-store-class.types';
+import { swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl } from './swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider';
 
 export class SwarmMessageStore<P extends ESwarmStoreConnector>
   extends SwarmStore<P, ISwarmMessageStoreEvents>
@@ -63,6 +67,10 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
   protected messageConstructors?: ISwarmMessageDatabaseConstructors;
 
   protected swarmMessageConstructorFabric?: ISwarmMessageConstructorWithEncryptedCacheFabric;
+
+  protected extendsWithAccessControl?: ReturnType<
+    typeof swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl
+  >;
 
   protected get dbMethodAddMessage(): TSwarmStoreDatabaseMethod<P> {
     const { connectorType } = this;
@@ -106,10 +114,15 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
   public async connect(
     options: ISwarmMessageStoreOptions<P>
   ): TSwarmMessageStoreConnectReturnType<P> {
-    const optionsSwarmStore = await swarmMessageStoreUtilsConnectorOptionsProvider(
+    const extendsWithAccessControl = swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl(
       options
     );
+    const optionsSwarmStore = await swarmMessageStoreUtilsConnectorOptionsProvider(
+      options,
+      extendsWithAccessControl
+    );
 
+    this.extendsWithAccessControl = extendsWithAccessControl;
     this.setOptions(optionsSwarmStore);
 
     const connectionResult = await super.connect(
@@ -211,6 +224,26 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
       );
       return err;
     }
+  }
+
+  /**
+   * open a new connection to the database specified
+   *
+   * @param {TSwarmStoreDatabaseOptions} dbOptions
+   * @returns {(Promise<void | Error>)}
+   * @memberof SwarmStore
+   */
+  public async openDatabase(
+    dbOptions: TSwarmStoreDatabaseOptions<P>
+  ): Promise<void | Error> {
+    return await super.openDatabase(
+      ((this.extendsWithAccessControl?.(
+        dbOptions
+      ) as unknown) as TSwarmStoreDatabaseOptions<
+        P,
+        ISwarmMessageStoreEvents
+      >) || dbOptions
+    );
   }
 
   protected validateOpts(options: ISwarmMessageStoreOptions<P>): void {
