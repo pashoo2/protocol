@@ -10,7 +10,6 @@ import { ISwarmStoreConnectorOrbitDBConnectionOptions } from '../../../swarm-sto
 import { ipfsUtilsConnectBasic } from '../../../../utils/ipfs-utils/ipfs-utils';
 import { getMessageValidator } from '../swarm-message-store-utils-common/swarm-message-store-utils-common';
 import { ISwarmStoreConnectorOrbitDBOptions } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.types';
-import { TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types';
 import { ISwarmStoreConnectorOrbitDbDatabaseOptions } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import {
   ISwarmStoreDatabaseBaseOptions,
@@ -61,21 +60,18 @@ export const swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl = (
     }
     grantAccessCallback = grantAccess;
   }
-  const grantAccess =
-    (dbOptions.grantAccess as TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<
-      TSwarmMessageSeriazlized
-    >) ||
-    getMessageValidator(
-      dbOptions,
-      options.messageConstructors,
-      grantAccessCallback,
-      options.userId
-    );
+
+  const grantAccess = getMessageValidator(
+    dbOptions,
+    options.messageConstructors,
+    grantAccessCallback || dbOptions.grantAccess,
+    options.userId
+  );
 
   return {
-    grantAccess,
     write: allowAccessForUsers,
     ...dbOptions,
+    grantAccess,
     provider: ESwarmStoreConnector.OrbitDB as ESwarmStoreConnector,
   };
 };

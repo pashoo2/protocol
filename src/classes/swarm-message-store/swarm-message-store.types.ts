@@ -75,7 +75,9 @@ export type TSwarmMessageStoreAccessControlGrantAccessCallback = (
   // TODO - can it be gotten from the database entry??
   dbName: string,
   // key for the value in the database
-  key?: string
+  key?: string,
+  // operation on the database
+  op?: string
 ) => Promise<boolean>;
 
 /**

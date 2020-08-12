@@ -43,7 +43,13 @@ export class DatabaseComponent extends React.PureComponent<IProps> {
     if (connectionBridge && !isOpened && !isOpening) {
       try {
         this.setState({ isOpening: true });
-        await connectionBridge.storage?.openDatabase(databaseOptions);
+        await connectionBridge.storage?.openDatabase({
+          ...databaseOptions,
+          grantAccess: async (...args: any[]) => {
+            console.log(...args);
+            return true;
+          },
+        });
       } catch (err) {
         console.error(err);
       } finally {

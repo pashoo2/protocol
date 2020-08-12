@@ -19,8 +19,13 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseAccessControllerManifest {
 export type TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<
   TFeedStoreType
 > = (
-  payload: ISwarmStoreConnectorOrbitDBLogEntity<TFeedStoreType>,
-  userId: string
+  // value
+  payload: TFeedStoreType,
+  userId: string,
+  // key of the value
+  key?: string,
+  // operation which is processed (like delete, add or something else)
+  operation?: string
 ) => Promise<boolean>;
 
 export interface ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess {

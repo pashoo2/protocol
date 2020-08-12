@@ -39,10 +39,12 @@ async function swarmMessageGrantValidator(
     isUserCanWrite: boolean;
     currentUserId: TCentralAuthorityUserIdentity;
   },
-  payload: ISwarmStoreConnectorOrbitDBLogEntity<TSwarmMessageSeriazlized>,
-  userId: string
+  value: TSwarmMessageSeriazlized,
+  userId: string,
+  key?: string,
+  op?: string
 ) {
-  if (!payload.value) {
+  if (!value) {
     return false;
   }
 
@@ -62,16 +64,14 @@ async function swarmMessageGrantValidator(
     return true;
   }
 
-  const { value: messageSerialized, key } = payload;
-
   try {
-    const swarmMessage = await messageConstructor.construct(messageSerialized);
+    const swarmMessage = await messageConstructor.construct(value);
 
     if (swarmMessage.uid !== userId) {
       return false;
     }
     if (grantAccessCb) {
-      return grantAccessCb(swarmMessage, userId, dbName, key);
+      return grantAccessCb(swarmMessage, userId, dbName, key, op);
     }
     return true;
   } catch (err) {

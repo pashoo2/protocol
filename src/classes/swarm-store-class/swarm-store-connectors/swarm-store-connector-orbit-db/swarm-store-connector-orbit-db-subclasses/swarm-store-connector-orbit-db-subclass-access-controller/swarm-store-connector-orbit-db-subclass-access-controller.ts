@@ -177,11 +177,12 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
     }
 
     const { identity, payload } = entry;
+    const { value, key, op } = payload;
     const { id } = identity;
     const { _grantAccessCallback } = this;
 
     if (typeof _grantAccessCallback === 'function') {
-      return _grantAccessCallback(payload, id);
+      return _grantAccessCallback(value, id, key, op);
     }
     return true;
   }
