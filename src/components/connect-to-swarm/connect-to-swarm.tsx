@@ -29,6 +29,7 @@ import { ConnectionBridge } from '../../classes/connection-bridge/connection-bri
 import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
 import { TSwarmMessageInstance } from '../../classes/swarm-message/swarm-message-constructor.types';
 import { ISwarmMessageInstanceDecrypted } from '../../classes/swarm-message/swarm-message-constructor.types';
+import { ISecretStorage } from '../../classes/secret-storage-class/secret-storage-class.types';
 
 export interface IMessageDescription {
   id: string;
@@ -56,6 +57,7 @@ export class ConnectToSwarm extends React.PureComponent {
       | undefined,
     databaseOpeningStatus: false as boolean,
     credentialsVariant: undefined as undefined | number,
+    secretStorage: undefined as undefined | ISecretStorage,
   };
 
   protected get defaultDbOptions() {
@@ -285,11 +287,13 @@ export class ConnectToSwarm extends React.PureComponent {
       );
 
       const userId = connectionBridge?.caConnection?.getUserIdentity();
-
+      debugger
+      console.log(connectionBridge.secretStorage)
       this.setState({
         connectionBridge,
         userId,
         databasesList: connectionBridge.storage?.databases,
+        secretStorage: connectionBridge.secretStorage,
       });
       this.setListenersConnectionBridge(connectionBridge);
     } catch (error) {
@@ -362,10 +366,10 @@ export class ConnectToSwarm extends React.PureComponent {
             Open default database
           </button>
         ) : (
-          <button onClick={this.handleOpenNewDatabase}>
-            Open new database
+            <button onClick={this.handleOpenNewDatabase}>
+              Open new database
           </button>
-        )}
+          )}
       </div>
     );
   }

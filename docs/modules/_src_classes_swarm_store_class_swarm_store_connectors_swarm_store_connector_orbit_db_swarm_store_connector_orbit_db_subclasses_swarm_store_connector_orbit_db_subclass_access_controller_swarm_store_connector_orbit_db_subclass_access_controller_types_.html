@@ -94,7 +94,7 @@
 				<section class="tsd-panel tsd-member tsd-kind-type-alias tsd-parent-kind-external-module tsd-has-type-parameter">
 					<a name="tswarmstoreconnectororbitdbaccessconrotllergrantaccesscallback" class="tsd-anchor"></a>
 					<h3>TSwarm<wbr>Store<wbr>Connector<wbr>Orbit<wbr>DbAccess<wbr>Conrotller<wbr>Grant<wbr>Access<wbr>Callback</h3>
-					<div class="tsd-signature tsd-kind-icon">TSwarm<wbr>Store<wbr>Connector<wbr>Orbit<wbr>DbAccess<wbr>Conrotller<wbr>Grant<wbr>Access<wbr>Callback&lt;TFeedStoreType&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>payload<span class="tsd-signature-symbol">: </span><a href="../interfaces/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_types_.iswarmstoreconnectororbitdblogentity.html" class="tsd-signature-type">ISwarmStoreConnectorOrbitDBLogEntity</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFeedStoreType</span><span class="tsd-signature-symbol">&gt;</span>, userId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></div>
+					<div class="tsd-signature tsd-kind-icon">TSwarm<wbr>Store<wbr>Connector<wbr>Orbit<wbr>DbAccess<wbr>Conrotller<wbr>Grant<wbr>Access<wbr>Callback&lt;TFeedStoreType&gt;<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>payload<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TFeedStoreType</span>, userId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, key<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span>, operation<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
 							<li>Defined in src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types.ts:19</li>
@@ -119,17 +119,23 @@
 						<ul class="tsd-parameters">
 							<li class="tsd-parameter-siganture">
 								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias">
-									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>payload<span class="tsd-signature-symbol">: </span><a href="../interfaces/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_types_.iswarmstoreconnectororbitdblogentity.html" class="tsd-signature-type">ISwarmStoreConnectorOrbitDBLogEntity</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFeedStoreType</span><span class="tsd-signature-symbol">&gt;</span>, userId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>payload<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TFeedStoreType</span>, userId<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, key<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span>, operation<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></li>
 								</ul>
 								<ul class="tsd-descriptions">
 									<li class="tsd-description">
 										<h4 class="tsd-parameters-title">Parameters</h4>
 										<ul class="tsd-parameters">
 											<li>
-												<h5>payload: <a href="../interfaces/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_types_.iswarmstoreconnectororbitdblogentity.html" class="tsd-signature-type">ISwarmStoreConnectorOrbitDBLogEntity</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">TFeedStoreType</span><span class="tsd-signature-symbol">&gt;</span></h5>
+												<h5>payload: <span class="tsd-signature-type">TFeedStoreType</span></h5>
 											</li>
 											<li>
 												<h5>userId: <span class="tsd-signature-type">string</span></h5>
+											</li>
+											<li>
+												<h5><span class="tsd-flag ts-flagOptional">Optional</span> key: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
+											</li>
+											<li>
+												<h5><span class="tsd-flag ts-flagOptional">Optional</span> operation: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
 											</li>
 										</ul>
 										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>

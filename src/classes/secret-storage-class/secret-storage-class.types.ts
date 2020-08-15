@@ -10,7 +10,7 @@ export interface ISecretStoreConfiguration {
   storageProviderName: TStorageProviderName;
 }
 
-export interface IISecretStorageOptions extends IStorageProviderOptions {}
+export interface IISecretStorageOptions extends IStorageProviderOptions { }
 
 export interface ISecretStorageSessionInfoStored {
   login: string;
@@ -34,7 +34,7 @@ export interface ISecretStoreCredentialsPassword {
 }
 
 export interface ISecretStoreCredentials
-  extends ISecretStoreCredentialsPassword {}
+  extends ISecretStoreCredentialsPassword { }
 
 export interface ISecretStoreCredentialsCryptoKey {
   key: CryptoKey;
@@ -46,6 +46,11 @@ export type TSecretStorageAuthOptionsCredentials =
 
 export type TSecretStorageAuthOptions =
   | TSecretStorageAuthOptionsCredentials
+  | ISecretStoreCredentialsCryptoKey;
+
+export type TSecretStorageAuthorizeCredentials =
+  | ISecretStoreCredentials
+  | ISecretStoreCredentialsSession
   | ISecretStoreCredentialsCryptoKey;
 
 export interface ISecretStorage extends IStorageCommon {

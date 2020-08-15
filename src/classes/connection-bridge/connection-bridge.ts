@@ -38,6 +38,9 @@ import {
 } from '../swarm-messgae-encrypted-cache/swarm-message-encrypted-cache.utils';
 import { ISwarmMessgaeEncryptedCache } from '../swarm-messgae-encrypted-cache';
 import { ISensitiveDataSessionStorageOptions } from '../sensitive-data-session-storage/sensitive-data-session-storage.types';
+import { ISecretStorage, TSecretStorageAuthorizeCredentials } from '../secret-storage-class/secret-storage-class.types';
+import { SecretStorage } from '../secret-storage-class/secret-storage-class';
+import { IStorageProviderOptions } from '../storage-providers/storage-providers.types';
 
 /**
  * this class used if front of connection
@@ -50,7 +53,7 @@ import { ISensitiveDataSessionStorageOptions } from '../sensitive-data-session-s
  */
 export class ConnectionBridge<
   P extends ESwarmStoreConnector = ESwarmStoreConnector.OrbitDB
-> implements IConnectionBridge {
+  > implements IConnectionBridge {
   public caConnection?: ICentralAuthority;
 
   public storage?: ISwarmMessageStore<P>;
@@ -60,6 +63,10 @@ export class ConnectionBridge<
   public swarmMessageEncryptedCacheFabric?: ISwarmMessageEncryptedCacheFabric;
 
   public swarmMessageConstructorFabric?: ISwarmMessageConstructorWithEncryptedCacheFabric;
+
+  public get secretStorage() {
+    return this._secretStorage;
+  }
 
   protected options?: IConnectionBridgeOptions<P, true>;
 
@@ -76,6 +83,8 @@ export class ConnectionBridge<
   protected userDataStore?: ISensitiveDataSessionStorage;
 
   protected swarmMessageEncryptedCache?: ISwarmMessgaeEncryptedCache;
+
+  protected _secretStorage?: ISecretStorage;
 
   protected swarmConnection?: {
     getNativeConnection(): any;
@@ -100,8 +109,9 @@ export class ConnectionBridge<
       await this.startSwarmMessageEncryptedCache();
       await this.createMessageConstructor();
       await this.startSwarmConnection();
-      await this.startStorageConnection();
+      await this.startSwarmMessageStorageConnection();
       await this.setSessionExists();
+      await this.startSecretStorage();
     } catch (err) {
       console.error('connection to the swarm failed', err);
       await this.close();
@@ -133,7 +143,7 @@ export class ConnectionBridge<
       return false;
     }
 
-    const session = await this.createSession({
+    const session = await this.createSessionFromStorage({
       ...sessionParams,
       clearStorageAfterConnect: false,
     });
@@ -226,7 +236,7 @@ export class ConnectionBridge<
    * @protected
    * @memberof ConnectionBridge
    */
-  protected setOptionsSwarmConnection() {}
+  protected setOptionsSwarmConnection() { }
 
   /**
    * set options for the message storage
@@ -343,7 +353,7 @@ export class ConnectionBridge<
     }
   }
 
-  protected async createSession(
+  protected async createSessionFromStorage(
     sessionParams: ISensitiveDataSessionStorageOptions
   ): Promise<ISensitiveDataSessionStorage> {
     const session = new SensitiveDataSessionStorage();
@@ -369,7 +379,7 @@ export class ConnectionBridge<
     const sessionParams = this.options?.auth.session;
 
     if (sessionParams) {
-      this.session = await this.createSession(sessionParams);
+      this.session = await this.createSessionFromStorage(sessionParams);
     }
   }
 
@@ -476,8 +486,6 @@ export class ConnectionBridge<
   }
 
   protected async startSwarmMessageEncryptedCache(): Promise<void> {
-    const login = this.options!.auth.credentials.login;
-
     if (!this.swarmMessageEncryptedCacheFabric) {
       throw new Error('Encrypted cache fabric must be started before');
     }
@@ -493,7 +501,7 @@ export class ConnectionBridge<
    * @memberof ConnectionBridge
    * @throws
    */
-  protected async startStorageConnection(): Promise<void> {
+  protected async startSwarmMessageStorageConnection(): Promise<void> {
     const swarmMessageStorageOptions = await this.setOptionsMessageStorage();
     const swarmMessageStorage = new SwarmMessageStore<P>();
     const result = await swarmMessageStorage.connect(
@@ -628,5 +636,33 @@ export class ConnectionBridge<
       CONNECTION_BRIDGE_SESSION_STORAGE_KEYS.SESSION_DATA_AVAILABLE,
       true
     );
+  }
+
+  protected getSecretStorageDBOptions(): Partial<IStorageProviderOptions> {
+    return {
+      dbName: `${CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX.SECRET_STORAGE}//${this.options?.auth.credentials.login}`
+    };
+  }
+
+  protected getSecretStorageAuthCredentials(): TSecretStorageAuthorizeCredentials {
+    if (!this.session && !this.options?.auth.credentials.password) {
+      throw new Error('Session storage or password must be provided to authorize in SecretStorage');
+    }
+    return {
+      ...this.options?.auth.credentials,
+      ...(this.session ? { session: this.session } : undefined),
+    } as TSecretStorageAuthorizeCredentials;
+  }
+
+  protected async startSecretStorage() {
+    const secretStorage = new SecretStorage();
+    const authResult = await secretStorage.authorize(
+      this.getSecretStorageAuthCredentials(),
+      this.getSecretStorageDBOptions(),
+    )
+    if (authResult !== true) {
+      throw (authResult === false ? new Error('Conntection to the secret storage failed') : authResult);
+    }
+    this._secretStorage = secretStorage;
   }
 }

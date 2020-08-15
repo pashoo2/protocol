@@ -60,6 +60,7 @@ import {
 import { IStorageProviderOptions } from 'classes/storage-providers/storage-providers.types';
 import { ISensitiveDataSessionStorage } from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
 import { isCryptoKeyDataEncryption } from '../../utils/encryption-keys-utils/encryption-keys-utils';
+import { TSecretStorageAuthorizeCredentials } from './secret-storage-class.types';
 
 /**
  * this classed used to store value in a
@@ -312,10 +313,7 @@ export class SecretStorage
   }
 
   public async authorize(
-    credentials:
-      | ISecretStoreCredentials
-      | ISecretStoreCredentialsSession
-      | ISecretStoreCredentialsCryptoKey,
+    credentials: TSecretStorageAuthorizeCredentials,
     options?: IStorageProviderOptions
   ): Promise<boolean | Error> {
     const credentialsWithKey = credentials as ISecretStoreCredentialsCryptoKey;
