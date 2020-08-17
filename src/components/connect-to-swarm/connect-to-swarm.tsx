@@ -30,6 +30,8 @@ import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-stor
 import { TSwarmMessageInstance } from '../../classes/swarm-message/swarm-message-constructor.types';
 import { ISwarmMessageInstanceDecrypted } from '../../classes/swarm-message/swarm-message-constructor.types';
 import { ISecretStorage } from '../../classes/secret-storage-class/secret-storage-class.types';
+import { ICentralAuthorityUserProfile } from '../../classes/central-authority-class/central-authority-class-types/central-authority-class-types-common';
+import { UserProfile } from '../userProfile/userProfile';
 
 export interface IMessageDescription {
   id: string;
@@ -58,6 +60,9 @@ export class ConnectToSwarm extends React.PureComponent {
     databaseOpeningStatus: false as boolean,
     credentialsVariant: undefined as undefined | number,
     secretStorage: undefined as undefined | ISecretStorage,
+    userProfileData: undefined as
+      | undefined
+      | Partial<ICentralAuthorityUserProfile>,
   };
 
   protected get defaultDbOptions() {
@@ -196,6 +201,7 @@ export class ConnectToSwarm extends React.PureComponent {
         <button onClick={() => this.toggleMessagesSending(true)}>
           {messagingSending ? 'Stop' : 'Start'} private messages sending
         </button>
+        {this.renderUserProfile()}
         {this.renderDatabasesList()}
         {this.renderConnectToDatabase()}
         {this.renderLoadMessages()}
@@ -287,13 +293,14 @@ export class ConnectToSwarm extends React.PureComponent {
       );
 
       const userId = connectionBridge?.caConnection?.getUserIdentity();
-      debugger
-      console.log(connectionBridge.secretStorage)
+      const userProfileData = await connectionBridge?.caConnection?.getCAUserProfile();
+
       this.setState({
         connectionBridge,
         userId,
         databasesList: connectionBridge.storage?.databases,
         secretStorage: connectionBridge.secretStorage,
+        userProfileData,
       });
       this.setListenersConnectionBridge(connectionBridge);
     } catch (error) {
@@ -328,6 +335,11 @@ export class ConnectToSwarm extends React.PureComponent {
       await this.handleOpenDatabase(dbName);
     }
   };
+
+  protected renderUserProfile() {
+    const { userId, userProfileData } = this.state;
+    return <UserProfile id={userId} profile={userProfileData} />;
+  }
 
   protected renderDatabasesList() {
     const {
@@ -366,10 +378,10 @@ export class ConnectToSwarm extends React.PureComponent {
             Open default database
           </button>
         ) : (
-            <button onClick={this.handleOpenNewDatabase}>
-              Open new database
+          <button onClick={this.handleOpenNewDatabase}>
+            Open new database
           </button>
-          )}
+        )}
       </div>
     );
   }

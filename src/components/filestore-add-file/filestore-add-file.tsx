@@ -1,9 +1,5 @@
 import React, { MouseEvent } from 'react';
-import { FILE_STORAGE_SERVICE_STATUS } from 'classes/filestorage-class';
-import {
-  downloadFile,
-  downloadFileByUrl,
-} from '../../utils/files-utils/files-utils-download';
+import { downloadFile } from '../../utils/files-utils/files-utils-download';
 import { IFileStorage } from '../../classes/filestorage-class/filestorage-class.types';
 import { FILE_STORAGE_SERVICE_TYPE } from '../../classes/filestorage-class/filestorage-class.const';
 import { connectToFileStorage } from './filestore-add-file.utils';
