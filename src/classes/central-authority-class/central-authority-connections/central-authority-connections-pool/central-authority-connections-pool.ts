@@ -391,6 +391,22 @@ export class CAConnectionsPool implements ICAConnectionPool {
   }
 
   /**
+   * Returns user's profile stored by the CA
+   * provider on which the user is authorized on.
+   * If the user is not authorized on a CA
+   * then undefined will be returned.
+   *
+   * @memberof CAConnectionsPool
+   */
+  public getCAUserProfile = async () => {
+    const authConnection = this.authConnection;
+    if (!authConnection) {
+      return;
+    }
+    return authConnection.connection?.getCAUserProfile();
+  };
+
+  /**
    * set the auth result and check the auth provider
    * in the result is equals to the auth provider id.
    *

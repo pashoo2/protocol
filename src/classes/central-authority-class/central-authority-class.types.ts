@@ -167,6 +167,16 @@ export interface ICentralAuthority {
    */
   getUserDataSignKeyPair(): Error | CryptoKeyPair;
   /**
+   * Returns user's profile stored by the CA
+   * provider on which the user is authorized on.
+   * If the user is not authorized on a CA
+   * then undefined will be returned.
+   *
+   * @returns {(Promise<Partial<ICentralAuthorityUserProfile> | undefined | Error>)}
+   * @memberof ICAConnection
+   */
+  getCAUserProfile(): Promise<ICentralAuthorityUserProfile | undefined>;
+  /**
    * export a crypto keys, including a private keys.
    * This crypto keys are used to sign or encrypt
    * a messages or another valuable information and

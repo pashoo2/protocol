@@ -209,6 +209,91 @@ export class CAConnectionWithFirebaseBase {
     return true;
   }
 
+  public getCAUserProfile = async (): Promise<
+    Partial<ICentralAuthorityUserProfile> | undefined | Error
+  > => {
+    if (this.isAuthorized) {
+      return this.getCurrentUserProfileData() || undefined;
+    }
+  };
+
+  /**
+   * Returns current authorized user's profile from
+   * the firebase.
+   *
+   * @protected
+   * @returns {(Partial<ICentralAuthorityUserProfile> | null)}
+   * @memberof CAConnectionWithFirebaseBase
+   */
+  protected getCurrentUserData(): firebase.User | null {
+    return this.app?.auth().currentUser;
+  }
+
+  /**
+   * Map the user's Firebase data to the user's
+   * Central Authority profile data.
+   *
+   * @protected
+   * @param {firebase.User} userData
+   * @memberof CAConnectionWithFirebaseBase
+   * @returns {Partial<ICentralAuthorityUserProfile>}
+   */
+  protected mapUserFirebaseDataToCAUserProfileData(
+    userData: firebase.User
+  ): Partial<ICentralAuthorityUserProfile> {
+    return {
+      name: userData.displayName,
+      email: userData.email,
+      phone: userData.phoneNumber,
+      photoURL: userData.photoURL,
+    };
+  }
+
+  /**
+   * Map the user's Firabase access provider's data to the
+   * Central Authority profile data.
+   *
+   * @protected
+   * @param {firebase.UserInfo} userData
+   * @returns {Partial<ICentralAuthorityUserProfile>}
+   * @memberof CAConnectionWithFirebaseBase
+   */
+  protected mapUserProviderDataToCAUserProfileData(
+    userData: firebase.UserInfo
+  ): Partial<ICentralAuthorityUserProfile> {
+    return {
+      name: userData.displayName,
+      email: userData.email,
+      phone: userData.phoneNumber,
+      photoURL: userData.photoURL,
+    };
+  }
+
+  /**
+   * Returns current authorized user's profile from
+   * the firebase.
+   *
+   * @protected
+   * @returns {(Partial<ICentralAuthorityUserProfile> | null)}
+   * @memberof CAConnectionWithFirebaseBase
+   */
+  protected getCurrentUserProfileData():
+    | Partial<ICentralAuthorityUserProfile>
+    | undefined {
+    const userData = this.getCurrentUserData();
+
+    if (userData) {
+      const userDataFromAuthProvider = userData?.providerData?.[0];
+
+      if (userDataFromAuthProvider) {
+        return this.mapUserProviderDataToCAUserProfileData(
+          userDataFromAuthProvider
+        );
+      }
+      return this.mapUserProviderDataToCAUserProfileData(userData);
+    }
+  }
+
   /**
    * This method may be substituted by firebase
    * connection implementation to be compilant
@@ -398,14 +483,11 @@ export class CAConnectionWithFirebaseBase {
   protected async singInWithAuthCredentials(
     authCredentials: ICentralAuthorityUserAuthCredentials
   ): Promise<boolean | Error> {
-    let signInResult;
     const { login, password } = authCredentials;
 
     try {
       if (password) {
-        signInResult = await this.app
-          .auth()
-          .signInWithEmailAndPassword(login, password);
+        await this.app.auth().signInWithEmailAndPassword(login, password);
       }
     } catch (err) {
       console.error(err);

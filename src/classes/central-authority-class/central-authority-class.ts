@@ -55,6 +55,10 @@ import {
   getUserIdentityFromCryptoCredentials,
 } from './central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials-crypto-keys';
 import { checkIsValidCryptoCredentials } from './central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
+import {
+  ISecretStoreCredentialsSession,
+  ISecretStoreCredentials,
+} from '../secret-storage-class/secret-storage-class.types';
 
 const CAError = getErrorScopedClass(CENTRAL_AUTHORITY_CLASS_ERRORS_PREFIX);
 
@@ -334,6 +338,23 @@ export class CentralAuthority implements ICentralAuthority {
       new CAError('there is no credentials of the current user')
     );
   }
+
+  /**
+   * Reads the user's profile from the CA service
+   * the user is authrorized on and return it if exists.
+   * If the user is not authorized on a CA then undefined
+   * will be returned.
+   *
+   * @returns {(Promise<ICentralAuthorityUserProfile | undefined>)}
+   * @memberof CentralAuthority
+   */
+  public async getCAUserProfile(): Promise<
+    ICentralAuthorityUserProfile | undefined
+  > {
+    return this.connectionAuthProvidersPool?.getCAUserProfile();
+  }
+
+  // TODO - set the user profile in the CA service
 
   /**
    * export crypto credentials of the current user
@@ -616,14 +637,24 @@ export class CentralAuthority implements ICentralAuthority {
     optionsUser: ICentralAuthorityUser
   ): ICAStorageCurrentUserCredentialsOptions {
     const { credentials } = optionsUser;
+    let userCredentials:
+      | ISecretStoreCredentialsSession
+      | ISecretStoreCredentials;
 
-    return {
-      credentials: {
+    if (!credentials.password) {
+      userCredentials = {
         login: credentials.login,
-        // TODO - may be add validation
-        password: credentials.password!,
         session: credentials.session,
-      },
+      } as ISecretStoreCredentialsSession;
+    } else {
+      userCredentials = {
+        login: credentials.login,
+        password: credentials.password,
+        session: credentials.session,
+      } as ISecretStoreCredentials;
+    }
+    return {
+      credentials: userCredentials,
     };
   }
 

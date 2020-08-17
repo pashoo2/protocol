@@ -122,4 +122,14 @@ export interface ICAConnection {
   ): Promise<Error | null | TCentralAuthorityUserCryptoCredentials>;
   // disconnect from the remote server
   disconnect(): Promise<Error | void>;
+  /**
+   * Returns user profile stored previousely in the CentralAuthority
+   * provider or get it from another access provider.
+   *
+   * @returns {(Promise<Partial<ICentralAuthorityUserProfile> | undefined | Error>)}
+   * @memberof ICAConnection
+   */
+  getCAUserProfile(): Promise<
+    Partial<ICentralAuthorityUserProfile> | undefined | Error
+  >;
 }

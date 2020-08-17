@@ -1,4 +1,3 @@
-import { ICAConnectionConfigurationFirebase } from '../central-authority-connection-firebase/central-authority-connection-firebase.types.configuration';
 import {
   ICAConnection,
   TCAAuthProviderIdentity,
@@ -106,4 +105,16 @@ export interface ICAConnectionPool {
   close(): Promise<Error | void>;
   // sign out from the service currently authorized throught
   signOut(): Promise<Error | void>;
+  /**
+   * Returns user's profile stored by the CA
+   * provider on which the user is authorized on.
+   * If the user is not authorized on a CA
+   * then undefined will be returned.
+   *
+   * @returns {(Promise<Partial<ICentralAuthorityUserProfile> | undefined | Error>)}
+   * @memberof ICAConnection
+   */
+  getCAUserProfile(): Promise<
+    Partial<ICentralAuthorityUserProfile> | undefined | Error
+  >;
 }
