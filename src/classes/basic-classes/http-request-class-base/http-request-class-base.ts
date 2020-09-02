@@ -82,13 +82,24 @@ export class HttpRequest extends HttpRequestBodyProcessor {
   }
 
   /**
+   *  /**
    * send the request to the server
    * on the url defined in the
    * options
    *
    * @memberof HttpRequest
+   *  @returns {(Promise<string | object | Error | FormData | Blob | HttpResponseError | File | undefined>)}
    */
-  public send = async () => {
+  public send = async (): Promise<
+    | string
+    | object
+    | Error
+    | FormData
+    | Blob
+    | HttpResponseError
+    | File
+    | undefined
+  > => {
     const { url, method, credentials, mode } = this;
     const body = this.getBody();
     const headers = this.getRequestHeaders();
