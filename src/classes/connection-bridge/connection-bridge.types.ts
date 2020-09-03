@@ -8,10 +8,7 @@ import { ICentralAuthorityOptions } from '../central-authority-class/central-aut
 import { ISwarmMessageConstructor } from '../swarm-message/swarm-message-constructor.types';
 import { ISensitiveDataSessionStorageOptions } from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
-import {
-  ISwarmMessgaeEncryptedCache,
-  ISwarmMessageEncryptedCacheFabric,
-} from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 
 export type IConnectionBridgeOptionsAuthCredentials = Omit<
   ICentralAuthorityOptions['user']['credentials'],

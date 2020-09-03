@@ -51,3 +51,68 @@ export enum SwarmChannelType {
    */
   MANAGED = 'MANAGED',
 }
+
+export enum SwarmChannelStatus {
+  /**
+   * the channel is initializing
+   */
+  INITIALIZING = 'INITIALIZING',
+  /**
+   * in process of closing the channel
+   */
+  CLOSING = 'CLOSING',
+  /**
+   * ready to do an operations
+   */
+  READY = 'READY',
+  /**
+   * waited for result of some async operation(s)
+   */
+  PENDING = 'PENDING',
+}
+
+export enum SwarmChannelEvents {
+  /**
+   * emitted on a new message.
+   */
+  MESSAGE = 'MESSAGE',
+  /**
+   * emitted each time a locally stored
+   * description changed.
+   */
+  LOCAL_META_CHANGED = 'LOCAL_META_CHANGED',
+  /**
+   * emitted each time a shared metadata changed.
+   */
+  SHARED_META_CHANGED = 'SHARED_META_CHANGED',
+  /**
+   * a new participant added to the channel
+   */
+  PARTICIPANT_ADDED = 'PARTICIPANT_ADDED',
+  /**
+   * participant was removed from the participants
+   * list.
+   */
+  PRTICIPANT_REMOVED = 'PRTICIPANT_REMOVED',
+  /**
+   * channel added to the list.
+   * specific for the channels list channel type.
+   */
+  CHANNEL_ADDED = 'CHANNEL_ADDED',
+  /**
+   * channel added to the list.
+   * specific for the channels list channel type.
+   */
+  CHANNEL_DESCRIPTION_CHANGED = 'CHANNEL_DESCRIPTION_CHANGED',
+  /**
+   * channel removed from the list.
+   * specific for the channels list channel type.
+   */
+  CHANNEL_REMOVED = 'CHANNEL_REMOVED',
+  /**
+   * emitted each time when a status of the instance
+   * changed.
+   */
+  STATUS_CHANGED = 'STATUS_CHANGED',
+  ERROR = 'ERROR',
+}

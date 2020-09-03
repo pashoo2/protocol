@@ -18,22 +18,31 @@ type keyOf<T extends TEventsList> = ownKeyOf<T> extends string | symbol
   ? keyof T
   : never;
 
-type TEvent = keyOf<TEventsList>;
+type TEvent<E> = keyOf<E>;
 
 export interface TypedEventEmitter<Events extends TEventsList> {
-  addListener<E extends TEvent>(event: E, listener: Events[E]): this;
-  on<E extends TEvent>(event: E, listener: Events[E]): this;
-  once<E extends TEvent>(event: E, listener: Events[E]): this;
-  prependListener<E extends TEvent>(event: E, listener: Events[E]): this;
-  prependOnceListener<E extends TEvent>(event: E, listener: Events[E]): this;
+  addListener<E extends TEvent<Events>>(event: E, listener: Events[E]): this;
+  on<E extends TEvent<Events>>(event: E, listener: Events[E]): this;
+  once<E extends TEvent<Events>>(event: E, listener: Events[E]): this;
+  prependListener<E extends TEvent<Events>>(
+    event: E,
+    listener: Events[E]
+  ): this;
+  prependOnceListener<E extends TEvent<Events>>(
+    event: E,
+    listener: Events[E]
+  ): this;
 
-  removeAllListeners<E extends TEvent>(event: E): this;
-  removeListener<E extends TEvent>(event: E, listener: Events[E]): this;
+  removeAllListeners<E extends TEvent<Events>>(event: E): this;
+  removeListener<E extends TEvent<Events>>(event: E, listener: Events[E]): this;
 
-  emit<E extends TEvent>(event: E, ...args: Arguments<Events[E]>): boolean;
-  eventNames(): TEvent[];
-  listeners<E extends TEvent>(event: E): Function[];
-  listenerCount<E extends TEvent>(event: E): number;
+  emit<E extends TEvent<Events>>(
+    event: E,
+    ...args: Arguments<Events[E]>
+  ): boolean;
+  eventNames(): TEvent<Events>[];
+  listeners<E extends TEvent<Events>>(event: E): Function[];
+  listenerCount<E extends TEvent<Events>>(event: E): number;
 
   getMaxListeners(): number;
   setMaxListeners(maxListeners: number): this;
