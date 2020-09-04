@@ -1,5 +1,4 @@
 import { ownKeyOf } from 'types/helper.types';
-import { any } from 'prop-types';
 
 /**
  * the source code is based on
@@ -12,37 +11,48 @@ type Arguments<T> = [T] extends [(...args: infer U) => any]
   ? []
   : [T];
 
-export type TEventsList = { [key in string | symbol]: any };
+export type TEventsList<T = any> = { [key in string | symbol]: T };
 
-type keyOf<T extends TEventsList> = ownKeyOf<T> extends string | symbol
-  ? keyof T
+type keyOf<T, E extends TEventsList<T>> = ownKeyOf<E> extends string | symbol
+  ? keyof E
   : never;
 
-type TEvent<E> = keyOf<E>;
+type TEvent<T, E extends TEventsList<T>> = keyOf<T, E>;
 
-export interface TypedEventEmitter<Events extends TEventsList> {
-  addListener<E extends TEvent<Events>>(event: E, listener: Events[E]): this;
-  on<E extends TEvent<Events>>(event: E, listener: Events[E]): this;
-  once<E extends TEvent<Events>>(event: E, listener: Events[E]): this;
-  prependListener<E extends TEvent<Events>>(
+/**
+ *
+ *
+ * @export
+ * @interface TypedEventEmitter
+ * @template T - types of events arguments
+ * @template Events - desription of events and it's arguments
+ */
+export interface TypedEventEmitter<Events extends TEventsList, T = any> {
+  addListener<E extends TEvent<T, Events>>(event: E, listener: Events[E]): this;
+  on<E extends TEvent<T, Events>>(event: E, listener: Events[E]): this;
+  once<E extends TEvent<T, Events>>(event: E, listener: Events[E]): this;
+  prependListener<E extends TEvent<T, Events>>(
     event: E,
     listener: Events[E]
   ): this;
-  prependOnceListener<E extends TEvent<Events>>(
+  prependOnceListener<E extends TEvent<T, Events>>(
     event: E,
     listener: Events[E]
   ): this;
 
-  removeAllListeners<E extends TEvent<Events>>(event: E): this;
-  removeListener<E extends TEvent<Events>>(event: E, listener: Events[E]): this;
+  removeAllListeners<E extends TEvent<T, Events>>(event: E): this;
+  removeListener<E extends TEvent<T, Events>>(
+    event: E,
+    listener: Events[E]
+  ): this;
 
-  emit<E extends TEvent<Events>>(
+  emit<E extends TEvent<T, Events>>(
     event: E,
     ...args: Arguments<Events[E]>
   ): boolean;
-  eventNames(): TEvent<Events>[];
-  listeners<E extends TEvent<Events>>(event: E): Function[];
-  listenerCount<E extends TEvent<Events>>(event: E): number;
+  eventNames(): TEvent<T, Events>[];
+  listeners<E extends TEvent<T, Events>>(event: E): Function[];
+  listenerCount<E extends TEvent<T, Events>>(event: E): number;
 
   getMaxListeners(): number;
   setMaxListeners(maxListeners: number): this;
