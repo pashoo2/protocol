@@ -76,7 +76,6 @@
     "orbit-db": "^0.24.2",
     "pull-mplex": "^0.1.2",
     "sort-keys": "^3.0.0",
-    "typed-emitter": "^1.0.0",
     "uri-to-multiaddr": "^3.0.2",
     "validator": "^12.1.0",
     "orbit-db-identity-provider": "^0.3.0"
@@ -129,6 +128,7 @@
     "rollup": "^2.8.0",
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-peer-deps-external": "^2.2.2",
+    "strict-event-emitter-types": "^2.0.0",
     "ts-jest": "^25.1.0",
     "ts-transformer-imports": "^0.4.3",
     "ttypescript": "^1.5.10",

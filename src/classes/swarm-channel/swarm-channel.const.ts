@@ -116,3 +116,5 @@ export enum SwarmChannelEvents {
   STATUS_CHANGED = 'STATUS_CHANGED',
   ERROR = 'ERROR',
 }
+
+export const SWARM_CHANNEL_TYPES = new Set(Object.values(SwarmChannelType));

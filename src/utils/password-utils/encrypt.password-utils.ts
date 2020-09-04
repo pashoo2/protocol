@@ -1,17 +1,11 @@
 import { TSaltUtilsSaltType } from './../encryption-utils/salt-utils.types';
-import {
-  PASSWORD_ENCRYPTION_UTILS_ENCRYPTION_INITIALIZATION_VECTOR_LENGTH,
-  PASSWORD_ENCRYPTION_UTILS_ENCRYPTION_PARAMS,
-} from './password-utils.const';
+import { PASSWORD_ENCRYPTION_UTILS_ENCRYPTION_PARAMS } from './password-utils.const';
 import {
   generateInitializationVectorNativeArrayBuffer,
   encryptToTypedArray,
   concatDataWithInitializationVector,
 } from 'utils/encryption-utils/encryption-utils';
-import {
-  TCRYPTO_UTIL_ENCRYPT_KEY_TYPES,
-  TCRYPTO_UTIL_ENCRYPT_DATA_TYPES,
-} from 'utils/encryption-utils/crypto-utils.types';
+import { TCRYPTO_UTIL_ENCRYPT_DATA_TYPES } from 'utils/encryption-utils/crypto-utils.types';
 import { encodeArrayBufferToDOMString } from 'utils/string-encoding-utils';
 import {
   importPasswordKeyFromString,

@@ -1,13 +1,7 @@
 import {
-  IFileStorageService,
-  TFileStorageFileAddress,
-} from '../../filestorage-class.types';
-import { TFileStorageFile } from '../../filestorage-class.types';
-import {
   FILE_STORAGE_SERVICE_STATUS,
   FILE_STORAGE_SERVICE_TYPE,
 } from '../../filestorage-class.const';
-import path from 'path';
 import HttpRequest from 'classes/basic-classes/http-request-class-base/http-request-class-base';
 import {
   IFileStorageClassProviderHTTPFileGetOptions,
@@ -18,7 +12,13 @@ import {
   FILE_STORAGE_PROVIDER_HTTP_IDENTIFIER,
 } from './filestorage-class-provider-http.const';
 import { HTTP_REQUEST_MODE } from 'classes/basic-classes/http-request-class-base';
-import { downloadFileByUrl } from '../../../../utils/files-utils/files-utils-download';
+import { downloadFileByUrl } from 'utils/files-utils/files-utils-download';
+
+import {
+  IFileStorageService,
+  TFileStorageFileAddress,
+} from '../../filestorage-class.types';
+import { TFileStorageFile } from '../../filestorage-class.types';
 
 export class FileStorageClassProviderHTTP
   implements IFileStorageService<FILE_STORAGE_SERVICE_TYPE.HTTP> {
@@ -61,8 +61,12 @@ export class FileStorageClassProviderHTTP
       ...options,
       url: urlNormalized,
     });
+    const result = await req.send();
 
-    return await req.send();
+    if (!(result instanceof File)) {
+      throw new Error('Failed to get the file from the network');
+    }
+    return result;
   };
 
   public download = async (

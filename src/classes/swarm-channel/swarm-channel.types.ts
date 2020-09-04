@@ -1,3 +1,5 @@
+import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
+import { TUesrIdentity } from '../../types/users.types';
 import {
   SwarmChannelType,
   SwarmChannelStatus,
@@ -7,9 +9,12 @@ import {
   ISwarmMessageInstanceDecrypted,
   TSwarmMessageConstructorBodyMessage,
 } from '../swarm-message/swarm-message-constructor.types';
-import TypedEventEmitter from '../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 
 export type TSwarmChannelId = string;
+
+export type TSwarmChannelPassworCryptodKeyExported = string;
+
+export type TSwarmChannelPasswordHash = string;
 
 /**
  * A metadata inforamtion about the
@@ -30,36 +35,17 @@ export interface ISwarmChannelLocalMeta {
    * Blacklist of users who can't to
    * put messages on the channel.
    *
-   * @type {[]}
+   * @type {TUesrIdentity[]}
+   * @memberof ISwarmChannelLocalMeta
    */
-  blacklist: [];
+  blacklist: TUesrIdentity[];
   /**
-   * Admin user id, if exists.
+   * A crypto key exported in a string.
    *
    * @type {string}
+   * @memberof ISwarmChannelLocalMeta
    */
-  ownerId: string;
-  /**
-   * List of the user's identities
-   * who are participate in the thread.
-   *
-   * @type {string[]}
-   * @memberof ISwarmChannel
-   */
-  participants: string[];
-  /**
-   * Is anyone can put messages.
-   *
-   * @type {boolean}
-   */
-  isPublic: boolean;
-  /**
-   * Exported crypto key for encryption
-   * and decryption channel's messages.
-   *
-   * @type {string}
-   */
-  passwordKey: string;
+  passworCryptodKeyExported?: TSwarmChannelPassworCryptodKeyExported;
 }
 
 /**
@@ -82,10 +68,9 @@ export interface ISwarmChannelSharedMeta {
    *
    * @type {string}
    */
-  ownerId: string;
+  ownerId: TUesrIdentity;
   /**
-   * Whether a public channel
-   * or not.
+   * Whether a public channel or not.
    *
    * @type {boolean}
    */
@@ -97,7 +82,7 @@ export interface ISwarmChannelSharedMeta {
    *
    * @type {string[]}
    */
-  participants: string[];
+  participants: TUesrIdentity[];
   /**
    * Description of the channel.
    * May be JSON stringified
@@ -106,6 +91,16 @@ export interface ISwarmChannelSharedMeta {
    * @type {string}
    */
   description: string;
+  /**
+   * If specified that all messages of the channel are
+   * encrypted by a crypto key.
+   * It must be calculated with a crypto hash
+   * alhorithm.
+   *
+   * @type {boolean}
+   * @memberof ISwarmChannelSharedMeta
+   */
+  passwordHash?: TSwarmChannelPasswordHash;
 }
 
 /**
@@ -114,7 +109,7 @@ export interface ISwarmChannelSharedMeta {
  * @export
  * @interface ISwarmChannel
  */
-export interface ISwarmChannelDescriptionFieldsBase {
+export interface ISwarmChannelDescriptionFieldsMain {
   /**
    * A unique identity of the channel.
    *
@@ -130,7 +125,16 @@ export interface ISwarmChannelDescriptionFieldsBase {
    * @memberof ISwarmChannel
    */
   type: SwarmChannelType;
+}
 
+/**
+ * A channel for messages sharing.
+ *
+ * @export
+ * @interface ISwarmChannel
+ */
+export interface ISwarmChannelDescriptionFieldsBase
+  extends ISwarmChannelDescriptionFieldsMain {
   /**
    * Meta information about the channel
    * which stored locally.
@@ -138,7 +142,7 @@ export interface ISwarmChannelDescriptionFieldsBase {
    * @type {Partial<ISwarmChannelLocalMeta>}
    * @memberof ISwarmChannelDescriptionFieldsBase
    */
-  localMeta: Partial<ISwarmChannelLocalMeta>;
+  localMeta: ISwarmChannelLocalMeta;
   /**
    * Meta information stored in the
    * in the swarm and shared between
@@ -147,7 +151,7 @@ export interface ISwarmChannelDescriptionFieldsBase {
    * @type {Partial<ISwarmChannelSharedMeta>}
    * @memberof ISwarmChannelDescriptionFieldsBase
    */
-  sharedMeta: Partial<ISwarmChannelSharedMeta>;
+  sharedMeta: ISwarmChannelSharedMeta;
 }
 
 export type TSwarmChannelEvents<A = any> = { [key in SwarmChannelEvents]: A };
@@ -171,7 +175,8 @@ export interface ISwarmChannelStateFields<
    */
   messagesList: ISwarmMessageInstanceDecrypted[];
   status: SwarmChannelStatus;
-  events: TypedEventEmitter<E>;
+  events: EventEmitter<E>;
+  isEncrypted: boolean;
 }
 
 export interface ISwarmChannelMethodsBase {
@@ -236,19 +241,19 @@ export interface ISwarmChannelMethodsBase {
   /**
    * Add a new participant for the channel.
    *
-   * @param {string} id
+   * @param {TUesrIdentity} id
    * @returns {Promise<void>}
    * @memberof ISwarmChannelMethodsBase
    */
-  addParticipant?(id: string): Promise<void>;
+  addParticipant?(id: TUesrIdentity): Promise<void>;
   /**
    * Remove a participant from the list.
    *
-   * @param {string} id
+   * @param {TUesrIdentity} id
    * @returns {Promise<void>}
    * @memberof ISwarmChannelMethodsBase
    */
-  removeParticipant?(id: string): Promise<void>;
+  removeParticipant?(id: TUesrIdentity): Promise<void>;
   /**
    * Add new channel to the channel's list.
    * Specific for the channels list channel type.
@@ -299,10 +304,32 @@ export interface ISwarmChannel<
     description: Required<ISwarmChannelDescriptionFieldsBase>
   ): ISwarmChannel<ET, E>;
   /**
+   * If a password is used for messages encryption within the channel.
+   */
+  new (
+    description: Required<ISwarmChannelDescriptionFieldsBase>,
+    password: string
+  ): ISwarmChannel<ET, E>;
+  /**
    * Create a channel which was initialized in the past and have
    * some metadata stored locally or in the swarm.
    * If there is no locally stored metada, metadata for the channel
    * will be read from the swarm.
+   *
+   * Password for the channel must be provided only when the user
+   * open a channel or created a new one.
    */
   new (id: TSwarmChannelId, type: SwarmChannelType): ISwarmChannel<ET, E>;
+  /**
+   * Password for the channel must be provided only when the user
+   * opens a channel which requered messages encryption for all messages
+   * whithin the channel.
+   * If the channel was opened before a crypto key for the password
+   * will be stored locally and is not neccessary to be provided.
+   */
+  new (
+    id: TSwarmChannelId,
+    type: SwarmChannelType,
+    password: string
+  ): ISwarmChannel<ET, E>;
 }
