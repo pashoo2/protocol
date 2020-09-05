@@ -38,6 +38,14 @@ export class SwarmChannelBase<
    * @memberof SwarmChannelBase
    */
   protected passwordKey?: CryptoKey;
+  /**
+   * Hash of the password value
+   *
+   * @protected
+   * @type {string}
+   * @memberof SwarmChannelBase
+   */
+  protected passwordHash?: string;
 
   /**
    * If true than a new channel must be created whithin initialization process,

@@ -54,6 +54,17 @@ export enum SwarmChannelType {
 
 export enum SwarmChannelStatus {
   /**
+   * the channel still in processing
+   * of the initial options values
+   */
+  STARTING = 'STARTING',
+  /**
+   * an options initial were set
+   * and the instance ready to be
+   * initialized.
+   */
+  STARTED = 'STARTED',
+  /**
    * the channel is initializing
    */
   INITIALIZING = 'INITIALIZING',
