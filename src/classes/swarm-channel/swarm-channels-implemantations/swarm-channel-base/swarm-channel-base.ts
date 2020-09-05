@@ -3,7 +3,6 @@ import {
   TSwarmChannelEvents,
   ISwarmChannelDescriptionFieldsBase,
   TSwarmChannelId,
-  TSwarmChannelPasswordKey,
 } from '../../swarm-channel.types';
 import { SwarmChannelType } from '../../swarm-channel.const';
 import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
