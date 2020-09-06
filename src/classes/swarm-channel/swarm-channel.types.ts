@@ -116,7 +116,7 @@ export interface ISwarmChannelDescriptionFieldsMain {
    * @type {string}
    * @memberof ISwarmChannel
    */
-  id: TSwarmChannelId;
+  readonly id: TSwarmChannelId;
 
   /**
    * Type of the channel
@@ -124,7 +124,7 @@ export interface ISwarmChannelDescriptionFieldsMain {
    * @type {ChannelType}
    * @memberof ISwarmChannel
    */
-  type: SwarmChannelType;
+  readonly type: SwarmChannelType;
 }
 
 /**
@@ -277,6 +277,16 @@ export interface ISwarmChannelMethodsBase {
    */
   removeChannel?(channelId: string): Promise<void>;
 }
+
+export type TSwarmChannelConstructorOptions =
+  // channel's description without password
+  | [Required<ISwarmChannelDescriptionFieldsBase>]
+  // channel's description with password
+  | [Required<ISwarmChannelDescriptionFieldsBase>, string]
+  // channel's id and type without a password
+  | [TSwarmChannelId, SwarmChannelType]
+  // channel's id and type with a password
+  | [TSwarmChannelId, SwarmChannelType, string];
 
 /**
  * A channel which available to post messages into.

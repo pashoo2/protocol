@@ -20,7 +20,12 @@ import {
   SWARM_CHANNEL_BASE_VALIDATOR_CHANNEL_PASSWORD_MAX_LENGTH,
   SWARM_CHANNEL_BASE_VALIDATOR_CHANNEL_PASSWORD_HASH_MIN_LENGTH,
 } from './swarm-channel-base-validator.const';
-import { isJWK } from '../../../../../../utils/encryption-keys-utils/encryption-keys-utils';
+import {
+  isJWK,
+  isCryptoKey,
+  isCryptoKeyDataDecryption,
+  isCryptoKeyDataEncryption,
+} from '../../../../../../utils/encryption-keys-utils/encryption-keys-utils';
 import { PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_EXPORT_FORMAT } from '../../../../../../utils/password-utils/password-utils.const';
 import {
   SWARM_CHANNEL_BASE_VALIDATOR_CHANNEL_NAME_MAX_LENGTH,
@@ -146,6 +151,28 @@ export class SwarmChannelBaseOptionsValidator {
         'Channel password exported crypto key must be exported in JWK format'
       );
     }
+    return true;
+  }
+
+  checPasswordCryptoKey(
+    channelPwdCryptoKey: any
+  ): channelPwdCryptoKey is CryptoKey {
+    assert(
+      !!channelPwdCryptoKey,
+      'Channel password crypto key must not be empty'
+    );
+    assert(
+      isCryptoKey(channelPwdCryptoKey),
+      'Channel password crypto key must be a valid instance of CryptoKey'
+    );
+    assert(
+      isCryptoKeyDataDecryption(channelPwdCryptoKey),
+      'Channel password crypto key should allow to decrypt messages'
+    );
+    assert(
+      isCryptoKeyDataEncryption(channelPwdCryptoKey),
+      'Channel password crypto key should allow to encrypt messages'
+    );
     return true;
   }
 

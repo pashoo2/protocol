@@ -180,7 +180,7 @@ export const getPasswordHash = async (
  * @param {ISwarmChannelPwdUtilsOptions} [options]
  * @returns {Promise<boolean>}
  */
-export const checkIsPasswordValid = async (
+export const checkIsPasswordRelatedToHash = async (
   id: TSwarmChannelId,
   type: SwarmChannelType,
   passwordString: string,

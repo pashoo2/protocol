@@ -10,7 +10,7 @@ export interface IStatusedClassHelperOptions<
   SCE extends string,
   Status extends string
 > {
-  statusChanesEmitter: TStatusClassHelperStatusChangesEmitter<SCE, Status>;
+  statusChangesEmitter: TStatusClassHelperStatusChangesEmitter<SCE, Status>;
   statusChangedEventName: SCE;
 }
 

@@ -91,7 +91,11 @@ export class StatusedClassHelper<
     return this.__resolveOnCondition(() => true, timeoutMs);
   }
 
-  stop() {
+  clearStatus() {
+    this.__clearStatus();
+  }
+
+  stopStatusEmitter() {
     this.__clearStatus();
     this.__unsetIsReady();
     this.__clearEventEmitters();
@@ -117,9 +121,19 @@ export class StatusedClassHelper<
     this.__setNewStatus(statusName);
     this.__emitStatusChaned(statusName);
   };
+
+  protected __getEmitterEventStatusChanged = (): StatusChangedEventName => {
+    const emitterEventStatusChanged = this.__emitterEventStatusChanged;
+
+    if (!emitterEventStatusChanged) {
+      throw new Error('emitterEventStatusChanged must not be empty');
+    }
+    return emitterEventStatusChanged;
+  };
+
   protected __setListenerForStatusChanges(): void {
     this.__emitterExternal?.addListener(
-      this.__emitterEventStatusChanged!,
+      this.__getEmitterEventStatusChanged(),
       this.__handleEmitterStatusChanged
     );
   }
@@ -130,7 +144,10 @@ export class StatusedClassHelper<
     assert(!!options, 'Options must be provided');
     assert(typeof options === 'object', 'Options must be an object');
 
-    const { statusChangedEventName, statusChanesEmitter } = options;
+    const {
+      statusChangedEventName,
+      statusChangesEmitter: statusChanesEmitter,
+    } = options;
 
     assert(
       !!statusChangedEventName,
@@ -170,7 +187,7 @@ export class StatusedClassHelper<
     options: IStatusedClassHelperOptions<StatusChangedEventName, Status>
   ): void {
     this.__emitterEventStatusChanged = options.statusChangedEventName;
-    this.__emitterExternal = options.statusChanesEmitter;
+    this.__emitterExternal = options.statusChangesEmitter;
   }
 
   /**
@@ -236,16 +253,20 @@ export class StatusedClassHelper<
   protected __emitExternalEmitterNewStatus(
     statusName: Status | undefined
   ): void {
-    this.__emitterExternal?.emit(this.__emitterEventStatusChanged!, statusName);
+    this.__emitterExternal?.emit(
+      this.__getEmitterEventStatusChanged(),
+      statusName
+    );
   }
 
   protected __clearEventEmitters(): void {
     this.__emitterExternal?.removeListener(
-      this.__emitterEventStatusChanged!,
+      this.__getEmitterEventStatusChanged(),
       this.__handleEmitterStatusChanged
     );
     this.__emitterInnerStatusChanged.removeAllListeners();
     (this.__emitterInnerStatusChanged as any) = undefined;
+    this.__emitterExternal = undefined;
   }
 
   protected __clearOptions(): void {
