@@ -1,7 +1,6 @@
 import {
   ISwarmChannel,
   TSwarmChannelEvents,
-  ISwarmChannelDescriptionFieldsBase,
   TSwarmChannelId,
 } from '../../swarm-channel.types';
 import {
@@ -11,17 +10,9 @@ import {
 } from '../../swarm-channel.const';
 import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { StatusedClassHelper } from '../../../../utils/classes-helpers/statused-class-helper/statused-class-helper';
-import {
-  TSwarmChannelConstructorOptions,
-  TSwarmChannelPasswordHash,
-} from '../../swarm-channel.types';
-import {
-  getPasswordHash,
-  generatePasswordKey,
-} from './utils/swarm-channel-pwd.utils/swarm-channel-pwd.utils';
-import { OPTIONS_PWD_UTILS_DEFAULT } from './utils/swarm-channel-pwd.utils/swarm-channel-pwd.utils.const';
-import { ISwarmChannelPwdUtilsOptions } from './utils/swarm-channel-pwd.utils/swarm-channel-pwd.utils.types';
-import { SwarmChannelBaseOptionsValidator } from './subclasses/swarm-channel-validators/swarm-channel-base-validator/swarm-channel-base-validator';
+import { TSwarmChannelConstructorOptions } from '../../swarm-channel.types';
+import { ISwarmChannelBaseConstructorOptions } from './swarm-channel-base.types';
+import { SwarmChannelOptionsFactory } from './utils/swarm-channel-options-factory/swarm-channel-options-factory';
 import {
   SWARM_CHANNEL_BASE_CHAMMEL_TYPE_DEFAULT,
   SWARM_CHANNEL_BASE_ID_DEFAULT,
@@ -55,48 +46,29 @@ export class SwarmChannelBase<
   }
 
   public get id(): TSwarmChannelId {
-    return this._id;
+    return (
+      this._optionsChannelConstructor?.channelId ||
+      SWARM_CHANNEL_BASE_ID_DEFAULT
+    );
   }
 
   public get type(): SwarmChannelType {
-    return this._type;
+    return (
+      this._optionsChannelConstructor?.channelType ||
+      SWARM_CHANNEL_BASE_CHAMMEL_TYPE_DEFAULT
+    );
   }
-  protected _type: SwarmChannelType = SWARM_CHANNEL_BASE_CHAMMEL_TYPE_DEFAULT;
-
-  protected _id: TSwarmChannelId = SWARM_CHANNEL_BASE_ID_DEFAULT;
 
   /**
-   * Crypto key used for encryption and decryprion of all
-   *  the channel's messages.
+   * Optionns which will be used during
+   * the channel's initialization or
+   * creation of a new channel.
    *
    * @protected
-   * @type {CryptoKey}
+   * @type {ISwarmChannelBaseConstructorOptions}
    * @memberof SwarmChannelBase
    */
-  protected _passwordKey?: CryptoKey;
-  /**
-   * Hash of the password value
-   *
-   * @protected
-   * @type {string}
-   * @memberof SwarmChannelBase
-   */
-  protected _passwordHash?: string;
-
-  /**
-   * If true than a new channel must be created whithin initialization process,
-   * according to the options provided in constructor.
-   *
-   * @protected
-   * @type {boolean}
-   * @memberof SwarmChannelBase
-   */
-  protected _isNecessaryToCreateNewChannel: boolean = false;
-  protected _validator = new SwarmChannelBaseOptionsValidator();
-
-  protected get _pwdUtilsOptions(): ISwarmChannelPwdUtilsOptions {
-    return OPTIONS_PWD_UTILS_DEFAULT;
-  }
+  protected _optionsChannelConstructor?: ISwarmChannelBaseConstructorOptions;
 
   constructor(...options: TSwarmChannelConstructorOptions) {
     super({
@@ -112,315 +84,44 @@ export class SwarmChannelBase<
   };
 
   /**
-   * Validate options for creation of a new swarm channel
+   * Set options used by the channel's constructor
+   * later.
    *
    * @protected
-   * @param {Required<ISwarmChannelDescriptionFieldsBase>} options
+   * @param {ISwarmChannelBaseConstructorOptions} options
    * @memberof SwarmChannelBase
    */
-  protected _validateOptionsNewChannel(
-    options: Required<ISwarmChannelDescriptionFieldsBase>
+  protected _setChannelConstructorOptions(
+    options: ISwarmChannelBaseConstructorOptions
   ): void {
-    this._validator.checkChannelDecription(options);
+    this._optionsChannelConstructor = options;
   }
 
   /**
-   * Validate a password string, used for messages enc_passwordHashryption
-   * and decryption.
+   * Handle options incoming.
    *
    * @protected
-   * @param {string} password
+   * @param {TSwarmChannelConstructorOptions} options
+   * @returns {Promise<void>}
    * @memberof SwarmChannelBase
    */
-  protected _validatePasswordForChannelEncryption(password: string): void {
-    this._validator.checkPassword(password);
-  }
-
-  protected _validateOptionsForStartingAnExistingChannel({
-    channelId,
-    channelType,
-  }: {
-    channelId: TSwarmChannelId;
-    channelType: SwarmChannelType;
-  }): void {
-    this._validator.checkId(channelId);
-    this._validator.checkType(channelType);
-  }
-
-  protected _handleOptions(options: TSwarmChannelConstructorOptions): void {
-    if (options.length === 1) {
-      // options for a new channel without encryption
-      const [optionsNewChannel] = options;
-
-      this._handleOptionsForNewChannelWithoutEncryption(optionsNewChannel);
-    } else if (options.length === 2) {
-      if (typeof options[0] === 'object') {
-        // options for a new channel with encryption
-        const [optionsNewChannel, password] = options;
-
-        this._handleOptionsForNewChannelWithEncryption(
-          optionsNewChannel,
-          password
-        );
-      } else {
-        // options for an existing channel without encryption
-        const [channelId, channelType] = options as [
-          TSwarmChannelId,
-          SwarmChannelType
-        ];
-
-        this._handleOptionsForExistingChannelNoEcryption(
-          channelId,
-          channelType
-        );
-      }
-    } else if (options.length === 3) {
-      // options for an existing channel with encryption
-      const [channelId, channelType, password] = options;
-
-      this._handleOptionsForExistingChannelWithEncryption(
-        channelId,
-        channelType,
-        password
-      );
-    } else {
-      throw new Error('An unknown options provided for starting the channel');
-    }
-  }
-
-  /**
-   * Handle options for creating a new channel without additional
-   * encryption of channel's messages.
-   *
-   * @protected
-   * @param {Required<ISwarmChannelDescriptionFieldsBase>} options
-   * @memberof SwarmChannelBase
-   */
-  protected _handleOptionsForNewChannelWithoutEncryption(
-    optionsNewChannel: Required<ISwarmChannelDescriptionFieldsBase>
-  ): void {
-    this._validateOptionsNewChannel(optionsNewChannel);
-    this._setOptionsToCreateNewChannelWithoutPasswordEncryption(
-      optionsNewChannel
-    );
-  }
-
-  /**
-   * Handle options for creating a new channel with messages encryption.
-   *
-   * @protected
-   * @param {Required<ISwarmChannelDescriptionFieldsBase>} optionsNewChannel
-   * @param {string} password
-   * @memberof SwarmChannelBase
-   */
-  protected _handleOptionsForNewChannelWithEncryption(
-    optionsNewChannel: Required<ISwarmChannelDescriptionFieldsBase>,
-    password: string
-  ) {
-    this._validateOptionsNewChannel(optionsNewChannel);
-    this._validatePasswordForChannelEncryption(password);
-    this._setOptionsToCreateNewChannelWithoutPasswordEncryption(
-      optionsNewChannel
-    );
-  }
-
-  /**
-   * Handle options for an existing channel without
-   * messages additional encryption.
-   *
-   * @protected
-   * @param {TSwarmChannelId} channelId
-   * @param {SwarmChannelType} channelType
-   * @memberof SwarmChannelBase
-   */
-  protected _handleOptionsForExistingChannelNoEcryption(
-    channelId: TSwarmChannelId,
-    channelType: SwarmChannelType
-  ) {
-    this._validateOptionsForStartingAnExistingChannel({
-      channelId,
-      channelType,
-    });
-    this._setOptionsToStartAnExistingChannelWithoutPasswordEncryption(
-      channelId,
-      channelType
-    );
-  }
-
-  /**
-   * Options for an existing channel with encryption
-   *
-   * @protected
-   * @param {TSwarmChannelId} channelId
-   * @param {SwarmChannelType} channelType
-   * @param {string} password
-   * @memberof SwarmChannelBase
-   */
-  protected _handleOptionsForExistingChannelWithEncryption(
-    channelId: TSwarmChannelId,
-    channelType: SwarmChannelType,
-    password: string
-  ) {
-    this._validateOptionsForStartingAnExistingChannel({
-      channelId,
-      channelType,
-    });
-    this._validatePasswordForChannelEncryption(password);
-    this._setOptionsToStartAnExistingChannelWithPasswordEncryption(
-      channelId,
-      channelType,
-      password
-    );
-  }
-
-  protected _getPasswordHash(
-    password: string
-  ): Promise<TSwarmChannelPasswordHash> {
-    return getPasswordHash(
-      this._id,
-      this._type,
-      password,
-      this._pwdUtilsOptions
-    );
-  }
-
-  protected _getPasswordKey(password: string): Promise<CryptoKey> {
-    return generatePasswordKey(
-      this._id,
-      this._type,
-      password,
-      this._pwdUtilsOptions
-    );
-  }
-
-  protected _setPasswordKey(pwdCryptoKey: CryptoKey): void {
-    this._validator.checPasswordCryptoKey(pwdCryptoKey);
-    this._passwordKey = pwdCryptoKey;
-  }
-
-  protected _setPasswordHash(pwdHash: TSwarmChannelPasswordHash): void {
-    this._validator.checkPasswordHash(pwdHash);
-    this._passwordHash = pwdHash;
-  }
-
-  /**
-   * Handle a password used for channel's messages
-   * encryption.
-   *
-   * @protected
-   * @param {string} password
-   * @memberof SwarmChannelBase
-   */
-  protected async _handlePasswordForMessagesEncryption(
-    password: string
+  protected async _handleOptions(
+    options: TSwarmChannelConstructorOptions
   ): Promise<void> {
     this.setStatus(SwarmChannelStatus.STARTING);
     try {
-      const [passwordKey, passwordHash] = await Promise.all([
-        this._getPasswordKey(password),
-        this._getPasswordHash(password),
-      ]);
+      const factoryChannelConstructorOptions = new SwarmChannelOptionsFactory();
+      const channelConstructorOptions = await factoryChannelConstructorOptions.handleOptions(
+        options
+      );
 
-      this._setPasswordKey(passwordKey);
-      this._setPasswordHash(passwordHash);
+      this._setChannelConstructorOptions(channelConstructorOptions);
       this.setStatus(SwarmChannelStatus.STARTED);
     } catch (err) {
       console.error(
-        new Error(`SwarmChannelBase::failed to handle password: ${err.message}`)
+        new Error(`Failed to get options for channel's constructor`)
       );
       this.clearStatus();
     }
-  }
-
-  /**
-   * Set options for creation a new swarm channel with or without
-   * additional messages encryption by a password provided
-   *
-   * @protected
-   * @param {Required<ISwarmChannelDescriptionFieldsBase>} options
-   * @param {string} [password]
-   * @memberof SwarmChannelBase
-   */
-  protected _setOptionsToCreateNewChannel(
-    options: Required<ISwarmChannelDescriptionFieldsBase>
-  ) {
-    this._isNecessaryToCreateNewChannel = true;
-    this._id = options.id;
-    this._type = options.type;
-  }
-
-  /**
-   * Set options which allows to create a new swarm channel
-   * without messages additional encryption.
-   *
-   * @protected
-   * @param {Required<ISwarmChannelDescriptionFieldsBase>} options
-   * @memberof SwarmChannelBase
-   */
-  protected _setOptionsToCreateNewChannelWithoutPasswordEncryption(
-    options: Required<ISwarmChannelDescriptionFieldsBase>
-  ): void {
-    this._setOptionsToCreateNewChannel(options);
-  }
-
-  /**
-   * Set options which allows to create a new swarm channel
-   * with messages additional encryption by a password.
-   *
-   * @protected
-   * @param {Required<ISwarmChannelDescriptionFieldsBase>} options
-   * @memberof SwarmChannelBase
-   */
-  protected _setOptionsToCreateNewChannelWithPasswordEncryption(
-    options: Required<ISwarmChannelDescriptionFieldsBase>,
-    password: string
-  ): void {
-    this._setOptionsToCreateNewChannel(options);
-    this._handlePasswordForMessagesEncryption(password);
-  }
-
-  protected _setOptionsStartExistingChannel(
-    channelId: TSwarmChannelId,
-    channelType: SwarmChannelType
-  ): void {
-    this._isNecessaryToCreateNewChannel = false;
-    this._id = channelId;
-    this._type = channelType;
-  }
-
-  /**
-   * Set options for starting an existing channel without
-   * an additional messages encryption.
-   *
-   * @protected
-   * @param {TSwarmChannelId} channelId
-   * @param {SwarmChannelType} channelType
-   * @memberof SwarmChannelBase
-   */
-  protected _setOptionsToStartAnExistingChannelWithoutPasswordEncryption(
-    channelId: TSwarmChannelId,
-    channelType: SwarmChannelType
-  ): void {
-    this._setOptionsStartExistingChannel(channelId, channelType);
-  }
-
-  /**
-   * Set options for starting an existing channel's with the
-   * given id and type. Every message will be encrypted by
-   * the password.
-   *
-   * @protected
-   * @param {TSwarmChannelId} channelId
-   * @param {SwarmChannelType} channelType
-   * @param {string} password
-   * @memberof SwarmChannelBase
-   */
-  protected _setOptionsToStartAnExistingChannelWithPasswordEncryption(
-    channelId: TSwarmChannelId,
-    channelType: SwarmChannelType,
-    password: string
-  ): void {
-    this._setOptionsStartExistingChannel(channelId, channelType);
-    this._handlePasswordForMessagesEncryption(password);
   }
 }

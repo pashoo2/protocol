@@ -1,3 +1,5 @@
+import assert from 'assert';
+
 import {
   ISwarmChannelDescriptionFieldsBase,
   TSwarmChannelId,
@@ -19,11 +21,6 @@ import {
   ISwarmChannelLocalMeta,
   ISwarmChannelSharedMeta,
 } from '../../../../swarm-channel.types';
-import assert from 'assert';
-import {
-  SWARM_CHANNEL_BASE_CHAMMEL_TYPE_DEFAULT,
-  SWARM_CHANNEL_BASE_ID_DEFAULT,
-} from './../../swarm-channel-base.const';
 
 export class SwarmChannelOptionsFactory {
   /**
@@ -39,11 +36,12 @@ export class SwarmChannelOptionsFactory {
     | undefined {
     return this._optionsSwarmChannelConstructor;
   }
+
   protected _optionsSwarmChannelConstructor?: ISwarmChannelBaseConstructorOptions;
 
-  protected _type: SwarmChannelType = SWARM_CHANNEL_BASE_CHAMMEL_TYPE_DEFAULT;
+  protected _type?: SwarmChannelType;
 
-  protected _id: TSwarmChannelId = SWARM_CHANNEL_BASE_ID_DEFAULT;
+  protected _id?: TSwarmChannelId;
 
   /**
    * Crypto key used for encryption and decryprion of all
@@ -560,8 +558,8 @@ export class SwarmChannelOptionsFactory {
   protected _getOptionsSwarmChannelConstructor(): ISwarmChannelBaseConstructorOptions {
     this._validateOptionsSwarmChannelConstructor();
     return {
-      channelId: this._id,
-      channelType: this._type,
+      channelId: this._id!,
+      channelType: this._type!,
       isNecessaryToCreateANewChannel: this._isNecessaryToCreateNewChannel,
       localMeta: this._localMeta,
       sharedMeta: this._sharedMeta,
