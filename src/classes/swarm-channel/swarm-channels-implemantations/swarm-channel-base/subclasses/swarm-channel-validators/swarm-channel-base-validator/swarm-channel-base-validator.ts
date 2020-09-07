@@ -5,7 +5,7 @@ import {
   TSwarmChannelPassworCryptodKeyExported,
   TSwarmChannelPasswordHash,
   ISwarmChannelDescriptionFieldsBase,
-} from '../../../../swarm-channel.types';
+} from '../../../../../swarm-channel.types';
 import assert from 'assert';
 import { TUesrIdentity } from 'types/users.types';
 import { validateUserIdentity } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-auth-credentials/central-authority-validators-auth-credentials';
@@ -13,7 +13,7 @@ import { validateUserIdentity } from 'classes/central-authority-class/central-au
 import {
   SwarmChannelType,
   SWARM_CHANNEL_TYPES,
-} from '../../../../swarm-channel.const';
+} from '../../../../../swarm-channel.const';
 import { ISwarmChannelDescriptionFieldsBasePartial } from './swarm-channel-base-validator.types';
 import {
   SWARM_CHANNEL_BASE_VALIDATOR_CHANNEL_PASSWORD_MIN_LENGTH,
@@ -25,8 +25,8 @@ import {
   isCryptoKey,
   isCryptoKeyDataDecryption,
   isCryptoKeyDataEncryption,
-} from '../../../../../../utils/encryption-keys-utils/encryption-keys-utils';
-import { PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_EXPORT_FORMAT } from '../../../../../../utils/password-utils/password-utils.const';
+} from '../../../../../../../utils/encryption-keys-utils/encryption-keys-utils';
+import { PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_EXPORT_FORMAT } from '../../../../../../../utils/password-utils/password-utils.const';
 import {
   SWARM_CHANNEL_BASE_VALIDATOR_CHANNEL_NAME_MAX_LENGTH,
   SWARM_CHANNEL_BASE_VALIDATOR_CHANNEL_DESCRIPTION_MAX_LENGTH,

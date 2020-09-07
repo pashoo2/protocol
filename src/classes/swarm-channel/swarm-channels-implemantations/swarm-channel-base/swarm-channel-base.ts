@@ -13,16 +13,15 @@ import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/eve
 import { StatusedClassHelper } from '../../../../utils/classes-helpers/statused-class-helper/statused-class-helper';
 import {
   TSwarmChannelConstructorOptions,
-  TSwarmChannelId,
   TSwarmChannelPasswordHash,
 } from '../../swarm-channel.types';
-import { SwarmChannelBaseOptionsValidator } from './subclasses/swarm-channel-base-validator/swarm-channel-base-validator';
 import {
   getPasswordHash,
   generatePasswordKey,
 } from './utils/swarm-channel-pwd.utils/swarm-channel-pwd.utils';
 import { OPTIONS_PWD_UTILS_DEFAULT } from './utils/swarm-channel-pwd.utils/swarm-channel-pwd.utils.const';
 import { ISwarmChannelPwdUtilsOptions } from './utils/swarm-channel-pwd.utils/swarm-channel-pwd.utils.types';
+import { SwarmChannelBaseOptionsValidator } from './subclasses/swarm-channel-validators/swarm-channel-base-validator/swarm-channel-base-validator';
 import {
   SWARM_CHANNEL_BASE_CHAMMEL_TYPE_DEFAULT,
   SWARM_CHANNEL_BASE_ID_DEFAULT,
