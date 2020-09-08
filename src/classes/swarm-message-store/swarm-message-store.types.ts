@@ -129,7 +129,8 @@ export type ISwarmMessageStoreDeleteMessageArg<
   : TSwarmMessageInstance; // instance of the message to remove
 
 /**
- * allows to write messages to the swarm storage
+ * Allows to write messages to the swarm storage
+ * and creating a new swarm databases.
  *
  * @export
  * @interface ISwarmMessageStore

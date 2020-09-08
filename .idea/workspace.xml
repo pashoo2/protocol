@@ -4,8 +4,9 @@
     <list default="true" id="e70e70e3-e48a-4dfd-91a6-03818e8691f6" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/node_modules-local/hypervision-browser" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules-local/hypervision-browser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channel.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channel.types.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/swarm-channel-base.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/swarm-channel-base.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/utils/swarm-channel-options-factory/swarm-channel-options-factory.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/utils/swarm-channel-options-factory/swarm-channel-options-factory.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/swarm-channel-base.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/swarm-channel-base.types.ts" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -25,43 +26,22 @@
       <file leaf-file-name="swarm-channel-base.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/swarm-channel-base.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="17" column="8" lean-forward="true" selection-start-line="17" selection-start-column="8" selection-end-line="17" selection-end-column="8" />
+            <state relative-caret-position="480">
+              <caret line="104" column="19" selection-start-line="104" selection-start-column="9" selection-end-line="104" selection-end-column="19" />
               <folding>
-                <element signature="e#0#141#0" expanded="true" />
+                <element signature="e#0#28#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="swarm-channel-pwd.utils.const.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/utils/swarm-channel-pwd.utils/swarm-channel-pwd.utils.const.ts">
+      <file leaf-file-name="swarm-channel.types.ts" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/classes/swarm-channel/swarm-channel.types.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="9" column="38" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="38" />
+            <state relative-caret-position="560">
+              <caret line="340" column="30" selection-start-line="340" selection-start-column="30" selection-end-line="340" selection-end-column="30" />
               <folding>
-                <element signature="e#0#126#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="swarm-channel-options-factory.ts" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/utils/swarm-channel-options-factory/swarm-channel-options-factory.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="9" column="28" selection-start-line="9" selection-start-column="28" selection-end-line="9" selection-end-column="28" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="swarm-channel-base.const.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/swarm-channel-base.const.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
-              <caret line="10" column="39" selection-start-line="10" selection-start-column="39" selection-end-line="10" selection-end-column="39" />
-              <folding>
-                <element signature="e#0#61#0" expanded="true" />
+                <element signature="e#0#103#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -157,6 +137,7 @@
         <option value="$PROJECT_DIR$/src/backog-classes/channel-authority-class/channel-authority-connections/channel-authority-connection-with-server-api/index,ts" />
         <option value="$PROJECT_DIR$/node_modules/ipfs/dist/index.js" />
         <option value="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/utils/swarm-channel-options-factory/swarm-channel-options-factory.ts" />
+        <option value="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channel.types.ts" />
       </list>
     </option>
   </component>
@@ -187,7 +168,7 @@
       <path value="$PROJECT_DIR$/package.json" />
     </packageJsonPaths>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="y" value="27" />
     <option name="width" value="960" />
     <option name="height" value="1007" />
@@ -239,27 +220,6 @@
               <item name="swarm-channel" type="462c0819:PsiDirectoryNode" />
               <item name="swarm-channels-implemantations" type="462c0819:PsiDirectoryNode" />
               <item name="swarm-channel-base" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
-              <item name="protocol" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="classes" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-channel" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-channels-implemantations" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-channel-base" type="462c0819:PsiDirectoryNode" />
-              <item name="utils" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
-              <item name="protocol" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="classes" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-channel" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-channels-implemantations" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-channel-base" type="462c0819:PsiDirectoryNode" />
-              <item name="utils" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-channel-options-factory" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -438,6 +398,7 @@
       <workItem from="1598006302091" duration="89000" />
       <workItem from="1599501382611" duration="454000" />
       <workItem from="1599501898061" duration="1869000" />
+      <workItem from="1599587765372" duration="72000" />
     </task>
     <servers />
   </component>
@@ -474,22 +435,23 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="33957000" />
+    <option name="totallyTimeSpent" value="34029000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="72" y="27" width="1368" height="873" extended-state="7" />
+    <frame x="72" y="27" width="1368" height="873" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info anchor="bottom" id="TypeScript" order="7" weight="0.32875144" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.36842105" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
-      <window_info anchor="bottom" id="Version Control" order="7" visible="true" weight="0.18783069" />
+      <window_info anchor="bottom" id="Version Control" order="7" weight="0.18733509" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.28980526" />
       <window_info id="npm" order="2" side_tool="true" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="7" weight="0.35607675" />
+      <window_info anchor="bottom" id="TypeScript" order="7" weight="0.32875144" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.36842105" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32804233" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.35738832" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -498,7 +460,6 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32875144" />
       <window_info anchor="right" id="Coverage" order="3" side_tool="true" weight="0.32960597" />
     </layout>
   </component>
@@ -555,13 +516,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/async-queue-class-base/async-queue-class-base.test.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="10" column="32" lean-forward="true" selection-start-line="10" selection-start-column="32" selection-end-line="14" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/utils/encryption-utils/encrypt-data.encryption-utils.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="204">
@@ -756,19 +710,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/swarm-channel-base.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" column="8" lean-forward="true" selection-start-line="17" selection-start-column="8" selection-end-line="17" selection-end-column="8" />
-          <folding>
-            <element signature="e#0#141#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/utils/swarm-channel-pwd.utils/swarm-channel-pwd.utils.const.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
+        <state relative-caret-position="75">
           <caret line="9" column="38" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="38" />
           <folding>
             <element signature="e#0#126#0" expanded="true" />
@@ -778,8 +722,28 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/utils/swarm-channel-options-factory/swarm-channel-options-factory.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
+        <state relative-caret-position="45">
           <caret line="9" column="28" selection-start-line="9" selection-start-column="28" selection-end-line="9" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/swarm-channel-base.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="480">
+          <caret line="104" column="19" selection-start-line="104" selection-start-column="9" selection-end-line="104" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#28#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/swarm-channel/swarm-channel.types.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="560">
+          <caret line="340" column="30" selection-start-line="340" selection-start-column="30" selection-end-line="340" selection-end-column="30" />
+          <folding>
+            <element signature="e#0#103#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

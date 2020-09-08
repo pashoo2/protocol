@@ -1,5 +1,10 @@
 import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { TUesrIdentity } from '../../types/users.types';
+import { ISwarmMessageConstructor } from '../swarm-message/swarm-message-constructor.types';
+import { ISecretStorage } from '../secret-storage-class/secret-storage-class.types';
+import { ESwarmStoreConnector } from '../swarm-store-class/swarm-store-class.const';
+import { ISwarmStoreConnectorBase } from '../swarm-store-class/swarm-store-class.types';
+import { ISwarmMessageStore } from '../swarm-message-store/swarm-message-store.types';
 import {
   SwarmChannelType,
   SwarmChannelStatus,
@@ -17,13 +22,42 @@ export type TSwarmChannelPassworCryptodKeyExported = string;
 export type TSwarmChannelPasswordHash = string;
 
 /**
+ * A channel for messages sharing.
+ *
+ * @export
+ * @interface ISwarmChannel
+ */
+export interface ISwarmChannelDescriptionFieldsMain {
+  /**
+   * A unique identity of the channel.
+   * Can't be changed during of the channel's
+   * lifecycle.
+   *
+   * @type {string}
+   * @memberof ISwarmChannel
+   */
+  readonly id: TSwarmChannelId;
+
+  /**
+   * Type of the channel
+   * Can't be changed during of the channel's
+   * lifecycle.
+   *
+   * @type {ChannelType}
+   * @memberof ISwarmChannel
+   */
+  readonly type: SwarmChannelType;
+}
+
+/**
  * A metadata inforamtion about the
  * channel stored locally.
  *
  * @export
  * @interface ISwarmChannelLocalMeta
  */
-export interface ISwarmChannelLocalMeta {
+export interface ISwarmChannelLocalMeta
+  extends ISwarmChannelDescriptionFieldsMain {
   /**
    * A full name of the channel.
    *
@@ -55,7 +89,8 @@ export interface ISwarmChannelLocalMeta {
  * @export
  * @interface ISwarmChannelSharedMeta
  */
-export interface ISwarmChannelSharedMeta {
+export interface ISwarmChannelSharedMeta
+  extends ISwarmChannelDescriptionFieldsMain {
   /**
    * Channel's name
    *
@@ -101,30 +136,6 @@ export interface ISwarmChannelSharedMeta {
    * @memberof ISwarmChannelSharedMeta
    */
   passwordHash?: TSwarmChannelPasswordHash;
-}
-
-/**
- * A channel for messages sharing.
- *
- * @export
- * @interface ISwarmChannel
- */
-export interface ISwarmChannelDescriptionFieldsMain {
-  /**
-   * A unique identity of the channel.
-   *
-   * @type {string}
-   * @memberof ISwarmChannel
-   */
-  readonly id: TSwarmChannelId;
-
-  /**
-   * Type of the channel
-   *
-   * @type {ChannelType}
-   * @memberof ISwarmChannel
-   */
-  readonly type: SwarmChannelType;
 }
 
 /**
@@ -179,6 +190,43 @@ export interface ISwarmChannelStateFields<
   isEncrypted: boolean;
 }
 
+/**
+ * Instances of the common classes used within
+ * swarm channel.
+ *
+ * @export
+ * @interface ISwarmChannelInitializationOptions
+ * @template P
+ */
+export interface ISwarmChannelInitializationOptions<
+  P extends ESwarmStoreConnector = ESwarmStoreConnector.OrbitDB
+> {
+  /**
+   * For messages construction
+   *
+   * @type {ISwarmMessageConstructor}
+   * @memberof ISwarmChannelInitializationOptions
+   */
+  messageConstructor: ISwarmMessageConstructor;
+
+  /**
+   * For storing local metadata
+   *
+   * @type {ISecretStorage}
+   * @memberof ISwarmChannelInitializationOptions
+   */
+  secretStorage: ISecretStorage;
+
+  /**
+   * Used for creation or opening an existing swarm's
+   * databases for messaging and storing a shared meta.
+   *
+   * @type {ISwarmMessageStore<P>}
+   * @memberof ISwarmChannelInitializationOptions
+   */
+  swarmMessageStoreConnector: ISwarmMessageStore<P>;
+}
+
 export interface ISwarmChannelMethodsBase {
   /**
    * Initialize channel.
@@ -201,7 +249,7 @@ export interface ISwarmChannelMethodsBase {
    * @memberof ISwarmChannelMethodsBase
    * @throws
    */
-  initialize(): Promise<void>;
+  initialize(initOptions: ISwarmChannelInitializationOptions): Promise<void>;
   /**
    * Update local's metadata about the channel
    *

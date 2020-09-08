@@ -1,9 +1,50 @@
+import { ISecretStorage } from 'classes/secret-storage-class/secret-storage-class.types';
+import { ISwarmMessageConstructor } from 'classes/swarm-message/swarm-message-constructor.types';
+import { ESwarmStoreConnector } from 'classes/swarm-store-class/swarm-store-class.const';
 import {
   TSwarmChannelId,
   ISwarmChannelLocalMeta,
   ISwarmChannelSharedMeta,
 } from '../../swarm-channel.types';
 import { SwarmChannelType } from '../../swarm-channel.const';
+import { ISwarmMessageStore } from '../../../swarm-message-store/swarm-message-store.types';
+
+/**
+ * Options which must be provided for initialization of
+ * a swarm channel.
+ *
+ * @export
+ * @interface ISwarmChannelBaseUsedInstances
+ * @template P
+ */
+export interface ISwarmChannelBaseUsedInstances<
+  P extends ESwarmStoreConnector = ESwarmStoreConnector.OrbitDB
+> {
+  /**
+   * For messages construction
+   *
+   * @type {ISwarmMessageConstructor}
+   * @memberof ISwarmChannelInitializationOptions
+   */
+  messageConstructor: ISwarmMessageConstructor;
+
+  /**
+   * For storing local metadata
+   *
+   * @type {ISecretStorage}
+   * @memberof ISwarmChannelInitializationOptions
+   */
+  secretStorage: ISecretStorage;
+
+  /**
+   * Used for creation or opening an existing swarm's
+   * databases for messaging and storing a shared meta.
+   *
+   * @type {ISwarmMessageStore<P>}
+   * @memberof ISwarmChannelInitializationOptions
+   */
+  swarmMessageStoreConnector: ISwarmMessageStore<P>;
+}
 
 export interface ISwarmChannelBaseConstructorOptions {
   /**

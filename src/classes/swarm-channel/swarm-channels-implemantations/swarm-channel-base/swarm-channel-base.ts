@@ -1,3 +1,8 @@
+import assert from 'assert';
+
+import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
+import { StatusedClassHelper } from 'utils/classes-helpers/statused-class-helper/statused-class-helper';
+
 import {
   ISwarmChannel,
   TSwarmChannelEvents,
@@ -8,11 +13,16 @@ import {
   SwarmChannelEvents,
   SwarmChannelStatus,
 } from '../../swarm-channel.const';
-import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
-import { StatusedClassHelper } from '../../../../utils/classes-helpers/statused-class-helper/statused-class-helper';
-import { TSwarmChannelConstructorOptions } from '../../swarm-channel.types';
-import { ISwarmChannelBaseConstructorOptions } from './swarm-channel-base.types';
+import {
+  TSwarmChannelConstructorOptions,
+  ISwarmChannelInitializationOptions,
+} from '../../swarm-channel.types';
+import {
+  ISwarmChannelBaseConstructorOptions,
+  ISwarmChannelBaseUsedInstances,
+} from './swarm-channel-base.types';
 import { SwarmChannelOptionsFactory } from './utils/swarm-channel-options-factory/swarm-channel-options-factory';
+import { ESwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.const';
 import {
   SWARM_CHANNEL_BASE_CHAMMEL_TYPE_DEFAULT,
   SWARM_CHANNEL_BASE_ID_DEFAULT,
@@ -31,7 +41,8 @@ import {
  */
 export class SwarmChannelBase<
   ET = any,
-  E extends TSwarmChannelEvents<ET> = TSwarmChannelEvents
+  E extends TSwarmChannelEvents<ET> = TSwarmChannelEvents,
+  P extends ESwarmStoreConnector = ESwarmStoreConnector.OrbitDB
 >
   extends StatusedClassHelper<
     SwarmChannelEvents.STATUS_CHANGED,
@@ -60,6 +71,24 @@ export class SwarmChannelBase<
   }
 
   /**
+   * Instances used during the channel's life
+   * cycle.
+   *
+   * @protected
+   * @type {ISwarmChannelBaseUsedInstances<P>}import assert from 'assert';
+   * @memberof SwarmChannelBase
+   */
+  protected _instancesUsed?: ISwarmChannelBaseUsedInstances<P>;
+
+  /**
+   * Classes used for the channel initialization.
+   *
+   * @protected
+   * @memberof SwarmChannelBase
+   */
+  protected _swarmChannelInitializers = {};
+
+  /**
    * Optionns which will be used during
    * the channel's initialization or
    * creation of a new channel.
@@ -78,6 +107,13 @@ export class SwarmChannelBase<
     this._handleOptions(options);
   }
 
+  public initialize = async (
+    initOptions: ISwarmChannelInitializationOptions<P>
+  ): Promise<void> => {
+    this._validateInitialOptions(initOptions);
+    this._setInitialOptions(initOptions);
+  };
+
   public close = async () => {
     // release status emitter
     this.stopStatusEmitter();
@@ -91,7 +127,7 @@ export class SwarmChannelBase<
    * @param {ISwarmChannelBaseConstructorOptions} options
    * @memberof SwarmChannelBase
    */
-  protected _setChannelConstructorOptions(
+  protected _setChannelInitializerOptions(
     options: ISwarmChannelBaseConstructorOptions
   ): void {
     this._optionsChannelConstructor = options;
@@ -110,12 +146,12 @@ export class SwarmChannelBase<
   ): Promise<void> {
     this.setStatus(SwarmChannelStatus.STARTING);
     try {
-      const factoryChannelConstructorOptions = new SwarmChannelOptionsFactory();
-      const channelConstructorOptions = await factoryChannelConstructorOptions.handleOptions(
+      const factoryChannelInitializerOptions = new SwarmChannelOptionsFactory();
+      const channelInitializerOptions = await factoryChannelInitializerOptions.handleOptions(
         options
       );
 
-      this._setChannelConstructorOptions(channelConstructorOptions);
+      this._setChannelInitializerOptions(channelInitializerOptions);
       this.setStatus(SwarmChannelStatus.STARTED);
     } catch (err) {
       console.error(
@@ -123,5 +159,38 @@ export class SwarmChannelBase<
       );
       this.clearStatus();
     }
+  }
+
+  protected _validateInitialOptions(
+    initOptions: ISwarmChannelInitializationOptions<P>
+  ): void {
+    assert(
+      !!initOptions.messageConstructor,
+      'An instance implemented the swarm messages constructor interface must be provided'
+    );
+    assert(
+      !!initOptions.swarmMessageStoreConnector,
+      'An instance implemented the secret storage interface must be provided'
+    );
+    assert(
+      !!initOptions.swarmMessageStoreConnector,
+      'An instance implemented swarm store connector must be provided'
+    );
+  }
+
+  protected _setInstances(
+    initOptions: ISwarmChannelInitializationOptions<P>
+  ): void {
+    this._instancesUsed = {
+      messageConstructor: initOptions.messageConstructor,
+      secretStorage: initOptions.secretStorage,
+      swarmMessageStoreConnector: initOptions.swarmMessageStoreConnector,
+    };
+  }
+
+  protected _setInitialOptions(
+    initOptions: ISwarmChannelInitializationOptions<P>
+  ): void {
+    this._setInstances(initOptions);
   }
 }
