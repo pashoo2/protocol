@@ -129,29 +129,15 @@ export type ISwarmMessageStoreDeleteMessageArg<
   : TSwarmMessageInstance; // instance of the message to remove
 
 /**
- * Allows to write messages to the swarm storage
- * and creating a new swarm databases.
+ * Methods for messaging between swarm users.
  *
  * @export
- * @interface ISwarmMessageStore
- * @extends {Omit<ISwarmStore<P>, 'connect'>}
- * @extends {EventEmitter<ISwarmMessageStoreEvents>}
+ * @interface ISwarmMessageStoreMessagingMethods
  * @template P
  */
-export interface ISwarmMessageStore<P extends ESwarmStoreConnector>
-  extends ISwarmStore<P, TSwarmMessageSeriazlized>,
-    EventEmitter<ISwarmMessageStoreEvents> {
-  /**
-   * connect to the swarm storage
-   *
-   * @param {ISwarmMessageStoreOptions<P>} options
-   * @returns {TSwarmMessageStoreConnectReturnType<P>}
-   * @memberof ISwarmMessageStore
-   * @throws
-   */
-  connect(
-    options: ISwarmMessageStoreOptions<P>
-  ): TSwarmMessageStoreConnectReturnType<P>;
+export interface ISwarmMessageStoreMessagingMethods<
+  P extends ESwarmStoreConnector
+> {
   /**
    * add message to a database with the given name
    *
@@ -227,4 +213,31 @@ export interface ISwarmMessageStore<P extends ESwarmStoreConnector>
     dbName: string,
     options: TSwarmStoreDatabaseIteratorMethodArgument<P>
   ): Promise<(TSwarmMessageInstance | Error)[]>;
+}
+
+/**
+ * Allows to write messages to the swarm storage
+ * and creating a new swarm databases.
+ *
+ * @export
+ * @interface ISwarmMessageStore
+ * @extends {Omit<ISwarmStore<P>, 'connect'>}
+ * @extends {EventEmitter<ISwarmMessageStoreEvents>}
+ * @template P
+ */
+export interface ISwarmMessageStore<P extends ESwarmStoreConnector>
+  extends ISwarmStore<P, TSwarmMessageSeriazlized>,
+    EventEmitter<ISwarmMessageStoreEvents>,
+    ISwarmMessageStoreMessagingMethods<P> {
+  /**
+   * connect to the swarm storage
+   *
+   * @param {ISwarmMessageStoreOptions<P>} options
+   * @returns {TSwarmMessageStoreConnectReturnType<P>}
+   * @memberof ISwarmMessageStore
+   * @throws
+   */
+  connect(
+    options: ISwarmMessageStoreOptions<P>
+  ): TSwarmMessageStoreConnectReturnType<P>;
 }

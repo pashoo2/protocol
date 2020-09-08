@@ -252,12 +252,12 @@ export class SwarmStore<
 
     if (dropDatabaseResult instanceof Error) {
       return dropDatabaseResult;
-    } else {
-      const dbOptions = this.getDatabaseOptions(dbName);
+    }
 
-      if (dbOptions) {
-        this.handleDatabaseDropped(dbOptions);
-      }
+    const dbOptions = this.getDatabaseOptions(dbName);
+
+    if (dbOptions) {
+      this.handleDatabaseDropped(dbOptions);
     }
   }
 
@@ -532,6 +532,10 @@ export class SwarmStore<
     this.emitDatabasesListUpdated();
   }
 
+  protected emitDatbaseDropped(dbName: string): void {
+    this.emit(ESwarmStoreEventNames.DROP_DATABASE, dbName);
+  }
+
   /**
    * Delete a database dropped from lists.
    *
@@ -544,8 +548,11 @@ export class SwarmStore<
   protected async handleDatabaseDropped(
     dbOpenedOptions: ISwarmStoreDatabaseBaseOptions
   ): Promise<void> {
-    delete this.databasesOpenedList[dbOpenedOptions.dbName];
+    const { dbName } = dbOpenedOptions;
+
+    delete this.databasesOpenedList[dbName];
     await this.removeDatabaseOpenedOptions(dbOpenedOptions);
+    this.emitDatbaseDropped(dbName);
     this.emitDatabasesListUpdated();
   }
 

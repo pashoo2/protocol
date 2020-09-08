@@ -128,7 +128,7 @@ export type TSwarmStoreDatabaseEntityKey<
  * @interface ISwarmStoreDatabaseOptions
  */
 export type TSwarmStoreDatabaseOptions<
-  P extends ESwarmStoreConnector = never,
+  P extends ESwarmStoreConnector,
   T extends any = never
 > = P extends ESwarmStoreConnector.OrbitDB
   ? ISwarmStoreConnectorOrbitDbDatabaseOptions<T> &

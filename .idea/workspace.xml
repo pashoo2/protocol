@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e70e70e3-e48a-4dfd-91a6-03818e8691f6" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/node_modules-local/hypervision-browser" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules-local/hypervision-browser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channel.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channel.types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/swarm-channel-base.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/swarm-channel-base.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/swarm-channel-base.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/swarm-channel-base.types.ts" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -26,8 +22,8 @@
       <file leaf-file-name="swarm-channel-base.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/swarm-channel-base.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="480">
-              <caret line="104" column="19" selection-start-line="104" selection-start-column="9" selection-end-line="104" selection-end-column="19" />
+            <state relative-caret-position="555">
+              <caret line="109" column="19" selection-start-line="109" selection-start-column="19" selection-end-line="109" selection-end-column="19" />
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
               </folding>
@@ -38,11 +34,8 @@
       <file leaf-file-name="swarm-channel.types.ts" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/classes/swarm-channel/swarm-channel.types.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="560">
-              <caret line="340" column="30" selection-start-line="340" selection-start-column="30" selection-end-line="340" selection-end-column="30" />
-              <folding>
-                <element signature="e#0#103#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="695">
+              <caret line="349" column="30" selection-start-line="349" selection-start-column="30" selection-end-line="349" selection-end-column="30" />
             </state>
           </provider>
         </entry>
@@ -398,7 +391,7 @@
       <workItem from="1598006302091" duration="89000" />
       <workItem from="1599501382611" duration="454000" />
       <workItem from="1599501898061" duration="1869000" />
-      <workItem from="1599587765372" duration="72000" />
+      <workItem from="1599587765372" duration="672000" />
     </task>
     <servers />
   </component>
@@ -435,11 +428,10 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="34029000" />
+    <option name="totallyTimeSpent" value="34629000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="72" y="27" width="1368" height="873" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
@@ -729,8 +721,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/swarm-channel-base.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="104" column="19" selection-start-line="104" selection-start-column="9" selection-end-line="104" selection-end-column="19" />
+        <state relative-caret-position="555">
+          <caret line="109" column="19" selection-start-line="109" selection-start-column="19" selection-end-line="109" selection-end-column="19" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
           </folding>
@@ -739,11 +731,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/classes/swarm-channel/swarm-channel.types.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="560">
-          <caret line="340" column="30" selection-start-line="340" selection-start-column="30" selection-end-line="340" selection-end-column="30" />
-          <folding>
-            <element signature="e#0#103#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="695">
+          <caret line="349" column="30" selection-start-line="349" selection-start-column="30" selection-end-line="349" selection-end-column="30" />
         </state>
       </provider>
     </entry>

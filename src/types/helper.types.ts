@@ -29,3 +29,10 @@ export type ArrayFirst<T extends any[]> = T extends Array<infer F> ? F : never;
 export type Defined<T extends {}> = {
   [k in keyof T]: T[k] extends undefined ? NonNullable<T[k]> : T[k];
 };
+
+export type OmitFirstArg<F extends Function> = F extends (
+  x: any,
+  ...args: infer P
+) => infer R
+  ? (...args: P) => R
+  : never;

@@ -90,6 +90,13 @@ export enum ESwarmStoreEventNames {
    *    - opened - list of databases names opened within the current session
    */
   DATABASES_LIST_UPDATED = 'DATABASES_LIST_UPDATED',
+  /**
+   * Emitted when a database dropped
+   *
+   * args:
+   * 1) dbName - name of a database dropped.
+   */
+  DROP_DATABASE = 'DROP_DATABASE',
 }
 
 export enum ESwarmStoreDbStatus {
