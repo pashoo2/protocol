@@ -23,7 +23,7 @@ import {
   ISwarmStoreDatabasesCommonStatusList,
   ESwarmStoreEventNames,
 } from 'classes';
-import { DatabaseComponent } from '../database-component/database-component';
+import { SwarmStoreDbComponent } from '../swarm-store-db-component/swarm-store-db-component';
 import { ESwarmMessageStoreEventNames } from '../../classes/swarm-message-store/swarm-message-store.const';
 import { ConnectionBridge } from '../../classes/connection-bridge/connection-bridge';
 import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
@@ -32,6 +32,8 @@ import { ISwarmMessageInstanceDecrypted } from '../../classes/swarm-message/swar
 import { ISecretStorage } from '../../classes/secret-storage-class/secret-storage-class.types';
 import { ICentralAuthorityUserProfile } from '../../classes/central-authority-class/central-authority-class-types/central-authority-class-types-common';
 import { UserProfile } from '../userProfile/userProfile';
+import { ISwarmStoreDatabaseBaseOptions } from '../../classes/swarm-store-class/swarm-store-class.types';
+import { SwarmMessagesDatabaseComponent } from '../swarm-messages-database-component/swarm-messages-database-component';
 
 export interface IMessageDescription {
   id: string;
@@ -57,6 +59,7 @@ export class ConnectToSwarm extends React.PureComponent {
     databasesList: undefined as
       | ISwarmStoreDatabasesCommonStatusList
       | undefined,
+    swarmStoreMessagesDbOptionsList: [] as ISwarmStoreDatabaseBaseOptions[],
     databaseOpeningStatus: false as boolean,
     credentialsVariant: undefined as undefined | number,
     secretStorage: undefined as undefined | ISecretStorage,
@@ -153,7 +156,7 @@ export class ConnectToSwarm extends React.PureComponent {
   public connectToDb = async () => {
     const { connectionBridge } = this.state;
 
-    if (connectionBridge) {
+    if (connectionBridge && connectionBridge.storage) {
       await connectionBridge.storage?.openDatabase(
         CONNECT_TO_SWARM_DATABASE_MAIN
       );
@@ -203,6 +206,7 @@ export class ConnectToSwarm extends React.PureComponent {
         </button>
         {this.renderUserProfile()}
         {this.renderDatabasesList()}
+        {this.renderSwarmMessagesDatabasesList()}
         {this.renderConnectToDatabase()}
         {this.renderLoadMessages()}
       </div>
@@ -336,6 +340,20 @@ export class ConnectToSwarm extends React.PureComponent {
     }
   };
 
+  public handleOpenNewSwarmStoreMessagesDatabase = async () => {
+    const dbName = window.prompt('Enter database name', '');
+
+    if (dbName) {
+      const dbOptions = {
+        ...this.defaultDbOptions,
+        dbName: dbName || this.defaultDbOptions.dbName,
+      };
+      this.setState(({ swarmStoreMessagesDbList }: any) => ({
+        swarmStoreMessagesDbList: [...swarmStoreMessagesDbList, dbOptions],
+      }));
+    }
+  };
+
   protected renderUserProfile() {
     const { userId, userProfileData } = this.state;
     return <UserProfile id={userId} profile={userProfileData} />;
@@ -363,7 +381,7 @@ export class ConnectToSwarm extends React.PureComponent {
               const dbMessages = this.state.messagesReceived.get(databaseName);
 
               return (
-                <DatabaseComponent
+                <SwarmStoreDbComponent
                   key={databaseName}
                   databaseOptions={databaseOptions}
                   isOpened={isOpened}
@@ -382,6 +400,33 @@ export class ConnectToSwarm extends React.PureComponent {
             Open new database
           </button>
         )}
+      </div>
+    );
+  }
+
+  protected renderSwarmMessagesDatabasesList() {
+    const {
+      swarmStoreMessagesDbOptionsList: swarmStoreMessagesDbList,
+      connectionBridge,
+    } = this.state;
+
+    return (
+      <div>
+        <div>
+          <h4>List of swarm messages databases:</h4>
+          {swarmStoreMessagesDbList.map((dbsOptions) => {
+            return (
+              <SwarmMessagesDatabaseComponent
+                key={dbsOptions.dbName}
+                databaseOptions={dbsOptions}
+                connectionBridge={connectionBridge}
+              />
+            );
+          })}
+        </div>
+        <button onClick={this.handleOpenNewSwarmStoreMessagesDatabase}>
+          Open new swarm store database
+        </button>
       </div>
     );
   }

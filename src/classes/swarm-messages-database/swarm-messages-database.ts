@@ -3,6 +3,7 @@ import {
   ISwarmMessagesDatabaseConnectOptions,
   TSwarmMessagesDatabaseType,
   TSwarmMessageDatabaseEvents,
+  ISwarmMessagesDatabaseReady,
 } from './swarm-messages-database.types';
 import {
   ESwarmStoreConnector,
@@ -12,6 +13,8 @@ import assert from 'assert';
 import { TSwarmStoreDatabaseOptions } from '../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageStore } from '../swarm-message-store/swarm-message-store.types';
 import { EventEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
+import { ESwarmMessageStoreEventNames } from '../swarm-message-store/swarm-message-store.const';
+import { ISwarmMessageBody } from '../swarm-message/swarm-message-constructor.types';
 
 export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
   implements ISwarmMessageDatabaseMessagingMethods<P> {
@@ -27,7 +30,7 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
     return this._isReady && !!this._swarmMessageStore;
   }
 
-  get emitter(): EventEmitter<TSwarmMessageDatabaseEvents<P>> {
+  get emitter(): EventEmitter<TSwarmMessageDatabaseEvents> {
     return this._emitter;
   }
 
@@ -42,7 +45,7 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
 
   protected _dbType?: TSwarmMessagesDatabaseType<P>;
 
-  protected _emitter = new EventEmitter<TSwarmMessageDatabaseEvents<P>>();
+  protected _emitter = new EventEmitter<TSwarmMessageDatabaseEvents>();
 
   /**
    * An instance implemented ISwarmMessageStore
@@ -58,7 +61,7 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
    * Options for the database which used for
    * database initialization via ISwarmMessageStore.
    *
-   * @protected
+   * @protectedimport { ISwarmMessagesDatabaseReady, } from './swarm-messages-database.types';
    * @type {TSwarmStoreDatabaseOptions}
    * @memberof SwarmMessagesDatabase
    */
@@ -73,7 +76,7 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
     this._setListeners();
   }
 
-  async close(): Promise<void> {
+  close = async (): Promise<void> => {
     if (!this.isReady) {
       console.warn('SwarmMessageDatabase instance was already closed');
       return;
@@ -82,9 +85,9 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
     await this._closeSwarmDatabaseInstance();
     this._emitInstanceClosed();
     this._handleDatabaseClosed();
-  }
+  };
 
-  async drop(): Promise<void> {
+  drop = async (): Promise<void> => {
     if (!this.isReady) {
       console.warn('SwarmMessageDatabase instance was already closed');
       return;
@@ -93,6 +96,56 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
     await this._dropSwarmDatabaseInstance();
     this._emitDatabaseDropped();
     this._handleDatabaseClosed();
+  };
+
+  addMessage = (
+    ...args: Parameters<ISwarmMessageDatabaseMessagingMethods<P>['addMessage']>
+  ): ReturnType<ISwarmMessageDatabaseMessagingMethods<P>['addMessage']> => {
+    if (!this._checkIsReady()) {
+      throw new Error('The instance is not ready to use');
+    }
+    return this._swarmMessageStore.addMessage(this._dbName, ...args);
+  };
+
+  deleteMessage = (
+    ...args: Parameters<
+      ISwarmMessageDatabaseMessagingMethods<P>['deleteMessage']
+    >
+  ): ReturnType<ISwarmMessageDatabaseMessagingMethods<P>['deleteMessage']> => {
+    if (!this._checkIsReady()) {
+      throw new Error('The instance is not ready to use');
+    }
+    return this._swarmMessageStore.deleteMessage(this._dbName, ...args);
+  };
+
+  collect = (
+    ...args: Parameters<ISwarmMessageDatabaseMessagingMethods<P>['collect']>
+  ): ReturnType<ISwarmMessageDatabaseMessagingMethods<P>['collect']> => {
+    if (!this._checkIsReady()) {
+      throw new Error('The instance is not ready to use');
+    }
+    return this._swarmMessageStore.collect(this._dbName, ...args);
+  };
+
+  /**
+   * Checks if the instance is ready to use
+   *
+   * @protected
+   * @memberof SwarmMessagesDatabase
+   */
+  protected _checkIsReady(): this is ISwarmMessagesDatabaseReady<P> {
+    if (!this._isReady) {
+      throw new Error('The instance is not ready to use');
+    }
+    if (!this._swarmMessageStore) {
+      throw new Error(
+        'Implementation of the SwarmMessgaeStore interface is not provided'
+      );
+    }
+    if (!this._dbName) {
+      throw new Error('Database name is not defined for the instance');
+    }
+    return true;
   }
 
   protected _validateOptions(
@@ -130,7 +183,7 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
     this._swarmMessageStore = options.swarmMessageStore;
   }
 
-  /**_unsetListeners
+  /**
    * Handle options provided for the connect
    * method.
    *
@@ -143,7 +196,10 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
     this._setOptions(options);
   }
 
-  protected _checkDatabaseProps() {
+  protected _checkDatabaseProps(): this is Omit<
+    ISwarmMessagesDatabaseReady<P>,
+    'isReady'
+  > {
     const swarmMessageStore = this._swarmMessageStore;
 
     if (!swarmMessageStore) {
@@ -152,11 +208,12 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
       );
     }
 
-    const { dbName: _dbName } = this;
+    const { _dbName } = this;
 
     if (!_dbName) {
       throw new Error('A database name is not defined');
     }
+    return true;
   }
 
   /**
@@ -178,6 +235,7 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
   protected _unsetIsReady = (): void => {
     this._isReady = false;
   };
+
   protected _handleDatabaseLoadingEvent = (
     dbName: string,
     percentage: number
@@ -191,21 +249,43 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
     this._emitter.emit(ESwarmStoreEventNames.UPDATE, dbName);
   };
 
-  protected _handleDatabaseNewEntryEvent = (
+  protected _handleDatabaseNewMessage = (
     dbName: string,
-    entry: any,
-    entryAddress: string,
-    heads: any,
-    dbType?: TSwarmMessagesDatabaseType<P>
+    message: ISwarmMessageBody,
+    // the global unique address of the message in the swarm
+    messageAddress: string,
+    // for key-value store it will be the key
+    key?: string
   ) => {
     if (this._dbName !== dbName) return;
     this._emitter.emit(
-      ESwarmStoreEventNames.LOADING,
+      ESwarmMessageStoreEventNames.NEW_MESSAGE,
       dbName,
-      entry,
-      entryAddress,
-      heads,
-      dbType
+      message,
+      messageAddress,
+      key
+    );
+  };
+
+  protected _handleDatabaseMessageError = (
+    dbName: string,
+    // swarm message string failed to deserialize
+    messageSerialized: string,
+    // error occurred while deserializing the message
+    error: Error,
+    // the global unique address of the message in the swarm
+    messageAddress: string,
+    // for key-value store it will be the key
+    key?: string
+  ) => {
+    if (this._dbName !== dbName) return;
+    this._emitter.emit(
+      ESwarmMessageStoreEventNames.NEW_MESSAGE_ERROR,
+      dbName,
+      messageSerialized,
+      error,
+      messageAddress,
+      key
     );
   };
 
@@ -252,8 +332,8 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
       this._handleDatabaseUpdatedEvent
     );
     this._swarmMessageStore?.addListener(
-      ESwarmStoreEventNames.NEW_ENTRY,
-      this._handleDatabaseNewEntryEvent
+      ESwarmMessageStoreEventNames.NEW_MESSAGE,
+      this._handleDatabaseNewMessage
     );
     this._swarmMessageStore?.addListener(
       ESwarmStoreEventNames.READY,
@@ -290,7 +370,7 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
     );
     this._swarmMessageStore?.addListener(
       ESwarmStoreEventNames.NEW_ENTRY,
-      this._handleDatabaseNewEntryEvent
+      this._handleDatabaseNewMessage
     );
     this._swarmMessageStore?.addListener(
       ESwarmStoreEventNames.READY,
@@ -321,10 +401,11 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
   }
 
   protected async _closeSwarmDatabaseInstance(): Promise<void> {
-    this._checkDatabaseProps();
-
+    if (!this._checkDatabaseProps()) {
+      throw new Error('Database props are not valid');
+    }
     const dbName = this._dbName;
-    const result = await this._swarmMessageStore?.closeDatabase(dbName!);
+    const result = await this._swarmMessageStore.closeDatabase(dbName);
 
     if (result instanceof Error) {
       throw new Error(
@@ -334,10 +415,12 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
   }
 
   protected async _dropSwarmDatabaseInstance() {
-    this._checkDatabaseProps();
+    if (!this._checkDatabaseProps()) {
+      throw new Error('Database props are not valid');
+    }
 
     const dbName = this._dbName;
-    const result = await this._swarmMessageStore?.dropDatabase(dbName!);
+    const result = await this._swarmMessageStore?.dropDatabase(dbName);
 
     if (result instanceof Error) {
       throw new Error(

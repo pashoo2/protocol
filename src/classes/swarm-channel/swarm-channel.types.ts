@@ -3,7 +3,6 @@ import { TUesrIdentity } from '../../types/users.types';
 import { ISwarmMessageConstructor } from '../swarm-message/swarm-message-constructor.types';
 import { ISecretStorage } from '../secret-storage-class/secret-storage-class.types';
 import { ESwarmStoreConnector } from '../swarm-store-class/swarm-store-class.const';
-import { ISwarmStoreConnectorBase } from '../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageStore } from '../swarm-message-store/swarm-message-store.types';
 import {
   SwarmChannelType,

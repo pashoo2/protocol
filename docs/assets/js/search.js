@@ -62796,7 +62796,7 @@ typedoc.search.data = {
     {
       id: 6592,
       kind: 128,
-      name: 'DatabaseComponent',
+      name: 'SwarmStoreDbComponent',
       url:
         'classes/_src_components_database_component_database_component_.databasecomponent.html',
       classes:
@@ -62811,7 +62811,7 @@ typedoc.search.data = {
         'classes/_src_components_database_component_database_component_.databasecomponent.html#state',
       classes: 'tsd-kind-object-literal tsd-parent-kind-class',
       parent:
-        '"src/components/database-component/database-component".DatabaseComponent',
+        '"src/components/database-component/database-component".SwarmStoreDbComponent',
     },
     {
       id: 6594,
@@ -62821,7 +62821,7 @@ typedoc.search.data = {
         'classes/_src_components_database_component_database_component_.databasecomponent.html#state.isopening',
       classes: 'tsd-kind-variable tsd-parent-kind-object-literal',
       parent:
-        '"src/components/database-component/database-component".DatabaseComponent.state',
+        '"src/components/database-component/database-component".SwarmStoreDbComponent.state',
     },
     {
       id: 6595,
@@ -62831,7 +62831,7 @@ typedoc.search.data = {
         'classes/_src_components_database_component_database_component_.databasecomponent.html#state.isclosing',
       classes: 'tsd-kind-variable tsd-parent-kind-object-literal',
       parent:
-        '"src/components/database-component/database-component".DatabaseComponent.state',
+        '"src/components/database-component/database-component".SwarmStoreDbComponent.state',
     },
     {
       id: 6596,
@@ -62841,7 +62841,7 @@ typedoc.search.data = {
         'classes/_src_components_database_component_database_component_.databasecomponent.html#handledbclose',
       classes: 'tsd-kind-method tsd-parent-kind-class',
       parent:
-        '"src/components/database-component/database-component".DatabaseComponent',
+        '"src/components/database-component/database-component".SwarmStoreDbComponent',
     },
     {
       id: 6597,
@@ -62851,7 +62851,7 @@ typedoc.search.data = {
         'classes/_src_components_database_component_database_component_.databasecomponent.html#handledbopen',
       classes: 'tsd-kind-method tsd-parent-kind-class',
       parent:
-        '"src/components/database-component/database-component".DatabaseComponent',
+        '"src/components/database-component/database-component".SwarmStoreDbComponent',
     },
     {
       id: 6598,
@@ -62861,7 +62861,7 @@ typedoc.search.data = {
         'classes/_src_components_database_component_database_component_.databasecomponent.html#sendswarmmessage',
       classes: 'tsd-kind-method tsd-parent-kind-class tsd-is-protected',
       parent:
-        '"src/components/database-component/database-component".DatabaseComponent',
+        '"src/components/database-component/database-component".SwarmStoreDbComponent',
     },
     {
       id: 6599,
@@ -62871,7 +62871,7 @@ typedoc.search.data = {
         'classes/_src_components_database_component_database_component_.databasecomponent.html#render',
       classes: 'tsd-kind-method tsd-parent-kind-class',
       parent:
-        '"src/components/database-component/database-component".DatabaseComponent',
+        '"src/components/database-component/database-component".SwarmStoreDbComponent',
     },
     {
       id: 6600,
@@ -62881,7 +62881,7 @@ typedoc.search.data = {
         'classes/_src_components_database_component_database_component_.databasecomponent.html#componentdidmount',
       classes: 'tsd-kind-method tsd-parent-kind-class tsd-is-inherited',
       parent:
-        '"src/components/database-component/database-component".DatabaseComponent',
+        '"src/components/database-component/database-component".SwarmStoreDbComponent',
     },
     {
       id: 6601,
@@ -62891,7 +62891,7 @@ typedoc.search.data = {
         'classes/_src_components_database_component_database_component_.databasecomponent.html#shouldcomponentupdate',
       classes: 'tsd-kind-method tsd-parent-kind-class tsd-is-inherited',
       parent:
-        '"src/components/database-component/database-component".DatabaseComponent',
+        '"src/components/database-component/database-component".SwarmStoreDbComponent',
     },
     {
       id: 6602,
@@ -62901,7 +62901,7 @@ typedoc.search.data = {
         'classes/_src_components_database_component_database_component_.databasecomponent.html#componentwillunmount',
       classes: 'tsd-kind-method tsd-parent-kind-class tsd-is-inherited',
       parent:
-        '"src/components/database-component/database-component".DatabaseComponent',
+        '"src/components/database-component/database-component".SwarmStoreDbComponent',
     },
     {
       id: 6603,
@@ -62911,7 +62911,7 @@ typedoc.search.data = {
         'classes/_src_components_database_component_database_component_.databasecomponent.html#componentdidcatch',
       classes: 'tsd-kind-method tsd-parent-kind-class tsd-is-inherited',
       parent:
-        '"src/components/database-component/database-component".DatabaseComponent',
+        '"src/components/database-component/database-component".SwarmStoreDbComponent',
     },
     {
       id: 6604,
@@ -62921,7 +62921,7 @@ typedoc.search.data = {
         'classes/_src_components_database_component_database_component_.databasecomponent.html#getsnapshotbeforeupdate',
       classes: 'tsd-kind-method tsd-parent-kind-class tsd-is-inherited',
       parent:
-        '"src/components/database-component/database-component".DatabaseComponent',
+        '"src/components/database-component/database-component".SwarmStoreDbComponent',
     },
     {
       id: 6605,
@@ -62931,7 +62931,7 @@ typedoc.search.data = {
         'classes/_src_components_database_component_database_component_.databasecomponent.html#componentdidupdate',
       classes: 'tsd-kind-method tsd-parent-kind-class tsd-is-inherited',
       parent:
-        '"src/components/database-component/database-component".DatabaseComponent',
+        '"src/components/database-component/database-component".SwarmStoreDbComponent',
     },
     {
       id: 6606,
@@ -62941,7 +62941,7 @@ typedoc.search.data = {
         'classes/_src_components_database_component_database_component_.databasecomponent.html#componentwillmount',
       classes: 'tsd-kind-method tsd-parent-kind-class tsd-is-inherited',
       parent:
-        '"src/components/database-component/database-component".DatabaseComponent',
+        '"src/components/database-component/database-component".SwarmStoreDbComponent',
     },
     {
       id: 6607,
@@ -62951,7 +62951,7 @@ typedoc.search.data = {
         'classes/_src_components_database_component_database_component_.databasecomponent.html#unsafe_componentwillmount',
       classes: 'tsd-kind-method tsd-parent-kind-class tsd-is-inherited',
       parent:
-        '"src/components/database-component/database-component".DatabaseComponent',
+        '"src/components/database-component/database-component".SwarmStoreDbComponent',
     },
     {
       id: 6608,
@@ -62961,7 +62961,7 @@ typedoc.search.data = {
         'classes/_src_components_database_component_database_component_.databasecomponent.html#componentwillreceiveprops',
       classes: 'tsd-kind-method tsd-parent-kind-class tsd-is-inherited',
       parent:
-        '"src/components/database-component/database-component".DatabaseComponent',
+        '"src/components/database-component/database-component".SwarmStoreDbComponent',
     },
     {
       id: 6609,
@@ -62971,7 +62971,7 @@ typedoc.search.data = {
         'classes/_src_components_database_component_database_component_.databasecomponent.html#unsafe_componentwillreceiveprops',
       classes: 'tsd-kind-method tsd-parent-kind-class tsd-is-inherited',
       parent:
-        '"src/components/database-component/database-component".DatabaseComponent',
+        '"src/components/database-component/database-component".SwarmStoreDbComponent',
     },
     {
       id: 6610,
@@ -62981,7 +62981,7 @@ typedoc.search.data = {
         'classes/_src_components_database_component_database_component_.databasecomponent.html#componentwillupdate',
       classes: 'tsd-kind-method tsd-parent-kind-class tsd-is-inherited',
       parent:
-        '"src/components/database-component/database-component".DatabaseComponent',
+        '"src/components/database-component/database-component".SwarmStoreDbComponent',
     },
     {
       id: 6611,
@@ -62991,7 +62991,7 @@ typedoc.search.data = {
         'classes/_src_components_database_component_database_component_.databasecomponent.html#unsafe_componentwillupdate',
       classes: 'tsd-kind-method tsd-parent-kind-class tsd-is-inherited',
       parent:
-        '"src/components/database-component/database-component".DatabaseComponent',
+        '"src/components/database-component/database-component".SwarmStoreDbComponent',
     },
     {
       id: 6612,
@@ -64115,7 +64115,7 @@ typedoc.search.data = {
     {
       id: 6732,
       kind: 16777216,
-      name: 'DatabaseComponent',
+      name: 'SwarmStoreDbComponent',
       url:
         'modules/_src_components_database_component_index_.html#databasecomponent',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',

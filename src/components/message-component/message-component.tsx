@@ -1,5 +1,5 @@
 import React from 'react';
-import { ISwarmMessageInstanceDecrypted } from '../../../classes/swarm-message/swarm-message-constructor.types';
+import { ISwarmMessageInstanceDecrypted } from '../../classes/swarm-message/swarm-message-constructor.types';
 
 export interface IMessageComponentProps {
   id: string;

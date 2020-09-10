@@ -10,6 +10,11 @@ import { TSwarmStoreDatabaseOptions } from '../swarm-store-class/swarm-store-cla
 import { OmitFirstArg } from '../../types/helper.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { EventEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
+import {
+  ISwarmMessageBody,
+  ISwarmMessageInstanceDecrypted,
+} from '../swarm-message/swarm-message-constructor.types';
+import { ESwarmMessageStoreEventNames } from '../swarm-message-store/swarm-message-store.const';
 
 /**
  * Options which are necessary for opening
@@ -26,18 +31,30 @@ export interface ISwarmMessagesDatabaseConnectOptions<
   dbOptions: TSwarmStoreDatabaseOptions<P>;
 }
 
-export type TSwarmMessageDatabaseEvents<P extends ESwarmStoreConnector> = {
+export type TSwarmMessageDatabaseEvents = {
   [ESwarmStoreEventNames.UPDATE]: (dbName: string) => void;
   [ESwarmStoreEventNames.DB_LOADING]: (
     dbName: string,
     percentage: number
   ) => void;
-  [ESwarmStoreEventNames.NEW_ENTRY]: (
+  [ESwarmMessageStoreEventNames.NEW_MESSAGE]: (
     dbName: string,
-    entry: any,
-    entryAddress: string,
-    heads: any,
-    dbType?: TSwarmMessagesDatabaseType<P>
+    message: ISwarmMessageInstanceDecrypted,
+    // the global unique address of the message in the swarm
+    messageAddress: string,
+    // for key-value store it will be the key
+    key?: string
+  ) => void;
+  [ESwarmMessageStoreEventNames.NEW_MESSAGE_ERROR]: (
+    dbName: string,
+    // swarm message string failed to deserialize
+    messageSerialized: string,
+    // error occurred while deserializing the message
+    error: Error,
+    // the global unique address of the message in the swarm
+    messageAddress: string,
+    // for key-value store it will be the key
+    key?: string
   ) => void;
   [ESwarmStoreEventNames.READY]: (dbName: string) => void;
   [ESwarmStoreEventNames.CLOSE_DATABASE]: (dbName: string) => void;
@@ -103,7 +120,7 @@ export interface ISwarmMessagesDatabaseProperties<
    * @type {EventEmitter<TSwarmMessageDatabaseEvents<P>>}
    * @memberof ISwarmMessagesDatabaseProperties
    */
-  emitter: EventEmitter<TSwarmMessageDatabaseEvents<P>>;
+  emitter: EventEmitter<TSwarmMessageDatabaseEvents>;
 }
 
 /**
@@ -141,4 +158,17 @@ export interface ISwarmMessagesDatabase<P extends ESwarmStoreConnector>
    * @memberof ISwarmMessagesDatabase
    */
   drop(): Promise<void>;
+}
+
+/**
+ * Properties of a databse which is ready to use.
+ *
+ * @export
+ * @interface ISwarmMessagesDatabaseReady
+ * @template P
+ */
+export interface ISwarmMessagesDatabaseReady<P extends ESwarmStoreConnector> {
+  _dbName: string;
+  _isReady: true;
+  _swarmMessageStore: ISwarmMessageStore<P>;
 }
