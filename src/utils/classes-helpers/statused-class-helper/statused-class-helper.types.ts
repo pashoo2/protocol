@@ -4,12 +4,12 @@ import { STATUSED_CLASS_HELPER_STATUS_CHANGED_EVENT_NAME } from './statused-clas
 export type TStatusClassHelperStatusChangesEmitter<
   SCE extends string,
   Status extends string
-> = EventEmitter<{ [key in SCE]: (status: Status, ...other: any[]) => void }>;
+  > = EventEmitter<{ [key in SCE]: (status: Status, ...other: any[]) => void }>;
 
 export interface IStatusedClassHelperOptions<
   SCE extends string,
   Status extends string
-> {
+  > {
   statusChangesEmitter: TStatusClassHelperStatusChangesEmitter<SCE, Status>;
   statusChangedEventName: SCE;
 }
@@ -23,7 +23,7 @@ export interface IStatusedClassHelperOptions<
  */
 export interface IStatusedClassHelperStatusEmitterEvents<
   Status extends string
-> {
+  > {
   /**
    * Status changed event, emits with a new status value
    * or undefined if the instance status was cleared.
@@ -38,7 +38,7 @@ export interface IStatusedClassHelperStatusEmitterEvents<
 export interface IStatusedClassHelper<
   StatusChangedEventName extends string,
   Status extends string
-> {
+  > {
   /**
    * The current status of the instance
    * or undefined if there is no status.
@@ -104,5 +104,5 @@ export interface IStatusedClassHelper<
    *
    * @memberof IStatusedClassHelper
    */
-  stop(): void;
+  stopStatusEmitter(): void;
 }

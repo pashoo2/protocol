@@ -73,7 +73,9 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
     options: ISwarmMessagesDatabaseConnectOptions<P>
   ): Promise<void> {
     this._handleOptions(options);
+    await this._openDatabaseInstance();
     this._setListeners();
+    this._setIsReady();
   }
 
   close = async (): Promise<void> => {
@@ -257,6 +259,7 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
     // for key-value store it will be the key
     key?: string
   ) => {
+    debugger
     if (this._dbName !== dbName) return;
     this._emitter.emit(
       ESwarmMessageStoreEventNames.NEW_MESSAGE,
@@ -347,6 +350,21 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
       ESwarmStoreEventNames.DROP_DATABASE,
       this._handleDatabaseDroppedEvent
     );
+  }
+
+  protected async _openDatabaseInstance(): Promise<void> {
+    if (!this._swarmMessageStore) {
+      throw new Error('Swarm message store must be provided');
+    }
+    if (!this._dbOptions) {
+      throw new Error('There is no options provided for the database');
+    }
+
+    const result = await this._swarmMessageStore?.openDatabase(this._dbOptions);
+
+    if (result instanceof Error) {
+      throw new Error(`Failed top open the database: ${result.message}`);
+    }
   }
 
   protected _unsetOptions(): void {

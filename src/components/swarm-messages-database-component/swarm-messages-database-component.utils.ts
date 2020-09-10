@@ -13,6 +13,7 @@ export const connectToDatabase = async <
   const db = new SwarmMessagesDatabase<P>();
 
   await db.connect(options);
+  debugger
   return db;
 };
 

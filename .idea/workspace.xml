@@ -2,11 +2,39 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e70e70e3-e48a-4dfd-91a6-03818e8691f6" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/node_modules-local/hypervision-browser" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules-local/hypervision-browser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/event-emitter-class-base/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/event-emitter-class-base/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channel.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channel.types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/subclasses/swarm-channel-initializers/swarm-channel-base-new-channel-initializer/swarm-channel-base-new-channel-initializer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/subclasses/swarm-channel-initializers/swarm-channel-base-new-channel-initializer/swarm-channel-base-new-channel-initializer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channel.const.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channel.types.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/subclasses/swarm-channel-initializers/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/subclasses/swarm-channel-initializers/swarm-channel-base-new-channel-initializer/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/subclasses/swarm-channel-initializers/swarm-channel-base-new-channel-initializer/swarm-channel-base-new-channel-initializer.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/subclasses/swarm-channel-initializers/swarm-channel-initializers.types.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/subclasses/swarm-channel-validators/swarm-channel-base-validator/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/subclasses/swarm-channel-validators/swarm-channel-base-validator/swarm-channel-base-validator.const.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/subclasses/swarm-channel-validators/swarm-channel-base-validator/swarm-channel-base-validator.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/subclasses/swarm-channel-validators/swarm-channel-base-validator/swarm-channel-base-validator.types.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/swarm-channel-base.const.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/swarm-channel-base.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/swarm-channel-base.types.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/utils/swarm-channel-options-factory/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/utils/swarm-channel-options-factory/swarm-channel-options-factory.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/utils/swarm-channel-pwd.utils/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/utils/swarm-channel-pwd.utils/swarm-channel-pwd.utils.const.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/utils/swarm-channel-pwd.utils/swarm-channel-pwd.utils.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/utils/swarm-channel-pwd.utils/swarm-channel-pwd.utils.types.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-channels-list/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-channels-list/swarm-channel-channels-list.types.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-pubsub/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-pubsub/swarm-channel-pubsub.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-pubsub/swarm-channel-pubsub.types.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-database/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-database/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/connect-to-swarm/connect-to-swarm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/connect-to-swarm/connect-to-swarm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/swarm-messages-database-component/swarm-messages-database-component.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/swarm-messages-database-component/swarm-messages-database-component.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/swarm-messages-database-component/swarm-messages-database-component.utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/swarm-messages-database-component/swarm-messages-database-component.utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/classes-helpers/statused-class-helper/statused-class-helper.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/classes-helpers/statused-class-helper/statused-class-helper.types.ts" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -23,27 +51,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="swarm-channel-base.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/swarm-channel-base.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15">
-              <caret line="109" column="19" selection-start-line="109" selection-start-column="19" selection-end-line="109" selection-end-column="19" />
-              <folding>
-                <element signature="e#0#28#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="swarm-channel.types.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/classes/swarm-channel/swarm-channel.types.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="463">
-              <caret line="274" column="5" lean-forward="true" selection-start-line="274" selection-start-column="5" selection-end-line="274" selection-end-column="5" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="swarm-store-db-component.tsx" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/components/swarm-store-db-component/swarm-store-db-component.tsx">
           <provider selected="true" editor-type-id="text-editor">
@@ -59,7 +66,7 @@
       <file leaf-file-name="swarm-messages-database-component.tsx" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/components/swarm-messages-database-component/swarm-messages-database-component.tsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="945">
+            <state>
               <caret line="84" column="21" selection-start-line="84" selection-start-column="21" selection-end-line="84" selection-end-column="21" />
               <folding>
                 <element signature="e#0#26#0" expanded="true" />
@@ -430,7 +437,7 @@
       <workItem from="1599501382611" duration="454000" />
       <workItem from="1599501898061" duration="1869000" />
       <workItem from="1599587765372" duration="672000" />
-      <workItem from="1599758278814" duration="1496000" />
+      <workItem from="1599758278814" duration="2094000" />
     </task>
     <servers />
   </component>
@@ -467,7 +474,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="36125000" />
+    <option name="totallyTimeSpent" value="36723000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="72" y="27" width="1368" height="873" extended-state="6" />
@@ -781,7 +788,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/components/swarm-messages-database-component/swarm-messages-database-component.tsx">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="945">
+        <state>
           <caret line="84" column="21" selection-start-line="84" selection-start-column="21" selection-end-line="84" selection-end-column="21" />
           <folding>
             <element signature="e#0#26#0" expanded="true" />

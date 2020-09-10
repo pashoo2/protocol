@@ -348,8 +348,8 @@ export class ConnectToSwarm extends React.PureComponent {
         ...this.defaultDbOptions,
         dbName: dbName || this.defaultDbOptions.dbName,
       };
-      this.setState(({ swarmStoreMessagesDbList }: any) => ({
-        swarmStoreMessagesDbList: [...swarmStoreMessagesDbList, dbOptions],
+      this.setState(({ swarmStoreMessagesDbOptionsList }: any) => ({
+        swarmStoreMessagesDbOptionsList: [...swarmStoreMessagesDbOptionsList, dbOptions],
       }));
     }
   };
@@ -396,17 +396,17 @@ export class ConnectToSwarm extends React.PureComponent {
             Open default database
           </button>
         ) : (
-          <button onClick={this.handleOpenNewDatabase}>
-            Open new database
+            <button onClick={this.handleOpenNewDatabase}>
+              Open new database
           </button>
-        )}
+          )}
       </div>
     );
   }
 
   protected renderSwarmMessagesDatabasesList() {
     const {
-      swarmStoreMessagesDbOptionsList: swarmStoreMessagesDbList,
+      swarmStoreMessagesDbOptionsList,
       connectionBridge,
     } = this.state;
 
@@ -414,7 +414,7 @@ export class ConnectToSwarm extends React.PureComponent {
       <div>
         <div>
           <h4>List of swarm messages databases:</h4>
-          {swarmStoreMessagesDbList.map((dbsOptions) => {
+          {swarmStoreMessagesDbOptionsList.map((dbsOptions) => {
             return (
               <SwarmMessagesDatabaseComponent
                 key={dbsOptions.dbName}

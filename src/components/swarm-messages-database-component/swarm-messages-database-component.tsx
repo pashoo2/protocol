@@ -10,7 +10,7 @@ import {
   setMessageListener,
 } from './swarm-messages-database-component.utils';
 import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
-import { SwarmMessagesDatabase } from '../../classes/swarm-messages-database/swarm-messages-database';
+import { SwarmMessagesDatabase } from '../../classes/swarm-messages-database';
 import { TSwarmStoreDatabaseEntityKey } from '../../classes/swarm-store-class/swarm-store-class.types';
 import { ISwarmMessagesDatabaseMessageDescription } from './swarm-messages-database-component.types';
 
@@ -28,7 +28,7 @@ interface IState<P extends ESwarmStoreConnector> {
 
 export class SwarmMessagesDatabaseComponent<
   P extends ESwarmStoreConnector
-> extends React.PureComponent<IProps, IState<P>> {
+  > extends React.PureComponent<IProps, IState<P>> {
   state = {
     messages: [] as ISwarmMessagesDatabaseMessageDescription[],
     isOpening: false,
@@ -36,10 +36,10 @@ export class SwarmMessagesDatabaseComponent<
     db: undefined as SwarmMessagesDatabase<P> | undefined,
   };
 
-  get isOpened() {
-    const { isOpening, isClosing } = this.state;
+  get isOpened(): boolean {
+    const { isOpening, isClosing, db } = this.state;
 
-    return !isOpening && !isClosing;
+    return !isOpening && !isClosing && !!db;
   }
 
   handleNewMessage = (
@@ -87,11 +87,12 @@ export class SwarmMessagesDatabaseComponent<
             return true;
           },
         };
+        debugger
         const db = await connectToDatabase({
           dbOptions,
           swarmMessageStore: connectionBridge.storage,
         });
-
+        debugger
         setMessageListener(db, this.handleNewMessage);
         this.setState({ db });
       } catch (err) {
@@ -157,8 +158,8 @@ export class SwarmMessagesDatabaseComponent<
         {isOpened ? (
           <button onClick={this.handleDbClose}>Close</button>
         ) : (
-          <button onClick={this.handleDbOpen}>Open</button>
-        )}
+            <button onClick={this.handleDbOpen}>Open</button>
+          )}
         <br />
         {isOpened && (
           <button onClick={this.sendSwarmMessage}>Send message</button>
