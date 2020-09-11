@@ -40,7 +40,7 @@ export interface ISwarmMessageDatabaseEvents<P extends ESwarmStoreConnector> {
   [ESwarmMessageStoreEventNames.NEW_MESSAGE]: (
     dbName: string,
     message: ISwarmMessageInstanceDecrypted,
-    // the global unique address of the message in the swarm
+    // the global unique address (hash) of the message in the swarm
     messageAddress: TSwarmStoreDatabaseEntityKey<P>,
     // for key-value store it will be the key
     key?: string
@@ -51,7 +51,7 @@ export interface ISwarmMessageDatabaseEvents<P extends ESwarmStoreConnector> {
     messageSerialized: string,
     // error occurred while deserializing the message
     error: Error,
-    // the global unique address of the message in the swarm
+    // the global unique address (hash) of the message in the swarm
     messageAddress: TSwarmStoreDatabaseEntityKey<P>,
     // for key-value store it will be the key
     key?: string
@@ -59,6 +59,16 @@ export interface ISwarmMessageDatabaseEvents<P extends ESwarmStoreConnector> {
   [ESwarmStoreEventNames.READY]: (dbName: string) => void;
   [ESwarmStoreEventNames.CLOSE_DATABASE]: (dbName: string) => void;
   [ESwarmStoreEventNames.DROP_DATABASE]: (dbName: string) => void;
+  [ESwarmMessageStoreEventNames.DELETE_MESSAGE]: (
+    dbName: string,
+    // the user who removed the message
+    userId: string,
+    // the global unique address (hash) of the DELETE message in the swarm
+    messageAddress: TSwarmStoreDatabaseEntityKey<P>,
+    // for key-value store it will be the key for the value,
+    // for feed store it will be hash of the message which deleted by this one.
+    keyOrHash?: string
+  ) => void;
 }
 
 /**

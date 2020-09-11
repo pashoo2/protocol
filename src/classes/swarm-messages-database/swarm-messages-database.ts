@@ -248,19 +248,17 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
 
   protected _handleDatabaseUpdatedEvent = (dbName: string): void => {
     if (this._dbName !== dbName) return;
-    debugger;
     this._emitter.emit(ESwarmStoreEventNames.UPDATE, dbName);
   };
 
   protected _handleDatabaseNewMessage = (
     dbName: string,
     message: ISwarmMessageBody,
-    // the global unique address of the message in the swarm
+    // the global unique address (hash) of the message in the swarm
     messageAddress: string,
     // for key-value store it will be the key
     key?: string
   ) => {
-    debugger;
     if (this._dbName !== dbName) return;
     this._emitter.emit(
       ESwarmMessageStoreEventNames.NEW_MESSAGE,
@@ -271,13 +269,32 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
     );
   };
 
+  protected _handleDatabaseDeleteMessage = (
+    dbName: string,
+    userID: string,
+    // the global unique address (hash) of the DELETE message in the swarm
+    messageAddress: string,
+    // for key-value store it will be the key for the value,
+    // for feed store it will be hash of the message which deleted by this one.
+    keyOrHash?: string
+  ) => {
+    if (this._dbName !== dbName) return;
+    this._emitter.emit(
+      ESwarmMessageStoreEventNames.DELETE_MESSAGE,
+      dbName,
+      userID,
+      messageAddress,
+      keyOrHash
+    );
+  };
+
   protected _handleDatabaseMessageError = (
     dbName: string,
     // swarm message string failed to deserialize
     messageSerialized: string,
     // error occurred while deserializing the message
     error: Error,
-    // the global unique address of the message in the swarm
+    // the global unique address (hash) of the message in the swarm
     messageAddress: string,
     // for key-value store it will be the key
     key?: string
@@ -320,34 +337,43 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
   };
 
   /**
+   /**
    * Set listeners to listen events of the SwarmMessageStore
    * implementation.
    *
+   *
    * @protected
+   * @param {boolean} [isSetListeners=true] - set or remove the listeners
    * @memberof SwarmMessagesDatabase
    */
-  protected _setListeners(): void {
-    this._swarmMessageStore?.addListener(
+  protected _setListeners(isSetListeners: boolean = true): void {
+    const method = isSetListeners ? 'addListener' : 'removeListener';
+
+    this._swarmMessageStore?.[method](
       ESwarmStoreEventNames.DB_LOADING,
       this._handleDatabaseLoadingEvent
     );
-    this._swarmMessageStore?.addListener(
+    this._swarmMessageStore?.[method](
       ESwarmStoreEventNames.UPDATE,
       this._handleDatabaseUpdatedEvent
     );
-    this._swarmMessageStore?.addListener(
+    this._swarmMessageStore?.[method](
       ESwarmMessageStoreEventNames.NEW_MESSAGE,
       this._handleDatabaseNewMessage
     );
-    this._swarmMessageStore?.addListener(
+    this._swarmMessageStore?.[method](
+      ESwarmMessageStoreEventNames.DELETE_MESSAGE,
+      this._handleDatabaseDeleteMessage
+    );
+    this._swarmMessageStore?.[method](
       ESwarmStoreEventNames.READY,
       this._handleDatabaseReadyEvent
     );
-    this._swarmMessageStore?.addListener(
+    this._swarmMessageStore?.[method](
       ESwarmStoreEventNames.CLOSE_DATABASE,
       this._handleDatabaseClosedEvent
     );
-    this._swarmMessageStore?.addListener(
+    this._swarmMessageStore?.[method](
       ESwarmStoreEventNames.DROP_DATABASE,
       this._handleDatabaseDroppedEvent
     );
@@ -379,26 +405,7 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
   }
 
   protected _unsetSwarmStoreListeners() {
-    this._swarmMessageStore?.addListener(
-      ESwarmStoreEventNames.DB_LOADING,
-      this._handleDatabaseLoadingEvent
-    );
-    this._swarmMessageStore?.addListener(
-      ESwarmStoreEventNames.UPDATE,
-      this._handleDatabaseUpdatedEvent
-    );
-    this._swarmMessageStore?.addListener(
-      ESwarmStoreEventNames.NEW_ENTRY,
-      this._handleDatabaseNewMessage
-    );
-    this._swarmMessageStore?.addListener(
-      ESwarmStoreEventNames.READY,
-      this._handleDatabaseReadyEvent
-    );
-    this._swarmMessageStore?.addListener(
-      ESwarmStoreEventNames.CLOSE_DATABASE,
-      this._handleDatabaseClosedEvent
-    );
+    this._setListeners(false);
   }
 
   protected _unsetSwarmMessageStoreInstance(): void {

@@ -56,6 +56,10 @@ import {
   TSwarmStoreDatabaseOptions,
 } from '../swarm-store-class/swarm-store-class.types';
 import { swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl } from './swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider';
+import {
+  EOrbitDbFeedStoreOperation,
+  ESwarmStoreConnectorOrbitDbDatabaseType,
+} from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 
 export class SwarmMessageStore<P extends ESwarmStoreConnector>
   extends SwarmStore<P, ISwarmMessageStoreEvents>
@@ -360,6 +364,33 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
   };
 
   /**
+   * Message or key was deleted
+   *
+   * @protected
+   * @memberof SwarmMessageStore
+   */
+  protected emitMessageDelete = (
+    dbName: string,
+    userId: string,
+    messageHash: string,
+    messageKey?: string
+  ) => {
+    console.log('SwarmMessageStore::emitMessageDelete', {
+      dbName,
+      userId,
+      messageHash,
+      messageKey,
+    });
+    this.emit(
+      ESwarmMessageStoreEventNames.DELETE_MESSAGE,
+      dbName,
+      userId,
+      messageHash,
+      messageKey
+    );
+  };
+
+  /**
    * handle a new message stored in the local database
    *
    * @memberof SwarmMessageStore
@@ -386,10 +417,22 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
     });
     const messageConstructor = await this.getMessageConstructor(dbName);
 
+    if (message?.payload?.op === EOrbitDbFeedStoreOperation.DELETE) {
+      return this.emitMessageDelete(
+        dbName,
+        message.identity.id,
+        message.hash,
+        dbType === ESwarmStoreConnectorOrbitDbDatabaseType.FEED
+          ? message.payload.value
+          : message.payload.key
+      );
+    }
     if (
       typeof message !== 'object' ||
       typeof message.payload !== 'object' ||
-      typeof message.payload.value !== 'string'
+      typeof message.payload.value !== 'string' ||
+      (dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE &&
+        typeof message.payload.key !== 'string')
     ) {
       return this.emitMessageConstructionFails(
         dbName,

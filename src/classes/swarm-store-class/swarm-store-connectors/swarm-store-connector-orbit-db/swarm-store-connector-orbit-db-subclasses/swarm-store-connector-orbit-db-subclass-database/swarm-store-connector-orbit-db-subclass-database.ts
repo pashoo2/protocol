@@ -608,7 +608,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     }
     try {
       const hashRemoved = await database.del(key);
-      debugger;
+
       if (typeof hashRemoved !== 'string') {
         throw new Error(
           'An unknown type of hash was returned for the value removed'
