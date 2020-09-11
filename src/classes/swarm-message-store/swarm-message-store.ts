@@ -62,7 +62,7 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
   implements ISwarmMessageStore<P> {
   protected connectorType: P | undefined;
 
-  protected accessControl?: ISwarmMessageStoreAccessControlOptions;
+  protected accessControl?: ISwarmMessageStoreAccessControlOptions<P>;
 
   protected messageConstructors?: ISwarmMessageDatabaseConstructors;
 

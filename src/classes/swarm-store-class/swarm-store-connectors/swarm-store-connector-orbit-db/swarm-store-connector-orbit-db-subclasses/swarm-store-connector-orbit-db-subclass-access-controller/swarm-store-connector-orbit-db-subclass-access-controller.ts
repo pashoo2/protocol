@@ -10,6 +10,8 @@ import {
   ISwarmStoreConnectorOrbitDbDatabaseAccessControllerManifest,
 } from './swarm-store-connector-orbit-db-subclass-access-controller.types';
 import { IdentityProvider } from 'orbit-db-identity-provider';
+import { ESwarmStoreConnector } from '../../../../swarm-store-class.const';
+import { EOrbitDbFeedStoreOperation } from '../swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 
 export class SwarmStoreConnectorOrbitDBSubclassAccessController<
   T
@@ -44,7 +46,8 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
   protected _isPublic: boolean = false;
 
   protected _grantAccessCallback?: TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<
-    T
+    T,
+    ESwarmStoreConnector.OrbitDB
   >;
 
   protected _orbitdb?: OrbitDB;
@@ -182,7 +185,12 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
     const { _grantAccessCallback } = this;
 
     if (typeof _grantAccessCallback === 'function') {
-      return _grantAccessCallback(value, id, key, op);
+      return _grantAccessCallback(
+        value,
+        id,
+        key,
+        op as EOrbitDbFeedStoreOperation | undefined
+      );
     }
     return true;
   }

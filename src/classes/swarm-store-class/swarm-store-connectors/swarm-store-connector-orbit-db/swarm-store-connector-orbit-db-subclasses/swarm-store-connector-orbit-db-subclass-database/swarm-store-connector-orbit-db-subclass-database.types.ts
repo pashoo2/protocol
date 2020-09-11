@@ -118,6 +118,11 @@ export type TSwarmStoreConnectorOrbitDbDatabaseAddMethodArgument<
   TStoreValue
 > = {
   value: TStoreValue;
+  /**
+   * Key of the value for Key-Value database store type.
+   *
+   * @type {TSwarmStoreConnectorOrbitDbDatabaseStoreKey}
+   */
   key?: TSwarmStoreConnectorOrbitDbDatabaseStoreKey;
 };
 

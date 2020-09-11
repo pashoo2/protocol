@@ -39,7 +39,8 @@
     "node_modules*",
     "./decentrilized-protocol",
     "/docs",
-    "/module-build"
+    "/module-build",
+    "/.ignored"
   ],
   "typedocOptions": {
     "mode": "modules",

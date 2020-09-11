@@ -1,9 +1,9 @@
 import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
-import { TUesrIdentity } from '../../types/users.types';
-import { ISwarmMessageConstructor } from '../swarm-message/swarm-message-constructor.types';
-import { ISecretStorage } from '../secret-storage-class/secret-storage-class.types';
-import { ESwarmStoreConnector } from '../swarm-store-class/swarm-store-class.const';
-import { ISwarmMessageStore } from '../swarm-message-store/swarm-message-store.types';
+import { TUesrIdentity } from '../../src/types/users.types';
+import { ISwarmMessageConstructor } from '../../src/classes/swarm-message/swarm-message-constructor.types';
+import { ISecretStorage } from '../../src/classes/secret-storage-class/secret-storage-class.types';
+import { ESwarmStoreConnector } from '../../src/classes/swarm-store-class/swarm-store-class.const';
+import { ISwarmMessageStore } from '../../src/classes/swarm-message-store/swarm-message-store.types';
 import {
   SwarmChannelType,
   SwarmChannelStatus,
@@ -12,7 +12,7 @@ import {
 import {
   ISwarmMessageInstanceDecrypted,
   TSwarmMessageConstructorBodyMessage,
-} from '../swarm-message/swarm-message-constructor.types';
+} from '../../src/classes/swarm-message/swarm-message-constructor.types';
 
 export type TSwarmChannelId = string;
 

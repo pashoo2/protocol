@@ -20,6 +20,7 @@ import {
   ESwarmStoreEventNames,
 } from './swarm-store-class.const';
 import { IStorageCommon } from 'types/storage.types';
+import { EOrbitDbFeedStoreOperation } from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 
 export type TSwarmStoreConnectorEventRetransmitter = (...args: any[]) => void;
 
@@ -65,6 +66,10 @@ export type TSwarmStoreDatabaseMethodArgument<
 > = P extends ESwarmStoreConnector.OrbitDB
   ? TSwarmStoreConnectorOrbitDbDatabaseMethodArgument<M>
   : never;
+
+export type TSwarmStoreDatabaseEntryOperation<
+  P extends ESwarmStoreConnector
+> = P extends ESwarmStoreConnector.OrbitDB ? EOrbitDbFeedStoreOperation : never;
 
 // arguments avalilable for a database method
 export type TSwarmStoreDatabaseIteratorMethodArgument<

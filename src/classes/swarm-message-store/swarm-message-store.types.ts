@@ -22,6 +22,7 @@ import {
 import { TCentralAuthorityUserIdentity } from '../central-authority-class/central-authority-class-types/central-authority-class-types-common';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { IStorageCommon } from 'types/storage.types';
+import { TSwarmStoreDatabaseEntryOperation } from '../swarm-store-class/swarm-store-class.types';
 
 /**
  * message unique identifier in the database
@@ -66,7 +67,9 @@ export interface ISwarmMessageStoreEvents extends ISwarmStoreEvents {
   ];
 }
 
-export type TSwarmMessageStoreAccessControlGrantAccessCallback = (
+export type TSwarmMessageStoreAccessControlGrantAccessCallback<
+  P extends ESwarmStoreConnector
+> = (
   // swarm message
   message: TSwarmMessageInstance,
   // identifier of the user sender of the message
@@ -77,7 +80,7 @@ export type TSwarmMessageStoreAccessControlGrantAccessCallback = (
   // key for the value in the database
   key?: string,
   // operation on the database
-  op?: string
+  op?: TSwarmStoreDatabaseEntryOperation<P>
 ) => Promise<boolean>;
 
 /**
@@ -87,9 +90,11 @@ export type TSwarmMessageStoreAccessControlGrantAccessCallback = (
  * @export
  * @interface ISwarmMessageStoreAccessControlOptions
  */
-export interface ISwarmMessageStoreAccessControlOptions {
+export interface ISwarmMessageStoreAccessControlOptions<
+  P extends ESwarmStoreConnector
+> {
   // async callback which is called each time before a new message will be wrote to the database
-  grantAccess?: TSwarmMessageStoreAccessControlGrantAccessCallback;
+  grantAccess?: TSwarmMessageStoreAccessControlGrantAccessCallback<P>;
   // a list of the user identifiers for whom an unconditional write access will be given
   allowAccessFor?: TSwarmMessageUserIdentifierSerialized[];
 }
@@ -111,7 +116,7 @@ export interface ISwarmMessageDatabaseConstructors {
 
 export interface ISwarmMessageStoreOptions<P extends ESwarmStoreConnector>
   extends ISwarmStoreOptions<P> {
-  accessControl?: ISwarmMessageStoreAccessControlOptions;
+  accessControl?: ISwarmMessageStoreAccessControlOptions<P>;
   messageConstructors: ISwarmMessageDatabaseConstructors;
   providerConnectionOptions: any;
   databasesListStorage: IStorageCommon;
@@ -190,7 +195,8 @@ export interface ISwarmMessageStoreMessagingMethods<
    * be accessed with iterator.
    *
    * @param dbName
-   * @param messageAddress
+   * @param messageAddress - a message's key for a key value store.
+   * A message's address in the swarm for a non key value store.
    * @returns {Promise<void>}
    * @memberof ISwarmMessageStore
    * @throws

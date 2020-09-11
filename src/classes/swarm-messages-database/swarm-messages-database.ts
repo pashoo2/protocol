@@ -2,7 +2,7 @@ import {
   ISwarmMessageDatabaseMessagingMethods,
   ISwarmMessagesDatabaseConnectOptions,
   TSwarmMessagesDatabaseType,
-  TSwarmMessageDatabaseEvents,
+  ISwarmMessageDatabaseEvents,
   ISwarmMessagesDatabaseReady,
 } from './swarm-messages-database.types';
 import {
@@ -30,7 +30,7 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
     return this._isReady && !!this._swarmMessageStore;
   }
 
-  get emitter(): EventEmitter<TSwarmMessageDatabaseEvents> {
+  get emitter(): EventEmitter<ISwarmMessageDatabaseEvents<P>> {
     return this._emitter;
   }
 
@@ -45,7 +45,7 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
 
   protected _dbType?: TSwarmMessagesDatabaseType<P>;
 
-  protected _emitter = new EventEmitter<TSwarmMessageDatabaseEvents>();
+  protected _emitter = new EventEmitter<ISwarmMessageDatabaseEvents<P>>();
 
   /**
    * An instance implemented ISwarmMessageStore
@@ -248,6 +248,7 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
 
   protected _handleDatabaseUpdatedEvent = (dbName: string): void => {
     if (this._dbName !== dbName) return;
+    debugger;
     this._emitter.emit(ESwarmStoreEventNames.UPDATE, dbName);
   };
 
@@ -259,7 +260,7 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
     // for key-value store it will be the key
     key?: string
   ) => {
-    debugger
+    debugger;
     if (this._dbName !== dbName) return;
     this._emitter.emit(
       ESwarmMessageStoreEventNames.NEW_MESSAGE,

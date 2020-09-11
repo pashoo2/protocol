@@ -13,6 +13,8 @@ import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-stor
 import { SwarmMessagesDatabase } from '../../classes/swarm-messages-database';
 import { TSwarmStoreDatabaseEntityKey } from '../../classes/swarm-store-class/swarm-store-class.types';
 import { ISwarmMessagesDatabaseMessageDescription } from './swarm-messages-database-component.types';
+import { ISwarmMessageInstanceDecrypted } from '../../classes/swarm-message/swarm-message-constructor.types';
+import { ISwarmMessageStoreDeleteMessageArg } from '../../classes/swarm-message-store/swarm-message-store.types';
 
 interface IProps {
   databaseOptions: ISwarmStoreDatabaseBaseOptions;
@@ -20,7 +22,7 @@ interface IProps {
 }
 
 interface IState<P extends ESwarmStoreConnector> {
-  messages: ISwarmMessagesDatabaseMessageDescription[];
+  messages: ISwarmMessagesDatabaseMessageDescription<P>[];
   isOpening: boolean;
   isClosing: boolean;
   db?: SwarmMessagesDatabase<P>;
@@ -28,9 +30,9 @@ interface IState<P extends ESwarmStoreConnector> {
 
 export class SwarmMessagesDatabaseComponent<
   P extends ESwarmStoreConnector
-  > extends React.PureComponent<IProps, IState<P>> {
+> extends React.PureComponent<IProps, IState<P>> {
   state = {
-    messages: [] as ISwarmMessagesDatabaseMessageDescription[],
+    messages: [] as ISwarmMessagesDatabaseMessageDescription<P>[],
     isOpening: false,
     isClosing: false,
     db: undefined as SwarmMessagesDatabase<P> | undefined,
@@ -43,7 +45,7 @@ export class SwarmMessagesDatabaseComponent<
   }
 
   handleNewMessage = (
-    message: ISwarmMessagesDatabaseMessageDescription
+    message: ISwarmMessagesDatabaseMessageDescription<P>
   ): void => {
     this.setState(({ messages }) => ({
       messages: [...messages, message],
@@ -87,12 +89,11 @@ export class SwarmMessagesDatabaseComponent<
             return true;
           },
         };
-        debugger
         const db = await connectToDatabase({
           dbOptions,
           swarmMessageStore: connectionBridge.storage,
         });
-        debugger
+
         setMessageListener(db, this.handleNewMessage);
         this.setState({ db });
       } catch (err) {
@@ -100,6 +101,39 @@ export class SwarmMessagesDatabaseComponent<
       } finally {
         this.setState({ isOpening: false });
       }
+    }
+  };
+
+  handleDeleteMessage = async (
+    id: TSwarmStoreDatabaseEntityKey<P>,
+    message: ISwarmMessageInstanceDecrypted,
+    key: string | undefined
+  ): Promise<void> => {
+    const { db } = this.state;
+    let removeArg:
+      | TSwarmStoreDatabaseEntityKey<P>
+      | string
+      | ISwarmMessageInstanceDecrypted
+      | undefined;
+
+    if (this.isOpened && db?.isReady) {
+      const { dbType } = db;
+
+      if (dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE) {
+        if (!key) {
+          throw new Error(
+            'For key-value database type a key must be provided to delete a message'
+          );
+        }
+        removeArg = key;
+      } else if (db.dbType === ESwarmStoreConnectorOrbitDbDatabaseType.FEED) {
+        removeArg = id;
+      } else {
+        removeArg = message;
+      }
+      return db.deleteMessage(
+        removeArg as ISwarmMessageStoreDeleteMessageArg<P>
+      );
     }
   };
 
@@ -158,8 +192,8 @@ export class SwarmMessagesDatabaseComponent<
         {isOpened ? (
           <button onClick={this.handleDbClose}>Close</button>
         ) : (
-            <button onClick={this.handleDbOpen}>Open</button>
-          )}
+          <button onClick={this.handleDbOpen}>Open</button>
+        )}
         <br />
         {isOpened && (
           <button onClick={this.sendSwarmMessage}>Send message</button>
@@ -174,6 +208,7 @@ export class SwarmMessagesDatabaseComponent<
                 id={message.id}
                 k={message.key}
                 message={message.message}
+                deleteMessage={this.handleDeleteMessage}
               />
             );
           })}

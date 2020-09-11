@@ -4,6 +4,7 @@ import { ISwarmMessagesDatabaseConnectOptions } from '../../classes/swarm-messag
 import { ISwarmMessageInstanceDecrypted } from '../../classes/swarm-message/swarm-message-constructor.types';
 import { ISwarmMessagesDatabaseMessageDescription } from './swarm-messages-database-component.types';
 import { ESwarmMessageStoreEventNames } from '../../classes/swarm-message-store/swarm-message-store.const';
+import { TSwarmStoreDatabaseEntityKey } from '../../classes/swarm-store-class/swarm-store-class.types';
 
 export const connectToDatabase = async <
   P extends ESwarmStoreConnector = ESwarmStoreConnector.OrbitDB
@@ -13,13 +14,19 @@ export const connectToDatabase = async <
   const db = new SwarmMessagesDatabase<P>();
 
   await db.connect(options);
-  debugger
   return db;
 };
 
-export const setMessageListener = <T extends SwarmMessagesDatabase<any>>(
+export const setMessageListener = <
+  P extends ESwarmStoreConnector = ESwarmStoreConnector.OrbitDB,
+  T extends SwarmMessagesDatabase<P> = SwarmMessagesDatabase<
+    ESwarmStoreConnector.OrbitDB
+  >
+>(
   db: T,
-  messagesListener: (message: ISwarmMessagesDatabaseMessageDescription) => void
+  messagesListener: (
+    message: ISwarmMessagesDatabaseMessageDescription<P>
+  ) => void
 ): void => {
   db.emitter.addListener(
     ESwarmMessageStoreEventNames.NEW_MESSAGE,
@@ -27,11 +34,10 @@ export const setMessageListener = <T extends SwarmMessagesDatabase<any>>(
       dbName: string,
       message: ISwarmMessageInstanceDecrypted,
       // the global unique address of the message in the swarm
-      messageAddress: string,
+      messageAddress: TSwarmStoreDatabaseEntityKey<P>,
       // for key-value store it will be the key
       key?: string
     ) => {
-      debugger;
       messagesListener({
         message,
         id: messageAddress,

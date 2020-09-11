@@ -235,24 +235,22 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     return undefined;
   };
 
+  /**
+   * Remove a value located in the key provided if it is a key value
+   * database.
+   * Remove an entry by it's address for a non key-value database.
+   *
+   * @param {TSwarmStoreConnectorOrbitDbDatabaseKey} keyOrEntryAddress - key of a value for key-value store or entry address.
+   * @returns {(Promise<Error | void>)}
+   * @memberof SwarmStoreConnectorOrbitDBDatabase
+   */
   public async remove(
-    hash: TSwarmStoreConnectorOrbitDbDatabaseKey
+    keyOrEntryAddress: TSwarmStoreConnectorOrbitDbDatabaseKey
   ): Promise<Error | void> {
-    const database = this.getDbStoreInstance();
-
-    if (database instanceof Error) {
-      return database;
-    }
     try {
-      const hashRemoved = this.isKVStore
-        ? (database as OrbitDbKeyValueStore<TStoreValue>).del(hash)
-        : (database as OrbitDbFeedStore<TStoreValue>).remove(hash);
-
-      if (typeof hashRemoved !== 'string') {
-        return new Error(
-          'An unknown type of hash was returned for the value removed'
-        );
-      }
+      await (this.isKVStore
+        ? this.removeKeyKVStore(keyOrEntryAddress)
+        : this.removeEntry(keyOrEntryAddress));
     } catch (err) {
       return err;
     }
@@ -585,6 +583,68 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     if (!this.isFullyLoaded) {
       this.isFullyLoaded = true;
       this.emitEvent(ESwarmStoreEventNames.LOADING, 100);
+    }
+  }
+
+  /**
+   * Deletes the Object associated with key.
+   * Returns a Promise that resolves to a String that is the multihash of the deleted entry.
+   *
+   * @protected
+   * @param {TSwarmStoreConnectorOrbitDbDatabaseKey} key - key of a value
+   * @returns {(Promise<Error | void>)}
+   * @memberof SwarmStoreConnectorOrbitDBDatabase
+   * @throws
+   */
+  protected async removeKeyKVStore(
+    key: TSwarmStoreConnectorOrbitDbDatabaseKey
+  ): Promise<void> {
+    const database = this.getDbStoreInstance() as OrbitDbKeyValueStore<
+      TStoreValue
+    >;
+
+    if (database instanceof Error) {
+      throw database;
+    }
+    try {
+      const hashRemoved = await database.del(key);
+      debugger;
+      if (typeof hashRemoved !== 'string') {
+        throw new Error(
+          'An unknown type of hash was returned for the value removed'
+        );
+      }
+    } catch (err) {
+      console.error(err);
+      throw new Error(
+        `Failed to remove an object by the key ${key}: ${err.message}`
+      );
+    }
+  }
+
+  /**
+   * Remove an entry by it's address provided
+   *
+   * @param {TSwarmStoreConnectorOrbitDbDatabaseKey} entryAddress
+   * @returns {(Promise<Error | void>)}
+   * @memberof SwarmStoreConnectorOrbitDBDatabase
+   * @throws
+   */
+  public async removeEntry(
+    entryAddress: TSwarmStoreConnectorOrbitDbDatabaseKey
+  ): Promise<Error | void> {
+    const database = this.getDbStoreInstance() as OrbitDbFeedStore<TStoreValue>;
+
+    if (database instanceof Error) {
+      throw database;
+    }
+    try {
+      await database.remove(entryAddress);
+    } catch (err) {
+      console.error(err);
+      return new Error(
+        `Failed to remove an entry by the address ${entryAddress}: ${err.message}`
+      );
     }
   }
 

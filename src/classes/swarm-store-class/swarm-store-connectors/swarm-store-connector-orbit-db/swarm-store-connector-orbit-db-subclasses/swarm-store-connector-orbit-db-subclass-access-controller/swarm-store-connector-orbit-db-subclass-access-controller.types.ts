@@ -1,5 +1,5 @@
-import { ISwarmStoreConnectorOrbitDBLogEntity } from '../../swarm-store-connector-orbit-db.types';
-
+import { TSwarmStoreDatabaseEntryOperation } from '../../../../swarm-store-class.types';
+import { ESwarmStoreConnector } from '../../../../swarm-store-class.const';
 export interface ISwarmStoreConnectorOrbitDbDatabaseAccessControllerManifest {
   /**
    * do not use the manifest to
@@ -17,15 +17,16 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseAccessControllerManifest {
  * userId === id
  */
 export type TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<
-  TFeedStoreType
+  T,
+  P extends ESwarmStoreConnector
 > = (
   // value
-  payload: TFeedStoreType,
+  payload: T,
   userId: string,
   // key of the value
   key?: string,
   // operation which is processed (like delete, add or something else)
-  operation?: string
+  operation?: TSwarmStoreDatabaseEntryOperation<P>
 ) => Promise<boolean>;
 
 export interface ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess {
@@ -49,7 +50,8 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseAccessControlleGrantCallback
    * @returns boolean
    */
   grantAccess?: TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<
-    TFeedStoreType
+    TFeedStoreType,
+    ESwarmStoreConnector.OrbitDB
   >;
 }
 
