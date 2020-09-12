@@ -9,3 +9,29 @@ export interface ISwarmMessagesDatabaseMessageDescription<
   key?: string;
   message: ISwarmMessageInstanceDecrypted;
 }
+
+export interface ISwarmMessagesDatabaseDeleteMessageDescription<
+  P extends ESwarmStoreConnector.OrbitDB
+> {
+  /**
+   * Id of the message which removed another message.
+   *
+   * @type {TSwarmStoreDatabaseEntityKey<P>}
+   * @memberof ISwarmMessagesDatabaseDeleteMessageDescription
+   */
+  id: TSwarmStoreDatabaseEntityKey<P>;
+  /**
+   * a key or a hash of a message which was removed
+   *
+   * @type {string}
+   * @memberof ISwarmMessagesDatabaseMessageDescription
+   */
+  keyOrIdRemoved?: string;
+  /**
+   * User's id who removed the message.
+   *
+   * @type {string}
+   * @memberof ISwarmMessagesDatabaseMessageDescription
+   */
+  userId: string;
+}

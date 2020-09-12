@@ -12,9 +12,9 @@ import {
 } from '../swarm-store-class/swarm-store-class.types';
 import { OmitFirstArg } from '../../types/helper.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
-import { EventEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { ISwarmMessageInstanceDecrypted } from '../swarm-message/swarm-message-constructor.types';
 import { ESwarmMessageStoreEventNames } from '../swarm-message-store/swarm-message-store.const';
+import { TTypedEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 
 /**
  * Options which are necessary for opening
@@ -67,7 +67,7 @@ export interface ISwarmMessageDatabaseEvents<P extends ESwarmStoreConnector> {
     messageAddress: TSwarmStoreDatabaseEntityKey<P>,
     // for key-value store it will be the key for the value,
     // for feed store it will be hash of the message which deleted by this one.
-    keyOrHash?: string
+    keyOrAddress?: string
   ) => void;
 }
 
@@ -127,10 +127,10 @@ export interface ISwarmMessagesDatabaseProperties<
    * Event emitter which emits various events
    * of the database.
    *
-   * @type {EventEmitter<ISwarmMessageDatabaseEvents<P>>}
+   * @type {TTypedEmitter<ISwarmMessageDatabaseEvents<P>>}
    * @memberof ISwarmMessagesDatabaseProperties
    */
-  emitter: EventEmitter<ISwarmMessageDatabaseEvents<P>>;
+  emitter: TTypedEmitter<ISwarmMessageDatabaseEvents<P>>;
 }
 
 /**

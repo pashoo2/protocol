@@ -10,11 +10,15 @@ import {
   ESwarmStoreEventNames,
 } from '../swarm-store-class/swarm-store-class.const';
 import assert from 'assert';
-import { TSwarmStoreDatabaseOptions } from '../swarm-store-class/swarm-store-class.types';
+import {
+  TSwarmStoreDatabaseOptions,
+  TSwarmStoreDatabaseEntityKey,
+} from '../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageStore } from '../swarm-message-store/swarm-message-store.types';
-import { EventEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
+import { getEventEmitterInstance } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { ESwarmMessageStoreEventNames } from '../swarm-message-store/swarm-message-store.const';
-import { ISwarmMessageBody } from '../swarm-message/swarm-message-constructor.types';
+import { ISwarmMessageInstanceDecrypted } from '../swarm-message/swarm-message-constructor.types';
+import { TTypedEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 
 export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
   implements ISwarmMessageDatabaseMessagingMethods<P> {
@@ -30,7 +34,7 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
     return this._isReady && !!this._swarmMessageStore;
   }
 
-  get emitter(): EventEmitter<ISwarmMessageDatabaseEvents<P>> {
+  get emitter(): TTypedEmitter<ISwarmMessageDatabaseEvents<P>> {
     return this._emitter;
   }
 
@@ -45,7 +49,9 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
 
   protected _dbType?: TSwarmMessagesDatabaseType<P>;
 
-  protected _emitter = new EventEmitter<ISwarmMessageDatabaseEvents<P>>();
+  protected _emitter = getEventEmitterInstance<
+    ISwarmMessageDatabaseEvents<P>
+  >();
 
   /**
    * An instance implemented ISwarmMessageStore
@@ -243,7 +249,7 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
     percentage: number
   ): void => {
     if (this._dbName !== dbName) return;
-    this._emitter.emit(ESwarmStoreEventNames.LOADING, dbName, percentage);
+    this._emitter.emit(ESwarmStoreEventNames.DB_LOADING, dbName, percentage);
   };
 
   protected _handleDatabaseUpdatedEvent = (dbName: string): void => {
@@ -253,9 +259,9 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
 
   protected _handleDatabaseNewMessage = (
     dbName: string,
-    message: ISwarmMessageBody,
+    message: ISwarmMessageInstanceDecrypted,
     // the global unique address (hash) of the message in the swarm
-    messageAddress: string,
+    messageAddress: TSwarmStoreDatabaseEntityKey<P>,
     // for key-value store it will be the key
     key?: string
   ) => {
@@ -273,12 +279,13 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
     dbName: string,
     userID: string,
     // the global unique address (hash) of the DELETE message in the swarm
-    messageAddress: string,
+    messageAddress: TSwarmStoreDatabaseEntityKey<P>,
     // for key-value store it will be the key for the value,
     // for feed store it will be hash of the message which deleted by this one.
     keyOrHash?: string
   ) => {
     if (this._dbName !== dbName) return;
+    debugger;
     this._emitter.emit(
       ESwarmMessageStoreEventNames.DELETE_MESSAGE,
       dbName,
@@ -295,7 +302,7 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
     // error occurred while deserializing the message
     error: Error,
     // the global unique address (hash) of the message in the swarm
-    messageAddress: string,
+    messageAddress: TSwarmStoreDatabaseEntityKey<P>,
     // for key-value store it will be the key
     key?: string
   ) => {
@@ -317,6 +324,11 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
   };
 
   protected _emitInstanceClosed() {
+    if (!this._dbName) {
+      throw new Error(
+        'SwarmMessagesDatabase::_emitInstanceClosed: failed cause there is no database name defined'
+      );
+    }
     this._emitter.emit(ESwarmStoreEventNames.CLOSE_DATABASE, this._dbName);
   }
 
@@ -327,6 +339,11 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
   };
 
   protected _emitDatabaseDropped(): void {
+    if (!this._dbName) {
+      throw new Error(
+        'SwarmMessagesDatabase::_emitDatabaseDropped: failed cause there is no database name defined'
+      );
+    }
     this._emitter.emit(ESwarmStoreEventNames.DROP_DATABASE, this._dbName);
   }
 

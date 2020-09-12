@@ -12,9 +12,13 @@ import {
 import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
 import { SwarmMessagesDatabase } from '../../classes/swarm-messages-database';
 import { TSwarmStoreDatabaseEntityKey } from '../../classes/swarm-store-class/swarm-store-class.types';
-import { ISwarmMessagesDatabaseMessageDescription } from './swarm-messages-database-component.types';
+import {
+  ISwarmMessagesDatabaseMessageDescription,
+  ISwarmMessagesDatabaseDeleteMessageDescription,
+} from './swarm-messages-database-component.types';
 import { ISwarmMessageInstanceDecrypted } from '../../classes/swarm-message/swarm-message-constructor.types';
 import { ISwarmMessageStoreDeleteMessageArg } from '../../classes/swarm-message-store/swarm-message-store.types';
+import { setMessageDeleteListener } from './swarm-messages-database-component.utils';
 
 interface IProps {
   databaseOptions: ISwarmStoreDatabaseBaseOptions;
@@ -44,11 +48,25 @@ export class SwarmMessagesDatabaseComponent<
     return !isOpening && !isClosing && !!db;
   }
 
-  handleNewMessage = (
+  onNewMessage = (
     message: ISwarmMessagesDatabaseMessageDescription<P>
   ): void => {
     this.setState(({ messages }) => ({
       messages: [...messages, message],
+    }));
+  };
+
+  onMessageDelete = (
+    deleteMessageDescription: ISwarmMessagesDatabaseDeleteMessageDescription<P>
+  ) => {
+    debugger;
+    this.setState(({ messages }) => ({
+      messages: [...messages].filter((msg) => {
+        return (
+          msg.id !== deleteMessageDescription.keyOrIdRemoved &&
+          (!msg.key || msg.key !== deleteMessageDescription.keyOrIdRemoved)
+        );
+      }),
     }));
   };
 
@@ -94,7 +112,8 @@ export class SwarmMessagesDatabaseComponent<
           swarmMessageStore: connectionBridge.storage,
         });
 
-        setMessageListener(db, this.handleNewMessage);
+        setMessageListener(db, this.onNewMessage);
+        setMessageDeleteListener(db, this.onMessageDelete);
         this.setState({ db });
       } catch (err) {
         console.error(err);
