@@ -285,7 +285,6 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
     keyOrHash?: string
   ) => {
     if (this._dbName !== dbName) return;
-    debugger;
     this._emitter.emit(
       ESwarmMessageStoreEventNames.DELETE_MESSAGE,
       dbName,

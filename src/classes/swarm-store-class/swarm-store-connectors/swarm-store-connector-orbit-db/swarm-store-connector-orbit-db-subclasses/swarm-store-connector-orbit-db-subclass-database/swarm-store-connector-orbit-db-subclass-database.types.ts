@@ -88,16 +88,19 @@ export enum ESwarmStoreConnectorOrbitDbDatabaseIteratorOption {
   reverse = 'reverse',
 }
 
-export interface ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions {
+export interface ISwarmStoreConnectorOrbitDbDatabaseIteratorOptionsRequired {
   // if the equal operator applyied all other will not be applied
-  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq]?: string | string[];
-  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.gt]?: string;
-  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.gte]?: string;
-  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.lt]?: string;
-  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.lte]?: string;
-  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.limit]?: number;
-  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.reverse]?: boolean;
+  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq]: string | string[];
+  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.gt]: string;
+  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.gte]: string;
+  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.lt]: string;
+  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.lte]: string;
+  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.limit]: number;
+  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.reverse]: boolean;
 }
+
+export interface ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions
+  extends Partial<ISwarmStoreConnectorOrbitDbDatabaseIteratorOptionsRequired> {}
 
 export interface ISwarmStoreConnectorOrbitDbDatabaseIteratorAnswer<T> {
   collect(): T[];

@@ -31,7 +31,10 @@ import {
   ESwarmStoreConnectorOrbitDbDatabaseType,
 } from './swarm-store-connector-orbit-db-subclass-database.const';
 import { ESwarmStoreEventNames } from '../../../../swarm-store-class.const';
-import { TSwarmStoreConnectorOrbitDbDatabaseMethodArgumentDbLoad } from './swarm-store-connector-orbit-db-subclass-database.types';
+import {
+  TSwarmStoreConnectorOrbitDbDatabaseMethodArgumentDbLoad,
+  ISwarmStoreConnectorOrbitDbDatabaseIteratorOptionsRequired,
+} from './swarm-store-connector-orbit-db-subclass-database.types';
 import { ISwarmStoreConnectorRequestLoadAnswer } from '../../../../swarm-store-class.types';
 import {
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_EMIT_BATCH_INT_MS,
@@ -403,15 +406,14 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     if (eqOperand) {
       return this.getValues(eqOperand, database);
     }
-
+    debugger;
     const iteratorOptionsRes =
       options ||
       SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ITERATOR_OPTIONS_DEFAULT;
 
-    return database
-      .iterator(iteratorOptionsRes)
-      .collect()
-      .map(this.parseValueStored);
+    const result = database.iterator(iteratorOptionsRes).collect();
+    debugger;
+    return result.map(this.parseValueStored);
   }
 
   protected async iteratorKeyValueStore(
@@ -427,7 +429,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     const database = this.getDbStoreInstance() as OrbitDbKeyValueStore<
       TStoreValue
     >;
-
     if (database instanceof Error) {
       return database;
     }
@@ -436,36 +437,85 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       options && options[ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq];
 
     if (eqOperand) {
-      if (eqOperand instanceof Array) {
-        return Promise.all(eqOperand.map(this.get));
-      }
-      return [await this.get(eqOperand)];
+      return this.getEqual(eqOperand);
     }
+
     // TODO - check it works
     const iteratorOptionsRes =
       options ||
       SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ITERATOR_OPTIONS_DEFAULT;
-    const keys = (database as any).all as string[];
-    let limit = (iteratorOptionsRes as any).limit;
+    const keys = Object.keys(database.all);
+    let limit = iteratorOptionsRes.limit;
 
-    if (limit < 0 || typeof limit !== 'number') {
+    if (typeof limit !== 'number' || limit < 0) {
       limit = undefined;
     }
-    return Promise.all(
-      keys
-        .slice(0, limit)
-        .filter((key) => {
-          const { gt, gte } = iteratorOptionsRes as any;
-          const isInclusive = !!gte;
 
-          if (!gt || !gte || (isInclusive ? key >= gte : key > gt)) {
-            return true;
-          }
-          return false;
-        })
-        .map(this.get)
-    );
+    const {
+      gt,
+      gte,
+      lt,
+      lte,
+      reverse,
+    } = iteratorOptionsRes as ISwarmStoreConnectorOrbitDbDatabaseIteratorOptionsRequired;
+    let keysList = (reverse ? keys.reverse() : keys).slice(0, limit);
+
+    if (gt || lt || gte || lte) {
+      keysList = this.filterKeys(keysList, iteratorOptionsRes);
+    }
+    return this.getKeysValues(keysList);
   }
+
+  protected getEqual = async (
+    eqOperand: string | string[]
+  ): Promise<
+    | Error
+    | Array<
+        | ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue>
+        | Error
+        | undefined
+      >
+  > => {
+    if (eqOperand instanceof Array) {
+      return Promise.all(eqOperand.map(this.get));
+    }
+    return [await this.get(eqOperand)];
+  };
+
+  protected filterKeys = (
+    keysList: string[],
+    filterOptions: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions
+  ): string[] => {
+    const { gt, gte, lt, lte } = filterOptions;
+
+    return keysList.filter((key) => {
+      if (!gt && !lt && !gte && !lte) {
+        return true;
+      }
+      if (gte && key >= gte) {
+        return true;
+      } else if (gt && key > gt) {
+        return true;
+      } else if (lte && key <= lte) {
+        return true;
+      } else if (lt && key < lt) {
+        return true;
+      }
+      return false;
+    });
+  };
+
+  protected getKeysValues = (
+    keys: string[]
+  ): Promise<
+    | Error
+    | Array<
+        | ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue>
+        | Error
+        | undefined
+      >
+  > => Promise.all(keys.map(this.get));
+
   protected parseValueStored = (
     e: LogEntry<TStoreValue>
   ):

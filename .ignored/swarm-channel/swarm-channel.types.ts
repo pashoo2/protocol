@@ -182,8 +182,19 @@ export interface ISwarmChannelStateFields<
 > {
   /**
    * Messages stored in the channel.
+   * It's just a cached version of the main database
+   * which is more performant.
+   * It was updated each time an events of message removing or database update fired.
+   *
    */
   messagesList: ISwarmMessageInstanceDecrypted[];
+  /**
+   * Exists only in key-value stores.
+   * It's just a cached version of the main database
+   * which is more performant.
+   * It was updated each time an events of message removing or database update fired.
+   */
+  keyValueStore?: Record<string, ISwarmMessageInstanceDecrypted>;
   status: SwarmChannelStatus;
   events: EventEmitter<E>;
   isEncrypted: boolean;

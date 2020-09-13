@@ -3,7 +3,10 @@ import { IConnectionBridge } from 'classes/connection-bridge/connection-bridge.t
 import { ISwarmStoreDatabaseBaseOptions } from 'classes/swarm-store-class/swarm-store-class.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { CONNECT_TO_SWARM_STORAGE_DEFAULT_MESSAGE_BODY } from '../connect-to-swarm/connect-to-swarm.const';
-import { ISwarmStoreConnectorOrbitDbDatabaseOptions } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
+import {
+  ISwarmStoreConnectorOrbitDbDatabaseOptions,
+  ESwarmStoreConnectorOrbitDbDatabaseIteratorOption,
+} from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import { MessageComponent } from '../message-component/message-component';
 import {
   connectToDatabase,
@@ -48,6 +51,18 @@ export class SwarmMessagesDatabaseComponent<
     return !isOpening && !isClosing && !!db;
   }
 
+  queryDatabase = async () => {
+    const { db } = this.state;
+
+    if (db) {
+      const result = await db.collect({
+        [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.limit]: -1,
+      } as any);
+      debugger;
+      console.log(result);
+    }
+  };
+
   onNewMessage = (
     message: ISwarmMessagesDatabaseMessageDescription<P>
   ): void => {
@@ -59,7 +74,6 @@ export class SwarmMessagesDatabaseComponent<
   onMessageDelete = (
     deleteMessageDescription: ISwarmMessagesDatabaseDeleteMessageDescription<P>
   ) => {
-    debugger;
     this.setState(({ messages }) => ({
       messages: [...messages].filter((msg) => {
         return (
@@ -68,6 +82,7 @@ export class SwarmMessagesDatabaseComponent<
         );
       }),
     }));
+    this.queryDatabase();
   };
 
   handleDbClose = async () => {
