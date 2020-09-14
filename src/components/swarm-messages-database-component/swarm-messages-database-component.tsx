@@ -58,7 +58,17 @@ export class SwarmMessagesDatabaseComponent<
       const result = await db.collect({
         [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.limit]: -1,
       } as any);
-      debugger;
+      console.log(result);
+    }
+  };
+
+  queryDatabaseMessagesWithMeta = async () => {
+    const { db } = this.state;
+
+    if (db) {
+      const result = await db.collectWithMeta({
+        [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.limit]: -1,
+      } as any);
       console.log(result);
     }
   };
@@ -83,6 +93,7 @@ export class SwarmMessagesDatabaseComponent<
       }),
     }));
     this.queryDatabase();
+    this.queryDatabaseMessagesWithMeta();
   };
 
   handleDbClose = async () => {

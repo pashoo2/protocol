@@ -76,6 +76,7 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValueType> {
   id: string; // id of the user who stores the value
   value: TStoreValueType;
   hash: TSwarmStoreConnectorOrbitDbDatabaseStoreHash;
+  key?: string; // key of the value for a KeyValue databases
 }
 
 export enum ESwarmStoreConnectorOrbitDbDatabaseIteratorOption {

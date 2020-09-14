@@ -133,6 +133,41 @@ export type ISwarmMessageStoreDeleteMessageArg<
   ? TSwarmStoreDatabaseEntityKey<P> // swarm message address
   : TSwarmMessageInstance; // instance of the message to remove
 
+export interface ISwarmMessageStoreMessageMeta<P extends ESwarmStoreConnector> {
+  /**
+   * A name of a database where the name is from
+   *
+   * @type {string}
+   * @memberof ISwarmMessageStoreMessageMeta
+   */
+  dbName: string;
+  /**
+   * The global unique address (hash) of the message in the swarm
+   *
+   * @type {TSwarmStoreDatabaseEntityKey<P>}
+   */
+  messageAddress: Error | undefined | TSwarmStoreDatabaseEntityKey<P>;
+  /**
+   * for key-value store it will be the key
+   *
+   * @type {string}
+   * @memberof ISwarmMessageStoreMessageMeta
+   */
+  key?: Error | string | undefined;
+}
+
+export interface ISwarmMessageStoreMessagingRequestWithMetaResult<
+  P extends ESwarmStoreConnector
+> extends ISwarmMessageStoreMessageMeta<P> {
+  /**
+   * Message parsed.
+   * Error if failed to parse the message.
+   *
+   * @type {(Error | TSwarmMessageInstance)}
+   */
+  message: Error | TSwarmMessageInstance;
+}
+
 /**
  * Methods for messaging between swarm users.
  *
@@ -219,6 +254,19 @@ export interface ISwarmMessageStoreMessagingMethods<
     dbName: string,
     options: TSwarmStoreDatabaseIteratorMethodArgument<P>
   ): Promise<(TSwarmMessageInstance | Error)[]>;
+
+  /**
+   * Collect messages with some metadata info.
+   *
+   * @param {string} dbName
+   * @param {TSwarmStoreDatabaseIteratorMethodArgument<P>} options
+   * @returns {Promise<(ISwarmMessageStoreMessagingRequestWithMetaResult<P>)[]>}
+   * @memberof ISwarmMessageStoreMessagingMethods
+   */
+  collectWithMeta(
+    dbName: string,
+    options: TSwarmStoreDatabaseIteratorMethodArgument<P>
+  ): Promise<ISwarmMessageStoreMessagingRequestWithMetaResult<P>[]>;
 }
 
 /**

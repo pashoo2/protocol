@@ -406,13 +406,13 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     if (eqOperand) {
       return this.getValues(eqOperand, database);
     }
-    debugger;
+
     const iteratorOptionsRes =
       options ||
       SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ITERATOR_OPTIONS_DEFAULT;
 
     const result = database.iterator(iteratorOptionsRes).collect();
-    debugger;
+
     return result.map(this.parseValueStored);
   }
 
@@ -463,7 +463,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     if (gt || lt || gte || lte) {
       keysList = this.filterKeys(keysList, iteratorOptionsRes);
     }
-    return this.getKeysValues(keysList);
+    return this.getValuesForKeys(keysList);
   }
 
   protected getEqual = async (
@@ -505,7 +505,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     });
   };
 
-  protected getKeysValues = (
+  protected getValuesForKeys = (
     keys: string[]
   ): Promise<
     | Error
@@ -532,6 +532,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
         id: identity.id,
         value: payload.value,
         hash,
+        key: this.isKVStore ? payload.key : undefined,
       };
     } else {
       return new Error('An unknown fromat of the data stored');

@@ -135,6 +135,19 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
     return this._swarmMessageStore.collect(this._dbName, ...args);
   };
 
+  collectWithMeta = (
+    ...args: Parameters<
+      ISwarmMessageDatabaseMessagingMethods<P>['collectWithMeta']
+    >
+  ): ReturnType<
+    ISwarmMessageDatabaseMessagingMethods<P>['collectWithMeta']
+  > => {
+    if (!this._checkIsReady()) {
+      throw new Error('The instance is not ready to use');
+    }
+    return this._swarmMessageStore.collectWithMeta(this._dbName, ...args);
+  };
+
   /**
    * Checks if the instance is ready to use
    *

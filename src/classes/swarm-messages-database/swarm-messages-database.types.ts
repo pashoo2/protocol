@@ -87,6 +87,9 @@ export interface ISwarmMessageDatabaseMessagingMethods<
     ISwarmMessageStoreMessagingMethods<P>['deleteMessage']
   >;
   collect: OmitFirstArg<ISwarmMessageStoreMessagingMethods<P>['collect']>;
+  collectWithMeta: OmitFirstArg<
+    ISwarmMessageStoreMessagingMethods<P>['collectWithMeta']
+  >;
 }
 
 export type TSwarmMessagesDatabaseType<

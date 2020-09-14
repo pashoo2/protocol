@@ -47,7 +47,11 @@ import {
   TSwarmMessageStoreMessageId,
   ISwarmMessageStoreDeleteMessageArg,
 } from './swarm-message-store.types';
-import { TSwarmMessageSeriazlized } from '../swarm-message/swarm-message-constructor.types';
+import {
+  TSwarmMessageSeriazlized,
+  ISwarmMessageInstanceDecrypted,
+  ISwarmMessageInstanceEncrypted,
+} from '../swarm-message/swarm-message-constructor.types';
 import { isDefined } from '../../utils/common-utils/common-utils-main';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { TSwarmMessageConstructorBodyMessage } from '../swarm-message/swarm-message-constructor.types';
@@ -56,6 +60,8 @@ import {
   TSwarmStoreDatabaseOptions,
 } from '../swarm-store-class/swarm-store-class.types';
 import { swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl } from './swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider';
+import { ISwarmMessageStoreMessagingRequestWithMetaResult } from './swarm-message-store.types';
+import { TSwarmStoreDatabaseRequestMethodReturnType } from '../swarm-store-class/swarm-store-class.types';
 import {
   EOrbitDbFeedStoreOperation,
   ESwarmStoreConnectorOrbitDbDatabaseType,
@@ -208,6 +214,98 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
       dbName,
       iterator as TSwarmStoreDatabaseIteratorMethodAnswer<P, any>
     );
+  }
+
+  public async collectWithMeta(
+    dbName: string,
+    options: TSwarmStoreDatabaseIteratorMethodArgument<P>
+  ): Promise<Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P>>> {
+    assert(typeof dbName === 'string', '');
+
+    const iterator = await this.request(
+      dbName,
+      this.dbMethodIterator,
+      this.getArgIterateDb(dbName, options)
+    );
+
+    if (iterator instanceof Error) {
+      throw iterator;
+    }
+
+    const collectMessagesResult = await this.collectMessages(
+      dbName,
+      iterator as TSwarmStoreDatabaseIteratorMethodAnswer<
+        P,
+        TSwarmStoreValueTypes<P>
+      >
+    );
+
+    return this.getMessagesWithMeta(
+      collectMessagesResult,
+      iterator as Exclude<
+        TSwarmStoreDatabaseRequestMethodReturnType<P, TSwarmStoreValueTypes<P>>,
+        Error
+      >,
+      dbName
+    );
+  }
+
+  protected getMessagesWithMeta(
+    messages: Array<
+      Error | ISwarmMessageInstanceDecrypted | ISwarmMessageInstanceEncrypted
+    >,
+    rawEntriesIterator: Exclude<
+      TSwarmStoreDatabaseRequestMethodReturnType<P, TSwarmStoreValueTypes<P>>,
+      Error
+    >,
+    dbName: string
+  ): Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P>> {
+    if (this.connectorType === ESwarmStoreConnector.OrbitDB) {
+      return this.joinMessagesWithRawOrbitDBEntries(
+        messages,
+        rawEntriesIterator as Exclude<
+          TSwarmStoreDatabaseIteratorMethodAnswer<
+            ESwarmStoreConnector.OrbitDB,
+            TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>
+          >,
+          Error
+        >,
+        dbName
+      );
+    }
+    return [];
+  }
+
+  protected joinMessagesWithRawOrbitDBEntries(
+    messages: Array<
+      Error | ISwarmMessageInstanceDecrypted | ISwarmMessageInstanceEncrypted
+    >,
+    rawEntriesIterator: Exclude<
+      TSwarmStoreDatabaseIteratorMethodAnswer<
+        ESwarmStoreConnector.OrbitDB,
+        TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>
+      >,
+      Error
+    >,
+    dbName: string
+  ): Array<
+    ISwarmMessageStoreMessagingRequestWithMetaResult<
+      ESwarmStoreConnector.OrbitDB
+    >
+  > {
+    return messages.map((messageInstance, idx) => {
+      const rawMessage = rawEntriesIterator[idx];
+
+      // TODO - depending on connector type return metadata
+      // const { connectorType } = this;
+      return {
+        dbName,
+        messageAddress:
+          rawMessage instanceof Error ? rawMessage : rawMessage?.hash,
+        key: rawMessage instanceof Error ? rawMessage : rawMessage?.key,
+        message: messageInstance,
+      };
+    });
   }
 
   public async dropDatabase(dbName: string): Promise<void | Error> {
