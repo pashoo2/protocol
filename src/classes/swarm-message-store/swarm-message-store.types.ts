@@ -16,18 +16,42 @@ import {
   TSwarmStoreDatabaseEntityKey,
 } from '../swarm-store-class/swarm-store-class.types';
 import {
-  TSwarmMessageSeriazlized,
+  TSwarmMessageSerialized,
   TSwarmMessageConstructorBodyMessage,
 } from '../swarm-message/swarm-message-constructor.types';
 import { TCentralAuthorityUserIdentity } from '../central-authority-class/central-authority-class-types/central-authority-class-types-common';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { IStorageCommon } from 'types/storage.types';
-import { TSwarmStoreDatabaseEntryOperation } from '../swarm-store-class/swarm-store-class.types';
+import {
+  TSwarmStoreDatabaseEntryOperation,
+  TSwarmStoreValueTypes,
+} from '../swarm-store-class/swarm-store-class.types';
+import { StorageProvider } from '../storage-providers/storage-providers.types';
+import { ISwarmStoreConnectorOrbitDbDatabaseValue } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
+import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
+import { TSwarmStoreDatabaseEntityAddress } from '../swarm-store-class/swarm-store-class.types';
 
 /**
  * message unique identifier in the database
  */
 export type TSwarmMessageStoreMessageId = string;
+
+export interface ISwarmMessageStoreSwarmMessageMetadata {
+  /**
+   * Message uniq address in the swarm
+   *
+   * @type {TSwarmMessageStoreMessageId}
+   * @memberof ISwarmMessageStoreSwarmMessageMetadata
+   */
+  messageAddress: TSwarmMessageStoreMessageId;
+  /**
+   * Message key in Key-Value databse
+   *
+   * @type {string}
+   * @memberof ISwarmMessageStoreSwarmMessageMetadata
+   */
+  key?: string;
+}
 
 export interface ISwarmMessageStoreEvents extends ISwarmStoreEvents {
   /**
@@ -115,23 +139,50 @@ export interface ISwarmMessageDatabaseConstructors {
 }
 
 export interface ISwarmMessageStoreOptions<P extends ESwarmStoreConnector>
-  extends ISwarmStoreOptions<P> {
+  extends ISwarmStoreOptions<P, TSwarmMessageSerialized> {
   accessControl?: ISwarmMessageStoreAccessControlOptions<P>;
   messageConstructors: ISwarmMessageDatabaseConstructors;
   providerConnectionOptions: any;
   databasesListStorage: IStorageCommon;
+  /**
+   * Used for caching messages constructed
+   * for keys and addresses.
+   *
+   * @type {IStorageCommon}
+   * @memberof ISwarmMessageStoreOptions
+   */
+  cache?: StorageProvider<TSwarmMessageInstance>;
   swarmMessageConstructorFabric?: ISwarmMessageConstructorWithEncryptedCacheFabric;
 }
 
 export type TSwarmMessageStoreConnectReturnType<
   P extends ESwarmStoreConnector
-> = ReturnType<ISwarmStore<P, TSwarmMessageSeriazlized>['connect']>;
+> = ReturnType<
+  ISwarmStore<
+    P,
+    TSwarmMessageSerialized,
+    ISwarmMessageStoreOptions<P>
+  >['connect']
+>;
+
+export type TSwarmMessageStoreEntryRaw<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmStoreValueTypes<P>
+> = P extends ESwarmStoreConnector
+  ? ISwarmStoreConnectorOrbitDbDatabaseValue<T>
+  : any;
 
 export type ISwarmMessageStoreDeleteMessageArg<
   P extends ESwarmStoreConnector
 > = P extends ESwarmStoreConnector.OrbitDB
-  ? TSwarmStoreDatabaseEntityKey<P> // swarm message address
+  ? TSwarmStoreDatabaseEntityKey<P> | TSwarmStoreDatabaseEntityAddress<P> // swarm message address
   : TSwarmMessageInstance; // instance of the message to remove
+
+export type ISwarmMessageStoreDatabaseType<
+  P extends ESwarmStoreConnector
+> = P extends ESwarmStoreConnector.OrbitDB
+  ? ESwarmStoreConnectorOrbitDbDatabaseType
+  : undefined;
 
 export interface ISwarmMessageStoreMessageMeta<P extends ESwarmStoreConnector> {
   /**
@@ -230,7 +281,7 @@ export interface ISwarmMessageStoreMessagingMethods<
    * be accessed with iterator.
    *
    * @param dbName
-   * @param messageAddress - a message's key for a key value store.
+   * @param messageAddressOrKey - a message's key for a key value store.
    * A message's address in the swarm for a non key value store.
    * @returns {Promise<void>}
    * @memberof ISwarmMessageStore
@@ -238,7 +289,7 @@ export interface ISwarmMessageStoreMessagingMethods<
    */
   deleteMessage(
     dbName: string,
-    messageAddress: ISwarmMessageStoreDeleteMessageArg<P>
+    messageAddressOrKey: ISwarmMessageStoreDeleteMessageArg<P>
   ): Promise<void>;
   /**
    * read all messages existing (not removed) in the database
@@ -280,7 +331,7 @@ export interface ISwarmMessageStoreMessagingMethods<
  * @template P
  */
 export interface ISwarmMessageStore<P extends ESwarmStoreConnector>
-  extends ISwarmStore<P, TSwarmMessageSeriazlized>,
+  extends ISwarmStore<P, TSwarmMessageSerialized, ISwarmMessageStoreOptions<P>>,
     EventEmitter<ISwarmMessageStoreEvents>,
     ISwarmMessageStoreMessagingMethods<P> {
   /**

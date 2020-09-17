@@ -6,7 +6,7 @@ export interface IStorageProviderOptions {
   dbName?: string;
 }
 
-export abstract class StorageProvider implements IStorageCommon {
+export abstract class StorageProvider<V = string> implements IStorageCommon<V> {
   /**
    * connect to the database specified
    *
@@ -30,7 +30,7 @@ export abstract class StorageProvider implements IStorageCommon {
    * @memberof StorageProvider
    */
   public abstract clearDb(): Promise<boolean | Error>;
-  public abstract set(key: string, value?: string): Promise<boolean | Error>;
+  public abstract set(key: string, value?: V): Promise<boolean | Error>;
 
   public abstract unset(key: string): Promise<boolean | Error>;
 
@@ -38,7 +38,7 @@ export abstract class StorageProvider implements IStorageCommon {
     key: string,
     value: Uint8Array
   ): Promise<boolean | Error>;
-  public abstract get(key: string): Promise<string | undefined | Error>;
+  public abstract get(key: string): Promise<V | undefined | Error>;
 
   public abstract getUInt8Array?(
     key: string
@@ -54,10 +54,10 @@ export type TStorageProvider = typeof StorageProvider;
  * @export
  * @interface IStorageProvider
  */
-export interface IStorageProvider {
+export interface IStorageProvider<V = string> {
   isBufferSupported?: boolean;
   isDbNameSupported?: boolean;
-  new (): StorageProvider;
+  new(): StorageProvider<V>;
 }
 
 export type TInstanceofStorageProvider = InstanceType<IStorageProvider>;

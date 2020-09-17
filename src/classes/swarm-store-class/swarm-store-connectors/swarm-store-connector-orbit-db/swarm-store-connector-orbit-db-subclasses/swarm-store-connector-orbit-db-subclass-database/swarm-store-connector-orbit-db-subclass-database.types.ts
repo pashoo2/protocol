@@ -1,5 +1,11 @@
-import { ISwarmStoreDatabaseBaseOptions } from '../../../../swarm-store-class.types';
-import { ESwarmStoreEventNames } from '../../../../swarm-store-class.const';
+import {
+  ISwarmStoreDatabaseBaseOptions,
+  TSwarmStoreValueTypes,
+} from '../../../../swarm-store-class.types';
+import {
+  ESwarmStoreEventNames,
+  ESwarmStoreConnector,
+} from '../../../../swarm-store-class.const';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from './swarm-store-connector-orbit-db-subclass-database.const';
 import {
   ISwarmStoreConnectorOrbitDbDatabaseAccessControlleGrantCallback,
@@ -20,9 +26,11 @@ export type TSwarmStoreConnectorOrbitDbDatabase<V> =
   | OrbitDbFeedStore<V>
   | OrbitDbKeyValueStore<V>;
 
-export interface ISwarmStoreConnectorOrbitDbDatabaseOptions<TFeedStoreType>
+export interface ISwarmStoreConnectorOrbitDbDatabaseOptions<
+  TStoreValueType extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>
+>
   extends ISwarmStoreConnectorOrbitDbDatabaseAccessControlleGrantCallback<
-      TFeedStoreType
+      TStoreValueType
     >,
     ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess,
     ISwarmStoreDatabaseBaseOptions {
@@ -72,12 +80,8 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseEvents<
 
 export type ISwarmStoreConnectorOrbitDbDatabaseKey = string;
 
-export interface ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValueType> {
-  id: string; // id of the user who stores the value
-  value: TStoreValueType;
-  hash: TSwarmStoreConnectorOrbitDbDatabaseStoreHash;
-  key?: string; // key of the value for a KeyValue databases
-}
+export interface ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValueType>
+  extends LogEntry<TStoreValueType> {}
 
 export enum ESwarmStoreConnectorOrbitDbDatabaseIteratorOption {
   eq = 'eq',

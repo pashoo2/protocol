@@ -1,4 +1,7 @@
-import { TSwarmStoreDatabaseEntryOperation } from '../../../../swarm-store-class.types';
+import {
+  TSwarmStoreDatabaseEntryOperation,
+  TSwarmStoreValueTypes,
+} from '../../../../swarm-store-class.types';
 import { ESwarmStoreConnector } from '../../../../swarm-store-class.const';
 export interface ISwarmStoreConnectorOrbitDbDatabaseAccessControllerManifest {
   /**
@@ -17,8 +20,8 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseAccessControllerManifest {
  * userId === id
  */
 export type TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<
-  T,
-  P extends ESwarmStoreConnector
+  P extends ESwarmStoreConnector,
+  T extends TSwarmStoreValueTypes<P>
 > = (
   // value
   payload: T,
@@ -40,7 +43,7 @@ export interface ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptio
 }
 
 export interface ISwarmStoreConnectorOrbitDbDatabaseAccessControlleGrantCallback<
-  TFeedStoreType
+  TValueType extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>
 > {
   /**
    * check whether to grant access for the user with
@@ -50,8 +53,8 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseAccessControlleGrantCallback
    * @returns boolean
    */
   grantAccess?: TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<
-    TFeedStoreType,
-    ESwarmStoreConnector.OrbitDB
+    ESwarmStoreConnector.OrbitDB,
+    TValueType
   >;
 }
 
@@ -64,7 +67,7 @@ export interface ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptio
 }
 
 export interface ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions<
-  TFeedStoreType
+  TFeedStoreType extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>
 >
   extends ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptions,
     ISwarmStoreConnectorOrbitDbDatabaseAccessControlleGrantCallback<

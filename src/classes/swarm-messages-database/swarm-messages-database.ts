@@ -11,17 +11,27 @@ import {
 } from '../swarm-store-class/swarm-store-class.const';
 import assert from 'assert';
 import {
-  TSwarmStoreDatabaseOptions,
-  TSwarmStoreDatabaseEntityKey,
-} from '../swarm-store-class/swarm-store-class.types';
-import { ISwarmMessageStore } from '../swarm-message-store/swarm-message-store.types';
+  ISwarmMessageStore,
+  ISwarmMessageStoreMessagingRequestWithMetaResult,
+  ISwarmMessageStoreDeleteMessageArg,
+} from '../swarm-message-store/swarm-message-store.types';
 import { getEventEmitterInstance } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { ESwarmMessageStoreEventNames } from '../swarm-message-store/swarm-message-store.const';
 import { ISwarmMessageInstanceDecrypted } from '../swarm-message/swarm-message-constructor.types';
 import { TTypedEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
+import {
+  TSwarmStoreValueTypes,
+  TSwarmStoreDatabaseEntityAddress,
+  TSwarmStoreDatabaseOptions,
+  TSwarmStoreDatabaseEntityKey,
+} from '../swarm-store-class/swarm-store-class.types';
+import { ESwarmMessagesDatabaseEventsNames } from './swarm-messages-database.const';
+import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 
-export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
-  implements ISwarmMessageDatabaseMessagingMethods<P> {
+export class SwarmMessagesDatabase<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmStoreValueTypes<P>
+> implements ISwarmMessageDatabaseMessagingMethods<P> {
   get dbName(): string | undefined {
     return this._dbName;
   }
@@ -36,6 +46,10 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
 
   get emitter(): TTypedEmitter<ISwarmMessageDatabaseEvents<P>> {
     return this._emitter;
+  }
+
+  get messagesList(): ISwarmMessageStoreMessagingRequestWithMetaResult<P>[] {
+    return this._messagesCached;
   }
 
   /**
@@ -71,12 +85,25 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
    * @type {TSwarmStoreDatabaseOptions}
    * @memberof SwarmMessagesDatabase
    */
-  protected _dbOptions?: TSwarmStoreDatabaseOptions<P>;
+  protected _dbOptions?: TSwarmStoreDatabaseOptions<P, T>;
 
   protected _isReady: boolean = false;
 
+  protected _messagesCached: ISwarmMessageStoreMessagingRequestWithMetaResult<
+    P
+  >[] = [];
+
+  /**
+   * Is update of the database entries running
+   *
+   * @protected
+   * @type {boolean}
+   * @memberof SwarmMessagesDatabase
+   */
+  protected _isUpdateInProgress: boolean = false;
+
   async connect(
-    options: ISwarmMessagesDatabaseConnectOptions<P>
+    options: ISwarmMessagesDatabaseConnectOptions<P, T>
   ): Promise<void> {
     this._handleOptions(options);
     await this._openDatabaseInstance();
@@ -115,15 +142,19 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
     return this._swarmMessageStore.addMessage(this._dbName, ...args);
   };
 
-  deleteMessage = (
-    ...args: Parameters<
-      ISwarmMessageDatabaseMessagingMethods<P>['deleteMessage']
-    >
+  deleteMessage = async (
+    messageAddressOrKey: ISwarmMessageStoreDeleteMessageArg<P>
   ): ReturnType<ISwarmMessageDatabaseMessagingMethods<P>['deleteMessage']> => {
     if (!this._checkIsReady()) {
       throw new Error('The instance is not ready to use');
     }
-    return this._swarmMessageStore.deleteMessage(this._dbName, ...args);
+    const result = await this._swarmMessageStore.deleteMessage(
+      this._dbName,
+      messageAddressOrKey
+    );
+
+    this._removeMessageFromCacheByAddressOrKey(messageAddressOrKey);
+    return result;
   };
 
   collect = (
@@ -170,7 +201,7 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
   }
 
   protected _validateOptions(
-    options: ISwarmMessagesDatabaseConnectOptions<P>
+    options: ISwarmMessagesDatabaseConnectOptions<P, T>
   ): void {
     assert(!!options, 'An options object must be provided');
     assert(typeof options === 'object', 'Options must be an object');
@@ -189,7 +220,7 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
     );
   }
 
-  protected _setDbOptions(dbOptions: TSwarmStoreDatabaseOptions<P>): void {
+  protected _setDbOptions(dbOptions: TSwarmStoreDatabaseOptions<P, T>): void {
     this._dbOptions = dbOptions;
     this._dbName = dbOptions.dbName;
     this._dbType = dbOptions.dbType as
@@ -198,7 +229,7 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
   }
 
   protected _setOptions(
-    options: ISwarmMessagesDatabaseConnectOptions<P>
+    options: ISwarmMessagesDatabaseConnectOptions<P, T>
   ): void {
     this._setDbOptions(options.dbOptions);
     this._swarmMessageStore = options.swarmMessageStore;
@@ -212,7 +243,9 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
    * @param {ISwarmMessage_handleDatabaseClosedsDatabaseConnectOptions<P>} options
    * @memberof SwarmMessagesDatabase
    */
-  protected _handleOptions(options: ISwarmMessagesDatabaseConnectOptions<P>) {
+  protected _handleOptions(
+    options: ISwarmMessagesDatabaseConnectOptions<P, T>
+  ): void {
     this._validateOptions(options);
     this._setOptions(options);
   }
@@ -268,6 +301,7 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
   protected _handleDatabaseUpdatedEvent = (dbName: string): void => {
     if (this._dbName !== dbName) return;
     this._emitter.emit(ESwarmStoreEventNames.UPDATE, dbName);
+    this._updateCache();
   };
 
   protected _handleDatabaseNewMessage = (
@@ -286,6 +320,7 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
       messageAddress,
       key
     );
+    this._addMessageToCache(dbName, message, messageAddress, key);
   };
 
   protected _handleDatabaseDeleteMessage = (
@@ -482,5 +517,111 @@ export class SwarmMessagesDatabase<P extends ESwarmStoreConnector>
         `Failed to drop the database ${dbName}: ${result.message}`
       );
     }
+  }
+
+  protected _findCachedMessage(
+    dbName: string,
+    // the global unique address (hash) of the message in the swarm
+    messageAddress: TSwarmStoreDatabaseEntityKey<P>
+  ): number {
+    return this._messagesCached.findIndex((messageDescription) => {
+      return (
+        messageDescription.dbName === dbName &&
+        messageDescription.messageAddress === messageAddress
+      );
+    });
+  }
+
+  protected _addMessageToCache(
+    dbName: string,
+    message: ISwarmMessageInstanceDecrypted,
+    // the global unique address (hash) of the message in the swarm
+    messageAddress: TSwarmStoreDatabaseEntityKey<P>,
+    // for key-value store it will be the key
+    key?: string
+  ) {
+    const idx = this._findCachedMessage(dbName, messageAddress);
+    const messageDescription = {
+      dbName,
+      message,
+      key,
+      messageAddress,
+    };
+
+    if (idx === -1) {
+      this._messagesCached.push(messageDescription);
+    } else {
+      this._messagesCached[idx] = messageDescription;
+    }
+  }
+
+  protected _removeMessageFromCache(
+    // for a non key-value stores
+    messageAddress?: TSwarmStoreDatabaseEntityAddress<P>,
+    // for key-value store it will be the key
+    key?: TSwarmStoreDatabaseEntityKey<P>
+  ) {
+    this._messagesCached = this._messagesCached.filter((message) => {
+      if (key) {
+        return message.key !== key;
+      }
+      return message.messageAddress !== messageAddress;
+    });
+  }
+
+  /**
+   * Remove the message from the cache by key for KV database or message address
+   * for a non KV database
+   *
+   * @protected
+   * @memberof SwarmMessagesDatabase
+   */
+  protected _removeMessageFromCacheByAddressOrKey = (
+    messageAddressOrKey: ISwarmMessageStoreDeleteMessageArg<P>
+  ) => {
+    const isKVStore =
+      this.dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE;
+
+    this._removeMessageFromCache(
+      isKVStore
+        ? undefined
+        : ((messageAddressOrKey as unknown) as TSwarmStoreDatabaseEntityAddress<
+            P
+          >), // address
+      isKVStore
+        ? ((messageAddressOrKey as unknown) as TSwarmStoreDatabaseEntityKey<P>)
+        : undefined // key
+    );
+  };
+
+  protected _setUpdateInProgress = () => {
+    this._isUpdateInProgress = true;
+    this._emitter.emit(ESwarmMessagesDatabaseEventsNames.CACHE_UPDATING);
+  };
+
+  protected _unsetUpdateInProgress = () => {
+    this._isUpdateInProgress = false;
+    this._emitter.emit(
+      ESwarmMessagesDatabaseEventsNames.CACHE_UPDATED,
+      this._messagesCached
+    );
+  };
+
+  // TODO - move the cache to a separate class
+
+  /**
+   * Request database for all messages.
+   *
+   * @protected
+   * @returns
+   * @memberof SwarmMessagesDatabase
+   */
+  protected _updateCache() {
+    if (this._isUpdateInProgress) {
+      // TODO - set flag to plan a new update
+      return;
+    }
+    this._setUpdateInProgress();
+    this._unsetUpdateInProgress();
   }
 }

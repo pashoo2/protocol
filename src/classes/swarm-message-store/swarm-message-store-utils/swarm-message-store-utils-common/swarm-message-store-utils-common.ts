@@ -2,9 +2,7 @@ import {
   ISwarmMessageDatabaseConstructors,
   TSwarmMessageStoreAccessControlGrantAccessCallback,
 } from '../../swarm-message-store.types';
-import { ISwarmStoreConnectorOrbitDBLogEntity } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.types';
 import { ISwarmStoreConnectorOrbitDbDatabaseOptions } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
-import { TSwarmMessageSerialized } from '../../../swarm-message/swarm-message-constructor.types';
 import {
   ISwarmStoreDatabaseBaseOptions,
   TSwarmStoreDatabaseEntryOperation,
@@ -13,8 +11,9 @@ import { TCentralAuthorityUserIdentity } from '../../../central-authority-class/
 import { ESwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.const';
 import { EOrbitDbFeedStoreOperation } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types';
+import { TSwarmStoreValueTypes } from '../../../swarm-store-class/swarm-store-class.types';
 import {
-  TSwarmMessageSeriazlized,
+  TSwarmMessageSerialized,
   ISwarmMessageConstructor,
 } from '../../../swarm-message/swarm-message-constructor.types';
 
@@ -45,7 +44,7 @@ async function swarmMessageGrantValidator<P extends ESwarmStoreConnector>(
     isUserCanWrite: boolean;
     currentUserId: TCentralAuthorityUserIdentity;
   },
-  value: TSwarmMessageSeriazlized,
+  value: TSwarmMessageSerialized,
   userId: string,
   key?: string,
   op?: TSwarmStoreDatabaseEntryOperation<P>
@@ -89,7 +88,7 @@ async function swarmMessageGrantValidator<P extends ESwarmStoreConnector>(
 
 export const getMessageValidator = <
   P extends ESwarmStoreConnector,
-  T extends string
+  T extends TSwarmStoreValueTypes<P>
 >(
   dboptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<
     TSwarmMessageSerialized
@@ -100,7 +99,7 @@ export const getMessageValidator = <
     | TSwarmMessageStoreAccessControlGrantAccessCallback<P>
     | undefined,
   currentUserId: TCentralAuthorityUserIdentity
-): TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<T, P> => {
+): TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<P, T> => {
   const { dbName, isPublic, write } = dboptions;
   const messageConstructor = getMessageConstructorForDatabase(
     dbName,

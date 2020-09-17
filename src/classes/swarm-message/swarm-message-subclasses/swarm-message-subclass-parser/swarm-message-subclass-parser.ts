@@ -7,7 +7,6 @@ import {
 import { isCryptoKeyDataDecryption } from '../../../../utils/encryption-keys-utils/encryption-keys-utils';
 import { QueuedEncryptionClassBase } from '../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base';
 import { ISwarmMessgaeEncryptedCache } from '../../../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
-import { ISwarmMessageBody } from '../../swarm-message-constructor.types';
 import {
   IQueuedEncrypyionClassBaseOptions,
   IQueuedEncrypyionClassBase,
@@ -15,7 +14,7 @@ import {
 import {
   ISwarmMessageRaw,
   TSwarmMessage,
-  TSwarmMessageSeriazlized,
+  TSwarmMessageSerialized,
 } from '../../swarm-message-constructor.types';
 import {
   ISwarmMessageSubclassParserOptions,
@@ -66,7 +65,7 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
    * @memberof SwarmMessageSubclassParser
    */
   public parse = async (
-    message: TSwarmMessageSeriazlized
+    message: TSwarmMessageSerialized
   ): Promise<TSwarmMessageInstance> => {
     const messageRaw = await this.parseMessageToRaw(message);
     const messageParsed = await this.parseMessageRaw(messageRaw);
@@ -131,13 +130,13 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
    * and validates it.
    *
    * @protected
-   * @param {TSwarmMessageSeriazlized} mesage
+   * @param {TSwarmMessageSerialized} mesage
    * @returns {ISwarmMessageRaw}
    * @memberof SwarmMessageSubclassParser
    * @throws
    */
   protected async parseMessageToRaw(
-    mesage: TSwarmMessageSeriazlized
+    mesage: TSwarmMessageSerialized
   ): Promise<ISwarmMessageRaw> {
     const { utils, validator } = this.options;
     const { messageParser } = utils;
@@ -215,11 +214,11 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
 
   protected getSwarmMessageInstance(
     msg: TSwarmMessage,
-    msgSerizlized: TSwarmMessageSeriazlized
+    msgSerizlized: TSwarmMessageSerialized
   ): TSwarmMessageInstance {
     return {
       ...msg,
-      toString: function(a: TSwarmMessageSeriazlized) {
+      toString: function(a: TSwarmMessageSerialized) {
         return a;
       }.bind(undefined, msgSerizlized),
     };

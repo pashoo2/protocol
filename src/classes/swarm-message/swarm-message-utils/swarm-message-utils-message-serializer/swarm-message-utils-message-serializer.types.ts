@@ -1,8 +1,8 @@
 import {
-  TSwarmMessageSeriazlized,
+  TSwarmMessageSerialized,
   ISwarmMessageRaw,
 } from '../../swarm-message-constructor.types';
 
 export interface ISwarmMessageUtilsMessageSerializer {
-  (msg: ISwarmMessageRaw): TSwarmMessageSeriazlized;
+  (msg: ISwarmMessageRaw): TSwarmMessageSerialized;
 }

@@ -11,7 +11,7 @@ import {
   TSwarmMessageInstance,
   TSwarmMessageConstructorArgumentBody,
   TSwarmMessageConstructorOptions,
-  TSwarmMessageSeriazlized,
+  TSwarmMessageSerialized,
 } from './swarm-message-constructor.types';
 import { SwarmMessageSubclassParser } from './swarm-message-subclasses/swarm-message-subclass-parser/swarm-message-subclass-parser';
 import {
@@ -128,7 +128,7 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
 
   /** */
   public construct = async <
-    T extends TSwarmMessageConstructorArgumentBody | TSwarmMessageSeriazlized
+    T extends TSwarmMessageConstructorArgumentBody | TSwarmMessageSerialized
   >(
     message: T
   ): Promise<TSwarmMessageInstance> => {
@@ -377,7 +377,7 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
    * @throws
    */
   protected async parse(
-    msg: TSwarmMessageSeriazlized
+    msg: TSwarmMessageSerialized
   ): Promise<TSwarmMessageInstance> {
     if (!this.parser) {
       throw new Error('A swarm message parser instance is not defined');

@@ -140,8 +140,6 @@ export interface ISwarmMessageRaw {
 export type TSwarmMessageConstructorArgumentBodyPrivate = TSwarmMessageConstructorArgumentBody &
   ISwarmMessageReceiver;
 
-export type TSwarmMessageSeriazlized = string;
-
 /**
  * body of a swarm message
  *
@@ -183,7 +181,7 @@ export type TSwarmMessage = ISwarmMessageEncrypted | ISwarmMessageDecrypted;
 
 export interface ISwarmMessageInstanceBase
   extends Omit<ISwarmMessageRaw, 'bdy'> {
-  toString(): TSwarmMessageSeriazlized;
+  toString(): TSwarmMessageSerialized;
 }
 
 export interface ISwarmMessageInstanceDecrypted
@@ -261,7 +259,7 @@ export type TSwarmMessageConstructorOptions = Omit<
 export interface ISwarmMessageConstructor {
   readonly caConnection?: ICentralAuthority;
   readonly encryptedCache?: ISwarmMessgaeEncryptedCache;
-  construct(message: TSwarmMessageSeriazlized): Promise<TSwarmMessageInstance>;
+  construct(message: TSwarmMessageSerialized): Promise<TSwarmMessageInstance>;
 }
 
 export type TSwarmMessageConstructorArgumentBody = Omit<

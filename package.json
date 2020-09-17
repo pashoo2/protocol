@@ -133,7 +133,7 @@
     "ts-transformer-imports": "^0.4.3",
     "ttypescript": "^1.5.10",
     "typedoc": "^0.16.11",
-    "typescript": "=3.7.2"
+    "typescript": "^3.7.5"
   },
   "peerDependencies": {
     "libp2p": "^0.27.7",

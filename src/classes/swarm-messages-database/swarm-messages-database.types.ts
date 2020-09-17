@@ -15,6 +15,9 @@ import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../swarm-store-class/sw
 import { ISwarmMessageInstanceDecrypted } from '../swarm-message/swarm-message-constructor.types';
 import { ESwarmMessageStoreEventNames } from '../swarm-message-store/swarm-message-store.const';
 import { TTypedEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
+import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../swarm-message-store/swarm-message-store.types';
+import { TSwarmStoreValueTypes } from '../swarm-store-class/swarm-store-class.types';
+import { ESwarmMessagesDatabaseEventsNames } from './swarm-messages-database.const';
 
 /**
  * Options which are necessary for opening
@@ -25,10 +28,11 @@ import { TTypedEmitter } from '../basic-classes/event-emitter-class-base/event-e
  * @template P
  */
 export interface ISwarmMessagesDatabaseConnectOptions<
-  P extends ESwarmStoreConnector
+  P extends ESwarmStoreConnector,
+  T extends TSwarmStoreValueTypes<P>
 > {
   swarmMessageStore: ISwarmMessageStore<P>;
-  dbOptions: TSwarmStoreDatabaseOptions<P>;
+  dbOptions: TSwarmStoreDatabaseOptions<P, T>;
 }
 
 export interface ISwarmMessageDatabaseEvents<P extends ESwarmStoreConnector> {
@@ -68,6 +72,21 @@ export interface ISwarmMessageDatabaseEvents<P extends ESwarmStoreConnector> {
     // for key-value store it will be the key for the value,
     // for feed store it will be hash of the message which deleted by this one.
     keyOrAddress?: string
+  ) => void;
+  /**
+   * Emits when swarm messages cache started to update
+   *
+   * @memberof ISwarmMessageDatabaseEvents
+   */
+  [ESwarmMessagesDatabaseEventsNames.CACHE_UPDATING]: () => void;
+  /**
+   * Swarm messages were requested from the database and the cache was updated
+   * with the messages.
+   *
+   * @memberof ISwarmMessageDatabaseEvents
+   */
+  [ESwarmMessagesDatabaseEventsNames.CACHE_UPDATED]: (
+    newMessagesList: ISwarmMessageStoreMessagingRequestWithMetaResult<P>[] // new messages list
   ) => void;
 }
 
@@ -134,6 +153,14 @@ export interface ISwarmMessagesDatabaseProperties<
    * @memberof ISwarmMessagesDatabaseProperties
    */
   emitter: TTypedEmitter<ISwarmMessageDatabaseEvents<P>>;
+
+  /**
+   * List of a messages with additional meta information.
+   *
+   * @type {ISwarmMessageStoreMessagingRequestWithMetaResult<P>[]}
+   * @memberof ISwarmMessagesDatabaseProperties
+   */
+  messagesList: ISwarmMessageStoreMessagingRequestWithMetaResult<P>[];
 }
 
 /**
@@ -143,7 +170,10 @@ export interface ISwarmMessagesDatabaseProperties<
  * @export
  * @interface ISwarmMessagesDatabase
  */
-export interface ISwarmMessagesDatabase<P extends ESwarmStoreConnector>
+export interface ISwarmMessagesDatabase<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmStoreValueTypes<P>
+>
   extends ISwarmMessageStoreMessagingMethods<P>,
     ISwarmMessagesDatabaseProperties<P> {
   /**
@@ -153,7 +183,7 @@ export interface ISwarmMessagesDatabase<P extends ESwarmStoreConnector>
    * @returns {Promise<void>}
    * @memberof ISwarmMessagesDatabase
    */
-  open(options: ISwarmMessagesDatabaseConnectOptions<P>): Promise<void>;
+  open(options: ISwarmMessagesDatabaseConnectOptions<P, T>): Promise<void>;
 
   /**
    * Close the connection with the database.

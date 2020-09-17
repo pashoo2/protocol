@@ -1,3 +1,4 @@
+import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import {
   ESwarmStoreConnectorOrbitDbDatabaseIteratorOption,
   ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions,
@@ -46,3 +47,5 @@ export const SWARM_MESSAGE_STORE_CONNECTOR_ORBIT_DB_ITERATOR_OPTIONS_DEFAULT_LIM
 export const SWARM_MESSAGE_STORE_CONNECTOR_ORBIT_DB_ITERATOR_OPTIONS_DEFAULT: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions = {
   [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.limit]: SWARM_MESSAGE_STORE_CONNECTOR_ORBIT_DB_ITERATOR_OPTIONS_DEFAULT_LIMIT,
 };
+
+export const SWARM_MESSAGE_STORE_CONNECTOR_DATABASE_TYPE_DEFAULT = ESwarmStoreConnectorOrbitDbDatabaseType.FEED;

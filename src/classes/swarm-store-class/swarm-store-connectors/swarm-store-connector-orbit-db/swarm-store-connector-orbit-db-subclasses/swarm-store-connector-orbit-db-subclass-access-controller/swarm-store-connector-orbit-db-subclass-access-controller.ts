@@ -12,9 +12,10 @@ import {
 import { IdentityProvider } from 'orbit-db-identity-provider';
 import { ESwarmStoreConnector } from '../../../../swarm-store-class.const';
 import { EOrbitDbFeedStoreOperation } from '../swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
+import { TSwarmStoreValueTypes } from '../../../../swarm-store-class.types';
 
 export class SwarmStoreConnectorOrbitDBSubclassAccessController<
-  T
+  T extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>
 > extends AccessController {
   // Returns the type of the access controller
   public static get type(): string {
@@ -31,7 +32,9 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
    * @returns
    * @memberof SwarmStoreConnectorOrbitDBSubclassAccessController
    */
-  public static async create<T>(
+  public static async create<
+    T extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>
+  >(
     orbitdb: OrbitDB,
     options: ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions<T> = {}
   ): Promise<SwarmStoreConnectorOrbitDBSubclassAccessController<T>> {
@@ -46,8 +49,8 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
   protected _isPublic: boolean = false;
 
   protected _grantAccessCallback?: TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<
-    T,
-    ESwarmStoreConnector.OrbitDB
+    ESwarmStoreConnector.OrbitDB,
+    T
   >;
 
   protected _orbitdb?: OrbitDB;

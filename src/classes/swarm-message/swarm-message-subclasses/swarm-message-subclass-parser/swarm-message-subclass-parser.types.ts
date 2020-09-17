@@ -5,7 +5,7 @@ import { IQueuedEncrypyionClassBaseOptions } from '../../../basic-classes/queued
 import { ISwarmMessgaeEncryptedCache } from '../../../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import {
-  TSwarmMessageSeriazlized,
+  TSwarmMessageSerialized,
   TSwarmMessageInstance,
 } from '../../swarm-message-constructor.types';
 
@@ -46,10 +46,10 @@ export interface ISwarmMessageSubclassParser {
   /**
    * deserialize and validate the swarm message
    *
-   * @param {TSwarmMessageSeriazlized} message - swarm message serialized
+   * @param {TSwarmMessageSerialized} message - swarm message serialized
    * @returns {Promise<ISwarmMessage>}
    * @memberof ISwarmMessageSubclassParser
    * @throws
    */
-  parse(message: TSwarmMessageSeriazlized): Promise<TSwarmMessageInstance>;
+  parse(message: TSwarmMessageSerialized): Promise<TSwarmMessageInstance>;
 }
