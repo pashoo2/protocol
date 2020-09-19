@@ -18,6 +18,18 @@ import { TTypedEmitter } from '../basic-classes/event-emitter-class-base/event-e
 import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../swarm-message-store/swarm-message-store.types';
 import { TSwarmStoreValueTypes } from '../swarm-store-class/swarm-store-class.types';
 import { ESwarmMessagesDatabaseEventsNames } from './swarm-messages-database.const';
+import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
+
+export type TSwarmMessageDatabaseMessagesCache<
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmMessagesDatabaseType<P> | undefined
+> = DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+  ? Map<string, ISwarmMessageStoreMessagingRequestWithMetaResult<P>>
+  : Set<ISwarmMessageStoreMessagingRequestWithMetaResult<P>>;
+
+export interface ISwarmMessagesDatabaseConnectCurrentUserOptions {
+  userId: TSwarmMessageUserIdentifierSerialized;
+}
 
 /**
  * Options which are necessary for opening
@@ -31,11 +43,15 @@ export interface ISwarmMessagesDatabaseConnectOptions<
   P extends ESwarmStoreConnector,
   T extends TSwarmStoreValueTypes<P>
 > {
+  user: ISwarmMessagesDatabaseConnectCurrentUserOptions;
   swarmMessageStore: ISwarmMessageStore<P>;
   dbOptions: TSwarmStoreDatabaseOptions<P, T>;
 }
 
-export interface ISwarmMessageDatabaseEvents<P extends ESwarmStoreConnector> {
+export interface ISwarmMessageDatabaseEvents<
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmMessagesDatabaseType<P> | undefined
+> {
   [ESwarmStoreEventNames.UPDATE]: (dbName: string) => void;
   [ESwarmStoreEventNames.DB_LOADING]: (
     dbName: string,
@@ -86,7 +102,7 @@ export interface ISwarmMessageDatabaseEvents<P extends ESwarmStoreConnector> {
    * @memberof ISwarmMessageDatabaseEvents
    */
   [ESwarmMessagesDatabaseEventsNames.CACHE_UPDATED]: (
-    newMessagesList: ISwarmMessageStoreMessagingRequestWithMetaResult<P>[] // new messages list
+    newMessagesList: TSwarmMessageDatabaseMessagesCache<P, DbType> // new messages list
   ) => void;
 }
 
@@ -155,6 +171,25 @@ export interface ISwarmMessagesDatabaseProperties<
   emitter: TTypedEmitter<ISwarmMessageDatabaseEvents<P>>;
 
   /**
+   * Whether the messages cache update is in progress.
+   *
+   * @type {boolean}
+   * @memberof ISwarmMessagesDatabaseProperties
+   */
+  whetherMessagesListUpdateInProgress: boolean;
+
+  /**
+   * Cause the list of cached messages is limited
+   * by messages stored count, this flag indicated
+   * whether some more messages are stored in the
+   * databse, which didn't fit into the cache.
+   *
+   * @type {boolean}
+   * @memberof ISwarmMessagesDatabaseProperties
+   */
+  isMessagesListContainsAllMessages: boolean;
+
+  /**
    * List of a messages with additional meta information.
    *
    * @type {ISwarmMessageStoreMessagingRequestWithMetaResult<P>[]}
@@ -214,4 +249,5 @@ export interface ISwarmMessagesDatabaseReady<P extends ESwarmStoreConnector> {
   _dbName: string;
   _isReady: true;
   _swarmMessageStore: ISwarmMessageStore<P>;
+  _currentUserId: TSwarmMessageUserIdentifierSerialized;
 }

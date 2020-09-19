@@ -303,10 +303,10 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
   > {
     assert(typeof dbName === 'string', '');
 
-    const iterator = await this.request(
+    const iterator = await this.request<T>(
       dbName,
       this.dbMethodIterator,
-      this.getArgIterateDb(dbName, options)
+      this.getArgIterateDb<T>(dbName, options)
     );
 
     if (iterator instanceof Error) {

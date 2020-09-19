@@ -1,3 +1,4 @@
+import { memoize } from './common-utils-main';
 /**
  * return how many bytes in the
  * number
@@ -20,3 +21,27 @@ export function bytesInInteger(num: number): number | Error {
   }
   return 8;
 }
+
+/**
+ * Return ten to the power memoized
+ * to reduce number of calculations.
+ *
+ * @param {number} power - power of 10
+ * @returns {number} - Math.pow(10, power)
+ */
+export const getPowTen = memoize((power: number): number => {
+  return Math.pow(10, power);
+});
+
+/**
+ * Round a number to a requered precision.
+ *
+ * @param {number} num - a number to round
+ * @param {number} precision - count of digits after floating point
+ * @returns {number} - the number rounding to precision required
+ */
+export const round = (num: number, precision: number): number => {
+  const mult = getPowTen(precision);
+
+  return Math.round((num + Number.EPSILON) * mult) / mult;
+};

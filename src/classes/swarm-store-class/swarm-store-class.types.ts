@@ -80,7 +80,7 @@ export type TSwarmStoreDatabaseIteratorMethodArgument<
   P extends ESwarmStoreConnector
 > = P extends ESwarmStoreConnector.OrbitDB
   ? ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions
-  : never;
+  : any;
 
 export type TSwarmStoreDatabaseLoadMethodAnswer<
   P extends ESwarmStoreConnector.OrbitDB

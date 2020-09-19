@@ -30,12 +30,19 @@ import {
   EOrbitDbFeedStoreOperation,
   ESwarmStoreConnectorOrbitDbDatabaseType,
 } from './swarm-store-connector-orbit-db-subclass-database.const';
-import { ESwarmStoreEventNames } from '../../../../swarm-store-class.const';
+import {
+  ESwarmStoreEventNames,
+  ESwarmStoreConnector,
+} from '../../../../swarm-store-class.const';
 import {
   TSwarmStoreConnectorOrbitDbDatabaseMethodArgumentDbLoad,
   ISwarmStoreConnectorOrbitDbDatabaseIteratorOptionsRequired,
 } from './swarm-store-connector-orbit-db-subclass-database.types';
-import { ISwarmStoreConnectorRequestLoadAnswer } from '../../../../swarm-store-class.types';
+import {
+  ISwarmStoreConnectorRequestLoadAnswer,
+  TSwarmStoreValueTypes,
+} from '../../../../swarm-store-class.types';
+import { TSwarmStoreConnectorOrbitDbDatabaseStoreHash } from './swarm-store-connector-orbit-db-subclass-database.types';
 import {
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_EMIT_BATCH_INT_MS,
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_EMIT_BATCH_SIZE,
@@ -46,7 +53,7 @@ import {
 } from './swarm-store-connector-orbit-db-subclass-database.types';
 
 export class SwarmStoreConnectorOrbitDBDatabase<
-  TStoreValue
+  TStoreValue extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>
 > extends EventEmitter<
   ISwarmStoreConnectorOrbitDbDatabaseEvents<
     SwarmStoreConnectorOrbitDBDatabase<TStoreValue>,
@@ -364,6 +371,12 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     this.itemsOverallCountInStorage = 0;
   }
 
+  protected getLodEntryHash(
+    logEntry: LogEntry<TStoreValue>
+  ): TSwarmStoreConnectorOrbitDbDatabaseStoreHash {
+    return logEntry.hash;
+  }
+
   protected findInOplog(
     key: TSwarmStoreConnectorOrbitDbDatabaseStoreKey,
     value: TStoreValue
@@ -384,6 +397,36 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     );
   }
 
+  protected filterRequltsFeedStore = (
+    logEntriesList: Array<LogEntry<TStoreValue>>,
+    filterOptions: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions
+  ): Array<LogEntry<TStoreValue>> => {
+    const { gt, gte, lt, lte, neq } = filterOptions;
+
+    if (!gt && !gte && !lt && !lte && !neq) {
+      return logEntriesList;
+    }
+    return logEntriesList.filter((logEntry) => {
+      const logEntryHash = this.getLodEntryHash(logEntry);
+
+      if (neq) {
+        if (neq instanceof Array) {
+          return !neq.includes(logEntryHash);
+        }
+        return neq !== logEntryHash;
+      } else if (gte && logEntryHash >= gte) {
+        return true;
+      } else if (gt && logEntryHash > gt) {
+        return true;
+      } else if (lte && logEntryHash <= lte) {
+        return true;
+      } else if (lt && logEntryHash < lt) {
+        return true;
+      }
+      return false;
+    });
+  };
+
   protected async iteratorFeedStore(
     options?: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions
   ): Promise<
@@ -401,7 +444,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     }
 
     const eqOperand =
-      options && options[ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq];
+      options?.[ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq];
 
     if (eqOperand) {
       return this.getValues(eqOperand, database);
@@ -410,9 +453,12 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     const iteratorOptionsRes =
       options ||
       SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ITERATOR_OPTIONS_DEFAULT;
+    let result = database.iterator(iteratorOptionsRes).collect();
 
-    const result = database.iterator(iteratorOptionsRes).collect();
-
+    if (options) {
+      result = this.filterRequltsFeedStore(result, options);
+      debugger;
+    }
     return result.map(this.parseValueStored);
   }
 
@@ -452,17 +498,11 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     }
 
     const {
-      gt,
-      gte,
-      lt,
-      lte,
       reverse,
     } = iteratorOptionsRes as ISwarmStoreConnectorOrbitDbDatabaseIteratorOptionsRequired;
     let keysList = (reverse ? keys.reverse() : keys).slice(0, limit);
 
-    if (gt || lt || gte || lte) {
-      keysList = this.filterKeys(keysList, iteratorOptionsRes);
-    }
+    keysList = this.filterKeys(keysList, iteratorOptionsRes);
     return this.getValuesForKeys(keysList);
   }
 
@@ -486,13 +526,18 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     keysList: string[],
     filterOptions: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions
   ): string[] => {
-    const { gt, gte, lt, lte } = filterOptions;
+    const { gt, gte, lt, lte, neq } = filterOptions;
 
+    if (!gt && !gte && !lt && !lte && !neq) {
+      return keysList;
+    }
     return keysList.filter((key) => {
-      if (!gt && !lt && !gte && !lte) {
-        return true;
-      }
-      if (gte && key >= gte) {
+      if (neq) {
+        if (neq instanceof Array) {
+          return !neq.includes(key);
+        }
+        return neq !== key;
+      } else if (gte && key >= gte) {
         return true;
       } else if (gt && key > gt) {
         return true;
@@ -528,12 +573,12 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       if (payload.op === EOrbitDbFeedStoreOperation.DELETE) {
         return undefined;
       }
-      return {
+      return ({
         id: identity.id,
         value: payload.value,
         hash,
         key: this.isKVStore ? payload.key : undefined,
-      };
+      } as unknown) as ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue>;
     } else {
       return new Error('An unknown fromat of the data stored');
     }

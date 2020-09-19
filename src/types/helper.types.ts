@@ -16,6 +16,17 @@ export type ArgumentTypes<F extends Function> = F extends (
   ? A
   : never;
 
+export type FirstPrameter<F extends (arg: any) => any> = Parameters<
+  F
+> extends Array<infer FirstArg>
+  ? FirstArg
+  : never;
+type FirstPrameter<F extends (arg: any) => any> = Parameters<F> extends Array<
+  infer FirstArg
+>
+  ? FirstArg
+  : never;
+
 export type OmitTypeProp<T extends {}, E> = {
   [k in keyof T]: T[k] extends E ? never : T[k];
 };

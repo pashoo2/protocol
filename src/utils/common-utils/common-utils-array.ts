@@ -1,4 +1,5 @@
 import { bytesInInteger } from './common-utils-number';
+import { isDefined } from './common-utils-main';
 
 export const commonUtilsArrayOrderByDecComparationFunction = <T>(
   a: T,
@@ -134,3 +135,23 @@ export const commonUtilsArrayIncludesAll = (
   }
   return true;
 };
+
+/**
+ * Returns only defined items of an array
+ *
+ * @template T
+ * @param {T[]} arr
+ * @returns {T[]}
+ */
+export const commonUtilsArrayDefinedOnly = <T>(arr: T[]): NonNullable<T>[] =>
+  arr.filter(isDefined);
+
+/**
+ * Returns uniq items of an array
+ *
+ * @template T
+ * @param {T[]} arr
+ * @returns {T[]}
+ */
+export const commonUtilsArrayUniq = <T>(arr: T[]): T[] =>
+  Array.from(new Set(arr));

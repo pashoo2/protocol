@@ -84,18 +84,44 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValueType>
   extends LogEntry<TStoreValueType> {}
 
 export enum ESwarmStoreConnectorOrbitDbDatabaseIteratorOption {
+  /**
+   * not equals to address or key
+   */
+  neq = 'neq',
+  /**
+   * equals to address or key
+   */
   eq = 'eq',
+  /**
+   * greater than
+   */
   gt = 'gt',
+  /**
+   * greater than or equals
+   */
   gte = 'gte',
+  /**
+   * less than
+   */
   lt = 'lt',
+  /**
+   * less than or equal
+   */
   lte = 'lte',
+  /**
+   * limit messages count to read
+   */
   limit = 'limit',
+  /**
+   * in reverse order
+   */
   reverse = 'reverse',
 }
 
 export interface ISwarmStoreConnectorOrbitDbDatabaseIteratorOptionsRequired {
   // if the equal operator applyied all other will not be applied
   [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq]: string | string[];
+  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.neq]: string | string[];
   [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.gt]: string;
   [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.gte]: string;
   [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.lt]: string;
