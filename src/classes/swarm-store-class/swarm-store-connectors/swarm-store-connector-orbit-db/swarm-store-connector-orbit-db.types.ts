@@ -1,9 +1,12 @@
 import { IPFS } from 'types/ipfs.types';
 import { ISwarmStoreConnectorOrbitDbDatabaseOptions } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
-import { ISwarmStoreMainOptions } from '../../swarm-store-class.types';
+import {
+  ISwarmStoreMainOptions,
+  TSwarmStoreValueTypes,
+} from '../../swarm-store-class.types';
 import { ISwarmStoreEvents } from '../../swarm-store-class.types';
 import { ESwarmStoreConnector } from '../../swarm-store-class.const';
-import { TSwarmStoreConnectorOrbitDbDatabaseKey } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
+import { TSwarmStoreConnectorOrbitDbDatabaseEntityIndex } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 
 export interface ISwarmStoreConnectorOrbitDBEvents extends ISwarmStoreEvents {}
 
@@ -19,8 +22,9 @@ export interface ISwarmStoreConnectorOrbitDBEvents extends ISwarmStoreEvents {}
  * @interface ISwarmStoreConnectorOrbitDBOptions
  * @template TFeedStoreTypes
  */
-export interface ISwarmStoreConnectorOrbitDBOptions<TFeedStoreTypes>
-  extends ISwarmStoreMainOptions<ESwarmStoreConnector.OrbitDB> {
+export interface ISwarmStoreConnectorOrbitDBOptions<
+  TFeedStoreTypes extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>
+> extends ISwarmStoreMainOptions<ESwarmStoreConnector.OrbitDB> {
   // databases which must be started when the orbit db
   // instance will be ready to use
   databases: ISwarmStoreConnectorOrbitDbDatabaseOptions<TFeedStoreTypes>[];
@@ -36,4 +40,4 @@ export interface ISwarmStoreConnectorOrbitDBLogEntity<T> {
   value: T;
 }
 
-export type TSwarmStoreConnectorOrbitDBEnityKey = TSwarmStoreConnectorOrbitDbDatabaseKey;
+export type TSwarmStoreConnectorOrbitDBEnityKey = TSwarmStoreConnectorOrbitDbDatabaseEntityIndex;

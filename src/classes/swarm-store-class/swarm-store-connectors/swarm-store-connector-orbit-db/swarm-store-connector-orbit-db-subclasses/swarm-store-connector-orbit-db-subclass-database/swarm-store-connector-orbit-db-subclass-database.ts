@@ -6,7 +6,7 @@ import {
   ISwarmStoreConnectorOrbitDbDatabaseEvents,
   ISwarmStoreConnectorOrbitDbDatabaseValue,
   ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions,
-  TSwarmStoreConnectorOrbitDbDatabaseKey,
+  TSwarmStoreConnectorOrbitDbDatabaseEntityIndex,
 } from './swarm-store-connector-orbit-db-subclass-database.types';
 import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
 import {
@@ -40,7 +40,12 @@ import {
 } from './swarm-store-connector-orbit-db-subclass-database.types';
 import {
   ISwarmStoreConnectorRequestLoadAnswer,
+  TSwarmStoreDatabaseType,
   TSwarmStoreValueTypes,
+} from '../../../../swarm-store-class.types';
+import {
+  TSwarmStoreDatabaseEntityAddress,
+  TSwarmStoreDatabaseEntityKey,
 } from '../../../../swarm-store-class.types';
 import { TSwarmStoreConnectorOrbitDbDatabaseStoreHash } from './swarm-store-connector-orbit-db-subclass-database.types';
 import {
@@ -53,10 +58,11 @@ import {
 } from './swarm-store-connector-orbit-db-subclass-database.types';
 
 export class SwarmStoreConnectorOrbitDBDatabase<
-  TStoreValue extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>
+  TStoreValue extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>,
+  DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>
 > extends EventEmitter<
   ISwarmStoreConnectorOrbitDbDatabaseEvents<
-    SwarmStoreConnectorOrbitDBDatabase<TStoreValue>,
+    SwarmStoreConnectorOrbitDBDatabase<TStoreValue, DbType>,
     TStoreValue
   >
 > {
@@ -179,12 +185,22 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       return database;
     }
     try {
-      if (this.isKVStore && !key) {
-        return new Error('Key must be provided for the key-value storage');
+      let hash: TSwarmStoreConnectorOrbitDbDatabaseStoreHash;
+      if (this.isKVStore) {
+        if (!key) {
+          return new Error('Key must be provided for the key-value storage');
+        }
+        /*
+         TODO - https://github.com/orbitdb/orbit-db/blob/master/API.md#setkey-value.
+         the 'set' method returns hash of entry added
+        */
+        hash = ((await (database as OrbitDbKeyValueStore<TStoreValue>).set(
+          key,
+          value
+        )) as unknown) as TSwarmStoreConnectorOrbitDbDatabaseStoreHash;
+      } else {
+        hash = await (database as OrbitDbFeedStore<TStoreValue>).add(value);
       }
-      const hash = await (this.isKVStore
-        ? (database as OrbitDbKeyValueStore<TStoreValue>).set(key!, value)
-        : (database as OrbitDbFeedStore<TStoreValue>).add(value));
       console.log(`ADDED DATA WITH HASH -- ${hash}`);
       if (typeof hash !== 'string') {
         return new Error(
@@ -206,7 +222,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
    * @memberof SwarmStoreConnectorOrbitDBDatabase
    */
   public get = async (
-    keyOrHash: TSwarmStoreConnectorOrbitDbDatabaseKey
+    keyOrHash: TSwarmStoreConnectorOrbitDbDatabaseEntityIndex
   ): Promise<
     Error | ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue> | undefined
   > => {
@@ -250,12 +266,12 @@ export class SwarmStoreConnectorOrbitDBDatabase<
    * database.
    * Remove an entry by it's address for a non key-value database.
    *
-   * @param {TSwarmStoreConnectorOrbitDbDatabaseKey} keyOrEntryAddress - key of a value for key-value store or entry address.
+   * @param {TSwarmStoreConnectorOrbitDbDatabaseEntityIndex} keyOrEntryAddress - key of a value for key-value store or entry address.
    * @returns {(Promise<Error | void>)}
    * @memberof SwarmStoreConnectorOrbitDBDatabase
    */
   public async remove(
-    keyOrEntryAddress: TSwarmStoreConnectorOrbitDbDatabaseKey
+    keyOrEntryAddress: TSwarmStoreConnectorOrbitDbDatabaseEntityIndex
   ): Promise<Error | void> {
     try {
       await (this.isKVStore
@@ -267,7 +283,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   }
 
   public iterator = async (
-    options?: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions
+    options?: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions<DbType>
   ): Promise<
     | Error
     | Array<
@@ -373,7 +389,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
 
   protected getLodEntryHash(
     logEntry: LogEntry<TStoreValue>
-  ): TSwarmStoreConnectorOrbitDbDatabaseStoreHash {
+  ): TSwarmStoreDatabaseEntityAddress<ESwarmStoreConnector.OrbitDB> {
     return logEntry.hash;
   }
 
@@ -399,7 +415,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
 
   protected filterRequltsFeedStore = (
     logEntriesList: Array<LogEntry<TStoreValue>>,
-    filterOptions: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions
+    filterOptions: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions<DbType>
   ): Array<LogEntry<TStoreValue>> => {
     const { gt, gte, lt, lte, neq } = filterOptions;
 
@@ -411,7 +427,9 @@ export class SwarmStoreConnectorOrbitDBDatabase<
 
       if (neq) {
         if (neq instanceof Array) {
-          return !neq.includes(logEntryHash);
+          return !(neq as TSwarmStoreDatabaseEntityAddress<
+            ESwarmStoreConnector.OrbitDB
+          >[]).includes(logEntryHash);
         }
         return neq !== logEntryHash;
       } else if (gte && logEntryHash >= gte) {
@@ -428,7 +446,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   };
 
   protected async iteratorFeedStore(
-    options?: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions
+    options?: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions<DbType>
   ): Promise<
     | Error
     | Array<
@@ -463,7 +481,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   }
 
   protected async iteratorKeyValueStore(
-    options?: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions
+    options?: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions<DbType>
   ): Promise<
     | Error
     | Array<
@@ -499,7 +517,9 @@ export class SwarmStoreConnectorOrbitDBDatabase<
 
     const {
       reverse,
-    } = iteratorOptionsRes as ISwarmStoreConnectorOrbitDbDatabaseIteratorOptionsRequired;
+    } = iteratorOptionsRes as ISwarmStoreConnectorOrbitDbDatabaseIteratorOptionsRequired<
+      DbType
+    >;
     let keysList = (reverse ? keys.reverse() : keys).slice(0, limit);
 
     keysList = this.filterKeys(keysList, iteratorOptionsRes);
@@ -524,7 +544,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
 
   protected filterKeys = (
     keysList: string[],
-    filterOptions: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions
+    filterOptions: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions<DbType>
   ): string[] => {
     const { gt, gte, lt, lte, neq } = filterOptions;
 
@@ -534,7 +554,9 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     return keysList.filter((key) => {
       if (neq) {
         if (neq instanceof Array) {
-          return !neq.includes(key);
+          return !(neq as TSwarmStoreDatabaseEntityKey<
+            ESwarmStoreConnector.OrbitDB
+          >[]).includes(key);
         }
         return neq !== key;
       } else if (gte && key >= gte) {
@@ -666,7 +688,12 @@ export class SwarmStoreConnectorOrbitDBDatabase<
 
   protected emitEvent(event: ESwarmStoreEventNames, ...args: any[]) {
     const { options } = this;
-    const { dbName } = options!;
+
+    if (!options) {
+      throw new Error('Options are not exists');
+    }
+
+    const { dbName } = options;
 
     this.emit(event, dbName, ...args);
   }
@@ -687,13 +714,13 @@ export class SwarmStoreConnectorOrbitDBDatabase<
    * Returns a Promise that resolves to a String that is the multihash of the deleted entry.
    *
    * @protected
-   * @param {TSwarmStoreConnectorOrbitDbDatabaseKey} key - key of a value
+   * @param {TSwarmStoreConnectorOrbitDbDatabaseEntityIndex} key - key of a value
    * @returns {(Promise<Error | void>)}
    * @memberof SwarmStoreConnectorOrbitDBDatabase
    * @throws
    */
   protected async removeKeyKVStore(
-    key: TSwarmStoreConnectorOrbitDbDatabaseKey
+    key: TSwarmStoreConnectorOrbitDbDatabaseEntityIndex
   ): Promise<void> {
     const database = this.getDbStoreInstance() as OrbitDbKeyValueStore<
       TStoreValue
@@ -721,13 +748,13 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   /**
    * Remove an entry by it's address provided
    *
-   * @param {TSwarmStoreConnectorOrbitDbDatabaseKey} entryAddress
+   * @param {TSwarmStoreConnectorOrbitDbDatabaseEntityIndex} entryAddress
    * @returns {(Promise<Error | void>)}
    * @memberof SwarmStoreConnectorOrbitDBDatabase
    * @throws
    */
   public async removeEntry(
-    entryAddress: TSwarmStoreConnectorOrbitDbDatabaseKey
+    entryAddress: TSwarmStoreConnectorOrbitDbDatabaseEntityIndex
   ): Promise<Error | void> {
     const database = this.getDbStoreInstance() as OrbitDbFeedStore<TStoreValue>;
 
@@ -1053,7 +1080,11 @@ export class SwarmStoreConnectorOrbitDBDatabase<
         );
       }
 
-      const { dbName } = options!;
+      if (!options) {
+        throw new Error('Options are not defined');
+      }
+
+      const { dbName } = options;
 
       if (!dbName) {
         return this.onFatalError(

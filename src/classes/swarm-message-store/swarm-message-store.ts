@@ -20,6 +20,7 @@ import { extend } from '../../utils/common-utils/common-utils-objects';
 import {
   TSwarmStoreDatabaseIteratorMethodAnswer,
   TSwarmStoreDatabaseMethodAnswer,
+  TSwarmStoreDatabaseEntityAddress,
 } from '../swarm-store-class/swarm-store-class.types';
 import {
   TSwarmStoreDatabaseMethodArgument,
@@ -56,8 +57,8 @@ import {
 import { isDefined } from '../../utils/common-utils/common-utils-main';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import {
-  TSwarmStoreDatabaseEntityKey,
   TSwarmStoreDatabaseOptions,
+  TSwarmStoreDatabaseType,
 } from '../swarm-store-class/swarm-store-class.types';
 import { swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl } from './swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider';
 
@@ -80,9 +81,17 @@ import {
   ESwarmStoreConnectorOrbitDbDatabaseType,
 } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 
-export class SwarmMessageStore<P extends ESwarmStoreConnector>
-  extends SwarmStore<P, TSwarmMessageSerialized, ISwarmMessageStoreEvents>
-  implements ISwarmMessageStore<P> {
+export class SwarmMessageStore<
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>
+>
+  extends SwarmStore<
+    P,
+    TSwarmMessageSerialized,
+    DbType,
+    ISwarmMessageStoreEvents
+  >
+  implements ISwarmMessageStore<P, DbType> {
   protected connectorType: P | undefined;
 
   protected accessControl?: ISwarmMessageStoreAccessControlOptions<P>;
@@ -150,7 +159,7 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
 
   public async connect(
     options: ISwarmMessageStoreOptions<P>
-  ): TSwarmMessageStoreConnectReturnType<P> {
+  ): TSwarmMessageStoreConnectReturnType<P, DbType> {
     const extendsWithAccessControl = swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl(
       options
     );
@@ -234,10 +243,13 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
     }
   }
 
-  public async addMessage<T extends TSwarmStoreValueTypes<P>>(
+  public async addMessage<
+    T extends TSwarmStoreValueTypes<P>,
+    DT extends DbType
+  >(
     dbName: string,
     msg: TSwarmMessageInstance | TSwarmMessageConstructorBodyMessage | string,
-    key?: TSwarmStoreDatabaseEntityKey<P>
+    key?: TSwarmStoreDatabaseEntityAddress<P>
   ): Promise<TSwarmMessageStoreMessageId> {
     const message: TSwarmMessageInstance | string =
       typeof msg === 'string' ? msg : await this.constructMessage(dbName, msg);
@@ -248,8 +260,8 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
     const requestAddArgument = {
       value: this.serializeMessage(message),
       key,
-    } as TSwarmStoreDatabaseMethodArgument<P, TSwarmStoreValueTypes<P>>;
-    const response = (await this.request<TSwarmStoreValueTypes<P>>(
+    } as TSwarmStoreDatabaseMethodArgument<P, TSwarmStoreValueTypes<P>, DT>;
+    const response = (await this.request<TSwarmStoreValueTypes<P>, DT>(
       dbName,
       this.dbMethodAddMessage,
       requestAddArgument
@@ -295,18 +307,18 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
     }
   }
 
-  public async collect<T extends TSwarmStoreValueTypes<P>>(
+  public async collect<T extends TSwarmStoreValueTypes<P>, DT extends DbType>(
     dbName: string,
-    options: TSwarmStoreDatabaseIteratorMethodArgument<P>
+    options: TSwarmStoreDatabaseIteratorMethodArgument<P, DT>
   ): Promise<
     (ISwarmMessageInstanceDecrypted | ISwarmMessageInstanceEncrypted | Error)[]
   > {
     assert(typeof dbName === 'string', '');
 
-    const iterator = await this.request<T>(
+    const iterator = await this.request<T, DT>(
       dbName,
       this.dbMethodIterator,
-      this.getArgIterateDb<T>(dbName, options)
+      this.getArgIterateDb<T, DT>(dbName, options)
     );
 
     if (iterator instanceof Error) {
@@ -319,16 +331,19 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
     );
   }
 
-  public async collectWithMeta(
+  public async collectWithMeta<
+    T extends TSwarmStoreValueTypes<P>,
+    DT extends DbType
+  >(
     dbName: string,
-    options: TSwarmStoreDatabaseIteratorMethodArgument<P>
+    options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>
   ): Promise<Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P>>> {
     assert(typeof dbName === 'string', '');
 
     const iterator = await this.request(
       dbName,
       this.dbMethodIterator,
-      this.getArgIterateDb(dbName, options)
+      this.getArgIterateDb<T, DT>(dbName, options)
     );
 
     if (iterator instanceof Error) {
@@ -859,16 +874,17 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
    * @returns {TSwarmStoreDatabaseMethodArgument<P, TSwarmStoreValueTypes<P>>}
    * @memberof SwarmMessageStore
    */
-  protected getArgRemoveMessage(
+  protected getArgRemoveMessage<DbType extends TSwarmStoreDatabaseType<P>>(
     messageAddress: string
-  ): TSwarmStoreDatabaseMethodArgument<P, TSwarmStoreValueTypes<P>> {
+  ): TSwarmStoreDatabaseMethodArgument<P, TSwarmStoreValueTypes<P>, DbType> {
     const { connectorType } = this;
 
     switch (connectorType) {
       case ESwarmStoreConnector.OrbitDB:
         return messageAddress as TSwarmStoreDatabaseMethodArgument<
           P,
-          TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>
+          TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>,
+          DbType
         >;
       default:
         throw new Error(
@@ -885,23 +901,27 @@ export class SwarmMessageStore<P extends ESwarmStoreConnector>
    * @returns {TSwarmStoreDatabaseMethodArgument<P, TSwarmStoreValueTypes<P>>}
    * @memberof SwarmMessageStore
    */
-  protected getArgIterateDb(
+  protected getArgIterateDb<
+    V extends TSwarmStoreValueTypes<P>,
+    DbType extends TSwarmStoreDatabaseType<P>
+  >(
     dbName: string,
-    options: TSwarmStoreDatabaseIteratorMethodArgument<P>
-  ): TSwarmStoreDatabaseIteratorMethodArgument<P> {
+    options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>
+  ): TSwarmStoreDatabaseMethodArgument<P, V, DbType> {
     const { connectorType } = this;
 
     switch (connectorType) {
       case ESwarmStoreConnector.OrbitDB:
         assert(options, 'The iteratro opti');
-        return options
+        return (options
           ? (extend(
               options,
               SWARM_MESSAGE_STORE_CONNECTOR_ORBIT_DB_ITERATOR_OPTIONS_DEFAULT
-            ) as TSwarmStoreDatabaseIteratorMethodArgument<P>)
+            ) as TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>)
           : (SWARM_MESSAGE_STORE_CONNECTOR_ORBIT_DB_ITERATOR_OPTIONS_DEFAULT as TSwarmStoreDatabaseIteratorMethodArgument<
-              P
-            >);
+              P,
+              DbType
+            >)) as TSwarmStoreDatabaseMethodArgument<P, V, DbType>;
       default:
         throw new Error(
           'Failed to define argument value for a swarm message collecting'

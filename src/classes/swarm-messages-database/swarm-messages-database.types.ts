@@ -1,31 +1,42 @@
 import {
   ISwarmMessageStore,
   ISwarmMessageStoreMessagingMethods,
+  ISwarmMessageStoreMessagingRequestWithMetaResult,
 } from '../swarm-message-store/swarm-message-store.types';
 import {
   ESwarmStoreConnector,
   ESwarmStoreEventNames,
 } from '../swarm-store-class/swarm-store-class.const';
 import {
-  TSwarmStoreDatabaseOptions,
+  TSwarmStoreDatabaseType,
+  TSwarmStoreDatabaseEntityAddress,
   TSwarmStoreDatabaseEntityKey,
+  TSwarmStoreDatabaseOptions,
+  TSwarmStoreValueTypes,
 } from '../swarm-store-class/swarm-store-class.types';
 import { OmitFirstArg } from '../../types/helper.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { ISwarmMessageInstanceDecrypted } from '../swarm-message/swarm-message-constructor.types';
 import { ESwarmMessageStoreEventNames } from '../swarm-message-store/swarm-message-store.const';
 import { TTypedEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
-import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../swarm-message-store/swarm-message-store.types';
-import { TSwarmStoreValueTypes } from '../swarm-store-class/swarm-store-class.types';
 import { ESwarmMessagesDatabaseEventsNames } from './swarm-messages-database.const';
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
+import { TSwarmStoreDatabaseEntityUniqueIndex } from '../swarm-store-class/swarm-store-class.types';
 
 export type TSwarmMessageDatabaseMessagesCache<
   P extends ESwarmStoreConnector,
-  DbType extends TSwarmMessagesDatabaseType<P> | undefined
-> = DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
-  ? Map<string, ISwarmMessageStoreMessagingRequestWithMetaResult<P>>
-  : Set<ISwarmMessageStoreMessagingRequestWithMetaResult<P>>;
+  DbType extends TSwarmStoreDatabaseType<P> | undefined
+> = P extends ESwarmStoreConnector.OrbitDB
+  ? DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE // key is key in the database, value - message with meta
+    ? Map<
+        TSwarmStoreDatabaseEntityKey<P>,
+        ISwarmMessageStoreMessagingRequestWithMetaResult<P>
+      > // key is message address, value - message with meta
+    : Map<
+        TSwarmStoreDatabaseEntityAddress<P>,
+        ISwarmMessageStoreMessagingRequestWithMetaResult<P>
+      >
+  : any;
 
 export interface ISwarmMessagesDatabaseConnectCurrentUserOptions {
   userId: TSwarmMessageUserIdentifierSerialized;
@@ -41,16 +52,17 @@ export interface ISwarmMessagesDatabaseConnectCurrentUserOptions {
  */
 export interface ISwarmMessagesDatabaseConnectOptions<
   P extends ESwarmStoreConnector,
-  T extends TSwarmStoreValueTypes<P>
+  T extends TSwarmStoreValueTypes<P>,
+  DbType extends TSwarmStoreDatabaseType<P>
 > {
   user: ISwarmMessagesDatabaseConnectCurrentUserOptions;
-  swarmMessageStore: ISwarmMessageStore<P>;
+  swarmMessageStore: ISwarmMessageStore<P, DbType>;
   dbOptions: TSwarmStoreDatabaseOptions<P, T>;
 }
 
 export interface ISwarmMessageDatabaseEvents<
   P extends ESwarmStoreConnector,
-  DbType extends TSwarmMessagesDatabaseType<P> | undefined
+  DbType extends TSwarmStoreDatabaseType<P>
 > {
   [ESwarmStoreEventNames.UPDATE]: (dbName: string) => void;
   [ESwarmStoreEventNames.DB_LOADING]: (
@@ -61,9 +73,9 @@ export interface ISwarmMessageDatabaseEvents<
     dbName: string,
     message: ISwarmMessageInstanceDecrypted,
     // the global unique address (hash) of the message in the swarm
-    messageAddress: TSwarmStoreDatabaseEntityKey<P>,
+    messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key
-    key?: string
+    key?: TSwarmStoreDatabaseEntityKey<P>
   ) => void;
   [ESwarmMessageStoreEventNames.NEW_MESSAGE_ERROR]: (
     dbName: string,
@@ -72,9 +84,9 @@ export interface ISwarmMessageDatabaseEvents<
     // error occurred while deserializing the message
     error: Error,
     // the global unique address (hash) of the message in the swarm
-    messageAddress: TSwarmStoreDatabaseEntityKey<P>,
+    messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key
-    key?: string
+    key?: TSwarmStoreDatabaseEntityKey<P>
   ) => void;
   [ESwarmStoreEventNames.READY]: (dbName: string) => void;
   [ESwarmStoreEventNames.CLOSE_DATABASE]: (dbName: string) => void;
@@ -84,10 +96,10 @@ export interface ISwarmMessageDatabaseEvents<
     // the user who removed the message
     userId: string,
     // the global unique address (hash) of the DELETE message in the swarm
-    messageAddress: TSwarmStoreDatabaseEntityKey<P>,
+    messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key for the value,
     // for feed store it will be hash of the message which deleted by this one.
-    keyOrAddress?: string
+    keyOrAddress?: TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>
   ) => void;
   /**
    * Emits when swarm messages cache started to update
@@ -102,7 +114,7 @@ export interface ISwarmMessageDatabaseEvents<
    * @memberof ISwarmMessageDatabaseEvents
    */
   [ESwarmMessagesDatabaseEventsNames.CACHE_UPDATED]: (
-    newMessagesList: TSwarmMessageDatabaseMessagesCache<P, DbType> // new messages list
+    messages: TSwarmMessageDatabaseMessagesCache<P, DbType> | undefined // new messages list
   ) => void;
 }
 
@@ -115,26 +127,26 @@ export interface ISwarmMessageDatabaseEvents<
  * @template P
  */
 export interface ISwarmMessageDatabaseMessagingMethods<
-  P extends ESwarmStoreConnector
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>
 > {
-  addMessage: OmitFirstArg<ISwarmMessageStoreMessagingMethods<P>['addMessage']>;
-  deleteMessage: OmitFirstArg<
-    ISwarmMessageStoreMessagingMethods<P>['deleteMessage']
+  addMessage: OmitFirstArg<
+    ISwarmMessageStoreMessagingMethods<P, DbType>['addMessage']
   >;
-  collect: OmitFirstArg<ISwarmMessageStoreMessagingMethods<P>['collect']>;
+  deleteMessage: OmitFirstArg<
+    ISwarmMessageStoreMessagingMethods<P, DbType>['deleteMessage']
+  >;
+  collect: OmitFirstArg<
+    ISwarmMessageStoreMessagingMethods<P, DbType>['collect']
+  >;
   collectWithMeta: OmitFirstArg<
-    ISwarmMessageStoreMessagingMethods<P>['collectWithMeta']
+    ISwarmMessageStoreMessagingMethods<P, DbType>['collectWithMeta']
   >;
 }
 
-export type TSwarmMessagesDatabaseType<
-  P extends ESwarmStoreConnector
-> = P extends ESwarmStoreConnector.OrbitDB
-  ? ESwarmStoreConnectorOrbitDbDatabaseType
-  : undefined;
-
 export interface ISwarmMessagesDatabaseProperties<
-  P extends ESwarmStoreConnector
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>
 > {
   /**
    * Is the database ready to use.
@@ -156,10 +168,10 @@ export interface ISwarmMessagesDatabaseProperties<
    * Type of the database if exist for database
    * connection type.
    *
-   * @type {TSwarmMessagesDatabaseType<P>}
+   * @type {DbType}
    * @memberof ISwarmMessagesDatabaseProperties
    */
-  dbType?: TSwarmMessagesDatabaseType<P>;
+  dbType?: DbType;
 
   /**
    * Event emitter which emits various events
@@ -168,7 +180,7 @@ export interface ISwarmMessagesDatabaseProperties<
    * @type {TTypedEmitter<ISwarmMessageDatabaseEvents<P>>}
    * @memberof ISwarmMessagesDatabaseProperties
    */
-  emitter: TTypedEmitter<ISwarmMessageDatabaseEvents<P>>;
+  emitter: TTypedEmitter<ISwarmMessageDatabaseEvents<P, DbType>>;
 
   /**
    * Whether the messages cache update is in progress.
@@ -192,10 +204,10 @@ export interface ISwarmMessagesDatabaseProperties<
   /**
    * List of a messages with additional meta information.
    *
-   * @type {ISwarmMessageStoreMessagingRequestWithMetaResult<P>[]}
+   * @type {TSwarmMessageDatabaseMessagesCache<P, DbType>}
    * @memberof ISwarmMessagesDatabaseProperties
    */
-  messagesList: ISwarmMessageStoreMessagingRequestWithMetaResult<P>[];
+  cachedMessages: TSwarmMessageDatabaseMessagesCache<P, DbType> | undefined;
 }
 
 /**
@@ -207,10 +219,11 @@ export interface ISwarmMessagesDatabaseProperties<
  */
 export interface ISwarmMessagesDatabase<
   P extends ESwarmStoreConnector,
-  T extends TSwarmStoreValueTypes<P>
+  T extends TSwarmStoreValueTypes<P>,
+  DbType extends TSwarmStoreDatabaseType<P>
 >
-  extends ISwarmMessageStoreMessagingMethods<P>,
-    ISwarmMessagesDatabaseProperties<P> {
+  extends ISwarmMessageStoreMessagingMethods<P, DbType>,
+    ISwarmMessagesDatabaseProperties<P, DbType> {
   /**
    * Method used for connecting to the database.
    *
@@ -218,7 +231,9 @@ export interface ISwarmMessagesDatabase<
    * @returns {Promise<void>}
    * @memberof ISwarmMessagesDatabase
    */
-  open(options: ISwarmMessagesDatabaseConnectOptions<P, T>): Promise<void>;
+  open(
+    options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType>
+  ): Promise<void>;
 
   /**
    * Close the connection with the database.
@@ -245,9 +260,12 @@ export interface ISwarmMessagesDatabase<
  * @interface ISwarmMessagesDatabaseReady
  * @template P
  */
-export interface ISwarmMessagesDatabaseReady<P extends ESwarmStoreConnector> {
+export interface ISwarmMessagesDatabaseReady<
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>
+> {
   _dbName: string;
   _isReady: true;
-  _swarmMessageStore: ISwarmMessageStore<P>;
+  _swarmMessageStore: ISwarmMessageStore<P, DbType>;
   _currentUserId: TSwarmMessageUserIdentifierSerialized;
 }

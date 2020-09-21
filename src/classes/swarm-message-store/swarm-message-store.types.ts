@@ -13,7 +13,7 @@ import { ESwarmMessageStoreEventNames } from './swarm-message-store.const';
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import {
   TSwarmStoreDatabaseIteratorMethodArgument,
-  TSwarmStoreDatabaseEntityKey,
+  TSwarmStoreDatabaseType,
 } from '../swarm-store-class/swarm-store-class.types';
 import {
   TSwarmMessageSerialized,
@@ -29,7 +29,10 @@ import {
 import { StorageProvider } from '../storage-providers/storage-providers.types';
 import { ISwarmStoreConnectorOrbitDbDatabaseValue } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
-import { TSwarmStoreDatabaseEntityAddress } from '../swarm-store-class/swarm-store-class.types';
+import {
+  TSwarmStoreDatabaseEntityAddress,
+  TSwarmStoreDatabaseEntityKey,
+} from '../swarm-store-class/swarm-store-class.types';
 
 /**
  * message unique identifier in the database
@@ -102,7 +105,7 @@ export type TSwarmMessageStoreAccessControlGrantAccessCallback<
   // TODO - can it be gotten from the database entry??
   dbName: string,
   // key for the value in the database
-  key?: string,
+  key?: TSwarmStoreDatabaseEntityKey<P>,
   // operation on the database
   op?: TSwarmStoreDatabaseEntryOperation<P>
 ) => Promise<boolean>;
@@ -156,11 +159,13 @@ export interface ISwarmMessageStoreOptions<P extends ESwarmStoreConnector>
 }
 
 export type TSwarmMessageStoreConnectReturnType<
-  P extends ESwarmStoreConnector
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>
 > = ReturnType<
   ISwarmStore<
     P,
     TSwarmMessageSerialized,
+    DbType,
     ISwarmMessageStoreOptions<P>
   >['connect']
 >;
@@ -175,7 +180,7 @@ export type TSwarmMessageStoreEntryRaw<
 export type ISwarmMessageStoreDeleteMessageArg<
   P extends ESwarmStoreConnector
 > = P extends ESwarmStoreConnector.OrbitDB
-  ? TSwarmStoreDatabaseEntityKey<P> | TSwarmStoreDatabaseEntityAddress<P> // swarm message address
+  ? TSwarmStoreDatabaseEntityAddress<P> // swarm message address
   : TSwarmMessageInstance; // instance of the message to remove
 
 export type ISwarmMessageStoreDatabaseType<
@@ -195,16 +200,16 @@ export interface ISwarmMessageStoreMessageMeta<P extends ESwarmStoreConnector> {
   /**
    * The global unique address (hash) of the message in the swarm
    *
-   * @type {TSwarmStoreDatabaseEntityKey<P>}
+   * @type {TSwarmStoreDatabaseEntityUniqueAddress<P>}
    */
-  messageAddress: Error | undefined | TSwarmStoreDatabaseEntityKey<P>;
+  messageAddress: Error | undefined | TSwarmStoreDatabaseEntityAddress<P>;
   /**
    * for key-value store it will be the key
    *
    * @type {string}
    * @memberof ISwarmMessageStoreMessageMeta
    */
-  key?: Error | string | undefined;
+  key?: Error | TSwarmStoreDatabaseEntityKey<P> | undefined;
 }
 
 export interface ISwarmMessageStoreMessagingRequestWithMetaResult<
@@ -227,14 +232,15 @@ export interface ISwarmMessageStoreMessagingRequestWithMetaResult<
  * @template P
  */
 export interface ISwarmMessageStoreMessagingMethods<
-  P extends ESwarmStoreConnector
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>
 > {
   /**
    * add message to a database with the given name
    *
    * @param {string} dbName - name of the database
    * @param {ISwarmMessageStoreOptions<P>} message - message to add
-   * @param {TSwarmStoreDatabaseEntityKey<P>} key - key for the message under which the message will be stored
+   * @param {TSwarmStoreDatabaseEntityUniqueAddress<P>} key - key for the message under which the message will be stored
    * @returns {Promise<TSwarmMessageStoreMessageId>} - unique message's identifier in the database
    * @memberof ISwarmMessageStore
    * @throws
@@ -303,7 +309,7 @@ export interface ISwarmMessageStoreMessagingMethods<
    */
   collect(
     dbName: string,
-    options: TSwarmStoreDatabaseIteratorMethodArgument<P>
+    options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>
   ): Promise<(TSwarmMessageInstance | Error)[]>;
 
   /**
@@ -316,7 +322,7 @@ export interface ISwarmMessageStoreMessagingMethods<
    */
   collectWithMeta(
     dbName: string,
-    options: TSwarmStoreDatabaseIteratorMethodArgument<P>
+    options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>
   ): Promise<ISwarmMessageStoreMessagingRequestWithMetaResult<P>[]>;
 }
 
@@ -330,10 +336,18 @@ export interface ISwarmMessageStoreMessagingMethods<
  * @extends {EventEmitter<ISwarmMessageStoreEvents>}
  * @template P
  */
-export interface ISwarmMessageStore<P extends ESwarmStoreConnector>
-  extends ISwarmStore<P, TSwarmMessageSerialized, ISwarmMessageStoreOptions<P>>,
+export interface ISwarmMessageStore<
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>
+>
+  extends ISwarmStore<
+      P,
+      TSwarmMessageSerialized,
+      DbType,
+      ISwarmMessageStoreOptions<P>
+    >,
     EventEmitter<ISwarmMessageStoreEvents>,
-    ISwarmMessageStoreMessagingMethods<P> {
+    ISwarmMessageStoreMessagingMethods<P, DbType> {
   /**
    * connect to the swarm storage
    *
@@ -344,5 +358,5 @@ export interface ISwarmMessageStore<P extends ESwarmStoreConnector>
    */
   connect(
     options: ISwarmMessageStoreOptions<P>
-  ): TSwarmMessageStoreConnectReturnType<P>;
+  ): TSwarmMessageStoreConnectReturnType<P, DbType>;
 }

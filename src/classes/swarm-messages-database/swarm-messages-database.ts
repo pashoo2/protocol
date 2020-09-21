@@ -1,7 +1,6 @@
 import {
   ISwarmMessageDatabaseMessagingMethods,
   ISwarmMessagesDatabaseConnectOptions,
-  TSwarmMessagesDatabaseType,
   ISwarmMessageDatabaseEvents,
   ISwarmMessagesDatabaseReady,
 } from './swarm-messages-database.types';
@@ -23,7 +22,7 @@ import {
   TSwarmStoreValueTypes,
   TSwarmStoreDatabaseEntityAddress,
   TSwarmStoreDatabaseOptions,
-  TSwarmStoreDatabaseEntityKey,
+  TSwarmStoreDatabaseType,
 } from '../swarm-store-class/swarm-store-class.types';
 import {
   ESwarmMessagesDatabaseEventsNames,
@@ -38,24 +37,21 @@ import {
 } from './swarm-messages-database.types';
 import validateUserIdentifier from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier';
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
-import { TSwarmStoreDatabaseIteratorMethodArgument } from '../swarm-store-class/swarm-store-class.types';
+import {
+  TSwarmStoreDatabaseIteratorMethodArgument,
+  TSwarmStoreDatabaseEntityKey,
+} from '../swarm-store-class/swarm-store-class.types';
 import { resolveOnIdleCallback } from '../../utils/throttling-utils/throttling-utils-idle-callback/throttling-utils-idle-callback';
 import { THROTTLING_UTILS_IDLE_CALLBACK_TIME_REMAINING_MAX_MS } from '../../utils/throttling-utils/throttling-utils-idle-callback/throttling-utils-idle-callback.const';
 import { round } from '../../utils/common-utils/common-utils-number';
-import {
-  getItemsCount,
-  isDefined,
-} from '../../utils/common-utils/common-utils-main';
-import {
-  commonUtilsArrayDefinedOnly,
-  commonUtilsArrayUniq,
-} from '../../utils/common-utils/common-utils-array';
+import { getItemsCount } from '../../utils/common-utils/common-utils-main';
+import { TSwarmStoreDatabaseEntityUniqueIndex } from '../swarm-store-class/swarm-store-class.types';
 
 export class SwarmMessagesDatabase<
   P extends ESwarmStoreConnector,
   T extends TSwarmStoreValueTypes<P>,
-  DbType extends TSwarmMessagesDatabaseType<P> | undefined
-> implements ISwarmMessageDatabaseMessagingMethods<P> {
+  DbType extends TSwarmStoreDatabaseType<P>
+> implements ISwarmMessageDatabaseMessagingMethods<P, DbType> {
   get dbName(): string | undefined {
     return this._dbName;
   }
@@ -68,7 +64,7 @@ export class SwarmMessagesDatabase<
     return this._isReady && !!this._swarmMessageStore;
   }
 
-  get emitter(): TTypedEmitter<ISwarmMessageDatabaseEvents<P>> {
+  get emitter(): TTypedEmitter<ISwarmMessageDatabaseEvents<P, DbType>> {
     return this._emitter;
   }
 
@@ -80,7 +76,9 @@ export class SwarmMessagesDatabase<
     return !!this._isSwarmMessagesCacheUpdateInProgress;
   }
 
-  get messagesList(): ISwarmMessageStoreMessagingRequestWithMetaResult<P>[] {
+  get cachedMessages():
+    | TSwarmMessageDatabaseMessagesCache<P, DbType>
+    | undefined {
     return this._messagesCached;
   }
 
@@ -124,7 +122,7 @@ export class SwarmMessagesDatabase<
    * @type {ISwarmMessageStore<P>}
    * @memberof SwarmMessagesDatabase
    */
-  protected _swarmMessageStore?: ISwarmMessageStore<P>;
+  protected _swarmMessageStore?: ISwarmMessageStore<P, DbType>;
 
   /**
    * Options for the database which used for
@@ -174,7 +172,7 @@ export class SwarmMessagesDatabase<
   protected _isSwarmMessagesCacheUpdateRequested: boolean = false;
 
   async connect(
-    options: ISwarmMessagesDatabaseConnectOptions<P, T>
+    options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType>
   ): Promise<void> {
     this._handleOptions(options);
     await this._openDatabaseInstance();
@@ -205,8 +203,12 @@ export class SwarmMessagesDatabase<
   };
 
   addMessage = (
-    ...args: Parameters<ISwarmMessageDatabaseMessagingMethods<P>['addMessage']>
-  ): ReturnType<ISwarmMessageDatabaseMessagingMethods<P>['addMessage']> => {
+    ...args: Parameters<
+      ISwarmMessageDatabaseMessagingMethods<P, DbType>['addMessage']
+    >
+  ): ReturnType<
+    ISwarmMessageDatabaseMessagingMethods<P, DbType>['addMessage']
+  > => {
     if (!this._checkIsReady()) {
       throw new Error('The instance is not ready to use');
     }
@@ -215,7 +217,9 @@ export class SwarmMessagesDatabase<
 
   deleteMessage = (
     messageAddressOrKey: ISwarmMessageStoreDeleteMessageArg<P>
-  ): ReturnType<ISwarmMessageDatabaseMessagingMethods<P>['deleteMessage']> => {
+  ): ReturnType<
+    ISwarmMessageDatabaseMessagingMethods<P, DbType>['deleteMessage']
+  > => {
     if (!this._checkIsReady()) {
       throw new Error('The instance is not ready to use');
     }
@@ -226,8 +230,12 @@ export class SwarmMessagesDatabase<
   };
 
   collect = (
-    ...args: Parameters<ISwarmMessageDatabaseMessagingMethods<P>['collect']>
-  ): ReturnType<ISwarmMessageDatabaseMessagingMethods<P>['collect']> => {
+    ...args: Parameters<
+      ISwarmMessageDatabaseMessagingMethods<P, DbType>['collect']
+    >
+  ): ReturnType<
+    ISwarmMessageDatabaseMessagingMethods<P, DbType>['collect']
+  > => {
     if (!this._checkIsReady()) {
       throw new Error('The instance is not ready to use');
     }
@@ -236,10 +244,10 @@ export class SwarmMessagesDatabase<
 
   collectWithMeta = (
     ...args: Parameters<
-      ISwarmMessageDatabaseMessagingMethods<P>['collectWithMeta']
+      ISwarmMessageDatabaseMessagingMethods<P, DbType>['collectWithMeta']
     >
   ): ReturnType<
-    ISwarmMessageDatabaseMessagingMethods<P>['collectWithMeta']
+    ISwarmMessageDatabaseMessagingMethods<P, DbType>['collectWithMeta']
   > => {
     if (!this._checkIsReady()) {
       throw new Error('The instance is not ready to use');
@@ -253,7 +261,7 @@ export class SwarmMessagesDatabase<
    * @protected
    * @memberof SwarmMessagesDatabase
    */
-  protected _checkIsReady(): this is ISwarmMessagesDatabaseReady<P> {
+  protected _checkIsReady(): this is ISwarmMessagesDatabaseReady<P, DbType> {
     if (!this._isReady) {
       throw new Error('The instance is not ready to use');
     }
@@ -272,7 +280,7 @@ export class SwarmMessagesDatabase<
   }
 
   protected _validateOptions(
-    options: ISwarmMessagesDatabaseConnectOptions<P, T>
+    options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType>
   ): void {
     assert(!!options, 'An options object must be provided');
     assert(typeof options === 'object', 'Options must be an object');
@@ -310,7 +318,7 @@ export class SwarmMessagesDatabase<
   }
 
   protected _setOptions(
-    options: ISwarmMessagesDatabaseConnectOptions<P, T>
+    options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType>
   ): void {
     this._setDbOptions(options.dbOptions);
     this._swarmMessageStore = options.swarmMessageStore;
@@ -326,14 +334,14 @@ export class SwarmMessagesDatabase<
    * @memberof SwarmMessagesDatabase
    */
   protected _handleOptions(
-    options: ISwarmMessagesDatabaseConnectOptions<P, T>
+    options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType>
   ): void {
     this._validateOptions(options);
     this._setOptions(options);
   }
 
   protected _checkDatabaseProps(): this is Omit<
-    ISwarmMessagesDatabaseReady<P>,
+    ISwarmMessagesDatabaseReady<P, DbType>,
     'isReady'
   > {
     const swarmMessageStore = this._swarmMessageStore;
@@ -390,9 +398,9 @@ export class SwarmMessagesDatabase<
     dbName: string,
     message: ISwarmMessageInstanceDecrypted,
     // the global unique address (hash) of the message in the swarm
-    messageAddress: TSwarmStoreDatabaseEntityKey<P>,
+    messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key
-    key?: string
+    key?: TSwarmStoreDatabaseEntityKey<P>
   ) => {
     if (this._dbName !== dbName) return;
     this._emitter.emit(
@@ -409,10 +417,10 @@ export class SwarmMessagesDatabase<
     dbName: string,
     userID: TSwarmMessageUserIdentifierSerialized,
     // the global unique address (hash) of the DELETE message in the swarm
-    messageAddress: TSwarmStoreDatabaseEntityKey<P>,
+    messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key for the value,
     // for feed store it will be hash of the message which deleted by this one.
-    keyOrHash?: string
+    keyOrHash?: TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>
   ) => {
     if (this._dbName !== dbName) return;
     this._emitter.emit(
@@ -432,9 +440,9 @@ export class SwarmMessagesDatabase<
     // error occurred while deserializing the message
     error: Error,
     // the global unique address (hash) of the message in the swarm
-    messageAddress: TSwarmStoreDatabaseEntityKey<P>,
+    messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key
-    key?: string
+    key?: TSwarmStoreDatabaseEntityKey<P>
   ) => {
     if (this._dbName !== dbName) return;
     this._emitter.emit(
@@ -605,54 +613,123 @@ export class SwarmMessagesDatabase<
 
   // TODO - move the cache to a separate class
 
-  protected _findCachedMessage(
+  protected _getMessageWithMeta(
     dbName: string,
+    message: ISwarmMessageInstanceDecrypted,
     // the global unique address (hash) of the message in the swarm
-    messageAddress: TSwarmStoreDatabaseEntityKey<P>
-  ): number {
-    return this._messagesCached?.findIndex((messageDescription) => {
-      return (
-        messageDescription.dbName === dbName &&
-        messageDescription.messageAddress === messageAddress
-      );
-    });
+    messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
+    // for key-value store it will be the key
+    key?: TSwarmStoreDatabaseEntityKey<P>
+  ): ISwarmMessageStoreMessagingRequestWithMetaResult<P> {
+    return {
+      message,
+      dbName,
+      messageAddress,
+      key,
+    };
   }
 
+  protected _addMessageInKeyValueStoreCache = (
+    messageWithMeta: ISwarmMessageStoreMessagingRequestWithMetaResult<P>,
+    // for key-value store it will be the key
+    key: TSwarmStoreDatabaseEntityKey<P>
+  ) => {
+    (this._messagesCached as TSwarmMessageDatabaseMessagesCache<
+      ESwarmStoreConnector.OrbitDB,
+      ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+    >)?.set(key, messageWithMeta);
+  };
+
+  protected _addMessageInFeedStoreCache = (
+    messageWithMeta: ISwarmMessageStoreMessagingRequestWithMetaResult<P>,
+    // for key-value store it will be the key
+    messageAddress: TSwarmStoreDatabaseEntityAddress<P>
+  ) => {
+    (this._messagesCached as TSwarmMessageDatabaseMessagesCache<
+      ESwarmStoreConnector.OrbitDB,
+      ESwarmStoreConnectorOrbitDbDatabaseType.FEED
+    >)?.set(messageAddress, messageWithMeta);
+  };
+
+  /**
+   * Create message's description and add it to the
+   * cache.
+   *
+   * @protected
+   * @param {string} dbName
+   * @param {ISwarmMessageInstanceDecrypted} message
+   * @param {TSwarmStoreDatabaseEntityAddress<P>} messageAddress
+   * @param {TSwarmStoreDatabaseEntityKey<P>} [key]
+   * @memberof SwarmMessagesDatabase
+   */
   protected _addMessageToCache(
     dbName: string,
     message: ISwarmMessageInstanceDecrypted,
     // the global unique address (hash) of the message in the swarm
-    messageAddress: TSwarmStoreDatabaseEntityKey<P>,
+    messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key
-    key?: string
+    key?: TSwarmStoreDatabaseEntityKey<P>
   ) {
-    const idx = this._findCachedMessage(dbName, messageAddress);
-    const messageDescription = {
+    const messageDescription = this._getMessageWithMeta(
       dbName,
       message,
-      key,
       messageAddress,
-    };
+      key
+    );
 
-    if (idx === -1) {
-      this._messagesCached.push(messageDescription);
+    if (this._isKeyValueDatabase) {
+      if (!key) {
+        throw new Error(
+          'A key should be defined to add a message in the key-value store messages cache'
+        );
+      }
+      this._addMessageInKeyValueStoreCache(messageDescription, key);
     } else {
-      this._messagesCached[idx] = messageDescription;
+      this._addMessageInFeedStoreCache(messageDescription, messageAddress);
     }
   }
+
+  protected _removeKeyValueFromKVStoreCache = (
+    key: TSwarmStoreDatabaseEntityKey<P>
+  ) => {
+    (this._messagesCached as TSwarmMessageDatabaseMessagesCache<
+      ESwarmStoreConnector.OrbitDB,
+      ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+    >)?.delete(key);
+  };
+
+  protected _removeMessageFromFeedStoreCache = (
+    messageAddress: TSwarmStoreDatabaseEntityAddress<P>
+  ) => {
+    (this._messagesCached as TSwarmMessageDatabaseMessagesCache<
+      ESwarmStoreConnector.OrbitDB,
+      ESwarmStoreConnectorOrbitDbDatabaseType.FEED
+    >)?.delete(messageAddress);
+  };
 
   protected _removeMessageFromCache(
     // for a non key-value stores
     messageAddress?: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key
-    key?: TSwarmStoreDatabaseEntityKey<P>
+    key?: TSwarmStoreDatabaseEntityAddress<P> | TSwarmStoreDatabaseEntityKey<P>
   ) {
-    this._messagesCached = this._messagesCached.filter((message) => {
-      if (key) {
-        return message.key !== key;
+    if (this._isKeyValueDatabase) {
+      if (!key) {
+        throw new Error(
+          "Key should be provided to remove it's value from the key-value store"
+        );
       }
-      return message.messageAddress !== messageAddress;
-    });
+      this._removeKeyValueFromKVStoreCache(
+        key as TSwarmStoreDatabaseEntityKey<P>
+      );
+    } else {
+      if (!messageAddress) {
+        throw new Error(
+          'A message address should be provided to remove message from the feed store messages cache'
+        );
+      }
+      this._removeMessageFromFeedStoreCache(messageAddress);
+    }
   }
 
   /**
@@ -661,16 +738,16 @@ export class SwarmMessagesDatabase<
    *
    * @protected
    * @param {ISwarmMessageInstanceDecrypted} message
-   * @param {TSwarmStoreDatabaseEntityKey<P>} messageAddress
+   * @param {TSwarmStoreDatabaseEntityUniqueAddress<P>} messageAddress
    * @param {string} [key]
    * @memberof SwarmMessagesDatabase
    */
   protected _handleCacheUpdateOnNewMessage(
     message: ISwarmMessageInstanceDecrypted,
     // the global unique address (hash) of the message in the swarm
-    messageAddress: TSwarmStoreDatabaseEntityKey<P>,
+    messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key
-    key?: string
+    key?: TSwarmStoreDatabaseEntityKey<P>
   ) {
     if (this._checkIsReady()) {
       const isMessageAddedByCurrentUser = message.uid === this._currentUserId;
@@ -691,17 +768,19 @@ export class SwarmMessagesDatabase<
    *
    * @protected
    * @param {TSwarmMessageUserIdentifierSerialized} userID
-   * @param {TSwarmStoreDatabaseEntityKey<P>} messageAddress
+   * @param {TSwarmStoreDatabaseEntityUniqueAddress<P>} messageAddress
    * @param {string} [keyOrHash]
    * @memberof SwarmMessagesDatabase
    */
   protected _handleCacheUpdateOnDeleteMessage(
     userID: TSwarmMessageUserIdentifierSerialized,
     // the global unique address (hash) of the DELETE message in the swarm
-    messageAddress: TSwarmStoreDatabaseEntityKey<P>,
+    messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key for the value,
     // for feed store it will be hash of the message which deleted by this one.
-    keyOrHash?: string
+    keyOrHash?:
+      | TSwarmStoreDatabaseEntityAddress<P>
+      | TSwarmStoreDatabaseEntityKey<P>
   ) {
     if (this._checkIsReady()) {
       const isMessageRemovedByCurrentUser = userID === this._currentUserId;
@@ -778,11 +857,11 @@ export class SwarmMessagesDatabase<
   protected _getDatabaseMessagesQueryOptions = (
     messagesCountToQuery: number,
     messagesReadAddressesOrKeysToExclude: string[]
-  ): TSwarmStoreDatabaseIteratorMethodArgument<P> => {
+  ): TSwarmStoreDatabaseIteratorMethodArgument<P, DbType> => {
     return {
       limit: messagesCountToQuery,
       neq: messagesReadAddressesOrKeysToExclude,
-    } as TSwarmStoreDatabaseIteratorMethodArgument<P>;
+    } as TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>;
   };
 
   /**
@@ -797,7 +876,9 @@ export class SwarmMessagesDatabase<
    */
   protected async _performMessagesCachePageRequest(
     messagesCountToQuery: number,
-    messagesReadAddressesOrKeysToExclude: string[]
+    messagesReadAddressesOrKeysToExclude: Array<
+      TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>
+    >
   ): Promise<Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P>>> {
     let queryAttempt = 0;
     let messages:
@@ -879,11 +960,11 @@ export class SwarmMessagesDatabase<
    * by it's description
    *
    * @param {ISwarmMessageStoreMessagingRequestWithMetaResult<P>} message
-   * @returns {(TSwarmStoreDatabaseEntityKey<P> | undefined)}
+   * @returns {(TSwarmStoreDatabaseEntityUniqueAddress<P> | undefined)}
    */
   protected _getMessageAddressByDescription = (
     message: ISwarmMessageStoreMessagingRequestWithMetaResult<P>
-  ): TSwarmStoreDatabaseEntityKey<P> | undefined => {
+  ): TSwarmStoreDatabaseEntityAddress<P> | undefined => {
     const { messageAddress } = message;
 
     if (!messageAddress || messageAddress instanceof Error) {
@@ -900,33 +981,13 @@ export class SwarmMessagesDatabase<
    */
   protected _getMessageKeyByDescription = (
     message: ISwarmMessageStoreMessagingRequestWithMetaResult<P>
-  ): string | undefined => {
+  ): TSwarmStoreDatabaseEntityKey<P> | undefined => {
     const { key } = message;
 
     if (!key || key instanceof Error) {
       return undefined;
     }
     return key;
-  };
-
-  /**
-   * Return unique addresses or keys for messages
-   *
-   * @param {ISwarmMessageStoreMessagingRequestWithMetaResult<P>[]} messagesWithMeta
-   * @returns {(Set<string | TSwarmStoreDatabaseEntityKey<P>>)}
-   */
-  protected _getMessagesUniqKeysOrAddresses = (
-    messagesWithMeta: ISwarmMessageStoreMessagingRequestWithMetaResult<P>[]
-  ): Set<string | TSwarmStoreDatabaseEntityKey<P>> => {
-    const messagesAddressesOrKeys = commonUtilsArrayDefinedOnly(
-      messagesWithMeta.map(
-        this._isKeyValueDatabase
-          ? this._getMessageKeyByDescription
-          : this._getMessageAddressByDescription
-      )
-    );
-
-    return new Set(messagesAddressesOrKeys);
   };
 
   /**
@@ -940,7 +1001,10 @@ export class SwarmMessagesDatabase<
    */
   protected _mapMessagesDescriptionsToKVStoreMap(
     messagesWithMeta: ISwarmMessageStoreMessagingRequestWithMetaResult<P>[]
-  ): Map<string, ISwarmMessageStoreMessagingRequestWithMetaResult<P>> {
+  ): TSwarmMessageDatabaseMessagesCache<
+    ESwarmStoreConnector.OrbitDB,
+    ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+  > {
     const messagesMap = new Map<
       string,
       ISwarmMessageStoreMessagingRequestWithMetaResult<P>
@@ -967,22 +1031,25 @@ export class SwarmMessagesDatabase<
    */
   protected _mapMessagesDescriptionsToFeedStoreSet(
     messagesWithMeta: ISwarmMessageStoreMessagingRequestWithMetaResult<P>[]
-  ): Set<ISwarmMessageStoreMessagingRequestWithMetaResult<P>> {
-    const messagesAddresses: TSwarmStoreDatabaseEntityKey<P>[] = [];
+  ): TSwarmMessageDatabaseMessagesCache<
+    ESwarmStoreConnector.OrbitDB,
+    ESwarmStoreConnectorOrbitDbDatabaseType.FEED
+  > {
+    const messagesMap = new Map<
+      string,
+      ISwarmMessageStoreMessagingRequestWithMetaResult<P>
+    >();
 
-    return new Set<ISwarmMessageStoreMessagingRequestWithMetaResult<P>>(
-      messagesWithMeta.filter((messageDescription) => {
-        const messageAddress = this._getMessageAddressByDescription(
-          messageDescription
-        );
+    messagesWithMeta.forEach((messageDescription) => {
+      const messageAddress = this._getMessageAddressByDescription(
+        messageDescription
+      );
 
-        if (!messageAddress || messagesAddresses.includes(messageAddress)) {
-          return false;
-        }
-        messagesAddresses.push(messageAddress);
-        return true;
-      })
-    );
+      if (messageAddress) {
+        messagesMap.set(messageAddress, messageDescription);
+      }
+    });
+    return messagesMap;
   }
 
   /**
@@ -1019,6 +1086,21 @@ export class SwarmMessagesDatabase<
     );
   };
 
+  protected _getMessagesReadKeysOrAddresses(
+    messagesCache: TSwarmMessageDatabaseMessagesCache<P, DbType>
+  ): Array<TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>> {
+    if (this.dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE) {
+      return (Array.from(messagesCache.keys()) as Array<
+        TSwarmStoreDatabaseEntityKey<P>
+      >) as Array<TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>>;
+    } else if (this.dbType === ESwarmStoreConnectorOrbitDbDatabaseType.FEED) {
+      return (Array.from(messagesCache.keys()) as Array<
+        TSwarmStoreDatabaseEntityAddress<P>
+      >) as Array<TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>>;
+    }
+    return [];
+  }
+
   /**
    * Performs swarm messages cache update by
    * quering database.
@@ -1042,22 +1124,15 @@ export class SwarmMessagesDatabase<
     let whetherMessagesLimitToReadReached = false;
     // whether all messages were read from the databse
     let whetherFullMessagesRead = false;
-    // messages addresses or keys used to filter results on
-    // a next batch read. It is because we have only
-    // the limit option for queryng the databse and
-    // have no native pagination.
-    let messagesReadAddressesOrKeys: Set<
-      string | TSwarmStoreDatabaseEntityKey<P>
-    > = new Set<TSwarmStoreDatabaseEntityKey<P>>();
-    let messagesRead: TSwarmMessageDatabaseMessagesCache<P, DbType> = this
-      ._isKeyValueDatabase
-      ? (new Map<
-          string,
+    let messagesRead = (this._isKeyValueDatabase
+      ? new Map<
+          TSwarmStoreDatabaseEntityKey<P>,
           ISwarmMessageStoreMessagingRequestWithMetaResult<P>
-        >() as TSwarmMessageDatabaseMessagesCache<P, DbType>)
-      : (new Set<
+        >()
+      : new Map<
+          TSwarmStoreDatabaseEntityAddress<P>,
           ISwarmMessageStoreMessagingRequestWithMetaResult<P>
-        >() as TSwarmMessageDatabaseMessagesCache<P, DbType>);
+        >()) as TSwarmMessageDatabaseMessagesCache<P, DbType>;
 
     while (!whetherMessagesLimitToReadReached && !whetherFullMessagesRead) {
       // time browser decide it will be idle.
@@ -1093,12 +1168,9 @@ export class SwarmMessagesDatabase<
 
       const messagesBatch = await this._performMessagesCachePageRequest(
         messagesToReadAtTheBatch,
-        Array.from(messagesReadAddressesOrKeys)
+        this._getMessagesReadKeysOrAddresses(messagesRead)
       );
 
-      messagesReadAddressesOrKeys = this._getMessagesUniqKeysOrAddresses(
-        messagesBatch
-      );
       messagesRead = this._mapMessagesWithMetaToStorageRelatedStructure(
         messagesBatch
       );

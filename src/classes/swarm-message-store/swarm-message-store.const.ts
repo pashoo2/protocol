@@ -44,8 +44,9 @@ export enum ESwarmMessageStoreEventNames {
 
 export const SWARM_MESSAGE_STORE_CONNECTOR_ORBIT_DB_ITERATOR_OPTIONS_DEFAULT_LIMIT = 200;
 
-export const SWARM_MESSAGE_STORE_CONNECTOR_ORBIT_DB_ITERATOR_OPTIONS_DEFAULT: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions = {
+export const SWARM_MESSAGE_STORE_CONNECTOR_DATABASE_TYPE_DEFAULT =
+  ESwarmStoreConnectorOrbitDbDatabaseType.FEED;
+
+export const SWARM_MESSAGE_STORE_CONNECTOR_ORBIT_DB_ITERATOR_OPTIONS_DEFAULT: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions<ESwarmStoreConnectorOrbitDbDatabaseType.FEED> = {
   [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.limit]: SWARM_MESSAGE_STORE_CONNECTOR_ORBIT_DB_ITERATOR_OPTIONS_DEFAULT_LIMIT,
 };
-
-export const SWARM_MESSAGE_STORE_CONNECTOR_DATABASE_TYPE_DEFAULT = ESwarmStoreConnectorOrbitDbDatabaseType.FEED;

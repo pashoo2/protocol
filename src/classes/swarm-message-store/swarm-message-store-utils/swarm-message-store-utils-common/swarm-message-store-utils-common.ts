@@ -11,7 +11,10 @@ import { TCentralAuthorityUserIdentity } from '../../../central-authority-class/
 import { ESwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.const';
 import { EOrbitDbFeedStoreOperation } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types';
-import { TSwarmStoreValueTypes } from '../../../swarm-store-class/swarm-store-class.types';
+import {
+  TSwarmStoreValueTypes,
+  TSwarmStoreDatabaseEntityKey,
+} from '../../../swarm-store-class/swarm-store-class.types';
 import {
   TSwarmMessageSerialized,
   ISwarmMessageConstructor,
@@ -45,8 +48,8 @@ async function swarmMessageGrantValidator<P extends ESwarmStoreConnector>(
     currentUserId: TCentralAuthorityUserIdentity;
   },
   value: TSwarmMessageSerialized,
-  userId: string,
-  key?: string,
+  userId: TCentralAuthorityUserIdentity,
+  key?: TSwarmStoreDatabaseEntityKey<P>,
   op?: TSwarmStoreDatabaseEntryOperation<P>
 ) {
   const {

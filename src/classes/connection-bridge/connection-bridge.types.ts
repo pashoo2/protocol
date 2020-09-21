@@ -9,6 +9,7 @@ import { ISwarmMessageConstructor } from '../swarm-message/swarm-message-constru
 import { ISensitiveDataSessionStorageOptions } from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { ISwarmMessageEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { TSwarmStoreDatabaseType } from '../swarm-store-class/swarm-store-class.types';
 
 export type IConnectionBridgeOptionsAuthCredentials = Omit<
   ICentralAuthorityOptions['user']['credentials'],
@@ -83,7 +84,8 @@ export interface IConnectionBridgeOptions<
 }
 
 export interface IConnectionBridge<
-  P extends ESwarmStoreConnector = ESwarmStoreConnector.OrbitDB
+  P extends ESwarmStoreConnector = ESwarmStoreConnector.OrbitDB,
+  DbType extends TSwarmStoreDatabaseType<P> = TSwarmStoreDatabaseType<P>
 > {
   /**
    * used to authorize the user or get
@@ -101,7 +103,7 @@ export interface IConnectionBridge<
    * @type {ISwarmMessageStore<P>}
    * @memberof IConnectionBridge
    */
-  storage?: ISwarmMessageStore<P>;
+  storage?: ISwarmMessageStore<P, DbType>;
   /**
    * allows to create messages, which can be stored in the swarm
    *

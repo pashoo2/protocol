@@ -38,9 +38,13 @@ import {
 } from '../swarm-messgae-encrypted-cache/swarm-message-encrypted-cache.utils';
 import { ISwarmMessgaeEncryptedCache } from '../swarm-messgae-encrypted-cache';
 import { ISensitiveDataSessionStorageOptions } from '../sensitive-data-session-storage/sensitive-data-session-storage.types';
-import { ISecretStorage, TSecretStorageAuthorizeCredentials } from '../secret-storage-class/secret-storage-class.types';
+import {
+  ISecretStorage,
+  TSecretStorageAuthorizeCredentials,
+} from '../secret-storage-class/secret-storage-class.types';
 import { SecretStorage } from '../secret-storage-class/secret-storage-class';
 import { IStorageProviderOptions } from '../storage-providers/storage-providers.types';
+import { TSwarmStoreDatabaseType } from '../swarm-store-class/swarm-store-class.types';
 
 /**
  * this class used if front of connection
@@ -52,11 +56,12 @@ import { IStorageProviderOptions } from '../storage-providers/storage-providers.
  * @class ConnectionBridge
  */
 export class ConnectionBridge<
-  P extends ESwarmStoreConnector = ESwarmStoreConnector.OrbitDB
-  > implements IConnectionBridge {
+  P extends ESwarmStoreConnector = ESwarmStoreConnector.OrbitDB,
+  DbType extends TSwarmStoreDatabaseType<P> = TSwarmStoreDatabaseType<P>
+> implements IConnectionBridge {
   public caConnection?: ICentralAuthority;
 
-  public storage?: ISwarmMessageStore<P>;
+  public storage?: ISwarmMessageStore<P, DbType>;
 
   public messageConstructor?: ISwarmMessageConstructor;
 
@@ -236,7 +241,7 @@ export class ConnectionBridge<
    * @protected
    * @memberof ConnectionBridge
    */
-  protected setOptionsSwarmConnection() { }
+  protected setOptionsSwarmConnection() {}
 
   /**
    * set options for the message storage
@@ -503,7 +508,7 @@ export class ConnectionBridge<
    */
   protected async startSwarmMessageStorageConnection(): Promise<void> {
     const swarmMessageStorageOptions = await this.setOptionsMessageStorage();
-    const swarmMessageStorage = new SwarmMessageStore<P>();
+    const swarmMessageStorage = new SwarmMessageStore<P, DbType>();
     const result = await swarmMessageStorage.connect(
       swarmMessageStorageOptions
     );
@@ -640,13 +645,15 @@ export class ConnectionBridge<
 
   protected getSecretStorageDBOptions(): Partial<IStorageProviderOptions> {
     return {
-      dbName: `${CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX.SECRET_STORAGE}//${this.options?.auth.credentials.login}`
+      dbName: `${CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX.SECRET_STORAGE}//${this.options?.auth.credentials.login}`,
     };
   }
 
   protected getSecretStorageAuthCredentials(): TSecretStorageAuthorizeCredentials {
     if (!this.session && !this.options?.auth.credentials.password) {
-      throw new Error('Session storage or password must be provided to authorize in SecretStorage');
+      throw new Error(
+        'Session storage or password must be provided to authorize in SecretStorage'
+      );
     }
     return {
       ...this.options?.auth.credentials,
@@ -658,10 +665,12 @@ export class ConnectionBridge<
     const secretStorage = new SecretStorage();
     const authResult = await secretStorage.authorize(
       this.getSecretStorageAuthCredentials(),
-      this.getSecretStorageDBOptions(),
-    )
+      this.getSecretStorageDBOptions()
+    );
     if (authResult !== true) {
-      throw (authResult === false ? new Error('Conntection to the secret storage failed') : authResult);
+      throw authResult === false
+        ? new Error('Conntection to the secret storage failed')
+        : authResult;
     }
     this._secretStorage = secretStorage;
   }

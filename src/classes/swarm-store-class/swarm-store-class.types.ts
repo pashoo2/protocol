@@ -1,30 +1,42 @@
 import { ISecretStoreCredentials } from '../secret-storage-class/secret-storage-class.types';
-import {
-  ISwarmStoreConnectorOrbitDBConnectionOptions,
-  TSwarmStoreConnectorOrbitDBEnityKey,
-} from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.types';
+import { ISwarmStoreConnectorOrbitDBConnectionOptions } from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.types';
 import { EventEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
-import { ESwarmStoreDbStatus as ESwarmStoreDatabaseStatus } from './swarm-store-class.const';
-import { SWARM_STORE_DATABASE_STATUS_ABSENT } from './swarm-store-class.const';
-import {
-  ISwarmStoreConnectorOrbitDbDatabaseOptions,
-  ISwarmStoreConnectorOrbitDbDatabaseValue,
-} from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
-import {
-  ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions,
-  TSwarmStoreConnectorOrbitDbDatabaseStoreHash,
-} from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
-import {
-  TSwarmStoreConnectorOrbitDbDatabaseMethodNames,
-  TSwarmStoreConnectorOrbitDbDatabaseMethodArgument,
-} from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import {
   ESwarmStoreConnector,
+  ESwarmStoreDbStatus as ESwarmStoreDatabaseStatus,
   ESwarmStoreEventNames,
+  SWARM_STORE_DATABASE_STATUS_ABSENT,
 } from './swarm-store-class.const';
+import {
+  ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions,
+  ISwarmStoreConnectorOrbitDbDatabaseOptions,
+  ISwarmStoreConnectorOrbitDbDatabaseValue,
+  TSwarmStoreConnectorOrbitDbDatabaseMethodArgument,
+  TSwarmStoreConnectorOrbitDbDatabaseMethodNames,
+  TSwarmStoreConnectorOrbitDbDatabaseStoreHash,
+  TSwarmStoreConnectorOrbitDbDatabaseStoreKey,
+} from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import { IStorageCommon } from 'types/storage.types';
-import { EOrbitDbFeedStoreOperation } from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
+import {
+  EOrbitDbFeedStoreOperation,
+  ESwarmStoreConnectorOrbitDbDatabaseType,
+} from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { TSwarmMessageSerialized } from '../swarm-message/swarm-message-constructor.types';
+
+export type TSwarmStoreDatabaseType<
+  P extends ESwarmStoreConnector
+> = P extends ESwarmStoreConnector.OrbitDB
+  ? ESwarmStoreConnectorOrbitDbDatabaseType
+  : undefined;
+
+export type TSwarmStoreDatabaseEntityUniqueIndex<
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>
+> = P extends ESwarmStoreConnector.OrbitDB
+  ? DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+    ? TSwarmStoreDatabaseEntityAddress<P>
+    : TSwarmStoreDatabaseEntityKey<P>
+  : never;
 
 export type TSwarmStoreConnectorEventRetransmitter = (...args: any[]) => void;
 
@@ -66,9 +78,10 @@ export interface ISwarmStoreEvents {
 // arguments avalilable for a database method
 export type TSwarmStoreDatabaseMethodArgument<
   P extends ESwarmStoreConnector,
-  M
+  M,
+  DbType extends TSwarmStoreDatabaseType<P>
 > = P extends ESwarmStoreConnector.OrbitDB
-  ? TSwarmStoreConnectorOrbitDbDatabaseMethodArgument<M>
+  ? TSwarmStoreConnectorOrbitDbDatabaseMethodArgument<M, DbType>
   : never;
 
 export type TSwarmStoreDatabaseEntryOperation<
@@ -77,9 +90,10 @@ export type TSwarmStoreDatabaseEntryOperation<
 
 // arguments avalilable for a database method
 export type TSwarmStoreDatabaseIteratorMethodArgument<
-  P extends ESwarmStoreConnector
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>
 > = P extends ESwarmStoreConnector.OrbitDB
-  ? ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions
+  ? ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions<DbType>
   : any;
 
 export type TSwarmStoreDatabaseLoadMethodAnswer<
@@ -131,7 +145,7 @@ export interface ISwarmStoreDatabaseBaseOptions {
 export type TSwarmStoreDatabaseEntityKey<
   P extends ESwarmStoreConnector = never
 > = P extends ESwarmStoreConnector.OrbitDB
-  ? TSwarmStoreConnectorOrbitDBEnityKey
+  ? TSwarmStoreConnectorOrbitDbDatabaseStoreKey
   : string;
 
 export type TSwarmStoreDatabaseEntityAddress<
@@ -272,7 +286,8 @@ export type TSwarmStoreDatabaseRequestMethodReturnType<
  */
 export interface ISwarmStoreConnectorBase<
   P extends ESwarmStoreConnector,
-  ItemType extends TSwarmStoreValueTypes<P>
+  ItemType extends TSwarmStoreValueTypes<P>,
+  DbType extends TSwarmStoreDatabaseType<P>
 > {
   // ready to use
   isReady: boolean;
@@ -305,19 +320,20 @@ export interface ISwarmStoreConnectorBase<
   // send request to a swarm database to perform
   // an operation such as read or seta value
   // on a database
-  request<A extends ItemType>(
+  request<A extends ItemType, DT extends DbType>(
     dbName: TSwarmStoreDatabaseOptions<P, A>['dbName'],
     dbMethod: TSwarmStoreDatabaseMethod<P>,
-    arg: TSwarmStoreDatabaseMethodArgument<P, A>
+    arg: TSwarmStoreDatabaseMethodArgument<P, A, DT>
   ): Promise<TSwarmStoreDatabaseRequestMethodReturnType<P, A>>;
 }
 
 export interface ISwarmStoreConnector<
   P extends ESwarmStoreConnector,
-  ItemType extends TSwarmStoreValueTypes<P>
+  ItemType extends TSwarmStoreValueTypes<P>,
+  DbType extends TSwarmStoreDatabaseType<P>
 >
   extends EventEmitter<ISwarmStoreEvents>,
-    ISwarmStoreConnectorBase<P, ItemType> {}
+    ISwarmStoreConnectorBase<P, ItemType, DbType> {}
 
 /**
  * Implements connection to a swarm
@@ -335,8 +351,9 @@ export interface ISwarmStoreConnector<
 export interface ISwarmStore<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
+  DbType extends TSwarmStoreDatabaseType<P>,
   O extends ISwarmStoreOptions<P, ItemType> = ISwarmStoreOptions<P, ItemType>
-> extends Omit<ISwarmStoreConnectorBase<P, ItemType>, 'connect'> {
+> extends Omit<ISwarmStoreConnectorBase<P, ItemType, DbType>, 'connect'> {
   // status of a database connected to
   dbStatuses: ISwarmStoreDatabasesStatuses;
   /**

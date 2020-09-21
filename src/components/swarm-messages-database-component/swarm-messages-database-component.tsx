@@ -14,7 +14,11 @@ import {
 } from './swarm-messages-database-component.utils';
 import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
 import { SwarmMessagesDatabase } from '../../classes/swarm-messages-database';
-import { TSwarmStoreDatabaseEntityKey } from '../../classes/swarm-store-class/swarm-store-class.types';
+import {
+  TSwarmStoreDatabaseEntityKey,
+  TSwarmStoreDatabaseType,
+  TSwarmStoreValueTypes,
+} from '../../classes/swarm-store-class/swarm-store-class.types';
 import {
   ISwarmMessagesDatabaseMessageDescription,
   ISwarmMessagesDatabaseDeleteMessageDescription,
@@ -28,21 +32,27 @@ interface IProps {
   connectionBridge?: IConnectionBridge;
 }
 
-interface IState<P extends ESwarmStoreConnector> {
+interface IState<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmStoreValueTypes<P>,
+  DbType extends TSwarmStoreDatabaseType<P>
+> {
   messages: ISwarmMessagesDatabaseMessageDescription<P>[];
   isOpening: boolean;
   isClosing: boolean;
-  db?: SwarmMessagesDatabase<P>;
+  db?: SwarmMessagesDatabase<P, T, DbType>;
 }
 
 export class SwarmMessagesDatabaseComponent<
-  P extends ESwarmStoreConnector
-> extends React.PureComponent<IProps, IState<P>> {
+  P extends ESwarmStoreConnector,
+  T extends TSwarmStoreValueTypes<P>,
+  DbType extends TSwarmStoreDatabaseType<P>
+> extends React.PureComponent<IProps, IState<P, T, DbType>> {
   state = {
     messages: [] as ISwarmMessagesDatabaseMessageDescription<P>[],
     isOpening: false,
     isClosing: false,
-    db: undefined as SwarmMessagesDatabase<P> | undefined,
+    db: undefined as SwarmMessagesDatabase<P, T, DbType> | undefined,
   };
 
   get isOpened(): boolean {
@@ -133,10 +143,10 @@ export class SwarmMessagesDatabaseComponent<
             return true;
           },
         };
-        const db = await connectToDatabase({
+        const db = (await connectToDatabase({
           dbOptions,
           swarmMessageStore: connectionBridge.storage,
-        });
+        } as any)) as any;
 
         setMessageListener(db, this.onNewMessage);
         setMessageDeleteListener(db, this.onMessageDelete);
