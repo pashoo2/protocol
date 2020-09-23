@@ -19,11 +19,11 @@ import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../swarm-store-class/sw
 import { ISwarmMessageInstanceDecrypted } from '../swarm-message/swarm-message-constructor.types';
 import { ESwarmMessageStoreEventNames } from '../swarm-message-store/swarm-message-store.const';
 import { TTypedEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
-import { ESwarmMessagesDatabaseEventsNames } from './swarm-messages-database.const';
+import { ESwarmMessagesDatabaseCacheEventsNames } from './swarm-messages-database.const';
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import { TSwarmStoreDatabaseEntityUniqueIndex } from '../swarm-store-class/swarm-store-class.types';
 
-export type TSwarmMessageDatabaseMessagesCache<
+export type TSwarmMessageDatabaseMessagesCached<
   P extends ESwarmStoreConnector,
   DbType extends TSwarmStoreDatabaseType<P> | undefined
 > = P extends ESwarmStoreConnector.OrbitDB
@@ -60,10 +60,31 @@ export interface ISwarmMessagesDatabaseConnectOptions<
   dbOptions: TSwarmStoreDatabaseOptions<P, T>;
 }
 
-export interface ISwarmMessageDatabaseEvents<
+export interface ISwarmMessageDatabaseCacheEvents<
   P extends ESwarmStoreConnector,
   DbType extends TSwarmStoreDatabaseType<P>
 > {
+  /**
+   * Emits when swarm messages cache started to update
+   *
+   * @memberof ISwarmMessageDatabaseEvents
+   */
+  [ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATING]: () => void;
+  /**
+   * Swarm messages were requested from the database and the cache was updated
+   * with the messages.
+   *
+   * @memberof ISwarmMessageDatabaseEvents
+   */
+  [ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATED]: (
+    messages: TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined // new messages list
+  ) => void;
+}
+
+export interface ISwarmMessageDatabaseEvents<
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>
+> extends ISwarmMessageDatabaseCacheEvents<P, DbType> {
   [ESwarmStoreEventNames.UPDATE]: (dbName: string) => void;
   [ESwarmStoreEventNames.DB_LOADING]: (
     dbName: string,
@@ -100,21 +121,6 @@ export interface ISwarmMessageDatabaseEvents<
     // for key-value store it will be the key for the value,
     // for feed store it will be hash of the message which deleted by this one.
     keyOrAddress?: TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>
-  ) => void;
-  /**
-   * Emits when swarm messages cache started to update
-   *
-   * @memberof ISwarmMessageDatabaseEvents
-   */
-  [ESwarmMessagesDatabaseEventsNames.CACHE_UPDATING]: () => void;
-  /**
-   * Swarm messages were requested from the database and the cache was updated
-   * with the messages.
-   *
-   * @memberof ISwarmMessageDatabaseEvents
-   */
-  [ESwarmMessagesDatabaseEventsNames.CACHE_UPDATED]: (
-    messages: TSwarmMessageDatabaseMessagesCache<P, DbType> | undefined // new messages list
   ) => void;
 }
 
@@ -204,10 +210,10 @@ export interface ISwarmMessagesDatabaseProperties<
   /**
    * List of a messages with additional meta information.
    *
-   * @type {TSwarmMessageDatabaseMessagesCache<P, DbType>}
+   * @type {TSwarmMessageDatabaseMessagesCached<P, DbType>}
    * @memberof ISwarmMessagesDatabaseProperties
    */
-  cachedMessages: TSwarmMessageDatabaseMessagesCache<P, DbType> | undefined;
+  cachedMessages: TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined;
 }
 
 /**
@@ -268,4 +274,94 @@ export interface ISwarmMessagesDatabaseReady<
   _isReady: true;
   _swarmMessageStore: ISwarmMessageStore<P, DbType>;
   _currentUserId: TSwarmMessageUserIdentifierSerialized;
+}
+
+export interface ISwarmMessagesDatabaseCacheOptionsDbInstance<
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>
+> {
+  collectWithMeta: OmitFirstArg<
+    ISwarmMessageStoreMessagingMethods<P, DbType>['collectWithMeta']
+  >;
+}
+
+export interface ISwarmMessagesDatabaseCacheOptions<
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>
+> {
+  dbType: DbType;
+  dbInstance: ISwarmMessagesDatabaseCacheOptionsDbInstance<P, DbType>;
+}
+
+export interface ISwarmMessagesDatabaseCache<
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>
+> {
+  /**
+   * Is the instance ready to be used.
+   *
+   * @type {boolean}
+   * @memberof ISwarmMessagesDatabaseCache
+   */
+  readonly isReady: boolean;
+  /**
+   * Messages cached.
+   *
+   * @type {TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined}
+   * @memberof ISwarmMessagesDatabaseCache
+   */
+  readonly cache: TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined;
+  /**
+   * Whether the cache is updating or not.
+   *
+   * @type {boolean}
+   * @memberof ISwarmMessagesDatabaseCache
+   */
+  readonly isUpdating: boolean;
+  /**
+   * Emits events which are related to operations with the cache
+   *
+   * @type {TTypedEmitter<ISwarmMessageDatabaseEvents<P, DbType>>}
+   * @memberof ISwarmMessagesDatabaseCache
+   */
+  readonly emitter: TTypedEmitter<ISwarmMessageDatabaseEvents<P, DbType>>;
+  /**
+   * Whether the cache contained all messages from the database
+   * or it's limit was reaached and update were stopped.
+   *
+   * @type {boolean}
+   * @memberof ISwarmMessagesDatabaseCache
+   */
+  readonly whetherMessagesListContainsAllMessages: boolean;
+  /**
+   * Start the instance
+   *
+   * @returns {Promise<void>}
+   * @memberof ISwarmMessagesDatabaseCache
+   */
+  start(): Promise<void>;
+  /**
+   * Close the instance
+   *
+   * @returns {Promise<void>}
+   * @memberof ISwarmMessagesDatabaseCache
+   */
+  close(): Promise<void>;
+  /**
+   * Start a new update of the messages cache or
+   * just plan a new one.
+   *
+   * @returns {(Promise<TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined>)}
+   * @memberof ISwarmMessagesDatabaseCache
+   */
+  update(): Promise<TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined>;
+}
+
+export interface ISwarmMessagesDatabaseCacheConstructor<
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>
+> {
+  new (
+    options: ISwarmMessagesDatabaseCacheOptions<P, DbType>
+  ): ISwarmMessagesDatabaseCache<P, DbType>;
 }
