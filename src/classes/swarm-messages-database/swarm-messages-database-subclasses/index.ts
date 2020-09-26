@@ -1,1 +1,1 @@
-export * from './swarm-messages-database-subclasses';
+export * from './swarm-messages-database-cache';

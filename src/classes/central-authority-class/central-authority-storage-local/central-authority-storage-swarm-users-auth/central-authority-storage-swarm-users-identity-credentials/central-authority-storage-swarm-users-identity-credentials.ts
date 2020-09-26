@@ -26,7 +26,7 @@ import {
   getUserIdentityByCryptoCredentials,
   getCryptoKeyPairsByCryptoCredentials,
 } from 'classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials';
-import { dataCachingUtilsCachingDecorator as caching } from 'utils/data-cache-utils/data-cache-utils';
+import { dataCachingUtilsCachingDecorator as caching } from 'utils/data-cache-utils';
 import {
   checkIsValidExportedCryptoCredentialsToString,
   checkIsValidCryptoCredentials,

@@ -3,7 +3,7 @@ import { SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter } from '.
 
 export class SwarmStoreConnectorOrbitDBSubclassStorageCache
   extends SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
-  implements Cache<string | Buffer | undefined> {
+  implements Cache {
   /**
    * @param {string} k
    * @param {*} v

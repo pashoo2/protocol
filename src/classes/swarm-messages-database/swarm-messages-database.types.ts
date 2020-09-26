@@ -22,6 +22,7 @@ import { TTypedEmitter } from '../basic-classes/event-emitter-class-base/event-e
 import { ESwarmMessagesDatabaseCacheEventsNames } from './swarm-messages-database.const';
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import { TSwarmStoreDatabaseEntityUniqueIndex } from '../swarm-store-class/swarm-store-class.types';
+import { ISwarmMessageStoreMessageWithMeta } from '../swarm-message-store/swarm-message-store.types';
 
 export type TSwarmMessageDatabaseMessagesCached<
   P extends ESwarmStoreConnector,
@@ -42,6 +43,13 @@ export interface ISwarmMessagesDatabaseConnectCurrentUserOptions {
   userId: TSwarmMessageUserIdentifierSerialized;
 }
 
+export interface ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>
+> {
+  cacheConstructor?: ISwarmMessagesDatabaseCacheConstructor<P, DbType>;
+}
+
 /**
  * Options which are necessary for opening
  * the database.
@@ -58,6 +66,10 @@ export interface ISwarmMessagesDatabaseConnectOptions<
   user: ISwarmMessagesDatabaseConnectCurrentUserOptions;
   swarmMessageStore: ISwarmMessageStore<P, DbType>;
   dbOptions: TSwarmStoreDatabaseOptions<P, T>;
+  cacheOptions?: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<
+    P,
+    DbType
+  >;
 }
 
 export interface ISwarmMessageDatabaseCacheEvents<
@@ -69,7 +81,7 @@ export interface ISwarmMessageDatabaseCacheEvents<
    *
    * @memberof ISwarmMessageDatabaseEvents
    */
-  [ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATING]: () => void;
+  [ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATING]: () => unknown;
   /**
    * Swarm messages were requested from the database and the cache was updated
    * with the messages.
@@ -78,18 +90,18 @@ export interface ISwarmMessageDatabaseCacheEvents<
    */
   [ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATED]: (
     messages: TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined // new messages list
-  ) => void;
+  ) => unknown;
 }
 
 export interface ISwarmMessageDatabaseEvents<
   P extends ESwarmStoreConnector,
   DbType extends TSwarmStoreDatabaseType<P>
 > extends ISwarmMessageDatabaseCacheEvents<P, DbType> {
-  [ESwarmStoreEventNames.UPDATE]: (dbName: string) => void;
+  [ESwarmStoreEventNames.UPDATE]: (dbName: string) => unknown;
   [ESwarmStoreEventNames.DB_LOADING]: (
     dbName: string,
     percentage: number
-  ) => void;
+  ) => unknown;
   [ESwarmMessageStoreEventNames.NEW_MESSAGE]: (
     dbName: string,
     message: ISwarmMessageInstanceDecrypted,
@@ -97,7 +109,7 @@ export interface ISwarmMessageDatabaseEvents<
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key
     key?: TSwarmStoreDatabaseEntityKey<P>
-  ) => void;
+  ) => unknown;
   [ESwarmMessageStoreEventNames.NEW_MESSAGE_ERROR]: (
     dbName: string,
     // swarm message string failed to deserialize
@@ -108,10 +120,10 @@ export interface ISwarmMessageDatabaseEvents<
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key
     key?: TSwarmStoreDatabaseEntityKey<P>
-  ) => void;
-  [ESwarmStoreEventNames.READY]: (dbName: string) => void;
-  [ESwarmStoreEventNames.CLOSE_DATABASE]: (dbName: string) => void;
-  [ESwarmStoreEventNames.DROP_DATABASE]: (dbName: string) => void;
+  ) => unknown;
+  [ESwarmStoreEventNames.READY]: (dbName: string) => unknown;
+  [ESwarmStoreEventNames.CLOSE_DATABASE]: (dbName: string) => unknown;
+  [ESwarmStoreEventNames.DROP_DATABASE]: (dbName: string) => unknown;
   [ESwarmMessageStoreEventNames.DELETE_MESSAGE]: (
     dbName: string,
     // the user who removed the message
@@ -121,7 +133,7 @@ export interface ISwarmMessageDatabaseEvents<
     // for key-value store it will be the key for the value,
     // for feed store it will be hash of the message which deleted by this one.
     keyOrAddress?: TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>
-  ) => void;
+  ) => unknown;
 }
 
 /**
@@ -274,6 +286,7 @@ export interface ISwarmMessagesDatabaseReady<
   _isReady: true;
   _swarmMessageStore: ISwarmMessageStore<P, DbType>;
   _currentUserId: TSwarmMessageUserIdentifierSerialized;
+  _swarmMessagesCache: ISwarmMessagesDatabaseCache<P, DbType>;
 }
 
 export interface ISwarmMessagesDatabaseCacheOptionsDbInstance<
@@ -305,7 +318,8 @@ export interface ISwarmMessagesDatabaseCache<
    */
   readonly isReady: boolean;
   /**
-   * Messages cached.
+   * Messages cached updated from the database
+   * and added with addMessage method
    *
    * @type {TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined}
    * @memberof ISwarmMessagesDatabaseCache
@@ -355,6 +369,37 @@ export interface ISwarmMessagesDatabaseCache<
    * @memberof ISwarmMessagesDatabaseCache
    */
   update(): Promise<TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined>;
+  /**
+   * Add the message with some meta information to the cache.
+   * Cache updated by the "update" method will rewrite the
+   * messages added and by it's database entries if they are
+   * exists or with nothing if not.
+   *
+   * @param {ISwarmMessageStoreMessageWithMeta<P>} swarmMessageWithMeta
+   * @returns {Promise<void>}
+   * @memberof ISwarmMessagesDatabaseCache
+   */
+  addMessage(
+    swarmMessageWithMeta: ISwarmMessageStoreMessageWithMeta<P>
+  ): Promise<void>;
+  /**
+   * Delete the messages from the current messages cache.
+   * Cache updated by the "update" method will rewrite the
+   * messages added and by it's database entries if they are
+   * exists or with nothing if not.
+   *
+   * @param {DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.FEED
+   *       ? TSwarmStoreDatabaseEntityAddress<P>
+   *       : TSwarmStoreDatabaseEntityKey<P>} messageUniqAddressOrKey
+   * @returns {Promise<void>}
+   * @memberof ISwarmMessagesDatabaseCache
+   */
+  deleteMessage(
+    // for a non key-value stores
+    messageUniqAddressOrKey: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.FEED
+      ? TSwarmStoreDatabaseEntityAddress<P>
+      : TSwarmStoreDatabaseEntityKey<P>
+  ): Promise<void>;
 }
 
 export interface ISwarmMessagesDatabaseCacheConstructor<

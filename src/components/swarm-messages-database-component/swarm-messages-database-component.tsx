@@ -25,7 +25,12 @@ import {
 } from './swarm-messages-database-component.types';
 import { ISwarmMessageInstanceDecrypted } from '../../classes/swarm-message/swarm-message-constructor.types';
 import { ISwarmMessageStoreDeleteMessageArg } from '../../classes/swarm-message-store/swarm-message-store.types';
-import { setMessageDeleteListener } from './swarm-messages-database-component.utils';
+import {
+  setMessageDeleteListener,
+  setCacheUpdateListener,
+} from './swarm-messages-database-component.utils';
+import { TSwarmMessageDatabaseMessagesCached } from '../../classes/swarm-messages-database/swarm-messages-database.types';
+import { isValidSwarmMessageDecryptedFormat } from '../../classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-swarm-message';
 
 interface IProps {
   databaseOptions: ISwarmStoreDatabaseBaseOptions;
@@ -37,7 +42,7 @@ interface IState<
   T extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>
 > {
-  messages: ISwarmMessagesDatabaseMessageDescription<P>[];
+  messages: TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined;
   isOpening: boolean;
   isClosing: boolean;
   db?: SwarmMessagesDatabase<P, T, DbType>;
@@ -49,7 +54,7 @@ export class SwarmMessagesDatabaseComponent<
   DbType extends TSwarmStoreDatabaseType<P>
 > extends React.PureComponent<IProps, IState<P, T, DbType>> {
   state = {
-    messages: [] as ISwarmMessagesDatabaseMessageDescription<P>[],
+    messages: undefined,
     isOpening: false,
     isClosing: false,
     db: undefined as SwarmMessagesDatabase<P, T, DbType> | undefined,
@@ -59,6 +64,16 @@ export class SwarmMessagesDatabaseComponent<
     const { isOpening, isClosing, db } = this.state;
 
     return !isOpening && !isClosing && !!db;
+  }
+
+  get isUpdating(): boolean {
+    return !!this.state.db?.whetherMessagesListUpdateInProgress;
+  }
+
+  get messagesCached():
+    | TSwarmMessageDatabaseMessagesCached<P, DbType>
+    | undefined {
+    return this.state.db?.cachedMessages;
   }
 
   queryDatabase = async () => {
@@ -86,24 +101,22 @@ export class SwarmMessagesDatabaseComponent<
   onNewMessage = (
     message: ISwarmMessagesDatabaseMessageDescription<P>
   ): void => {
-    this.setState(({ messages }) => ({
-      messages: [...messages, message],
-    }));
+    console.log('New message', message);
   };
 
   onMessageDelete = (
     deleteMessageDescription: ISwarmMessagesDatabaseDeleteMessageDescription<P>
   ) => {
-    this.setState(({ messages }) => ({
-      messages: [...messages].filter((msg) => {
-        return (
-          msg.id !== deleteMessageDescription.keyOrIdRemoved &&
-          (!msg.key || msg.key !== deleteMessageDescription.keyOrIdRemoved)
-        );
-      }),
-    }));
-    this.queryDatabase();
-    this.queryDatabaseMessagesWithMeta();
+    console.log('Message removed', deleteMessageDescription);
+  };
+
+  onMessagesCacheUpdated = (
+    messages: TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined
+  ) => {
+    console.log('Cache updated', messages);
+    this.setState({
+      messages: this.state.db?.cachedMessages,
+    });
   };
 
   handleDbClose = async () => {
@@ -150,6 +163,7 @@ export class SwarmMessagesDatabaseComponent<
 
         setMessageListener(db, this.onNewMessage);
         setMessageDeleteListener(db, this.onMessageDelete);
+        setCacheUpdateListener(db, this.onMessagesCacheUpdated);
         this.setState({ db });
       } catch (err) {
         console.error(err);
@@ -233,9 +247,9 @@ export class SwarmMessagesDatabaseComponent<
   };
 
   render() {
-    const { isOpening, isClosing, messages } = this.state;
+    const { isOpening, isClosing } = this.state;
     const { databaseOptions } = this.props;
-    const isOpened = this.isOpened;
+    const { isOpened, isUpdating } = this;
     const { dbName, isPublic } = databaseOptions;
 
     return (
@@ -253,16 +267,39 @@ export class SwarmMessagesDatabaseComponent<
         {isOpened && (
           <button onClick={this.sendSwarmMessage}>Send message</button>
         )}
+        {isUpdating && <div>Updating...</div>}
         <div>
           Messages:
-          {messages.map((message) => {
+          {this.messagesCached?.forEach((messageWithMeta, key) => {
+            const {
+              messageAddress,
+              dbName: messageDbName,
+              message,
+            } = messageWithMeta;
+            let messageId = '';
+
+            if (message instanceof Error) {
+              return <div>Error: {message.message}</div>;
+            }
+            try {
+              if (!isValidSwarmMessageDecryptedFormat(message)) {
+                return <div>Message has an invalid format</div>;
+              }
+            } catch (err) {
+              return <div>Error message format: {err.message}</div>;
+            }
+            if (messageAddress instanceof Error) {
+              messageId = messageAddress.message;
+            } else if (messageAddress) {
+              messageId = messageAddress;
+            }
             return (
               <MessageComponent
-                key={message.id}
-                dbName={dbName}
-                id={message.id}
-                k={message.key}
-                message={message.message}
+                key={key}
+                dbName={messageDbName || dbName}
+                id={messageId as TSwarmStoreDatabaseEntityKey<P>}
+                k={key}
+                message={message}
                 deleteMessage={this.handleDeleteMessage}
               />
             );

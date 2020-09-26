@@ -31,6 +31,14 @@ import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../swarm-store-class/sw
 import validateUserIdentifier from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier';
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import { SwarmMessagesDatabaseCache } from './swarm-messages-database-subclasses/swarm-messages-database-cache';
+import {
+  ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions,
+  ISwarmMessagesDatabaseCacheOptions,
+  ISwarmMessagesDatabaseCache,
+} from './swarm-messages-database.types';
+import { isConstructor } from '../../utils/common-utils/common-utils-classes';
+import { ESwarmMessagesDatabaseCacheEventsNames } from './swarm-messages-database.const';
+import { ISwarmMessageStoreMessageWithMeta } from '../swarm-message-store/swarm-message-store.types';
 
 export class SwarmMessagesDatabase<
   P extends ESwarmStoreConnector,
@@ -54,11 +62,11 @@ export class SwarmMessagesDatabase<
   }
 
   get isMessagesListContainsAllMessages(): boolean {
-    return !!this._isSwarmMessagesCacheContainsAllMessages;
+    return !!this._swarmMessagesCache?.whetherMessagesListContainsAllMessages;
   }
 
   get whetherMessagesListUpdateInProgress(): boolean {
-    return !!this._pendingMessagesUpdatePromise;
+    return !!this._swarmMessagesCache?.isUpdating;
   }
 
   get cachedMessages():
@@ -110,6 +118,15 @@ export class SwarmMessagesDatabase<
   protected _swarmMessageStore?: ISwarmMessageStore<P, DbType>;
 
   /**
+   * Implementation of a swarm messages cahce
+   *
+   * @protected
+   * @type {ISwarmMessagesDatabaseCache<P, DbType>}
+   * @memberof SwarmMessagesDatabase
+   */
+  protected _swarmMessagesCache?: ISwarmMessagesDatabaseCache<P, DbType>;
+
+  /**
    * Options for the database which used for
    * database initialization via ISwarmMessageStore.
    *
@@ -121,13 +138,30 @@ export class SwarmMessagesDatabase<
 
   protected _currentUserOptons?: ISwarmMessagesDatabaseConnectCurrentUserOptions;
 
+  protected _cacheOptions?: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<
+    P,
+    DbType
+  >;
+
   protected _isReady: boolean = false;
+
+  /**
+   * Swarm messages cached
+   *
+   * @protected
+   * @type {(TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined)}
+   * @memberof SwarmMessagesDatabase
+   */
+  protected _messagesCached:
+    | TSwarmMessageDatabaseMessagesCached<P, DbType>
+    | undefined;
 
   async connect(
     options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType>
   ): Promise<void> {
     this._handleOptions(options);
     await this._openDatabaseInstance();
+    await this._startSwarmMessagesCache();
     this._setListeners();
     this._setIsReady();
   }
@@ -139,6 +173,7 @@ export class SwarmMessagesDatabase<
     }
     this._unsetIsReady();
     await this._closeSwarmDatabaseInstance();
+    await this._closeSwarmMessagesCahceInstance();
     this._emitInstanceClosed();
     this._handleDatabaseClosed();
   };
@@ -228,6 +263,9 @@ export class SwarmMessagesDatabase<
     if (!this._currentUserId) {
       throw new Error('Identity of the current user is not defined');
     }
+    if (!this._swarmMessagesCache) {
+      throw new Error('Swarm messages cahce is not exists');
+    }
     return true;
   }
 
@@ -277,6 +315,36 @@ export class SwarmMessagesDatabase<
     this._setUserOptions(options.user);
   }
 
+  protected _validateCacheOptions(
+    options?: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<
+      P,
+      DbType
+    >
+  ): void {
+    if (!options) {
+      return;
+    }
+    assert(
+      typeof options === 'object',
+      'Swarm messages cache options must be an object'
+    );
+    if (options.cacheConstructor) {
+      assert(
+        isConstructor(options.cacheConstructor),
+        'cacheConstructor option should be a constructor'
+      );
+    }
+  }
+
+  protected _setCacheOptions(
+    options: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<
+      P,
+      DbType
+    >
+  ): void {
+    this._cacheOptions = options;
+  }
+
   /**
    * Handle options provided for the connect
    * method.
@@ -290,6 +358,10 @@ export class SwarmMessagesDatabase<
   ): void {
     this._validateOptions(options);
     this._setOptions(options);
+    if (options.cacheOptions) {
+      this._validateCacheOptions(options.cacheOptions);
+      this._setCacheOptions(options.cacheOptions);
+    }
   }
 
   protected _checkDatabaseProps(): this is Omit<
@@ -332,6 +404,85 @@ export class SwarmMessagesDatabase<
     this._isReady = false;
   };
 
+  protected _setMessagesCached = (
+    messagesCached: TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined
+  ) => {
+    this._messagesCached = messagesCached;
+  };
+
+  protected _updateMessagesCache(): void {
+    if (!this._isReady) {
+      console.warn(`The database ${this._dbName}:${this._dbType} is not ready`);
+      return;
+    }
+    if (this._checkIsReady()) {
+      this._swarmMessagesCache.update();
+    }
+  }
+
+  protected _getSwarmMessageWithMeta(
+    dbName: string,
+    message: ISwarmMessageInstanceDecrypted,
+    // the global unique address (hash) of the message in the swarm
+    messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
+    // for key-value store it will be the key
+    key?: TSwarmStoreDatabaseEntityKey<P>
+  ): ISwarmMessageStoreMessageWithMeta<P> {
+    return {
+      dbName,
+      message,
+      messageAddress,
+      key,
+    };
+  }
+
+  /**
+   * Add message to the cache by it's description.
+   *
+   * @protected
+   * @param {string} dbName
+   * @param {ISwarmMessageInstanceDecrypted} message
+   * @param {TSwarmStoreDatabaseEntityAddress<P>} messageAddress
+   * @param {TSwarmStoreDatabaseEntityKey<P>} [key]
+   * @returns {Promise<void>}
+   * @memberof SwarmMessagesDatabase
+   */
+  protected _addMessageToCache(
+    dbName: string,
+    message: ISwarmMessageInstanceDecrypted,
+    // the global unique address (hash) of the message in the swarm
+    messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
+    // for key-value store it will be the key
+    key?: TSwarmStoreDatabaseEntityKey<P>
+  ): Promise<void> {
+    if (this._checkIsReady()) {
+      return this._swarmMessagesCache.addMessage(
+        this._getSwarmMessageWithMeta(dbName, message, messageAddress, key)
+      );
+    }
+    throw new Error('Swarm messages cache is not ready');
+  }
+
+  protected _removeMessageFromCache(
+    messageAddressOrMessageEntityKey:
+      | TSwarmStoreDatabaseEntityAddress<P>
+      | TSwarmStoreDatabaseEntityKey<P>
+  ): Promise<void> {
+    if (this._checkIsReady()) {
+      if (!messageAddressOrMessageEntityKey) {
+        throw new Error(
+          'Messages address or message key requered to remove message from the cache'
+        );
+      }
+      return this._swarmMessagesCache.deleteMessage(
+        messageAddressOrMessageEntityKey as DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.FEED
+          ? TSwarmStoreDatabaseEntityAddress<P>
+          : TSwarmStoreDatabaseEntityKey<P>
+      );
+    }
+    throw new Error('Swarm messages cache is not ready');
+  }
+
   protected _handleDatabaseLoadingEvent = (
     dbName: string,
     percentage: number
@@ -342,6 +493,7 @@ export class SwarmMessagesDatabase<
 
   protected _handleDatabaseUpdatedEvent = (dbName: string): void => {
     if (this._dbName !== dbName) return;
+    debugger;
     this._emitter.emit(ESwarmStoreEventNames.UPDATE, dbName);
     this._updateMessagesCache();
   };
@@ -411,6 +563,8 @@ export class SwarmMessagesDatabase<
     if (this._dbName !== dbName) return;
     this._emitter.emit(ESwarmStoreEventNames.READY, dbName);
     this._setIsReady();
+    // update cache when the database is ready
+    this._updateMessagesCache();
   };
 
   protected _emitInstanceClosed() {
@@ -453,7 +607,9 @@ export class SwarmMessagesDatabase<
    * @param {boolean} [isSetListeners=true] - set or remove the listeners
    * @memberof SwarmMessagesDatabase
    */
-  protected _setListeners(isSetListeners: boolean = true): void {
+  protected _setSwarmMessagesStoreListeners(
+    isSetListeners: boolean = true
+  ): void {
     const method = isSetListeners ? 'addListener' : 'removeListener';
 
     this._swarmMessageStore?.[method](
@@ -486,6 +642,50 @@ export class SwarmMessagesDatabase<
     );
   }
 
+  protected _handleCacheUpdating = (): void => {
+    this._emitter.emit(ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATING);
+  };
+
+  protected _handleCacheUpdated = (
+    messagesCached: TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined
+  ): void => {
+    this._setMessagesCached(messagesCached);
+    this.emitter.emit(
+      ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATED,
+      messagesCached
+    );
+  };
+
+  /**
+   * Set listeners for swarm messages cache events
+   *
+   * @protected
+   * @param {boolean} [isSetListeners=true]
+   * @memberof SwarmMessagesDatabase
+   */
+  protected _setCacheListeners(isSetListeners: boolean = true): void {
+    if (!this._swarmMessagesCache) {
+      throw new Error('Swarm messages cache is not defined');
+    }
+
+    const { emitter } = this._swarmMessagesCache;
+    const method = isSetListeners ? 'addListener' : 'removeListener';
+
+    emitter[method](
+      ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATING as any,
+      this._handleCacheUpdating
+    );
+    emitter[method](
+      ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATED as any,
+      this._handleCacheUpdated
+    );
+  }
+
+  protected _setListeners(isSetListeners: boolean = true): void {
+    this._setSwarmMessagesStoreListeners(isSetListeners);
+    this._setCacheListeners(isSetListeners);
+  }
+
   protected async _openDatabaseInstance(): Promise<void> {
     if (!this._swarmMessageStore) {
       throw new Error('Swarm message store must be provided');
@@ -499,6 +699,31 @@ export class SwarmMessagesDatabase<
     if (result instanceof Error) {
       throw new Error(`Failed top open the database: ${result.message}`);
     }
+  }
+
+  protected _getSwarmMessagesCacheOptions(): ISwarmMessagesDatabaseCacheOptions<
+    P,
+    DbType
+  > {
+    if (!this._dbType) {
+      throw new Error('Failed to defined database type');
+    }
+    return {
+      dbInstance: this,
+      dbType: this._dbType,
+    };
+  }
+
+  protected async _startSwarmMessagesCache(): Promise<void> {
+    const SwarmMessagesCacheConstructor =
+      this._cacheOptions?.cacheConstructor || SwarmMessagesDatabaseCache;
+    const swarmMessagesCacheOptions = this._getSwarmMessagesCacheOptions();
+    const swarmMessagesCache = new SwarmMessagesCacheConstructor(
+      swarmMessagesCacheOptions
+    );
+
+    await swarmMessagesCache.start();
+    this._swarmMessagesCache = swarmMessagesCache;
   }
 
   protected _unsetOptions(): void {
@@ -548,6 +773,13 @@ export class SwarmMessagesDatabase<
     }
   }
 
+  protected _closeSwarmMessagesCahceInstance(): Promise<void> {
+    if (!this._swarmMessagesCache) {
+      throw new Error('There is no active instance for caching swarm messages');
+    }
+    return this._swarmMessagesCache.close();
+  }
+
   protected async _dropSwarmDatabaseInstance() {
     if (!this._checkDatabaseProps()) {
       throw new Error('Database props are not valid');
@@ -581,15 +813,19 @@ export class SwarmMessagesDatabase<
     key?: TSwarmStoreDatabaseEntityKey<P>
   ) {
     if (this._checkIsReady()) {
-      const isMessageAddedByCurrentUser = message.uid === this._currentUserId;
+      // const isMessageAddedByCurrentUser = message.uid === this._currentUserId;
+      //
+      // if (isMessageAddedByCurrentUser) {
+      //   this._addMessageToCache(this._dbName, message, messageAddress, key);
+      // } else {
+      //   this._updateMessagesCache();
+      // }
+
+      // Add the message to the cache, independently which user
+      // added this. Cache will be fully updated only when
+      // database replicated with another user.
       debugger;
-      if (isMessageAddedByCurrentUser) {
-        this._addMessageToCache(this._dbName, message, messageAddress, key);
-      } else {
-        // TODO - may be it's not neccessary to update the overall cache.
-        // but a conflicts with removed messages can be occurred.
-        this._updateMessagesCache();
-      }
+      this._addMessageToCache(this._dbName, message, messageAddress, key);
     }
   }
 
@@ -614,23 +850,27 @@ export class SwarmMessagesDatabase<
       | TSwarmStoreDatabaseEntityKey<P>
   ) {
     if (this._checkIsReady()) {
-      const isMessageRemovedByCurrentUser = userID === this._currentUserId;
-      const isKVStore = this._isKeyValueDatabase;
+      // const isMessageRemovedByCurrentUser = userID === this._currentUserId;
+      // debugger;
+      // if (isMessageRemovedByCurrentUser) {
+      //   this._removeMessageFromCache(
+      //     this._isKeyValueDatabase
+      //       ? ((keyOrHash as unknown) as TSwarmStoreDatabaseEntityKey<P>)
+      //       : ((keyOrHash as unknown) as TSwarmStoreDatabaseEntityAddress<P>) // address
+      //   );
+      // } else {
+      //   this._updateMessagesCache();
+      // }
+
+      // Remove the message from the cache, independently which user
+      // added this. Cache will be fully updated only when
+      // database replicated with another user.
       debugger;
-      if (isMessageRemovedByCurrentUser) {
-        this._removeMessageFromCache(
-          isKVStore
-            ? undefined
-            : ((keyOrHash as unknown) as TSwarmStoreDatabaseEntityAddress<P>), // address
-          isKVStore
-            ? ((keyOrHash as unknown) as TSwarmStoreDatabaseEntityKey<P>)
-            : undefined // key
-        );
-      } else {
-        // TODO - may be it's not neccessary to update the overall cache.
-        // but a conflicts with removed messages can be occurred.
-        this._updateMessagesCache();
-      }
+      this._removeMessageFromCache(
+        this._isKeyValueDatabase
+          ? ((keyOrHash as unknown) as TSwarmStoreDatabaseEntityKey<P>)
+          : ((keyOrHash as unknown) as TSwarmStoreDatabaseEntityAddress<P>) // address
+      );
     }
   }
 }

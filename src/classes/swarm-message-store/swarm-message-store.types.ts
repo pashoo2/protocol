@@ -29,6 +29,7 @@ import {
 import { StorageProvider } from '../storage-providers/storage-providers.types';
 import { ISwarmStoreConnectorOrbitDbDatabaseValue } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
+import { ISwarmMessageInstanceDecrypted } from '../swarm-message/swarm-message-constructor.types';
 import {
   TSwarmStoreDatabaseEntityAddress,
   TSwarmStoreDatabaseEntityKey,
@@ -222,6 +223,38 @@ export interface ISwarmMessageStoreMessagingRequestWithMetaResult<
    * @type {(Error | TSwarmMessageInstance)}
    */
   message: Error | TSwarmMessageInstance;
+}
+
+export interface ISwarmMessageStoreMessageWithMeta<
+  P extends ESwarmStoreConnector
+> {
+  /**
+   * A name of a database where the name is from
+   *
+   * @type {string}
+   * @memberof ISwarmMessageStoreMessageMeta
+   */
+  dbName: string;
+  /**
+   * The global unique address (hash) of the message in the swarm
+   *
+   * @type {TSwarmStoreDatabaseEntityUniqueAddress<P>}
+   */
+  messageAddress: TSwarmStoreDatabaseEntityAddress<P>;
+  /**
+   * for key-value store it will be the key
+   *
+   * @type {string}
+   * @memberof ISwarmMessageStoreMessageMeta
+   */
+  key: TSwarmStoreDatabaseEntityKey<P> | undefined;
+  /**
+   * Message parsed.
+   * Error if failed to parse the message.
+   *
+   * @type {(Error | TSwarmMessageInstance)}
+   */
+  message: ISwarmMessageInstanceDecrypted;
 }
 
 /**

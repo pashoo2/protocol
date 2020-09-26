@@ -18,7 +18,6 @@ import { TSwarmMessageUserIdentifierSerialized } from './swarm-message-subclass-
 import { CA_USER_IDENTITY_VERSIONS_LIST } from '../../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
 import {
   TSwarmMessage,
-  ISwarmMessageBody,
   TSwarmMessageBodyEncrypted,
 } from '../../../swarm-message-constructor.types';
 import { validateMessageBodyRawFormat } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-body-raw/swarm-message-subclass-validator-fields-validator-body-raw';

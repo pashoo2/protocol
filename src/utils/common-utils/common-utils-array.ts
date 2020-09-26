@@ -1,6 +1,66 @@
 import { bytesInInteger } from './common-utils-number';
 import { isDefined } from './common-utils-main';
 
+export const commonUtilsIsInstanceOfArray = (a: any): a is Array<any> =>
+  !a || typeof a !== 'object' || a instanceof Array;
+
+/**
+ * Checks whether two array items are equal
+ *
+ * @param {Array<any>} firstArray
+ * @param {Array<any>} secondArray
+ * @returns {boolean}
+ */
+export const commonUtilsIsTwoArraysEquals = (
+  firstArray: Array<any>,
+  secondArray: Array<any>
+): boolean => {
+  if (firstArray === secondArray) {
+    return true;
+  }
+  if (firstArray.length !== secondArray.length) {
+    return false;
+  }
+  return !firstArray.some((firstArrayItem, firstArrayItemIndex) => {
+    return firstArrayItem !== secondArray[firstArrayItemIndex];
+  }, true);
+};
+/**
+ * Checks whether two items are arrays and the two array items are equal and return the second
+ * one if equals.
+ * Returns the second array if two arrays are equal or returns false otherwise.
+ *
+ * @template S
+ * @template F
+ * @param {F} firstArray
+ * @param {S} secondArray
+ * @returns {S | false}
+ */
+export const commonUtilsReturnArrayIfTwoArraysEquals = <S>(
+  firstArray: any,
+  secondArray: S
+): S extends Array<any> ? S : false =>
+  (commonUtilsIsInstanceOfArray(firstArray) &&
+  commonUtilsIsInstanceOfArray(secondArray) &&
+  commonUtilsIsTwoArraysEquals(firstArray, secondArray)
+    ? secondArray
+    : false) as S extends Array<any> ? S : false;
+
+/**
+ * Checks whether all arrays has the same items in the same order
+ *
+ * @param {...Array<Array<any>>} arrays
+ * @returns {boolean}
+ */
+export const commonUtilsIsAllArraysEquals = (
+  ...arrays: Array<Array<any>>
+): boolean => {
+  if (arrays.length === 1) {
+    return commonUtilsIsInstanceOfArray(arrays[0]);
+  }
+  return !arrays.reduce(commonUtilsReturnArrayIfTwoArraysEquals, arrays[0]);
+};
+
 export const commonUtilsArrayOrderByDecComparationFunction = <T>(
   a: T,
   b: T

@@ -1,12 +1,16 @@
 import { SwarmMessagesDatabase } from '../../classes/swarm-messages-database/swarm-messages-database';
 import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
-import { ISwarmMessagesDatabaseConnectOptions } from '../../classes/swarm-messages-database/swarm-messages-database.types';
+import {
+  ISwarmMessagesDatabaseConnectOptions,
+  TSwarmMessageDatabaseMessagesCached,
+} from '../../classes/swarm-messages-database/swarm-messages-database.types';
 import { ISwarmMessageInstanceDecrypted } from '../../classes/swarm-message/swarm-message-constructor.types';
 import {
   ISwarmMessagesDatabaseMessageDescription,
   ISwarmMessagesDatabaseDeleteMessageDescription,
 } from './swarm-messages-database-component.types';
 import { ESwarmMessageStoreEventNames } from '../../classes/swarm-message-store/swarm-message-store.const';
+import { ESwarmMessagesDatabaseCacheEventsNames } from '../../classes/swarm-messages-database/swarm-messages-database.const';
 import {
   TSwarmStoreValueTypes,
   TSwarmStoreDatabaseType,
@@ -102,6 +106,37 @@ export const setMessageDeleteListener = <
   return () =>
     db.emitter.removeListener(
       ESwarmMessageStoreEventNames.DELETE_MESSAGE,
+      listener
+    );
+};
+
+export const setCacheUpdateListener = <
+  P extends ESwarmStoreConnector = ESwarmStoreConnector.OrbitDB,
+  V extends TSwarmStoreValueTypes<P> = TSwarmStoreValueTypes<P>,
+  DbType extends TSwarmStoreDatabaseType<P> = TSwarmStoreDatabaseType<P>,
+  T extends SwarmMessagesDatabase<P, V, DbType> = SwarmMessagesDatabase<
+    ESwarmStoreConnector.OrbitDB,
+    V,
+    DbType
+  >
+>(
+  db: T,
+  cacheUpdateListener: (
+    messages: TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined
+  ) => unknown
+) => {
+  const listener = (
+    messages: TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined
+  ) => {
+    cacheUpdateListener(messages);
+  };
+  db.emitter.addListener(
+    ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATED,
+    listener
+  );
+  return () =>
+    db.emitter.removeListener(
+      ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATED,
       listener
     );
 };

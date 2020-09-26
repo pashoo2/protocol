@@ -1,33 +1,8 @@
-import { FirstPrameter } from 'types/helper.types';
 import { isTypedArray } from '../typed-array-utils';
 import { TTypedArrays } from '../../types/main.types';
 
 export const isDefined = <T>(v: T): v is NonNullable<T> => v != null;
 
-export const memoize = <
-  F extends (arg: any) => any,
-  A extends FirstPrameter<F>,
-  R extends ReturnType<F>
->(
-  functionToMemoize: F
-): ((arg: A) => R) => {
-  const cachedResults = new Map<A, R>();
-  const memoized = (a: A): R => {
-    const cachedResult = cachedResults.get(a);
-
-    if (cachedResult) {
-      return cachedResult;
-    }
-
-    const result = functionToMemoize(a);
-
-    cachedResults.set(a, result);
-    return result;
-  };
-
-  memoized.clean = () => cachedResults.clear();
-  return memoized;
-};
 /**
  * Count of items
  *
@@ -52,4 +27,54 @@ export const getItemsCount = <
     return arg.byteLength;
   }
   throw new Error('Unsupported type');
+};
+
+/**
+ * Return a Promise which will be resolved
+ * when the callback returns any value
+ * which is defined(not null, ubdefined, NaN).
+ *
+ * @template R - resolved type return by the callback function
+ * @param {() => R | undefined} cb - callback function called each interval till not trow or return somethind
+ * @param {number} [checkIntervalMs=100] - interval when the callback will be called
+ * @param {number} [timeoutMs = 360000] - timeout when the promise will be rejected if not resolved before
+ * @returns {Promise<R>}
+ * @throw - rejects on timeout or if the callback thrown an error
+ */
+export const waitFor = <R>(
+  cb: () => NonNullable<R> | undefined,
+  checkIntervalMs: number = 100,
+  timeoutMs: number = 360000
+): Promise<R> => {
+  return new Promise((res, rej) => {
+    let timeout: NodeJS.Timer | undefined;
+    let checkInterval: NodeJS.Timeout | undefined;
+    const clearTimers = () => {
+      checkInterval && clearInterval(checkInterval);
+      timeout && clearTimeout(timeout);
+      checkInterval = undefined;
+      timeout = undefined;
+    };
+
+    if (timeoutMs) {
+      timeout = setTimeout(() => {
+        clearTimers();
+        rej(new Error('Timeout'));
+      }, timeoutMs);
+    }
+    checkInterval = setInterval(() => {
+      let result;
+      try {
+        result = cb();
+      } catch (err) {
+        clearTimers();
+        rej(err);
+        return;
+      }
+      if (isDefined(result)) {
+        clearTimers();
+        res(result);
+      }
+    }, checkIntervalMs);
+  });
 };

@@ -33,7 +33,9 @@ export type OmitTypeProp<T extends {}, E> = {
 
 export type OmitType<T, O> = T extends O ? never : T;
 
-export type ConstructorType<T> = new (...args: any[]) => T;
+export type ConstructorType<R, A extends Array<any> = any[]> = new (
+  ...args: A
+) => R;
 
 export type ArrayFirst<T extends any[]> = T extends Array<infer F> ? F : never;
 
@@ -47,3 +49,7 @@ export type OmitFirstArg<F extends Function> = F extends (
 ) => infer R
   ? (...args: P) => R
   : never;
+
+export type ArrayElement<
+  ArrayType extends readonly unknown[]
+> = ArrayType[number];

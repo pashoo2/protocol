@@ -1,4 +1,4 @@
-import { memoize } from './common-utils-main';
+import { memoize } from '../data-cache-utils/data-cache-utils-memoization';
 /**
  * return how many bytes in the
  * number
