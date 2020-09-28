@@ -27,7 +27,24 @@ export const getCancelRequestIdleCallback = (): CancelRequestIdleCallback =>
 
 export const resolveOnIdleCallback = (
   timeoutMs: number = THROTTLING_UTILS_IDLE_CALLBACK_TIMEOUT_DEFAULT_MS
-): Promise<RequestIdleCallbackArgument> =>
+): Promise<{
+  timeRemaining: number;
+  didTimeout: boolean;
+}> =>
   new Promise((res) => {
-    getRequestIdleCallback()(res, { timeout: timeoutMs });
+    const requestIdleCallback = getRequestIdleCallback();
+    const idleCallback = requestIdleCallback(
+      (e: RequestIdleCallbackArgument) => {
+        const timeRemaining = Number(e.timeRemaining && e.timeRemaining());
+        if (timeRemaining) {
+          debugger;
+        }
+        res({
+          timeRemaining,
+          didTimeout: !!e.didTimeout,
+        });
+        getCancelRequestIdleCallback()(idleCallback);
+      },
+      { timeout: timeoutMs }
+    );
   });

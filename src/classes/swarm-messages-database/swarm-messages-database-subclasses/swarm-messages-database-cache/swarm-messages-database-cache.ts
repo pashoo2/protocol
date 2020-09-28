@@ -36,6 +36,8 @@ import {
 } from '../../swarm-messages-database.types';
 import { memoizeLastReturnedValue } from 'utils/data-cache-utils/data-cache-utils-memoization';
 import { filterMap } from 'utils/common-utils/common-utils-maps';
+import { SWARM_MESSAGES_DATABASE_CACHE_PLANNED_CACHE_UPDATE_FAILED_RETRY_DELAY_MS } from './swarm-messages-database-cache.const';
+import { delay } from 'utils/common-utils/common-utils-timer';
 
 export class SwarmMessagesDatabaseCache<
   P extends ESwarmStoreConnector,
@@ -463,14 +465,14 @@ export class SwarmMessagesDatabaseCache<
    */
   protected _requestTimeBrowserIdle = async (): Promise<number> => {
     const { timeRemaining, didTimeout } = await resolveOnIdleCallback();
-
+    debugger;
     if (didTimeout) {
       return 0;
     }
     // time browser decide it will be idle.
-    return timeRemaining
-      ? timeRemaining()
-      : THROTTLING_UTILS_IDLE_CALLBACK_TIME_REMAINING_MAX_MS;
+    return (
+      timeRemaining || THROTTLING_UTILS_IDLE_CALLBACK_TIME_REMAINING_MAX_MS
+    );
   };
   /**
    * how many items can be read during
@@ -711,7 +713,7 @@ export class SwarmMessagesDatabaseCache<
    * @returns {Promise<Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P>>>}
    * @throws
    */
-  protected async _performMessagesCachePageRequest(
+  protected async _performMessagesCacheCollectPageRequest(
     messagesCountToQuery: number,
     messagesReadAddressesOrKeysToExclude: Array<
       TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>
@@ -720,6 +722,7 @@ export class SwarmMessagesDatabaseCache<
     if (!this._checkIsReady()) {
       throw new Error('The instance is not ready');
     }
+    debugger;
 
     let queryAttempt = 0;
     let messages:
@@ -729,14 +732,16 @@ export class SwarmMessagesDatabaseCache<
       messagesCountToQuery,
       messagesReadAddressesOrKeysToExclude
     );
-
+    debugger;
     while (
       !messages &&
       !this._whetherMaxDatabaseQueriesAttemptsFailed(queryAttempt)
     ) {
       try {
         messages = await this._dbInstance.collectWithMeta(queryOptions);
+        debugger;
       } catch (err) {
+        debugger;
         console.error(
           new Error(
             `_performMessagesCachePageRequest::failed::attempt::${queryAttempt}`
@@ -848,6 +853,7 @@ export class SwarmMessagesDatabaseCache<
   protected async _performMessagesReadingToUpdateCache(): Promise<
     TSwarmMessageDatabaseMessagesCached<P, DbType>
   > {
+    debugger;
     // current page
     let pageToQueryIndex = 0;
     // count messages to read from the database.
@@ -899,7 +905,7 @@ export class SwarmMessagesDatabaseCache<
         messagesToReadAtTheBatch = messagesToReadAtTheBatch + 1;
       }
 
-      const messagesBatch = await this._performMessagesCachePageRequest(
+      const messagesBatch = await this._performMessagesCacheCollectPageRequest(
         messagesToReadAtTheBatch,
         this._getMessagesReadKeysOrAddresses(messagesRead)
       );
@@ -960,7 +966,15 @@ export class SwarmMessagesDatabaseCache<
       debugger;
       // start a new interaction if there is no one active
       this._unsetNewCacheUpdatePlanned();
-      return await this._runNewCacheUpdate();
+      try {
+        return await this._runNewCacheUpdate();
+      } catch (err) {
+        console.error(`Failed to plan a new cache update: ${err.message}`, err);
+        await delay(
+          SWARM_MESSAGES_DATABASE_CACHE_PLANNED_CACHE_UPDATE_FAILED_RETRY_DELAY_MS
+        );
+        return await this._planNewCacheUpdate();
+      }
     }
     debugger;
     // if another iteration was started just waiting for results
@@ -1002,7 +1016,9 @@ export class SwarmMessagesDatabaseCache<
       this._updateCacheWithMessages(messages);
       this._emitDbMessagesWithAddedMessagesCaheUpdated();
     } catch (err) {
-      console.error(`Failed to update messages cache: ${err.message}`);
+      console.error(`Failed to update messages cache: ${err.message}`, err);
+      debugger;
+      throw err;
     }
     this._unsetCacheUpdateInProgress();
     this._runNextCacheUpdateIterationIfNecessary();

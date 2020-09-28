@@ -19,3 +19,8 @@ export const SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_ITEMS_COUNT_LIMIT_DEFAULT = 
  * Maximum attempt count if query of an items page was failed.
  */
 export const SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_ITEMS_MAX_PAGE_QUERY_ATTEMPTS_DEFAULT = 3;
+
+/**
+ * Delay before the next attempt to read messages in the cache if the previous was failed.
+ */
+export const SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_UPDATE_RETRY_DELAY_MS = 100;

@@ -69,13 +69,13 @@ import {
   ISwarmMessageStoreDatabaseType,
 } from './swarm-message-store.types';
 import { TSwarmStoreDatabaseRequestMethodReturnType } from '../swarm-store-class/swarm-store-class.types';
-import { SecretStorageProviderInMemory } from '../storage-providers/storage-in-memory-provider/storage-in-memory-provider';
+import { StorageProviderInMemory } from '../storage-providers/storage-in-memory-provider/storage-in-memory-provider';
 import { StorageProvider } from '../storage-providers/storage-providers.types';
 import {
   ISwarmMessageStoreUtilsMessagesCache,
   ISwarmMessageStoreUtilsMessagesCacheOptions,
 } from './swarm-message-store-utils/swarm-message-store-utils-messages-cache/swarm-message-store-utils-messages-cache.types';
-import { SwarmMessagesStoreUtilsMessagesCache } from './swarm-message-store-utils/swarm-message-store-utils-messages-cache/swarm-message-store-utils-messages-cache';
+import { SwarmMessageStoreUtilsMessagesCache } from './swarm-message-store-utils/swarm-message-store-utils-messages-cache/swarm-message-store-utils-messages-cache';
 import {
   EOrbitDbFeedStoreOperation,
   ESwarmStoreConnectorOrbitDbDatabaseType,
@@ -111,7 +111,7 @@ export class SwarmMessageStore<
 
   protected _cache?: StorageProvider<
     TSwarmMessageInstance
-  > = new SecretStorageProviderInMemory<TSwarmMessageInstance>();
+  > = new StorageProviderInMemory<TSwarmMessageInstance>();
 
   protected _databasesMessagesCaches: Record<
     string,
@@ -179,6 +179,7 @@ export class SwarmMessageStore<
     if (connectionResult instanceof Error) {
       throw connectionResult;
     }
+    await this._startCacheStore();
     this.setListeners();
   }
 
@@ -1130,12 +1131,10 @@ export class SwarmMessageStore<
   protected openDatabaseMessagesCache = async (
     dbName: string
   ): Promise<void> => {
-    const messagesCache = new SwarmMessagesStoreUtilsMessagesCache();
-    debugger;
+    const messagesCache = new SwarmMessageStoreUtilsMessagesCache();
     const options = this.getOptionsForDatabaseMessagesCache(dbName);
 
     await messagesCache.connect(options);
-    debugger;
     this._databasesMessagesCaches[dbName] = messagesCache;
   };
 
@@ -1312,4 +1311,26 @@ export class SwarmMessageStore<
     dbName: string
   ): ESwarmStoreConnectorOrbitDbDatabaseType | undefined =>
     this._dbTypes[dbName];
+
+  /**
+   * Connect to the cache store
+   *
+   * @returns {Promise<void>}
+   * @throws - throws if failed to connect
+   */
+  protected _startCacheStore = async (): Promise<void> => {
+    const { _cache: cacheStore } = this;
+
+    if (!cacheStore) {
+      throw new Error('There is no cache store');
+    }
+
+    const connectToCacheResult = await cacheStore.connect();
+    debugger;
+    if (connectToCacheResult instanceof Error) {
+      throw new Error(
+        `Failed to connect to cache store: ${connectToCacheResult.message}`
+      );
+    }
+  };
 }

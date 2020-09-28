@@ -446,6 +446,13 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     });
   };
 
+  protected async preloadEntitiesBeforeIterate(count: number): Promise<void> {
+    if (count && Number(count) > this.itemsCurrentlyLoaded) {
+      // before to query the database entities must be preloaded in memory
+      await this.load(count);
+    }
+  }
+
   protected async iteratorFeedStore(
     options?: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions<DbType>
   ): Promise<
@@ -462,16 +469,28 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       return database;
     }
 
+    const iteratorOptionsRes =
+      options ||
+      SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ITERATOR_OPTIONS_DEFAULT;
+    let limit = iteratorOptionsRes.limit;
+
+    if (typeof limit !== 'number' || limit < 0) {
+      limit = undefined;
+    }
+    debugger;
+    // before to query the database entities must be preloaded in memory
+    limit && (await this.preloadEntitiesBeforeIterate(limit));
+    debugger;
     const eqOperand =
       options?.[ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq];
 
     if (eqOperand) {
+      // if the equal operand passed within the argument
+      // return just values queried by it and
+      // ignore all other operators.
       return this.getValues(eqOperand, database);
     }
 
-    const iteratorOptionsRes =
-      options ||
-      SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ITERATOR_OPTIONS_DEFAULT;
     let result = database.iterator(iteratorOptionsRes).collect();
 
     if (options) {
@@ -498,23 +517,30 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       return database;
     }
 
-    const eqOperand =
-      options && options[ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq];
-
-    if (eqOperand) {
-      return this.getEqual(eqOperand);
-    }
-
     // TODO - check it works
     const iteratorOptionsRes =
       options ||
       SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ITERATOR_OPTIONS_DEFAULT;
-    const keys = Object.keys(database.all);
     let limit = iteratorOptionsRes.limit;
 
     if (typeof limit !== 'number' || limit < 0) {
       limit = undefined;
     }
+    debugger;
+    // before to query the database entities must be preloaded in memory
+    limit && (await this.preloadEntitiesBeforeIterate(limit));
+    debugger;
+    const eqOperand =
+      options?.[ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq];
+
+    if (eqOperand) {
+      // if the equal operand passed within the argument
+      // return just values queried by it and
+      // ignore all other operators.
+      return this.getEqual(eqOperand);
+    }
+
+    const keys = Object.keys(database.all);
 
     const {
       reverse,

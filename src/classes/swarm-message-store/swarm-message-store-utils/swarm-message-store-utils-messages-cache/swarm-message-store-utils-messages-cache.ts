@@ -11,14 +11,14 @@ import {
 } from './swarm-message-store-utils-messages-cache.types';
 import assert from 'assert';
 
-export class SwarmMessagesStoreUtilsMessagesCache
+export class SwarmMessageStoreUtilsMessagesCache
   implements ISwarmMessageStoreUtilsMessagesCache {
   /**
    * Falag means the instance is opened and ready to use.
    *
    * @protected
    * @type {boolean}
-   * @memberof SwarmMessagesStoreUtilsMessagesCache
+   * @memberof SwarmMessageStoreUtilsMessagesCache
    */
   protected _isReady: boolean = false;
   protected _cache?: StorageProvider<TSwarmMessageInstance | string>;
@@ -218,7 +218,7 @@ export class SwarmMessagesStoreUtilsMessagesCache
    *
    * @protected
    * @param {ISwarmMessageStoreUtilsMessagesCacheOptions} options
-   * @memberof SwarmMessagesStoreUtilsMessagesCache
+   * @memberof SwarmMessageStoreUtilsMessagesCache
    * @throws
    */
   protected _validateOptions(
@@ -250,7 +250,7 @@ export class SwarmMessagesStoreUtilsMessagesCache
    *
    * @protected
    * @param {ISwarmMessageStoreUtilsMessagesCacheOptions} options
-   * @memberof SwarmMessagesStoreUtilsMessagesCache
+   * @memberof SwarmMessageStoreUtilsMessagesCache
    */
   protected _validateAndSetOptions(
     options: ISwarmMessageStoreUtilsMessagesCacheOptions
@@ -265,7 +265,7 @@ export class SwarmMessagesStoreUtilsMessagesCache
    *
    * @protected
    * @returns {this is ISwarmMessageStoreUtilsMessageCacheReady}
-   * @memberof SwarmMessagesStoreUtilsMessagesCache
+   * @memberof SwarmMessageStoreUtilsMessagesCache
    * @throws
    */
   protected _checkIsReady(): this is ISwarmMessageStoreUtilsMessageCacheReady {

@@ -37,8 +37,12 @@ import {
   ISwarmMessagesDatabaseCache,
 } from './swarm-messages-database.types';
 import { isConstructor } from '../../utils/common-utils/common-utils-classes';
-import { ESwarmMessagesDatabaseCacheEventsNames } from './swarm-messages-database.const';
+import {
+  ESwarmMessagesDatabaseCacheEventsNames,
+  SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_UPDATE_RETRY_DELAY_MS,
+} from './swarm-messages-database.const';
 import { ISwarmMessageStoreMessageWithMeta } from '../swarm-message-store/swarm-message-store.types';
+import { delay } from '../../utils/common-utils/common-utils-timer';
 
 export class SwarmMessagesDatabase<
   P extends ESwarmStoreConnector,
@@ -417,7 +421,13 @@ export class SwarmMessagesDatabase<
       return;
     }
     if (this._checkIsReady()) {
-      this._swarmMessagesCache.update();
+      this._swarmMessagesCache.update().catch(async (err) => {
+        console.error(`Failed to update messages cache ${err.message}`);
+        await delay(
+          SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_UPDATE_RETRY_DELAY_MS
+        );
+        this._updateMessagesCache();
+      });
     }
   }
 
@@ -612,7 +622,7 @@ export class SwarmMessagesDatabase<
     isSetListeners: boolean = true
   ): void {
     const method = isSetListeners ? 'addListener' : 'removeListener';
-    debugger;
+
     this._swarmMessageStore?.[method](
       ESwarmStoreEventNames.DB_LOADING,
       this._handleDatabaseLoadingEvent
@@ -683,7 +693,6 @@ export class SwarmMessagesDatabase<
   }
 
   protected _setListeners(isSetListeners: boolean = true): void {
-    debugger;
     this._setSwarmMessagesStoreListeners(isSetListeners);
     this._setCacheListeners(isSetListeners);
   }
