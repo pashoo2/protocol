@@ -164,6 +164,7 @@ export class SwarmMessagesDatabase<
     await this._startSwarmMessagesCache();
     this._setListeners();
     this._setIsReady();
+    this._updateMessagesCache();
   }
 
   close = async (): Promise<void> => {
@@ -507,6 +508,7 @@ export class SwarmMessagesDatabase<
     key?: TSwarmStoreDatabaseEntityKey<P>
   ) => {
     if (this._dbName !== dbName) return;
+    debugger;
     this._emitter.emit(
       ESwarmMessageStoreEventNames.NEW_MESSAGE,
       dbName,
@@ -527,6 +529,7 @@ export class SwarmMessagesDatabase<
     keyOrHash?: TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>
   ) => {
     if (this._dbName !== dbName) return;
+    debugger;
     this._emitter.emit(
       ESwarmMessageStoreEventNames.DELETE_MESSAGE,
       dbName,
@@ -563,8 +566,6 @@ export class SwarmMessagesDatabase<
     if (this._dbName !== dbName) return;
     this._emitter.emit(ESwarmStoreEventNames.READY, dbName);
     this._setIsReady();
-    // update cache when the database is ready
-    this._updateMessagesCache();
   };
 
   protected _emitInstanceClosed() {
@@ -611,7 +612,7 @@ export class SwarmMessagesDatabase<
     isSetListeners: boolean = true
   ): void {
     const method = isSetListeners ? 'addListener' : 'removeListener';
-
+    debugger;
     this._swarmMessageStore?.[method](
       ESwarmStoreEventNames.DB_LOADING,
       this._handleDatabaseLoadingEvent
@@ -682,6 +683,7 @@ export class SwarmMessagesDatabase<
   }
 
   protected _setListeners(isSetListeners: boolean = true): void {
+    debugger;
     this._setSwarmMessagesStoreListeners(isSetListeners);
     this._setCacheListeners(isSetListeners);
   }

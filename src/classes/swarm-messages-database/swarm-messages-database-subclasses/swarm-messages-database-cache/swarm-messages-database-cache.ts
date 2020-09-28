@@ -237,11 +237,11 @@ export class SwarmMessagesDatabaseCache<
   }
 
   start = async (): Promise<void> => {
-    if (!this._checkIsReady()) {
+    if (this._isReady) {
       return;
     }
-    this._isReady = true;
     this._resetTheInstance();
+    this._isReady = true;
   };
 
   close = async () => {
@@ -950,15 +950,19 @@ export class SwarmMessagesDatabaseCache<
   protected async _planNewCacheUpdate(): Promise<
     TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined
   > {
+    debugger;
     this._setNewCacheUpdatePlanned();
     // await when the current iteration will be over
     await this._waitForCurrentMessagesUpdate();
+    debugger;
     this._checkIsReady();
     if (!this._pendingMessagesUpdatePromise) {
+      debugger;
       // start a new interaction if there is no one active
       this._unsetNewCacheUpdatePlanned();
       return await this._runNewCacheUpdate();
     }
+    debugger;
     // if another iteration was started just waiting for results
     return this._waitForCurrentMessagesUpdate();
   }
@@ -1015,6 +1019,7 @@ export class SwarmMessagesDatabaseCache<
   protected async _updateMessagesCache(): Promise<
     TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined
   > {
+    debugger;
     this._checkIsReady();
     if (this._pendingMessagesUpdatePromise) {
       return this._planNewCacheUpdate();

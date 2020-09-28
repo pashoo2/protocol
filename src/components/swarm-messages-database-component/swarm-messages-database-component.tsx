@@ -31,10 +31,13 @@ import {
 } from './swarm-messages-database-component.utils';
 import { TSwarmMessageDatabaseMessagesCached } from '../../classes/swarm-messages-database/swarm-messages-database.types';
 import { isValidSwarmMessageDecryptedFormat } from '../../classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-swarm-message';
+import { TSwarmMessageUserIdentifierSerialized } from '../../classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 
 interface IProps {
+  userId: TSwarmMessageUserIdentifierSerialized;
   databaseOptions: ISwarmStoreDatabaseBaseOptions;
   connectionBridge?: IConnectionBridge;
+  isOpenImmediate?: boolean;
 }
 
 interface IState<
@@ -159,7 +162,10 @@ export class SwarmMessagesDatabaseComponent<
         const db = (await connectToDatabase({
           dbOptions,
           swarmMessageStore: connectionBridge.storage,
-        } as any)) as any;
+          user: {
+            userId: this.props.userId,
+          },
+        })) as any;
 
         setMessageListener(db, this.onNewMessage);
         setMessageDeleteListener(db, this.onMessageDelete);
@@ -245,6 +251,14 @@ export class SwarmMessagesDatabaseComponent<
       alert(err.message);
     }
   };
+
+  componentDidMount() {
+    const { isOpenImmediate } = this.props;
+
+    if (isOpenImmediate) {
+      this.handleDbOpen();
+    }
+  }
 
   render() {
     const { isOpening, isClosing } = this.state;

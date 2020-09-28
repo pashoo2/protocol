@@ -41,7 +41,12 @@ export interface IMessageDescription {
   message: ISwarmMessageInstanceDecrypted;
 }
 
-export class ConnectToSwarm extends React.PureComponent {
+export interface IConnectToSwarmProps {
+  connectImmediateWithCredentials?: 1 | 2;
+  dbNameToConnect?: string;
+}
+
+export class ConnectToSwarm extends React.PureComponent<IConnectToSwarmProps> {
   public state = {
     isConnecting: false,
     messagingSending: undefined as NodeJS.Timeout | undefined,
@@ -213,6 +218,14 @@ export class ConnectToSwarm extends React.PureComponent {
     );
   }
 
+  public componentDidMount() {
+    const { connectImmediateWithCredentials } = this.props;
+
+    if (connectImmediateWithCredentials != null) {
+      this.connectToSwarm(connectImmediateWithCredentials);
+    }
+  }
+
   public render() {
     const { connectionBridge, isConnecting, error } = this.state;
 
@@ -307,6 +320,12 @@ export class ConnectToSwarm extends React.PureComponent {
         userProfileData,
       });
       this.setListenersConnectionBridge(connectionBridge);
+
+      const { dbNameToConnect } = this.props;
+
+      if (dbNameToConnect) {
+        await this.handleOpenNewSwarmStoreMessagesDatabase(dbNameToConnect);
+      }
     } catch (error) {
       this.setState({
         error,
@@ -332,6 +351,10 @@ export class ConnectToSwarm extends React.PureComponent {
     }
   };
 
+  public handleClickOpenNewSwarmStoreMessagesDatabase = () => {
+    this.handleOpenNewSwarmStoreMessagesDatabase();
+  };
+
   public handleOpenNewDatabase = async () => {
     const dbName = window.prompt('Enter database name', '');
 
@@ -340,8 +363,10 @@ export class ConnectToSwarm extends React.PureComponent {
     }
   };
 
-  public handleOpenNewSwarmStoreMessagesDatabase = async () => {
-    const dbName = window.prompt('Enter database name', '');
+  protected handleOpenNewSwarmStoreMessagesDatabase = async (
+    dbNameToOpen?: string
+  ) => {
+    const dbName = dbNameToOpen || window.prompt('Enter database name', '');
 
     if (dbName) {
       const dbOptions = {
@@ -349,7 +374,10 @@ export class ConnectToSwarm extends React.PureComponent {
         dbName: dbName || this.defaultDbOptions.dbName,
       };
       this.setState(({ swarmStoreMessagesDbOptionsList }: any) => ({
-        swarmStoreMessagesDbOptionsList: [...swarmStoreMessagesDbOptionsList, dbOptions],
+        swarmStoreMessagesDbOptionsList: [
+          ...swarmStoreMessagesDbOptionsList,
+          dbOptions,
+        ],
       }));
     }
   };
@@ -396,35 +424,39 @@ export class ConnectToSwarm extends React.PureComponent {
             Open default database
           </button>
         ) : (
-            <button onClick={this.handleOpenNewDatabase}>
-              Open new database
+          <button onClick={this.handleOpenNewDatabase}>
+            Open new database
           </button>
-          )}
+        )}
       </div>
     );
   }
 
   protected renderSwarmMessagesDatabasesList() {
-    const {
-      swarmStoreMessagesDbOptionsList,
-      connectionBridge,
-    } = this.state;
+    const { swarmStoreMessagesDbOptionsList, connectionBridge } = this.state;
+    const { dbNameToConnect } = this.props;
 
     return (
       <div>
         <div>
           <h4>List of swarm messages databases:</h4>
           {swarmStoreMessagesDbOptionsList.map((dbsOptions) => {
+            const { userId } = this.state;
+            if (!userId) {
+              throw new Error('User identity should not be empty');
+            }
             return (
               <SwarmMessagesDatabaseComponent
                 key={dbsOptions.dbName}
+                userId={userId}
                 databaseOptions={dbsOptions}
                 connectionBridge={connectionBridge}
+                isOpenImmediate={dbsOptions.dbName === dbNameToConnect}
               />
             );
           })}
         </div>
-        <button onClick={this.handleOpenNewSwarmStoreMessagesDatabase}>
+        <button onClick={this.handleClickOpenNewSwarmStoreMessagesDatabase}>
           Open new swarm store database
         </button>
       </div>

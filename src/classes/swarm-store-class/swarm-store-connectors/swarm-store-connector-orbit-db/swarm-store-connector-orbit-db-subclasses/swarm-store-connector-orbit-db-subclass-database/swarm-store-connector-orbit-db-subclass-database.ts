@@ -141,7 +141,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     }
 
     const loadDbResult = await dbStore.load(this.preloadCount);
-
+    debugger;
     if ((loadDbResult as unknown) instanceof Error) {
       console.error(loadDbResult);
       return this.onFatalError(
@@ -321,7 +321,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   ): Promise<ISwarmStoreConnectorRequestLoadAnswer | Error> => {
     const itemsLoaded = this.itemsCurrentlyLoaded;
     const newDbInstance = await this.restartDbInstanceSilent();
-
+    debugger;
     if (newDbInstance instanceof Error) {
       console.error('Failed to restart the database');
       return newDbInstance;
@@ -329,6 +329,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
 
     const countToLoad = this.itemsCurrentlyLoaded + count;
     await newDbInstance.load(countToLoad);
+    debugger;
     return {
       count: this.itemsCurrentlyLoaded - itemsLoaded,
       loadedCount: this.itemsCurrentlyLoaded,

@@ -809,6 +809,7 @@ export class SwarmMessageStore<
           : message.payload.key
       );
     }
+    debugger;
     return this.handleNewDataMessage<T>(dbName, dbType, message);
   };
 
@@ -1130,9 +1131,11 @@ export class SwarmMessageStore<
     dbName: string
   ): Promise<void> => {
     const messagesCache = new SwarmMessagesStoreUtilsMessagesCache();
+    debugger;
     const options = this.getOptionsForDatabaseMessagesCache(dbName);
 
     await messagesCache.connect(options);
+    debugger;
     this._databasesMessagesCaches[dbName] = messagesCache;
   };
 
@@ -1272,6 +1275,7 @@ export class SwarmMessageStore<
     dbType: ISwarmMessageStoreDatabaseType<P>,
     message: TSwarmMessageStoreEntryRaw<P, T>
   ): Promise<TSwarmMessageInstance | undefined> {
+    debugger;
     const messageMetadata = this.getSwarmMessageMetadata<T>(message, dbType);
     return await this.getSwarmMessageInstanceFromCacheByAddress(
       dbName,
