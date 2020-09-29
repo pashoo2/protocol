@@ -451,7 +451,9 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   };
 
   protected async preloadEntitiesBeforeIterate(count: number): Promise<void> {
+    debugger;
     if (count && Number(count) > this.itemsCurrentlyLoaded) {
+      debugger;
       // before to query the database entities must be preloaded in memory
       await this.load(count);
     }
@@ -467,12 +469,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<
         | undefined
       >
   > {
-    const database = this.getDbStoreInstance() as OrbitDbFeedStore<TStoreValue>;
-
-    if (database instanceof Error) {
-      return database;
-    }
-
     const iteratorOptionsRes =
       options ||
       SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ITERATOR_OPTIONS_DEFAULT;
@@ -487,7 +483,12 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     debugger;
     const eqOperand =
       options?.[ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq];
+    // database instance can become another one after load() method call
+    const database = this.getDbStoreInstance() as OrbitDbFeedStore<TStoreValue>;
 
+    if (database instanceof Error) {
+      return database;
+    }
     if (eqOperand) {
       // if the equal operand passed within the argument
       // return just values queried by it and
@@ -514,13 +515,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<
         | undefined
       >
   > {
-    const database = this.getDbStoreInstance() as OrbitDbKeyValueStore<
-      TStoreValue
-    >;
-    if (database instanceof Error) {
-      return database;
-    }
-
     // TODO - check it works
     const iteratorOptionsRes =
       options ||
@@ -543,7 +537,13 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       // ignore all other operators.
       return this.getEqual(eqOperand);
     }
-
+    // database instance can become another one after the load() method call
+    const database = this.getDbStoreInstance() as OrbitDbKeyValueStore<
+      TStoreValue
+    >;
+    if (database instanceof Error) {
+      return database;
+    }
     const keys = Object.keys(database.all);
 
     const {

@@ -916,21 +916,24 @@ export class SwarmMessagesDatabaseCache<
       messagesRead = this._mapMessagesWithMetaToStorageRelatedStructure(
         messagesBatch
       );
-
+      debugger;
       const whetherMessagesReadLessThanRequested =
         getItemsCount(messagesRead) < messagesToReadAtTheBatch;
 
       if (whetherMessagesReadLessThanRequested) {
         // if read less than requested it means that
         // all messages were read
+        debugger;
         whetherFullMessagesRead = true;
       }
     }
+    debugger;
     if (whetherFullMessagesRead) {
       this._setFullMessagesReadFromDatabaseToCache();
     } else {
       this._unsetFullMessagesReadFromDatabaseToCache();
     }
+    debugger;
     return messagesRead;
   }
 
