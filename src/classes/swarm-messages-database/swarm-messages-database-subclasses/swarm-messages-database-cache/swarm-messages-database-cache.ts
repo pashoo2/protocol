@@ -17,7 +17,7 @@ import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../swarm-store-cl
 import {
   ESwarmMessagesDatabaseCacheEventsNames,
   SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_ITEMS_COUNT_LIMIT_DEFAULT,
-  SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_ITEMS_COUNT_PER_PAGE_DEFAULT,
+  SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_ITEMS_COUNT_PER_IDLE_PERIOD_OF_50_MS,
   SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_ITEMS_MAX_PAGE_QUERY_ATTEMPTS_DEFAULT,
 } from '../../swarm-messages-database.const';
 import {
@@ -465,14 +465,12 @@ export class SwarmMessagesDatabaseCache<
    */
   protected _requestTimeBrowserIdle = async (): Promise<number> => {
     const { timeRemaining, didTimeout } = await resolveOnIdleCallback();
-    debugger;
+
     if (didTimeout) {
       return 0;
     }
     // time browser decide it will be idle.
-    return (
-      timeRemaining || THROTTLING_UTILS_IDLE_CALLBACK_TIME_REMAINING_MAX_MS
-    );
+    return timeRemaining;
   };
   /**
    * how many items can be read during
@@ -481,7 +479,9 @@ export class SwarmMessagesDatabaseCache<
    * @param {number} timeAvailToRun
    * @returns {number}
    */
-  protected _getItemsCountToRead = (timeAvailToRun: number): number => {
+  protected _getItemsCountToReadForIdlePeriod = (
+    timeAvailToRun: number
+  ): number => {
     // the maximum messages to read for max time remaining THROTTLING_UTILS_IDLE_CALLBACK_TIME_REMAINING_MAX_MS
     // is equal to SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_ITEMS_COUNT_PER_PAGE_DEFAULT. We need to calculate
     // messages to read for timeAvailToRun.
@@ -490,9 +490,10 @@ export class SwarmMessagesDatabaseCache<
       2
     );
 
-    return (
-      SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_ITEMS_COUNT_PER_PAGE_DEFAULT *
-      percentAcordingToFreeTime
+    return round(
+      SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_ITEMS_COUNT_PER_IDLE_PERIOD_OF_50_MS *
+        percentAcordingToFreeTime,
+      0
     );
   };
   /**
@@ -876,7 +877,7 @@ export class SwarmMessagesDatabaseCache<
       this._checkIsReady();
       // time browser decide it will be idle.
       const timeAvailToRun = await this._requestTimeBrowserIdle();
-      debugger;
+
       if (!timeAvailToRun) {
         // if there is no free time to run
         // waiting for the time
@@ -886,7 +887,9 @@ export class SwarmMessagesDatabaseCache<
       // the maximum messages to read for max time remaining THROTTLING_UTILS_IDLE_CALLBACK_TIME_REMAINING_MAX_MS
       // is equal to SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_ITEMS_COUNT_PER_PAGE_DEFAULT. We need to calculate
       // messages to read for timeAvailToRun.
-      const currentPageItemsToRead = this._getItemsCountToRead(timeAvailToRun);
+      const currentPageItemsToRead = this._getItemsCountToReadForIdlePeriod(
+        timeAvailToRun
+      );
       debugger;
       if (!currentPageItemsToRead) {
         // nothing to read at this iteration
@@ -913,13 +916,13 @@ export class SwarmMessagesDatabaseCache<
       messagesRead = this._mapMessagesWithMetaToStorageRelatedStructure(
         messagesBatch
       );
-      if (
-        whetherMessagesLimitToReadReached &&
-        !this._whetherMessagesLimitReached(getItemsCount(messagesRead))
-      ) {
-        // if tried to read more messages than the limit
-        // but got some less. So decide that all
-        // messages read from the database.
+
+      const whetherMessagesReadLessThanRequested =
+        getItemsCount(messagesRead) < messagesToReadAtTheBatch;
+
+      if (whetherMessagesReadLessThanRequested) {
+        // if read less than requested it means that
+        // all messages were read
         whetherFullMessagesRead = true;
       }
     }

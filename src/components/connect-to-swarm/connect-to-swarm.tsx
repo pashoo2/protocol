@@ -43,7 +43,9 @@ export interface IMessageDescription {
 
 export interface IConnectToSwarmProps {
   connectImmediateWithCredentials?: 1 | 2;
-  dbNameToConnect?: string;
+  dbOptionsToConnectImmediate?: Partial<ISwarmStoreDatabaseBaseOptions> & {
+    dbName: ISwarmStoreDatabaseBaseOptions['dbName'];
+  };
 }
 
 export class ConnectToSwarm extends React.PureComponent<IConnectToSwarmProps> {
@@ -321,10 +323,12 @@ export class ConnectToSwarm extends React.PureComponent<IConnectToSwarmProps> {
       });
       this.setListenersConnectionBridge(connectionBridge);
 
-      const { dbNameToConnect } = this.props;
+      const { dbOptionsToConnectImmediate } = this.props;
 
-      if (dbNameToConnect) {
-        await this.handleOpenNewSwarmStoreMessagesDatabase(dbNameToConnect);
+      if (dbOptionsToConnectImmediate) {
+        await this.handleOpenNewSwarmStoreMessagesDatabase(
+          dbOptionsToConnectImmediate
+        );
       }
     } catch (error) {
       this.setState({
@@ -364,15 +368,18 @@ export class ConnectToSwarm extends React.PureComponent<IConnectToSwarmProps> {
   };
 
   protected handleOpenNewSwarmStoreMessagesDatabase = async (
-    dbNameToOpen?: string
+    dbOptionsToConnectImmediate?: Partial<ISwarmStoreDatabaseBaseOptions>
   ) => {
+    const dbNameToOpen = dbOptionsToConnectImmediate?.dbName;
     const dbName = dbNameToOpen || window.prompt('Enter database name', '');
 
     if (dbName) {
       const dbOptions = {
         ...this.defaultDbOptions,
+        ...dbOptionsToConnectImmediate,
         dbName: dbName || this.defaultDbOptions.dbName,
       };
+      debugger;
       this.setState(({ swarmStoreMessagesDbOptionsList }: any) => ({
         swarmStoreMessagesDbOptionsList: [
           ...swarmStoreMessagesDbOptionsList,
@@ -434,7 +441,7 @@ export class ConnectToSwarm extends React.PureComponent<IConnectToSwarmProps> {
 
   protected renderSwarmMessagesDatabasesList() {
     const { swarmStoreMessagesDbOptionsList, connectionBridge } = this.state;
-    const { dbNameToConnect } = this.props;
+    const { dbOptionsToConnectImmediate } = this.props;
 
     return (
       <div>
@@ -451,7 +458,9 @@ export class ConnectToSwarm extends React.PureComponent<IConnectToSwarmProps> {
                 userId={userId}
                 databaseOptions={dbsOptions}
                 connectionBridge={connectionBridge}
-                isOpenImmediate={dbsOptions.dbName === dbNameToConnect}
+                isOpenImmediate={
+                  dbsOptions.dbName === dbOptionsToConnectImmediate?.dbName
+                }
               />
             );
           })}

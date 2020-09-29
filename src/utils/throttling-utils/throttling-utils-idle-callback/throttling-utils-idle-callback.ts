@@ -36,9 +36,6 @@ export const resolveOnIdleCallback = (
     const idleCallback = requestIdleCallback(
       (e: RequestIdleCallbackArgument) => {
         const timeRemaining = Number(e.timeRemaining && e.timeRemaining());
-        if (timeRemaining) {
-          debugger;
-        }
         res({
           timeRemaining,
           didTimeout: !!e.didTimeout,

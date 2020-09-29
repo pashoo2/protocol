@@ -48,6 +48,7 @@ import {
   TSwarmStoreDatabaseEntityKey,
 } from '../../../../swarm-store-class.types';
 import { TSwarmStoreConnectorOrbitDbDatabaseStoreHash } from './swarm-store-connector-orbit-db-subclass-database.types';
+import { SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_PRELOAD_COUNT_MIN } from './swarm-store-connector-orbit-db-subclass-database.const';
 import {
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_EMIT_BATCH_INT_MS,
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_EMIT_BATCH_SIZE,
@@ -139,7 +140,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       console.error(dbStore);
       return new Error('Failed to create a new database instance');
     }
-
+    debugger;
     const loadDbResult = await dbStore.load(this.preloadCount);
     debugger;
     if ((loadDbResult as unknown) instanceof Error) {
@@ -320,16 +321,19 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     count: TSwarmStoreConnectorOrbitDbDatabaseMethodArgumentDbLoad
   ): Promise<ISwarmStoreConnectorRequestLoadAnswer | Error> => {
     const itemsLoaded = this.itemsCurrentlyLoaded;
-    const newDbInstance = await this.restartDbInstanceSilent();
-    debugger;
-    if (newDbInstance instanceof Error) {
-      console.error('Failed to restart the database');
-      return newDbInstance;
-    }
 
-    const countToLoad = this.itemsCurrentlyLoaded + count;
-    await newDbInstance.load(countToLoad);
-    debugger;
+    if (count) {
+      const newDbInstance = await this.restartDbInstanceSilent();
+      debugger;
+      if (newDbInstance instanceof Error) {
+        console.error('Failed to restart the database');
+        return newDbInstance;
+      }
+
+      const countToLoad = this.itemsCurrentlyLoaded + count;
+      await newDbInstance.load(countToLoad);
+      debugger;
+    }
     return {
       count: this.itemsCurrentlyLoaded - itemsLoaded,
       loadedCount: this.itemsCurrentlyLoaded,
@@ -1172,11 +1176,16 @@ export class SwarmStoreConnectorOrbitDBDatabase<
         'setOptions'
       );
     }
-    if (typeof preloadCount === 'number') {
-      this.preloadCount = preloadCount;
-    } else if (preloadCount) {
+    if (preloadCount && typeof preloadCount !== 'number') {
       return this.onFatalError('Preload count must be number', 'setOptions');
     }
+    // preloadCount must not be 0.
+    // If it's equals to 0, the database not firing events which
+    // are necessary for the application to continue the work with
+    // the database.
+    this.preloadCount =
+      (preloadCount ? preloadCount : undefined) ||
+      SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_PRELOAD_COUNT_MIN;
     if (dbType) {
       if (
         !Object.values(ESwarmStoreConnectorOrbitDbDatabaseType).includes(dbType)

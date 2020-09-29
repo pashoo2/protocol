@@ -40,6 +40,7 @@ import { isConstructor } from '../../utils/common-utils/common-utils-classes';
 import {
   ESwarmMessagesDatabaseCacheEventsNames,
   SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_UPDATE_RETRY_DELAY_MS,
+  SWARM_MESSAGES_DATABASE_MESSAGES_EMITTED_UNIQ_ID_ADDRESS_PREFIX,
 } from './swarm-messages-database.const';
 import { ISwarmMessageStoreMessageWithMeta } from '../swarm-message-store/swarm-message-store.types';
 import { delay } from '../../utils/common-utils/common-utils-timer';
@@ -148,6 +149,8 @@ export class SwarmMessagesDatabase<
   >;
 
   protected _isReady: boolean = false;
+
+  protected _newMessagesEmitted = new Set<string>();
 
   /**
    * Swarm messages cached
@@ -509,6 +512,70 @@ export class SwarmMessagesDatabase<
     this._updateMessagesCache();
   };
 
+  /**
+   * Returns a unique value for the message to set it in
+   * the list of messages received.
+   *
+   * @param {TSwarmStoreDatabaseEntityAddress<P>} messageAddress
+   * @param {TSwarmStoreDatabaseEntityKey<P>} [key]
+   * @param {ISwarmMessageInstanceDecrypted} [message] - optional cause for DELETE messages
+   * a message object by itself may be not exists.
+   * @returns {string}
+   */
+  protected _getMessageUniqueIdForEmittedAsNewList = (
+    // the global unique address (hash) of the message in the swarm
+    messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
+    // for key-value store it will be the key
+    key?: TSwarmStoreDatabaseEntityKey<P>,
+    message?: ISwarmMessageInstanceDecrypted
+  ): string => {
+    return message
+      ? message.sig
+      : `${SWARM_MESSAGES_DATABASE_MESSAGES_EMITTED_UNIQ_ID_ADDRESS_PREFIX}::${messageAddress}`;
+  };
+
+  /**
+   * Add message to the list of a messages uniq id's which
+   * were emitted as a new before
+   *
+   * @param {TSwarmStoreDatabaseEntityAddress<P>} messageAddress
+   * @param {TSwarmStoreDatabaseEntityKey<P>} [key]
+   * @param {ISwarmMessageInstanceDecrypted} [message] - optional cause for DELETE messages
+   * a message object by itself may be not exists.
+   */
+  protected _addMessageToListOfEmitted = (
+    // the global unique address (hash) of the message in the swarm
+    messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
+    // for key-value store it will be the key
+    key?: TSwarmStoreDatabaseEntityKey<P>,
+    message?: ISwarmMessageInstanceDecrypted
+  ): void => {
+    this._newMessagesEmitted.add(
+      this._getMessageUniqueIdForEmittedAsNewList(messageAddress, key, message)
+    );
+  };
+
+  /**
+   * Checks whether the message is already been emitted as a new message
+   *
+   * @param {TSwarmStoreDatabaseEntityAddress<P>} messageAddress
+   * @param {TSwarmStoreDatabaseEntityKey<P>} [key]
+   * @param {ISwarmMessageInstanceDecrypted} [message] - optional cause for DELETE messages
+   * a message object by itself may be not exists.
+   * @returns {boolean}
+   */
+  protected _isMessageAlreadyEmitted = (
+    // the global unique address (hash) of the message in the swarm
+    messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
+    // for key-value store it will be the key
+    key?: TSwarmStoreDatabaseEntityKey<P>,
+    message?: ISwarmMessageInstanceDecrypted
+  ): boolean => {
+    return this._newMessagesEmitted.has(
+      this._getMessageUniqueIdForEmittedAsNewList(messageAddress, key, message)
+    );
+  };
+
   protected _handleDatabaseNewMessage = (
     dbName: string,
     message: ISwarmMessageInstanceDecrypted,
@@ -519,6 +586,10 @@ export class SwarmMessagesDatabase<
   ) => {
     if (this._dbName !== dbName) return;
     debugger;
+    if (this._isMessageAlreadyEmitted(messageAddress, key, message)) {
+      return;
+    }
+    debugger;
     this._emitter.emit(
       ESwarmMessageStoreEventNames.NEW_MESSAGE,
       dbName,
@@ -526,6 +597,7 @@ export class SwarmMessagesDatabase<
       messageAddress,
       key
     );
+    this._addMessageToListOfEmitted(messageAddress, key, message);
     this._handleCacheUpdateOnNewMessage(message, messageAddress, key);
   };
 
@@ -539,6 +611,16 @@ export class SwarmMessagesDatabase<
     keyOrHash?: TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>
   ) => {
     if (this._dbName !== dbName) return;
+
+    const keyToCheckAlreadyEmitted = this._isKeyValueDatabase
+      ? keyOrHash
+      : undefined;
+
+    if (
+      this._isMessageAlreadyEmitted(messageAddress, keyToCheckAlreadyEmitted)
+    ) {
+      return;
+    }
     debugger;
     this._emitter.emit(
       ESwarmMessageStoreEventNames.DELETE_MESSAGE,
@@ -547,6 +629,7 @@ export class SwarmMessagesDatabase<
       messageAddress,
       keyOrHash
     );
+    this._addMessageToListOfEmitted(messageAddress, keyToCheckAlreadyEmitted);
     this._handleCacheUpdateOnDeleteMessage(userID, messageAddress, keyOrHash);
   };
 
@@ -824,18 +907,6 @@ export class SwarmMessagesDatabase<
     key?: TSwarmStoreDatabaseEntityKey<P>
   ) {
     if (this._checkIsReady()) {
-      // const isMessageAddedByCurrentUser = message.uid === this._currentUserId;
-      //
-      // if (isMessageAddedByCurrentUser) {
-      //   this._addMessageToCache(this._dbName, message, messageAddress, key);
-      // } else {
-      //   this._updateMessagesCache();
-      // }
-
-      // Add the message to the cache, independently which user
-      // added this. Cache will be fully updated only when
-      // database replicated with another user.
-      debugger;
       this._addMessageToCache(this._dbName, message, messageAddress, key);
     }
   }
@@ -861,22 +932,6 @@ export class SwarmMessagesDatabase<
       | TSwarmStoreDatabaseEntityKey<P>
   ) {
     if (this._checkIsReady()) {
-      // const isMessageRemovedByCurrentUser = userID === this._currentUserId;
-      // debugger;
-      // if (isMessageRemovedByCurrentUser) {
-      //   this._removeMessageFromCache(
-      //     this._isKeyValueDatabase
-      //       ? ((keyOrHash as unknown) as TSwarmStoreDatabaseEntityKey<P>)
-      //       : ((keyOrHash as unknown) as TSwarmStoreDatabaseEntityAddress<P>) // address
-      //   );
-      // } else {
-      //   this._updateMessagesCache();
-      // }
-
-      // Remove the message from the cache, independently which user
-      // added this. Cache will be fully updated only when
-      // database replicated with another user.
-      debugger;
       this._removeMessageFromCache(
         this._isKeyValueDatabase
           ? ((keyOrHash as unknown) as TSwarmStoreDatabaseEntityKey<P>)

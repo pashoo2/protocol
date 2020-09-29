@@ -8,7 +8,7 @@ export enum ESwarmMessagesDatabaseCacheEventsNames {
  * This the default count of a messages items per one
  * database request.
  */
-export const SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_ITEMS_COUNT_PER_PAGE_DEFAULT = 20;
+export const SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_ITEMS_COUNT_PER_IDLE_PERIOD_OF_50_MS = 20;
 
 /**
  * How many messages can be read from the database per one cache update.
@@ -24,3 +24,10 @@ export const SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_ITEMS_MAX_PAGE_QUERY_ATTEMPT
  * Delay before the next attempt to read messages in the cache if the previous was failed.
  */
 export const SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_UPDATE_RETRY_DELAY_MS = 100;
+
+/**
+ * Prefix for a message's address which used as a uniq messge's identity (e.g. for DELETE
+ * messages) to put into the list of messages already emitted as a new or delete
+ */
+export const SWARM_MESSAGES_DATABASE_MESSAGES_EMITTED_UNIQ_ID_ADDRESS_PREFIX =
+  'ADDR::';
