@@ -140,9 +140,9 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       console.error(dbStore);
       return new Error('Failed to create a new database instance');
     }
-    debugger;
+
     const loadDbResult = await dbStore.load(this.preloadCount);
-    debugger;
+
     if ((loadDbResult as unknown) instanceof Error) {
       console.error(loadDbResult);
       return this.onFatalError(
@@ -227,35 +227,18 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   ): Promise<
     Error | ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue> | undefined
   > => {
-    const database = this.getDbStoreInstance();
+    const entryRaw = this.readRawEntry(keyOrHash);
 
-    if (database instanceof Error) {
-      return database;
+    if (!entryRaw || entryRaw instanceof Error) {
+      return entryRaw;
     }
-
     try {
-      let e:
-        | TStoreValue
-        | LogEntry<TStoreValue>
-        | Error
-        | undefined = database.get(keyOrHash);
-
-      if (e instanceof Error) {
-        return new Error('An error has occurred on get the data from the key');
-      }
-      if (e && this.isKVStore) {
-        e = this.findInOplog(keyOrHash, e as TStoreValue);
-      } else if ((e as LogEntry<TStoreValue>).hash !== keyOrHash) {
+      if (this.isKVStore && entryRaw.payload.key !== keyOrHash) {
+        return undefined;
+      } else if (entryRaw.hash !== keyOrHash) {
         return undefined;
       }
-      if (e instanceof Error) {
-        return new Error(
-          'An error has occurred when finding value in the oplog'
-        );
-      }
-      if (e) {
-        return this.parseValueStored(e as LogEntry<TStoreValue>);
-      }
+      return entryRaw;
     } catch (err) {
       return err;
     }
@@ -323,15 +306,15 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     const itemsLoaded = this.itemsCurrentlyLoaded;
 
     if (count) {
-      const newDbInstance = await this.restartDbInstanceSilent();
+      const dbInstance = await this.restartDbInstanceSilent();
       debugger;
-      if (newDbInstance instanceof Error) {
+      if (dbInstance instanceof Error) {
         console.error('Failed to restart the database');
-        return newDbInstance;
+        return dbInstance;
       }
 
       const countToLoad = this.itemsCurrentlyLoaded + count;
-      await newDbInstance.load(countToLoad);
+      await dbInstance.load(countToLoad);
       debugger;
     }
     return {
@@ -339,6 +322,34 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       loadedCount: this.itemsCurrentlyLoaded,
       overallCount: this.itemsOverallCount,
     };
+  };
+
+  public parseValueStored = (
+    e: LogEntry<TStoreValue>
+  ):
+    | {
+        id: LogEntry<TStoreValue>['identity']['id'];
+        value: LogEntry<TStoreValue>['payload']['value'];
+        key: LogEntry<TStoreValue>['payload']['key'];
+        hash: LogEntry<TStoreValue>['hash'];
+      }
+    | Error
+    | undefined => {
+    const { payload, identity, hash } = e;
+
+    if (payload) {
+      if (payload.op === EOrbitDbFeedStoreOperation.DELETE) {
+        return undefined;
+      }
+      return {
+        id: identity.id,
+        value: payload.value,
+        hash,
+        key: this.isKVStore ? payload.key : undefined,
+      };
+    } else {
+      return new Error('An unknown fromat of the data stored');
+    }
   };
 
   protected createDb(): Promise<
@@ -398,6 +409,67 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     return logEntry.hash;
   }
 
+  /**
+   * Read a value stored in the database storage
+   * by key or value unique hash
+   *
+   * @protected
+   * @param {TSwarmStoreConnectorOrbitDbDatabaseEntityIndex} keyOrHash
+   * @returns {(TStoreValue
+   *     | LogEntry<TStoreValue>
+   *     | Error
+   *     | undefined)}
+   * @memberof SwarmStoreConnectorOrbitDBDatabase
+   */
+  protected readRawValueFromStorage = (
+    keyOrHash: TSwarmStoreConnectorOrbitDbDatabaseEntityIndex
+  ): TStoreValue | LogEntry<TStoreValue> | Error | undefined => {
+    const database = this.getDbStoreInstance();
+
+    if (database instanceof Error) {
+      return new Error(`Failed to get database insatane: ${database.message}`);
+    }
+
+    const entryRawOrStoreValue = database.get(keyOrHash) as
+      | TStoreValue
+      | LogEntry<TStoreValue>
+      | Error
+      | undefined;
+    debugger;
+    return entryRawOrStoreValue;
+  };
+
+  /**
+   * Read the raw entry from the database
+   *
+   * @protected
+   * @param {TSwarmStoreConnectorOrbitDbDatabaseEntityIndex} keyOrHash
+   * @returns {(TStoreValue
+   *     | LogEntry<TStoreValue>
+   *     | Error
+   *     | undefined)}
+   * @memberof SwarmStoreConnectorOrbitDBDatabase
+   */
+  protected readRawEntry = (
+    keyOrHash: TSwarmStoreConnectorOrbitDbDatabaseEntityIndex
+  ): LogEntry<TStoreValue> | Error | undefined => {
+    try {
+      const entryRawOrStoreValue = this.readRawValueFromStorage(keyOrHash);
+      const entryRaw = (entryRawOrStoreValue && this.isKVStore
+        ? this.findInOplog(keyOrHash, entryRawOrStoreValue as TStoreValue)
+        : entryRawOrStoreValue) as LogEntry<TStoreValue> | Error | undefined;
+
+      if (entryRaw instanceof Error) {
+        return new Error('An error has occurred on get the data from the key');
+      }
+      return entryRaw;
+    } catch (err) {
+      return new Error(
+        `Failed to read a raw entry from the databse: ${err.message}`
+      );
+    }
+  };
+
   protected findInOplog(
     key: TSwarmStoreConnectorOrbitDbDatabaseStoreKey,
     value: TStoreValue
@@ -451,9 +523,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   };
 
   protected async preloadEntitiesBeforeIterate(count: number): Promise<void> {
-    debugger;
     if (count && Number(count) > this.itemsCurrentlyLoaded) {
-      debugger;
       // before to query the database entities must be preloaded in memory
       await this.load(count);
     }
@@ -477,7 +547,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     if (typeof limit !== 'number' || limit < 0) {
       limit = undefined;
     }
-    debugger;
     // before to query the database entities must be preloaded in memory
     limit && (await this.preloadEntitiesBeforeIterate(limit));
     debugger;
@@ -502,7 +571,8 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       result = this.filterRequltsFeedStore(result, options);
       debugger;
     }
-    return result.map(this.parseValueStored);
+    debugger;
+    return result;
   }
 
   protected async iteratorKeyValueStore(
@@ -524,7 +594,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     if (typeof limit !== 'number' || limit < 0) {
       limit = undefined;
     }
-    debugger;
     // before to query the database entities must be preloaded in memory
     limit && (await this.preloadEntitiesBeforeIterate(limit));
     debugger;
@@ -612,30 +681,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
         | Error
         | undefined
       >
-  > => Promise.all(keys.map(this.get));
-
-  protected parseValueStored = (
-    e: LogEntry<TStoreValue>
-  ):
-    | ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue>
-    | Error
-    | undefined => {
-    const { payload, identity, hash } = e;
-
-    if (payload) {
-      if (payload.op === EOrbitDbFeedStoreOperation.DELETE) {
-        return undefined;
-      }
-      return ({
-        id: identity.id,
-        value: payload.value,
-        hash,
-        key: this.isKVStore ? payload.key : undefined,
-      } as unknown) as ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue>;
-    } else {
-      return new Error('An unknown fromat of the data stored');
-    }
-  };
+  > => Promise.all(keys.map(this.readRawEntry)) as any;
 
   protected getValues(
     hash: string | string[],

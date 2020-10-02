@@ -54,7 +54,6 @@ import {
   ISwarmMessageInstanceEncrypted,
   TSwarmMessageConstructorBodyMessage,
 } from '../swarm-message/swarm-message-constructor.types';
-import { isDefined } from '../../utils/common-utils/common-utils-main';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import {
   TSwarmStoreDatabaseOptions,
@@ -341,32 +340,33 @@ export class SwarmMessageStore<
   ): Promise<Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P>>> {
     assert(typeof dbName === 'string', '');
 
-    const iterator = await this.request(
+    const rawEntries = await this.request(
       dbName,
       this.dbMethodIterator,
       this.getArgIterateDb<T, DT>(dbName, options)
     );
 
-    if (iterator instanceof Error) {
-      throw iterator;
+    if (rawEntries instanceof Error) {
+      throw rawEntries;
     }
 
     const collectMessagesResult = await this.collectMessages(
       dbName,
-      iterator as TSwarmStoreDatabaseIteratorMethodAnswer<
+      rawEntries as TSwarmStoreDatabaseIteratorMethodAnswer<
         P,
         TSwarmStoreValueTypes<P>
       >,
       this._getDatabaseType(dbName) as ISwarmMessageStoreDatabaseType<P>
     );
-
+    debugger;
     return this.getMessagesWithMeta(
       collectMessagesResult,
-      iterator as Exclude<
+      rawEntries as Exclude<
         TSwarmStoreDatabaseRequestMethodReturnType<P, TSwarmStoreValueTypes<P>>,
         Error
       >,
-      dbName
+      dbName,
+      this._getDatabaseType(dbName) as ISwarmMessageStoreDatabaseType<P>
     );
   }
 
@@ -500,9 +500,11 @@ export class SwarmMessageStore<
       TSwarmStoreDatabaseRequestMethodReturnType<P, TSwarmStoreValueTypes<P>>,
       Error
     >,
-    dbName: string
+    dbName: string,
+    dbType: ISwarmMessageStoreDatabaseType<P>
   ): Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P>> {
     if (this.connectorType === ESwarmStoreConnector.OrbitDB) {
+      debugger;
       return this.joinMessagesWithRawOrbitDBEntries(
         messages,
         rawEntriesIterator as Exclude<
@@ -512,7 +514,8 @@ export class SwarmMessageStore<
           >,
           Error
         >,
-        dbName
+        dbName,
+        dbType
       );
     }
     return [];
@@ -529,23 +532,31 @@ export class SwarmMessageStore<
       >,
       Error
     >,
-    dbName: string
+    dbName: string,
+    dbType: ISwarmMessageStoreDatabaseType<P>
   ): Array<
     ISwarmMessageStoreMessagingRequestWithMetaResult<
       ESwarmStoreConnector.OrbitDB
     >
   > {
+    debugger;
     return messages.map((messageInstance, idx) => {
-      const rawMessage = rawEntriesIterator[idx];
-
-      // TODO - depending on connector type return metadata
-      // const { connectorType } = this;
+      const logEntry = rawEntriesIterator[idx];
+      const messageMetadata = this.getSwarmMessageMetadata<
+        TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>
+      >(
+        logEntry as TSwarmMessageStoreEntryRaw<
+          P,
+          TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>
+        >,
+        dbType
+      );
+      debugger;
       return {
         dbName,
-        messageAddress:
-          rawMessage instanceof Error ? rawMessage : rawMessage?.hash,
-        key: rawMessage instanceof Error ? rawMessage : rawMessage?.key,
         message: messageInstance,
+        messageAddress: messageMetadata.messageAddress,
+        key: messageMetadata.key,
       };
     });
   }
@@ -647,6 +658,7 @@ export class SwarmMessageStore<
     return (
       typeof message === 'object' &&
       typeof message.payload === 'object' &&
+      typeof message.hash === 'string' &&
       typeof message.payload.value === 'string' &&
       (dbType !== ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ||
         typeof message.payload.key === 'string')
@@ -935,41 +947,40 @@ export class SwarmMessageStore<
     T extends TSwarmStoreValueTypes<P>
   >(
     dbName: string,
-    iteratorAnswer: TSwarmStoreDatabaseIteratorMethodAnswer<
+    rawEnties: TSwarmStoreDatabaseIteratorMethodAnswer<
       ESwarmStoreConnector.OrbitDB,
       T
     >, // TODO - may be not a string,
     dbType: ESwarmStoreConnectorOrbitDbDatabaseType
   ): Promise<(TSwarmMessageInstance | Error)[]> {
-    if (iteratorAnswer instanceof Error) {
-      throw iteratorAnswer;
+    if (rawEnties instanceof Error) {
+      throw rawEnties;
     }
     return Promise.all(
-      iteratorAnswer
-        .map(async (logEntry) => {
-          if (logEntry instanceof Error) {
-            return logEntry;
-          }
-          if (!logEntry) {
-            return logEntry;
-          }
-          try {
-            const messageMetadata = this.getSwarmMessageMetadata<T>(
-              logEntry as TSwarmMessageStoreEntryRaw<P, T>,
-              dbType as ISwarmMessageStoreDatabaseType<P>
-            );
-            const message = await this.constructMessage(
-              dbName,
-              logEntry.payload.value,
-              messageMetadata
-            );
+      rawEnties.map(async (logEntry) => {
+        if (logEntry instanceof Error) {
+          return logEntry;
+        }
+        if (!logEntry) {
+          return logEntry;
+        }
+        try {
+          debugger;
+          const messageMetadata = this.getSwarmMessageMetadata<T>(
+            logEntry as TSwarmMessageStoreEntryRaw<P, T>,
+            dbType as ISwarmMessageStoreDatabaseType<P>
+          );
+          const message = await this.constructMessage(
+            dbName,
+            logEntry.payload.value,
+            messageMetadata
+          );
 
-            return message;
-          } catch (err) {
-            return err;
-          }
-        })
-        .filter(isDefined)
+          return message;
+        } catch (err) {
+          return err;
+        }
+      })
     );
   }
 
@@ -978,14 +989,14 @@ export class SwarmMessageStore<
    *
    * @protected
    * @param {string} dbName
-   * @param {TSwarmStoreDatabaseIteratorMethodAnswer<P, any>} iterator
+   * @param {TSwarmStoreDatabaseIteratorMethodAnswer<P, any>} rawEntries
    * @param {any} d
    * @returns {TSwarmMessageInstance[]}
    * @memberof SwarmMessageStore
    */
   protected collectMessages<T extends TSwarmStoreValueTypes<P>>(
     dbName: string,
-    iterator: TSwarmStoreDatabaseIteratorMethodAnswer<P, T>,
+    rawEntries: TSwarmStoreDatabaseIteratorMethodAnswer<P, T>,
     dbType: ISwarmMessageStoreDatabaseType<P>
   ): Promise<(TSwarmMessageInstance | Error)[]> {
     const { connectorType } = this;
@@ -994,7 +1005,7 @@ export class SwarmMessageStore<
       case ESwarmStoreConnector.OrbitDB:
         return this.collectMessagesFromOrbitDBIterator<T>(
           dbName,
-          iterator,
+          rawEntries,
           dbType
         );
       default:

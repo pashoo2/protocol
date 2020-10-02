@@ -743,6 +743,7 @@ export class SwarmMessagesDatabase<
   protected _handleCacheUpdated = (
     messagesCached: TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined
   ): void => {
+    debugger;
     this._setMessagesCached(messagesCached);
     this.emitter.emit(
       ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATED,

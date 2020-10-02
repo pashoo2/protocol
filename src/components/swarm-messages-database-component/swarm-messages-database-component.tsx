@@ -118,7 +118,7 @@ export class SwarmMessagesDatabaseComponent<
   ) => {
     console.log('Cache updated', messages);
     this.setState({
-      messages: this.state.db?.cachedMessages,
+      messages,
     });
   };
 
@@ -222,7 +222,7 @@ export class SwarmMessagesDatabaseComponent<
           alert('It is not a public database');
           return;
         }
-
+        debugger;
         let key: string | undefined;
 
         if (
