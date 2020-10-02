@@ -1,4 +1,4 @@
-export function filterMap<M extends Map<any, any>, F extends Array<any>>(
+export function filterMapKeys<M extends Map<any, any>, F extends Array<any>>(
   map: M,
   filterKeys: F
 ): M {

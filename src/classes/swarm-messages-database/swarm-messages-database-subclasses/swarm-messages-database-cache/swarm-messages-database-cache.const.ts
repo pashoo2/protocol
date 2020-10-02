@@ -7,3 +7,8 @@ export const SWARM_MESSAGES_DATABASE_CACHE_PLANNED_CACHE_UPDATE_FAILED_RETRY_DEL
  * Timeout for one batch of database quering result during messsages cache update
  */
 export const SWARM_MESSAGES_DATABASE_CACHE_PLANNED_CACHE_UPDATE_BATCH_TIMEOUT_MS = 100;
+
+/**
+ * Milliseconds to wait before adding messages from the pending queue to the cache
+ */
+export const SWARM_MESSAGES_DATABASE_CACHE_ADD_TO_CACHE_MESSAGES_PENDING_DEBOUNCE_MS = 100;

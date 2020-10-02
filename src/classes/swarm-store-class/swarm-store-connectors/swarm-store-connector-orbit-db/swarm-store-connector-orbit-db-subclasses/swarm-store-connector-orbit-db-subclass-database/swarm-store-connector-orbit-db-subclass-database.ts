@@ -303,25 +303,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   public load = async (
     count: TSwarmStoreConnectorOrbitDbDatabaseMethodArgumentDbLoad
   ): Promise<ISwarmStoreConnectorRequestLoadAnswer | Error> => {
-    const itemsLoaded = this.itemsCurrentlyLoaded;
-
-    if (count) {
-      const dbInstance = await this.restartDbInstanceSilent();
-      debugger;
-      if (dbInstance instanceof Error) {
-        console.error('Failed to restart the database');
-        return dbInstance;
-      }
-
-      const countToLoad = this.itemsCurrentlyLoaded + count;
-      await dbInstance.load(countToLoad);
-      debugger;
-    }
-    return {
-      count: this.itemsCurrentlyLoaded - itemsLoaded,
-      loadedCount: this.itemsCurrentlyLoaded,
-      overallCount: this.itemsOverallCount,
-    };
+    return this._load(this.itemsCurrentlyLoaded + count);
   };
 
   public parseValueStored = (
@@ -402,6 +384,33 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   protected resetItemsOverall() {
     this.itemsOverallCountInStorage = 0;
   }
+
+  /**
+   * returns a count of an items loaded or Error
+   *
+   * @memberof SwarmStoreConnectorOrbitDBDatabase
+   */
+  protected _load = async (
+    count: TSwarmStoreConnectorOrbitDbDatabaseMethodArgumentDbLoad
+  ): Promise<ISwarmStoreConnectorRequestLoadAnswer | Error> => {
+    const itemsLoaded = this.itemsCurrentlyLoaded;
+
+    if (count) {
+      const dbInstance = await this.restartDbInstanceSilent();
+
+      if (dbInstance instanceof Error) {
+        console.error('Failed to restart the database');
+        return dbInstance;
+      }
+      await dbInstance.load(count);
+      debugger;
+    }
+    return {
+      count: this.itemsCurrentlyLoaded - itemsLoaded,
+      loadedCount: this.itemsCurrentlyLoaded,
+      overallCount: this.itemsOverallCount,
+    };
+  };
 
   protected getLodEntryHash(
     logEntry: LogEntry<TStoreValue>
@@ -525,7 +534,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   protected async preloadEntitiesBeforeIterate(count: number): Promise<void> {
     if (count && Number(count) > this.itemsCurrentlyLoaded) {
       // before to query the database entities must be preloaded in memory
-      await this.load(count);
+      await this._load(count);
     }
   }
 
