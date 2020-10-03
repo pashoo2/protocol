@@ -56,7 +56,7 @@ export class SwarmMessagesDatabaseComponent<
   T extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>
 > extends React.PureComponent<IProps, IState<P, T, DbType>> {
-  state = {
+  state: IState<P, T, DbType> = {
     messages: undefined,
     isOpening: false,
     isClosing: false,
@@ -222,7 +222,7 @@ export class SwarmMessagesDatabaseComponent<
           alert('It is not a public database');
           return;
         }
-        debugger;
+
         let key: string | undefined;
 
         if (
@@ -265,6 +265,8 @@ export class SwarmMessagesDatabaseComponent<
     const { databaseOptions } = this.props;
     const { isOpened, isUpdating } = this;
     const { dbName, isPublic } = databaseOptions;
+    // TODO - this.messagesCached doesn't work
+    const { messages } = this.state;
 
     return (
       <div style={{ border: '1px solid black' }}>
@@ -284,40 +286,41 @@ export class SwarmMessagesDatabaseComponent<
         {isUpdating && <div>Updating...</div>}
         <div>
           Messages:
-          {this.messagesCached?.forEach((messageWithMeta, key) => {
-            const {
-              messageAddress,
-              dbName: messageDbName,
-              message,
-            } = messageWithMeta;
-            let messageId = '';
+          {messages &&
+            Array.from(messages.entries()).map(([key, messageWithMeta]) => {
+              const {
+                messageAddress,
+                dbName: messageDbName,
+                message,
+              } = messageWithMeta;
+              let messageId = '';
 
-            if (message instanceof Error) {
-              return <div>Error: {message.message}</div>;
-            }
-            try {
-              if (!isValidSwarmMessageDecryptedFormat(message)) {
-                return <div>Message has an invalid format</div>;
+              if (message instanceof Error) {
+                return <div>Error: {message.message}</div>;
               }
-            } catch (err) {
-              return <div>Error message format: {err.message}</div>;
-            }
-            if (messageAddress instanceof Error) {
-              messageId = messageAddress.message;
-            } else if (messageAddress) {
-              messageId = messageAddress;
-            }
-            return (
-              <MessageComponent
-                key={key}
-                dbName={messageDbName || dbName}
-                id={messageId as TSwarmStoreDatabaseEntityKey<P>}
-                k={key}
-                message={message}
-                deleteMessage={this.handleDeleteMessage}
-              />
-            );
-          })}
+              try {
+                if (!isValidSwarmMessageDecryptedFormat(message)) {
+                  return <div>Message has an invalid format</div>;
+                }
+              } catch (err) {
+                return <div>Error message format: {err.message}</div>;
+              }
+              if (messageAddress instanceof Error) {
+                messageId = messageAddress.message;
+              } else if (messageAddress) {
+                messageId = messageAddress;
+              }
+              return (
+                <MessageComponent
+                  key={key}
+                  dbName={messageDbName || dbName}
+                  id={messageId as TSwarmStoreDatabaseEntityKey<P>}
+                  k={key}
+                  message={message}
+                  deleteMessage={this.handleDeleteMessage}
+                />
+              );
+            })}
         </div>
       </div>
     );

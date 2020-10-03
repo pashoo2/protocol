@@ -227,8 +227,6 @@ export class SwarmMessagesDatabaseCache<
     P,
     DbType
   > {
-    // TODO - doesn't work properly
-    debugger;
     return this._composeRemovedAddedMessagesWithCache(
       this._messagesCached,
       this._messagesAddedToCache,
@@ -335,6 +333,7 @@ export class SwarmMessagesDatabaseCache<
       return;
     }
     // TODO - seems not works properly
+    // TODO - _messagesAddedToCache added when cahce update in progres - BUG
     debugger;
     // wait when the cache updating batch will be overed
     // because the message may be already in the cache
@@ -349,6 +348,11 @@ export class SwarmMessagesDatabaseCache<
       ? TSwarmStoreDatabaseEntityAddress<P>
       : TSwarmStoreDatabaseEntityKey<P>
   ): Promise<void> => {
+    // TODO - doesnt work in the key-value store
+    // if remove value from a key and then add
+    // add a new value by the same key. The new value is still absent
+    // it's necessary to remove a message only by it's address (not by key)
+    // or request cache updated (moreconsistent)
     if (!this._checkIsReady()) {
       return;
     }
@@ -591,7 +595,10 @@ export class SwarmMessagesDatabaseCache<
    * @param {[ISwarmMessageStoreMessageWithMeta<P>, (...args: any[]) => unknown]} [swarmMessageWithMeta, callback]
    * @returns {(Promise<boolean | Error>)}
    */
-  _addPendingMessageToCache = async ([swarmMessageWithMeta, callback]: [
+  protected _addPendingMessageToCache = async ([
+    swarmMessageWithMeta,
+    callback,
+  ]: [
     ISwarmMessageStoreMessageWithMeta<P>,
     (...args: any[]) => unknown
   ]): Promise<boolean | Error> => {
@@ -1185,7 +1192,10 @@ export class SwarmMessagesDatabaseCache<
       );
       debugger;
       const whetherMessagesReadLessThanRequested =
-        getItemsCount(messagesReadAtBatch) < currentPageItemsToRead;
+        messagesToReadAtTheBatch > 3 && !getItemsCount(messagesReadAtBatch);
+      // TODO - ORBIT DB counts also removed items, so we can request more than
+      // it will return
+      // getItemsCount(messagesReadAtBatch) < currentPageItemsToRead;
 
       if (whetherMessagesReadLessThanRequested) {
         // if read less than requested it means that

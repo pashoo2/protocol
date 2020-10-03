@@ -379,7 +379,6 @@ export class ConnectToSwarm extends React.PureComponent<IConnectToSwarmProps> {
         ...dbOptionsToConnectImmediate,
         dbName: dbName || this.defaultDbOptions.dbName,
       };
-      debugger;
       this.setState(({ swarmStoreMessagesDbOptionsList }: any) => ({
         swarmStoreMessagesDbOptionsList: [
           ...swarmStoreMessagesDbOptionsList,
