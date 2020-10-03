@@ -52,13 +52,16 @@ export const commonUtilsReturnArrayIfTwoArraysEquals = <S>(
  * @param {...Array<Array<any>>} arrays
  * @returns {boolean}
  */
-export const commonUtilsIsAllArraysEquals = (
+export const commonUtilsAreAllArraysEqual = (
   ...arrays: Array<Array<any>>
 ): boolean => {
+  if (!arrays.length) {
+    return true;
+  }
   if (arrays.length === 1) {
     return commonUtilsIsInstanceOfArray(arrays[0]);
   }
-  return !arrays.reduce(commonUtilsReturnArrayIfTwoArraysEquals, arrays[0]);
+  return !!arrays.reduce(commonUtilsReturnArrayIfTwoArraysEquals, arrays[0]);
 };
 
 export const commonUtilsArrayOrderByDecComparationFunction = <T>(

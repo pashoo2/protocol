@@ -227,6 +227,8 @@ export class SwarmMessagesDatabaseCache<
     P,
     DbType
   > {
+    // TODO - doesn't work properly
+    debugger;
     return this._composeRemovedAddedMessagesWithCache(
       this._messagesCached,
       this._messagesAddedToCache,
@@ -274,23 +276,31 @@ export class SwarmMessagesDatabaseCache<
     | Promise<void>
     | undefined;
 
+  /**
+   * Runs adding of messages to addedMessages store
+   * from the queue of a pending for adding messages.
+   * Plans a clearing of a messages added store.
+   * Emits the cahce update event if any message was added
+   * to the store.
+   *
+   * @protected
+   * @memberof SwarmMessagesDatabaseCache
+   */
   protected _runAddingMessagesPendingToBeAddedToCache = debounce(async () => {
     const messagesPendingToAddInCache = this._messagesPendingToAddInCache;
 
     this._messagesPendingToAddInCache = [];
-    await Promise.all(
-      messagesPendingToAddInCache.map(
-        async ([swarmMessageWithMeta, callback]) => {
-          try {
-            callback(await this._addMessage(swarmMessageWithMeta));
-          } catch (err) {
-            callback(err);
-          }
-        }
-      )
+
+    const messagesAddingResults = await Promise.all(
+      messagesPendingToAddInCache.map(this._addPendingMessageToCache)
     );
+
     this._planResetAddedAndDeletedMessages();
-    this._emitDbMessagesWithAddedMessagesCaheUpdated();
+    if (messagesAddingResults.includes(true)) {
+      // if any message was added to the cache, emit the event
+      // that the cache was upadated
+      this._emitDbMessagesWithAddedMessagesCaheUpdated();
+    }
   }, SWARM_MESSAGES_DATABASE_CACHE_ADD_TO_CACHE_MESSAGES_PENDING_DEBOUNCE_MS);
 
   constructor(options: ISwarmMessagesDatabaseCacheOptions<P, DbType>) {
@@ -324,9 +334,12 @@ export class SwarmMessagesDatabaseCache<
     if (!this._checkIsReady()) {
       return;
     }
+    // TODO - seems not works properly
+    debugger;
     // wait when the cache updating batch will be overed
     // because the message may be already in the cache
     await this._waitTillMessagesCacheUpateBatchOvered();
+    debugger;
     return this._addMessageInAddToCachePendingQueue(swarmMessageWithMeta);
   };
 
@@ -401,8 +414,9 @@ export class SwarmMessagesDatabaseCache<
       this._messagesPendingToAddInCache.push([
         swarmMessageWithMeta,
         (addMessageResult: Error | void) => {
+          debugger;
           if (addMessageResult instanceof Error) {
-            rej(addMessageResult);
+            rej();
           } else {
             res();
           }
@@ -432,7 +446,6 @@ export class SwarmMessagesDatabaseCache<
 
     if (_messagesCacheUpdatingBatch) {
       await Promise.race([
-        this,
         _messagesCacheUpdatingBatch,
         timeout(
           SWARM_MESSAGES_DATABASE_CACHE_PLANNED_CACHE_UPDATE_BATCH_TIMEOUT_MS
@@ -465,6 +478,15 @@ export class SwarmMessagesDatabaseCache<
     );
   }
 
+  /**
+   * Add the message to the cache unconditionally,
+   * If can't to add the message it throws.
+   *
+   * @protected
+   * @param {ISwarmMessageStoreMessageWithMeta<P>} swarmMessageWithMeta
+   * @memberof SwarmMessagesDatabaseCache
+   * @throws
+   */
   protected _addMessageToMessagesAddedToCacheStore(
     swarmMessageWithMeta: ISwarmMessageStoreMessageWithMeta<P>
   ): void {
@@ -479,19 +501,25 @@ export class SwarmMessagesDatabaseCache<
       swarmMessageWithMeta
     );
   }
-
+  /**
+   * Add message to the cache if not already exists
+   * in there
+   *
+   * @param {ISwarmMessageStoreMessageWithMeta<P>} swarmMessageWithMeta
+   * @returns {Promise<boolean>} - true if the message was added, false otherwise
+   * @throws
+   */
   protected _addMessage = async (
     swarmMessageWithMeta: ISwarmMessageStoreMessageWithMeta<P>
-  ) => {
+  ): Promise<boolean> => {
     if (
       !this._checkIsReady() ||
       this._checkMessageIsAlreadyInCache(swarmMessageWithMeta)
     ) {
-      debugger;
-      return;
+      return false;
     }
-    debugger;
     this._addMessageToMessagesAddedToCacheStore(swarmMessageWithMeta);
+    return true;
   };
 
   protected _addMessageInKeyValueStoreCache = (
@@ -554,6 +582,28 @@ export class SwarmMessagesDatabaseCache<
         messageWithMeta.message as ISwarmMessageInstanceDecrypted
       )
     );
+  };
+
+  /**
+   * Add message from the pending queue to the main cache store
+   * and call the callback with the result of adding
+   *
+   * @param {[ISwarmMessageStoreMessageWithMeta<P>, (...args: any[]) => unknown]} [swarmMessageWithMeta, callback]
+   * @returns {(Promise<boolean | Error>)}
+   */
+  _addPendingMessageToCache = async ([swarmMessageWithMeta, callback]: [
+    ISwarmMessageStoreMessageWithMeta<P>,
+    (...args: any[]) => unknown
+  ]): Promise<boolean | Error> => {
+    try {
+      const addMessageResult = await this._addMessage(swarmMessageWithMeta);
+
+      callback(addMessageResult);
+      return addMessageResult;
+    } catch (err) {
+      callback(err);
+      return err;
+    }
   };
 
   protected _removeKeyValueFromKVStoreCache = (
@@ -772,8 +822,9 @@ export class SwarmMessagesDatabaseCache<
   }
 
   /**
-   * Create message's description and add it to the
-   * cache.
+   * Create message's description depending on the database
+   * type(keyvalue or feed). Add the description created to the
+   * cache unconditionally.
    *
    * @protected
    * @param {string} dbName
@@ -836,6 +887,15 @@ export class SwarmMessagesDatabaseCache<
     );
   }
 
+  /**
+   * Validate and unconditionally add the message to the cache
+   *
+   * @protected
+   * @param {TSwarmMessageDatabaseMessagesCached<P, DbType>} messagesCachedStore
+   * @param {ISwarmMessageStoreMessageWithMeta<P>} swarmMessageWithMeta
+   * @memberof SwarmMessagesDatabaseCache
+   * @throws - throws if failed to add the message for any reason
+   */
   protected _addMessageWithMetaToCache(
     messagesCachedStore: TSwarmMessageDatabaseMessagesCached<P, DbType>,
     swarmMessageWithMeta: ISwarmMessageStoreMessageWithMeta<P>
@@ -1250,11 +1310,12 @@ export class SwarmMessagesDatabaseCache<
         messagesRead
       );
 
+      this._setCurrentCacheUpdateTempMessages(messagesRead);
       this._setMessagesCacheUpdateInProgress(promiseMessagesUpdating);
       messages = await promiseMessagesUpdating;
       debugger;
-      this._unsetCurrentCacheUpdateTempMessages();
       this._updateCacheWithMessages(messages);
+      this._unsetCurrentCacheUpdateTempMessages();
       this._emitDbMessagesWithAddedMessagesCaheUpdated();
     } catch (err) {
       console.error(`Failed to update messages cache: ${err.message}`, err);

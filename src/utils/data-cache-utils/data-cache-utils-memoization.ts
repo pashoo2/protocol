@@ -1,5 +1,6 @@
 import { FirstPrameter } from '../../types';
-import { commonUtilsIsAllArraysEquals } from '../common-utils';
+import { commonUtilsAreAllArraysEqual } from '../common-utils';
+import { mapValuesForFurtherComparision } from './data-cache-utils-main';
 
 export const memoize = <
   F extends (arg: any) => any,
@@ -40,11 +41,17 @@ export const memoize = <
 export const memoizeLastReturnedValue = <F extends (...arg: any[]) => any>(
   func: F
 ) => {
-  let lastArgs: Parameters<F>;
+  let lastArgs: any[];
   let lastReturnValue: ReturnType<F>;
+
   return (...args: Parameters<F>): ReturnType<F> => {
-    if (!lastArgs || !commonUtilsIsAllArraysEquals(lastArgs, args)) {
-      lastArgs = args;
+    const argsMappedForComparision = mapValuesForFurtherComparision(args);
+
+    if (
+      !lastArgs ||
+      !commonUtilsAreAllArraysEqual(lastArgs, argsMappedForComparision)
+    ) {
+      lastArgs = argsMappedForComparision;
       lastReturnValue = func(...args);
     }
     return lastReturnValue;
