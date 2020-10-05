@@ -67,7 +67,10 @@ import {
   TSwarmMessageStoreEntryRaw,
   ISwarmMessageStoreDatabaseType,
 } from './swarm-message-store.types';
-import { TSwarmStoreDatabaseRequestMethodReturnType } from '../swarm-store-class/swarm-store-class.types';
+import {
+  TSwarmStoreDatabaseRequestMethodReturnType,
+  TSwarmStoreDatabaseEntityKey,
+} from '../swarm-store-class/swarm-store-class.types';
 import { StorageProviderInMemory } from '../storage-providers/storage-in-memory-provider/storage-in-memory-provider';
 import { StorageProvider } from '../storage-providers/storage-providers.types';
 import {
@@ -337,7 +340,9 @@ export class SwarmMessageStore<
   >(
     dbName: string,
     options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>
-  ): Promise<Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P>>> {
+  ): Promise<
+    Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P> | undefined>
+  > {
     assert(typeof dbName === 'string', '');
 
     const rawEntries = await this.request(
@@ -502,7 +507,7 @@ export class SwarmMessageStore<
     >,
     dbName: string,
     dbType: ISwarmMessageStoreDatabaseType<P>
-  ): Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P>> {
+  ): Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P> | undefined> {
     if (this.connectorType === ESwarmStoreConnector.OrbitDB) {
       debugger;
       return this.joinMessagesWithRawOrbitDBEntries(
@@ -535,9 +540,10 @@ export class SwarmMessageStore<
     dbName: string,
     dbType: ISwarmMessageStoreDatabaseType<P>
   ): Array<
-    ISwarmMessageStoreMessagingRequestWithMetaResult<
-      ESwarmStoreConnector.OrbitDB
-    >
+    | ISwarmMessageStoreMessagingRequestWithMetaResult<
+        ESwarmStoreConnector.OrbitDB
+      >
+    | undefined
   > {
     debugger;
     return messages.map((messageInstance, idx) => {
@@ -551,7 +557,10 @@ export class SwarmMessageStore<
         >,
         dbType
       );
-      debugger;
+
+      if (!messageMetadata) {
+        return undefined;
+      }
       return {
         dbName,
         message: messageInstance,
@@ -620,8 +629,13 @@ export class SwarmMessageStore<
   protected emitMessageDelete = (
     dbName: string,
     userId: string,
-    messageHash: string,
-    messageKey?: string
+    messageHash: TSwarmStoreDatabaseEntityAddress<P>,
+    messageDeletedHash: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+      ? TSwarmStoreDatabaseEntityAddress<P> | undefined
+      : TSwarmStoreDatabaseEntityAddress<P>,
+    messageKey: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+      ? TSwarmStoreDatabaseEntityKey<P>
+      : undefined
   ) => {
     console.log('SwarmMessageStore::emitMessageDelete', {
       dbName,
@@ -634,6 +648,7 @@ export class SwarmMessageStore<
       dbName,
       userId,
       messageHash,
+      messageDeletedHash,
       messageKey
     );
   };
@@ -666,9 +681,14 @@ export class SwarmMessageStore<
   }
 
   protected getSwarmMessageMetadataOrbitDb<T extends TSwarmStoreValueTypes<P>>(
-    message: TSwarmMessageStoreEntryRaw<ESwarmStoreConnector.OrbitDB, T>,
+    message:
+      | TSwarmMessageStoreEntryRaw<ESwarmStoreConnector.OrbitDB, T>
+      | undefined,
     dbType: ISwarmMessageStoreDatabaseType<P>
-  ): ISwarmMessageStoreSwarmMessageMetadata {
+  ): ISwarmMessageStoreSwarmMessageMetadata | undefined {
+    if (!message) {
+      return message;
+    }
     return {
       messageAddress: message.hash,
       key:
@@ -679,9 +699,9 @@ export class SwarmMessageStore<
   }
 
   protected getSwarmMessageMetadata<T extends TSwarmStoreValueTypes<P>>(
-    message: TSwarmMessageStoreEntryRaw<P, T>,
+    message: TSwarmMessageStoreEntryRaw<P, T> | undefined,
     dbType: ISwarmMessageStoreDatabaseType<P>
-  ): ISwarmMessageStoreSwarmMessageMetadata {
+  ): ISwarmMessageStoreSwarmMessageMetadata | undefined {
     const { connectorType } = this;
 
     switch (connectorType as P) {
@@ -773,11 +793,12 @@ export class SwarmMessageStore<
       }
     }
     if (swarmMessageInstance) {
-      const { messageAddress, key } = this.getSwarmMessageMetadata<T>(
-        message,
-        dbType
-      );
+      const messageWithMeta = this.getSwarmMessageMetadata<T>(message, dbType);
 
+      if (!messageWithMeta) {
+        return;
+      }
+      const { messageAddress, key } = messageWithMeta;
       return this.emitMessageNew(
         dbName,
         swarmMessageInstance,
@@ -801,7 +822,7 @@ export class SwarmMessageStore<
   ]: [
     string,
     TSwarmMessageStoreEntryRaw<P, T>,
-    string,
+    TSwarmStoreDatabaseEntityAddress<P>,
     any,
     ISwarmMessageStoreDatabaseType<P>
   ]): Promise<void> => {
@@ -816,10 +837,16 @@ export class SwarmMessageStore<
       return this.emitMessageDelete(
         dbName,
         message.identity.id,
-        message.hash,
-        dbType === ESwarmStoreConnectorOrbitDbDatabaseType.FEED
-          ? message.payload.value
-          : message.payload.key
+        message.hash as TSwarmStoreDatabaseEntityAddress<P>,
+        (message.payload
+          .value as unknown) as DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+          ? TSwarmStoreDatabaseEntityAddress<P> | undefined
+          : TSwarmStoreDatabaseEntityAddress<P>,
+        (dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+          ? message.payload.key
+          : undefined) as DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+          ? TSwarmStoreDatabaseEntityKey<P>
+          : undefined
       );
     }
     debugger;
@@ -1283,10 +1310,13 @@ export class SwarmMessageStore<
   >(
     dbName: string,
     dbType: ISwarmMessageStoreDatabaseType<P>,
-    message: TSwarmMessageStoreEntryRaw<P, T>
+    message: TSwarmMessageStoreEntryRaw<P, T> | undefined
   ): Promise<TSwarmMessageInstance | undefined> {
     debugger;
     const messageMetadata = this.getSwarmMessageMetadata<T>(message, dbType);
+    if (!messageMetadata) {
+      return;
+    }
     return await this.getSwarmMessageInstanceFromCacheByAddress(
       dbName,
       messageMetadata.messageAddress

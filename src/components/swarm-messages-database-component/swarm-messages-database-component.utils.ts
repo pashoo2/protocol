@@ -91,13 +91,16 @@ export const setMessageDeleteListener = <
     userId: string,
     // the global unique address (hash) of the DELETE message in the swarm
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
+    // the global unique address (hash) of the DELETED message in the swarm
+    messageDeletedAddress: TSwarmStoreDatabaseEntityAddress<P> | undefined,
     // for key-value store it will be the key for the value,
     // for feed store it will be hash of the message which deleted by this one.
-    keyOrAddress?: TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>
+    key: TSwarmStoreDatabaseEntityKey<P> | undefined
   ) => {
     messagesDeleteListener({
       id: messageAddress,
-      keyOrIdRemoved: keyOrAddress,
+      idDeleted: messageDeletedAddress,
+      key,
       userId,
     });
   };

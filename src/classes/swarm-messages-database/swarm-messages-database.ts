@@ -478,21 +478,20 @@ export class SwarmMessagesDatabase<
   }
 
   protected _removeMessageFromCache(
-    messageAddressOrMessageEntityKey:
-      | TSwarmStoreDatabaseEntityAddress<P>
-      | TSwarmStoreDatabaseEntityKey<P>
+    messageAddress: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+      ? TSwarmStoreDatabaseEntityAddress<P> | undefined
+      : TSwarmStoreDatabaseEntityAddress<P>,
+    key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+      ? TSwarmStoreDatabaseEntityKey<P>
+      : undefined
   ): Promise<void> {
     if (this._checkIsReady()) {
-      if (!messageAddressOrMessageEntityKey) {
+      if (!messageAddress && !key) {
         throw new Error(
           'Messages address or message key requered to remove message from the cache'
         );
       }
-      return this._swarmMessagesCache.deleteMessage(
-        messageAddressOrMessageEntityKey as DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.FEED
-          ? TSwarmStoreDatabaseEntityAddress<P>
-          : TSwarmStoreDatabaseEntityKey<P>
-      );
+      return this._swarmMessagesCache.deleteMessage(messageAddress, key);
     }
     throw new Error('Swarm messages cache is not ready');
   }
@@ -606,9 +605,15 @@ export class SwarmMessagesDatabase<
     userID: TSwarmMessageUserIdentifierSerialized,
     // the global unique address (hash) of the DELETE message in the swarm
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
+    // the global unique address (hash) of the DELETED message in the swarm
+    messageDeletedAddress: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+      ? TSwarmStoreDatabaseEntityAddress<P> | undefined
+      : TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key for the value,
     // for feed store it will be hash of the message which deleted by this one.
-    keyOrHash?: TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>
+    keyOrHash: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+      ? TSwarmStoreDatabaseEntityKey<P>
+      : undefined
   ) => {
     if (this._dbName !== dbName) return;
 
@@ -627,10 +632,16 @@ export class SwarmMessagesDatabase<
       dbName,
       userID,
       messageAddress,
+      messageDeletedAddress,
       keyOrHash
     );
     this._addMessageToListOfEmitted(messageAddress, keyToCheckAlreadyEmitted);
-    this._handleCacheUpdateOnDeleteMessage(userID, messageAddress, keyOrHash);
+    this._handleCacheUpdateOnDeleteMessage(
+      userID,
+      messageAddress,
+      messageDeletedAddress,
+      keyOrHash
+    );
   };
 
   protected _handleDatabaseMessageError = (
@@ -926,18 +937,18 @@ export class SwarmMessagesDatabase<
     userID: TSwarmMessageUserIdentifierSerialized,
     // the global unique address (hash) of the DELETE message in the swarm
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
+    // deleted message address
+    messageDeletedAddress: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+      ? TSwarmStoreDatabaseEntityAddress<P> | undefined
+      : TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key for the value,
     // for feed store it will be hash of the message which deleted by this one.
-    keyOrHash?:
-      | TSwarmStoreDatabaseEntityAddress<P>
-      | TSwarmStoreDatabaseEntityKey<P>
+    keyOrHash: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+      ? TSwarmStoreDatabaseEntityKey<P>
+      : undefined
   ) {
     if (this._checkIsReady()) {
-      this._removeMessageFromCache(
-        this._isKeyValueDatabase
-          ? ((keyOrHash as unknown) as TSwarmStoreDatabaseEntityKey<P>)
-          : ((keyOrHash as unknown) as TSwarmStoreDatabaseEntityAddress<P>) // address
-      );
+      this._removeMessageFromCache(messageDeletedAddress, keyOrHash);
     }
   }
 }

@@ -130,9 +130,15 @@ export interface ISwarmMessageDatabaseEvents<
     userId: string,
     // the global unique address (hash) of the DELETE message in the swarm
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
+    // the global unique address (hash) of the DELETED message in the swarm
+    messageDeletedAddress: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+      ? TSwarmStoreDatabaseEntityAddress<P> | undefined
+      : TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key for the value,
     // for feed store it will be hash of the message which deleted by this one.
-    keyOrAddress?: TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>
+    key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+      ? TSwarmStoreDatabaseEntityKey<P>
+      : undefined
   ) => unknown;
 }
 
@@ -396,9 +402,12 @@ export interface ISwarmMessagesDatabaseCache<
    */
   deleteMessage(
     // for a non key-value stores
-    messageUniqAddressOrKey: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.FEED
-      ? TSwarmStoreDatabaseEntityAddress<P>
-      : TSwarmStoreDatabaseEntityKey<P>
+    messageUniqAddressOrKey: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+      ? TSwarmStoreDatabaseEntityAddress<P> | undefined
+      : TSwarmStoreDatabaseEntityAddress<P>,
+    key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+      ? TSwarmStoreDatabaseEntityKey<P>
+      : undefined
   ): Promise<void>;
 }
 

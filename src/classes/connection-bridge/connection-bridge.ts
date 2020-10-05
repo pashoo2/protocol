@@ -516,7 +516,7 @@ export class ConnectionBridge<
     if (result instanceof Error) {
       throw result;
     }
-    this.storage = swarmMessageStorage;
+    this.storage = swarmMessageStorage as ISwarmMessageStore<P, DbType>;
   }
 
   /**

@@ -444,7 +444,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       | LogEntry<TStoreValue>
       | Error
       | undefined;
-    debugger;
+
     return entryRawOrStoreValue;
   };
 

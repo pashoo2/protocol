@@ -21,12 +21,19 @@ export interface ISwarmMessagesDatabaseDeleteMessageDescription<
    */
   id: TSwarmStoreDatabaseEntityKey<P>;
   /**
-   * a key or a hash of a message which was removed
+   * hash of a message which was removed
    *
    * @type {string}
    * @memberof ISwarmMessagesDatabaseMessageDescription
    */
-  keyOrIdRemoved?: string;
+  idDeleted: TSwarmStoreDatabaseEntityKey<P> | undefined;
+  /**
+   * a key of a message which was removed
+   *
+   * @type {string}
+   * @memberof ISwarmMessagesDatabaseMessageDescription
+   */
+  key: string | undefined;
   /**
    * User's id who removed the message.
    *

@@ -350,13 +350,15 @@ export interface ISwarmMessageStoreMessagingMethods<
    *
    * @param {string} dbName
    * @param {TSwarmStoreDatabaseIteratorMethodArgument<P>} options
-   * @returns {Promise<(ISwarmMessageStoreMessagingRequestWithMetaResult<P>)[]>}
+   * @returns {Promise<(ISwarmMessageStoreMessagingRequestWithMetaResult<P> | undefined)[]>}
    * @memberof ISwarmMessageStoreMessagingMethods
    */
   collectWithMeta(
     dbName: string,
     options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>
-  ): Promise<ISwarmMessageStoreMessagingRequestWithMetaResult<P>[]>;
+  ): Promise<
+    Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P> | undefined>
+  >;
 }
 
 /**
