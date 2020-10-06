@@ -15,7 +15,11 @@ import { isValidSwarmMessageDecryptedFormat } from './swarm-message-store-valida
 export function validateSwarmMessageWithMeta<P extends ESwarmStoreConnector>(
   swarmMessageWithMeta: any
 ): swarmMessageWithMeta is ISwarmMessageStoreMessageWithMeta<P> {
-  assert(swarmMessageWithMeta, 'Swarm message with meta is not defined');
+  if (!swarmMessageWithMeta) {
+    alert('No swarm message with meta');
+    debugger;
+  }
+  assert(!!swarmMessageWithMeta, 'Swarm message with meta is not defined');
   assert(
     typeof swarmMessageWithMeta === 'object',
     'Swarm message with meta should be an object'

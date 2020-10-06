@@ -233,8 +233,10 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       return entryRaw;
     }
     try {
-      if (this.isKVStore && entryRaw.payload.key !== keyOrHash) {
-        return undefined;
+      if (this.isKVStore) {
+        if (entryRaw.payload.key !== keyOrHash) {
+          return undefined;
+        }
       } else if (entryRaw.hash !== keyOrHash) {
         return undefined;
       }

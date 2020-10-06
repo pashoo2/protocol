@@ -131,6 +131,7 @@ export const setCacheUpdateListener = <
   const listener = (
     messages: TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined
   ) => {
+    debugger;
     cacheUpdateListener(messages);
   };
   db.emitter.addListener(

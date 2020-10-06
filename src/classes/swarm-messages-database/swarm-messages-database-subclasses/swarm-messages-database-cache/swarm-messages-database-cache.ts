@@ -185,6 +185,18 @@ export class SwarmMessagesDatabaseCache<
   protected _messagesRemovedFromCache?: TMessagesRemovedFromCache<P, DbType>;
 
   /**
+   * Keys to update after the current cache update proccess will
+   * be overed.
+   *
+   * @protected
+   * @type {Set<TSwarmStoreDatabaseEntityKey<P>>}
+   * @memberof SwarmMessagesDatabaseCache
+   */
+  protected _messagesKeysToUpdateAfterCurrentCacheUpdate?: Set<
+    TSwarmStoreDatabaseEntityKey<P>
+  >;
+
+  /**
    * Promise which will be resolved on next batch
    * of messages cache update will be overed.
    *
@@ -304,7 +316,7 @@ export class SwarmMessagesDatabaseCache<
     if (messagesAddingResults.includes(true)) {
       // if any message was added to the cache, emit the event
       // that the cache was upadated
-      this._emitDbMessagesWithAddedMessagesCaheUpdated();
+      this._emitDbMessagesWithAddedMessagesCaheUpdatedWithAddedOrDeletedFromTheCurrent();
     }
   }, SWARM_MESSAGES_DATABASE_CACHE_ADD_TO_CACHE_MESSAGES_PENDING_DEBOUNCE_MS);
 
@@ -371,9 +383,10 @@ export class SwarmMessagesDatabaseCache<
     if (!this._checkIsReady()) {
       return;
     }
+    debugger;
     this._createMessagesRemovedStoreIfNotExists();
     await this._addMessageToRemoved(messageUniqAddress, key);
-    this._emitDbMessagesWithAddedMessagesCaheUpdated();
+    debugger;
     this._planResetAddedAndDeletedMessages();
   };
 
@@ -444,7 +457,7 @@ export class SwarmMessagesDatabaseCache<
       this._createMessagesCachedStore();
     }
     await this._updateCacheForKeyInKeyValueStore(key);
-    this._planCacheUpdateForKey(key);
+    this._planCacheUpdateForKeyIfCacheUpdateActive(key);
   }
 
   protected _addMessageInAddToCachePendingQueue(
@@ -689,6 +702,30 @@ export class SwarmMessagesDatabaseCache<
     }
   }
 
+  /**
+   * When cache updated but a value was removed or writed
+   * directly in this._messagesCache, the same reference
+   * will be emitted.
+   * And libraries which are related on immutability will fail.
+   * So a new instance of Map must be emitted.
+   *
+   * @protected
+   * @memberof SwarmMessagesDatabaseCache
+   */
+  protected _emitDbMessagesWithAddedMessagesCaheUpdatedWithAddedOrDeletedFromTheCurrent() {
+    debugger;
+    const messagesCached = this._messagesCachedComposedWithAddedAndRemoved;
+
+    if (messagesCached) {
+      this._emitCacheUpdated(
+        new Map(messagesCached) as TSwarmMessageDatabaseMessagesCached<
+          P,
+          DbType
+        >
+      );
+    }
+  }
+
   protected _setMessagesCacheUpdateInProgress = (
     promisePending: Promise<TSwarmMessageDatabaseMessagesCached<P, DbType>>
   ) => {
@@ -699,12 +736,15 @@ export class SwarmMessagesDatabaseCache<
   protected _unsetCacheUpdateInProgress = () => {
     this._pendingMessagesUpdatePromise = undefined;
   };
+
   protected _setNewCacheUpdatePlanned = () => {
     this._isSwarmMessagesCacheUpdateRequested = true;
   };
+
   protected _unsetNewCacheUpdatePlanned = () => {
     this._isSwarmMessagesCacheUpdateRequested = false;
   };
+
   /**
    * Whether the limit of failed attempts reached
    *
@@ -719,6 +759,7 @@ export class SwarmMessagesDatabaseCache<
       SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_ITEMS_MAX_PAGE_QUERY_ATTEMPTS_DEFAULT
     );
   };
+
   /**
    * Get options for query for a batch of messages
    *
@@ -735,6 +776,7 @@ export class SwarmMessagesDatabaseCache<
       [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.neq]: messagesReadAddressesOrKeysToExclude,
     } as TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>;
   };
+
   /**
    * Request idle callback and resolves
    * with a time browser will be do nothing
@@ -1017,63 +1059,128 @@ export class SwarmMessagesDatabaseCache<
             `Failed to read a messages stored for the key ${key}: ${message.message}`
           );
         }
-        if (validateSwarmMessageWithMeta(message)) {
-          return this._addMessageWithMetaToCache(messagesCached, message);
+        if (message && validateSwarmMessageWithMeta(message)) {
+          this._addMessageWithMetaToCache(messagesCached, message);
+          this._emitDbMessagesWithAddedMessagesCaheUpdatedWithAddedOrDeletedFromTheCurrent();
+          return;
         }
       }
-      return this._removeKeyValueFromKVStoreCache(messagesCached, key);
+      this._removeKeyValueFromKVStoreCache(messagesCached, key);
+      this._emitDbMessagesWithAddedMessagesCaheUpdatedWithAddedOrDeletedFromTheCurrent();
+    }
+  }
+
+  protected _unsetKeysPlannedToUpdate() {
+    if (!this._isKeyValueDatabase) {
+      throw new Error('It should be a key value store to support this feature');
+    }
+    this._messagesKeysToUpdateAfterCurrentCacheUpdate = undefined;
+  }
+
+  protected _getStorageForKeysToRequestAfterTheCurrentCacheUpdate(): Set<
+    TSwarmStoreDatabaseEntityKey<P>
+  > {
+    if (!this._isKeyValueDatabase) {
+      throw new Error('It should be a key value store to support this feature');
+    }
+
+    const messagesKeysToUpdateStore = this
+      ._messagesKeysToUpdateAfterCurrentCacheUpdate;
+
+    if (!messagesKeysToUpdateStore) {
+      throw new Error('There is no _messagesKeysToUpdateAfterCacheUpdate');
+    }
+    return messagesKeysToUpdateStore;
+  }
+
+  protected _createStorageForKeysToRequestAfterTheCurrentCacheUpdate() {
+    this._messagesKeysToUpdateAfterCurrentCacheUpdate = new Set();
+  }
+
+  protected _addKeyToRequestAfterCurrentCacheUpdate(
+    key: TSwarmStoreDatabaseEntityKey<P>
+  ) {
+    this._getStorageForKeysToRequestAfterTheCurrentCacheUpdate().add(key);
+  }
+
+  protected _planCacheUpdateForKey(key: TSwarmStoreDatabaseEntityKey<P>): void {
+    this._checkIsReady();
+    if (!this._messagesKeysToUpdateAfterCurrentCacheUpdate) {
+      this._createStorageForKeysToRequestAfterTheCurrentCacheUpdate();
+    }
+    this._addKeyToRequestAfterCurrentCacheUpdate(key);
+  }
+
+  protected _planCacheUpdateForKeyIfCacheUpdateActive(
+    key: TSwarmStoreDatabaseEntityKey<P>
+  ): void {
+    if (this._pendingMessagesUpdatePromise) {
+      this._planCacheUpdateForKey(key);
+    }
+  }
+
+  protected _updateCacheForKeyInKeyValueStoreIfCacheExists(
+    key: TSwarmStoreDatabaseEntityKey<P>
+  ): undefined | Promise<void> {
+    if (this._messagesCached) {
+      return this._updateCacheForKeyInKeyValueStore(key);
     }
   }
 
   protected _updateKeysPlannedToUpdate = async () => {
     this._checkIsReady();
-    if (!this._messagesRemovedFromCache) {
-      return;
-    }
-    if (!this._isKeyValueDatabase) {
-      throw new Error('This operation is allowed only for a key-value stores');
-    }
     if (!this._messagesCached) {
       return;
     }
-    return Promise.all(
-      Array.from(
-        (this._messagesRemovedFromCache as Set<
-          TSwarmStoreDatabaseEntityKey<P>
-        >).values()
-      ).map((key) =>
-        this._updateCacheForKeyInKeyValueStore(key).catch((err) => {
-          console.error(new Error(`Failed to read value for the key ${key}`));
-          throw err;
-        })
-      )
+
+    const keysToUpdateList = Array.from(
+      this._getStorageForKeysToRequestAfterTheCurrentCacheUpdate().values()
     );
+    const countOverall = keysToUpdateList.length;
+    let countReadFromStore = 0;
+
+    while (countReadFromStore < countOverall) {
+      const currentPageItemsToRead = await this._getItemsCountCanBeReadForCurrentIdlePeriod();
+      const keysToRead = keysToUpdateList.slice(
+        countReadFromStore - 1,
+        Math.max(countReadFromStore - 1 + currentPageItemsToRead, countOverall)
+      );
+
+      debugger;
+      countReadFromStore = countReadFromStore + currentPageItemsToRead;
+      await Promise.all(
+        keysToRead.map((key) =>
+          this._updateCacheForKeyInKeyValueStore(key).catch((err) => {
+            console.error(new Error(`Failed to read value for the key ${key}`));
+            throw err;
+          })
+        )
+      );
+    }
   };
 
-  protected _planCacheUpdateForKey(key: TSwarmStoreDatabaseEntityKey<P>) {
-    this._checkIsReady();
-    this._createMessagesRemovedStoreIfNotExists();
-    this._messagesRemovedFromCache?.add(key);
-  }
-
-  protected async _addMessageKeyToRemovedKeyValueStore(
+  protected async _addKeyToRemoved(
     key: TSwarmStoreDatabaseEntityKey<P>
   ): Promise<void> {
     debugger;
     await this._waitTillMessagesCacheUpateBatchOver();
-    debugger;
-    if (this._messagesCached) {
-      await this._updateCacheForKeyInKeyValueStore(key);
-    }
-    this._planCacheUpdateForKey(key);
+    await this._updateCacheForKeyInKeyValueStoreIfCacheExists(key);
+    this._planCacheUpdateForKeyIfCacheUpdateActive(key);
   }
 
   protected _addMessageAddressAndKeyToRemovedFeedStore(
     messageUniqAddress: TSwarmStoreDatabaseEntityAddress<P>
   ) {
-    (this._messagesRemovedFromCache as Set<
+    const store = this._messagesRemovedFromCache as Set<
       TSwarmStoreDatabaseEntityAddress<P>
-    >).add(messageUniqAddress);
+    >;
+
+    if (!store.has(messageUniqAddress)) {
+      (this._messagesRemovedFromCache as Set<
+        TSwarmStoreDatabaseEntityAddress<P>
+      >).add(messageUniqAddress);
+      this._emitDbMessagesWithAddedMessagesCaheUpdatedWithAddedOrDeletedFromTheCurrent();
+    }
   }
 
   protected async _addMessageToRemoved(
@@ -1093,7 +1200,7 @@ export class SwarmMessagesDatabaseCache<
       if (!key) {
         throw new Error('A key must be defined');
       }
-      return this._addMessageKeyToRemovedKeyValueStore(
+      return this._addKeyToRemoved(
         (key as unknown) as TSwarmStoreDatabaseEntityKey<P>
       );
     } else {
@@ -1280,6 +1387,30 @@ export class SwarmMessagesDatabaseCache<
   };
 
   /**
+   * Returns a count of items can be read from the store
+   * during the current browser's idle period.
+   *
+   * @protected
+   * @returns
+   * @memberof SwarmMessagesDatabaseCache
+   */
+  protected async _getItemsCountCanBeReadForCurrentIdlePeriod(): Promise<
+    number
+  > {
+    const timeAvailToRun = await this._requestTimeBrowserIdle();
+
+    if (!timeAvailToRun) {
+      // if there is no free time to run
+      // waiting for the time
+      return 0;
+    }
+    // the maximum messages to read for max time remaining THROTTLING_UTILS_IDLE_CALLBACK_TIME_REMAINING_MAX_MS
+    // is equal to SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_ITEMS_COUNT_PER_PAGE_DEFAULT. We need to calculate
+    // messages to read for timeAvailToRun.
+    return this._getItemsCountToReadForIdlePeriod(timeAvailToRun);
+  }
+
+  /**
    * Performs swarm messages cache update by
    * quering database.
    * Query performed only when the brawser is
@@ -1309,22 +1440,8 @@ export class SwarmMessagesDatabaseCache<
       this._checkIsReady();
 
       const resolveMessagesUpatingBatchPromise = this._createMessagesCacheUpdatingBatchPromise();
-      // time browser decide it will be idle.
-      const timeAvailToRun = await this._requestTimeBrowserIdle();
+      const currentPageItemsToRead = await this._getItemsCountCanBeReadForCurrentIdlePeriod();
 
-      if (!timeAvailToRun) {
-        // if there is no free time to run
-        // waiting for the time
-        continue;
-      }
-
-      // the maximum messages to read for max time remaining THROTTLING_UTILS_IDLE_CALLBACK_TIME_REMAINING_MAX_MS
-      // is equal to SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_ITEMS_COUNT_PER_PAGE_DEFAULT. We need to calculate
-      // messages to read for timeAvailToRun.
-      const currentPageItemsToRead = this._getItemsCountToReadForIdlePeriod(
-        timeAvailToRun
-      );
-      debugger;
       if (!currentPageItemsToRead) {
         // nothing to read at this iteration
         continue;
@@ -1350,7 +1467,9 @@ export class SwarmMessagesDatabaseCache<
       );
       debugger;
       const whetherMessagesReadLessThanRequested =
-        messagesToReadAtTheBatch > 50 && !getItemsCount(messagesReadAtBatch);
+        messagesToReadAtTheBatch > 50 &&
+        currentPageItemsToRead > 6 &&
+        !getItemsCount(messagesReadAtBatch);
       // TODO - ORBIT DB counts also removed items, so we can request more than
       // it will return
       // getItemsCount(messagesReadAtBatch) < currentPageItemsToRead;
@@ -1541,7 +1660,9 @@ export class SwarmMessagesDatabaseCache<
     });
     if (this._isKeyValueDatabase) {
       debugger;
-      await this._updateKeysPlannedToUpdate();
+      const pendingKeysUpdate = this._updateKeysPlannedToUpdate();
+      this._unsetKeysPlannedToUpdate();
+      await pendingKeysUpdate;
     }
     if (resolvePromise) {
       // clear store with messages added
