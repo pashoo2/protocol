@@ -25,9 +25,7 @@ import { TSwarmMessageSerialized } from '../swarm-message/swarm-message-construc
 
 export type TSwarmStoreDatabaseType<
   P extends ESwarmStoreConnector
-> = P extends ESwarmStoreConnector.OrbitDB
-  ? ESwarmStoreConnectorOrbitDbDatabaseType
-  : undefined;
+> = ESwarmStoreConnectorOrbitDbDatabaseType;
 
 export type TSwarmStoreDatabaseEntityUniqueIndex<
   P extends ESwarmStoreConnector,

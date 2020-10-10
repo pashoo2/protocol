@@ -419,3 +419,15 @@ export interface ISwarmMessagesDatabaseCacheConstructor<
     options: ISwarmMessagesDatabaseCacheOptions<P, DbType>
   ): ISwarmMessagesDatabaseCache<P, DbType>;
 }
+
+export interface ISwarmMessagesDatabaseMesssageMeta<
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>
+> {
+  messageUniqAddress: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+    ? TSwarmStoreDatabaseEntityAddress<P> | undefined
+    : TSwarmStoreDatabaseEntityAddress<P>;
+  key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+    ? TSwarmStoreDatabaseEntityKey<P>
+    : undefined;
+}

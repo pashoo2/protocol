@@ -28,7 +28,10 @@ const getValueStateMeasurement = <T = unknown>(value: T): TSimpleTypes | T => {
   if (value instanceof ArrayBuffer) {
     return value.byteLength;
   }
-  if (value instanceof Map || value instanceof Set) {
+  if (value instanceof Map) {
+    return value.size;
+  }
+  if (value instanceof Set) {
     return value.size;
   }
   if (Object.getPrototypeOf(value) === SIMPLE_OBJECT_PROTOTYPE) {

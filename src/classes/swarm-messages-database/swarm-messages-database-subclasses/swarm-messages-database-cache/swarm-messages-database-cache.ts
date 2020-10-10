@@ -45,7 +45,7 @@ import { concatMaps } from '../../../../utils/common-utils/common-utils-maps';
 import { timeout } from '../../../../utils/common-utils/common-utils-timer';
 import { debounce } from 'utils/throttling-utils';
 import { SWARM_MESSAGES_DATABASE_CACHE_ADD_TO_CACHE_MESSAGES_PENDING_DEBOUNCE_MS } from './swarm-messages-database-cache.const';
-import { TMessagesRemovedFromCache } from './swarm-messages-database-cache.types';
+import { TSwarmMessagesDatabaseCacheMessagesRemovedFromCache } from './swarm-messages-database-cache.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseIteratorOption } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 
 export class SwarmMessagesDatabaseCache<
@@ -85,7 +85,7 @@ export class SwarmMessagesDatabaseCache<
   protected _filterMessagesCached = memoizeLastReturnedValue(
     (
       messagesCached: TSwarmMessageDatabaseMessagesCached<P, DbType>,
-      messagesAddressesAndKeysMarkedAsRemoved?: TMessagesRemovedFromCache<
+      messagesAddressesAndKeysMarkedAsRemoved?: TSwarmMessagesDatabaseCacheMessagesRemovedFromCache<
         P,
         DbType
       >
@@ -112,7 +112,7 @@ export class SwarmMessagesDatabaseCache<
         | TSwarmMessageDatabaseMessagesCached<P, DbType>
         | undefined,
       messagesAddressesAndKeysMarkedAsRemoved:
-        | TMessagesRemovedFromCache<P, DbType>
+        | TSwarmMessagesDatabaseCacheMessagesRemovedFromCache<P, DbType>
         | undefined
     ) =>
       this._filterMessagesCached(
@@ -182,7 +182,10 @@ export class SwarmMessagesDatabaseCache<
    *   >}
    * @memberof SwarmMessagesDatabaseCache
    */
-  protected _messagesRemovedFromCache?: TMessagesRemovedFromCache<P, DbType>;
+  protected _messagesRemovedFromCache?: TSwarmMessagesDatabaseCacheMessagesRemovedFromCache<
+    P,
+    DbType
+  >;
 
   /**
    * Keys to update after the current cache update proccess will
