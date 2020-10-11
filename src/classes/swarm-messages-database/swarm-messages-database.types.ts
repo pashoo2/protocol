@@ -21,7 +21,6 @@ import { ESwarmMessageStoreEventNames } from '../swarm-message-store/swarm-messa
 import { TTypedEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 import { ESwarmMessagesDatabaseCacheEventsNames } from './swarm-messages-database.const';
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
-import { TSwarmStoreDatabaseEntityUniqueIndex } from '../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageStoreMessageWithMeta } from '../swarm-message-store/swarm-message-store.types';
 
 export type TSwarmMessageDatabaseMessagesCached<

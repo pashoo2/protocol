@@ -5,7 +5,10 @@ import {
   TSwarmStoreDatabaseType,
 } from '../../../swarm-store-class/swarm-store-class.types';
 import { ESwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.const';
-import { ISwarmMessagesDatabaseMesssageMeta } from '../../swarm-messages-database.types';
+import {
+  ISwarmMessagesDatabaseMesssageMeta,
+  TSwarmMessageDatabaseMessagesCached,
+} from '../../swarm-messages-database.types';
 import { ISwarmMessageInstanceDecrypted } from '../../../swarm-message/swarm-message-constructor.types';
 
 export type TSwarmMessagesDatabaseCacheMessagesRemovedFromCache<
@@ -25,19 +28,23 @@ export interface ISwarmMessagesDatabaseMessagesCacheMessageDescription<
 
 export interface ISwarmMessagesDatabaseMessagesCacheStoreCommon<
   P extends ESwarmStoreConnector,
-  DbType extends TSwarmStoreDatabaseType<P>
+  DbType extends TSwarmStoreDatabaseType<P>,
+  IsTemp extends boolean
 > {
-  readonly tempCacheStore?: ISwarmMessagesDatabaseMessagesCacheStoreCommon<
-    P,
-    DbType
-  >;
+  /**
+   * Whether it is a temporary storage
+   *
+   * @type {IsTemp}
+   * @memberof ISwarmMessagesDatabaseMessagesCacheStoreCommon
+   */
+  readonly isTemp: IsTemp;
   /**
    * Returns all messages stored in cache
    *
-   * @returns {Array<ISwarmMessagesDatabaseMesssageMeta<P, DbType>>}
+   * @returns {TSwarmMessageDatabaseMessagesCached<P, DbType>}
    * @memberof ISwarmMessagesDatabaseMessagesCacheStore
    */
-  getAll(): Array<ISwarmMessagesDatabaseMesssageMeta<P, DbType>>;
+  readonly entries: TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined;
   /**
    * Read message from the cache
    *
@@ -77,8 +84,9 @@ export interface ISwarmMessagesDatabaseMessagesCacheStoreCommon<
 
 export interface ISwarmMessagesDatabaseMessagesCacheStore<
   P extends ESwarmStoreConnector,
-  DbType extends TSwarmStoreDatabaseType<P>
-> extends ISwarmMessagesDatabaseMessagesCacheStoreCommon<P, DbType> {
+  DbType extends TSwarmStoreDatabaseType<P>,
+  IsTemp extends boolean
+> extends ISwarmMessagesDatabaseMessagesCacheStoreCommon<P, DbType, IsTemp> {
   /**
    * Get messages to read after the current batch of update will be performed.
    *
@@ -112,29 +120,23 @@ export interface ISwarmMessagesDatabaseMessagesCacheStore<
    *
    * @memberof ISwarmMessagesDatabaseMessagesCachedStore
    */
-  linkTempStore(
-    tempCacheStore: ISwarmMessagesDatabaseMessagesCacheStoreCommon<P, DbType>
+  updateByTempStore(
+    tempCacheStore: ISwarmMessagesDatabaseMessagesCacheStoreCommon<
+      P,
+      DbType,
+      any
+    >
   ): void;
-  /**
-   * Unlink a temp store
-   *
-   * @memberof ISwarmMessagesDatabaseMessagesCachedStore
-   */
-  unlinkTempStore(): void;
-  /**
-   * Update all messages in cache with messages stored in the temp store
-   *
-   * @memberof ISwarmMessagesDatabaseMessagesCacheStore
-   */
-  updateByTempStore(): void;
 }
 
 export interface ISwarmMessagesDatabaseMessagesCacheStoreConstructor<
   P extends ESwarmStoreConnector,
-  DbType extends TSwarmStoreDatabaseType<P>
+  DbType extends TSwarmStoreDatabaseType<P>,
+  IsTemp extends boolean
 > {
   constructor(
     dbType: DbType,
-    isTemp: boolean
-  ): ISwarmMessagesDatabaseMessagesCacheStore<P, DbType>;
+    dbName: string,
+    isTemp: IsTemp
+  ): ISwarmMessagesDatabaseMessagesCacheStore<P, DbType, IsTemp>;
 }
