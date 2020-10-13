@@ -1,8 +1,10 @@
 import assert from 'assert';
-
 import { SwarmMessagesDatabaseMessagesCachedStoreCore } from '../swarm-messages-database-messages-cached-store-core/swarm-messages-database-messages-cached-store-core';
 import { ESwarmStoreConnector } from '../../../../../swarm-store-class/swarm-store-class.const';
-import { TSwarmMessagesDatabaseMessagesCachedStoreMessagesMetaHash } from '../../swarm-messages-database-messages-cached-store.types';
+import {
+  TSwarmMessagesDatabaseMessagesCachedStoreMessagesMetaHash,
+  ISwarmMessagesDatabaseMessagesCachedStoreCore,
+} from '../../swarm-messages-database-messages-cached-store.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import {
   ISwarmMessagesDatabaseMesssageMeta,
@@ -14,12 +16,19 @@ import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../../..
 export class SwarmMessagesDatabaseMessagesCachedStoreKeyValue<
   P extends ESwarmStoreConnector,
   IsTemp extends boolean
-> extends SwarmMessagesDatabaseMessagesCachedStoreCore<
-  P,
-  ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
-  IsTemp,
-  TSwarmMessagesDatabaseMessagesCachedStoreMessagesMetaHash
-> {
+>
+  extends SwarmMessagesDatabaseMessagesCachedStoreCore<
+    P,
+    ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
+    IsTemp,
+    TSwarmMessagesDatabaseMessagesCachedStoreMessagesMetaHash
+  >
+  implements
+    ISwarmMessagesDatabaseMessagesCachedStoreCore<
+      P,
+      ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
+      IsTemp
+    > {
   get entriesCached(): TSwarmMessageDatabaseMessagesCached<
     P,
     ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
@@ -31,14 +40,27 @@ export class SwarmMessagesDatabaseMessagesCachedStoreKeyValue<
     ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
   >;
 
+  get = (
+    meta: ISwarmMessagesDatabaseMesssageMeta<
+      P,
+      ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+    >
+  ):
+    | ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector>
+    | undefined => {
+    this._beforeGet(meta);
+    return this._getMessageCachedByMeta(meta);
+  };
+
   set = (
     entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<
       P,
       ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
     >
   ): void => {
-    super.set(entry);
+    this._beforeSet(entry);
     this._setMessageInEntriesCached(entry);
+    this._incMessagesInCacheVersion();
   };
 
   unset = (
@@ -47,14 +69,36 @@ export class SwarmMessagesDatabaseMessagesCachedStoreKeyValue<
       ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
     >
   ): void => {
-    super.unset(meta);
-
-    const key = this._getMessageAddressFromMeta(meta);
-    if (!key) {
-      throw new Error('A key is not defined');
-    }
-    this.entriesCached.delete(key);
+    this._beforeUnset(meta);
+    this._unsetMessageInEntriesCached(meta);
+    this._incMessagesInCacheVersion();
   };
+
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  updateWithEntries = (this._isTemp === true
+    ? undefined
+    : (
+        entries: TSwarmMessageDatabaseMessagesCached<
+          P,
+          ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+        >
+      ): void => {
+        this._updateCacheWithEntries(entries);
+        this._incMessagesInCacheVersion();
+      }) as ISwarmMessagesDatabaseMessagesCachedStoreCore<
+    P,
+    ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
+    IsTemp
+  >['updateWithEntries'];
+
+  protected _whetherEntryIsExists(
+    entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<
+      P,
+      ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+    >
+  ): boolean {
+    return !!this._getMessageCachedByMeta(entry.messageMeta);
+  }
 
   protected _checkMeta(
     meta: ISwarmMessagesDatabaseMesssageMeta<
@@ -64,6 +108,25 @@ export class SwarmMessagesDatabaseMessagesCachedStoreKeyValue<
   ): void {
     super._checkMeta(meta);
     assert(meta.key, 'Key must be defined in meta information');
+  }
+
+  protected _getMessageCachedByMeta(
+    meta: ISwarmMessagesDatabaseMesssageMeta<
+      P,
+      ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+    >
+  ):
+    | ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector>
+    | undefined {
+    this._checkMeta(meta);
+
+    const messageKey = this._getMessageKeyFromMeta(meta);
+
+    if (!messageKey) {
+      console.warn('Message key is absent in meta information');
+      return;
+    }
+    return this._entriesCached.get(messageKey);
   }
 
   protected _getMessageInfo(
@@ -116,5 +179,19 @@ export class SwarmMessagesDatabaseMessagesCachedStoreKeyValue<
       throw new Error('A key is not defined');
     }
     this.entriesCached.set(key, this._getMessageInfo(entry));
+  }
+
+  protected _updateCacheWithEntries(
+    entries: TSwarmMessageDatabaseMessagesCached<
+      P,
+      ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+    >
+  ): void {
+    this._entriesCached = new Map(
+      entries
+    ) as TSwarmMessageDatabaseMessagesCached<
+      P,
+      ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+    >;
   }
 }

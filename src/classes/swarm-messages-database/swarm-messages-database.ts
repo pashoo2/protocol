@@ -814,9 +814,13 @@ export class SwarmMessagesDatabase<
     if (!this._dbType) {
       throw new Error('Failed to defined database type');
     }
+    if (!this._dbName) {
+      throw new Error('Database name should not be empty');
+    }
     return {
       dbInstance: this,
       dbType: this._dbType,
+      dbName: this._dbName,
     };
   }
 

@@ -3,10 +3,9 @@ import { ESwarmStoreConnector } from '../../../../../swarm-store-class/swarm-sto
 import {
   ISwarmMessagesDatabaseMessagesCachedStoreCore,
   TSwarmMessagesDatabaseMessagesCachedStoreMessagesMetaHash,
-  ISwarmMessagesDatabaseMessagesCacheStoreExtendedDefferedMethods,
 } from '../../swarm-messages-database-messages-cached-store.types';
 import {
-  ISwarmMessagesDatabaseMessagesCacheStore,
+  ISwarmMessagesDatabaseMessagesCacheStoreNonTemp,
   ISwarmMessagesDatabaseMessagesCacheMessageDescription,
 } from '../../../swarm-messages-database-cache/swarm-messages-database-cache.types';
 import { ISwarmMessagesDatabaseMesssageMeta } from '../../../../swarm-messages-database.types';
@@ -19,8 +18,7 @@ import { isValidSwarmMessageDecryptedFormat } from '../../../../../swarm-message
 import { ISwarmMessageInstanceDecrypted } from '../../../../../swarm-message/swarm-message-constructor.types';
 import { SWARM_MESSGES_DATABASE_SWARM_MESSAGES_CACHED_SWARM_MESSAGES_META_HASH_DELIMETER } from 'classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-cached-store/swarm-messages-database-messages-cached-store.const';
 import { whetherSwarmMessagesDecryptedAreEqual } from '../../../../../swarm-message/swarm-message-utils/swarm-message-utils-common/swarm-message-utils-common-decrypted';
-import { memoizeLastReturnedValue } from '../../../../../../utils/data-cache-utils/data-cache-utils-memoization';
-import { isDefined } from '../../../../../../utils/common-utils/common-utils-main';
+import { TSwarmMessagesDatabaseMessagesCacheStore } from '../../../swarm-messages-database-cache/swarm-messages-database-cache.types';
 
 export class SwarmMessagesDatabaseMessagesCachedStoreCore<
   P extends ESwarmStoreConnector,
@@ -31,12 +29,8 @@ export class SwarmMessagesDatabaseMessagesCachedStoreCore<
   implements
     Omit<
       ISwarmMessagesDatabaseMessagesCachedStoreCore<P, DbType, IsTemp>,
-      'entriesCached'
+      'entriesCached' | 'get' | 'set' | 'unset' | 'updateWithEntries'
     > {
-  public get entries() {
-    return this._entries(this._messagesCachedVersion);
-  }
-
   public get isTemp(): IsTemp {
     return this._isTemp;
   }
@@ -52,48 +46,20 @@ export class SwarmMessagesDatabaseMessagesCachedStoreCore<
     ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>
   >();
 
-  protected _entries = memoizeLastReturnedValue((version) => {
-    return Array.from(this._messagesCached.values()).filter(isDefined);
-  });
-
   protected get _isInitialized(): boolean {
     return !!this._cachedStore;
   }
 
   constructor(
-    protected _cachedStore: ISwarmMessagesDatabaseMessagesCacheStoreExtendedDefferedMethods<
+    protected _cachedStore: TSwarmMessagesDatabaseMessagesCacheStore<
       P,
       DbType,
       IsTemp
     >,
-    protected _dbType: DbType,
     protected _isTemp: IsTemp,
+    protected _dbType: DbType,
     protected _dbName: string
   ) {}
-
-  get = (
-    meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>
-  ):
-    | ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>
-    | undefined => {
-    this._checkIsInitialized();
-    this._checkMeta(meta);
-    return this._getEntryFromCache(meta);
-  };
-
-  set = (
-    entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>
-  ): void => {
-    this._checkIsInitialized();
-    this._checkEntryWithMeta(entry);
-    this._setEntryInCache(entry);
-  };
-
-  unset = (meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>): void => {
-    this._checkIsInitialized();
-    this._checkMeta(meta);
-    this._unsetEntryInCache(meta);
-  };
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   add = (this._isTemp === true
@@ -103,6 +69,9 @@ export class SwarmMessagesDatabaseMessagesCachedStoreCore<
       ): void => {
         this._checkIsInitialized();
         this._checkEntryWithMeta(entry);
+        if (this._whetherEntryIsExists(entry)) {
+          return;
+        }
         this._addDefferedReadEntryAfterCurrentBatchOfCacheUpdate(
           entry.messageMeta
         );
@@ -127,8 +96,35 @@ export class SwarmMessagesDatabaseMessagesCachedStoreCore<
     IsTemp
   >['remove'];
 
+  protected _beforeGet = (
+    meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>
+  ): void => {
+    this._checkIsInitialized();
+    this._checkMeta(meta);
+  };
+
+  protected _beforeSet = (
+    entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>
+  ): void => {
+    this._checkIsInitialized();
+    this._checkEntryWithMeta(entry);
+  };
+
+  protected _beforeUnset = (
+    meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>
+  ): void => {
+    this._checkIsInitialized();
+    this._checkMeta(meta);
+  };
+
+  protected _whetherEntryIsExists(
+    entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>
+  ): boolean {
+    return false;
+  }
+
   protected _checkIsInitialized(): this is {
-    _cachedStore: ISwarmMessagesDatabaseMessagesCacheStore<P, DbType, IsTemp>;
+    _cachedStore: ISwarmMessagesDatabaseMessagesCacheStoreNonTemp<P, DbType>;
   } {
     assert(this._cachedStore, 'The isnstance is not initialized');
     return true;
@@ -178,14 +174,6 @@ export class SwarmMessagesDatabaseMessagesCachedStoreCore<
     return `${meta.messageUniqAddress}${SWARM_MESSGES_DATABASE_SWARM_MESSAGES_CACHED_SWARM_MESSAGES_META_HASH_DELIMETER}${meta.key}` as MetaHash;
   }
 
-  protected _getEntryFromCache(
-    meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>
-  ):
-    | ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>
-    | undefined {
-    return this._messagesCached.get(this._getMetaHash(meta));
-  }
-
   protected _incMessagesInCacheVersion() {
     this._messagesCachedVersion += 1;
   }
@@ -217,31 +205,11 @@ export class SwarmMessagesDatabaseMessagesCachedStoreCore<
     }
   }
 
-  protected _setEntryInCache(
-    entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>
-  ): void {
-    const entryExisting = this._getEntryFromCache(entry.messageMeta);
-
-    this._messagesCached.set(this._getMetaHash(entry.messageMeta), entry);
-    this._incMessagesInCacheVersionIfMessagesNotEquals(entryExisting, entry);
-  }
-
-  protected _unsetEntryInCache(
-    meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>
-  ) {
-    const entryExisting = this._getEntryFromCache(meta);
-
-    this._messagesCached.delete(this._getMetaHash(meta));
-    if (entryExisting) {
-      this._incMessagesInCacheVersion();
-    }
-  }
-
   protected _addDefferedReadEntryAfterCurrentBatchOfCacheUpdate(
     meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>
   ): void {
     if (this._checkIsInitialized()) {
-      this._cachedStore._addToDefferedReadAfterCurrentCacheUpdateBatch(meta);
+      this._cachedStore._addToDefferedReadAfterCurrentCacheUpdateBatch!(meta);
     }
   }
 
@@ -249,7 +217,7 @@ export class SwarmMessagesDatabaseMessagesCachedStoreCore<
     meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>
   ): void {
     if (this._checkIsInitialized()) {
-      this._cachedStore._addToDefferedUpdate(meta);
+      this._cachedStore._addToDefferedUpdate!(meta);
     }
   }
 }

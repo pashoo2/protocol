@@ -308,6 +308,7 @@ export interface ISwarmMessagesDatabaseCacheOptions<
   DbType extends TSwarmStoreDatabaseType<P>
 > {
   dbType: DbType;
+  dbName: string;
   dbInstance: ISwarmMessagesDatabaseCacheOptionsDbInstance<P, DbType>;
 }
 
@@ -381,12 +382,12 @@ export interface ISwarmMessagesDatabaseCache<
    * exists or with nothing if not.
    *
    * @param {ISwarmMessageStoreMessageWithMeta<P>} swarmMessageWithMeta
-   * @returns {Promise<void>}
+   * @returns {Promise<boolean>} - whether the messages was set in the cache or already exists in the cache
    * @memberof ISwarmMessagesDatabaseCache
    */
   addMessage(
     swarmMessageWithMeta: ISwarmMessageStoreMessageWithMeta<P>
-  ): Promise<void>;
+  ): Promise<boolean>;
   /**
    * Delete the messages from the current messages cache.
    * Cache updated by the "update" method will rewrite the
