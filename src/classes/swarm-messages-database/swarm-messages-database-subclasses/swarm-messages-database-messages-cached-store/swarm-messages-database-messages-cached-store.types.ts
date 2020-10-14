@@ -85,6 +85,15 @@ export interface ISwarmMessagesDatabaseMessagesCachedStoreCore<
    */
   unset(meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>): void;
   /**
+   * Update the cache with the entries.
+   *
+   * @param {TSwarmMessageDatabaseMessagesCached<P, DbType>} entries
+   * @memberof ISwarmMessagesDatabaseMessagesCachedStoreCore
+   */
+  updateWithEntries(
+    entries: TSwarmMessageDatabaseMessagesCached<P, DbType>
+  ): void;
+  /**
    * Remove an existing message from the store. Can be a deffered operation.
    *
    * @param {ISwarmMessagesDatabaseMesssageMeta<P, DbType>} meta
@@ -93,10 +102,6 @@ export interface ISwarmMessagesDatabaseMessagesCachedStoreCore<
    */
   remove: IsTemp extends false
     ? (meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>) => void
-    : undefined;
-
-  updateWithEntries: IsTemp extends false
-    ? (entries: TSwarmMessageDatabaseMessagesCached<P, DbType>) => void
     : undefined;
 }
 

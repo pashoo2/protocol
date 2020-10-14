@@ -79,6 +79,13 @@ export interface ISwarmMessagesDatabaseMessagesCacheStoreTemp<
   unset(
     messageCharacteristic: ISwarmMessagesDatabaseMesssageMeta<P, DbType>
   ): void;
+  /**
+   * Update database with messages passed in the argument.
+   *
+   * @param {TSwarmMessageDatabaseMessagesCached<P, DbType>} entries
+   * @memberof ISwarmMessagesDatabaseMessagesCacheStoreTemp
+   */
+  update(entries: TSwarmMessageDatabaseMessagesCached<P, DbType>): void;
 }
 
 export interface ISwarmMessagesDatabaseMessagesCacheStoreNonTemp<

@@ -79,6 +79,10 @@ export class SwarmMessagesDatabaseMessagesCachedStoreTemp<
     return this._cachedStoreImplementation.unset(messageCharacteristic);
   }
 
+  update(entries: TSwarmMessageDatabaseMessagesCached<P, DbType>): void {
+    return this._cachedStoreImplementation.updateWithEntries(entries);
+  }
+
   protected _createCachedStoreImplementation(): ISwarmMessagesDatabaseMessagesCachedStoreCore<
     P,
     DbType,

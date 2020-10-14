@@ -72,21 +72,15 @@ export class SwarmMessagesDatabaseMessagesCachedStoreFeed<
   };
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  updateWithEntries = (this._isTemp === true
-    ? undefined
-    : (
-        entries: TSwarmMessageDatabaseMessagesCached<
-          P,
-          ESwarmStoreConnectorOrbitDbDatabaseType.FEED
-        >
-      ): void => {
-        this._updateCacheWithEntries(entries);
-        this._incMessagesInCacheVersion();
-      }) as ISwarmMessagesDatabaseMessagesCachedStoreCore<
-    P,
-    ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
-    IsTemp
-  >['updateWithEntries'];
+  updateWithEntries(
+    entries: TSwarmMessageDatabaseMessagesCached<
+      P,
+      ESwarmStoreConnectorOrbitDbDatabaseType.FEED
+    >
+  ): void {
+    this._updateCacheWithEntries(entries);
+    this._incMessagesInCacheVersion();
+  }
 
   protected _whetherEntryIsExists(
     entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<
@@ -173,6 +167,6 @@ export class SwarmMessagesDatabaseMessagesCachedStoreFeed<
     >
   ): void {
     this._clearEntriesCached();
-    entries.forEach((value) => this._entriesCached.set(key, value));
+    entries.forEach((value, key) => this._entriesCached.set(key, value));
   }
 }

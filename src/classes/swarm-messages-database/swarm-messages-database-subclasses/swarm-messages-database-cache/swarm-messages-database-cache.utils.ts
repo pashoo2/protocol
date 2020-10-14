@@ -8,6 +8,7 @@ import { ISwarmMessagesDatabaseMesssageMeta } from '../../swarm-messages-databas
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { ISwarmMessagesDatabaseMessagesCacheMessageDescription } from './swarm-messages-database-cache.types';
 import { ISwarmMessageStoreMessageWithMeta } from '../../../swarm-message-store/swarm-message-store.types';
+import { TSwarmStoreDatabaseEntityUniqueIndex } from '../../../swarm-store-class/swarm-store-class.types';
 
 export const checkMessageAddress = <
   P extends ESwarmStoreConnector,
@@ -141,6 +142,50 @@ export const getMessageMetaForMessageWithMeta = <
       : undefined,
     dbType
   );
+};
+
+export const getMessageUniqIndexByMeta = <
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>
+>(
+  messageMeta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>,
+  dbType: DbType
+): TSwarmStoreDatabaseEntityUniqueIndex<P, DbType> => {
+  if (dbType === ESwarmStoreConnectorOrbitDbDatabaseType.FEED) {
+    const { messageUniqAddress } = messageMeta;
+
+    if (!messageUniqAddress) {
+      throw new Error(
+        'Message unique address should be defined for a feed store'
+      );
+    }
+    return (messageUniqAddress as unknown) as TSwarmStoreDatabaseEntityUniqueIndex<
+      P,
+      DbType
+    >;
+  } else {
+    const { key } = messageMeta;
+
+    if (!key) {
+      throw new Error('Message key should be defined for a key-value store');
+    }
+    return (key as unknown) as TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>;
+  }
+};
+
+export const getMessagesUniqIndexesByMeta = <
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>
+>(
+  messagesMeta: Set<ISwarmMessagesDatabaseMesssageMeta<P, DbType>>,
+  dbType: DbType
+): Array<TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>> => {
+  const resultedArray = [];
+
+  for (const messageMeta of messagesMeta) {
+    resultedArray.push(getMessageUniqIndexByMeta(messageMeta, dbType));
+  }
+  return resultedArray;
 };
 
 export const getMessageDescriptionForMessageWithMeta = <
