@@ -89,10 +89,11 @@ export interface ISwarmMessagesDatabaseMessagesCachedStoreCore<
    *
    * @param {TSwarmMessageDatabaseMessagesCached<P, DbType>} entries
    * @memberof ISwarmMessagesDatabaseMessagesCachedStoreCore
+   * @returns {boolean} - whether any messages were updated
    */
   updateWithEntries(
     entries: TSwarmMessageDatabaseMessagesCached<P, DbType>
-  ): void;
+  ): boolean;
   /**
    * Remove an existing message from the store. Can be a deffered operation.
    *

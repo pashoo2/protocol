@@ -84,8 +84,9 @@ export interface ISwarmMessagesDatabaseMessagesCacheStoreTemp<
    *
    * @param {TSwarmMessageDatabaseMessagesCached<P, DbType>} entries
    * @memberof ISwarmMessagesDatabaseMessagesCacheStoreTemp
+   * @returns {boolean} - whether some messages were updated in the cache
    */
-  update(entries: TSwarmMessageDatabaseMessagesCached<P, DbType>): void;
+  update(entries: TSwarmMessageDatabaseMessagesCached<P, DbType>): boolean;
 }
 
 export interface ISwarmMessagesDatabaseMessagesCacheStoreNonTemp<

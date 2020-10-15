@@ -77,9 +77,14 @@ export class SwarmMessagesDatabaseMessagesCachedStoreFeed<
       P,
       ESwarmStoreConnectorOrbitDbDatabaseType.FEED
     >
-  ): void {
-    this._updateCacheWithEntries(entries);
+  ): boolean {
+    const hasUpdatedMessages = this._updateCacheWithEntries(
+      entries,
+      this._entriesCached
+    );
+
     this._incMessagesInCacheVersion();
+    return hasUpdatedMessages;
   }
 
   protected _whetherEntryIsExists(
@@ -154,19 +159,5 @@ export class SwarmMessagesDatabaseMessagesCachedStoreFeed<
       throw new Error('An address must not be empty');
     }
     this._entriesCached.set(address, this._getMessageInfo(entry));
-  }
-
-  protected _clearEntriesCached() {
-    this._entriesCached.clear();
-  }
-
-  protected _updateCacheWithEntries(
-    entries: TSwarmMessageDatabaseMessagesCached<
-      P,
-      ESwarmStoreConnectorOrbitDbDatabaseType.FEED
-    >
-  ): void {
-    this._clearEntriesCached();
-    entries.forEach((value, key) => this._entriesCached.set(key, value));
   }
 }

@@ -8,7 +8,10 @@ import {
   ISwarmMessagesDatabaseMessagesCacheStoreNonTemp,
   ISwarmMessagesDatabaseMessagesCacheMessageDescription,
 } from '../../../swarm-messages-database-cache/swarm-messages-database-cache.types';
-import { ISwarmMessagesDatabaseMesssageMeta } from '../../../../swarm-messages-database.types';
+import {
+  ISwarmMessagesDatabaseMesssageMeta,
+  TSwarmMessageDatabaseMessagesCached,
+} from '../../../../swarm-messages-database.types';
 import {
   TSwarmStoreDatabaseType,
   TSwarmStoreDatabaseEntityKey,
@@ -20,6 +23,8 @@ import { SWARM_MESSGES_DATABASE_SWARM_MESSAGES_CACHED_SWARM_MESSAGES_META_HASH_D
 import { whetherSwarmMessagesDecryptedAreEqual } from '../../../../../swarm-message/swarm-message-utils/swarm-message-utils-common/swarm-message-utils-common-decrypted';
 import { TSwarmMessagesDatabaseMessagesCacheStore } from '../../../swarm-messages-database-cache/swarm-messages-database-cache.types';
 import { ISwarmMessagesDatabaseMessagesCacheStoreExtendedDefferedMethods } from '../../swarm-messages-database-messages-cached-store.types';
+import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../../../swarm-message-store/swarm-message-store.types';
+import { _checkWhetherSameSwarmMessagesDecrypted } from '../../../swarm-messages-database-cache/swarm-messages-database-cache.utils';
 
 export class SwarmMessagesDatabaseMessagesCachedStoreCore<
   P extends ESwarmStoreConnector,
@@ -233,5 +238,59 @@ export class SwarmMessagesDatabaseMessagesCachedStoreCore<
     if (this._checkIsInitialized()) {
       this._cachedStore._addToDefferedUpdate(meta);
     }
+  }
+
+  protected _checkWhetherUpdatValue(
+    source:
+      | ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector>
+      | undefined,
+    target:
+      | ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector>
+      | undefined
+  ): boolean {
+    if (!source && !target) {
+      return false;
+    }
+    if (!source && target) {
+      return true;
+    }
+    if (source === target) {
+      return false;
+    }
+    return !source || !_checkWhetherSameSwarmMessagesDecrypted(source, target);
+  }
+
+  protected _checkWhetherUpdateKey(
+    key: string,
+    value: ISwarmMessageStoreMessagingRequestWithMetaResult<
+      ESwarmStoreConnector
+    >,
+    entriesCached: TSwarmMessageDatabaseMessagesCached<P, DbType>
+  ) {
+    return this._checkWhetherUpdatValue(entriesCached.get(key), value);
+  }
+
+  protected _clearEntriesCached(
+    entriesCached: TSwarmMessageDatabaseMessagesCached<P, DbType>
+  ) {
+    entriesCached.clear();
+  }
+
+  protected _updateCacheWithEntries(
+    entries: TSwarmMessageDatabaseMessagesCached<P, DbType>,
+    entriesCached: TSwarmMessageDatabaseMessagesCached<P, DbType>
+  ): boolean {
+    let hasMessagesUpdated = false;
+    this._clearEntriesCached(entriesCached);
+    entries.forEach((value, key) => {
+      if (!value) {
+        return;
+      }
+      if (this._checkWhetherUpdateKey(key, value, entriesCached)) {
+        entriesCached.set(key, value);
+        hasMessagesUpdated = true;
+      }
+    });
+    return hasMessagesUpdated;
   }
 }

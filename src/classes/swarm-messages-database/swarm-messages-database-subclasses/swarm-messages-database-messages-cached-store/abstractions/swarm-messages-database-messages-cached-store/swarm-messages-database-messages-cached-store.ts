@@ -24,8 +24,6 @@ export class SwarmMessagesDatabaseMessagesCachedStore<
 > extends SwarmMessagesDatabaseMessagesCachedStoreTemp<P, DbType, false>
   implements
     ISwarmMessagesDatabaseMessagesCacheStoreExtendedDefferedMethods<P, DbType> {
-  public readonly isTemp = false;
-
   protected _listDefferedReadAfterCurrentCacheUpdateBatch = new Set<
     ISwarmMessagesDatabaseMesssageMeta<P, DbType>
   >();
@@ -71,14 +69,14 @@ export class SwarmMessagesDatabaseMessagesCachedStore<
     >
   ) {}
 
-  public updateByTempStore = (): void => {
+  public updateByTempStore = (): boolean => {
     const { _tempMessagesCachedStoreLinked } = this;
 
     if (
       !_tempMessagesCachedStoreLinked ||
       !_tempMessagesCachedStoreLinked.entries
     ) {
-      return;
+      return false;
     }
     return this._cachedStoreImplementation.updateWithEntries(
       _tempMessagesCachedStoreLinked.entries

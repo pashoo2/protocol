@@ -150,7 +150,14 @@ export class SwarmMessagesDatabaseCache<
    *     | undefined)}
    * @memberof SwarmMessagesDatabaseCache
    */
-  protected _defferedPartialCacheUpdatePromise: Promise<void> | undefined;
+  protected _defferedPartialCacheUpdatePromise:
+    | ReturnType<
+        SwarmMessagesDatabaseCache<
+          P,
+          DbType
+        >['_runDefferedMessagesUpdateInCache']
+      >
+    | undefined;
 
   /**
    * Promise which will be resolved on next batch
@@ -198,7 +205,6 @@ export class SwarmMessagesDatabaseCache<
 
   constructor(options: ISwarmMessagesDatabaseCacheOptions<P, DbType>) {
     this._setOptions(options);
-    this._initializeCacheStore();
   }
 
   public start = async (): Promise<void> => {
@@ -206,7 +212,7 @@ export class SwarmMessagesDatabaseCache<
       return;
     }
     this._resetTheInstance();
-    this._unsetCacheStore();
+    this._initializeCacheStore();
     this._isReady = true;
   };
 
@@ -306,6 +312,7 @@ export class SwarmMessagesDatabaseCache<
 
   protected _initializeCacheStore(): void {
     this._messagesCachedStore = this._createMessagesCachedStorage(false);
+    debugger;
   }
 
   protected _resetTheInstance() {
@@ -1197,16 +1204,27 @@ export class SwarmMessagesDatabaseCache<
         this._getAndResetDefferedUpdateAfterCacheUpdateProcess();
   }
 
+  /**
+   * Read messages deffered by a metadata of them.
+   *
+   * @protected
+   * @param {Set<ISwarmMessagesDatabaseMesssageMeta<P, DbType>>} messagesForUpdateMeta
+   * @param {ISwarmMessagesDatabaseMessagesCacheStoreNonTemp<P, DbType>} cacheStore
+   * @param {DbType} dbType
+   * @returns {Promise<boolean>}
+   * @memberof SwarmMessagesDatabaseCache
+   */
   protected async _runDefferedMessagesUpdateInCache(
     messagesForUpdateMeta: Set<ISwarmMessagesDatabaseMesssageMeta<P, DbType>>,
     cacheStore: ISwarmMessagesDatabaseMessagesCacheStoreNonTemp<P, DbType>,
     dbType: DbType
-  ): Promise<void> {
+  ): Promise<boolean> {
     const messagesMetaToRead = getMessagesUniqIndexesByMeta(
       messagesForUpdateMeta,
       dbType
     );
     let idx = 0;
+    let hasMessagesToUpdate = false;
 
     while (idx < messagesMetaToRead.length) {
       const messagesCountToRead = await this._getItemsCountCanBeReadForCurrentIdlePeriod();
@@ -1222,13 +1240,17 @@ export class SwarmMessagesDatabaseCache<
         )
       );
       debugger;
-      cacheStore.update(messagesReadAtBatch);
+      hasMessagesToUpdate =
+        hasMessagesToUpdate || cacheStore.update(messagesReadAtBatch);
       idx += messagesCountToRead;
     }
+    return hasMessagesToUpdate;
   }
 
   protected _setActiveDefferedPartialCacheUpdate(
-    activeUpdate: Promise<void>
+    activeUpdate: ReturnType<
+      SwarmMessagesDatabaseCache<P, DbType>['_runDefferedMessagesUpdateInCache']
+    >
   ): void {
     this._defferedPartialCacheUpdatePromise = activeUpdate;
   }
@@ -1247,7 +1269,7 @@ export class SwarmMessagesDatabaseCache<
    * @protected
    * @memberof SwarmMessagesDatabaseCache
    */
-  protected _runDefferedPartialCacheUpdate = async () => {
+  protected _runDefferedPartialCacheUpdate = async (): Promise<boolean> => {
     const messagesMetaToUpdate:
       | Set<ISwarmMessagesDatabaseMesssageMeta<P, DbType>>
       | undefined = this._getAndResetMessagesDefferedUpdateWithinCaheUpdateBatch();
@@ -1262,30 +1284,39 @@ export class SwarmMessagesDatabaseCache<
       );
 
       this._setActiveDefferedPartialCacheUpdate(activeCahePartialUpdate);
-      await activeCahePartialUpdate;
+
+      const hasMessagesUpdated = await activeCahePartialUpdate;
+
       this._unsetActiveDefferedPartialCacheUpdate();
+      return hasMessagesUpdated;
     }
+    return false;
   };
 
-  protected _runDefferedPartialCacheUpdateAfterCacheUpdate(): Promise<void> {
+  protected async _runDefferedPartialCacheUpdateAfterCacheUpdate() {
     const pendingResetAddedAndDeletedMessagesPromise = this
       ._defferedPartialCacheUpdatePromise;
 
     if (pendingResetAddedAndDeletedMessagesPromise) {
       return pendingResetAddedAndDeletedMessagesPromise;
     }
-    return this._runDefferedPartialCacheUpdate();
+    await this._runDefferedPartialCacheUpdate();
   }
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  protected _runDefferedPartialCacheUpdateDebounced = debounce(async () => {
-    if (this._isDefferedMessagesUpdateActive) {
-      // if it's already in progress
-      return;
-    }
-    debugger;
-    await this._runDefferedPartialCacheUpdate();
-    this._emitDbMessagesWithAddedMessagesCaheUpdated();
-    this._runDefferedPartialCacheUpdateDebounced();
-  }, SWARM_MESSAGES_DATABASE_CACHE_ADD_TO_CACHE_MESSAGES_PENDING_DEBOUNCE_MS);
+  protected _runDefferedPartialCacheUpdateDebounced = debounce(
+    async (): Promise<void> => {
+      if (this._isDefferedMessagesUpdateActive) {
+        // if it's already in progress
+        return;
+      }
+      debugger;
+      if (await this._runDefferedPartialCacheUpdate()) {
+        // if has any updated messages emit the event that the cache have updated
+        this._emitDbMessagesWithAddedMessagesCaheUpdated();
+      }
+      this._runDefferedPartialCacheUpdateDebounced();
+    },
+    SWARM_MESSAGES_DATABASE_CACHE_ADD_TO_CACHE_MESSAGES_PENDING_DEBOUNCE_MS
+  );
 }

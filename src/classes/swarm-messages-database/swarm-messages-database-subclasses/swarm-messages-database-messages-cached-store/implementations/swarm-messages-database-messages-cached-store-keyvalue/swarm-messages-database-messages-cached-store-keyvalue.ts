@@ -80,9 +80,14 @@ export class SwarmMessagesDatabaseMessagesCachedStoreKeyValue<
       P,
       ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
     >
-  ): void {
-    this._updateCacheWithEntries(entries);
+  ): boolean {
+    const hasUpdatedMessages = this._updateCacheWithEntries(
+      entries,
+      this._entriesCached
+    );
+
     this._incMessagesInCacheVersion();
+    return hasUpdatedMessages;
   }
 
   protected _whetherEntryIsExists(
@@ -175,17 +180,12 @@ export class SwarmMessagesDatabaseMessagesCachedStoreKeyValue<
     this.entriesCached.set(key, this._getMessageInfo(entry));
   }
 
-  protected _updateCacheWithEntries(
-    entries: TSwarmMessageDatabaseMessagesCached<
-      P,
-      ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+  protected _checkWhetherUpdateKey(
+    key: string,
+    value: ISwarmMessageStoreMessagingRequestWithMetaResult<
+      ESwarmStoreConnector
     >
-  ): void {
-    this._entriesCached = new Map(
-      entries
-    ) as TSwarmMessageDatabaseMessagesCached<
-      P,
-      ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
-    >;
+  ) {
+    return this._checkWhetherUpdatValue(this._entriesCached.get(key), value);
   }
 }

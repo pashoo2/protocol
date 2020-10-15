@@ -7,8 +7,13 @@ import { ESwarmStoreConnector } from '../../../swarm-store-class/swarm-store-cla
 import { ISwarmMessagesDatabaseMesssageMeta } from '../../swarm-messages-database.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { ISwarmMessagesDatabaseMessagesCacheMessageDescription } from './swarm-messages-database-cache.types';
-import { ISwarmMessageStoreMessageWithMeta } from '../../../swarm-message-store/swarm-message-store.types';
+import {
+  ISwarmMessageStoreMessageWithMeta,
+  ISwarmMessageStoreMessagingRequestWithMetaResult,
+} from '../../../swarm-message-store/swarm-message-store.types';
 import { TSwarmStoreDatabaseEntityUniqueIndex } from '../../../swarm-store-class/swarm-store-class.types';
+import { isValidSwarmMessageDecryptedFormat } from '../../../swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-swarm-message';
+import { whetherSwarmMessagesDecryptedAreEqual } from '../../../swarm-message/swarm-message-utils/swarm-message-utils-common/swarm-message-utils-common-decrypted';
 
 export const checkMessageAddress = <
   P extends ESwarmStoreConnector,
@@ -203,4 +208,29 @@ export const getMessageDescriptionForMessageWithMeta = <
     messageMeta,
     messageEntry: swarmMessageWithMeta.message,
   };
+};
+/**
+ * Check whether the arguments are a values have the valid SwarmMessageDecrypted format
+ * and the same.
+ *
+ * @param {ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector>} first
+ * @param {ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector>} second
+ * @returns {boolean}
+ */
+export const _checkWhetherSameSwarmMessagesDecrypted = (
+  first:
+    | ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector>
+    | undefined,
+  second:
+    | ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector>
+    | undefined
+): boolean => {
+  if (!first || !second || first instanceof Error || second instanceof Error) {
+    return false;
+  }
+  return (
+    isValidSwarmMessageDecryptedFormat(first) &&
+    isValidSwarmMessageDecryptedFormat(second) &&
+    whetherSwarmMessagesDecryptedAreEqual(first, second)
+  );
 };

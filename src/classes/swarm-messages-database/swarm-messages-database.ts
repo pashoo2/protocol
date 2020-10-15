@@ -44,6 +44,7 @@ import {
 } from './swarm-messages-database.const';
 import { ISwarmMessageStoreMessageWithMeta } from '../swarm-message-store/swarm-message-store.types';
 import { delay } from '../../utils/common-utils/common-utils-timer';
+import { SWARM_MESSAGES_DATABASE_MESSAGES_MAX_ATTEMPTS_CACHE_UPDATE } from './swarm-messages-database.const';
 
 export class SwarmMessagesDatabase<
   P extends ESwarmStoreConnector,
@@ -418,18 +419,22 @@ export class SwarmMessagesDatabase<
     this._messagesCached = messagesCached;
   };
 
-  protected _updateMessagesCache(): void {
+  protected _updateMessagesCache(attempt = 0): void {
     if (!this._isReady) {
       console.warn(`The database ${this._dbName}:${this._dbType} is not ready`);
       return;
     }
     if (this._checkIsReady()) {
       this._swarmMessagesCache.update().catch(async (err) => {
-        console.error(`Failed to update messages cache ${err.message}`);
-        await delay(
-          SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_UPDATE_RETRY_DELAY_MS
-        );
-        this._updateMessagesCache();
+        if (
+          attempt > SWARM_MESSAGES_DATABASE_MESSAGES_MAX_ATTEMPTS_CACHE_UPDATE
+        ) {
+          console.error(`Failed to update messages cache ${err.message}`);
+          await delay(
+            SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_UPDATE_RETRY_DELAY_MS
+          );
+          this._updateMessagesCache(attempt++);
+        }
       });
     }
   }

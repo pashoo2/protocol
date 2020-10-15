@@ -362,7 +362,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       console.error('Failed to close the instance of store');
       return result;
     }
-    return this.createDbInstance();
+    return this.createDbInstanceSilent();
   }
 
   protected setItemsOverallCount(total: number) {
@@ -943,9 +943,25 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     this.emitEmtriesPending();
   };
 
+  private handleFeedStoreReadySilent = () => {
+    this.setReadyState();
+    this.logStore();
+  };
+
   private handleFeedStoreLoaded = () => {
     // emit event that the database local copy was fully loaded
     // this.emitFullyLoaded();
+  };
+
+  protected handleFeedStoreLoadProgressSilent = (
+    address: string,
+    hash: string,
+    entry: LogEntry<TStoreValue>,
+    progress: number,
+    total: number
+  ) => {
+    this.setItemsOverallCount(total);
+    this.handleNewEntry(address, entry, {});
   };
 
   private handleFeedStoreLoadProgress = (
@@ -955,8 +971,13 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     progress: number,
     total: number
   ) => {
-    this.setItemsOverallCount(total);
-    this.handleNewEntry(address, entry, {});
+    this.handleFeedStoreLoadProgressSilent(
+      address,
+      hash,
+      entry,
+      progress,
+      total
+    );
     // emit event database local copy loading progress
     this.emitEvent(
       ESwarmStoreEventNames.LOADING,
@@ -1067,18 +1088,19 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   };
 
   private setFeedStoreEventListeners(
-    feedStore: TSwarmStoreConnectorOrbitDbDatabase<TStoreValue>,
-    isSet = true
+    db: TSwarmStoreConnectorOrbitDbDatabase<TStoreValue>,
+    isSet = true,
+    isSilent = false
   ): Error | void {
-    if (!feedStore) {
+    if (!db) {
       return new Error('An instance of the FeedStore must be specified');
     }
-    if (!feedStore.events) {
+    if (!db.events) {
       return new Error('An unknown API of the FeedStore');
     }
     if (
-      typeof feedStore.events.addListener !== 'function' ||
-      typeof feedStore.events.removeListener !== 'function'
+      typeof db.events.addListener !== 'function' ||
+      typeof db.events.removeListener !== 'function'
     ) {
       return new Error('An unknown API of the FeedStore events');
     }
@@ -1087,35 +1109,40 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       ? COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_ON
       : COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_OFF;
 
-    feedStore.events[methodName](
+    db.events[methodName](
       EOrbidDBFeedSoreEvents.READY,
-      this.handleFeedStoreReady
+      isSilent ? this.handleFeedStoreReadySilent : this.handleFeedStoreReady
     );
-    feedStore.events[methodName](
+    db.events[methodName](
+      EOrbidDBFeedSoreEvents.LOAD_PROGRESS,
+      isSilent
+        ? this.handleFeedStoreLoadProgressSilent
+        : this.handleFeedStoreLoadProgress
+    );
+    db.events[methodName](
       EOrbidDBFeedSoreEvents.LOAD,
       this.handleFeedStoreLoaded
     );
-    feedStore.events[methodName](
-      EOrbidDBFeedSoreEvents.LOAD_PROGRESS,
-      this.handleFeedStoreLoadProgress
-    );
-    feedStore.events[methodName](
+    db.events[methodName](
       EOrbidDBFeedSoreEvents.REPLICATED,
       this.handleFeedStoreReplicated
     );
-    feedStore.events[methodName](
+    db.events[methodName](
       EOrbidDBFeedSoreEvents.CLOSE,
       this.handleFeedStoreClosed
     );
-    feedStore.events[methodName](
+    db.events[methodName](
       EOrbidDBFeedSoreEvents.REPLICATE_PROGRESS,
       this.handleFeedStoreReplicateInProgress
     );
-    feedStore.events[methodName](
-      EOrbidDBFeedSoreEvents.WRITE,
-      this.handleWrite
-    );
+    db.events[methodName](EOrbidDBFeedSoreEvents.WRITE, this.handleWrite);
   }
+
+  private setFeedStoreEventListenersSilent = (
+    db: TSwarmStoreConnectorOrbitDbDatabase<TStoreValue>
+  ) => {
+    this.setFeedStoreEventListeners(db, undefined, true);
+  };
 
   private unsetStoreEventListeners(
     feedStore: TSwarmStoreConnectorOrbitDbDatabase<TStoreValue>
@@ -1155,9 +1182,9 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     return resultedOptions;
   }
 
-  private async createDbInstance(): Promise<
-    Error | TSwarmStoreConnectorOrbitDbDatabase<TStoreValue>
-  > {
+  private async createDbInstance(
+    isSilent: boolean = false
+  ): Promise<Error | TSwarmStoreConnectorOrbitDbDatabase<TStoreValue>> {
     try {
       const { orbitDb, options } = this;
 
@@ -1203,7 +1230,9 @@ export class SwarmStoreConnectorOrbitDBDatabase<
         return this.onFatalError(db, 'createDbInstance::feed store creation');
       }
 
-      const setStoreListenersResult = this.setFeedStoreEventListeners(db);
+      const setStoreListenersResult = isSilent
+        ? this.setFeedStoreEventListenersSilent(db)
+        : this.setFeedStoreEventListeners(db);
 
       if (setStoreListenersResult instanceof Error) {
         return this.onFatalError(
@@ -1217,6 +1246,10 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       return this.onFatalError(err, 'createDbInstance');
     }
   }
+
+  private createDbInstanceSilent = () => {
+    return this.createDbInstance(true);
+  };
 
   private setOptions(
     options: ISwarmStoreConnectorOrbitDbDatabaseOptions<TStoreValue>
