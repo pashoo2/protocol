@@ -171,8 +171,9 @@ export interface ISwarmMessagesDatabaseMessagesCacheStoreNonTemp<
    * to save a consistency.
    *
    * @memberof ISwarmMessagesDatabaseMessagesCachedStore
+   * @return {boolean} - whether cache entries were updated
    */
-  updateByTempStore(): void;
+  updateByTempStore(): boolean;
   /**
    * Unlink the temp storage linked before.
    *

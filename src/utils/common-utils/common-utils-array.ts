@@ -3,9 +3,38 @@ import { isDefined } from './common-utils-main';
 
 export const commonUtilsIsInstanceOfArray = (a: any): a is Array<any> =>
   !a || typeof a !== 'object' || a instanceof Array;
-
 /**
  * Checks whether two array items are equal
+ *
+ * @param {Array<any>} firstArray
+ * @param {Array<any>} secondArray
+ * @returns {boolean}
+ */
+
+/**
+ * Checks whether two arrays have the same items.
+ * Order doesn't matter.
+ *
+ * @param {Array<any>} firstArray
+ * @param {Array<any>} secondArray
+ * @returns {boolean}
+ */
+export const commonUtilsIsTwoArraysHaveSameItems = (
+  firstArray: Array<any>,
+  secondArray: Array<any>
+): boolean => {
+  if (firstArray === secondArray) {
+    return true;
+  }
+  if (firstArray.length !== secondArray.length) {
+    return false;
+  }
+  return !firstArray.some((firstArrayItem) => {
+    return !secondArray.includes(firstArrayItem);
+  }, true);
+};
+/**
+ * Checks whether two array items are equal and all items in the same order
  *
  * @param {Array<any>} firstArray
  * @param {Array<any>} secondArray
@@ -26,7 +55,7 @@ export const commonUtilsIsTwoArraysEquals = (
   }, true);
 };
 /**
- * Checks whether two items are arrays and the two array items are equal and return the second
+ * Checks whether two items are arrays and the two array items are equal and all items in the same order and return the second
  * one if equals.
  * Returns the second array if two arrays are equal or returns false otherwise.
  *

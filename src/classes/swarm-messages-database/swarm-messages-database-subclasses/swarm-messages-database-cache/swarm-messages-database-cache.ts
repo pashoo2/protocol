@@ -1048,12 +1048,15 @@ export class SwarmMessagesDatabaseCache<
    * @protected
    * @memberof SwarmMessagesDatabaseCache
    */
-  protected _updateMessagesCachedStoreByLinkedTempStoreMessages(): void {
+  protected _updateMessagesCachedStoreByLinkedTempStoreMessages(): boolean {
     if (this._checkIsReady()) {
       debugger;
-      this._messagesCachedStore.updateByTempStore();
+      const hasMessagesUpdated = this._messagesCachedStore.updateByTempStore();
+
       this._messagesCachedStore.unlinkWithTempStore();
+      return hasMessagesUpdated;
     }
+    return false;
   }
 
   /**
@@ -1077,9 +1080,15 @@ export class SwarmMessagesDatabaseCache<
 
       this._setMessagesCacheUpdateInProgress(promiseMessagesUpdating);
       await promiseMessagesUpdating;
-      this._updateMessagesCachedStoreByLinkedTempStoreMessages();
-      await this._runDefferedPartialCacheUpdate();
-      this._emitDbMessagesWithAddedMessagesCaheUpdated();
+
+      let hasMessagesUpdated = this._updateMessagesCachedStoreByLinkedTempStoreMessages();
+
+      hasMessagesUpdated =
+        hasMessagesUpdated || (await this._runDefferedPartialCacheUpdate());
+      if (hasMessagesUpdated) {
+        // emit only if any message was updated in the cache store
+        this._emitDbMessagesWithAddedMessagesCaheUpdated();
+      }
     } catch (err) {
       console.error(`Failed to update messages cache: ${err.message}`, err);
       debugger;

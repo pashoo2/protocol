@@ -17,6 +17,7 @@ import { whetherSwarmMessagesDecryptedAreEqual } from '../../../../../swarm-mess
 import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../../../swarm-message-store/swarm-message-store.types';
 import { isValidSwarmMessageDecryptedFormat } from '../../../../../swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-swarm-message';
 import { ISwarmMessageInstanceDecrypted } from '../../../../../swarm-message/swarm-message-constructor.types';
+import { commonUtilsIsTwoArraysHaveSameItems } from '../../../../../../utils/common-utils/common-utils-array';
 
 export class SwarmMessagesDatabaseMessagesCachedStore<
   P extends ESwarmStoreConnector,
@@ -77,6 +78,12 @@ export class SwarmMessagesDatabaseMessagesCachedStore<
       !_tempMessagesCachedStoreLinked.entries
     ) {
       return false;
+    }
+
+    const whetherSameKeysInTempAndMainStorage = this._whetherSameKeysBetweenTempStorageLinkedEntriesAndMain();
+
+    if (!whetherSameKeysInTempAndMainStorage) {
+      this._cachedStoreImplementation.clear();
     }
     return this._cachedStoreImplementation.updateWithEntries(
       _tempMessagesCachedStoreLinked.entries
@@ -210,6 +217,22 @@ export class SwarmMessagesDatabaseMessagesCachedStore<
         messageInTempStore,
         description.messageEntry
       )
+    );
+  }
+
+  protected _whetherSameKeysBetweenTempStorageLinkedEntriesAndMain(): boolean {
+    const linkedStorageKeys = this._tempMessagesCachedStoreLinked?.entries?.keys();
+    const mainStorageKeys = this._cachedStoreImplementation.entriesCached.keys();
+
+    if (!mainStorageKeys !== !linkedStorageKeys) {
+      return false;
+    }
+    if (!linkedStorageKeys) {
+      return false;
+    }
+    return commonUtilsIsTwoArraysHaveSameItems(
+      Array.from(mainStorageKeys),
+      Array.from(linkedStorageKeys)
     );
   }
 }

@@ -87,6 +87,10 @@ export class SwarmMessagesDatabaseMessagesCachedStoreFeed<
     return hasUpdatedMessages;
   }
 
+  clear() {
+    this._entriesCached.clear();
+  }
+
   protected _whetherEntryIsExists(
     entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<
       P,

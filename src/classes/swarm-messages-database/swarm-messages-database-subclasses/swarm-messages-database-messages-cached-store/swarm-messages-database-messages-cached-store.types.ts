@@ -104,6 +104,13 @@ export interface ISwarmMessagesDatabaseMessagesCachedStoreCore<
   remove: IsTemp extends false
     ? (meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>) => void
     : undefined;
+
+  /**
+   * Unset all items in the cache
+   *
+   * @memberof ISwarmMessagesDatabaseMessagesCachedStoreCore
+   */
+  clear(): void;
 }
 
 export type TSwarmMessagesDatabaseMessagesCachedStoreMessagesMetaHash = string;

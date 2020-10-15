@@ -35,7 +35,7 @@ export class SwarmMessagesDatabaseMessagesCachedStoreCore<
   implements
     Omit<
       ISwarmMessagesDatabaseMessagesCachedStoreCore<P, DbType, IsTemp>,
-      'entriesCached' | 'get' | 'set' | 'unset' | 'updateWithEntries'
+      'entriesCached' | 'get' | 'set' | 'unset' | 'updateWithEntries' | 'clear'
     > {
   public get isTemp(): IsTemp {
     return this._isTemp;
@@ -46,11 +46,6 @@ export class SwarmMessagesDatabaseMessagesCachedStoreCore<
   }
 
   protected _messagesCachedVersion: number = 0;
-
-  protected _messagesCached = new Map<
-    MetaHash,
-    ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>
-  >();
 
   protected get _isInitialized(): boolean {
     return !!this._cachedStore;
@@ -281,12 +276,19 @@ export class SwarmMessagesDatabaseMessagesCachedStoreCore<
     entriesCached: TSwarmMessageDatabaseMessagesCached<P, DbType>
   ): boolean {
     let hasMessagesUpdated = false;
+    // if there is no entries cached for now, it is not neccesary to check
+    // whether to need update it, because it is always neccessary.
+    const wetherToCheckUpdateNeccessary = !!entriesCached.size;
+
     this._clearEntriesCached(entriesCached);
     entries.forEach((value, key) => {
       if (!value) {
         return;
       }
-      if (this._checkWhetherUpdateKey(key, value, entriesCached)) {
+      if (
+        wetherToCheckUpdateNeccessary ||
+        this._checkWhetherUpdateKey(key, value, entriesCached)
+      ) {
         entriesCached.set(key, value);
         hasMessagesUpdated = true;
       }
