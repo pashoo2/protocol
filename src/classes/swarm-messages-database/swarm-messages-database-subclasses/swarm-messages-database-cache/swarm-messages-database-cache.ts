@@ -207,7 +207,6 @@ export class SwarmMessagesDatabaseCache<
     }
     this._resetTheInstance();
     this._unsetCacheStore();
-    this._unsetTempCacheStore();
     this._isReady = true;
   };
 
@@ -216,12 +215,13 @@ export class SwarmMessagesDatabaseCache<
     this._clearEventEmitter();
     this._resetTheInstance();
     this._unsetCacheStore();
-    this._unsetTempCacheStore();
     this._unsetDbInstance();
   };
 
-  public update = () => {
-    return this._updateMessagesCache();
+  public update = async () => {
+    // wait when the cache update process will be overed
+    await this._updateMessagesCache();
+    return this._messagesCached;
   };
 
   public addMessage = async (
@@ -316,10 +316,6 @@ export class SwarmMessagesDatabaseCache<
 
   protected _unsetCacheStore() {
     this._messagesCachedStore = undefined;
-  }
-
-  protected _unsetTempCacheStore() {
-    this._messagesCachedStoreTemp = undefined;
   }
 
   protected _unsetDbInstance() {
@@ -834,6 +830,33 @@ export class SwarmMessagesDatabaseCache<
   }
 
   /**
+   * Checks whether all items read from the database.
+   * Because in OrbitDB's store there is no
+   * way at now to know how many keys with non-empty
+   * data are exist, than the only way is to read items
+   * and check some conditions to understand whether all
+   * items were read. Also when no items were returned, that
+   * doesn't mean that there is no more messages in storage,
+   * because an empty data returns also for "delete" messages.
+   *
+   * @param {number} expectedMessagesOverallToReadAtTheBatchCount -
+   * @param {number} expectedNewMessagesCountToReadAtTheBatchCount -
+   * @param {number} resultedNewMessagesCountReadAtTheBatchCount -
+   * @returns {boolean}
+   */
+  protected _whetherMessagesReadLessThanRequested = (
+    expectedMessagesOverallToReadAtTheBatchCount: number,
+    expectedNewMessagesToReadAtTheBatchCount: number,
+    resultedNewMessagesReadAtTheBatchCount: number
+  ): boolean => {
+    return (
+      expectedMessagesOverallToReadAtTheBatchCount > 50 &&
+      expectedNewMessagesToReadAtTheBatchCount > 6 &&
+      !resultedNewMessagesReadAtTheBatchCount
+    );
+  };
+
+  /**
    * Performs swarm messages cache update by
    * quering database.
    * Query performed only when the brawser is
@@ -857,7 +880,7 @@ export class SwarmMessagesDatabaseCache<
     // overall messages read count
     let messagesReadCount = 0;
     // count messages to read from the database.
-    let messagesToReadAtTheBatch = 0;
+    let messagesCountToReadAtTheBatch = 0;
     // limit of messages count in the cached was reached
     let whetherMessagesLimitToReadReached = false;
     // whether all messages were read from the databse
@@ -867,37 +890,43 @@ export class SwarmMessagesDatabaseCache<
       this._checkIsReady();
 
       const resolveMessagesUpatingBatchPromise = this._createMessagesCacheUpdatingBatchPromise();
-      const currentPageItemsToRead = await this._getItemsCountCanBeReadForCurrentIdlePeriod();
+      const currentPageItemsToReadCount = await this._getItemsCountCanBeReadForCurrentIdlePeriod();
 
-      if (!currentPageItemsToRead) {
+      if (!currentPageItemsToReadCount) {
         // nothing to read at this iteration
         continue;
       }
       pageToQueryIndex = pageToQueryIndex + 1;
-      messagesToReadAtTheBatch = messagesReadCount + currentPageItemsToRead;
+      messagesCountToReadAtTheBatch =
+        messagesReadCount + currentPageItemsToReadCount;
       whetherMessagesLimitToReadReached = this._whetherMessagesLimitReached(
-        messagesToReadAtTheBatch
+        messagesCountToReadAtTheBatch
       );
 
       if (whetherMessagesLimitToReadReached) {
         // add one more to define if the database
         // contains some more data
-        messagesToReadAtTheBatch = messagesToReadAtTheBatch + 1;
+        messagesCountToReadAtTheBatch = messagesCountToReadAtTheBatch + 1;
       }
 
+      const entriesExists = (messagesCachedStoreTemp.entries ||
+        []) as TSwarmMessageDatabaseMessagesCached<P, DbType>;
+      const messagesIdentitiesToExclude = this._getMessagesReadKeysOrAddresses(
+        entriesExists
+      );
       const messagesReadAtBatch = await this._performMessagesCacheCollectPageRequest(
-        messagesToReadAtTheBatch,
-        // TODO
-        this._getMessagesReadKeysOrAddresses(messagesCachedStoreTemp)
+        messagesCountToReadAtTheBatch,
+        messagesIdentitiesToExclude
       );
       const messagesReadAtBatchMapped = this._mapMessagesWithMetaToStorageRelatedStructure(
         messagesReadAtBatch
       );
       debugger;
-      const whetherMessagesReadLessThanRequested =
-        messagesToReadAtTheBatch > 50 &&
-        currentPageItemsToRead > 6 &&
-        !getItemsCount(messagesReadAtBatchMapped);
+      const whetherMessagesReadLessThanRequested = this._whetherMessagesReadLessThanRequested(
+        messagesCountToReadAtTheBatch,
+        currentPageItemsToReadCount,
+        getItemsCount(messagesReadAtBatchMapped)
+      );
       // TODO - ORBIT DB counts also removed items, so we can request more than
       // it will return
       // getItemsCount(messagesReadAtBatch) < currentPageItemsToRead;
@@ -911,7 +940,7 @@ export class SwarmMessagesDatabaseCache<
       debugger;
       console.log(messagesCachedStoreTemp);
       resolveMessagesUpatingBatchPromise();
-      messagesReadCount = messagesToReadAtTheBatch;
+      messagesReadCount = messagesCountToReadAtTheBatch;
     }
     debugger;
     if (whetherFullMessagesRead) {
@@ -943,9 +972,7 @@ export class SwarmMessagesDatabaseCache<
    * @returns {(Promise<TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined>)}
    * @memberof SwarmMessagesDatabase
    */
-  protected async _planNewCacheUpdate(): Promise<
-    TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined
-  > {
+  protected async _planNewCacheUpdate(): Promise<void> {
     debugger;
     this._setNewCacheUpdatePlanned();
     // await when the current iteration will be over
@@ -1030,10 +1057,7 @@ export class SwarmMessagesDatabaseCache<
    * @returns {(Promise<TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined>)}
    * @memberof SwarmMessagesDatabase
    */
-  protected async _runNewCacheUpdate(): Promise<
-    TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined
-  > {
-    let messages: TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined;
+  protected async _runNewCacheUpdate(): Promise<void> {
     debugger;
     try {
       const messagesCachedTempStore = this._createMessagesCachedStorage(true);
@@ -1056,7 +1080,6 @@ export class SwarmMessagesDatabaseCache<
     } finally {
       this._unsetCacheUpdateInProgress();
       this._runNextCacheUpdateIterationIfNecessary();
-      return messages;
     }
   }
 
@@ -1067,9 +1090,7 @@ export class SwarmMessagesDatabaseCache<
    * @returns {Promise<TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined>}
    * @memberof SwarmMessagesDatabase
    */
-  protected async _updateMessagesCache(): Promise<
-    TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined
-  > {
+  protected async _updateMessagesCache(): Promise<void> {
     debugger;
     this._checkIsReady();
     if (this._pendingMessagesUpdatePromise) {
@@ -1078,8 +1099,6 @@ export class SwarmMessagesDatabaseCache<
     this._unsetNewCacheUpdatePlanned();
     return this._runNewCacheUpdate();
   }
-
-  // ----USING OF A SEPARATE STORAGE
 
   protected _addMessageToCachedStore(
     swarmMessageWithMeta: ISwarmMessageStoreMessageWithMeta<P>
@@ -1202,7 +1221,7 @@ export class SwarmMessagesDatabaseCache<
           messagesMetaToRead.slice(idx, idx + messagesCountToRead)
         )
       );
-
+      debugger;
       cacheStore.update(messagesReadAtBatch);
       idx += messagesCountToRead;
     }
@@ -1264,6 +1283,7 @@ export class SwarmMessagesDatabaseCache<
       // if it's already in progress
       return;
     }
+    debugger;
     await this._runDefferedPartialCacheUpdate();
     this._emitDbMessagesWithAddedMessagesCaheUpdated();
     this._runDefferedPartialCacheUpdateDebounced();
