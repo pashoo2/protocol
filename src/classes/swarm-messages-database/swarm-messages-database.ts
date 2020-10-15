@@ -468,7 +468,7 @@ export class SwarmMessagesDatabase<
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key
     key?: TSwarmStoreDatabaseEntityKey<P>
-  ): Promise<void> {
+  ): Promise<boolean> {
     if (this._checkIsReady()) {
       return this._swarmMessagesCache.addMessage(
         this._getSwarmMessageWithMeta(dbName, message, messageAddress, key)

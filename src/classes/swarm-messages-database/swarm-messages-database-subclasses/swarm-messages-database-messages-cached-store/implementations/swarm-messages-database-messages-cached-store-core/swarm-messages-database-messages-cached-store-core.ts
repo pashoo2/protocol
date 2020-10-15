@@ -19,6 +19,7 @@ import { ISwarmMessageInstanceDecrypted } from '../../../../../swarm-message/swa
 import { SWARM_MESSGES_DATABASE_SWARM_MESSAGES_CACHED_SWARM_MESSAGES_META_HASH_DELIMETER } from 'classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-cached-store/swarm-messages-database-messages-cached-store.const';
 import { whetherSwarmMessagesDecryptedAreEqual } from '../../../../../swarm-message/swarm-message-utils/swarm-message-utils-common/swarm-message-utils-common-decrypted';
 import { TSwarmMessagesDatabaseMessagesCacheStore } from '../../../swarm-messages-database-cache/swarm-messages-database-cache.types';
+import { ISwarmMessagesDatabaseMessagesCacheStoreExtendedDefferedMethods } from '../../swarm-messages-database-messages-cached-store.types';
 
 export class SwarmMessagesDatabaseMessagesCachedStoreCore<
   P extends ESwarmStoreConnector,
@@ -124,9 +125,22 @@ export class SwarmMessagesDatabaseMessagesCachedStoreCore<
   }
 
   protected _checkIsInitialized(): this is {
-    _cachedStore: ISwarmMessagesDatabaseMessagesCacheStoreNonTemp<P, DbType>;
+    _cachedStore: ISwarmMessagesDatabaseMessagesCacheStoreExtendedDefferedMethods<
+      P,
+      DbType
+    >;
   } {
     assert(this._cachedStore, 'The isnstance is not initialized');
+    assert(
+      typeof ((this._cachedStore as unknown) as any)
+        ?._addToDefferedReadAfterCurrentCacheUpdateBatch === 'function',
+      'The cached store should have the "_addToDefferedReadAfterCurrentCacheUpdateBatch" method'
+    );
+    assert(
+      typeof ((this._cachedStore as unknown) as any)?._addToDefferedUpdate ===
+        'function',
+      'The cached store should have the "_addToDefferedUpdate" method'
+    );
     return true;
   }
 
@@ -209,7 +223,7 @@ export class SwarmMessagesDatabaseMessagesCachedStoreCore<
     meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>
   ): void {
     if (this._checkIsInitialized()) {
-      this._cachedStore._addToDefferedReadAfterCurrentCacheUpdateBatch!(meta);
+      this._cachedStore._addToDefferedReadAfterCurrentCacheUpdateBatch(meta);
     }
   }
 
@@ -217,7 +231,7 @@ export class SwarmMessagesDatabaseMessagesCachedStoreCore<
     meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>
   ): void {
     if (this._checkIsInitialized()) {
-      this._cachedStore._addToDefferedUpdate!(meta);
+      this._cachedStore._addToDefferedUpdate(meta);
     }
   }
 }
