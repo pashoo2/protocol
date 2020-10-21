@@ -346,17 +346,9 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   protected async restartDbInstanceSilent(): Promise<
     Error | TSwarmStoreConnectorOrbitDbDatabase<TStoreValue>
   > {
-    const db = this.getDbStoreInstance();
-
-    if (!db) {
-      return new Error('There is no an active database instance');
-    }
-    if (db instanceof Error) {
-      return db;
-    }
     this.unsetAllListenersForEvents();
-
-    const result = await this.closeInstanceOfStore(db);
+    debugger;
+    const result = await this.closeCurrentStore();
 
     if (result instanceof Error) {
       console.error('Failed to close the instance of store');
@@ -404,6 +396,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
         console.error('Failed to restart the database');
         return dbInstance;
       }
+      debugger;
       await dbInstance.load(count);
       debugger;
     }
@@ -534,7 +527,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   };
 
   protected async preloadEntitiesBeforeIterate(count: number): Promise<void> {
-    if (count && Number(count) > this.itemsCurrentlyLoaded) {
+    if (Number(count) > this.itemsCurrentlyLoaded) {
       // before to query the database entities must be preloaded in memory
       await this._load(count);
     }
@@ -946,6 +939,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   private handleFeedStoreReadySilent = () => {
     this.setReadyState();
     this.logStore();
+    this.emitEmtriesPending();
   };
 
   private handleFeedStoreLoaded = () => {
@@ -1037,7 +1031,9 @@ export class SwarmStoreConnectorOrbitDBDatabase<
           'Failed to close the current instance of the Database store'
         );
       }
-      this.database = undefined;
+      if (database === this.database) {
+        this.database = undefined;
+      }
     }
   }
 
@@ -1221,6 +1217,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
         ...SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONFIGURATION,
         accessController: this.getAccessControllerOptions(),
       };
+      debugger;
       const db: Error | TSwarmStoreConnectorOrbitDbDatabase<TStoreValue> = this
         .isKVStore
         ? await orbitDb.keyvalue(dbName, storeOptions)
@@ -1241,13 +1238,16 @@ export class SwarmStoreConnectorOrbitDBDatabase<
         );
       }
       this.database = db;
+      debugger;
       return db;
     } catch (err) {
       return this.onFatalError(err, 'createDbInstance');
     }
   }
 
-  private createDbInstanceSilent = () => {
+  private createDbInstanceSilent = (): Promise<
+    OrbitDbFeedStore<TStoreValue> | OrbitDbKeyValueStore<TStoreValue> | Error
+  > => {
     return this.createDbInstance(true);
   };
 
