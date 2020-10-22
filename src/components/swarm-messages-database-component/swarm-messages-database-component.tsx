@@ -236,15 +236,17 @@ export class SwarmMessagesDatabaseComponent<
           }
         }
 
-        const message = prompt('Message', '');
-
-        await db.addMessage(
-          {
-            ...CONNECT_TO_SWARM_STORAGE_DEFAULT_MESSAGE_BODY,
-            pld: message || '',
-          },
-          key as TSwarmStoreDatabaseEntityKey<P> | undefined
-        );
+        // const message = prompt('Message', String(new Date()));
+        while (true) {
+          await db.addMessage(
+            {
+              ...CONNECT_TO_SWARM_STORAGE_DEFAULT_MESSAGE_BODY,
+              pld: String(new Date()) || '',
+            },
+            key as TSwarmStoreDatabaseEntityKey<P> | undefined
+          );
+          await new Promise((res) => setTimeout(res, 300));
+        }
       }
     } catch (err) {
       console.error(err);

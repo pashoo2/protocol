@@ -1299,6 +1299,10 @@ export class SwarmMessagesDatabaseCache<
       debugger;
       hasMessagesUpdated = hasMessagesUpdated || hasMessagesUpdatedAtBatch;
       messagesCountAlreadyRead += messagesCountToReadAtBatch;
+      console.log(
+        'swarmMessagesDatabaseCache::messagesCountAlreadyRead',
+        messagesCountAlreadyRead
+      );
     }
     return hasMessagesUpdated;
   }

@@ -50,6 +50,11 @@ import {
 import { TSwarmStoreConnectorOrbitDbDatabaseStoreHash } from './swarm-store-connector-orbit-db-subclass-database.types';
 import { SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_PRELOAD_COUNT_MIN } from './swarm-store-connector-orbit-db-subclass-database.const';
 import {
+  createPromisePending,
+  IPromisePending,
+  resolvePromisePending,
+} from '../../../../../../utils/common-utils/commom-utils.promies';
+import {
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_EMIT_BATCH_INT_MS,
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_EMIT_BATCH_SIZE,
 } from './swarm-store-connector-orbit-db-subclass-database.const';
@@ -106,6 +111,28 @@ export class SwarmStoreConnectorOrbitDBDatabase<
    * @memberof SwarmStoreConnectorOrbitDBDatabase
    */
   protected entriesReceived: Record<string, string> = {};
+
+  /**
+   * Is database restart is in progress
+   *
+   * @protected
+   * @type {boolean}
+   * @memberof SwarmStoreConnectorOrbitDBDatabase
+   */
+  protected databaseRestartingPromise:
+    | IPromisePending<Error | TSwarmStoreConnectorOrbitDbDatabase<TStoreValue>>
+    | undefined;
+
+  /**
+   * Is creation of a new instance of the datbase is in progress
+   *
+   * @protected
+   * @type {boolean}
+   * @memberof SwarmStoreConnectorOrbitDBDatabase
+   */
+  protected creatingNewDBInstancePromise:
+    | IPromisePending<Error | TSwarmStoreConnectorOrbitDbDatabase<TStoreValue>>
+    | undefined;
 
   protected get itemsCurrentlyLoaded() {
     return Object.keys(this.entriesReceived).length;
@@ -343,18 +370,54 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     return this.createDbInstance();
   }
 
+  protected createPendingRestartingDatabase() {
+    this.databaseRestartingPromise = createPromisePending();
+  }
+
+  protected resolvePendingRestartingDatabase(
+    result: Error | TSwarmStoreConnectorOrbitDbDatabase<TStoreValue>
+  ) {
+    const { databaseRestartingPromise } = this;
+    if (databaseRestartingPromise) {
+      resolvePromisePending(databaseRestartingPromise, result);
+      this.databaseRestartingPromise = undefined;
+    }
+  }
+
   protected async restartDbInstanceSilent(): Promise<
     Error | TSwarmStoreConnectorOrbitDbDatabase<TStoreValue>
   > {
-    this.unsetAllListenersForEvents();
-    debugger;
-    const result = await this.closeCurrentStore();
-
-    if (result instanceof Error) {
-      console.error('Failed to close the instance of store');
-      return result;
+    const { databaseRestartingPromise } = this;
+    if (databaseRestartingPromise) {
+      debugger;
+      return databaseRestartingPromise;
     }
-    return this.createDbInstanceSilent();
+
+    let methodResult:
+      | Error
+      | TSwarmStoreConnectorOrbitDbDatabase<TStoreValue> = new Error(
+      'Failed to restart db instance'
+    );
+
+    try {
+      this.createPendingRestartingDatabase();
+      this.unsetAllListenersForEvents();
+      debugger;
+      const result = await this.closeCurrentStore();
+
+      if (result instanceof Error) {
+        console.error('Failed to close the instance of store');
+        methodResult = result;
+        return result;
+      }
+      methodResult = await this.createDbInstanceSilent();
+      return methodResult;
+    } catch (err) {
+      methodResult = err;
+      return err;
+    } finally {
+      this.resolvePendingRestartingDatabase(methodResult);
+    }
   }
 
   protected setItemsOverallCount(total: number) {
@@ -712,7 +775,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       return new Error('The store is not ready to use');
     }
     if (!database) {
-      return this.emitError('The database store instance is empty');
+      return this.emitError('The database store instance is not exists');
     }
     return database;
   }
@@ -1178,53 +1241,91 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     return resultedOptions;
   }
 
+  protected createPendingPromiseCreatingNewDBInstance() {
+    this.creatingNewDBInstancePromise = createPromisePending();
+  }
+
+  protected resolvePendingPromiseCreatingNewDBInstance(
+    result: Error | TSwarmStoreConnectorOrbitDbDatabase<TStoreValue>
+  ) {
+    const { creatingNewDBInstancePromise } = this;
+    if (creatingNewDBInstancePromise) {
+      resolvePromisePending(creatingNewDBInstancePromise, result);
+      this.creatingNewDBInstancePromise = undefined;
+    }
+  }
+
   private async createDbInstance(
     isSilent: boolean = false
   ): Promise<Error | TSwarmStoreConnectorOrbitDbDatabase<TStoreValue>> {
+    const { creatingNewDBInstancePromise } = this;
+    if (creatingNewDBInstancePromise) {
+      return creatingNewDBInstancePromise;
+    }
+
+    let methodResult:
+      | Error
+      | TSwarmStoreConnectorOrbitDbDatabase<TStoreValue> = new Error(
+      'createDbInstance failed for unknown reason'
+    );
+
     try {
+      this.createPendingPromiseCreatingNewDBInstance();
+
       const { orbitDb, options } = this;
 
       if (!orbitDb) {
-        return this.onFatalError(
+        methodResult = this.onFatalError(
           'There is no intance of the OrbitDb is specified',
           'createDbInstance'
         );
+        return methodResult;
       }
 
       if (!options) {
-        throw new Error('Options are not defined');
+        methodResult = this.onFatalError(
+          'Options are not defined',
+          'createDbInstance'
+        );
+        throw methodResult;
       }
 
       const { dbName } = options;
 
       if (!dbName) {
-        return this.onFatalError(
+        methodResult = this.onFatalError(
           'A name of the database must be specified',
           'createDbInstance'
         );
+        return methodResult;
       }
 
       const dbStoreOptions = this.getStoreOptions();
 
       if (dbStoreOptions instanceof Error) {
-        return this.onFatalError(
+        methodResult = this.onFatalError(
           dbStoreOptions,
           'createDbInstance::getStoreOptions'
         );
+        return methodResult;
       }
 
       const storeOptions = {
         ...SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONFIGURATION,
         accessController: this.getAccessControllerOptions(),
       };
-      debugger;
+
       const db: Error | TSwarmStoreConnectorOrbitDbDatabase<TStoreValue> = this
         .isKVStore
         ? await orbitDb.keyvalue(dbName, storeOptions)
         : await orbitDb.feed(dbName, storeOptions);
 
       if (db instanceof Error) {
-        return this.onFatalError(db, 'createDbInstance::feed store creation');
+        methodResult = this.onFatalError(
+          db,
+          'createDbInstance::feed store creation'
+        );
+        return methodResult;
       }
 
       const setStoreListenersResult = isSilent
@@ -1232,16 +1333,21 @@ export class SwarmStoreConnectorOrbitDBDatabase<
         : this.setFeedStoreEventListeners(db);
 
       if (setStoreListenersResult instanceof Error) {
-        return this.onFatalError(
+        methodResult = this.onFatalError(
           setStoreListenersResult,
           'createDbInstance::set feed store listeners'
         );
+        return methodResult;
       }
       this.database = db;
+      methodResult = db;
       debugger;
       return db;
     } catch (err) {
-      return this.onFatalError(err, 'createDbInstance');
+      methodResult = this.onFatalError(err, 'createDbInstance');
+      return methodResult;
+    } finally {
+      this.resolvePendingPromiseCreatingNewDBInstance(methodResult);
     }
   }
 

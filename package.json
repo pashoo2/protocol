@@ -73,7 +73,7 @@
     "multiaddr": "^7.4.3",
     "multiaddr-to-uri": "^5.1.0",
     "normalize-url": "^4.5.0",
-    "orbit-db": "^0.24.2",
+    "orbit-db": "^0.25.1",
     "orbit-db-identity-provider": "^0.3.0",
     "pull-mplex": "^0.1.2",
     "sort-keys": "^3.0.0",
