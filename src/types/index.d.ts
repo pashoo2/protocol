@@ -19,3 +19,5 @@ export * from './orbit-db-identity-provider-ext';
 export * from './orbit-db-keystore';
 
 export * from './users.types';
+
+export * from './orbit-db-address';

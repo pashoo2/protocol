@@ -29,6 +29,7 @@ export abstract class OpenStorageClass implements IStorageCommon {
   public abstract getUInt8Array(
     key: string
   ): Promise<Uint8Array | undefined | Error>;
+  public abstract clearDb(): Promise<boolean | Error>;
 }
 
 export type TOpenStorage = typeof OpenStorageClass;

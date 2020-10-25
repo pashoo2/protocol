@@ -1,3 +1,4 @@
+import { IStore } from 'orbit-db-cache';
 import {
   ISwarmStoreDatabaseBaseOptions,
   TSwarmStoreValueTypes,
@@ -46,6 +47,7 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseOptions<
    * @memberof ISwarmStoreConnectorOrbitDbDatabaseOptions
    */
   dbType?: ESwarmStoreConnectorOrbitDbDatabaseType;
+  cache?: IStore;
 }
 
 export interface ISwarmStoreConnectorOrbitDbDatabaseEvents<

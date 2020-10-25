@@ -37933,7 +37933,8 @@ typedoc.search.data = {
     {
       id: 3976,
       kind: 256,
-      name: 'IOrbitDbKeystoreStore',
+      name:
+        'ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbKeystoreStore',
       url:
         'interfaces/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_subclasses_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_types_.iorbitdbkeystorestore.html',
       classes: 'tsd-kind-interface tsd-parent-kind-external-module',
@@ -37948,7 +37949,7 @@ typedoc.search.data = {
         'interfaces/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_subclasses_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_types_.iorbitdbkeystorestore.html#db',
       classes: 'tsd-kind-property tsd-parent-kind-interface tsd-is-inherited',
       parent:
-        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".IOrbitDbKeystoreStore',
+        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbKeystoreStore',
     },
     {
       id: 3978,
@@ -37958,7 +37959,7 @@ typedoc.search.data = {
         'interfaces/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_subclasses_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_types_.iorbitdbkeystorestore.html#db.__type',
       classes: 'tsd-kind-type-literal tsd-parent-kind-property',
       parent:
-        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".IOrbitDbKeystoreStore.db',
+        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbKeystoreStore.db',
     },
     {
       id: 3979,
@@ -37968,7 +37969,7 @@ typedoc.search.data = {
         'interfaces/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_subclasses_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_types_.iorbitdbkeystorestore.html#db.__type.status',
       classes: 'tsd-kind-variable tsd-parent-kind-type-literal',
       parent:
-        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".IOrbitDbKeystoreStore.db.__type',
+        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbKeystoreStore.db.__type',
     },
     {
       id: 3980,
@@ -37978,7 +37979,7 @@ typedoc.search.data = {
         'interfaces/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_subclasses_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_types_.iorbitdbkeystorestore.html#status-1',
       classes: 'tsd-kind-property tsd-parent-kind-interface tsd-is-inherited',
       parent:
-        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".IOrbitDbKeystoreStore',
+        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbKeystoreStore',
     },
     {
       id: 3981,
@@ -37988,7 +37989,7 @@ typedoc.search.data = {
         'interfaces/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_subclasses_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_types_.iorbitdbkeystorestore.html#open',
       classes: 'tsd-kind-method tsd-parent-kind-interface tsd-is-inherited',
       parent:
-        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".IOrbitDbKeystoreStore',
+        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbKeystoreStore',
     },
     {
       id: 3982,
@@ -37998,7 +37999,7 @@ typedoc.search.data = {
         'interfaces/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_subclasses_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_types_.iorbitdbkeystorestore.html#close',
       classes: 'tsd-kind-method tsd-parent-kind-interface tsd-is-inherited',
       parent:
-        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".IOrbitDbKeystoreStore',
+        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbKeystoreStore',
     },
     {
       id: 3983,
@@ -38008,7 +38009,7 @@ typedoc.search.data = {
         'interfaces/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_subclasses_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_types_.iorbitdbkeystorestore.html#get',
       classes: 'tsd-kind-method tsd-parent-kind-interface tsd-is-inherited',
       parent:
-        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".IOrbitDbKeystoreStore',
+        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbKeystoreStore',
     },
     {
       id: 3984,
@@ -38018,7 +38019,7 @@ typedoc.search.data = {
         'interfaces/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_subclasses_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_types_.iorbitdbkeystorestore.html#del',
       classes: 'tsd-kind-method tsd-parent-kind-interface tsd-is-inherited',
       parent:
-        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".IOrbitDbKeystoreStore',
+        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbKeystoreStore',
     },
     {
       id: 3985,
@@ -38028,12 +38029,13 @@ typedoc.search.data = {
         'interfaces/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_subclasses_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_types_.iorbitdbkeystorestore.html#put',
       classes: 'tsd-kind-method tsd-parent-kind-interface tsd-is-inherited',
       parent:
-        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".IOrbitDbKeystoreStore',
+        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbKeystoreStore',
     },
     {
       id: 3986,
       kind: 256,
-      name: 'IOrbitDbCacheStore',
+      name:
+        'ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbCacheStore',
       url:
         'interfaces/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_subclasses_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_types_.iorbitdbcachestore.html',
       classes: 'tsd-kind-interface tsd-parent-kind-external-module',
@@ -38048,7 +38050,7 @@ typedoc.search.data = {
         'interfaces/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_subclasses_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_types_.iorbitdbcachestore.html#db',
       classes: 'tsd-kind-property tsd-parent-kind-interface tsd-is-inherited',
       parent:
-        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".IOrbitDbCacheStore',
+        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbCacheStore',
     },
     {
       id: 3988,
@@ -38058,7 +38060,7 @@ typedoc.search.data = {
         'interfaces/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_subclasses_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_types_.iorbitdbcachestore.html#db.__type',
       classes: 'tsd-kind-type-literal tsd-parent-kind-property',
       parent:
-        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".IOrbitDbCacheStore.db',
+        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbCacheStore.db',
     },
     {
       id: 3989,
@@ -38068,7 +38070,7 @@ typedoc.search.data = {
         'interfaces/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_subclasses_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_types_.iorbitdbcachestore.html#db.__type.status',
       classes: 'tsd-kind-variable tsd-parent-kind-type-literal',
       parent:
-        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".IOrbitDbCacheStore.db.__type',
+        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbCacheStore.db.__type',
     },
     {
       id: 3990,
@@ -38078,7 +38080,7 @@ typedoc.search.data = {
         'interfaces/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_subclasses_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_types_.iorbitdbcachestore.html#status-1',
       classes: 'tsd-kind-property tsd-parent-kind-interface tsd-is-inherited',
       parent:
-        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".IOrbitDbCacheStore',
+        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbCacheStore',
     },
     {
       id: 3991,
@@ -38088,7 +38090,7 @@ typedoc.search.data = {
         'interfaces/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_subclasses_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_types_.iorbitdbcachestore.html#open',
       classes: 'tsd-kind-method tsd-parent-kind-interface tsd-is-inherited',
       parent:
-        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".IOrbitDbCacheStore',
+        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbCacheStore',
     },
     {
       id: 3992,
@@ -38098,7 +38100,7 @@ typedoc.search.data = {
         'interfaces/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_subclasses_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_types_.iorbitdbcachestore.html#close',
       classes: 'tsd-kind-method tsd-parent-kind-interface tsd-is-inherited',
       parent:
-        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".IOrbitDbCacheStore',
+        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbCacheStore',
     },
     {
       id: 3993,
@@ -38108,7 +38110,7 @@ typedoc.search.data = {
         'interfaces/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_subclasses_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_types_.iorbitdbcachestore.html#get',
       classes: 'tsd-kind-method tsd-parent-kind-interface tsd-is-inherited',
       parent:
-        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".IOrbitDbCacheStore',
+        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbCacheStore',
     },
     {
       id: 3994,
@@ -38118,7 +38120,7 @@ typedoc.search.data = {
         'interfaces/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_subclasses_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_types_.iorbitdbcachestore.html#del',
       classes: 'tsd-kind-method tsd-parent-kind-interface tsd-is-inherited',
       parent:
-        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".IOrbitDbCacheStore',
+        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbCacheStore',
     },
     {
       id: 3995,
@@ -38128,7 +38130,7 @@ typedoc.search.data = {
         'interfaces/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_subclasses_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_types_.iorbitdbcachestore.html#put',
       classes: 'tsd-kind-method tsd-parent-kind-interface tsd-is-inherited',
       parent:
-        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".IOrbitDbCacheStore',
+        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types".ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbCacheStore',
     },
     {
       id: 3996,
@@ -38554,7 +38556,8 @@ typedoc.search.data = {
     {
       id: 4038,
       kind: 16777216,
-      name: 'IOrbitDbKeystoreStore',
+      name:
+        'ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbKeystoreStore',
       url:
         'modules/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_subclasses_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_index_.html#iorbitdbkeystorestore',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
@@ -38564,7 +38567,8 @@ typedoc.search.data = {
     {
       id: 4039,
       kind: 16777216,
-      name: 'IOrbitDbCacheStore',
+      name:
+        'ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbCacheStore',
       url:
         'modules/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_subclasses_swarm_store_connector_orbit_db_subclass_store_to_secret_storage_adapter_index_.html#iorbitdbcachestore',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
@@ -56450,7 +56454,8 @@ typedoc.search.data = {
     {
       id: 5885,
       kind: 16777216,
-      name: 'IOrbitDbKeystoreStore',
+      name:
+        'ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbKeystoreStore',
       url:
         'modules/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_subclasses_index_.html#iorbitdbkeystorestore',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
@@ -56460,7 +56465,8 @@ typedoc.search.data = {
     {
       id: 5886,
       kind: 16777216,
-      name: 'IOrbitDbCacheStore',
+      name:
+        'ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbCacheStore',
       url:
         'modules/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_subclasses_index_.html#iorbitdbcachestore',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
@@ -56965,7 +56971,8 @@ typedoc.search.data = {
     {
       id: 5936,
       kind: 16777216,
-      name: 'IOrbitDbKeystoreStore',
+      name:
+        'ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbKeystoreStore',
       url:
         'modules/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_index_.html#iorbitdbkeystorestore',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
@@ -56975,7 +56982,8 @@ typedoc.search.data = {
     {
       id: 5937,
       kind: 16777216,
-      name: 'IOrbitDbCacheStore',
+      name:
+        'ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbCacheStore',
       url:
         'modules/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_index_.html#iorbitdbcachestore',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
@@ -57551,7 +57559,8 @@ typedoc.search.data = {
     {
       id: 5999,
       kind: 16777216,
-      name: 'IOrbitDbKeystoreStore',
+      name:
+        'ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbKeystoreStore',
       url:
         'modules/_src_classes_swarm_store_class_swarm_store_connectors_index_.html#iorbitdbkeystorestore',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
@@ -57560,7 +57569,8 @@ typedoc.search.data = {
     {
       id: 6000,
       kind: 16777216,
-      name: 'IOrbitDbCacheStore',
+      name:
+        'ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbCacheStore',
       url:
         'modules/_src_classes_swarm_store_class_swarm_store_connectors_index_.html#iorbitdbcachestore',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
@@ -58435,7 +58445,8 @@ typedoc.search.data = {
     {
       id: 6097,
       kind: 16777216,
-      name: 'IOrbitDbKeystoreStore',
+      name:
+        'ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbKeystoreStore',
       url:
         'modules/_src_classes_swarm_store_class_index_.html#iorbitdbkeystorestore',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
@@ -58444,7 +58455,8 @@ typedoc.search.data = {
     {
       id: 6098,
       kind: 16777216,
-      name: 'IOrbitDbCacheStore',
+      name:
+        'ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbCacheStore',
       url:
         'modules/_src_classes_swarm_store_class_index_.html#iorbitdbcachestore',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
@@ -61537,7 +61549,8 @@ typedoc.search.data = {
     {
       id: 6462,
       kind: 16777216,
-      name: 'IOrbitDbKeystoreStore',
+      name:
+        'ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbKeystoreStore',
       url: 'modules/_src_classes_index_.html#iorbitdbkeystorestore',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
       parent: '"src/classes/index"',
@@ -61545,7 +61558,8 @@ typedoc.search.data = {
     {
       id: 6463,
       kind: 16777216,
-      name: 'IOrbitDbCacheStore',
+      name:
+        'ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbCacheStore',
       url: 'modules/_src_classes_index_.html#iorbitdbcachestore',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
       parent: '"src/classes/index"',
@@ -67511,7 +67525,8 @@ typedoc.search.data = {
     {
       id: 7138,
       kind: 16777216,
-      name: 'IOrbitDbKeystoreStore',
+      name:
+        'ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbKeystoreStore',
       url: 'modules/_src_dev_.html#iorbitdbkeystorestore',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
       parent: '"src/dev"',
@@ -67519,7 +67534,8 @@ typedoc.search.data = {
     {
       id: 7139,
       kind: 16777216,
-      name: 'IOrbitDbCacheStore',
+      name:
+        'ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbCacheStore',
       url: 'modules/_src_dev_.html#iorbitdbcachestore',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
       parent: '"src/dev"',
@@ -70484,7 +70500,8 @@ typedoc.search.data = {
     {
       id: 7496,
       kind: 16777216,
-      name: 'IOrbitDbKeystoreStore',
+      name:
+        'ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbKeystoreStore',
       url: 'modules/_src_index_.html#iorbitdbkeystorestore',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
       parent: '"src/index"',
@@ -70492,7 +70509,8 @@ typedoc.search.data = {
     {
       id: 7497,
       kind: 16777216,
-      name: 'IOrbitDbCacheStore',
+      name:
+        'ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbCacheStore',
       url: 'modules/_src_index_.html#iorbitdbcachestore',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
       parent: '"src/index"',
@@ -73456,7 +73474,8 @@ typedoc.search.data = {
     {
       id: 7854,
       kind: 16777216,
-      name: 'IOrbitDbKeystoreStore',
+      name:
+        'ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbKeystoreStore',
       url: 'modules/_src_prod_.html#iorbitdbkeystorestore',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
       parent: '"src/prod"',
@@ -73464,7 +73483,8 @@ typedoc.search.data = {
     {
       id: 7855,
       kind: 16777216,
-      name: 'IOrbitDbCacheStore',
+      name:
+        'ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterOrbitDbCacheStore',
       url: 'modules/_src_prod_.html#iorbitdbcachestore',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
       parent: '"src/prod"',

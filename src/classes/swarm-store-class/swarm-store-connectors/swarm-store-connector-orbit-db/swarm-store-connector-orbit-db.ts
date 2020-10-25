@@ -34,10 +34,16 @@ import {
   COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_UNSET_ALL_LISTENERS,
 } from 'const/common-values/common-values';
 import { SwarmStorageConnectorOrbitDBSublassKeyStore } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-keystore/swarm-store-connector-orbit-db-subclass-keystore';
-import { ISwarmStoreConnectorOrbitDBSubclassStorageFabric } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-storage-fabric/swarm-store-connector-orbit-db-subclass-storage-fabric.types';
+import {
+  ISwarmStoreConnectorOrbitDBSubclassStorageFabric,
+  ISwarmStoreConnectorOrbitDbSubclassStorageFabricConstructorOptions,
+} from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-storage-fabric/swarm-store-connector-orbit-db-subclass-storage-fabric.types';
 import { SwarmStoreConnectorOrbitDBSubclassStorageFabric } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-storage-fabric/swarm-store-connector-orbit-db-subclass-storage-fabric';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { TSwarmStoreDatabaseType } from '../../swarm-store-class.types';
+import { ISwarmStoreConnectorOrbitDbUtilsAddressCreateRootPathOptions } from './swarm-store-connector-orbit-db-utils/swarm-store-connector-orbit-db-utils-address/swarm-store-connector-orbit-db-utils-address.types';
+import { swarmStoreConnectorOrbitDbUtilsAddressCreateRootPath } from './swarm-store-connector-orbit-db-utils/swarm-store-connector-orbit-db-utils-address/swarm-store-connector-orbit-db-utils-address';
+import { ISecretStoreCredentials } from '../../../secret-storage-class/secret-storage-class.types';
 import {
   ISwarmStoreConnector,
   TSwarmStoreValueTypes,
@@ -89,6 +95,8 @@ export class SwarmStoreConnectorOrbitDB<
 
   protected directory: string = SWARM_STORE_CONNECTOR_ORBITDB_KEYSTORE_DEFAULT_DIRECTORY;
 
+  protected rootPath?: string;
+
   protected identity?: any;
 
   protected connectionOptions?: ISwarmStoreConnectorOrbitDBConnectionOptions;
@@ -110,6 +118,8 @@ export class SwarmStoreConnectorOrbitDB<
 
   protected storage?: ISwarmStoreConnectorOrbitDBSubclassStorageFabric;
 
+  protected initializationPromise: Promise<void> | undefined;
+
   private dbCloseListeners: ((...args: any[]) => any)[] = [];
 
   public constructor(
@@ -119,6 +129,7 @@ export class SwarmStoreConnectorOrbitDB<
     SwarmStoreConnectorOrbitDB.loadCustomIdentityProvider();
     SwarmStoreConnectorOrbitDB.loadCustomAccessController();
     this.applyOptions(options);
+    this.createInitializationPromise(options);
   }
 
   /**
@@ -134,6 +145,8 @@ export class SwarmStoreConnectorOrbitDB<
   public connect = async (
     connectionOptions: ISwarmStoreConnectorOrbitDBConnectionOptions
   ): Promise<void | Error> => {
+    // waiting for the instance initialization
+    await this.initializationPromise;
     const resultCreateIdentity = await this.createIdentity();
 
     if (resultCreateIdentity instanceof Error) {
@@ -234,17 +247,17 @@ export class SwarmStoreConnectorOrbitDB<
     }
 
     if (useEncryptedStorage) {
-      // Add the database name in the Storage fabric
-      // as the enctypted db. The storage fabric
-      // will create the encrypted storage
-      // for this database
-      this.storage?.addSecretDatabaseName(dbName);
+      await this.addDatabaseNameToListOfUsingSecretStorage(dbName);
     }
 
+    const optionsWithCachestore = await this.extendDatabaseOptionsWithCache(
+      dbOptions,
+      dbName
+    );
     const database = new SwarmStoreConnectorOrbitDBDatabase<
       ISwarmDatabaseValueTypes,
       DbType
-    >(dbOptions, orbitDb);
+    >(optionsWithCachestore, orbitDb);
 
     this.setListenersDatabaseEvents(database);
 
@@ -609,7 +622,7 @@ export class SwarmStoreConnectorOrbitDB<
     }
     this.options = options;
 
-    const { userId, credentials, directory } = options;
+    const { userId, directory } = options;
 
     if (!userId) {
       console.warn(new Error('The user id is not provided'));
@@ -619,13 +632,49 @@ export class SwarmStoreConnectorOrbitDB<
     if (typeof directory === 'string') {
       this.directory = directory;
     }
+  }
+
+  private createStorages(credentials?: ISecretStoreCredentials): void {
     if (credentials) {
       // if credentials provided, then
       // create the secret keystorage
       this.createIdentityKeystores(credentials);
-      // create secret storage fabric
-      this.createStorage(credentials);
     }
+    // create secret storage fabric
+    this.createStorageFabric(credentials);
+  }
+
+  protected getParamsForStoreRootPath(): ISwarmStoreConnectorOrbitDbUtilsAddressCreateRootPathOptions {
+    return {
+      directory: this.directory,
+      userId: String(this.userId),
+    };
+  }
+
+  protected async createStoreRootPath(): Promise<void> {
+    const rootPathParams = this.getParamsForStoreRootPath();
+    this.rootPath = await swarmStoreConnectorOrbitDbUtilsAddressCreateRootPath(
+      rootPathParams
+    );
+  }
+
+  protected async initialize(
+    credentials?: ISecretStoreCredentials
+  ): Promise<void> {
+    await this.createStoreRootPath();
+    this.createStorages(credentials);
+  }
+
+  protected unsetInitializationPromise = (): void => {
+    this.initializationPromise = undefined;
+  };
+
+  protected createInitializationPromise(
+    options: ISwarmStoreConnectorOrbitDBOptions<ISwarmDatabaseValueTypes>
+  ): void {
+    this.initializationPromise = this.initialize(options.credentials).finally(
+      this.unsetInitializationPromise
+    );
   }
 
   /**
@@ -657,6 +706,22 @@ export class SwarmStoreConnectorOrbitDB<
     this.identityKeystore = identityKeystore;
   }
 
+  private getOptionsForSwarmStoreConnectorOrbitDBSubclassStorageFabric(
+    credentials?: ISwarmStoreConnectorOrbitDBOptions<
+      ISwarmDatabaseValueTypes
+    >['credentials']
+  ): ISwarmStoreConnectorOrbitDbSubclassStorageFabricConstructorOptions {
+    const { rootPath } = this;
+    debugger;
+    if (typeof rootPath !== 'string') {
+      throw new Error('createIdentityKeystores::rootPath must be a string');
+    }
+    return {
+      rootPath,
+      credentials,
+    };
+  }
+
   /**
    * create a Storage fabric which is
    * used by the OrbitDB instance
@@ -670,17 +735,16 @@ export class SwarmStoreConnectorOrbitDB<
    * @memberof SwarmStoreConnectorOrbitDB
    * @throws
    */
-  private createStorage(
-    credentials: ISwarmStoreConnectorOrbitDBOptions<
+  private createStorageFabric(
+    credentials?: ISwarmStoreConnectorOrbitDBOptions<
       ISwarmDatabaseValueTypes
     >['credentials']
   ): void {
-    if (!credentials) {
-      throw new Error('createIdentityKeystores::credentials must be provided');
-    }
-    this.storage = new SwarmStoreConnectorOrbitDBSubclassStorageFabric(
+    debugger;
+    const options = this.getOptionsForSwarmStoreConnectorOrbitDBSubclassStorageFabric(
       credentials
     );
+    this.storage = new SwarmStoreConnectorOrbitDBSubclassStorageFabric(options);
   }
 
   protected createKeystore(
@@ -1330,5 +1394,38 @@ export class SwarmStoreConnectorOrbitDB<
       await this.closeDatabases();
       return this.emitError(err);
     }
+  }
+
+  protected async extendDatabaseOptionsWithCache(
+    dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<
+      ISwarmDatabaseValueTypes
+    >,
+    dbName: string
+  ): Promise<
+    ISwarmStoreConnectorOrbitDbDatabaseOptions<ISwarmDatabaseValueTypes>
+  > {
+    const { storage } = this;
+    debugger;
+    if (!storage) {
+      throw new Error('Storage is not exists in the connector');
+    }
+    return {
+      ...dbOptions,
+      cache: await storage.createStoreForDb(dbName),
+    };
+  }
+
+  protected async addDatabaseNameToListOfUsingSecretStorage(
+    dbName: string
+  ): Promise<void> {
+    if (!this.storage) {
+      throw new Error('There is no storage instance');
+    }
+    debugger;
+    // Add the database name in the Storage fabric
+    // as the enctypted db. The storage fabric
+    // will create the encrypted storage
+    // for this database
+    await this.storage.addSecretDatabaseName(dbName);
   }
 }

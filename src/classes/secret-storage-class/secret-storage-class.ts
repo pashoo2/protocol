@@ -9,7 +9,6 @@ import {
   importPasswordKey,
   exportPasswordKeyAsString,
   importPasswordKeyFromString,
-  exportPasswordKey,
 } from 'utils/password-utils/derive-key.password-utils';
 import { TPASSWORD_ENCRYPTION_KEY_IMPORT_NATIVE_SUPPORTED_TYPES } from 'utils/password-utils/password-utils.types';
 import {

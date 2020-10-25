@@ -1,30 +1,30 @@
-import { IStorageProviderOptions } from 'classes/storage-providers/storage-providers.types';
-import { validateCryptoKeyCredentials } from './../../../../../secret-storage-class/secret-storage-class-utils/secret-storage-class-utils-main/secret-storage-class-utils-main';
+import { validateCryptoKeyCredentials } from '../../../../../../secret-storage-class/secret-storage-class-utils/secret-storage-class-utils-main/secret-storage-class-utils-main';
 import {
   ISecretStoreCredentials,
   ISecretStoreCredentialsCryptoKey,
 } from 'classes/secret-storage-class/secret-storage-class.types';
 import { SecretStorage } from 'classes/secret-storage-class/secret-storage-class';
-import {
-  IOrbitDbCacheStore,
-  IOrbitDbKeystoreStore,
-} from './swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types';
-import {
-  SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_DEFAULT_OPTIONS_SECRET_STORAGE,
-  SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS,
-} from './swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.const';
+import { SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_STORAGE_ADAPTER_DEFAULT_OPTIONS_STORAGE } from '../swarm-store-connector-orbit-db-subclasses-cache.const';
 import { TCallbackError, TCallbackErrorValue } from 'orbit-db-cache';
-import { ISecretStorage } from '../../../../../secret-storage-class/secret-storage-class.types';
+import { ISecretStorage } from '../../../../../../secret-storage-class/secret-storage-class.types';
+import { ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterConstructorOptions } from './swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types';
+import { SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_OPEN_STORAGE_ADAPTER_STATUS } from '../swarm-store-connector-orbit-db-subclasses-cache.const';
+import {
+  ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbKeystoreStore,
+  ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore,
+} from '../swarm-store-connector-orbit-db-subclasses-cache.types';
 
 export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
-  implements IOrbitDbKeystoreStore, IOrbitDbCacheStore {
-  public get status(): SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS {
+  implements
+    ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbKeystoreStore,
+    ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore {
+  public get status(): SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_OPEN_STORAGE_ADAPTER_STATUS {
     const { isClose } = this;
 
     if (isClose) {
-      return SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS.CLOSE;
+      return SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_OPEN_STORAGE_ADAPTER_STATUS.CLOSE;
     }
-    return SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS.OPEN;
+    return SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_OPEN_STORAGE_ADAPTER_STATUS.OPEN;
   }
 
   /**
@@ -32,7 +32,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
    * ` get status () { return this._store.db.status } `
    *
    * @readonly
-   * @type {{ status: SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_STATUS }}
+   * @type {{ status: SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_OPEN_STORAGE_ADAPTER_STATUS }}
    * @memberof SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
    */
   public get db() {
@@ -41,7 +41,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
     };
   }
 
-  protected options?: IStorageProviderOptions;
+  protected options?: ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterConstructorOptions;
 
   protected secretStorage?: ISecretStorage;
 
@@ -54,8 +54,8 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
   protected isClose: boolean = false;
 
   constructor(
-    credentials: ISecretStoreCredentials | ISecretStoreCredentialsCryptoKey,
-    options: Required<IStorageProviderOptions>
+    options: ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterConstructorOptions,
+    credentials: ISecretStoreCredentials | ISecretStoreCredentialsCryptoKey
   ) {
     this.setOptions(options);
     this.setCredentials(credentials);
@@ -229,7 +229,9 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
     return new Error('There is no connection to the SecretStorage');
   }
 
-  protected setOptions(options: Required<IStorageProviderOptions>): void {
+  protected setOptions(
+    options: ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterConstructorOptions
+  ): void {
     if (!options) {
       throw new Error('Options must be provided');
     }
@@ -286,7 +288,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
 
   private createSecretStorage() {
     const secretStorage = new SecretStorage(
-      SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_SECRET_STORAGE_ADAPTER_DEFAULT_OPTIONS_SECRET_STORAGE
+      SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_STORAGE_ADAPTER_DEFAULT_OPTIONS_STORAGE
     );
 
     this.secretStorage = secretStorage;

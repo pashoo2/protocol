@@ -206,6 +206,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   public add = async (
     addArg: TSwarmStoreConnectorOrbitDbDatabaseAddMethodArgument<TStoreValue>
   ): Promise<string | Error> => {
+    debugger;
     const { value, key } = addArg;
     const database = this.getDbStoreInstance();
 
@@ -230,6 +231,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
         hash = await (database as OrbitDbFeedStore<TStoreValue>).add(value);
       }
       console.log(`ADDED DATA WITH HASH -- ${hash}`);
+      debugger;
       if (typeof hash !== 'string') {
         return new Error(
           'An unknown type of hash was returned for the value stored'
@@ -254,6 +256,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   ): Promise<
     Error | ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue> | undefined
   > => {
+    debugger;
     const entryRaw = this.readRawEntry(keyOrHash);
 
     if (!entryRaw || entryRaw instanceof Error) {
@@ -286,6 +289,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   public async remove(
     keyOrEntryAddress: TSwarmStoreConnectorOrbitDbDatabaseEntityIndex
   ): Promise<Error | void> {
+    debugger;
     try {
       await (this.isKVStore
         ? this.removeKeyKVStore(keyOrEntryAddress)
@@ -390,7 +394,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     const { databaseRestartingPromise } = this;
     if (databaseRestartingPromise) {
       debugger;
-      return databaseRestartingPromise;
+      return new Error('The current database instance is already restarting');
     }
 
     let methodResult:
@@ -1290,7 +1294,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
         throw methodResult;
       }
 
-      const { dbName } = options;
+      const { dbName, cache } = options;
 
       if (!dbName) {
         methodResult = this.onFatalError(
@@ -1312,6 +1316,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
 
       const storeOptions = {
         ...SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONFIGURATION,
+        cache,
         accessController: this.getAccessControllerOptions(),
       };
 

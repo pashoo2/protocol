@@ -44,33 +44,27 @@ export class OpenStorage implements OpenStorageClass {
 
   protected dbName?: string;
 
+  protected connectingPromise: Promise<void> | undefined;
+
   public connect = async (
     configuration?: IOpenStorageConfiguration
   ): Promise<void | Error> => {
-    const { options, storageProviderName } = configuration || {};
-    const storageProvider = getStorageProviderByName(
-      storageProviderName || STORAGE_PROVIDERS_NAME.LOCAL_FORAGE
-    );
-
-    if (!storageProvider) {
-      return new Error(
-        `There is no storage provider with the name ${storageProviderName}`
-      );
+    const { connectingPromise } = this;
+    if (connectingPromise) {
+      return connectingPromise;
     }
-
-    const connectToStorageProviderResult = await storageProvider.connect(
-      options
-    );
-
-    if (connectToStorageProviderResult instanceof Error) {
-      console.error(connectToStorageProviderResult);
-      return new Error('Failed to connect to the storage provider');
+    try {
+      const connectToStorePromise = this.connectToStore(configuration);
+      this.setConnectingPromise(connectToStorePromise);
+      return connectToStorePromise;
+    } catch (err) {
+      this.unsetConnectingPromise();
+      return err;
     }
-    this.setStorageProviderConnection(storageProvider);
-    this.setOptions(options);
   };
 
   public disconnect = async (): Promise<Error | void> => {
+    await this.waitTillConnecting();
     const { isActive, storageProvider } = this;
 
     if (isActive && storageProvider) {
@@ -83,12 +77,16 @@ export class OpenStorage implements OpenStorageClass {
     }
     this.unsetStorageProviderConnection();
     this.unsetOptions();
+    this.unsetConnectingPromise();
+    console.error(new Error('disconnect'));
+    throw new Error('disconnect');
   };
 
   public set = async (
     key: string,
     value?: string
   ): Promise<boolean | Error> => {
+    await this.waitTillConnecting();
     const { isActive, storageProvider } = this;
 
     if (!isActive || !storageProvider) {
@@ -101,6 +99,7 @@ export class OpenStorage implements OpenStorageClass {
     key: string,
     value: Uint8Array
   ): Promise<boolean | Error> => {
+    await this.waitTillConnecting();
     const { isActive, storageProvider, isBufferSupported } = this;
 
     if (!isActive || !storageProvider) {
@@ -116,6 +115,7 @@ export class OpenStorage implements OpenStorageClass {
   };
 
   public get = async (key: string): Promise<string | undefined | Error> => {
+    await this.waitTillConnecting();
     const { isActive, storageProvider } = this;
 
     if (!isActive || !storageProvider) {
@@ -127,6 +127,7 @@ export class OpenStorage implements OpenStorageClass {
   public getUInt8Array = async (
     key: string
   ): Promise<Uint8Array | undefined | Error> => {
+    await this.waitTillConnecting();
     const { isActive, storageProvider, isBufferSupported } = this;
 
     if (!isActive || !storageProvider) {
@@ -139,6 +140,22 @@ export class OpenStorage implements OpenStorageClass {
       return new Error('The storage provider is not support this operation');
     }
     return storageProvider.getUInt8Array(this.keyNameInStorage(key));
+  };
+
+  public clearDb = async (): Promise<boolean | Error> => {
+    await this.waitTillConnecting();
+    const { isActive, storageProvider } = this;
+
+    if (!isActive || !storageProvider) {
+      return new Error('There is no connection to a StorageProvider');
+    }
+    const result = await this.storageProvider?.clearDb();
+
+    if (result instanceof Error) {
+      console.error(result);
+      return Error('Failed to clear the database with the storage provider');
+    }
+    return true;
   };
 
   /**
@@ -174,5 +191,43 @@ export class OpenStorage implements OpenStorageClass {
 
   protected unsetStorageProviderConnection() {
     this.storageProvider = undefined;
+  }
+
+  protected async connectToStore(
+    configuration?: IOpenStorageConfiguration
+  ): Promise<void> {
+    const { options, storageProviderName } = configuration || {};
+    const storageProvider = getStorageProviderByName(
+      storageProviderName || STORAGE_PROVIDERS_NAME.LOCAL_FORAGE
+    );
+    debugger;
+    if (!storageProvider) {
+      throw new Error(
+        `There is no storage provider with the name ${storageProviderName}`
+      );
+    }
+
+    const connectToStorageProviderResult = await storageProvider.connect(
+      options
+    );
+    debugger;
+    if (connectToStorageProviderResult instanceof Error) {
+      console.error(connectToStorageProviderResult);
+      throw new Error('Failed to connect to the storage provider');
+    }
+    this.setStorageProviderConnection(storageProvider);
+    this.setOptions(options);
+  }
+
+  protected setConnectingPromise(connectingPromise: Promise<void>): void {
+    this.connectingPromise = connectingPromise;
+  }
+
+  protected unsetConnectingPromise(): void {
+    this.connectingPromise = undefined;
+  }
+
+  protected async waitTillConnecting(): Promise<void> {
+    await this.connectingPromise;
   }
 }

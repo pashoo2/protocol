@@ -1,12 +1,20 @@
 import { ownValueOf } from 'types/helper.types';
 import { STORAGE_PROVIDERS_NAME } from './storage-providers.const';
-import { IStorageCommon } from '../../types/storage.types';
+import { IStorage, IStorageCommon } from '../../types/storage.types';
 
 export interface IStorageProviderOptions {
   dbName?: string;
+  /**
+   * If not provided then the default storage implementation
+   * will be used.
+   *
+   * @type {IStorage}
+   * @memberof IStorageProviderOptions
+   */
+  storageImplementation?: IStorageCommon;
 }
 
-export abstract class StorageProvider<V = string> implements IStorageCommon<V> {
+export abstract class StorageProvider<V = string> implements IStorage<V> {
   /**
    * connect to the database specified
    *
@@ -57,7 +65,7 @@ export type TStorageProvider = typeof StorageProvider;
 export interface IStorageProvider<V = string> {
   isBufferSupported?: boolean;
   isDbNameSupported?: boolean;
-  new(): StorageProvider<V>;
+  new (): StorageProvider<V>;
 }
 
 export type TInstanceofStorageProvider = InstanceType<IStorageProvider>;

@@ -136,7 +136,12 @@ export interface ISwarmStoreDatabaseBaseOptions {
   isPublic?: boolean;
   // how many records to preload
   preloadCount?: number;
-  // use encrypted storage for the database
+  /**
+   * use encrypted storage for the database
+   *
+   * @type {boolean} [false]
+   * @memberof ISwarmStoreDatabaseBaseOptions
+   */
   useEncryptedStorage?: boolean;
 }
 

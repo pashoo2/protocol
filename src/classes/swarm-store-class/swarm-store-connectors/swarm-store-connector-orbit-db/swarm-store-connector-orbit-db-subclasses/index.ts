@@ -10,4 +10,4 @@ export * from './swarm-store-connector-orbit-db-subclass-storage-cache';
 
 export * from './swarm-store-connector-orbit-db-subclass-storage-fabric';
 
-export * from './swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter';
+export * from './swarm-store-connector-orbit-db-subclasses-cache/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter';
