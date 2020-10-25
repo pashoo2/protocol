@@ -511,7 +511,7 @@ export class SwarmMessagesDatabase<
 
   protected _handleDatabaseUpdatedEvent = (dbName: string): void => {
     if (this._dbName !== dbName) return;
-    debugger;
+
     this._emitter.emit(ESwarmStoreEventNames.UPDATE, dbName);
     this._updateMessagesCache();
   };
@@ -589,11 +589,11 @@ export class SwarmMessagesDatabase<
     key?: TSwarmStoreDatabaseEntityKey<P>
   ) => {
     if (this._dbName !== dbName) return;
-    debugger;
+
     if (this._isMessageAlreadyEmitted(messageAddress, key, message)) {
       return;
     }
-    debugger;
+
     this._emitter.emit(
       ESwarmMessageStoreEventNames.NEW_MESSAGE,
       dbName,
@@ -631,7 +631,7 @@ export class SwarmMessagesDatabase<
     ) {
       return;
     }
-    debugger;
+
     this._emitter.emit(
       ESwarmMessageStoreEventNames.DELETE_MESSAGE,
       dbName,
@@ -759,7 +759,6 @@ export class SwarmMessagesDatabase<
   protected _handleCacheUpdated = (
     messagesCached: TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined
   ): void => {
-    debugger;
     this._setMessagesCached(messagesCached);
     this.emitter.emit(
       ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATED,

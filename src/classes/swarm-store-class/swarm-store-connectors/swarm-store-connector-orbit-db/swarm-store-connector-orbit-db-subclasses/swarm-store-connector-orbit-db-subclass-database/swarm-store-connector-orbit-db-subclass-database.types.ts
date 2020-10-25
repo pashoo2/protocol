@@ -14,6 +14,7 @@ import {
 } from '../swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types';
 import OrbitDbFeedStore from 'orbit-db-feedstore';
 import OrbitDbKeyValueStore from 'orbit-db-kvstore';
+import { ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore } from '../swarm-store-connector-orbit-db-subclasses-cache/swarm-store-connector-orbit-db-subclasses-cache.types';
 import {
   TSwarmStoreDatabaseEntityUniqueIndex,
   TSwarmStoreDatabaseType,
@@ -47,7 +48,7 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseOptions<
    * @memberof ISwarmStoreConnectorOrbitDbDatabaseOptions
    */
   dbType?: ESwarmStoreConnectorOrbitDbDatabaseType;
-  cache?: IStore;
+  cache?: ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore;
 }
 
 export interface ISwarmStoreConnectorOrbitDbDatabaseEvents<

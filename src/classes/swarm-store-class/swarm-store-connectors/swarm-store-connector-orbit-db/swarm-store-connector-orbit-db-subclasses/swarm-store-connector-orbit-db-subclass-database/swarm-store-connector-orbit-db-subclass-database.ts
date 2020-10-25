@@ -49,6 +49,7 @@ import {
 } from '../../../../swarm-store-class.types';
 import { TSwarmStoreConnectorOrbitDbDatabaseStoreHash } from './swarm-store-connector-orbit-db-subclass-database.types';
 import { SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_PRELOAD_COUNT_MIN } from './swarm-store-connector-orbit-db-subclass-database.const';
+import { ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore } from '../swarm-store-connector-orbit-db-subclasses-cache/swarm-store-connector-orbit-db-subclasses-cache.types';
 import {
   createPromisePending,
   IPromisePending,
@@ -206,7 +207,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   public add = async (
     addArg: TSwarmStoreConnectorOrbitDbDatabaseAddMethodArgument<TStoreValue>
   ): Promise<string | Error> => {
-    debugger;
     const { value, key } = addArg;
     const database = this.getDbStoreInstance();
 
@@ -231,7 +231,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
         hash = await (database as OrbitDbFeedStore<TStoreValue>).add(value);
       }
       console.log(`ADDED DATA WITH HASH -- ${hash}`);
-      debugger;
+
       if (typeof hash !== 'string') {
         return new Error(
           'An unknown type of hash was returned for the value stored'
@@ -256,7 +256,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   ): Promise<
     Error | ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue> | undefined
   > => {
-    debugger;
     const entryRaw = this.readRawEntry(keyOrHash);
 
     if (!entryRaw || entryRaw instanceof Error) {
@@ -289,7 +288,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   public async remove(
     keyOrEntryAddress: TSwarmStoreConnectorOrbitDbDatabaseEntityIndex
   ): Promise<Error | void> {
-    debugger;
     try {
       await (this.isKVStore
         ? this.removeKeyKVStore(keyOrEntryAddress)
@@ -391,22 +389,24 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   protected async restartDbInstanceSilent(): Promise<
     Error | TSwarmStoreConnectorOrbitDbDatabase<TStoreValue>
   > {
-    const { databaseRestartingPromise } = this;
+    const { databaseRestartingPromise, database } = this;
+
     if (databaseRestartingPromise) {
-      debugger;
       return new Error('The current database instance is already restarting');
     }
 
+    const cacheStore = database && this.getDatabaseCache(database);
     let methodResult:
       | Error
       | TSwarmStoreConnectorOrbitDbDatabase<TStoreValue> = new Error(
       'Failed to restart db instance'
     );
 
+    cacheStore && this.setPreventCloseDatabaseCache(cacheStore);
     try {
       this.createPendingRestartingDatabase();
       this.unsetAllListenersForEvents();
-      debugger;
+
       const result = await this.closeCurrentStore();
 
       if (result instanceof Error) {
@@ -415,11 +415,18 @@ export class SwarmStoreConnectorOrbitDBDatabase<
         return result;
       }
       methodResult = await this.createDbInstanceSilent();
+      if (methodResult instanceof Error) {
+        return methodResult;
+      }
+      cacheStore && this.unsetPreventCloseDatabaseCache(cacheStore);
       return methodResult;
     } catch (err) {
       methodResult = err;
       return err;
     } finally {
+      if (cacheStore && methodResult instanceof Error) {
+        this.closeDatabaseCache(cacheStore);
+      }
       this.resolvePendingRestartingDatabase(methodResult);
     }
   }
@@ -463,9 +470,8 @@ export class SwarmStoreConnectorOrbitDBDatabase<
         console.error('Failed to restart the database');
         return dbInstance;
       }
-      debugger;
+
       await dbInstance.load(count);
-      debugger;
     }
     return {
       count: this.itemsCurrentlyLoaded - itemsLoaded,
@@ -640,7 +646,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<
 
     if (options) {
       result = this.filterRequltsFeedStore(result, options);
-      debugger;
     }
     debugger;
     return result;
@@ -667,7 +672,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     }
     // before to query the database entities must be preloaded in memory
     limit && (await this.preloadEntitiesBeforeIterate(limit));
-    debugger;
+
     const eqOperand =
       options?.[ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq];
 
@@ -1090,6 +1095,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     const { database } = this;
 
     if (database) {
+      debugger;
       const closeStoreResult = await this.closeInstanceOfStore(database);
 
       if (closeStoreResult instanceof Error) {
@@ -1104,24 +1110,66 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     }
   }
 
+  private setPreventCloseDatabaseCache(
+    cache: ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore
+  ): void {
+    cache.setPreventClose(true);
+  }
+
+  private unsetPreventCloseDatabaseCache(
+    cache: ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore
+  ): void {
+    cache.setPreventClose(false);
+  }
+
+  private closeDatabaseCache(
+    cache: ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore
+  ): void {
+    cache.close();
+  }
+
+  private getDatabaseCache(
+    database: OrbitDbFeedStore<TStoreValue> | OrbitDbKeyValueStore<TStoreValue>
+  ): ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore {
+    return (this.database as any)?._cache
+      ._store as ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore;
+  }
+
   // restart the store
   private async restartStore(): Promise<Error | void> {
-    const { isClosed } = this;
+    const { isClosed, database } = this;
+    const cacheStore = database && this.getDatabaseCache(database);
+    let result: undefined | Error;
 
     if (isClosed) {
       return new Error('The store was closed previousely');
     }
+    cacheStore && this.setPreventCloseDatabaseCache(cacheStore);
+    try {
+      const currentStoreStopResult = await this.closeCurrentStore();
 
-    const currentStoreStopResult = await this.closeCurrentStore();
+      if (currentStoreStopResult instanceof Error) {
+        console.error(currentStoreStopResult);
+        result = this.onFatalError(
+          'Failed to restart the Database cause failed to close the store instance',
+          'restartStore'
+        );
+        return result;
+      }
+      const connectResult = await this.connect();
 
-    if (currentStoreStopResult instanceof Error) {
-      console.error(currentStoreStopResult);
-      return this.onFatalError(
-        'Failed to restart the Database cause failed to close the store instance',
-        'restartStore'
-      );
+      if (connectResult instanceof Error) {
+        result = connectResult;
+      }
+      cacheStore && this.unsetPreventCloseDatabaseCache(cacheStore);
+    } catch (err) {
+      console.error(err);
+      result = err;
+    } finally {
+      if (result instanceof Error) {
+        cacheStore && this.closeDatabaseCache(cacheStore);
+      }
     }
-    return this.connect();
   }
 
   private handleFeedStoreReplicateInProgress = (
@@ -1346,7 +1394,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       }
       this.database = db;
       methodResult = db;
-      debugger;
+
       return db;
     } catch (err) {
       methodResult = this.onFatalError(err, 'createDbInstance');

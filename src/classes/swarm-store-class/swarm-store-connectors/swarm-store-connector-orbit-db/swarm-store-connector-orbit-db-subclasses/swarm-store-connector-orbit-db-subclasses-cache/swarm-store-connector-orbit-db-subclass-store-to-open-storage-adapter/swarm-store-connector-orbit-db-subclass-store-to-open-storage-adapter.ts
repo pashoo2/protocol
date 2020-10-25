@@ -44,6 +44,18 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToOpenStorageAdapter
 
   protected isClose: boolean = false;
 
+  /**
+   * close() method will not close the instance. It's
+   * necessary when restart the database, it's cache
+   * is closed by the OrbitDB API, so to prevent
+   * a cache from closing and it can be resused.
+   *
+   * @protected
+   * @type {boolean}
+   * @memberof SwarmStoreConnectorOrbitDBSubclassStoreToOpenStorageAdapter
+   */
+  protected isPreventedClose: boolean = false;
+
   constructor(
     options: ISwarmStoreConnectorOrbitDBSubclassStoreToOpenStorageAdapterConstructorOptions
   ) {
@@ -70,7 +82,8 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToOpenStorageAdapter
   }
 
   public close = async (cb?: TCallbackError): Promise<void> => {
-    if (!this.isOpen || this.isClose) {
+    this.throwIfClosed();
+    if (this.isPreventedClose) {
       return;
     }
     this.setIsClose();
@@ -90,6 +103,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToOpenStorageAdapter
     k: string,
     cb?: TCallbackErrorValue
   ): Promise<string | undefined> {
+    this.throwIfClosed();
     // open connection to the secret storage
     // before any operations
     await this.openIfNecessary();
@@ -119,9 +133,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToOpenStorageAdapter
     v: string | Buffer,
     cb?: TCallbackError
   ): Promise<void> {
-    if (this.isClose) {
-      console.error('CLOSED');
-    }
+    this.throwIfClosed();
     await this.openIfNecessary();
 
     const storage = this.getStorage();
@@ -144,6 +156,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToOpenStorageAdapter
   }
 
   public del = async (key: string, cb?: TCallbackError) => {
+    this.throwIfClosed();
     await this.openIfNecessary();
 
     const storage = this.getStorage();
@@ -162,6 +175,11 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToOpenStorageAdapter
     if (typeof cb === 'function') {
       cb(undefined);
     }
+  };
+
+  public setPreventClose = (isPrevented: boolean): void => {
+    this.throwIfClosed();
+    this.isPreventedClose = Boolean(isPrevented);
   };
 
   public dropDb = async () => {
@@ -207,6 +225,12 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToOpenStorageAdapter
 
   protected unsetIsClose() {
     this.isClose = false;
+  }
+
+  protected throwIfClosed() {
+    if (this.isClose) {
+      throw new Error('The instance is closed');
+    }
   }
 
   protected getStorage(): Error | IStorageCommon {
@@ -268,7 +292,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToOpenStorageAdapter
     return storageImplementation;
   }
 
-  private async startStorage(): Promise<Error | boolean> {
+  protected async startStorage(): Promise<Error | boolean> {
     if (this.storage) {
       return true;
     }

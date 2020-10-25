@@ -71,8 +71,9 @@ export class SwarmStoreConnectorOrbitDBSubclassStorageFabric
    * @memberof SwarmStoreConnectorOrbitDBSubclassStorageFabric
    * @throws
    */
-  public async createStore(path: string): Promise<IStore> {
-    debugger;
+  public async createStore(
+    path: string
+  ): Promise<ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore> {
     await this.ready;
     if (this.whetherUseSecretStorageForPath(path)) {
       return this.createSecretStorageForPath(path);
@@ -92,8 +93,9 @@ export class SwarmStoreConnectorOrbitDBSubclassStorageFabric
    * @memberof SwarmStoreConnectorOrbitDBSubclassStorageFabric
    * @throws
    */
-  public async createStoreForDb(dbName: string): Promise<IStore> {
-    debugger;
+  public async createStoreForDb(
+    dbName: string
+  ): Promise<ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore> {
     await this.ready;
     const dbPath = await this.createPathForDb(dbName);
     if (this.whetherUseSecretStorageForDB(dbName)) {

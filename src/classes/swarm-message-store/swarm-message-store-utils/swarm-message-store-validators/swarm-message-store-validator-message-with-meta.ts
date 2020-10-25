@@ -17,7 +17,6 @@ export function validateSwarmMessageWithMeta<P extends ESwarmStoreConnector>(
 ): swarmMessageWithMeta is ISwarmMessageStoreMessageWithMeta<P> {
   if (!swarmMessageWithMeta) {
     alert('No swarm message with meta');
-    debugger;
   }
   assert(!!swarmMessageWithMeta, 'Swarm message with meta is not defined');
   assert(

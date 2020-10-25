@@ -712,7 +712,7 @@ export class SwarmStoreConnectorOrbitDB<
     >['credentials']
   ): ISwarmStoreConnectorOrbitDbSubclassStorageFabricConstructorOptions {
     const { rootPath } = this;
-    debugger;
+
     if (typeof rootPath !== 'string') {
       throw new Error('createIdentityKeystores::rootPath must be a string');
     }
@@ -740,7 +740,6 @@ export class SwarmStoreConnectorOrbitDB<
       ISwarmDatabaseValueTypes
     >['credentials']
   ): void {
-    debugger;
     const options = this.getOptionsForSwarmStoreConnectorOrbitDBSubclassStorageFabric(
       credentials
     );
@@ -1405,7 +1404,7 @@ export class SwarmStoreConnectorOrbitDB<
     ISwarmStoreConnectorOrbitDbDatabaseOptions<ISwarmDatabaseValueTypes>
   > {
     const { storage } = this;
-    debugger;
+
     if (!storage) {
       throw new Error('Storage is not exists in the connector');
     }
@@ -1421,7 +1420,7 @@ export class SwarmStoreConnectorOrbitDB<
     if (!this.storage) {
       throw new Error('There is no storage instance');
     }
-    debugger;
+
     // Add the database name in the Storage fabric
     // as the enctypted db. The storage fabric
     // will create the encrypted storage

@@ -200,7 +200,7 @@ export class OpenStorage implements OpenStorageClass {
     const storageProvider = getStorageProviderByName(
       storageProviderName || STORAGE_PROVIDERS_NAME.LOCAL_FORAGE
     );
-    debugger;
+
     if (!storageProvider) {
       throw new Error(
         `There is no storage provider with the name ${storageProviderName}`
@@ -210,7 +210,7 @@ export class OpenStorage implements OpenStorageClass {
     const connectToStorageProviderResult = await storageProvider.connect(
       options
     );
-    debugger;
+
     if (connectToStorageProviderResult instanceof Error) {
       console.error(connectToStorageProviderResult);
       throw new Error('Failed to connect to the storage provider');

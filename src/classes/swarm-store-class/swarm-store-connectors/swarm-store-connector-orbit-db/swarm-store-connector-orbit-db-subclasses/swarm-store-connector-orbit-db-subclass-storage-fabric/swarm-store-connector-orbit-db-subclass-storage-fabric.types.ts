@@ -1,23 +1,27 @@
-import { IStore } from 'orbit-db-cache';
 import { ISecretStoreCredentials } from '../../../../../secret-storage-class/secret-storage-class.types';
+import { ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore } from '../swarm-store-connector-orbit-db-subclasses-cache/swarm-store-connector-orbit-db-subclasses-cache.types';
 
 export interface ISwarmStoreConnectorOrbitDBSubclassStorageFabric {
   /**
    * create cache store for the path
    *
    * @param {string} path
-   * @returns {Promise<IStore>}
+   * @returns {Promise<ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore>}
    * @memberof ISwarmStoreConnectorOrbitDBSubclassStorageFabric
    */
-  createStore(path: string): Promise<IStore>;
+  createStore(
+    path: string
+  ): Promise<ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore>;
   /**
    * create cache store for the database
    *
    * @param {string} dbName
-   * @returns {Promise<IStore>}
+   * @returns {Promise<ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore>}
    * @memberof ISwarmStoreConnectorOrbitDBSubclassStorageFabric
    */
-  createStoreForDb(dbName: string): Promise<IStore>;
+  createStoreForDb(
+    dbName: string
+  ): Promise<ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore>;
   /**
    * add database name to the list of database have
    * secret cache store
