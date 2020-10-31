@@ -61,13 +61,23 @@ export class SwarmStoreConnectorOrbitDB<
   ISwarmDatabaseValueTypes extends TSwarmStoreValueTypes<
     ESwarmStoreConnector.OrbitDB
   >,
-  DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>
+  DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<
+    ESwarmStoreConnector.OrbitDB,
+    ISwarmDatabaseValueTypes,
+    DbType
+  > = ISwarmStoreConnectorBasic<
+    ESwarmStoreConnector.OrbitDB,
+    ISwarmDatabaseValueTypes,
+    DbType
+  >
 > extends EventEmitter<ISwarmStoreConnectorOrbitDBEvents>
   implements
     ISwarmStoreConnector<
       ESwarmStoreConnector.OrbitDB,
       ISwarmDatabaseValueTypes,
-      DbType
+      DbType,
+      ConnectorBasic
     > {
   private static isLoadedCustomIdentityProvider: boolean = false;
 
@@ -105,7 +115,8 @@ export class SwarmStoreConnectorOrbitDB<
 
   protected connectionOptions?: ISwarmStoreConnectorOrbitDBConnectionOptions<
     ISwarmDatabaseValueTypes,
-    DbType
+    DbType,
+    ConnectorBasic
   >;
 
   protected options?: ISwarmStoreConnectorOrbitDBOptions<
@@ -133,7 +144,8 @@ export class SwarmStoreConnectorOrbitDB<
   protected _connectorFabric:
     | ISwarmStoreConnectorOrbitDbConnecectionBasicFabric<
         ISwarmDatabaseValueTypes,
-        DbType
+        DbType,
+        ConnectorBasic
       >
     | undefined;
 
@@ -160,7 +172,8 @@ export class SwarmStoreConnectorOrbitDB<
   public async connect(
     connectionOptions: ISwarmStoreConnectorOrbitDBConnectionOptions<
       ISwarmDatabaseValueTypes,
-      DbType
+      DbType,
+      ConnectorBasic
     >
   ): Promise<void | Error> {
     // waiting for the instance initialization
@@ -966,7 +979,8 @@ export class SwarmStoreConnectorOrbitDB<
   private setConnectionOptions(
     connectionOptions: ISwarmStoreConnectorOrbitDBConnectionOptions<
       ISwarmDatabaseValueTypes,
-      DbType
+      DbType,
+      ConnectorBasic
     >
   ): void | Error {
     if (!connectionOptions) {
@@ -1492,7 +1506,8 @@ export class SwarmStoreConnectorOrbitDB<
   protected _setConnectorBasicFabric(
     connectionOptions: ISwarmStoreConnectorOrbitDBConnectionOptions<
       ISwarmDatabaseValueTypes,
-      DbType
+      DbType,
+      ConnectorBasic
     >
   ): void {
     const { connectorFabric } = connectionOptions;

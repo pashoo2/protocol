@@ -32,6 +32,7 @@ import {
 import { TSwarmMessageDatabaseMessagesCached } from '../../classes/swarm-messages-database/swarm-messages-database.types';
 import { isValidSwarmMessageDecryptedFormat } from '../../classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-swarm-message';
 import { TSwarmMessageUserIdentifierSerialized } from '../../classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
+import { ISwarmStoreConnectorBasic } from '../../classes/swarm-store-class/swarm-store-class.types';
 
 interface IProps {
   userId: TSwarmMessageUserIdentifierSerialized;
@@ -43,24 +44,36 @@ interface IProps {
 interface IState<
   P extends ESwarmStoreConnector,
   T extends TSwarmStoreValueTypes<P>,
-  DbType extends TSwarmStoreDatabaseType<P>
+  DbType extends TSwarmStoreDatabaseType<P>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<
+    ESwarmStoreConnector.OrbitDB,
+    T,
+    DbType
+  >
 > {
   messages: TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined;
   isOpening: boolean;
   isClosing: boolean;
-  db?: SwarmMessagesDatabase<P, T, DbType>;
+  db?: SwarmMessagesDatabase<P, T, DbType, ConnectorBasic>;
 }
 
 export class SwarmMessagesDatabaseComponent<
   P extends ESwarmStoreConnector,
   T extends TSwarmStoreValueTypes<P>,
-  DbType extends TSwarmStoreDatabaseType<P>
-> extends React.PureComponent<IProps, IState<P, T, DbType>> {
-  state: IState<P, T, DbType> = {
+  DbType extends TSwarmStoreDatabaseType<P>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<
+    ESwarmStoreConnector.OrbitDB,
+    T,
+    DbType
+  >
+> extends React.PureComponent<IProps, IState<P, T, DbType, ConnectorBasic>> {
+  state: IState<P, T, DbType, ConnectorBasic> = {
     messages: undefined,
     isOpening: false,
     isClosing: false,
-    db: undefined as SwarmMessagesDatabase<P, T, DbType> | undefined,
+    db: undefined as
+      | SwarmMessagesDatabase<P, T, DbType, ConnectorBasic>
+      | undefined,
   };
 
   get isOpened(): boolean {

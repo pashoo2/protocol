@@ -80,18 +80,25 @@ import {
   ESwarmStoreConnectorOrbitDbDatabaseType,
 } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { ESwarmStoreConnectorOrbitDbDatabaseMethodNames } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db';
+import { ISwarmStoreConnectorBasic } from '../swarm-store-class/swarm-store-class.types';
 
 export class SwarmMessageStore<
   P extends ESwarmStoreConnector,
-  DbType extends TSwarmStoreDatabaseType<P>
+  DbType extends TSwarmStoreDatabaseType<P>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<
+    ESwarmStoreConnector.OrbitDB,
+    TSwarmMessageSerialized,
+    DbType
+  >
 >
   extends SwarmStore<
     P,
     TSwarmMessageSerialized,
     DbType,
-    ISwarmMessageStoreEvents
+    ISwarmMessageStoreEvents,
+    ConnectorBasic
   >
-  implements ISwarmMessageStore<P, DbType> {
+  implements ISwarmMessageStore<P, DbType, ConnectorBasic> {
   protected connectorType: P | undefined;
 
   protected accessControl?: ISwarmMessageStoreAccessControlOptions<P>;
@@ -158,8 +165,8 @@ export class SwarmMessageStore<
   }
 
   public async connect(
-    options: ISwarmMessageStoreOptions<P, DbType>
-  ): TSwarmMessageStoreConnectReturnType<P, DbType> {
+    options: ISwarmMessageStoreOptions<P, DbType, ConnectorBasic>
+  ): TSwarmMessageStoreConnectReturnType<P, DbType, ConnectorBasic> {
     const extendsWithAccessControl = swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl(
       options
     );
@@ -372,7 +379,9 @@ export class SwarmMessageStore<
     );
   }
 
-  protected validateOpts(options: ISwarmMessageStoreOptions<P, DbType>): void {
+  protected validateOpts(
+    options: ISwarmMessageStoreOptions<P, DbType, ConnectorBasic>
+  ): void {
     super.validateOptions(options);
 
     const { messageConstructors } = options;
@@ -420,7 +429,9 @@ export class SwarmMessageStore<
     }
   }
 
-  protected setOptions(options: ISwarmMessageStoreOptions<P, DbType>): void {
+  protected setOptions(
+    options: ISwarmMessageStoreOptions<P, DbType, ConnectorBasic>
+  ): void {
     this.validateOpts(options);
     this.connectorType = options.provider;
     this.accessControl = options.accessControl;

@@ -16,7 +16,10 @@ import {
 } from './swarm-store-class.const';
 import { IStorageCommon } from 'types/storage.types';
 import { calculateHash } from 'utils/hash-calculation-utils';
-import { TSwarmStoreDatabaseType } from './swarm-store-class.types';
+import {
+  TSwarmStoreDatabaseType,
+  ISwarmStoreConnectorBasic,
+} from './swarm-store-class.types';
 import {
   ISwarmStoreConnector,
   ISwarmStoreDatabasesStatuses,
@@ -46,8 +49,20 @@ export class SwarmStore<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  E extends ISwarmStoreEvents = ISwarmStoreEvents
-> extends EventEmitter<E> implements ISwarmStore<P, ItemType, DbType> {
+  E extends ISwarmStoreEvents = ISwarmStoreEvents,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<
+    ESwarmStoreConnector.OrbitDB,
+    ItemType,
+    DbType
+  > = ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, ItemType, DbType>,
+  O extends ISwarmStoreOptions<
+    P,
+    ItemType,
+    DbType,
+    ConnectorBasic
+  > = ISwarmStoreOptions<P, ItemType, DbType, ConnectorBasic>
+> extends EventEmitter<E>
+  implements ISwarmStore<P, ItemType, DbType, ConnectorBasic, O> {
   public get isReady(): boolean {
     return !!this.connector && this.connector.isReady;
   }
@@ -76,7 +91,9 @@ export class SwarmStore<
     };
   }
 
-  protected connector: ISwarmStoreConnector<P, ItemType, DbType> | undefined;
+  protected connector:
+    | ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic>
+    | undefined;
 
   protected dbStatusesExisting: ISwarmStoreDatabasesStatuses = SWARM_STORE_DATABASES_STATUSES_EMPTY;
 
@@ -137,11 +154,11 @@ export class SwarmStore<
    * @memberof SwarmStore
    */
   public async connect(
-    options: ISwarmStoreOptions<P, ItemType, DbType>,
+    options: ISwarmStoreOptions<P, ItemType, DbType, ConnectorBasic>,
     databasePersistantListStorage?: IStorageCommon
   ): Promise<Error | void> {
     let connectionWithConnector:
-      | ISwarmStoreConnector<P, ItemType, DbType>
+      | ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic>
       | undefined;
     try {
       this.validateOptions(options);
@@ -300,7 +317,7 @@ export class SwarmStore<
    * @throws
    */
   protected validateOptions(
-    options: ISwarmStoreOptions<P, ItemType, DbType>
+    options: ISwarmStoreOptions<P, ItemType, DbType, ConnectorBasic>
   ): void {
     assert(options, 'An options must be specified');
     assert(
@@ -411,7 +428,7 @@ export class SwarmStore<
    * @memberof SwarmStore
    */
   protected getDatabasePersistentListDirectory(
-    options: ISwarmStoreOptions<P, ItemType, DbType>
+    options: ISwarmStoreOptions<P, ItemType, DbType, ConnectorBasic>
   ): string {
     return `${options.userId}/${options.directory ||
       SWARM_STORE_DATABASES_PERSISTENT_LIST_DIRECTORY_DEFAULT}`;
@@ -624,8 +641,8 @@ export class SwarmStore<
    * @memberof SwarmStore
    */
   protected createConnectionWithStorageConnector(
-    options: ISwarmStoreOptions<P, ItemType, DbType>
-  ): ISwarmStoreConnector<P, ItemType, DbType> {
+    options: ISwarmStoreOptions<P, ItemType, DbType, ConnectorBasic>
+  ): ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic> {
     const { provider } = options;
     const Constructor = this.getStorageConnector(options.provider);
 
@@ -639,7 +656,12 @@ export class SwarmStore<
       connection instanceof Constructor,
       `Failed to create connection with the provider ${provider}`
     );
-    return connection as ISwarmStoreConnector<P, ItemType, DbType>;
+    return connection as ISwarmStoreConnector<
+      P,
+      ItemType,
+      DbType,
+      ConnectorBasic
+    >;
   }
 
   /**
@@ -651,8 +673,8 @@ export class SwarmStore<
    * @memberof SwarmStore
    */
   protected async startConnectionWithConnector(
-    connector: ISwarmStoreConnector<P, ItemType, DbType>,
-    options: ISwarmStoreOptions<P, ItemType, DbType>
+    connector: ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic>,
+    options: ISwarmStoreOptions<P, ItemType, DbType, ConnectorBasic>
   ): Promise<void> {
     const connectionResult = await connector.connect(
       options.providerConnectionOptions
@@ -694,7 +716,7 @@ export class SwarmStore<
    * @memberof SwarmStore
    */
   protected createStatusTable(
-    options: ISwarmStoreOptions<P, ItemType, DbType>
+    options: ISwarmStoreOptions<P, ItemType, DbType, ConnectorBasic>
   ) {
     const { databases } = options;
 
@@ -729,7 +751,7 @@ export class SwarmStore<
    * @memberof SwarmStore
    */
   protected subscribeOnDbEvents(
-    connector: ISwarmStoreConnector<P, ItemType, DbType>,
+    connector: ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic>,
     isSubscribe: boolean = true
   ): void {
     if (!connector) {
@@ -754,7 +776,7 @@ export class SwarmStore<
   }
 
   protected unsubscribeFromDbEvents(
-    connector: ISwarmStoreConnector<P, ItemType, DbType>
+    connector: ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic>
   ) {
     this.subscribeOnDbEvents(connector, false);
   }
@@ -767,7 +789,7 @@ export class SwarmStore<
    * @memberof SwarmStore
    */
   protected subscribeConnectorAllEvents(
-    connector: ISwarmStoreConnector<P, ItemType, DbType>
+    connector: ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic>
   ) {
     if (!connector) {
       throw new Error('There is no swarm connector');
@@ -786,7 +808,7 @@ export class SwarmStore<
   }
 
   protected unSubscribeConnectorAllEvents(
-    connector: ISwarmStoreConnector<P, ItemType, DbType>
+    connector: ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic>
   ) {
     const { storeConnectorEventsHandlers } = this;
 
@@ -807,7 +829,7 @@ export class SwarmStore<
    * @memberof SwarmStore
    */
   protected subscribeOnConnector(
-    connector: ISwarmStoreConnector<P, ItemType, DbType>
+    connector: ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic>
   ) {
     this.subscribeOnDbEvents(connector);
     this.subscribeConnectorAllEvents(connector);
@@ -820,7 +842,7 @@ export class SwarmStore<
    * @memberof SwarmStore
    */
   protected unSubscribeFromConnector(
-    connector: ISwarmStoreConnector<P, ItemType, DbType>
+    connector: ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic>
   ) {
     this.unsubscribeFromDbEvents(connector);
     this.unSubscribeConnectorAllEvents(connector);

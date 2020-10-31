@@ -16,6 +16,7 @@ import {
   TSwarmStoreDatabaseType,
 } from '../../../swarm-store-class/swarm-store-class.types';
 import { TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types';
+import { ISwarmStoreConnectorBasic } from '../../../swarm-store-class/swarm-store-class.types';
 import {
   ISwarmStoreDatabaseBaseOptions,
   TSwarmStoreDatabaseOptions,
@@ -35,18 +36,27 @@ import {
  *   ISwarmStoreDatabaseBaseOptions & { provider: ESwarmStoreConnector.OrbitDB })}
  */
 function swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControlOrbitDB<
-  T extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>,
-  DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>
+  ItemType extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>,
+  DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<
+    ESwarmStoreConnector.OrbitDB,
+    ItemType,
+    DbType
+  >
 >(
-  options: ISwarmMessageStoreOptions<ESwarmStoreConnector.OrbitDB, DbType>,
-  dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<T> &
+  options: ISwarmMessageStoreOptions<
+    ESwarmStoreConnector.OrbitDB,
+    DbType,
+    ConnectorBasic
+  >,
+  dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType> &
     ISwarmStoreDatabaseBaseOptions,
   allowAccessForUsers?: string[],
   grantAccessCallback?: TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<
     ESwarmStoreConnector,
-    T
+    ItemType
   >
-): TSwarmStoreDatabaseOptions<ESwarmStoreConnector.OrbitDB, T> &
+): TSwarmStoreDatabaseOptions<ESwarmStoreConnector.OrbitDB, ItemType> &
   ISwarmStoreDatabaseBaseOptions & { provider: ESwarmStoreConnector.OrbitDB } {
   const grantAccess = getMessageValidator(
     dbOptions,
@@ -75,9 +85,14 @@ function swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControlOrbitDB<
 export const swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl = <
   P extends ESwarmStoreConnector,
   T extends TSwarmStoreValueTypes<P>,
-  DbType extends TSwarmStoreDatabaseType<P>
+  DbType extends TSwarmStoreDatabaseType<P>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<
+    ESwarmStoreConnector.OrbitDB,
+    T,
+    DbType
+  >
 >(
-  options: ISwarmMessageStoreOptions<P, DbType>
+  options: ISwarmMessageStoreOptions<P, DbType, ConnectorBasic>
 ) => (
   dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<T> &
     ISwarmStoreDatabaseBaseOptions
@@ -114,7 +129,8 @@ export const swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl = <
   }
   return swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControlOrbitDB<
     T,
-    DbType
+    DbType,
+    ConnectorBasic
   >(options, dbOptions, allowAccessForUsers, grantAccessCallback as any) as any; // TODO - on added another DB provider than the OrbitDB, any type must be removed
 };
 
@@ -131,12 +147,19 @@ export const swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl = <
  * >)}
  */
 async function swarmMessageStoreUtilsConnectorOptionsProviderForOrbitDB<
-  ISwarmDatabaseValueTypes extends TSwarmStoreValueTypes<
-    ESwarmStoreConnector.OrbitDB
-  >,
-  DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>
+  ItemsTypes extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>,
+  DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<
+    ESwarmStoreConnector.OrbitDB,
+    ItemsTypes,
+    DbType
+  >
 >(
-  options: ISwarmMessageStoreOptions<ESwarmStoreConnector.OrbitDB, DbType>,
+  options: ISwarmMessageStoreOptions<
+    ESwarmStoreConnector.OrbitDB,
+    DbType,
+    ConnectorBasic
+  >,
   extendWithAccessControlOptions: ReturnType<
     typeof swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl
   >
@@ -144,7 +167,8 @@ async function swarmMessageStoreUtilsConnectorOptionsProviderForOrbitDB<
   ISwarmStoreConnectorOrbitDBOptions<TSwarmMessageSerialized> & {
     providerConnectionOptions: ISwarmStoreConnectorOrbitDBConnectionOptions<
       TSwarmMessageSerialized,
-      DbType
+      DbType,
+      ConnectorBasic
     >;
     provider: typeof ESwarmStoreConnector.OrbitDB;
   }
@@ -178,13 +202,19 @@ async function swarmMessageStoreUtilsConnectorOptionsProviderForOrbitDB<
  */
 export async function swarmMessageStoreUtilsConnectorOptionsProvider<
   P extends ESwarmStoreConnector,
-  DbType extends TSwarmStoreDatabaseType<P>
+  DbType extends TSwarmStoreDatabaseType<P>,
+  ItemsTypes extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<
+    ESwarmStoreConnector.OrbitDB,
+    ItemsTypes,
+    DbType
+  >
 >(
-  options: ISwarmMessageStoreOptions<P, DbType>,
+  options: ISwarmMessageStoreOptions<P, DbType, ConnectorBasic>,
   extendWithAccessControlOptions: ReturnType<
     typeof swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl
   >
-): Promise<ISwarmMessageStoreOptions<P, DbType>> {
+): Promise<ISwarmMessageStoreOptions<P, DbType, ConnectorBasic>> {
   const { provider } = options;
 
   switch (provider) {
@@ -192,7 +222,7 @@ export async function swarmMessageStoreUtilsConnectorOptionsProvider<
       return swarmMessageStoreUtilsConnectorOptionsProviderForOrbitDB(
         options,
         extendWithAccessControlOptions
-      ) as Promise<ISwarmMessageStoreOptions<P, DbType>>;
+      ) as Promise<ISwarmMessageStoreOptions<P, DbType, ConnectorBasic>>;
     default:
       throw new Error(
         `Failed to transform options cause the provider "${provider}" is unknown`

@@ -11,6 +11,7 @@ import {
 } from './swarm-messages-database-component.types';
 import { ESwarmMessageStoreEventNames } from '../../classes/swarm-message-store/swarm-message-store.const';
 import { ESwarmMessagesDatabaseCacheEventsNames } from '../../classes/swarm-messages-database/swarm-messages-database.const';
+import { ISwarmStoreConnectorBasic } from '../../classes/swarm-store-class/swarm-store-class.types';
 import {
   TSwarmStoreValueTypes,
   TSwarmStoreDatabaseType,
@@ -21,11 +22,16 @@ import {
 export const connectToDatabase = async <
   P extends ESwarmStoreConnector = ESwarmStoreConnector.OrbitDB,
   V extends TSwarmStoreValueTypes<P> = TSwarmStoreValueTypes<P>,
-  DbType extends TSwarmStoreDatabaseType<P> = TSwarmStoreDatabaseType<P>
+  DbType extends TSwarmStoreDatabaseType<P> = TSwarmStoreDatabaseType<P>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<
+    ESwarmStoreConnector.OrbitDB,
+    V,
+    DbType
+  > = ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, V, DbType>
 >(
-  options: ISwarmMessagesDatabaseConnectOptions<P, V, DbType>
-): Promise<SwarmMessagesDatabase<P, V, DbType>> => {
-  const db = new SwarmMessagesDatabase<P, V, DbType>();
+  options: ISwarmMessagesDatabaseConnectOptions<P, V, DbType, ConnectorBasic>
+): Promise<SwarmMessagesDatabase<P, V, DbType, ConnectorBasic>> => {
+  const db = new SwarmMessagesDatabase<P, V, DbType, ConnectorBasic>();
 
   await db.connect(options);
   return db;
@@ -35,10 +41,21 @@ export const setMessageListener = <
   P extends ESwarmStoreConnector = ESwarmStoreConnector.OrbitDB,
   V extends TSwarmStoreValueTypes<P> = TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P> = TSwarmStoreDatabaseType<P>,
-  T extends SwarmMessagesDatabase<P, V, DbType> = SwarmMessagesDatabase<
+  ConnectorBasic extends ISwarmStoreConnectorBasic<
     ESwarmStoreConnector.OrbitDB,
     V,
     DbType
+  > = ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, V, DbType>,
+  T extends SwarmMessagesDatabase<
+    P,
+    V,
+    DbType,
+    ConnectorBasic
+  > = SwarmMessagesDatabase<
+    ESwarmStoreConnector.OrbitDB,
+    V,
+    DbType,
+    ConnectorBasic
   >
 >(
   db: T,
@@ -73,10 +90,21 @@ export const setMessageDeleteListener = <
   P extends ESwarmStoreConnector = ESwarmStoreConnector.OrbitDB,
   V extends TSwarmStoreValueTypes<P> = TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P> = TSwarmStoreDatabaseType<P>,
-  T extends SwarmMessagesDatabase<P, V, DbType> = SwarmMessagesDatabase<
+  ConnectorBasic extends ISwarmStoreConnectorBasic<
     ESwarmStoreConnector.OrbitDB,
     V,
     DbType
+  > = ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, V, DbType>,
+  T extends SwarmMessagesDatabase<
+    P,
+    V,
+    DbType,
+    ConnectorBasic
+  > = SwarmMessagesDatabase<
+    ESwarmStoreConnector.OrbitDB,
+    V,
+    DbType,
+    ConnectorBasic
   >
 >(
   db: T,
@@ -116,10 +144,21 @@ export const setCacheUpdateListener = <
   P extends ESwarmStoreConnector = ESwarmStoreConnector.OrbitDB,
   V extends TSwarmStoreValueTypes<P> = TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P> = TSwarmStoreDatabaseType<P>,
-  T extends SwarmMessagesDatabase<P, V, DbType> = SwarmMessagesDatabase<
+  ConnectorBasic extends ISwarmStoreConnectorBasic<
     ESwarmStoreConnector.OrbitDB,
     V,
     DbType
+  > = ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, V, DbType>,
+  T extends SwarmMessagesDatabase<
+    P,
+    V,
+    DbType,
+    ConnectorBasic
+  > = SwarmMessagesDatabase<
+    ESwarmStoreConnector.OrbitDB,
+    V,
+    DbType,
+    ConnectorBasic
   >
 >(
   db: T,

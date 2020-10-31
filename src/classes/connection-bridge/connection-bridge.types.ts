@@ -5,11 +5,27 @@ import {
 import { ESwarmStoreConnector } from '../swarm-store-class/swarm-store-class.const';
 import { ICentralAuthority } from '../central-authority-class/central-authority-class.types';
 import { ICentralAuthorityOptions } from '../central-authority-class/central-authority-class.types';
-import { ISwarmMessageConstructor } from '../swarm-message/swarm-message-constructor.types';
+import {
+  ISwarmMessageConstructor,
+  TSwarmMessageSerialized,
+} from '../swarm-message/swarm-message-constructor.types';
 import { ISensitiveDataSessionStorageOptions } from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { ISwarmMessageEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
-import { TSwarmStoreDatabaseType } from '../swarm-store-class/swarm-store-class.types';
+import {
+  TSwarmStoreDatabaseType,
+  ISwarmStoreConnectorBasicWithEntriesCount,
+} from '../swarm-store-class/swarm-store-class.types';
+import { ISwarmStoreConnectorOrbitDbConnecectionBasicFabric } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.types';
+
+export type TConnectionBridgeSwarmStoreConnectorBasic<
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>
+> = ISwarmStoreConnectorBasicWithEntriesCount<
+  P,
+  TSwarmMessageSerialized,
+  DbType
+>;
 
 export type IConnectionBridgeOptionsAuthCredentials = Omit<
   ICentralAuthorityOptions['user']['credentials'],
@@ -50,9 +66,40 @@ export interface IConnectionBridgeSwarmConnection<T> {
   getNativeConnection(): T;
 }
 
+export interface IConnectionBridgeStorageOptions<
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  ConnectorBasic extends TConnectionBridgeSwarmStoreConnectorBasic<
+    P,
+    DbType
+  > = TConnectionBridgeSwarmStoreConnectorBasic<P, DbType>
+>
+  extends Omit<
+    ISwarmMessageStoreOptions<P, DbType, ConnectorBasic>,
+    | 'userId'
+    | 'credentials'
+    | 'messageConstructors'
+    | 'providerConnectionOptions'
+    | 'databasesListStorage'
+  > {
+  connectorBasicFabric?: ISwarmStoreConnectorOrbitDbConnecectionBasicFabric<
+    TSwarmMessageSerialized,
+    DbType,
+    ISwarmStoreConnectorBasicWithEntriesCount<
+      ESwarmStoreConnector.OrbitDB,
+      TSwarmMessageSerialized,
+      DbType
+    >
+  >;
+}
+
 export interface IConnectionBridgeOptions<
   P extends ESwarmStoreConnector,
   DbType extends TSwarmStoreDatabaseType<P>,
+  ConnectorBasic extends TConnectionBridgeSwarmStoreConnectorBasic<
+    P,
+    DbType
+  > = TConnectionBridgeSwarmStoreConnectorBasic<P, DbType>,
   CD extends boolean = false
 > {
   auth: IConnectionBridgeOptionsAuth<CD>;
@@ -71,14 +118,7 @@ export interface IConnectionBridgeOptions<
    * @type {ISwarmMessageStoreOptions<P>}
    * @memberof IConnectionBridgeOptions
    */
-  storage: Omit<
-    ISwarmMessageStoreOptions<P, DbType>,
-    | 'userId'
-    | 'credentials'
-    | 'messageConstructors'
-    | 'providerConnectionOptions'
-    | 'databasesListStorage'
-  >;
+  storage: IConnectionBridgeStorageOptions<P, DbType, ConnectorBasic>;
   /**
    * specify options for the swarm connection provider
    *
@@ -90,7 +130,11 @@ export interface IConnectionBridgeOptions<
 
 export interface IConnectionBridge<
   P extends ESwarmStoreConnector = ESwarmStoreConnector.OrbitDB,
-  DbType extends TSwarmStoreDatabaseType<P> = TSwarmStoreDatabaseType<P>
+  DbType extends TSwarmStoreDatabaseType<P> = TSwarmStoreDatabaseType<P>,
+  ConnectorBasic extends TConnectionBridgeSwarmStoreConnectorBasic<
+    P,
+    DbType
+  > = TConnectionBridgeSwarmStoreConnectorBasic<P, DbType>
 > {
   /**
    * used to authorize the user or get
@@ -108,7 +152,7 @@ export interface IConnectionBridge<
    * @type {ISwarmMessageStore<P>}
    * @memberof IConnectionBridge
    */
-  storage?: ISwarmMessageStore<P, DbType>;
+  storage?: ISwarmMessageStore<P, DbType, ConnectorBasic>;
   /**
    * allows to create messages, which can be stored in the swarm
    *

@@ -1,26 +1,26 @@
 import {
   TSwarmStoreValueTypes,
   TSwarmStoreDatabaseType,
-  ISwarmStoreConnectorBasicWithItemsCount,
+  ISwarmStoreConnectorBasicWithEntriesCount,
 } from '../../../../../../swarm-store-class.types';
 import { ESwarmStoreConnector } from '../../../../../../swarm-store-class.const';
 import { SwarmStoreConnectorOrbitDBDatabaseQueued } from '../swarm-store-connector-orbit-db-subclass-database-queued';
 
-export class swarmStoreConnectorOrbitDbSubclassDatabaseQueuedItemsCounted<
+export class SwarmStoreConnectorOrbitDbSubclassDatabaseQueuedItemsCounted<
   TStoreValue extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>,
   DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>
 > extends SwarmStoreConnectorOrbitDBDatabaseQueued<TStoreValue, DbType>
   implements
-    ISwarmStoreConnectorBasicWithItemsCount<
+    ISwarmStoreConnectorBasicWithEntriesCount<
       ESwarmStoreConnector.OrbitDB,
       TStoreValue,
       DbType
     > {
-  get countItemsLoaded(): number {
+  get countEntriesLoaded(): number {
     return this.itemsCurrentlyLoaded;
   }
 
-  get countItemsOverall(): number {
+  get countEntriesAllExists(): number {
     return this.itemsOverallCount;
   }
 }

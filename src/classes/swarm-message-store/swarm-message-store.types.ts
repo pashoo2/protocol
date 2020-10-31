@@ -30,7 +30,10 @@ import { StorageProvider } from '../storage-providers/storage-providers.types';
 import { ISwarmStoreConnectorOrbitDbDatabaseValue } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { ISwarmMessageInstanceDecrypted } from '../swarm-message/swarm-message-constructor.types';
-import { TSwarmStoreConnectorConnectionOptions } from '../swarm-store-class/swarm-store-class.types';
+import {
+  TSwarmStoreConnectorConnectionOptions,
+  ISwarmStoreConnectorBasic,
+} from '../swarm-store-class/swarm-store-class.types';
 import {
   TSwarmStoreDatabaseEntityAddress,
   TSwarmStoreDatabaseEntityKey,
@@ -145,14 +148,26 @@ export interface ISwarmMessageDatabaseConstructors {
 
 export interface ISwarmMessageStoreOptions<
   P extends ESwarmStoreConnector,
-  DbType extends TSwarmStoreDatabaseType<P>
-> extends ISwarmStoreOptions<P, TSwarmMessageSerialized, DbType> {
+  DbType extends TSwarmStoreDatabaseType<P>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<
+    ESwarmStoreConnector.OrbitDB,
+    TSwarmMessageSerialized,
+    DbType
+  >
+>
+  extends ISwarmStoreOptions<
+    P,
+    TSwarmMessageSerialized,
+    DbType,
+    ConnectorBasic
+  > {
   accessControl?: ISwarmMessageStoreAccessControlOptions<P>;
   messageConstructors: ISwarmMessageDatabaseConstructors;
   providerConnectionOptions: TSwarmStoreConnectorConnectionOptions<
     P,
     TSwarmMessageSerialized,
-    DbType
+    DbType,
+    ConnectorBasic
   >;
   databasesListStorage: IStorageCommon;
   /**
@@ -168,13 +183,19 @@ export interface ISwarmMessageStoreOptions<
 
 export type TSwarmMessageStoreConnectReturnType<
   P extends ESwarmStoreConnector,
-  DbType extends TSwarmStoreDatabaseType<P>
+  DbType extends TSwarmStoreDatabaseType<P>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<
+    ESwarmStoreConnector.OrbitDB,
+    TSwarmMessageSerialized,
+    DbType
+  >
 > = ReturnType<
   ISwarmStore<
     P,
     TSwarmMessageSerialized,
     DbType,
-    ISwarmMessageStoreOptions<P, DbType>
+    ConnectorBasic,
+    ISwarmMessageStoreOptions<P, DbType, ConnectorBasic>
   >['connect']
 >;
 
@@ -380,13 +401,19 @@ export interface ISwarmMessageStoreMessagingMethods<
  */
 export interface ISwarmMessageStore<
   P extends ESwarmStoreConnector,
-  DbType extends TSwarmStoreDatabaseType<P>
+  DbType extends TSwarmStoreDatabaseType<P>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<
+    ESwarmStoreConnector.OrbitDB,
+    TSwarmMessageSerialized,
+    DbType
+  >
 >
   extends ISwarmStore<
       P,
       TSwarmMessageSerialized,
       DbType,
-      ISwarmMessageStoreOptions<P, DbType>
+      ConnectorBasic,
+      ISwarmMessageStoreOptions<P, DbType, ConnectorBasic>
     >,
     EventEmitter<ISwarmMessageStoreEvents>,
     ISwarmMessageStoreMessagingMethods<P, DbType> {
@@ -399,6 +426,6 @@ export interface ISwarmMessageStore<
    * @throws
    */
   connect(
-    options: ISwarmMessageStoreOptions<P, DbType>
-  ): TSwarmMessageStoreConnectReturnType<P, DbType>;
+    options: ISwarmMessageStoreOptions<P, DbType, ConnectorBasic>
+  ): TSwarmMessageStoreConnectReturnType<P, DbType, ConnectorBasic>;
 }
