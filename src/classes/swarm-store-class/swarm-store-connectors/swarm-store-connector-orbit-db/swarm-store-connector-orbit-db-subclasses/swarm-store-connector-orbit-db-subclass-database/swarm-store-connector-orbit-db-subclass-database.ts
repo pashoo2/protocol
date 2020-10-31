@@ -51,6 +51,7 @@ import { TSwarmStoreConnectorOrbitDbDatabaseStoreHash } from './swarm-store-conn
 import { SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_PRELOAD_COUNT_MIN } from './swarm-store-connector-orbit-db-subclass-database.const';
 import { ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore } from '../swarm-store-connector-orbit-db-subclasses-cache/swarm-store-connector-orbit-db-subclasses-cache.types';
 import { IPromisePending } from '../../../../../../types/promise.types';
+import { ISwarmStoreConnectorBasic } from '../../../../swarm-store-class.types';
 import {
   createPromisePending,
   resolvePromisePending,
@@ -67,12 +68,19 @@ import {
 export class SwarmStoreConnectorOrbitDBDatabase<
   TStoreValue extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>,
   DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>
-> extends EventEmitter<
-  ISwarmStoreConnectorOrbitDbDatabaseEvents<
-    SwarmStoreConnectorOrbitDBDatabase<TStoreValue, DbType>,
-    TStoreValue
+>
+  extends EventEmitter<
+    ISwarmStoreConnectorOrbitDbDatabaseEvents<
+      SwarmStoreConnectorOrbitDBDatabase<TStoreValue, DbType>,
+      TStoreValue
+    >
   >
-> {
+  implements
+    ISwarmStoreConnectorBasic<
+      ESwarmStoreConnector.OrbitDB,
+      TStoreValue,
+      DbType
+    > {
   // is loaded fully and ready to use
   public isReady: boolean = false;
 
@@ -219,13 +227,12 @@ export class SwarmStoreConnectorOrbitDBDatabase<
         | undefined
       >
   > {
-    debugger;
     return this.isKVStore
       ? this.iteratorKeyValueStore(options)
       : this.iteratorFeedStore(options);
   }
 
-  public async drop() {
+  public async drop(): Promise<Error | void> {
     const database = this.getDbStoreInstance();
 
     if (database instanceof Error) {
@@ -464,7 +471,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<
         console.error('Failed to restart the database');
         return dbInstance;
       }
-      debugger;
       await dbInstance.load(count);
     }
     return {
@@ -620,7 +626,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     }
     // before to query the database entities must be preloaded in memory
     limit && (await this.preloadEntitiesBeforeIterate(limit));
-    debugger;
     const eqOperand =
       options?.[ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq];
     // database instance can become another one after load() method call
@@ -641,7 +646,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     if (options) {
       result = this.filterRequltsFeedStore(result, options);
     }
-    debugger;
     return result;
   }
 
@@ -1097,7 +1101,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     const { database } = this;
 
     if (database) {
-      debugger;
       const closeStoreResult = await this.closeInstanceOfStore(database);
 
       if (closeStoreResult instanceof Error) {

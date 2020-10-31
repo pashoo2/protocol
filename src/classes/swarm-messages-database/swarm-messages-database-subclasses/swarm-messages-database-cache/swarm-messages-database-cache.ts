@@ -307,7 +307,6 @@ export class SwarmMessagesDatabaseCache<
 
   protected _initializeCacheStore(): void {
     this._messagesCachedStore = this._createMessagesCachedStorage(false);
-    debugger;
   }
 
   protected _resetTheInstance() {
@@ -436,7 +435,6 @@ export class SwarmMessagesDatabaseCache<
   }
 
   protected _emitDbMessagesWithAddedMessagesCaheUpdated() {
-    debugger;
     if (this._messagesCached) {
       this._emitCacheUpdated(this._messagesCached);
     }
@@ -680,22 +678,17 @@ export class SwarmMessagesDatabaseCache<
     if (!this._checkIsReady()) {
       throw new Error('The instance is not ready');
     }
-    debugger;
-
     let queryAttempt = 0;
     let messages:
       | Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P> | undefined>
       | undefined;
-    debugger;
     while (
       !messages &&
       !this._whetherMaxDatabaseQueriesAttemptsFailed(queryAttempt)
     ) {
       try {
         messages = await this._dbInstance.collectWithMeta(queryOptions);
-        debugger;
       } catch (err) {
-        debugger;
         console.error(
           new Error(
             `_performMessagesCachePageRequest::failed::attempt::${queryAttempt}`
@@ -869,6 +862,18 @@ export class SwarmMessagesDatabaseCache<
     );
   };
 
+  protected getMessagesIdentitiesToExcludeAtCacheUpdateBatch(
+    messagesCachedStoreTemp: ISwarmMessagesDatabaseMessagesCacheStoreTemp<
+      P,
+      DbType,
+      true
+    >
+  ): TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>[] {
+    const entriesExists = (messagesCachedStoreTemp.entries ||
+      []) as TSwarmMessageDatabaseMessagesCached<P, DbType>;
+    return this._getMessagesReadKeysOrAddresses(entriesExists);
+  }
+
   /**
    * Performs swarm messages cache update by
    * quering database.
@@ -898,6 +903,7 @@ export class SwarmMessagesDatabaseCache<
     let whetherMessagesLimitToReadReached = false;
     // whether all messages were read from the databse
     let whetherFullMessagesRead = false;
+    const allMessagesRead = new Map();
 
     while (!whetherMessagesLimitToReadReached && !whetherFullMessagesRead) {
       this._checkIsReady();
@@ -922,12 +928,9 @@ export class SwarmMessagesDatabaseCache<
         messagesCountToReadAtTheBatch = messagesCountToReadAtTheBatch + 1;
       }
 
-      const entriesExists = (messagesCachedStoreTemp.entries ||
-        []) as TSwarmMessageDatabaseMessagesCached<P, DbType>;
-      const messagesIdentitiesToExclude = this._getMessagesReadKeysOrAddresses(
-        entriesExists
+      const messagesIdentitiesToExclude = this.getMessagesIdentitiesToExcludeAtCacheUpdateBatch(
+        messagesCachedStoreTemp
       );
-      debugger;
       const queryOptions = this._getDatabaseMessagesToReadQueryOptionsWithMessagesToExclude(
         messagesCountToReadAtTheBatch,
         messagesIdentitiesToExclude
@@ -938,8 +941,9 @@ export class SwarmMessagesDatabaseCache<
       const messagesReadAtBatchMapped = this._mapMessagesWithMetaToStorageRelatedStructure(
         messagesReadAtBatch
       );
-      debugger;
-      const whetherMessagesReadLessThanRequested = this._whetherMessagesReadLessThanRequested(
+      // if read less than requested it means that
+      // all messages were read
+      whetherFullMessagesRead = this._whetherMessagesReadLessThanRequested(
         messagesCountToReadAtTheBatch,
         currentPageItemsToReadCount,
         getItemsCount(messagesReadAtBatchMapped)
@@ -947,19 +951,25 @@ export class SwarmMessagesDatabaseCache<
       // TODO - ORBIT DB counts also removed items, so we can request more than
       // it will return
       // getItemsCount(messagesReadAtBatch) < currentPageItemsToRead;
-
-      if (whetherMessagesReadLessThanRequested) {
-        // if read less than requested it means that
-        // all messages were read
-        whetherFullMessagesRead = true;
-      }
       messagesCachedStoreTemp.update(messagesReadAtBatchMapped);
-      debugger;
+      // DEBUG--
+      messagesReadAtBatchMapped.forEach((value, key) => {
+        allMessagesRead.set(key, value);
+      });
+      if (
+        allMessagesRead.size > Number(messagesCachedStoreTemp?.entries?.size)
+      ) {
+        console.error(new Error('Read count is not equal'));
+        debugger;
+      }
+      if (whetherFullMessagesRead) {
+        debugger;
+      }
+      // --DEBUG
       console.log(messagesCachedStoreTemp);
       resolveMessagesUpatingBatchPromise();
       messagesReadCount = messagesCountToReadAtTheBatch;
     }
-    debugger;
     if (whetherFullMessagesRead) {
       this._setFullMessagesReadFromDatabaseToCache();
     } else {
@@ -990,14 +1000,11 @@ export class SwarmMessagesDatabaseCache<
    * @memberof SwarmMessagesDatabase
    */
   protected async _planNewCacheUpdate(): Promise<void> {
-    debugger;
     this._setNewCacheUpdatePlanned();
     // await when the current iteration will be over
     await this._waitForCurrentMessagesUpdate();
-    debugger;
     this._checkIsReady();
     if (!this._pendingMessagesUpdatePromise) {
-      debugger;
       // start a new interaction if there is no one active
       this._unsetNewCacheUpdatePlanned();
       try {
@@ -1010,7 +1017,6 @@ export class SwarmMessagesDatabaseCache<
         return await this._planNewCacheUpdate();
       }
     }
-    debugger;
     // if another iteration was started just waiting for results
     return this._waitForCurrentMessagesUpdate();
   }
@@ -1060,7 +1066,6 @@ export class SwarmMessagesDatabaseCache<
    */
   protected _updateMessagesCachedStoreByLinkedTempStoreMessages(): boolean {
     if (this._checkIsReady()) {
-      debugger;
       const hasMessagesUpdated = this._messagesCachedStore.updateByTempStore();
 
       this._messagesCachedStore.unlinkWithTempStore();
@@ -1078,7 +1083,6 @@ export class SwarmMessagesDatabaseCache<
    * @memberof SwarmMessagesDatabase
    */
   protected async _runNewCacheUpdate(): Promise<void> {
-    debugger;
     try {
       const messagesCachedTempStore = this._createMessagesCachedStorage(true);
 
@@ -1102,7 +1106,6 @@ export class SwarmMessagesDatabaseCache<
       }
     } catch (err) {
       console.error(`Failed to update messages cache: ${err.message}`, err);
-      debugger;
       throw err;
     } finally {
       this._unsetCacheUpdateInProgress();
@@ -1118,7 +1121,6 @@ export class SwarmMessagesDatabaseCache<
    * @memberof SwarmMessagesDatabase
    */
   protected async _updateMessagesCache(): Promise<void> {
-    debugger;
     this._checkIsReady();
     if (this._pendingMessagesUpdatePromise) {
       return this._planNewCacheUpdate();
@@ -1291,12 +1293,10 @@ export class SwarmMessagesDatabaseCache<
         messagesCountAlreadyRead,
         messagesCountToReadAtBatch
       );
-      debugger;
       const messagesReadAtBatch = await this._runDefferedMessageReadBatch(
         messagesMetaToReadAtBatch
       );
       const hasMessagesUpdatedAtBatch = cacheStore.update(messagesReadAtBatch);
-      debugger;
       hasMessagesUpdated = hasMessagesUpdated || hasMessagesUpdatedAtBatch;
       messagesCountAlreadyRead += messagesCountToReadAtBatch;
       console.log(
@@ -1336,7 +1336,6 @@ export class SwarmMessagesDatabaseCache<
     this._setActiveDefferedPartialCacheUpdate(activeCachePartialUpdate);
 
     const hasMessagesUpdated = await activeCachePartialUpdate;
-    debugger;
     this._unsetActiveDefferedPartialCacheUpdate();
     return hasMessagesUpdated;
   }
@@ -1389,7 +1388,6 @@ export class SwarmMessagesDatabaseCache<
       const messagesToUpdate = this._getAndResetMessagesDefferedUpdateWithinCaheUpdateBatch();
 
       if (messagesToUpdate?.size) {
-        debugger;
         if (await this._runDefferedPartialCacheUpdate(messagesToUpdate)) {
           // if has any updated messages emit the event that the cache have updated
           this._emitDbMessagesWithAddedMessagesCaheUpdated();

@@ -137,7 +137,7 @@ export class SwarmStore<
    * @memberof SwarmStore
    */
   public async connect(
-    options: ISwarmStoreOptions<P, ItemType>,
+    options: ISwarmStoreOptions<P, ItemType, DbType>,
     databasePersistantListStorage?: IStorageCommon
   ): Promise<Error | void> {
     let connectionWithConnector:
@@ -299,7 +299,9 @@ export class SwarmStore<
    * @memberof SwarmStore
    * @throws
    */
-  protected validateOptions(options: ISwarmStoreOptions<P, ItemType>): void {
+  protected validateOptions(
+    options: ISwarmStoreOptions<P, ItemType, DbType>
+  ): void {
     assert(options, 'An options must be specified');
     assert(
       typeof options === 'object',
@@ -409,7 +411,7 @@ export class SwarmStore<
    * @memberof SwarmStore
    */
   protected getDatabasePersistentListDirectory(
-    options: ISwarmStoreOptions<P, ItemType>
+    options: ISwarmStoreOptions<P, ItemType, DbType>
   ): string {
     return `${options.userId}/${options.directory ||
       SWARM_STORE_DATABASES_PERSISTENT_LIST_DIRECTORY_DEFAULT}`;
@@ -622,7 +624,7 @@ export class SwarmStore<
    * @memberof SwarmStore
    */
   protected createConnectionWithStorageConnector(
-    options: ISwarmStoreOptions<P, ItemType>
+    options: ISwarmStoreOptions<P, ItemType, DbType>
   ): ISwarmStoreConnector<P, ItemType, DbType> {
     const { provider } = options;
     const Constructor = this.getStorageConnector(options.provider);
@@ -650,7 +652,7 @@ export class SwarmStore<
    */
   protected async startConnectionWithConnector(
     connector: ISwarmStoreConnector<P, ItemType, DbType>,
-    options: ISwarmStoreOptions<P, ItemType>
+    options: ISwarmStoreOptions<P, ItemType, DbType>
   ): Promise<void> {
     const connectionResult = await connector.connect(
       options.providerConnectionOptions
@@ -691,7 +693,9 @@ export class SwarmStore<
    * @param {ISwarmStoreOptions<P>} options
    * @memberof SwarmStore
    */
-  protected createStatusTable(options: ISwarmStoreOptions<P, ItemType>) {
+  protected createStatusTable(
+    options: ISwarmStoreOptions<P, ItemType, DbType>
+  ) {
     const { databases } = options;
 
     databases.forEach((dbOptions) => {

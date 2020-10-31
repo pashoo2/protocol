@@ -4,10 +4,7 @@ import {
   ISwarmMessagesDatabaseMessagesCachedStoreCore,
   TSwarmMessagesDatabaseMessagesCachedStoreMessagesMetaHash,
 } from '../../swarm-messages-database-messages-cached-store.types';
-import {
-  ISwarmMessagesDatabaseMessagesCacheStoreNonTemp,
-  ISwarmMessagesDatabaseMessagesCacheMessageDescription,
-} from '../../../swarm-messages-database-cache/swarm-messages-database-cache.types';
+import { ISwarmMessagesDatabaseMessagesCacheMessageDescription } from '../../../swarm-messages-database-cache/swarm-messages-database-cache.types';
 import {
   ISwarmMessagesDatabaseMesssageMeta,
   TSwarmMessageDatabaseMessagesCached,
@@ -26,7 +23,7 @@ import { ISwarmMessagesDatabaseMessagesCacheStoreExtendedDefferedMethods } from 
 import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../../../swarm-message-store/swarm-message-store.types';
 import { _checkWhetherSameSwarmMessagesDecrypted } from '../../../swarm-messages-database-cache/swarm-messages-database-cache.utils';
 
-export class SwarmMessagesDatabaseMessagesCachedStoreCore<
+export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
   P extends ESwarmStoreConnector,
   DbType extends TSwarmStoreDatabaseType<P>,
   IsTemp extends boolean,
@@ -117,12 +114,6 @@ export class SwarmMessagesDatabaseMessagesCachedStoreCore<
     this._checkIsInitialized();
     this._checkMeta(meta);
   };
-
-  protected _whetherEntryIsExists(
-    entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>
-  ): boolean {
-    return false;
-  }
 
   protected _checkIsInitialized(): this is {
     _cachedStore: ISwarmMessagesDatabaseMessagesCacheStoreExtendedDefferedMethods<
@@ -235,6 +226,10 @@ export class SwarmMessagesDatabaseMessagesCachedStoreCore<
     }
   }
 
+  protected _canUpdateWithEmptyValue() {
+    return false;
+  }
+
   protected _checkWhetherUpdatValue(
     source:
       | ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector>
@@ -243,6 +238,9 @@ export class SwarmMessagesDatabaseMessagesCachedStoreCore<
       | ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector>
       | undefined
   ): boolean {
+    if (!target && !this._canUpdateWithEmptyValue()) {
+      return false;
+    }
     if (!source && !target) {
       return false;
     }
@@ -280,19 +278,21 @@ export class SwarmMessagesDatabaseMessagesCachedStoreCore<
     // whether to need update it, because it is always neccessary.
     const wetherToCheckUpdateNeccessary = !!entriesCached.size;
 
-    this._clearEntriesCached(entriesCached);
     entries.forEach((value, key) => {
-      if (!value) {
-        return;
-      }
       if (
         wetherToCheckUpdateNeccessary ||
         this._checkWhetherUpdateKey(key, value, entriesCached)
       ) {
         entriesCached.set(key, value);
         hasMessagesUpdated = true;
+      } else {
+        console.error(new Error('_updateCacheWithEntries'));
       }
     });
     return hasMessagesUpdated;
   }
+
+  protected abstract _whetherEntryIsExists(
+    entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>
+  ): boolean;
 }

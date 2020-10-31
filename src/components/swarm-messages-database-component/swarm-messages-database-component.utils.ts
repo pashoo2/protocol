@@ -16,7 +16,6 @@ import {
   TSwarmStoreDatabaseType,
   TSwarmStoreDatabaseEntityKey,
   TSwarmStoreDatabaseEntityAddress,
-  TSwarmStoreDatabaseEntityUniqueIndex,
 } from '../../classes/swarm-store-class/swarm-store-class.types';
 
 export const connectToDatabase = async <
@@ -131,7 +130,6 @@ export const setCacheUpdateListener = <
   const listener = (
     messages: TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined
   ) => {
-    debugger;
     cacheUpdateListener(messages);
   };
   db.emitter.addListener(

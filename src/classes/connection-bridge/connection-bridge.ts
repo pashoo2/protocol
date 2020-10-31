@@ -44,7 +44,14 @@ import {
 } from '../secret-storage-class/secret-storage-class.types';
 import { SecretStorage } from '../secret-storage-class/secret-storage-class';
 import { IStorageProviderOptions } from '../storage-providers/storage-providers.types';
-import { TSwarmStoreDatabaseType } from '../swarm-store-class/swarm-store-class.types';
+import {
+  TSwarmStoreDatabaseType,
+  TSwarmStoreConnectorConnectionOptions,
+} from '../swarm-store-class/swarm-store-class.types';
+import { TSwarmMessageSerialized } from '../swarm-message/swarm-message-constructor.types';
+import { IConnectionBridgeSwarmConnection } from './connection-bridge.types';
+import { getSwarmStoreConnectionProviderOptionsForOrbitDb } from './connection-bridge.utils';
+import { IPFS } from 'types/ipfs.types';
 
 /**
  * this class used if front of connection
@@ -73,7 +80,7 @@ export class ConnectionBridge<
     return this._secretStorage;
   }
 
-  protected options?: IConnectionBridgeOptions<P, true>;
+  protected options?: IConnectionBridgeOptions<P, DbType, true>;
 
   protected optionsCA?: ICentralAuthorityOptions;
 
@@ -81,7 +88,7 @@ export class ConnectionBridge<
 
   protected optionsSwarmConnection?: any;
 
-  protected optionsMessageStorage?: ISwarmMessageStoreOptions<P>;
+  protected optionsMessageStorage?: ISwarmMessageStoreOptions<P, DbType>;
 
   protected session?: ISensitiveDataSessionStorage;
 
@@ -91,9 +98,9 @@ export class ConnectionBridge<
 
   protected _secretStorage?: ISecretStorage;
 
-  protected swarmConnection?: {
-    getNativeConnection(): any;
-  };
+  protected swarmConnection:
+    | IConnectionBridgeSwarmConnection<unknown>
+    | undefined;
 
   /**
    * Connect to the central authority,
@@ -104,7 +111,9 @@ export class ConnectionBridge<
    * @memberof ConnectionBridge
    * @throws
    */
-  public async connect(options: IConnectionBridgeOptions<P>): Promise<void> {
+  public async connect(
+    options: IConnectionBridgeOptions<P, DbType>
+  ): Promise<void> {
     await this.setOptions(options);
     try {
       await this.startSession();
@@ -130,10 +139,12 @@ export class ConnectionBridge<
    * @memberof ConnectionBridge
    */
   public async checkSessionAvailable(
-    options?: ISensitiveDataSessionStorageOptions | IConnectionBridgeOptions<P>
+    options?:
+      | ISensitiveDataSessionStorageOptions
+      | IConnectionBridgeOptions<P, DbType>
   ) {
-    const sessionParams = (options as IConnectionBridgeOptions<P>)?.auth
-      ? (options as IConnectionBridgeOptions<P>)?.auth.session
+    const sessionParams = (options as IConnectionBridgeOptions<P, DbType>)?.auth
+      ? (options as IConnectionBridgeOptions<P, DbType>)?.auth.session
       : (options as ISensitiveDataSessionStorageOptions | undefined);
 
     if (!sessionParams) {
@@ -243,6 +254,19 @@ export class ConnectionBridge<
    */
   protected setOptionsSwarmConnection() {}
 
+  protected getSwarmStoreConnectionProviderOptions<T>(
+    swarmConnection: IConnectionBridgeSwarmConnection<T>
+  ): TSwarmStoreConnectorConnectionOptions<P, TSwarmMessageSerialized, DbType> {
+    // TODO - refactor it
+    return getSwarmStoreConnectionProviderOptionsForOrbitDb(
+      (swarmConnection as unknown) as IConnectionBridgeSwarmConnection<IPFS>
+    ) as TSwarmStoreConnectorConnectionOptions<
+      P,
+      TSwarmMessageSerialized,
+      DbType
+    >;
+  }
+
   /**
    * set options for the message storage
    *
@@ -251,10 +275,14 @@ export class ConnectionBridge<
    * @throws
    */
   protected async setOptionsMessageStorage(): Promise<
-    ISwarmMessageStoreOptions<P>
+    ISwarmMessageStoreOptions<P, DbType>
   > {
-    const { messageConstructor, caConnection, swarmConnection } = this;
-    const options = this.options!;
+    const { messageConstructor, caConnection, swarmConnection, options } = this;
+
+    if (!options) {
+      throw new Error('Options must be defined');
+    }
+
     const { auth: authOptions, storage: storageOptions } = options;
 
     if (!messageConstructor) {
@@ -277,11 +305,12 @@ export class ConnectionBridge<
 
     const authCredentials = {
       ...(authOptions.credentials as ISwarmMessageStoreOptions<
-        P
+        P,
+        DbType
       >['credentials']),
       session: this.session,
     };
-    const messageStorageOptions: ISwarmMessageStoreOptions<P> = {
+    const messageStorageOptions: ISwarmMessageStoreOptions<P, DbType> = {
       ...storageOptions,
       credentials: authCredentials,
       userId,
@@ -292,9 +321,9 @@ export class ConnectionBridge<
       messageConstructors: {
         default: messageConstructor,
       },
-      providerConnectionOptions: {
-        ipfs: swarmConnection.getNativeConnection(),
-      },
+      providerConnectionOptions: this.getSwarmStoreConnectionProviderOptions(
+        swarmConnection
+      ),
     };
 
     return messageStorageOptions;
@@ -320,7 +349,7 @@ export class ConnectionBridge<
    * @memberof ConnectionBridge
    * @throws
    */
-  protected async setOptions(options: IConnectionBridgeOptions<P>) {
+  protected async setOptions(options: IConnectionBridgeOptions<P, DbType>) {
     await this.startUserDataStore();
     assert(options, 'Options must be provided');
     assert(typeof options === 'object', 'Options must be an object');
@@ -329,7 +358,11 @@ export class ConnectionBridge<
         CONNECTION_BRIDGE_SESSION_STORAGE_KEYS.USER_LOGIN,
         options.auth.credentials.login
       );
-      this.options = (options as unknown) as IConnectionBridgeOptions<P, true>;
+      this.options = (options as unknown) as IConnectionBridgeOptions<
+        P,
+        DbType,
+        true
+      >;
     } else {
       assert(
         options.auth.session,
@@ -570,10 +603,10 @@ export class ConnectionBridge<
     const { swarmConnection } = this;
 
     if (swarmConnection) {
-      const ipfsConnection = swarmConnection.getNativeConnection();
+      const nativeConnection = swarmConnection.getNativeConnection();
 
       try {
-        await ipfsConnection.stop();
+        await (nativeConnection as IPFS).stop();
       } catch (error) {
         console.error(
           'closeSwarmConnection failed to stop the ipfs node!',

@@ -5,6 +5,7 @@ export enum ESwarmStoreConnectorOrbitDbDatabaseType {
   FEED = 'feed_store',
   KEY_VALUE = 'key_value',
 }
+
 export enum EOrbidDBFeedSoreEvents {
   REPLICATED = 'replicated',
   REPLICATE_PROGRESS = 'replicate.progress',

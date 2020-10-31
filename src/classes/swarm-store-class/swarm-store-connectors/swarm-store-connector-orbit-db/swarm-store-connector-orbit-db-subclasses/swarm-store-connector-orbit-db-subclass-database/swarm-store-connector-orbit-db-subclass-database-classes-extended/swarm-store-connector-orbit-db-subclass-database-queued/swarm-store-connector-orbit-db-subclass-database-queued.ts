@@ -12,11 +12,18 @@ import {
   IAsyncQueueConcurent,
 } from '../../../../../../../basic-classes/async-queue-concurent/async-queue-concurent.types';
 import { ArgumentTypes } from 'types/helper.types';
+import { ISwarmStoreConnectorBasic } from '../../../../../../swarm-store-class.types';
 
 export class SwarmStoreConnectorOrbitDBDatabaseQueued<
   TStoreValue extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>,
   DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>
-> extends SwarmStoreConnectorOrbitDBDatabase<TStoreValue, DbType> {
+> extends SwarmStoreConnectorOrbitDBDatabase<TStoreValue, DbType>
+  implements
+    ISwarmStoreConnectorBasic<
+      ESwarmStoreConnector.OrbitDB,
+      TStoreValue,
+      DbType
+    > {
   /**
    * All async operations with the database, excluding datbase
    * close and open, should use this queue.

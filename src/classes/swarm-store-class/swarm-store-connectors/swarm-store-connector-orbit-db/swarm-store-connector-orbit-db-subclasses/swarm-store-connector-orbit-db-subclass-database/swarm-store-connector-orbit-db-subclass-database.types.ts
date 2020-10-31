@@ -1,24 +1,22 @@
-import { IStore } from 'orbit-db-cache';
 import {
   ISwarmStoreDatabaseBaseOptions,
+  TSwarmStoreDatabaseEntityUniqueIndex,
+  TSwarmStoreDatabaseType,
   TSwarmStoreValueTypes,
 } from '../../../../swarm-store-class.types';
 import {
-  ESwarmStoreEventNames,
   ESwarmStoreConnector,
+  ESwarmStoreEventNames,
 } from '../../../../swarm-store-class.const';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from './swarm-store-connector-orbit-db-subclass-database.const';
 import {
-  ISwarmStoreConnectorOrbitDbDatabaseAccessControlleGrantCallback,
   ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess,
+  ISwarmStoreConnectorOrbitDbDatabaseAccessControlleGrantCallback,
 } from '../swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types';
 import OrbitDbFeedStore from 'orbit-db-feedstore';
 import OrbitDbKeyValueStore from 'orbit-db-kvstore';
 import { ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore } from '../swarm-store-connector-orbit-db-subclasses-cache/swarm-store-connector-orbit-db-subclasses-cache.types';
-import {
-  TSwarmStoreDatabaseEntityUniqueIndex,
-  TSwarmStoreDatabaseType,
-} from '../../../../swarm-store-class.types';
+import { ESwarmStoreConnectorOrbitDbDatabaseMethodNames } from '../../swarm-store-connector-orbit-db.types';
 
 export type TSwarmStoreConnectorOrbitDbDatabaseStoreHash = string;
 
@@ -170,15 +168,6 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions<
 
 export interface ISwarmStoreConnectorOrbitDbDatabaseIteratorAnswer<T> {
   collect(): T[];
-}
-
-export enum ESwarmStoreConnectorOrbitDbDatabaseMethodNames {
-  'get' = 'get',
-  'add' = 'add',
-  'remove' = 'remove',
-  'iterator' = 'iterator',
-  'close' = 'close',
-  'load' = 'load',
 }
 
 export type TSwarmStoreConnectorOrbitDbDatabaseMethodNames = ESwarmStoreConnectorOrbitDbDatabaseMethodNames;

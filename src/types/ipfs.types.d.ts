@@ -28,7 +28,7 @@ export class IPFS extends EventEmitter {
 
   preStart(callback: Callback<any>): void;
   start(callback?: Callback<any>): void;
-  stop(callback?: (error?: Error) => void): void;
+  stop(callback?: (error?: Error) => void): Pomise<void>;
   isOnline(): boolean;
 
   version(

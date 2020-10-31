@@ -46,8 +46,13 @@ export interface IConnectionBridgeOptionsAuth<CD extends boolean = false> {
   authProvidersPool?: ICentralAuthorityOptions['authProvidersPool'];
 }
 
+export interface IConnectionBridgeSwarmConnection<T> {
+  getNativeConnection(): T;
+}
+
 export interface IConnectionBridgeOptions<
-  P extends ESwarmStoreConnector = ESwarmStoreConnector.OrbitDB,
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>,
   CD extends boolean = false
 > {
   auth: IConnectionBridgeOptionsAuth<CD>;
@@ -67,7 +72,7 @@ export interface IConnectionBridgeOptions<
    * @memberof IConnectionBridgeOptions
    */
   storage: Omit<
-    ISwarmMessageStoreOptions<P>,
+    ISwarmMessageStoreOptions<P, DbType>,
     | 'userId'
     | 'credentials'
     | 'messageConstructors'
@@ -142,7 +147,7 @@ export interface IConnectionBridge<
    * @returns {(Promise<Error | void>)}
    * @memberof IConnectionBridge
    */
-  connect(options: IConnectionBridgeOptions<P>): Promise<Error | void>;
+  connect(options: IConnectionBridgeOptions<P, DbType>): Promise<Error | void>;
 
   /**
    * checks was a session started before and
@@ -155,7 +160,9 @@ export interface IConnectionBridge<
    * @memberof IConnectionBridge
    */
   checkSessionAvailable(
-    options?: ISensitiveDataSessionStorageOptions | IConnectionBridgeOptions<P>
+    options?:
+      | ISensitiveDataSessionStorageOptions
+      | IConnectionBridgeOptions<P, DbType>
   ): Promise<boolean>;
   /**
    * Close all connections and release the options.

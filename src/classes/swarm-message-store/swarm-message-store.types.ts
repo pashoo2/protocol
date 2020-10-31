@@ -30,6 +30,7 @@ import { StorageProvider } from '../storage-providers/storage-providers.types';
 import { ISwarmStoreConnectorOrbitDbDatabaseValue } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { ISwarmMessageInstanceDecrypted } from '../swarm-message/swarm-message-constructor.types';
+import { TSwarmStoreConnectorConnectionOptions } from '../swarm-store-class/swarm-store-class.types';
 import {
   TSwarmStoreDatabaseEntityAddress,
   TSwarmStoreDatabaseEntityKey,
@@ -142,11 +143,17 @@ export interface ISwarmMessageDatabaseConstructors {
   default: ISwarmMessageConstructor;
 }
 
-export interface ISwarmMessageStoreOptions<P extends ESwarmStoreConnector>
-  extends ISwarmStoreOptions<P, TSwarmMessageSerialized> {
+export interface ISwarmMessageStoreOptions<
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>
+> extends ISwarmStoreOptions<P, TSwarmMessageSerialized, DbType> {
   accessControl?: ISwarmMessageStoreAccessControlOptions<P>;
   messageConstructors: ISwarmMessageDatabaseConstructors;
-  providerConnectionOptions: any;
+  providerConnectionOptions: TSwarmStoreConnectorConnectionOptions<
+    P,
+    TSwarmMessageSerialized,
+    DbType
+  >;
   databasesListStorage: IStorageCommon;
   /**
    * Used for caching messages constructed
@@ -167,7 +174,7 @@ export type TSwarmMessageStoreConnectReturnType<
     P,
     TSwarmMessageSerialized,
     DbType,
-    ISwarmMessageStoreOptions<P>
+    ISwarmMessageStoreOptions<P, DbType>
   >['connect']
 >;
 
@@ -379,7 +386,7 @@ export interface ISwarmMessageStore<
       P,
       TSwarmMessageSerialized,
       DbType,
-      ISwarmMessageStoreOptions<P>
+      ISwarmMessageStoreOptions<P, DbType>
     >,
     EventEmitter<ISwarmMessageStoreEvents>,
     ISwarmMessageStoreMessagingMethods<P, DbType> {
@@ -392,6 +399,6 @@ export interface ISwarmMessageStore<
    * @throws
    */
   connect(
-    options: ISwarmMessageStoreOptions<P>
+    options: ISwarmMessageStoreOptions<P, DbType>
   ): TSwarmMessageStoreConnectReturnType<P, DbType>;
 }
