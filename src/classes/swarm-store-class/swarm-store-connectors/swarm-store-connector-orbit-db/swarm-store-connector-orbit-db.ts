@@ -44,6 +44,7 @@ import { TSwarmStoreDatabaseType } from '../../swarm-store-class.types';
 import { ISwarmStoreConnectorOrbitDbUtilsAddressCreateRootPathOptions } from './swarm-store-connector-orbit-db-utils/swarm-store-connector-orbit-db-utils-address/swarm-store-connector-orbit-db-utils-address.types';
 import { swarmStoreConnectorOrbitDbUtilsAddressCreateRootPath } from './swarm-store-connector-orbit-db-utils/swarm-store-connector-orbit-db-utils-address/swarm-store-connector-orbit-db-utils-address';
 import { ISecretStoreCredentials } from '../../../secret-storage-class/secret-storage-class.types';
+import { SwarmStoreConnectorOrbitDBDatabaseQueued } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database-classes-extended/swarm-store-connector-orbit-db-subclass-database-queued/swarm-store-connector-orbit-db-subclass-database-queued';
 import {
   ISwarmStoreConnector,
   TSwarmStoreValueTypes,
@@ -142,9 +143,9 @@ export class SwarmStoreConnectorOrbitDB<
      * @returns {(Promise<void | Error>)}
      * @memberof SwarmStoreConnectorOrbitDB
      */
-  public connect = async (
+  public async connect(
     connectionOptions: ISwarmStoreConnectorOrbitDBConnectionOptions
-  ): Promise<void | Error> => {
+  ): Promise<void | Error> {
     // waiting for the instance initialization
     await this.initializationPromise;
     const resultCreateIdentity = await this.createIdentity();
@@ -204,15 +205,15 @@ export class SwarmStoreConnectorOrbitDB<
     }
     // set the database is ready to query
     this.setReady();
-  };
+  }
 
-  public openDatabase = async (
+  public async openDatabase(
     dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<
       ISwarmDatabaseValueTypes
     >,
     openAttempt: number = 0,
     checkOptionsIsExists: boolean = true
-  ): Promise<void | Error> => {
+  ): Promise<void | Error> {
     const { orbitDb, isClosed } = this;
 
     if (!orbitDb) {
@@ -254,7 +255,7 @@ export class SwarmStoreConnectorOrbitDB<
       dbOptions,
       dbName
     );
-    const database = new SwarmStoreConnectorOrbitDBDatabase<
+    const database = new SwarmStoreConnectorOrbitDBDatabaseQueued<
       ISwarmDatabaseValueTypes,
       DbType
     >(optionsWithCachestore, orbitDb);
@@ -288,7 +289,7 @@ export class SwarmStoreConnectorOrbitDB<
     console.log('openDatabase', dbName);
     this.databases.push(database);
     this.emit(ESwarmStoreEventNames.READY, dbOptions.dbName);
-  };
+  }
 
   public async dropDatabase(dbName: string) {
     const db = this.getDbConnection(dbName);

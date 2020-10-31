@@ -13,7 +13,7 @@ export const SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_ITEMS_COUNT_PER_IDLE_PERIOD_
 /**
  * How many messages can be read from the database per one cache update.
  */
-export const SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_ITEMS_COUNT_LIMIT_DEFAULT = 500;
+export const SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_ITEMS_COUNT_LIMIT_DEFAULT = 5000;
 
 /**
  * Maximum attempt count if query of an items page was failed.

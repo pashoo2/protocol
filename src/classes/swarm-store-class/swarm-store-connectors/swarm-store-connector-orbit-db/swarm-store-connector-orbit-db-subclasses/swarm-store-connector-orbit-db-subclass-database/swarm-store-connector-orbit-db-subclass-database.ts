@@ -50,9 +50,9 @@ import {
 import { TSwarmStoreConnectorOrbitDbDatabaseStoreHash } from './swarm-store-connector-orbit-db-subclass-database.types';
 import { SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_PRELOAD_COUNT_MIN } from './swarm-store-connector-orbit-db-subclass-database.const';
 import { ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore } from '../swarm-store-connector-orbit-db-subclasses-cache/swarm-store-connector-orbit-db-subclasses-cache.types';
+import { IPromisePending } from '../../../../../../types/promise.types';
 import {
   createPromisePending,
-  IPromisePending,
   resolvePromisePending,
 } from '../../../../../../utils/common-utils/commom-utils.promies';
 import {
@@ -114,17 +114,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   protected entriesReceived: Record<string, string> = {};
 
   /**
-   * Is database restart is in progress
-   *
-   * @protected
-   * @type {boolean}
-   * @memberof SwarmStoreConnectorOrbitDBDatabase
-   */
-  protected databaseRestartingPromise:
-    | IPromisePending<Error | TSwarmStoreConnectorOrbitDbDatabase<TStoreValue>>
-    | undefined;
-
-  /**
    * Is creation of a new instance of the datbase is in progress
    *
    * @protected
@@ -161,7 +150,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     this.setOrbitDbInstance(orbitDb);
   }
 
-  public connect = async (): Promise<Error | void> => {
+  public async connect(): Promise<Error | void> {
     const dbStore = await this.createDb();
 
     if (dbStore instanceof Error) {
@@ -178,71 +167,17 @@ export class SwarmStoreConnectorOrbitDBDatabase<
         'connect'
       );
     }
-  };
+  }
 
-  public close = async (opt?: any): Promise<Error | void> => {
-    this.unsetAllListenersForEvents();
-    this.unsetReadyState();
-    this.resetEntriesPending();
-    this.resetEntriesReceived();
-    this.unsetEmithBatchInterval();
-    this.resetItemsOverall();
-    this.isClosed = true;
+  public async close(opt?: any): Promise<Error | void> {
+    return this._close(opt);
+  }
 
-    let result: undefined | Error;
-
-    try {
-      const closeCurrentStoreResult = await this.closeCurrentStore();
-
-      if (closeCurrentStoreResult instanceof Error) {
-        result = closeCurrentStoreResult;
-      }
-    } catch (err) {
-      result = err;
-    }
-    this.emitEvent(ESwarmStoreEventNames.CLOSE, this);
-    return result;
-  };
-
-  public add = async (
+  public async add(
     addArg: TSwarmStoreConnectorOrbitDbDatabaseAddMethodArgument<TStoreValue>
-  ): Promise<string | Error> => {
-    const { value, key } = addArg;
-    const database = this.getDbStoreInstance();
-
-    if (database instanceof Error) {
-      return database;
-    }
-    try {
-      let hash: TSwarmStoreConnectorOrbitDbDatabaseStoreHash;
-      if (this.isKVStore) {
-        if (!key) {
-          return new Error('Key must be provided for the key-value storage');
-        }
-        /*
-         TODO - https://github.com/orbitdb/orbit-db/blob/master/API.md#setkey-value.
-         the 'set' method returns hash of entry added
-        */
-        hash = ((await (database as OrbitDbKeyValueStore<TStoreValue>).set(
-          key,
-          value
-        )) as unknown) as TSwarmStoreConnectorOrbitDbDatabaseStoreHash;
-      } else {
-        hash = await (database as OrbitDbFeedStore<TStoreValue>).add(value);
-      }
-      console.log(`ADDED DATA WITH HASH -- ${hash}`);
-
-      if (typeof hash !== 'string') {
-        return new Error(
-          'An unknown type of hash was returned for the value stored'
-        );
-      }
-      return hash;
-    } catch (err) {
-      console.trace(err);
-      return err;
-    }
-  };
+  ): Promise<string | Error> {
+    return this._add(addArg);
+  }
 
   /**
    * for the key value store a key must be used.
@@ -251,30 +186,13 @@ export class SwarmStoreConnectorOrbitDBDatabase<
    *
    * @memberof SwarmStoreConnectorOrbitDBDatabase
    */
-  public get = async (
+  public async get(
     keyOrHash: TSwarmStoreConnectorOrbitDbDatabaseEntityIndex
   ): Promise<
     Error | ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue> | undefined
-  > => {
-    const entryRaw = this.readRawEntry(keyOrHash);
-
-    if (!entryRaw || entryRaw instanceof Error) {
-      return entryRaw;
-    }
-    try {
-      if (this.isKVStore) {
-        if (entryRaw.payload.key !== keyOrHash) {
-          return undefined;
-        }
-      } else if (entryRaw.hash !== keyOrHash) {
-        return undefined;
-      }
-      return entryRaw;
-    } catch (err) {
-      return err;
-    }
-    return undefined;
-  };
+  > {
+    return this._get(keyOrHash);
+  }
 
   /**
    * Remove a value located in the key provided if it is a key value
@@ -288,16 +206,10 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   public async remove(
     keyOrEntryAddress: TSwarmStoreConnectorOrbitDbDatabaseEntityIndex
   ): Promise<Error | void> {
-    try {
-      await (this.isKVStore
-        ? this.removeKeyKVStore(keyOrEntryAddress)
-        : this.removeEntry(keyOrEntryAddress));
-    } catch (err) {
-      return err;
-    }
+    return this._remove(keyOrEntryAddress);
   }
 
-  public iterator = async (
+  public async iterator(
     options?: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions<DbType>
   ): Promise<
     | Error
@@ -306,13 +218,14 @@ export class SwarmStoreConnectorOrbitDBDatabase<
         | Error
         | undefined
       >
-  > => {
+  > {
+    debugger;
     return this.isKVStore
       ? this.iteratorKeyValueStore(options)
       : this.iteratorFeedStore(options);
-  };
+  }
 
-  public drop = async () => {
+  public async drop() {
     const database = this.getDbStoreInstance();
 
     if (database instanceof Error) {
@@ -324,18 +237,18 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     } catch (err) {
       return err;
     }
-  };
+  }
 
   /**
    * returns a count of an items loaded or Error
    *
    * @memberof SwarmStoreConnectorOrbitDBDatabase
    */
-  public load = async (
+  public async load(
     count: TSwarmStoreConnectorOrbitDbDatabaseMethodArgumentDbLoad
-  ): Promise<ISwarmStoreConnectorRequestLoadAnswer | Error> => {
+  ): Promise<ISwarmStoreConnectorRequestLoadAnswer | Error> {
     return this._load(this.itemsCurrentlyLoaded + count);
-  };
+  }
 
   public parseValueStored = (
     e: LogEntry<TStoreValue>
@@ -372,28 +285,110 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     return this.createDbInstance();
   }
 
-  protected createPendingRestartingDatabase() {
-    this.databaseRestartingPromise = createPromisePending();
+  protected _get = async (
+    keyOrHash: TSwarmStoreConnectorOrbitDbDatabaseEntityIndex
+  ): Promise<
+    Error | ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue> | undefined
+  > => {
+    const entryRaw = this.readRawEntry(keyOrHash);
+
+    if (!entryRaw || entryRaw instanceof Error) {
+      return entryRaw;
+    }
+    try {
+      if (this.isKVStore) {
+        if (entryRaw.payload.key !== keyOrHash) {
+          return undefined;
+        }
+      } else if (entryRaw.hash !== keyOrHash) {
+        return undefined;
+      }
+      return entryRaw;
+    } catch (err) {
+      return err;
+    }
+  };
+
+  protected async _close(opt?: any): Promise<Error | void> {
+    this.unsetAllListenersForEvents();
+    this.unsetReadyState();
+    this.resetEntriesPending();
+    this.resetEntriesReceived();
+    this.unsetEmithBatchInterval();
+    this.resetItemsOverall();
+    this.isClosed = true;
+
+    let result: undefined | Error;
+
+    try {
+      const closeCurrentStoreResult = await this.closeCurrentStore();
+
+      if (closeCurrentStoreResult instanceof Error) {
+        result = closeCurrentStoreResult;
+      }
+    } catch (err) {
+      result = err;
+    }
+    this.emitEvent(ESwarmStoreEventNames.CLOSE, this);
+    return result;
   }
 
-  protected resolvePendingRestartingDatabase(
-    result: Error | TSwarmStoreConnectorOrbitDbDatabase<TStoreValue>
-  ) {
-    const { databaseRestartingPromise } = this;
-    if (databaseRestartingPromise) {
-      resolvePromisePending(databaseRestartingPromise, result);
-      this.databaseRestartingPromise = undefined;
+  protected async _add(
+    addArg: TSwarmStoreConnectorOrbitDbDatabaseAddMethodArgument<TStoreValue>
+  ): Promise<string | Error> {
+    const { value, key } = addArg;
+    const database = this.getDbStoreInstance();
+
+    if (database instanceof Error) {
+      return database;
+    }
+    try {
+      let hash: TSwarmStoreConnectorOrbitDbDatabaseStoreHash;
+      if (this.isKVStore) {
+        if (!key) {
+          return new Error('Key must be provided for the key-value storage');
+        }
+        /*
+         TODO - https://github.com/orbitdb/orbit-db/blob/master/API.md#setkey-value.
+         the 'set' method returns hash of entry added
+        */
+        hash = ((await (database as OrbitDbKeyValueStore<TStoreValue>).set(
+          key,
+          value
+        )) as unknown) as TSwarmStoreConnectorOrbitDbDatabaseStoreHash;
+      } else {
+        hash = await (database as OrbitDbFeedStore<TStoreValue>).add(value);
+      }
+      console.log(`ADDED DATA WITH HASH -- ${hash}`);
+
+      if (typeof hash !== 'string') {
+        return new Error(
+          'An unknown type of hash was returned for the value stored'
+        );
+      }
+      return hash;
+    } catch (err) {
+      console.trace(err);
+      return err;
+    }
+  }
+
+  protected async _remove(
+    keyOrEntryAddress: TSwarmStoreConnectorOrbitDbDatabaseEntityIndex
+  ): Promise<Error | void> {
+    try {
+      await (this.isKVStore
+        ? this.removeKeyKVStore(keyOrEntryAddress)
+        : this.removeEntry(keyOrEntryAddress));
+    } catch (err) {
+      return err;
     }
   }
 
   protected async restartDbInstanceSilent(): Promise<
     Error | TSwarmStoreConnectorOrbitDbDatabase<TStoreValue>
   > {
-    const { databaseRestartingPromise, database } = this;
-
-    if (databaseRestartingPromise) {
-      return new Error('The current database instance is already restarting');
-    }
+    const { database } = this;
 
     const cacheStore = database && this.getDatabaseCache(database);
     let methodResult:
@@ -404,7 +399,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<
 
     cacheStore && this.setPreventCloseDatabaseCache(cacheStore);
     try {
-      this.createPendingRestartingDatabase();
       this.unsetAllListenersForEvents();
 
       const result = await this.closeCurrentStore();
@@ -427,26 +421,26 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       if (cacheStore && methodResult instanceof Error) {
         this.closeDatabaseCache(cacheStore);
       }
-      this.resolvePendingRestartingDatabase(methodResult);
     }
   }
 
   protected setItemsOverallCount(total: number) {
-    this.itemsOverallCountInStorage = Math.max(
-      this.itemsOverallCountInStorage,
-      total
-    );
-    console.log('total number of entries', total);
+    const newTotal = Math.max(this.itemsOverallCountInStorage, total);
+    if (this.itemsOverallCountInStorage !== newTotal) {
+      this.itemsOverallCountInStorage = newTotal;
+      console.log('total number of entries', total);
+    }
   }
 
   /**
-   * increment the overall count by 1
+   * increment the overall count by 1, which are stored in the
+   * storage but may be not loaded with the sb.load method
    *
    * @protected
    * @memberof SwarmStoreConnectorOrbitDBDatabase
    */
-  protected incItemsOverallCount() {
-    this.itemsOverallCountInStorage++;
+  protected incItemsOverallCountByOne() {
+    this.setItemsOverallCount(this.itemsOverallCountInStorage + 1);
   }
 
   protected resetItemsOverall() {
@@ -458,9 +452,9 @@ export class SwarmStoreConnectorOrbitDBDatabase<
    *
    * @memberof SwarmStoreConnectorOrbitDBDatabase
    */
-  protected _load = async (
+  protected async _load(
     count: TSwarmStoreConnectorOrbitDbDatabaseMethodArgumentDbLoad
-  ): Promise<ISwarmStoreConnectorRequestLoadAnswer | Error> => {
+  ): Promise<ISwarmStoreConnectorRequestLoadAnswer | Error> {
     const itemsLoaded = this.itemsCurrentlyLoaded;
 
     if (count) {
@@ -470,7 +464,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
         console.error('Failed to restart the database');
         return dbInstance;
       }
-
+      debugger;
       await dbInstance.load(count);
     }
     return {
@@ -478,7 +472,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       loadedCount: this.itemsCurrentlyLoaded,
       overallCount: this.itemsOverallCount,
     };
-  };
+  }
 
   protected getLodEntryHash(
     logEntry: LogEntry<TStoreValue>
@@ -713,9 +707,9 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       >
   > => {
     if (eqOperand instanceof Array) {
-      return Promise.all(eqOperand.map(this.get));
+      return Promise.all(eqOperand.map(this._get));
     }
-    return [await this.get(eqOperand)];
+    return [await this._get(eqOperand)];
   };
 
   protected filterKeys = (
@@ -769,8 +763,8 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   > {
     const pending =
       typeof hash === 'string'
-        ? [this.get(hash)]
-        : hash.map((h) => this.get(h));
+        ? [this._get(hash)]
+        : hash.map((h) => this._get(h));
 
     return Promise.all(pending);
   }
@@ -830,7 +824,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     const { isClosed } = this;
 
     if (!isClosed) {
-      this.close();
+      this._close();
     }
     return this.emitError(
       'The database closed cause a fatal error',
@@ -989,13 +983,21 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     this.newEntriesPending = [];
   }
 
+  private addMessageToEmitPending(
+    address: string,
+    entry: LogEntry<TStoreValue>,
+    heads: any
+  ): void {
+    this.newEntriesPending.push([address, entry, heads]);
+  }
+
   private handleNewEntry = (
     address: string,
     entry: LogEntry<TStoreValue>,
     heads: any
-  ) => {
+  ): void => {
     if (!this.checkWasEntryReceived(entry)) {
-      this.newEntriesPending.push([address, entry, heads]);
+      this.addMessageToEmitPending(address, entry, heads);
       this.addMessageToReceivedMessages(entry);
     }
   };
@@ -1193,8 +1195,10 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     entry: LogEntry<TStoreValue>,
     heads: any
   ) => {
-    this.incItemsOverallCount(); // this must be called before the handleNewEntry,
     // otherwise doubling of the overall count will be caused
+    if (!this.checkWasEntryReceived(entry)) {
+      this.incItemsOverallCountByOne();
+    }
     this.handleNewEntry(address, entry, heads);
   };
 
@@ -1460,11 +1464,11 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   private emitEntries = (
     batchSize: number = SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_EMIT_BATCH_SIZE
   ) => {
-    console.log('newEntriesPending count', this.newEntriesPending.length, {
-      itemsCurrentlyLoaded: this.itemsCurrentlyLoaded,
-      itemsOverallCount: this.itemsOverallCount,
-    });
     if (this.newEntriesPending.length) {
+      console.log('newEntriesPending count', this.newEntriesPending.length, {
+        itemsCurrentlyLoaded: this.itemsCurrentlyLoaded,
+        itemsOverallCount: this.itemsOverallCount,
+      });
       this.newEntriesPending
         .splice(0, batchSize)
         .forEach((newEntry) => newEntry && this.emitNewEntry(...newEntry));
