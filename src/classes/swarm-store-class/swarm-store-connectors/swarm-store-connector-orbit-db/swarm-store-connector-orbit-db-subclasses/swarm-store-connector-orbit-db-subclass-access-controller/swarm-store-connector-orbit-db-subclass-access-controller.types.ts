@@ -21,10 +21,11 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseAccessControllerManifest {
  */
 export type TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<
   P extends ESwarmStoreConnector,
-  T extends TSwarmStoreValueTypes<P>
+  T extends TSwarmStoreValueTypes<P>,
+  I extends unknown = never
 > = (
   // value
-  payload: T,
+  payload: T | I,
   userId: string,
   // key of the value
   key?: string,

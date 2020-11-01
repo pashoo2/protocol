@@ -11,10 +11,8 @@ import { TCentralAuthorityUserIdentity } from '../../../central-authority-class/
 import { ESwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.const';
 import { EOrbitDbFeedStoreOperation } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types';
-import {
-  TSwarmStoreValueTypes,
-  TSwarmStoreDatabaseEntityKey,
-} from '../../../swarm-store-class/swarm-store-class.types';
+import { TSwarmMessageInstance } from '../../../swarm-message/swarm-message-constructor.types';
+import { TSwarmStoreDatabaseEntityKey } from '../../../swarm-store-class/swarm-store-class.types';
 import {
   TSwarmMessageSerialized,
   ISwarmMessageConstructor,
@@ -36,18 +34,24 @@ export const getMessageConstructorForDatabase = (
   return messageConstructors.default;
 };
 
-async function swarmMessageGrantValidator<P extends ESwarmStoreConnector>(
+async function swarmMessageGrantValidator<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  I extends TSwarmMessageInstance,
+  CB extends
+    | TSwarmMessageStoreAccessControlGrantAccessCallback<P, T>
+    | TSwarmMessageStoreAccessControlGrantAccessCallback<P, I>
+    | undefined
+>(
   this: {
     dbName: string;
     messageConstructor: ISwarmMessageConstructor;
-    grantAccessCb:
-      | TSwarmMessageStoreAccessControlGrantAccessCallback<P>
-      | undefined;
+    grantAccessCb: CB;
     isPublic: boolean | undefined;
     isUserCanWrite: boolean;
     currentUserId: TCentralAuthorityUserIdentity;
   },
-  value: TSwarmMessageSerialized,
+  value: T,
   userId: TCentralAuthorityUserIdentity,
   key?: TSwarmStoreDatabaseEntityKey<P>,
   op?: TSwarmStoreDatabaseEntryOperation<P>
@@ -80,7 +84,10 @@ async function swarmMessageGrantValidator<P extends ESwarmStoreConnector>(
       return false;
     }
     if (grantAccessCb) {
-      return grantAccessCb(swarmMessage, userId, dbName, key, op);
+      return (grantAccessCb as TSwarmMessageStoreAccessControlGrantAccessCallback<
+        P,
+        I
+      >)((swarmMessage as unknown) as I, userId, dbName, key, op);
     }
     return true;
   } catch (err) {
@@ -91,18 +98,21 @@ async function swarmMessageGrantValidator<P extends ESwarmStoreConnector>(
 
 export const getMessageValidator = <
   P extends ESwarmStoreConnector,
-  T extends TSwarmStoreValueTypes<P>
+  T extends TSwarmMessageSerialized,
+  I extends TSwarmMessageInstance,
+  CB extends
+    | TSwarmMessageStoreAccessControlGrantAccessCallback<P, T>
+    | TSwarmMessageStoreAccessControlGrantAccessCallback<P, I>
+    | undefined
 >(
   dboptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<
     TSwarmMessageSerialized
   > &
     ISwarmStoreDatabaseBaseOptions,
   messageConstructors: ISwarmMessageDatabaseConstructors,
-  grantAccessCb:
-    | TSwarmMessageStoreAccessControlGrantAccessCallback<P>
-    | undefined,
+  grantAccessCb: CB,
   currentUserId: TCentralAuthorityUserIdentity
-): TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<P, T> => {
+): TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<P, T, I> => {
   const { dbName, isPublic, write } = dboptions;
   const messageConstructor = getMessageConstructorForDatabase(
     dbName,
@@ -112,7 +122,11 @@ export const getMessageValidator = <
   if (!messageConstructor) {
     throw new Error(`There is no message contructor found for the ${dbName}`);
   }
-  return swarmMessageGrantValidator.bind({
+  return (swarmMessageGrantValidator as TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<
+    P,
+    T,
+    I
+  >).bind({
     messageConstructor,
     dbName,
     grantAccessCb,

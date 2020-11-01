@@ -17,14 +17,16 @@ import {
 } from '../swarm-message-store/swarm-message-store.types';
 import { getEventEmitterInstance } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { ESwarmMessageStoreEventNames } from '../swarm-message-store/swarm-message-store.const';
-import { ISwarmMessageInstanceDecrypted } from '../swarm-message/swarm-message-constructor.types';
+import {
+  ISwarmMessageInstanceDecrypted,
+  TSwarmMessageSerialized,
+} from '../swarm-message/swarm-message-constructor.types';
 import { TTypedEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 import {
   TSwarmStoreDatabaseEntityAddress,
   TSwarmStoreDatabaseEntityKey,
   TSwarmStoreDatabaseOptions,
   TSwarmStoreDatabaseType,
-  TSwarmStoreValueTypes,
 } from '../swarm-store-class/swarm-store-class.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import validateUserIdentifier from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier';
@@ -41,19 +43,33 @@ import {
   SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_UPDATE_RETRY_DELAY_MS,
   SWARM_MESSAGES_DATABASE_MESSAGES_EMITTED_UNIQ_ID_ADDRESS_PREFIX,
 } from './swarm-messages-database.const';
-import { ISwarmMessageStoreMessageWithMeta } from '../swarm-message-store/swarm-message-store.types';
+import {
+  ISwarmMessageStoreMessageWithMeta,
+  ISwarmMessageStoreOptionsWithConnectorFabric,
+} from '../swarm-message-store/swarm-message-store.types';
 import { delay } from '../../utils/common-utils/common-utils-timer';
 import { SWARM_MESSAGES_DATABASE_MESSAGES_MAX_ATTEMPTS_CACHE_UPDATE } from './swarm-messages-database.const';
-import { ISwarmStoreConnectorBasic } from '../swarm-store-class/swarm-store-class.types';
+import {
+  ISwarmStoreConnectorBasic,
+  ISwarmStoreConnector,
+} from '../swarm-store-class/swarm-store-class.types';
 
 export class SwarmMessagesDatabase<
   P extends ESwarmStoreConnector,
-  T extends TSwarmStoreValueTypes<P>,
+  T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
   ConnectorBasic extends ISwarmStoreConnectorBasic<
     ESwarmStoreConnector.OrbitDB,
     T,
     DbType
+  >,
+  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, ConnectorBasic>,
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
+    P,
+    T,
+    DbType,
+    ConnectorBasic,
+    ConnectorMain
   >
 > implements ISwarmMessageDatabaseMessagingMethods<P, DbType> {
   get dbName(): string | undefined {
@@ -126,7 +142,14 @@ export class SwarmMessagesDatabase<
    * @type {ISwarmMessageStore<P>}
    * @memberof SwarmMessagesDatabase
    */
-  protected _swarmMessageStore?: ISwarmMessageStore<P, DbType, ConnectorBasic>;
+  protected _swarmMessageStore?: ISwarmMessageStore<
+    P,
+    T,
+    DbType,
+    ConnectorBasic,
+    ConnectorMain,
+    O
+  >;
 
   /**
    * Implementation of a swarm messages cahce
@@ -170,7 +193,14 @@ export class SwarmMessagesDatabase<
     | undefined;
 
   async connect(
-    options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType, ConnectorBasic>
+    options: ISwarmMessagesDatabaseConnectOptions<
+      P,
+      T,
+      DbType,
+      ConnectorBasic,
+      ConnectorMain,
+      O
+    >
   ): Promise<void> {
     this._handleOptions(options);
     await this._openDatabaseInstance();
@@ -264,9 +294,11 @@ export class SwarmMessagesDatabase<
    */
   protected _checkIsReady(): this is ISwarmMessagesDatabaseReady<
     P,
-    DbType,
     T,
-    ConnectorBasic
+    DbType,
+    ConnectorBasic,
+    ConnectorMain,
+    O
   > {
     if (!this._isReady) {
       throw new Error('The instance is not ready to use');
@@ -289,7 +321,14 @@ export class SwarmMessagesDatabase<
   }
 
   protected _validateOptions(
-    options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType, ConnectorBasic>
+    options: ISwarmMessagesDatabaseConnectOptions<
+      P,
+      T,
+      DbType,
+      ConnectorBasic,
+      ConnectorMain,
+      O
+    >
   ): void {
     assert(!!options, 'An options object must be provided');
     assert(typeof options === 'object', 'Options must be an object');
@@ -327,7 +366,14 @@ export class SwarmMessagesDatabase<
   }
 
   protected _setOptions(
-    options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType, ConnectorBasic>
+    options: ISwarmMessagesDatabaseConnectOptions<
+      P,
+      T,
+      DbType,
+      ConnectorBasic,
+      ConnectorMain,
+      O
+    >
   ): void {
     this._setDbOptions(options.dbOptions);
     this._swarmMessageStore = options.swarmMessageStore;
@@ -373,7 +419,14 @@ export class SwarmMessagesDatabase<
    * @memberof SwarmMessagesDatabase
    */
   protected _handleOptions(
-    options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType, ConnectorBasic>
+    options: ISwarmMessagesDatabaseConnectOptions<
+      P,
+      T,
+      DbType,
+      ConnectorBasic,
+      ConnectorMain,
+      O
+    >
   ): void {
     this._validateOptions(options);
     this._setOptions(options);
@@ -384,7 +437,7 @@ export class SwarmMessagesDatabase<
   }
 
   protected _checkDatabaseProps(): this is Omit<
-    ISwarmMessagesDatabaseReady<P, DbType, T, ConnectorBasic>,
+    ISwarmMessagesDatabaseReady<P, T, DbType, ConnectorBasic, ConnectorMain, O>,
     'isReady'
   > {
     const swarmMessageStore = this._swarmMessageStore;

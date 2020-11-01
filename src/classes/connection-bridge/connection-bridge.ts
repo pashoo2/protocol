@@ -55,6 +55,11 @@ import {
 } from './connection-bridge.types';
 import { getSwarmStoreConnectionProviderOptionsForOrbitDb } from './connection-bridge.utils';
 import { IPFS } from 'types/ipfs.types';
+import {
+  ISwarmStoreConnector,
+  ISwarmStoreOptionsWithConnectorFabric,
+} from '../swarm-store-class/swarm-store-class.types';
+import { ISwarmMessageStoreOptionsWithConnectorFabric } from '../swarm-message-store/swarm-message-store.types';
 
 /**
  * this class used if front of connection
@@ -67,15 +72,43 @@ import { IPFS } from 'types/ipfs.types';
  */
 export class ConnectionBridge<
   P extends ESwarmStoreConnector = ESwarmStoreConnector.OrbitDB,
+  T extends TSwarmMessageSerialized = TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P> = TSwarmStoreDatabaseType<P>,
   ConnectorBasic extends TConnectionBridgeSwarmStoreConnectorBasic<
     P,
+    T,
     DbType
-  > = TConnectionBridgeSwarmStoreConnectorBasic<P, DbType>
-> implements IConnectionBridge {
+  > = TConnectionBridgeSwarmStoreConnectorBasic<P, T, DbType>,
+  ConnectorMain extends ISwarmStoreConnector<
+    P,
+    T,
+    DbType,
+    ConnectorBasic
+  > = ISwarmStoreConnector<P, TSwarmMessageSerialized, DbType, ConnectorBasic>,
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
+    P,
+    T,
+    DbType,
+    ConnectorBasic,
+    ConnectorMain
+  > = ISwarmMessageStoreOptionsWithConnectorFabric<
+    P,
+    T,
+    DbType,
+    ConnectorBasic,
+    ConnectorMain
+  >
+> implements IConnectionBridge<P, T, DbType, ConnectorBasic, ConnectorMain, O> {
   public caConnection?: ICentralAuthority;
 
-  public storage?: ISwarmMessageStore<P, DbType, ConnectorBasic>;
+  public storage?: ISwarmMessageStore<
+    P,
+    T,
+    DbType,
+    ConnectorBasic,
+    ConnectorMain,
+    O
+  >;
 
   public messageConstructor?: ISwarmMessageConstructor;
 
@@ -87,7 +120,13 @@ export class ConnectionBridge<
     return this._secretStorage;
   }
 
-  protected options?: IConnectionBridgeOptions<P, DbType, ConnectorBasic, true>;
+  protected options?: IConnectionBridgeOptions<
+    P,
+    T,
+    DbType,
+    ConnectorBasic,
+    true
+  >;
 
   protected optionsCA?: ICentralAuthorityOptions;
 
@@ -97,6 +136,7 @@ export class ConnectionBridge<
 
   protected optionsMessageStorage?: ISwarmMessageStoreOptions<
     P,
+    T,
     DbType,
     ConnectorBasic
   >;
@@ -123,7 +163,7 @@ export class ConnectionBridge<
    * @throws
    */
   public async connect(
-    options: IConnectionBridgeOptions<P, DbType>
+    options: IConnectionBridgeOptions<P, T, DbType>
   ): Promise<void> {
     await this.setOptions(options);
     try {
@@ -152,10 +192,11 @@ export class ConnectionBridge<
   public async checkSessionAvailable(
     options?:
       | ISensitiveDataSessionStorageOptions
-      | IConnectionBridgeOptions<P, DbType>
+      | IConnectionBridgeOptions<P, T, DbType>
   ) {
-    const sessionParams = (options as IConnectionBridgeOptions<P, DbType>)?.auth
-      ? (options as IConnectionBridgeOptions<P, DbType>)?.auth.session
+    const sessionParams = (options as IConnectionBridgeOptions<P, T, DbType>)
+      ?.auth
+      ? (options as IConnectionBridgeOptions<P, T, DbType>)?.auth.session
       : (options as ISensitiveDataSessionStorageOptions | undefined);
 
     if (!sessionParams) {
@@ -292,9 +333,7 @@ export class ConnectionBridge<
    * @memberof ConnectionBridge
    * @throws
    */
-  protected async setOptionsMessageStorage(): Promise<
-    ISwarmMessageStoreOptions<P, DbType, ConnectorBasic>
-  > {
+  protected async getOptionsMessageStorage(): Promise<O> {
     const { messageConstructor, caConnection, swarmConnection, options } = this;
 
     if (!options) {
@@ -324,16 +363,13 @@ export class ConnectionBridge<
     const authCredentials = {
       ...(authOptions.credentials as ISwarmMessageStoreOptions<
         P,
+        T,
         DbType,
         ConnectorBasic
       >['credentials']),
       session: this.session,
     };
-    const messageStorageOptions: ISwarmMessageStoreOptions<
-      P,
-      DbType,
-      ConnectorBasic
-    > = {
+    const messageStorageOptions: O = {
       ...storageOptions,
       credentials: authCredentials,
       userId,
@@ -347,7 +383,7 @@ export class ConnectionBridge<
       providerConnectionOptions: this.getSwarmStoreConnectionProviderOptions(
         swarmConnection
       ),
-    };
+    } as any; // TODO - resolve the type
 
     return messageStorageOptions;
   }
@@ -373,7 +409,7 @@ export class ConnectionBridge<
    * @throws
    */
   protected async setOptions(
-    options: IConnectionBridgeOptions<P, DbType, ConnectorBasic>
+    options: IConnectionBridgeOptions<P, T, DbType, ConnectorBasic>
   ) {
     await this.startUserDataStore();
     assert(options, 'Options must be provided');
@@ -385,6 +421,7 @@ export class ConnectionBridge<
       );
       this.options = (options as unknown) as IConnectionBridgeOptions<
         P,
+        T,
         DbType,
         ConnectorBasic,
         true
@@ -566,7 +603,7 @@ export class ConnectionBridge<
    * @throws
    */
   protected async startSwarmMessageStorageConnection(): Promise<void> {
-    const swarmMessageStorageOptions = await this.setOptionsMessageStorage();
+    const swarmMessageStorageOptions = await this.getOptionsMessageStorage();
     const swarmMessageStorage = new SwarmMessageStore<
       P,
       DbType,
@@ -582,7 +619,9 @@ export class ConnectionBridge<
     this.storage = swarmMessageStorage as ISwarmMessageStore<
       P,
       DbType,
-      ConnectorBasic
+      ConnectorBasic,
+      ConnectorMain,
+      O
     >;
   }
 

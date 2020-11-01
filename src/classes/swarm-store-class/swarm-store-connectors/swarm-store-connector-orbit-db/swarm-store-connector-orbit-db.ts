@@ -127,11 +127,7 @@ export class SwarmStoreConnectorOrbitDB<
 
   protected orbitDb?: OrbitDB; // instance of the OrbitDB
 
-  protected databases: ISwarmStoreConnectorBasic<
-    ESwarmStoreConnector.OrbitDB,
-    ISwarmDatabaseValueTypes,
-    DbType
-  >[] = [];
+  protected databases: ConnectorBasic[] = [];
 
   protected identityKeystore?: Keystore;
 
@@ -421,11 +417,7 @@ export class SwarmStoreConnectorOrbitDB<
   protected getDbConnection = (
     dbName: string,
     checkIsOpen: boolean = true
-  ): ISwarmStoreConnectorBasic<
-    ESwarmStoreConnector.OrbitDB,
-    ISwarmDatabaseValueTypes,
-    DbType
-  > | void => {
+  ): ConnectorBasic | undefined => {
     const { databases } = this;
 
     return databases.find((db) => {
@@ -444,10 +436,10 @@ export class SwarmStoreConnectorOrbitDB<
    * closed and ready.
    * @protected
    * @param {string} dbName
-   * @returns
+   * @returns {ConnectorBasic | undefiend}
    * @memberof SwarmStoreConnectorOrbitDB
    */
-  protected getDbConnectionExists(dbName: string) {
+  protected getDbConnectionExists(dbName: string): ConnectorBasic | undefined {
     return this.getDbConnection(dbName, false);
   }
 
@@ -1470,13 +1462,7 @@ export class SwarmStoreConnectorOrbitDB<
     >,
     dbName: string,
     orbitDb: OrbitDB
-  ): Promise<
-    ISwarmStoreConnectorBasic<
-      ESwarmStoreConnector.OrbitDB,
-      ISwarmDatabaseValueTypes,
-      DbType
-    >
-  > {
+  ): Promise<ConnectorBasic> {
     const optionsWithCachestore = await this.extendDatabaseOptionsWithCache(
       dbOptions,
       dbName

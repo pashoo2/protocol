@@ -17,15 +17,17 @@ import {
   ISwarmStoreConnectorBasicWithEntriesCount,
 } from '../swarm-store-class/swarm-store-class.types';
 import { ISwarmStoreConnectorOrbitDbConnecectionBasicFabric } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.types';
+import {
+  ISwarmStoreConnector,
+  ISwarmStoreOptionsWithConnectorFabric,
+} from '../swarm-store-class/swarm-store-class.types';
+import { ISwarmMessageStoreOptionsWithConnectorFabric } from '../swarm-message-store/swarm-message-store.types';
 
 export type TConnectionBridgeSwarmStoreConnectorBasic<
   P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>
-> = ISwarmStoreConnectorBasicWithEntriesCount<
-  P,
-  TSwarmMessageSerialized,
-  DbType
->;
+> = ISwarmStoreConnectorBasicWithEntriesCount<P, T, DbType>;
 
 export type IConnectionBridgeOptionsAuthCredentials = Omit<
   ICentralAuthorityOptions['user']['credentials'],
@@ -68,14 +70,16 @@ export interface IConnectionBridgeSwarmConnection<T> {
 
 export interface IConnectionBridgeStorageOptions<
   P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
   ConnectorBasic extends TConnectionBridgeSwarmStoreConnectorBasic<
     P,
+    T,
     DbType
-  > = TConnectionBridgeSwarmStoreConnectorBasic<P, DbType>
+  > = TConnectionBridgeSwarmStoreConnectorBasic<P, T, DbType>
 >
   extends Omit<
-    ISwarmMessageStoreOptions<P, DbType, ConnectorBasic>,
+    ISwarmMessageStoreOptions<P, T, DbType, ConnectorBasic>,
     | 'userId'
     | 'credentials'
     | 'messageConstructors'
@@ -83,11 +87,11 @@ export interface IConnectionBridgeStorageOptions<
     | 'databasesListStorage'
   > {
   connectorBasicFabric?: ISwarmStoreConnectorOrbitDbConnecectionBasicFabric<
-    TSwarmMessageSerialized,
+    T,
     DbType,
     ISwarmStoreConnectorBasicWithEntriesCount<
       ESwarmStoreConnector.OrbitDB,
-      TSwarmMessageSerialized,
+      T,
       DbType
     >
   >;
@@ -95,11 +99,13 @@ export interface IConnectionBridgeStorageOptions<
 
 export interface IConnectionBridgeOptions<
   P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
   ConnectorBasic extends TConnectionBridgeSwarmStoreConnectorBasic<
     P,
+    T,
     DbType
-  > = TConnectionBridgeSwarmStoreConnectorBasic<P, DbType>,
+  > = TConnectionBridgeSwarmStoreConnectorBasic<P, T, DbType>,
   CD extends boolean = false
 > {
   auth: IConnectionBridgeOptionsAuth<CD>;
@@ -118,7 +124,7 @@ export interface IConnectionBridgeOptions<
    * @type {ISwarmMessageStoreOptions<P>}
    * @memberof IConnectionBridgeOptions
    */
-  storage: IConnectionBridgeStorageOptions<P, DbType, ConnectorBasic>;
+  storage: IConnectionBridgeStorageOptions<P, T, DbType, ConnectorBasic>;
   /**
    * specify options for the swarm connection provider
    *
@@ -130,11 +136,32 @@ export interface IConnectionBridgeOptions<
 
 export interface IConnectionBridge<
   P extends ESwarmStoreConnector = ESwarmStoreConnector.OrbitDB,
+  T extends TSwarmMessageSerialized = TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P> = TSwarmStoreDatabaseType<P>,
   ConnectorBasic extends TConnectionBridgeSwarmStoreConnectorBasic<
     P,
+    T,
     DbType
-  > = TConnectionBridgeSwarmStoreConnectorBasic<P, DbType>
+  > = TConnectionBridgeSwarmStoreConnectorBasic<P, T, DbType>,
+  ConnectorMain extends ISwarmStoreConnector<
+    P,
+    T,
+    DbType,
+    ConnectorBasic
+  > = ISwarmStoreConnector<P, TSwarmMessageSerialized, DbType, ConnectorBasic>,
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
+    P,
+    T,
+    DbType,
+    ConnectorBasic,
+    ConnectorMain
+  > = ISwarmMessageStoreOptionsWithConnectorFabric<
+    P,
+    T,
+    DbType,
+    ConnectorBasic,
+    ConnectorMain
+  >
 > {
   /**
    * used to authorize the user or get
@@ -152,7 +179,7 @@ export interface IConnectionBridge<
    * @type {ISwarmMessageStore<P>}
    * @memberof IConnectionBridge
    */
-  storage?: ISwarmMessageStore<P, DbType, ConnectorBasic>;
+  storage?: ISwarmMessageStore<P, T, DbType, ConnectorBasic, ConnectorMain, O>;
   /**
    * allows to create messages, which can be stored in the swarm
    *
@@ -191,7 +218,9 @@ export interface IConnectionBridge<
    * @returns {(Promise<Error | void>)}
    * @memberof IConnectionBridge
    */
-  connect(options: IConnectionBridgeOptions<P, DbType>): Promise<Error | void>;
+  connect(
+    options: IConnectionBridgeOptions<P, T, DbType>
+  ): Promise<Error | void>;
 
   /**
    * checks was a session started before and
@@ -206,7 +235,7 @@ export interface IConnectionBridge<
   checkSessionAvailable(
     options?:
       | ISensitiveDataSessionStorageOptions
-      | IConnectionBridgeOptions<P, DbType>
+      | IConnectionBridgeOptions<P, T, DbType>
   ): Promise<boolean>;
   /**
    * Close all connections and release the options.

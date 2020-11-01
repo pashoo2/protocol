@@ -23,8 +23,14 @@ import {
   ISwarmMessagesDatabaseMessageDescription,
   ISwarmMessagesDatabaseDeleteMessageDescription,
 } from './swarm-messages-database-component.types';
-import { ISwarmMessageInstanceDecrypted } from '../../classes/swarm-message/swarm-message-constructor.types';
-import { ISwarmMessageStoreDeleteMessageArg } from '../../classes/swarm-message-store/swarm-message-store.types';
+import {
+  ISwarmMessageInstanceDecrypted,
+  TSwarmMessageSerialized,
+} from '../../classes/swarm-message/swarm-message-constructor.types';
+import {
+  ISwarmMessageStoreDeleteMessageArg,
+  ISwarmMessageStoreOptionsWithConnectorFabric,
+} from '../../classes/swarm-message-store/swarm-message-store.types';
 import {
   setMessageDeleteListener,
   setCacheUpdateListener,
@@ -32,7 +38,10 @@ import {
 import { TSwarmMessageDatabaseMessagesCached } from '../../classes/swarm-messages-database/swarm-messages-database.types';
 import { isValidSwarmMessageDecryptedFormat } from '../../classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-swarm-message';
 import { TSwarmMessageUserIdentifierSerialized } from '../../classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
-import { ISwarmStoreConnectorBasic } from '../../classes/swarm-store-class/swarm-store-class.types';
+import {
+  ISwarmStoreConnectorBasic,
+  ISwarmStoreConnector,
+} from '../../classes/swarm-store-class/swarm-store-class.types';
 
 interface IProps {
   userId: TSwarmMessageUserIdentifierSerialized;
@@ -43,18 +52,26 @@ interface IProps {
 
 interface IState<
   P extends ESwarmStoreConnector,
-  T extends TSwarmStoreValueTypes<P>,
+  T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
   ConnectorBasic extends ISwarmStoreConnectorBasic<
     ESwarmStoreConnector.OrbitDB,
     T,
     DbType
+  >,
+  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, ConnectorBasic>,
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
+    P,
+    T,
+    DbType,
+    ConnectorBasic,
+    ConnectorMain
   >
 > {
   messages: TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined;
   isOpening: boolean;
   isClosing: boolean;
-  db?: SwarmMessagesDatabase<P, T, DbType, ConnectorBasic>;
+  db?: SwarmMessagesDatabase<P, T, DbType, ConnectorBasic, ConnectorMain, O>;
 }
 
 export class SwarmMessagesDatabaseComponent<
@@ -65,14 +82,25 @@ export class SwarmMessagesDatabaseComponent<
     ESwarmStoreConnector.OrbitDB,
     T,
     DbType
+  >,
+  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, ConnectorBasic>,
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
+    P,
+    T,
+    DbType,
+    ConnectorBasic,
+    ConnectorMain
   >
-> extends React.PureComponent<IProps, IState<P, T, DbType, ConnectorBasic>> {
-  state: IState<P, T, DbType, ConnectorBasic> = {
+> extends React.PureComponent<
+  IProps,
+  IState<P, T, DbType, ConnectorBasic, ConnectorMain, O>
+> {
+  state: IState<P, T, DbType, ConnectorBasic, ConnectorMain, O> = {
     messages: undefined,
     isOpening: false,
     isClosing: false,
     db: undefined as
-      | SwarmMessagesDatabase<P, T, DbType, ConnectorBasic>
+      | SwarmMessagesDatabase<P, T, DbType, ConnectorBasic, ConnectorMain, O>
       | undefined,
   };
 

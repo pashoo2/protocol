@@ -16,13 +16,22 @@ import {
 } from '../swarm-store-class/swarm-store-class.types';
 import { OmitFirstArg } from '../../types/helper.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
-import { ISwarmMessageInstanceDecrypted } from '../swarm-message/swarm-message-constructor.types';
+import {
+  ISwarmMessageInstanceDecrypted,
+  TSwarmMessageSerialized,
+} from '../swarm-message/swarm-message-constructor.types';
 import { ESwarmMessageStoreEventNames } from '../swarm-message-store/swarm-message-store.const';
 import { TTypedEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 import { ESwarmMessagesDatabaseCacheEventsNames } from './swarm-messages-database.const';
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
-import { ISwarmMessageStoreMessageWithMeta } from '../swarm-message-store/swarm-message-store.types';
-import { ISwarmStoreConnectorBasic } from '../swarm-store-class/swarm-store-class.types';
+import {
+  ISwarmMessageStoreMessageWithMeta,
+  ISwarmMessageStoreOptionsWithConnectorFabric,
+} from '../swarm-message-store/swarm-message-store.types';
+import {
+  ISwarmStoreConnectorBasic,
+  ISwarmStoreConnector,
+} from '../swarm-store-class/swarm-store-class.types';
 
 export type TSwarmMessageDatabaseMessagesCached<
   P extends ESwarmStoreConnector,
@@ -60,16 +69,31 @@ export interface ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<
  */
 export interface ISwarmMessagesDatabaseConnectOptions<
   P extends ESwarmStoreConnector,
-  T extends TSwarmStoreValueTypes<P>,
+  T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
   ConnectorBasic extends ISwarmStoreConnectorBasic<
     ESwarmStoreConnector.OrbitDB,
     T,
     DbType
+  >,
+  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, ConnectorBasic>,
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
+    P,
+    T,
+    DbType,
+    ConnectorBasic,
+    ConnectorMain
   >
 > {
   user: ISwarmMessagesDatabaseConnectCurrentUserOptions;
-  swarmMessageStore: ISwarmMessageStore<P, DbType, ConnectorBasic>;
+  swarmMessageStore: ISwarmMessageStore<
+    P,
+    T,
+    DbType,
+    ConnectorBasic,
+    ConnectorMain,
+    O
+  >;
   dbOptions: TSwarmStoreDatabaseOptions<P, T>;
   cacheOptions?: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<
     P,
@@ -248,12 +272,20 @@ export interface ISwarmMessagesDatabaseProperties<
  */
 export interface ISwarmMessagesDatabase<
   P extends ESwarmStoreConnector,
-  T extends TSwarmStoreValueTypes<P>,
+  T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
   ConnectorBasic extends ISwarmStoreConnectorBasic<
     ESwarmStoreConnector.OrbitDB,
     T,
     DbType
+  >,
+  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, ConnectorBasic>,
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
+    P,
+    T,
+    DbType,
+    ConnectorBasic,
+    ConnectorMain
   >
 >
   extends ISwarmMessageStoreMessagingMethods<P, DbType>,
@@ -266,7 +298,14 @@ export interface ISwarmMessagesDatabase<
    * @memberof ISwarmMessagesDatabase
    */
   open(
-    options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType, ConnectorBasic>
+    options: ISwarmMessagesDatabaseConnectOptions<
+      P,
+      T,
+      DbType,
+      ConnectorBasic,
+      ConnectorMain,
+      O
+    >
   ): Promise<void>;
 
   /**
@@ -296,17 +335,32 @@ export interface ISwarmMessagesDatabase<
  */
 export interface ISwarmMessagesDatabaseReady<
   P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  T extends TSwarmStoreValueTypes<P>,
   ConnectorBasic extends ISwarmStoreConnectorBasic<
     ESwarmStoreConnector.OrbitDB,
     T,
     DbType
+  >,
+  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, ConnectorBasic>,
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
+    P,
+    T,
+    DbType,
+    ConnectorBasic,
+    ConnectorMain
   >
 > {
   _dbName: string;
   _isReady: true;
-  _swarmMessageStore: ISwarmMessageStore<P, DbType, ConnectorBasic>;
+  _swarmMessageStore: ISwarmMessageStore<
+    P,
+    T,
+    DbType,
+    ConnectorBasic,
+    ConnectorMain,
+    O
+  >;
   _currentUserId: TSwarmMessageUserIdentifierSerialized;
   _swarmMessagesCache: ISwarmMessagesDatabaseCache<P, DbType>;
 }

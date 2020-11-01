@@ -16,6 +16,8 @@ import {
 } from './swarm-store-class.const';
 import { IStorageCommon } from 'types/storage.types';
 import { calculateHash } from 'utils/hash-calculation-utils';
+import { checkIsError } from '../../utils/common-utils/common-utils-check-value';
+import { ISwarmStoreOptionsWithConnectorFabric } from './swarm-store-class.types';
 import {
   TSwarmStoreDatabaseType,
   ISwarmStoreConnectorBasic,
@@ -30,7 +32,6 @@ import {
   TSwarmStoreDatabaseOptions,
   ISwarmStoreEvents,
   ISwarmStore,
-  ISwarmStoreOptions,
 } from './swarm-store-class.types';
 
 /**
@@ -55,14 +56,28 @@ export class SwarmStore<
     ItemType,
     DbType
   > = ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, ItemType, DbType>,
-  O extends ISwarmStoreOptions<
+  ConnectorMain extends ISwarmStoreConnector<
     P,
     ItemType,
     DbType,
     ConnectorBasic
-  > = ISwarmStoreOptions<P, ItemType, DbType, ConnectorBasic>
+  > = ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic>,
+  O extends ISwarmStoreOptionsWithConnectorFabric<
+    P,
+    ItemType,
+    DbType,
+    ConnectorBasic,
+    ConnectorMain
+  > = ISwarmStoreOptionsWithConnectorFabric<
+    P,
+    ItemType,
+    DbType,
+    ConnectorBasic,
+    ConnectorMain
+  >
 > extends EventEmitter<E>
-  implements ISwarmStore<P, ItemType, DbType, ConnectorBasic, O> {
+  implements
+    ISwarmStore<P, ItemType, DbType, ConnectorBasic, ConnectorMain, O> {
   public get isReady(): boolean {
     return !!this.connector && this.connector.isReady;
   }
@@ -91,9 +106,7 @@ export class SwarmStore<
     };
   }
 
-  protected connector:
-    | ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic>
-    | undefined;
+  protected connector: ConnectorMain | undefined;
 
   protected dbStatusesExisting: ISwarmStoreDatabasesStatuses = SWARM_STORE_DATABASES_STATUSES_EMPTY;
 
@@ -154,12 +167,10 @@ export class SwarmStore<
    * @memberof SwarmStore
    */
   public async connect(
-    options: ISwarmStoreOptions<P, ItemType, DbType, ConnectorBasic>,
+    options: O,
     databasePersistantListStorage?: IStorageCommon
   ): Promise<Error | void> {
-    let connectionWithConnector:
-      | ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic>
-      | undefined;
+    let connectionWithConnector: ConnectorMain | undefined;
     try {
       this.validateOptions(options);
       if (databasePersistantListStorage) {
@@ -215,9 +226,9 @@ export class SwarmStore<
   public async openDatabase(
     dbOptions: TSwarmStoreDatabaseOptions<P, ItemType>
   ): Promise<void | Error> {
-    const { connector } = this;
+    const connector = this.getConnectorOrError();
 
-    if (!connector) {
+    if (checkIsError(connector)) {
       return new Error('Connector is not exists');
     }
     this.setEmptyStatusForDb(dbOptions.dbName);
@@ -242,9 +253,9 @@ export class SwarmStore<
    * @memberof SwarmStore
    */
   public async closeDatabase(dbName: string): Promise<void | Error> {
-    const { connector } = this;
+    const connector = this.getConnectorOrError();
 
-    if (!connector) {
+    if (checkIsError(connector)) {
       return new Error('Connector is not exists');
     }
     this.setClosedStatusForDb(dbName);
@@ -262,9 +273,9 @@ export class SwarmStore<
   }
 
   public async dropDatabase(dbName: string): Promise<void | Error> {
-    const { connector } = this;
+    const connector = this.getConnectorOrError();
 
-    if (!connector) {
+    if (checkIsError(connector)) {
       return new Error('Connector is not exists');
     }
     this.setClosedStatusForDb(dbName);
@@ -298,9 +309,9 @@ export class SwarmStore<
     dbMethod: TSwarmStoreDatabaseMethod<P>,
     arg: TSwarmStoreDatabaseMethodArgument<P, A, DbType>
   ): Promise<TSwarmStoreDatabaseRequestMethodReturnType<P, A>> {
-    const { connector } = this;
+    const connector = this.getConnectorOrError();
 
-    if (!connector) {
+    if (checkIsError(connector)) {
       return new Error('Connector is not exists');
     }
     this.setClosedStatusForDb(dbName);
@@ -316,9 +327,7 @@ export class SwarmStore<
    * @memberof SwarmStore
    * @throws
    */
-  protected validateOptions(
-    options: ISwarmStoreOptions<P, ItemType, DbType, ConnectorBasic>
-  ): void {
+  protected validateOptions(options: O): void {
     assert(options, 'An options must be specified');
     assert(
       typeof options === 'object',
@@ -344,6 +353,7 @@ export class SwarmStore<
       'Directory must be a string if specified'
     );
     assert(options.provider, 'Provider must be specified');
+    assert(options.connectorFabric, 'Connector fabric must be specified');
     assert(
       Object.values(ESwarmStoreConnector).includes(options.provider),
       `There is unknown provider specified "${options.provider}"`
@@ -418,6 +428,15 @@ export class SwarmStore<
     return this.databases?.options[dbName];
   }
 
+  protected getConnectorOrError(): ConnectorMain | Error {
+    const { connector } = this;
+
+    if (!connector) {
+      return new Error('Connector is not exists');
+    }
+    return connector;
+  }
+
   /**
    * Directry for the database persistent list.
    * Better if it will be uniq per users
@@ -427,9 +446,7 @@ export class SwarmStore<
    * @returns {string}
    * @memberof SwarmStore
    */
-  protected getDatabasePersistentListDirectory(
-    options: ISwarmStoreOptions<P, ItemType, DbType, ConnectorBasic>
-  ): string {
+  protected getDatabasePersistentListDirectory(options: O): string {
     return `${options.userId}/${options.directory ||
       SWARM_STORE_DATABASES_PERSISTENT_LIST_DIRECTORY_DEFAULT}`;
   }
@@ -640,28 +657,12 @@ export class SwarmStore<
    * @returns {(ISwarmStoreConnector<P> | Error)}
    * @memberof SwarmStore
    */
-  protected createConnectionWithStorageConnector(
-    options: ISwarmStoreOptions<P, ItemType, DbType, ConnectorBasic>
-  ): ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic> {
-    const { provider } = options;
-    const Constructor = this.getStorageConnector(options.provider);
+  protected createConnectionWithStorageConnector(options: O): ConnectorMain {
+    const { connectorFabric } = options;
+    const connection = connectorFabric(options);
 
-    if (!Constructor) {
-      throw new Error(`A constructor was not found for the ${provider}`);
-    }
-
-    const connection = new Constructor(options);
-
-    assert(
-      connection instanceof Constructor,
-      `Failed to create connection with the provider ${provider}`
-    );
-    return connection as ISwarmStoreConnector<
-      P,
-      ItemType,
-      DbType,
-      ConnectorBasic
-    >;
+    assert(connection, `Failed to create connection with the provider`);
+    return connection;
   }
 
   /**
@@ -673,8 +674,8 @@ export class SwarmStore<
    * @memberof SwarmStore
    */
   protected async startConnectionWithConnector(
-    connector: ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic>,
-    options: ISwarmStoreOptions<P, ItemType, DbType, ConnectorBasic>
+    connector: ConnectorMain,
+    options: O
   ): Promise<void> {
     const connectionResult = await connector.connect(
       options.providerConnectionOptions
@@ -715,9 +716,7 @@ export class SwarmStore<
    * @param {ISwarmStoreOptions<P>} options
    * @memberof SwarmStore
    */
-  protected createStatusTable(
-    options: ISwarmStoreOptions<P, ItemType, DbType, ConnectorBasic>
-  ) {
+  protected createStatusTable(options: O) {
     const { databases } = options;
 
     databases.forEach((dbOptions) => {
