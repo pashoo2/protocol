@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   ISwarmMessageStoreOptions,
   ISwarmMessageStore,
@@ -22,6 +23,10 @@ import {
   ISwarmStoreOptionsWithConnectorFabric,
 } from '../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageStoreOptionsWithConnectorFabric } from '../swarm-message-store/swarm-message-store.types';
+import {
+  TSwarmStoreValueTypes,
+  ISwarmStoreConnectorBasic,
+} from '../swarm-store-class/swarm-store-class.types';
 
 export type TConnectionBridgeSwarmStoreConnectorBasic<
   P extends ESwarmStoreConnector,
@@ -135,32 +140,52 @@ export interface IConnectionBridgeOptions<
 }
 
 export interface IConnectionBridge<
-  P extends ESwarmStoreConnector = ESwarmStoreConnector.OrbitDB,
-  T extends TSwarmMessageSerialized = TSwarmMessageSerialized,
-  DbType extends TSwarmStoreDatabaseType<P> = TSwarmStoreDatabaseType<P>,
-  ConnectorBasic extends TConnectionBridgeSwarmStoreConnectorBasic<
+  P extends ESwarmStoreConnector,
+  ItemType extends TSwarmStoreValueTypes<P>,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType>,
+  PO extends TSwarmStoreConnectorConnectionOptions<
     P,
-    T,
-    DbType
-  > = TConnectionBridgeSwarmStoreConnectorBasic<P, T, DbType>,
-  ConnectorMain extends ISwarmStoreConnector<
-    P,
-    T,
+    ItemType,
     DbType,
     ConnectorBasic
-  > = ISwarmStoreConnector<P, TSwarmMessageSerialized, DbType, ConnectorBasic>,
-  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
+  >,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>,
+  CO extends ISwarmStoreProviderOptions<
     P,
-    T,
+    ItemType,
     DbType,
     ConnectorBasic,
-    ConnectorMain
-  > = ISwarmMessageStoreOptionsWithConnectorFabric<
+    PO
+  >,
+  CFO extends ISwarmStoreOptionsConnectorFabric<
     P,
-    T,
+    ItemType,
     DbType,
     ConnectorBasic,
+    PO,
+    CO,
+    DBO,
     ConnectorMain
+  >,
+  ConnectorMain extends ISwarmStoreConnector<
+    P,
+    ItemType,
+    DbType,
+    ConnectorBasic,
+    PO,
+    DBO
+  >,
+  O extends ISwarmStoreOptionsWithConnectorFabric<
+    P,
+    ItemType,
+    DbType,
+    ConnectorBasic,
+    PO,
+    CO,
+    DBO,
+    ConnectorMain,
+    CFO
   >
 > {
   /**

@@ -2,8 +2,7 @@ import { EventEmitter } from '../basic-classes/event-emitter-class-base/event-em
 import assert from 'assert';
 import {
   TSwarmStoreDatabaseRequestMethodReturnType,
-  ISwarmStoreOptionsOfDatabasesKnownList,
-  ISwarmStoreDatabaseBaseOptions,
+  TSwarmStoreOptionsOfDatabasesKnownList,
   ISwarmStoreDatabasesCommonStatusList,
 } from './swarm-store-class.types';
 import {
@@ -17,7 +16,12 @@ import {
 import { IStorageCommon } from 'types/storage.types';
 import { calculateHash } from 'utils/hash-calculation-utils';
 import { checkIsError } from '../../utils/common-utils/common-utils-check-value';
-import { ISwarmStoreOptionsWithConnectorFabric } from './swarm-store-class.types';
+import {
+  ISwarmStoreOptionsWithConnectorFabric,
+  TSwarmStoreConnectorConnectionOptions,
+  ISwarmStoreProviderOptions,
+  ISwarmStoreOptionsConnectorFabric,
+} from './swarm-store-class.types';
 import {
   TSwarmStoreDatabaseType,
   ISwarmStoreConnectorBasic,
@@ -50,34 +54,66 @@ export class SwarmStore<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  E extends ISwarmStoreEvents = ISwarmStoreEvents,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<
-    ESwarmStoreConnector.OrbitDB,
-    ItemType,
-    DbType
-  > = ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, ItemType, DbType>,
-  ConnectorMain extends ISwarmStoreConnector<
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType>,
+  PO extends TSwarmStoreConnectorConnectionOptions<
     P,
     ItemType,
     DbType,
     ConnectorBasic
-  > = ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic>,
+  >,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>,
+  CO extends ISwarmStoreProviderOptions<
+    P,
+    ItemType,
+    DbType,
+    ConnectorBasic,
+    PO
+  >,
+  CFO extends ISwarmStoreOptionsConnectorFabric<
+    P,
+    ItemType,
+    DbType,
+    ConnectorBasic,
+    PO,
+    CO,
+    DBO,
+    ConnectorMain
+  >,
+  ConnectorMain extends ISwarmStoreConnector<
+    P,
+    ItemType,
+    DbType,
+    ConnectorBasic,
+    PO,
+    DBO
+  >,
   O extends ISwarmStoreOptionsWithConnectorFabric<
     P,
     ItemType,
     DbType,
     ConnectorBasic,
-    ConnectorMain
-  > = ISwarmStoreOptionsWithConnectorFabric<
-    P,
-    ItemType,
-    DbType,
-    ConnectorBasic,
-    ConnectorMain
-  >
+    PO,
+    CO,
+    DBO,
+    ConnectorMain,
+    CFO
+  >,
+  E extends ISwarmStoreEvents<P, ItemType, DBO>,
+  DBL extends TSwarmStoreOptionsOfDatabasesKnownList<P, ItemType, DBO>
 > extends EventEmitter<E>
   implements
-    ISwarmStore<P, ItemType, DbType, ConnectorBasic, ConnectorMain, O> {
+    ISwarmStore<
+      P,
+      ItemType,
+      DbType,
+      ConnectorBasic,
+      PO,
+      DBO,
+      CO,
+      CFO,
+      ConnectorMain,
+      O
+    > {
   public get isReady(): boolean {
     return !!this.connector && this.connector.isReady;
   }
@@ -93,7 +129,11 @@ export class SwarmStore<
     return SWARM_STORE_DATABASES_STATUSES_EMPTY;
   }
 
-  public get databases(): ISwarmStoreDatabasesCommonStatusList {
+  public get databases(): ISwarmStoreDatabasesCommonStatusList<
+    P,
+    ItemType,
+    DBO
+  > {
     const { databasesKnownOptionsList, databasesOpenedList } = this;
 
     return {
@@ -123,10 +163,10 @@ export class SwarmStore<
    * then it's options won't be added to the list.
    *
    * @protected
-   * @type {ISwarmStoreOptionsOfDatabasesKnownList}
+   * @type {TSwarmStoreOptionsOfDatabasesKnownList}
    * @memberof SwarmStore
    */
-  protected databasesKnownOptionsList: ISwarmStoreOptionsOfDatabasesKnownList = {};
+  protected databasesKnownOptionsList: DBL = {} as DBL;
 
   /**
    * Databases opened during this session.
@@ -223,9 +263,7 @@ export class SwarmStore<
    * @returns {(Promise<void | Error>)}
    * @memberof SwarmStore
    */
-  public async openDatabase(
-    dbOptions: TSwarmStoreDatabaseOptions<P, ItemType>
-  ): Promise<void | Error> {
+  public async openDatabase(dbOptions: DBO): Promise<void | Error> {
     const connector = this.getConnectorOrError();
 
     if (checkIsError(connector)) {
@@ -304,8 +342,12 @@ export class SwarmStore<
    * @returns {(Promise<TSwarmStoreDatabaseMethodAnswer<P, A> | Error>)}
    * @memberof SwarmStore
    */
-  public async request<A extends ItemType, DT extends DbType>(
-    dbName: TSwarmStoreDatabaseOptions<P, A>['dbName'],
+  public async request<
+    A extends ItemType,
+    DT extends DbType,
+    DBOpts extends DBO
+  >(
+    dbName: DBOpts['dbName'],
     dbMethod: TSwarmStoreDatabaseMethod<P>,
     arg: TSwarmStoreDatabaseMethodArgument<P, A, DbType>
   ): Promise<TSwarmStoreDatabaseRequestMethodReturnType<P, A>> {
@@ -422,9 +464,7 @@ export class SwarmStore<
    * @returns {ISwarmStoreDatabaseBaseOptions | undefined}
    * @memberof SwarmStore
    */
-  protected getDatabaseOptions(
-    dbName: string
-  ): undefined | ISwarmStoreDatabaseBaseOptions {
+  protected getDatabaseOptions(dbName: DBO['dbName']): undefined | DBO {
     return this.databases?.options[dbName];
   }
 
@@ -477,13 +517,13 @@ export class SwarmStore<
    * known
    *
    * @protected
-   * @param {ISwarmStoreOptionsOfDatabasesKnownList} databasesKnownOptionsList
+   * @param {TSwarmStoreOptionsOfDatabasesKnownList} databasesKnownOptionsList
    * @returns {string}
    * @memberof SwarmStore
    * @throws
    */
   protected stringifyDatabaseOptionsList(
-    databasesKnownOptionsList: ISwarmStoreOptionsOfDatabasesKnownList
+    databasesKnownOptionsList: DBL
   ): string {
     return JSON.stringify(databasesKnownOptionsList);
   }
@@ -493,13 +533,11 @@ export class SwarmStore<
    *
    * @protected
    * @param {string} databasesKnownOptionsList
-   * @returns {ISwarmStoreOptionsOfDatabasesKnownList}
+   * @returns {TSwarmStoreOptionsOfDatabasesKnownList}
    * @memberof SwarmStore
    * @throws
    */
-  protected parseDatabaseOptionsList(
-    databasesKnownOptionsList: string
-  ): ISwarmStoreOptionsOfDatabasesKnownList {
+  protected parseDatabaseOptionsList(databasesKnownOptionsList: string): DBL {
     return JSON.parse(databasesKnownOptionsList);
   }
 
@@ -547,9 +585,7 @@ export class SwarmStore<
    * @returns {(Promise<void>)}
    * @throws
    */
-  protected async handleDatabaseOpened(
-    dbOpenedOptions: ISwarmStoreDatabaseBaseOptions
-  ): Promise<void> {
+  protected async handleDatabaseOpened(dbOpenedOptions: DBO): Promise<void> {
     this.databasesOpenedList[dbOpenedOptions.dbName] = true;
     await this.addDatabaseOpenedOptions(dbOpenedOptions);
     this.emitDatabasesListUpdated();
@@ -565,9 +601,7 @@ export class SwarmStore<
    * @returns {(Promise<void>)}
    * @throws
    */
-  protected async handleDatabaseClosed(
-    dbOpenedOptions: ISwarmStoreDatabaseBaseOptions
-  ): Promise<void> {
+  protected async handleDatabaseClosed(dbOpenedOptions: DBO): Promise<void> {
     delete this.databasesOpenedList[dbOpenedOptions.dbName];
     this.emitDatabasesListUpdated();
   }
@@ -585,9 +619,7 @@ export class SwarmStore<
    * @returns {(Promise<void>)}
    * @throws
    */
-  protected async handleDatabaseDropped(
-    dbOpenedOptions: ISwarmStoreDatabaseBaseOptions
-  ): Promise<void> {
+  protected async handleDatabaseDropped(dbOpenedOptions: DBO): Promise<void> {
     const { dbName } = dbOpenedOptions;
 
     delete this.databasesOpenedList[dbName];
@@ -605,10 +637,10 @@ export class SwarmStore<
    * @param {ISwarmStoreDatabaseBaseOptions} dbOpenedOptions
    * @memberof SwarmStore
    */
-  protected async addDatabaseOpenedOptions(
-    dbOpenedOptions: ISwarmStoreDatabaseBaseOptions
-  ) {
-    this.databasesKnownOptionsList[dbOpenedOptions.dbName] = dbOpenedOptions;
+  protected async addDatabaseOpenedOptions(dbOpenedOptions: DBO) {
+    this.databasesKnownOptionsList[
+      dbOpenedOptions.dbName as DBO['dbName']
+    ] = dbOpenedOptions as DBL[DBO['dbName']];
     await this.storeDatabasesKnownOptionsList();
   }
 
@@ -621,10 +653,10 @@ export class SwarmStore<
    * @param {ISwarmStoreDatabaseBaseOptions} dbOpenedOptions
    * @memberof SwarmStore
    */
-  protected async removeDatabaseOpenedOptions(
-    dbOpenedOptions: ISwarmStoreDatabaseBaseOptions
-  ) {
-    delete this.databasesKnownOptionsList[dbOpenedOptions.dbName];
+  protected async removeDatabaseOpenedOptions(dbOpenedOptions: DBO) {
+    delete this.databasesKnownOptionsList[
+      dbOpenedOptions.dbName as DBO['dbName']
+    ];
     await this.storeDatabasesKnownOptionsList();
   }
 
@@ -648,6 +680,13 @@ export class SwarmStore<
     }
   }
 
+  protected getOptionsForConnectorFabric(options: O): CO {
+    return {
+      provider: options.provider,
+      providerConnectionOptions: options.providerConnectionOptions,
+    } as CO;
+  }
+
   /**
    * create a connection with a connector
    * specified in options
@@ -659,7 +698,8 @@ export class SwarmStore<
    */
   protected createConnectionWithStorageConnector(options: O): ConnectorMain {
     const { connectorFabric } = options;
-    const connection = connectorFabric(options);
+    const connectorFabricOptions = this.getOptionsForConnectorFabric(options);
+    const connection = connectorFabric(connectorFabricOptions);
 
     assert(connection, `Failed to create connection with the provider`);
     return connection;
@@ -750,7 +790,7 @@ export class SwarmStore<
    * @memberof SwarmStore
    */
   protected subscribeOnDbEvents(
-    connector: ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic>,
+    connector: ConnectorMain,
     isSubscribe: boolean = true
   ): void {
     if (!connector) {
@@ -774,9 +814,7 @@ export class SwarmStore<
     );
   }
 
-  protected unsubscribeFromDbEvents(
-    connector: ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic>
-  ) {
+  protected unsubscribeFromDbEvents(connector: ConnectorMain) {
     this.subscribeOnDbEvents(connector, false);
   }
 
@@ -787,9 +825,7 @@ export class SwarmStore<
    * @protected
    * @memberof SwarmStore
    */
-  protected subscribeConnectorAllEvents(
-    connector: ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic>
-  ) {
+  protected subscribeConnectorAllEvents(connector: ConnectorMain) {
     if (!connector) {
       throw new Error('There is no swarm connector');
     }
@@ -806,9 +842,7 @@ export class SwarmStore<
     this.storeConnectorEventsHandlers = storeConnectorEventsHandlers;
   }
 
-  protected unSubscribeConnectorAllEvents(
-    connector: ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic>
-  ) {
+  protected unSubscribeConnectorAllEvents(connector: ConnectorMain) {
     const { storeConnectorEventsHandlers } = this;
 
     if (storeConnectorEventsHandlers && connector) {
@@ -827,9 +861,7 @@ export class SwarmStore<
    * @protected
    * @memberof SwarmStore
    */
-  protected subscribeOnConnector(
-    connector: ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic>
-  ) {
+  protected subscribeOnConnector(connector: ConnectorMain) {
     this.subscribeOnDbEvents(connector);
     this.subscribeConnectorAllEvents(connector);
   }
@@ -840,9 +872,7 @@ export class SwarmStore<
    * @protected
    * @memberof SwarmStore
    */
-  protected unSubscribeFromConnector(
-    connector: ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic>
-  ) {
+  protected unSubscribeFromConnector(connector: ConnectorMain) {
     this.unsubscribeFromDbEvents(connector);
     this.unSubscribeConnectorAllEvents(connector);
   }

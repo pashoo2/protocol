@@ -12,9 +12,13 @@ import {
 } from '../../swarm-store-class.types';
 import { ESwarmStoreConnector } from '../../swarm-store-class.const';
 import OrbitDB from 'orbit-db';
-import { ISwarmStoreConnectorBasicWithEntriesCount } from '../../swarm-store-class.types';
+import { TSwarmStoreDatabaseOptions } from '../../swarm-store-class.types';
 
-export interface ISwarmStoreConnectorOrbitDBEvents extends ISwarmStoreEvents {}
+export interface ISwarmStoreConnectorOrbitDBEvents<
+  P extends ESwarmStoreConnector.OrbitDB,
+  ItemType extends TSwarmStoreValueTypes<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>
+> extends ISwarmStoreEvents<P, ItemType, DBO> {}
 
 /**
  * directory - this string will be used as a
