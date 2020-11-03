@@ -186,6 +186,7 @@ export type TSwarmStoreDatabaseOptions<
 > = P extends ESwarmStoreConnector.OrbitDB
   ? ISwarmStoreConnectorOrbitDbDatabaseOptions<T>
   : ISwarmStoreDatabaseBaseOptions;
+
 /**
  * options of swarm databases want to connect
  *
@@ -193,14 +194,12 @@ export type TSwarmStoreDatabaseOptions<
  * @interface ISwarmStoreDatabasesOptions
  */
 export interface ISwarmStoreDatabasesOptions<
-  P extends ESwarmStoreConnector = never,
-  T extends TSwarmStoreValueTypes<P> = never
+  P extends ESwarmStoreConnector,
+  T extends TSwarmStoreValueTypes<P>
 > {
   // databases which must be started when the orbit db
   // instance will be ready to use
-  databases: P extends never
-    ? ISwarmStoreDatabaseBaseOptions
-    : TSwarmStoreDatabaseOptions<P, T>[];
+  databases: TSwarmStoreDatabaseOptions<P, T>[];
   // a virtual directory name where to store all the data received
   directory: string;
 }
@@ -456,10 +455,14 @@ export interface ISwarmStoreConnectorBase<
 }
 
 export interface ISwarmStoreConnectorBasic<
-  TSwarmStoreConnectorType extends ESwarmStoreConnector,
-  TStoreValue extends TSwarmStoreValueTypes<TSwarmStoreConnectorType>,
-  DbType extends TSwarmStoreDatabaseType<TSwarmStoreConnectorType>
-> extends EventEmitter<ISwarmStoreConnectorOrbitDBEvents> {
+  P extends ESwarmStoreConnector,
+  ItemType extends TSwarmStoreValueTypes<P>,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<
+    P,
+    ItemType
+  > = TSwarmStoreDatabaseOptions<P, ItemType>
+> extends EventEmitter<ISwarmStoreConnectorOrbitDBEvents<P, ItemType, DBO>> {
   dbName: string;
   isClosed: boolean;
   isReady: boolean;
@@ -489,12 +492,12 @@ export interface ISwarmStoreConnectorBasic<
   /**
    * Add the new entry to the database
    *
-   * @param {TSwarmStoreConnectorOrbitDbDatabaseAddMethodArgument<TStoreValue>} addArg
+   * @param {TSwarmStoreConnectorOrbitDbDatabaseAddMethodArgument<ItemType>} addArg
    * @returns {(Promise<string | Error>)}
    * @memberof ISwarmStoreConnectorOrbitDBDatabase
    */
   [ESwarmStoreConnectorOrbitDbDatabaseMethodNames.add](
-    addArg: TSwarmStoreConnectorOrbitDbDatabaseAddMethodArgument<TStoreValue>
+    addArg: TSwarmStoreConnectorOrbitDbDatabaseAddMethodArgument<ItemType>
   ): Promise<string | Error>;
 
   /**
@@ -505,14 +508,14 @@ export interface ISwarmStoreConnectorBasic<
    *
    * @param {TSwarmStoreConnectorOrbitDbDatabaseEntityIndex} keyOrHash
    * @returns {(Promise<
-   *     Error | ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue> | undefined
+   *     Error | ISwarmStoreConnectorOrbitDbDatabaseValue<ItemType> | undefined
    *   >)}
    * @memberof ISwarmStoreConnectorOrbitDBDatabase
    */
   [ESwarmStoreConnectorOrbitDbDatabaseMethodNames.get](
     keyOrHash: TSwarmStoreConnectorOrbitDbDatabaseEntityIndex
   ): Promise<
-    Error | ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue> | undefined
+    Error | ISwarmStoreConnectorOrbitDbDatabaseValue<ItemType> | undefined
   >;
 
   /**
@@ -536,7 +539,7 @@ export interface ISwarmStoreConnectorBasic<
    * @returns {(Promise<
    *     | Error
    *     | Array<
-   *         | ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue>
+   *         | ISwarmStoreConnectorOrbitDbDatabaseValue<ItemType>
    *         | Error
    *         | undefined
    *       >
@@ -548,9 +551,7 @@ export interface ISwarmStoreConnectorBasic<
   ): Promise<
     | Error
     | Array<
-        | ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue>
-        | Error
-        | undefined
+        ISwarmStoreConnectorOrbitDbDatabaseValue<ItemType> | Error | undefined
       >
   >;
 

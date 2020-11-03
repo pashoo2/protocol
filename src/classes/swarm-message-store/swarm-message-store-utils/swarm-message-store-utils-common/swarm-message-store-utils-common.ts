@@ -12,7 +12,11 @@ import { ESwarmStoreConnector } from '../../../swarm-store-class/swarm-store-cla
 import { EOrbitDbFeedStoreOperation } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types';
 import { TSwarmMessageInstance } from '../../../swarm-message/swarm-message-constructor.types';
-import { TSwarmStoreDatabaseEntityKey } from '../../../swarm-store-class/swarm-store-class.types';
+import {
+  TSwarmStoreDatabaseEntityKey,
+  TSwarmStoreDatabaseOptions,
+} from '../../../swarm-store-class/swarm-store-class.types';
+import { TSwarmMessagesStoreGrantAccessCallback } from '../../swarm-message-store.types';
 import {
   TSwarmMessageSerialized,
   ISwarmMessageConstructor,
@@ -99,20 +103,19 @@ async function swarmMessageGrantValidator<
 export const getMessageValidator = <
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends TSwarmMessageInstance,
-  CB extends
-    | TSwarmMessageStoreAccessControlGrantAccessCallback<P, T>
-    | TSwarmMessageStoreAccessControlGrantAccessCallback<P, I>
-    | undefined
+  DBO extends TSwarmStoreDatabaseOptions<P, T>,
+  MSI extends TSwarmMessageInstance | T,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>
 >(
-  dboptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<
-    TSwarmMessageSerialized
-  > &
-    ISwarmStoreDatabaseBaseOptions,
+  dboptions: DBO,
   messageConstructors: ISwarmMessageDatabaseConstructors,
-  grantAccessCb: CB,
+  grantAccessCb: GAC,
   currentUserId: TCentralAuthorityUserIdentity
-): TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<P, T, I> => {
+): TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<
+  P,
+  T,
+  MSI
+> => {
   const { dbName, isPublic, write } = dboptions;
   const messageConstructor = getMessageConstructorForDatabase(
     dbName,
@@ -125,7 +128,7 @@ export const getMessageValidator = <
   return (swarmMessageGrantValidator as TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<
     P,
     T,
-    I
+    MSI
   >).bind({
     messageConstructor,
     dbName,
