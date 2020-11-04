@@ -53,3 +53,5 @@ export type OmitFirstArg<F extends Function> = F extends (
 export type ArrayElement<
   ArrayType extends readonly unknown[]
 > = ArrayType[number];
+
+export type PromiseResolveType<T> = T extends PromiseLike<infer U> ? U : T;

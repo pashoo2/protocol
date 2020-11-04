@@ -342,12 +342,8 @@ export class SwarmStore<
    * @returns {(Promise<TSwarmStoreDatabaseMethodAnswer<P, A> | Error>)}
    * @memberof SwarmStore
    */
-  public async request<
-    A extends ItemType,
-    DT extends DbType,
-    DBOpts extends DBO
-  >(
-    dbName: DBOpts['dbName'],
+  public async request<A extends ItemType, DT extends DbType>(
+    dbName: DBO['dbName'],
     dbMethod: TSwarmStoreDatabaseMethod<P>,
     arg: TSwarmStoreDatabaseMethodArgument<P, A, DbType>
   ): Promise<TSwarmStoreDatabaseRequestMethodReturnType<P, A>> {

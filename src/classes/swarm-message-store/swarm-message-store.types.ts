@@ -36,6 +36,7 @@ import {
   ISwarmStoreOptionsConnectorFabric,
 } from '../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageInstanceBase } from '../swarm-message/swarm-message-constructor.types';
+import { PromiseResolveType } from '../../types/helper.types';
 import {
   ISwarmStoreConnector,
   ISwarmStoreOptionsWithConnectorFabric,
@@ -168,9 +169,11 @@ export interface ISwarmMessageStoreAccessControlOptions<
  * @export
  * @interface ISwarmMessageDatabaseConstructors
  */
-export interface ISwarmMessageDatabaseConstructors {
-  [dbName: string]: ISwarmMessageConstructor;
-  default: ISwarmMessageConstructor;
+export interface ISwarmMessageDatabaseConstructors<
+  SMC extends ISwarmMessageConstructor
+> {
+  [dbName: string]: SMC;
+  default: SMC;
 }
 
 export interface ISwarmMessageStoreOptions<
@@ -190,7 +193,9 @@ export interface ISwarmMessageStoreOptions<
   ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined
 > extends ISwarmStoreOptions<P, T, DbType, ConnectorBasic, PO> {
   accessControl: ACO;
-  messageConstructors: ISwarmMessageDatabaseConstructors;
+  messageConstructors: ISwarmMessageDatabaseConstructors<
+    PromiseResolveType<ReturnType<NonNullable<MCF>>>
+  >;
   databasesListStorage: IStorageCommon;
   swarmMessageConstructorFabric: MCF;
   /**
@@ -200,7 +205,7 @@ export interface ISwarmMessageStoreOptions<
    * @type {IStorageCommon}
    * @memberof ISwarmMessageStoreOptions
    */
-  cache?: StorageProvider<TSwarmMessageInstance>;
+  cache?: StorageProvider<Exclude<MSI, T>>;
 }
 
 export interface ISwarmMessageStoreOptionsWithConnectorFabric<

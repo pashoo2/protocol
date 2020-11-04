@@ -144,7 +144,9 @@ export type TSwarmStoreValueTypes<
 export type TSwarmStoreDatabaseMethodAnswer<
   P extends ESwarmStoreConnector,
   T extends TSwarmStoreValueTypes<P>
-> = P extends ESwarmStoreConnector.OrbitDB ? T : any;
+> = P extends ESwarmStoreConnector.OrbitDB
+  ? ISwarmStoreConnectorOrbitDbDatabaseValue<T>
+  : never;
 
 export interface ISwarmStoreDatabaseBaseOptions {
   // Database name
@@ -389,6 +391,14 @@ export type TSwarmStoreDatabaseMethod<
   ? TSwarmStoreConnectorOrbitDbDatabaseMethodNames
   : never;
 
+export type TSwarmStoreDatabaseRequestMethodEntitiesReturnType<
+  P extends ESwarmStoreConnector,
+  ItemType extends TSwarmStoreValueTypes<P>
+> =
+  | Error
+  | TSwarmStoreDatabaseMethodAnswer<P, ItemType>
+  | TSwarmStoreDatabaseIteratorMethodAnswer<P, ItemType>;
+
 export type TSwarmStoreDatabaseRequestMethodReturnType<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>
@@ -396,8 +406,7 @@ export type TSwarmStoreDatabaseRequestMethodReturnType<
   | Error
   | TSwarmStoreDatabaseLoadMethodAnswer<P>
   | TSwarmStoreDatabaseCloseMethodAnswer<P>
-  | TSwarmStoreDatabaseMethodAnswer<P, ItemType>
-  | TSwarmStoreDatabaseIteratorMethodAnswer<P, ItemType>;
+  | TSwarmStoreDatabaseRequestMethodEntitiesReturnType<P, ItemType>;
 
 /**
  * this interface must be implemented by a swarm storage connectors
