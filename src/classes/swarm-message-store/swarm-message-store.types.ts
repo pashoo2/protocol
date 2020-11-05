@@ -51,26 +51,23 @@ import {
   TSwarmStoreDatabaseEntityKey,
 } from '../swarm-store-class/swarm-store-class.types';
 
-/**
- * message unique identifier in the database
- */
-export type TSwarmMessageStoreMessageId = string;
-
-export interface ISwarmMessageStoreSwarmMessageMetadata {
+export interface ISwarmMessageStoreSwarmMessageMetadata<
+  P extends ESwarmStoreConnector
+> {
   /**
    * Message uniq address in the swarm
    *
    * @type {TSwarmMessageStoreMessageId}
    * @memberof ISwarmMessageStoreSwarmMessageMetadata
    */
-  messageAddress: TSwarmMessageStoreMessageId;
+  messageAddress: TSwarmStoreDatabaseEntityAddress<P>;
   /**
    * Message key in Key-Value databse
    *
    * @type {string}
    * @memberof ISwarmMessageStoreSwarmMessageMetadata
    */
-  key?: string;
+  key: TSwarmStoreDatabaseEntityKey<P> | undefined;
 }
 
 export type TSwarmMessagesStoreGrantAccessCallback<
@@ -351,7 +348,7 @@ export type ISwarmMessageStoreDeleteMessageArg<
   P extends ESwarmStoreConnector
 > = P extends ESwarmStoreConnector.OrbitDB
   ? TSwarmStoreDatabaseEntityAddress<P> // swarm message address
-  : TSwarmMessageInstance; // instance of the message to remove
+  : never; // instance of the message to remove
 
 export type ISwarmMessageStoreDatabaseType<
   P extends ESwarmStoreConnector
@@ -451,7 +448,7 @@ export interface ISwarmMessageStoreMessagingMethods<
     dbName: string,
     message: TSwarmMessageInstance,
     key?: TSwarmStoreDatabaseEntityKey<P>
-  ): Promise<TSwarmMessageStoreMessageId>;
+  ): Promise<TSwarmStoreDatabaseEntityAddress<P>>;
 
   /**
    * add message serialized to a database with the given name
@@ -466,7 +463,7 @@ export interface ISwarmMessageStoreMessagingMethods<
     dbName: string,
     message: string,
     key?: TSwarmStoreDatabaseEntityKey<P>
-  ): Promise<TSwarmMessageStoreMessageId>;
+  ): Promise<TSwarmStoreDatabaseEntityAddress<P>>;
 
   /**
    * construct and add message to a database with the given name.
@@ -481,7 +478,7 @@ export interface ISwarmMessageStoreMessagingMethods<
     dbName: string,
     message: TSwarmMessageConstructorBodyMessage,
     key?: TSwarmStoreDatabaseEntityKey<P>
-  ): Promise<TSwarmMessageStoreMessageId>;
+  ): Promise<TSwarmStoreDatabaseEntityAddress<P>>;
 
   /**
    * Message removed from the database

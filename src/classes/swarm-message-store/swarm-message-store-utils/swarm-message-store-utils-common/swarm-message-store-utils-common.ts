@@ -22,9 +22,11 @@ import {
   ISwarmMessageConstructor,
 } from '../../../swarm-message/swarm-message-constructor.types';
 
-export const getMessageConstructorForDatabase = (
+export const getMessageConstructorForDatabase = <
+  SMC extends ISwarmMessageConstructor
+>(
   dbName: string,
-  messageConstructors: ISwarmMessageDatabaseConstructors
+  messageConstructors: ISwarmMessageDatabaseConstructors<SMC>
 ) => {
   if (!messageConstructors) {
     return;
@@ -105,10 +107,11 @@ export const getMessageValidator = <
   T extends TSwarmMessageSerialized,
   DBO extends TSwarmStoreDatabaseOptions<P, T>,
   MSI extends TSwarmMessageInstance | T,
-  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
+  SMC extends ISwarmMessageConstructor
 >(
   dboptions: DBO,
-  messageConstructors: ISwarmMessageDatabaseConstructors,
+  messageConstructors: ISwarmMessageDatabaseConstructors<SMC>,
   grantAccessCb: GAC,
   currentUserId: TCentralAuthorityUserIdentity
 ): TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<

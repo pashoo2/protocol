@@ -27,6 +27,7 @@ import {
   TSwarmMessagesStoreGrantAccessCallback,
 } from '../../swarm-message-store.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { PromiseResolveType } from '../../../../types/helper.types';
 import {
   ISwarmStoreDatabaseBaseOptions,
   TSwarmStoreDatabaseOptions,
@@ -110,7 +111,14 @@ function swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControlOrbitDB<
   grantAccessCallback: GAC
 ): TSwarmStoreDatabaseOptions<ESwarmStoreConnector.OrbitDB, ItemType> &
   ISwarmStoreDatabaseBaseOptions & { provider: ESwarmStoreConnector.OrbitDB } {
-  const grantAccess = getMessageValidator<P, ItemType, DBO, MSI, GAC>(
+  const grantAccess = getMessageValidator<
+    P,
+    ItemType,
+    DBO,
+    MSI,
+    GAC,
+    PromiseResolveType<ReturnType<NonNullable<MCF>>>
+  >(
     dbOptions,
     options.messageConstructors,
     // TODO - TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<string, P>

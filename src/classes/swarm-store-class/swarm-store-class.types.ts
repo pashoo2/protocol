@@ -168,13 +168,13 @@ export type TSwarmStoreDatabaseEntityKey<
   P extends ESwarmStoreConnector = never
 > = P extends ESwarmStoreConnector.OrbitDB
   ? TSwarmStoreConnectorOrbitDbDatabaseStoreKey
-  : string;
+  : never;
 
 export type TSwarmStoreDatabaseEntityAddress<
   P extends ESwarmStoreConnector
 > = P extends ESwarmStoreConnector.OrbitDB
   ? TSwarmStoreConnectorOrbitDbDatabaseStoreHash
-  : string;
+  : never;
 
 /**
  * options of a swarm database
