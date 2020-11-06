@@ -108,7 +108,9 @@ export class FileStorage<T extends FILE_STORAGE_SERVICE_TYPE> implements IFileSt
     this.servicesByTypes.delete(service.type as T);
   }
 
-  protected connectToService = async (configuration: IFileStorageServiceConnectOptions<T>): Promise<TFileStorageServiceIdentifier> => {
+  protected connectToService = async (
+    configuration: IFileStorageServiceConnectOptions<T>
+  ): Promise<TFileStorageServiceIdentifier> => {
     assert(configuration, 'Service configuration was not provided');
 
     const { type, options } = configuration;

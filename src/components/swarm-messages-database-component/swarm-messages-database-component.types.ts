@@ -1,6 +1,7 @@
 import { ISwarmMessageInstanceDecrypted } from '../../classes/swarm-message/swarm-message-constructor.types';
 import { TSwarmStoreDatabaseEntityKey } from '../../classes/swarm-store-class/swarm-store-class.types';
 import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
+import { TSwarmMessageUserIdentifierSerialized } from '../../classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 
 export interface ISwarmMessagesDatabaseMessageDescription<P extends ESwarmStoreConnector.OrbitDB> {
   id: TSwarmStoreDatabaseEntityKey<P>;
@@ -36,5 +37,5 @@ export interface ISwarmMessagesDatabaseDeleteMessageDescription<P extends ESwarm
    * @type {string}
    * @memberof ISwarmMessagesDatabaseMessageDescription
    */
-  userId: string;
+  userId: TSwarmMessageUserIdentifierSerialized;
 }

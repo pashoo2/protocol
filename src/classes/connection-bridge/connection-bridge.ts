@@ -345,12 +345,16 @@ export class ConnectionBridge<
     }
   }
 
-  protected async createSessionFromStorage(sessionParams: ISensitiveDataSessionStorageOptions): Promise<ISensitiveDataSessionStorage> {
+  protected async createSessionFromStorage(
+    sessionParams: ISensitiveDataSessionStorageOptions
+  ): Promise<ISensitiveDataSessionStorage> {
     const session = new SensitiveDataSessionStorage();
 
     await session.connect({
       ...sessionParams,
-      storagePrefix: sessionParams.storagePrefix ? `${sessionParams.storagePrefix}${this.options?.auth.credentials?.login}` : undefined,
+      storagePrefix: sessionParams.storagePrefix
+        ? `${sessionParams.storagePrefix}${this.options?.auth.credentials?.login}`
+        : undefined,
     });
     return session;
   }
@@ -471,7 +475,9 @@ export class ConnectionBridge<
     if (!this.swarmMessageEncryptedCacheFabric) {
       throw new Error('Encrypted cache fabric must be started before');
     }
-    this.swarmMessageEncryptedCache = await this.startEncryptedCache(CONNECTION_BRIDGE_STORAGE_DATABASE_NAME.MESSAGE_CACHE_STORAGE);
+    this.swarmMessageEncryptedCache = await this.startEncryptedCache(
+      CONNECTION_BRIDGE_STORAGE_DATABASE_NAME.MESSAGE_CACHE_STORAGE
+    );
   }
 
   /**

@@ -2,7 +2,10 @@ import { SwarmMessageEncryptedCache } from './swarm-messgae-encrypted-cache';
 import { TSecretStorageAuthOptionsCredentials } from '../secret-storage-class/secret-storage-class.types';
 import { SecretStorage } from '../secret-storage-class/secret-storage-class';
 import { IISecretStorageOptions } from '../secret-storage-class/secret-storage-class.types';
-import { ISwarmMessageEncryptedCacheFabric, ISwarmMessageConstructorWithEncryptedCacheFabric } from './swarm-messgae-encrypted-cache.types';
+import {
+  ISwarmMessageEncryptedCacheFabric,
+  ISwarmMessageConstructorWithEncryptedCacheFabric,
+} from './swarm-messgae-encrypted-cache.types';
 import { TSwarmMessageConstructorOptions } from '../swarm-message/swarm-message-constructor.types';
 import { SwarmMessageConstructor } from '../swarm-message/swarm-message-constructor';
 import { extend } from '../../utils/common-utils/common-utils-objects';
@@ -56,8 +59,12 @@ export const getSwarmMessageConstructorWithCacheFabric = async (
 ): Promise<ISwarmMessageConstructorWithEncryptedCacheFabric> => {
   const encryptedCacheFabric = await getSwarmMessageEncryptedCacheFabric(credentials, dbNamePrefix);
 
-  return async (swarmMessageConstructorOptions: Partial<TSwarmMessageConstructorOptions>, storageProviderOptions?: IISecretStorageOptions) => {
-    const encryptedCache = swarmMessageConstructorOptions.instances?.encryptedCache || (await encryptedCacheFabric(storageProviderOptions));
+  return async (
+    swarmMessageConstructorOptions: Partial<TSwarmMessageConstructorOptions>,
+    storageProviderOptions?: IISecretStorageOptions
+  ) => {
+    const encryptedCache =
+      swarmMessageConstructorOptions.instances?.encryptedCache || (await encryptedCacheFabric(storageProviderOptions));
     const options = extend(swarmMessageConstructorOptions, {
       ...constructorOptions,
       instances: {

@@ -54,13 +54,28 @@ function swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControlOrbitDB<
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
   ACO extends ISwarmMessageStoreAccessControlOptions<P, ItemType, MSI, GAC> | undefined,
-  O extends ISwarmMessageStoreOptionsWithConnectorFabric<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain, CFO, MSI, GAC, MCF, ACO>
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
+    P,
+    ItemType,
+    DbType,
+    ConnectorBasic,
+    PO,
+    CO,
+    DBO,
+    ConnectorMain,
+    CFO,
+    MSI,
+    GAC,
+    MCF,
+    ACO
+  >
 >(
   options: O,
   dbOptions: DBO,
   allowAccessForUsers: string[] | undefined,
   grantAccessCallback: GAC
-): TSwarmStoreDatabaseOptions<ESwarmStoreConnector.OrbitDB, ItemType> & ISwarmStoreDatabaseBaseOptions & { provider: ESwarmStoreConnector.OrbitDB } {
+): TSwarmStoreDatabaseOptions<ESwarmStoreConnector.OrbitDB, ItemType> &
+  ISwarmStoreDatabaseBaseOptions & { provider: ESwarmStoreConnector.OrbitDB } {
   const grantAccess = getMessageValidator<P, ItemType, DBO, MSI, GAC, PromiseResolveType<ReturnType<NonNullable<MCF>>>>(
     dbOptions,
     options.messageConstructors,
@@ -99,7 +114,21 @@ export const swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl = <
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
   ACO extends ISwarmMessageStoreAccessControlOptions<P, ItemType, MSI, GAC> | undefined,
-  O extends ISwarmMessageStoreOptionsWithConnectorFabric<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain, CFO, MSI, GAC, MCF, ACO>
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
+    P,
+    ItemType,
+    DbType,
+    ConnectorBasic,
+    PO,
+    CO,
+    DBO,
+    ConnectorMain,
+    CFO,
+    MSI,
+    GAC,
+    MCF,
+    ACO
+  >
 >(
   options: O
 ) => (dbOptions: DBO): DBO & ISwarmStoreDatabaseBaseOptions & { provider: P } => {
@@ -114,7 +143,10 @@ export const swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl = <
     if (!grantAccess) {
       throw new Error('"Grant access" callback function must be provided');
     }
-    assert(typeof grantAccess === 'function' && grantAccess.length === 3, '"Grant access" callback must be a function which accepts a 3 arguments');
+    assert(
+      typeof grantAccess === 'function' && grantAccess.length === 3,
+      '"Grant access" callback must be a function which accepts a 3 arguments'
+    );
     if (allowAccessFor) {
       assert(allowAccessFor instanceof Array, 'Users list for which access is uncinditionally granted for must be a function');
       allowAccessFor.forEach((userId) => assert(typeof userId === 'string', 'The user identity must be a string'));
@@ -166,7 +198,21 @@ async function swarmMessageStoreUtilsConnectorOptionsProviderForOrbitDB<
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
   ACO extends ISwarmMessageStoreAccessControlOptions<P, ItemType, MSI, GAC> | undefined,
-  O extends ISwarmMessageStoreOptionsWithConnectorFabric<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain, CFO, MSI, GAC, MCF, ACO>
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
+    P,
+    ItemType,
+    DbType,
+    ConnectorBasic,
+    PO,
+    CO,
+    DBO,
+    ConnectorMain,
+    CFO,
+    MSI,
+    GAC,
+    MCF,
+    ACO
+  >
 >(
   options: O,
   extendWithAccessControlOptions: (dbOptions: DBO) => DBO
@@ -217,7 +263,21 @@ export async function swarmMessageStoreUtilsConnectorOptionsProvider<
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
   ACO extends ISwarmMessageStoreAccessControlOptions<P, ItemType, MSI, GAC> | undefined,
-  O extends ISwarmMessageStoreOptionsWithConnectorFabric<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain, CFO, MSI, GAC, MCF, ACO>
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
+    P,
+    ItemType,
+    DbType,
+    ConnectorBasic,
+    PO,
+    CO,
+    DBO,
+    ConnectorMain,
+    CFO,
+    MSI,
+    GAC,
+    MCF,
+    ACO
+  >
 >(options: O, extendWithAccessControlOptions: (dbOptions: DBO) => DBO): Promise<O> {
   const { provider } = options;
 

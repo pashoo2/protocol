@@ -51,7 +51,10 @@ export const isValidSalt = (salt: any): salt is TSaltUtilsSaltType => {
     if (!isEqualArrayBufferNative(typedFromStr, salt)) {
       return false;
     }
-    return salt.byteLength >= SALT_GENERATION_UTILS_SALT_MIN_LENGTH_BYTES && salt.byteLength <= SALT_GENERATION_UTILS_SALT_MAX_LENGTH_BYTES;
+    return (
+      salt.byteLength >= SALT_GENERATION_UTILS_SALT_MIN_LENGTH_BYTES &&
+      salt.byteLength <= SALT_GENERATION_UTILS_SALT_MAX_LENGTH_BYTES
+    );
   }
   if (typeof salt === 'string') {
     const typedFromStr = stringToTypedArray(salt);
@@ -69,7 +72,8 @@ export const isValidSalt = (salt: any): salt is TSaltUtilsSaltType => {
       return false;
     }
     return (
-      typedFromStr.byteLength >= SALT_GENERATION_UTILS_SALT_MIN_LENGTH_BYTES && typedFromStr.byteLength <= SALT_GENERATION_UTILS_SALT_MAX_LENGTH_BYTES
+      typedFromStr.byteLength >= SALT_GENERATION_UTILS_SALT_MIN_LENGTH_BYTES &&
+      typedFromStr.byteLength <= SALT_GENERATION_UTILS_SALT_MAX_LENGTH_BYTES
     );
   }
   return false;

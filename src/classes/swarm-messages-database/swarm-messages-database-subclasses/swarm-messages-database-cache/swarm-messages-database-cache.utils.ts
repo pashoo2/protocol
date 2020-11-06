@@ -18,7 +18,9 @@ import { whetherSwarmMessagesDecryptedAreEqual } from '../../../swarm-message/sw
 export const checkMessageAddress = <P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>>(
   messageUniqAddress: any,
   dbType: DbType
-): messageUniqAddress is DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? undefined : TSwarmStoreDatabaseEntityAddress<P> => {
+): messageUniqAddress is DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+  ? undefined
+  : TSwarmStoreDatabaseEntityAddress<P> => {
   const isFeedStore = dbType === ESwarmStoreConnectorOrbitDbDatabaseType.FEED;
   const isKeyValueStore = dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE;
 
@@ -56,7 +58,9 @@ export const checkMessageKey = <P extends ESwarmStoreConnector, DbType extends T
 };
 
 export const getMessagesMetaByAddressAndKey = <P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>>(
-  messageUniqAddress: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? undefined : TSwarmStoreDatabaseEntityAddress<P>,
+  messageUniqAddress: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+    ? undefined
+    : TSwarmStoreDatabaseEntityAddress<P>,
   key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined,
   dbType: DbType
 ): ISwarmMessagesDatabaseMesssageMeta<P, DbType> => {
@@ -89,7 +93,9 @@ export const createMessagesMetaByAddressAndKey = <P extends ESwarmStoreConnector
     (isKeyValueStore ? undefined : messageUniqAddress) as DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
       ? undefined
       : TSwarmStoreDatabaseEntityAddress<P>,
-    (isFeedStore ? undefined : key) as DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined,
+    (isFeedStore ? undefined : key) as DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+      ? TSwarmStoreDatabaseEntityKey<P>
+      : undefined,
     dbType
   );
 };
@@ -103,7 +109,9 @@ export const getMessageMetaForMessageWithMeta = <P extends ESwarmStoreConnector,
     (messageAddress as unknown) as DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
       ? TSwarmStoreDatabaseEntityAddress<P> | undefined
       : TSwarmStoreDatabaseEntityAddress<P>,
-    (key as unknown) as DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined,
+    (key as unknown) as DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+      ? TSwarmStoreDatabaseEntityKey<P>
+      : undefined,
     dbType
   );
 };
@@ -141,7 +149,10 @@ export const getMessagesUniqIndexesByMeta = <P extends ESwarmStoreConnector, DbT
   return resultedArray;
 };
 
-export const getMessageDescriptionForMessageWithMeta = <P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>>(
+export const getMessageDescriptionForMessageWithMeta = <
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>
+>(
   swarmMessageWithMeta: ISwarmMessageStoreMessageWithMeta<P>,
   dbType: DbType
 ): ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType> => {
@@ -167,6 +178,8 @@ export const _checkWhetherSameSwarmMessagesDecrypted = (
     return false;
   }
   return (
-    isValidSwarmMessageDecryptedFormat(first) && isValidSwarmMessageDecryptedFormat(second) && whetherSwarmMessagesDecryptedAreEqual(first, second)
+    isValidSwarmMessageDecryptedFormat(first) &&
+    isValidSwarmMessageDecryptedFormat(second) &&
+    whetherSwarmMessagesDecryptedAreEqual(first, second)
   );
 };

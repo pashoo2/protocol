@@ -1,6 +1,9 @@
 import { TTypedArrays } from 'types/main.types';
 import { DATA_SIGN_CRYPTO_UTIL_KEYPAIR_SALT_KEY_NAME } from './data-sign-utils.const';
-import { DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME, DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME } from './data-sign-utils.const';
+import {
+  DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME,
+  DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME,
+} from './data-sign-utils.const';
 
 export type TDATA_SIGN_UTIL_KEY_EXPORT_FORMAT_TYPE = JsonWebKey;
 

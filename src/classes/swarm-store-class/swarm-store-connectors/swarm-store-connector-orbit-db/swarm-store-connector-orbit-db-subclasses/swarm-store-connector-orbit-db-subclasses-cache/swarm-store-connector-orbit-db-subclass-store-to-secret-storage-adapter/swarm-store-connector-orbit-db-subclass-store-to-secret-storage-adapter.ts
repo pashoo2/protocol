@@ -1,5 +1,8 @@
 import { validateCryptoKeyCredentials } from '../../../../../../secret-storage-class/secret-storage-class-utils/secret-storage-class-utils-main/secret-storage-class-utils-main';
-import { ISecretStoreCredentials, ISecretStoreCredentialsCryptoKey } from 'classes/secret-storage-class/secret-storage-class.types';
+import {
+  ISecretStoreCredentials,
+  ISecretStoreCredentialsCryptoKey,
+} from 'classes/secret-storage-class/secret-storage-class.types';
 import { SecretStorage } from 'classes/secret-storage-class/secret-storage-class';
 import { SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_STORAGE_ADAPTER_DEFAULT_OPTIONS_STORAGE } from '../swarm-store-connector-orbit-db-subclasses-cache.const';
 import { ISecretStorage } from '../../../../../../secret-storage-class/secret-storage-class.types';
@@ -12,7 +15,9 @@ import { SwarmStoreConnectorOrbitDBSubclassStoreToOpenStorageAdapter } from '../
 
 export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
   extends SwarmStoreConnectorOrbitDBSubclassStoreToOpenStorageAdapter
-  implements ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbKeystoreStore, ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore {
+  implements
+    ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbKeystoreStore,
+    ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore {
   protected storage?: ISecretStorage;
 
   private credentials?: ISecretStoreCredentials;
@@ -61,7 +66,9 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
   }
 
   private createSecretStorage() {
-    const secretStorage = new SecretStorage(SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_STORAGE_ADAPTER_DEFAULT_OPTIONS_STORAGE);
+    const secretStorage = new SecretStorage(
+      SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_STORAGE_ADAPTER_DEFAULT_OPTIONS_STORAGE
+    );
 
     this.storage = secretStorage;
   }

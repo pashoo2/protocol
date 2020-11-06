@@ -48,7 +48,9 @@ export interface ISwarmStoreConnectorBasic<
    *   >)}
    * @memberof ISwarmStoreConnectorOrbitDBDatabase
    */
-  get(keyOrHash: TSwarmStoreConnectorOrbitDbDatabaseEntityIndex): Promise<Error | ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue> | undefined>;
+  get(
+    keyOrHash: TSwarmStoreConnectorOrbitDbDatabaseEntityIndex
+  ): Promise<Error | ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue> | undefined>;
 
   /**
    * Remove a value located in the key provided if it is a key value

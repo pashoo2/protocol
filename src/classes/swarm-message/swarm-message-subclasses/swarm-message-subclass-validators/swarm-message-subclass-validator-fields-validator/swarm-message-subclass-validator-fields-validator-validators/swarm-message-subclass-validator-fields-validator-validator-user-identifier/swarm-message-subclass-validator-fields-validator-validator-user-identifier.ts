@@ -13,7 +13,10 @@ import { CA_USER_IDENTITY_VERSION_PROP_NAME } from '../../../../../../central-au
  * @param {string} userId
  * @throws
  */
-export function validateUserIdentifier(userId: TSwarmMessageUserIdentifierSerialized, validVersions?: TSwarmMessageUserIdentifierVersion[]): void {
+export function validateUserIdentifier(
+  userId: TSwarmMessageUserIdentifierSerialized,
+  validVersions?: TSwarmMessageUserIdentifierVersion[]
+): void {
   assert(userId != null, 'User id must be specified');
   assert(typeof userId === 'string', 'User id must be a string');
   assert(userId.length < SWARM_MESSAGE_SUBCLASS_VALIDATOR_USER_IDENTITY_SERIALIZED_MAX_LENGTH, 'User ientity if too large');

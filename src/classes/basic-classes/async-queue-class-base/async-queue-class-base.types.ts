@@ -26,7 +26,9 @@ export type TAsyncQueueBaseClassPromiseProvider<T> = () => Promise<T>;
 
 export type TAsyncQueueBaseClassPromiseProviderBatch<T> = TAsyncQueueBaseClassPromiseProvider<T>[];
 
-export type TAsyncQueueBaseClassPromiseProviderPending<T> = TAsyncQueueBaseClassPromiseProvider<T> | TAsyncQueueBaseClassPromiseProviderBatch<T>;
+export type TAsyncQueueBaseClassPromiseProviderPending<T> =
+  | TAsyncQueueBaseClassPromiseProvider<T>
+  | TAsyncQueueBaseClassPromiseProviderBatch<T>;
 
 export interface IAsyncQueueBaseClass {
   /**

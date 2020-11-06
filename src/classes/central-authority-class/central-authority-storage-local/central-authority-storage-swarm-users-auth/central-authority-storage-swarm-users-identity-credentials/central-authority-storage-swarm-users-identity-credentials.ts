@@ -95,7 +95,9 @@ export class CentralAuthorityIdentityCredentialsStorage
    * @returns {(Promise<TCentralAuthorityUserCryptoCredentials | Error | null>)}
    * @memberof CentralAuthorityIdentityCredentialsStorage
    */
-  public async getCredentials(identity: TCentralAuthorityUserIdentity): Promise<TCentralAuthorityUserCryptoCredentials | Error | null> {
+  public async getCredentials(
+    identity: TCentralAuthorityUserIdentity
+  ): Promise<TCentralAuthorityUserCryptoCredentials | Error | null> {
     const { isActive } = this;
 
     if (!isActive) {
@@ -283,7 +285,11 @@ export class CentralAuthorityIdentityCredentialsStorage
         return new Error('The identity is not valid');
       }
 
-      const cryptoCredentialsExported = await getExportedCryptoCredentialsByCAIdentity(caIdentity, cryptoKeyPairs, checkPrivateKey);
+      const cryptoCredentialsExported = await getExportedCryptoCredentialsByCAIdentity(
+        caIdentity,
+        cryptoKeyPairs,
+        checkPrivateKey
+      );
 
       if (cryptoCredentialsExported instanceof Error) {
         console.error(cryptoCredentialsExported);
@@ -346,7 +352,9 @@ export class CentralAuthorityIdentityCredentialsStorage
   }
 
   @caching(CA_IDENTITY_CREDENTIALS_STORAGE_READ_CACHE_CAPACITY)
-  protected async getCredentialsCached(identity: TCAUserIdentityRawTypes): Promise<TCentralAuthorityUserCryptoCredentials | Error | null> {
+  protected async getCredentialsCached(
+    identity: TCAUserIdentityRawTypes
+  ): Promise<TCentralAuthorityUserCryptoCredentials | Error | null> {
     try {
       // parse the identity
       const caIdentity = new CentralAuthorityIdentity(identity);

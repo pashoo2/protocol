@@ -4,12 +4,19 @@ import {
   ISwarmMessagesDatabaseConnectOptions,
   TSwarmMessageDatabaseMessagesCached,
 } from '../../classes/swarm-messages-database/swarm-messages-database.types';
-import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from '../../classes/swarm-message/swarm-message-constructor.types';
-import { ISwarmMessagesDatabaseMessageDescription, ISwarmMessagesDatabaseDeleteMessageDescription } from './swarm-messages-database-component.types';
+import {
+  ISwarmMessageInstanceDecrypted,
+  TSwarmMessageSerialized,
+} from '../../classes/swarm-message/swarm-message-constructor.types';
+import {
+  ISwarmMessagesDatabaseMessageDescription,
+  ISwarmMessagesDatabaseDeleteMessageDescription,
+} from './swarm-messages-database-component.types';
 import { ESwarmMessageStoreEventNames } from '../../classes/swarm-message-store/swarm-message-store.const';
 import { ESwarmMessagesDatabaseCacheEventsNames } from '../../classes/swarm-messages-database/swarm-messages-database.const';
 import { ISwarmStoreConnectorBasic, ISwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageStoreOptionsWithConnectorFabric } from '../../classes/swarm-message-store/swarm-message-store.types';
+import { TSwarmMessageUserIdentifierSerialized } from '../../classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import {
   TSwarmStoreDatabaseType,
   TSwarmStoreDatabaseEntityKey,
@@ -26,13 +33,13 @@ export const connectToDatabase = async <
     DbType
   >,
   ConnectorMain extends ISwarmStoreConnector<P, T, DbType, ConnectorBasic> = ISwarmStoreConnector<P, T, DbType, ConnectorBasic>,
-  O extends ISwarmMessageStoreOptionsWithConnectorFabric<P, T, DbType, ConnectorBasic, ConnectorMain> = ISwarmMessageStoreOptionsWithConnectorFabric<
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
     P,
     T,
     DbType,
     ConnectorBasic,
     ConnectorMain
-  >
+  > = ISwarmMessageStoreOptionsWithConnectorFabric<P, T, DbType, ConnectorBasic, ConnectorMain>
 >(
   options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType, ConnectorBasic, ConnectorMain, O>
 ): Promise<SwarmMessagesDatabase<P, T, DbType, ConnectorBasic, ConnectorMain, O>> => {
@@ -89,7 +96,7 @@ export const setMessageDeleteListener = <
   const listener = (
     dbName: string,
     // the user who removed the message
-    userId: string,
+    userId: TSwarmMessageUserIdentifierSerialized,
     // the global unique address (hash) of the DELETE message in the swarm
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // the global unique address (hash) of the DELETED message in the swarm

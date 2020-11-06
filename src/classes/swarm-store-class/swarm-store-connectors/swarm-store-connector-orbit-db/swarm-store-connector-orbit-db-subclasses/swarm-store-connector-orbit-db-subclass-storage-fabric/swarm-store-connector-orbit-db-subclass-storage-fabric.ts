@@ -172,7 +172,9 @@ export class SwarmStoreConnectorOrbitDBSubclassStorageFabric implements ISwarmSt
     return { dbName };
   }
 
-  protected async createOpenStorageCacheInstance(path: string): Promise<ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore> {
+  protected async createOpenStorageCacheInstance(
+    path: string
+  ): Promise<ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore> {
     const cacheStoreConstructorOptions = await this.createOptionsForOpenStorageCacheInstanceConstructor(path);
     const cacheStoreInstance = new SwarmStoreConnectorOrbitDBSubclassStoreToOpenStorageAdapter(cacheStoreConstructorOptions);
 

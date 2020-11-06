@@ -12,9 +12,14 @@ import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../swarm
 export type TSwarmMessagesDatabaseCacheMessagesRemovedFromCache<
   P extends ESwarmStoreConnector,
   DbType extends TSwarmStoreDatabaseType<P>
-> = DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.FEED ? Set<TSwarmStoreDatabaseEntityAddress<P>> : Set<TSwarmStoreDatabaseEntityKey<P>>;
+> = DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.FEED
+  ? Set<TSwarmStoreDatabaseEntityAddress<P>>
+  : Set<TSwarmStoreDatabaseEntityKey<P>>;
 
-export interface ISwarmMessagesDatabaseMessagesCacheMessageDescription<P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>> {
+export interface ISwarmMessagesDatabaseMessagesCacheMessageDescription<
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>
+> {
   messageMeta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>;
   messageEntry: ISwarmMessageInstanceDecrypted;
 }
@@ -71,8 +76,10 @@ export interface ISwarmMessagesDatabaseMessagesCacheStoreTemp<
   update(entries: TSwarmMessageDatabaseMessagesCached<P, DbType>): boolean;
 }
 
-export interface ISwarmMessagesDatabaseMessagesCacheStoreNonTemp<P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>>
-  extends ISwarmMessagesDatabaseMessagesCacheStoreTemp<P, DbType, false> {
+export interface ISwarmMessagesDatabaseMessagesCacheStoreNonTemp<
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>
+> extends ISwarmMessagesDatabaseMessagesCacheStoreTemp<P, DbType, false> {
   readonly isTemp: false;
   /**
    * Get messages to read after the current batch of update will be performed.

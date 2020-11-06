@@ -6,7 +6,10 @@ import {
 } from '../../swarm-messages-database-messages-cached-store.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { ISwarmMessagesDatabaseMessagesCacheMessageDescription } from '../../../swarm-messages-database-cache/swarm-messages-database-cache.types';
-import { ISwarmMessagesDatabaseMesssageMeta, TSwarmMessageDatabaseMessagesCached } from '../../../../swarm-messages-database.types';
+import {
+  ISwarmMessagesDatabaseMesssageMeta,
+  TSwarmMessageDatabaseMessagesCached,
+} from '../../../../swarm-messages-database.types';
 import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../../../swarm-message-store/swarm-message-store.types';
 
 export class SwarmMessagesDatabaseMessagesCachedStoreFeed<P extends ESwarmStoreConnector, IsTemp extends boolean>
@@ -85,7 +88,9 @@ export class SwarmMessagesDatabaseMessagesCachedStoreFeed<P extends ESwarmStoreC
     };
   }
 
-  protected _unsetMessageInEntriesCached(meta: ISwarmMessagesDatabaseMesssageMeta<P, ESwarmStoreConnectorOrbitDbDatabaseType.FEED>): void {
+  protected _unsetMessageInEntriesCached(
+    meta: ISwarmMessagesDatabaseMesssageMeta<P, ESwarmStoreConnectorOrbitDbDatabaseType.FEED>
+  ): void {
     const address = this._getMessageAddressFromMeta(meta);
 
     if (!address) {

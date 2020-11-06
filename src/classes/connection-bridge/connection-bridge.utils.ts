@@ -20,7 +20,9 @@ const connectorBasicFabricDefault = <DbType extends TSwarmStoreDatabaseType<ESwa
   return new SwarmStoreConnectorOrbitDbSubclassDatabaseQueuedItemsCounted(dbOptions, orbitDb);
 };
 
-export const getSwarmStoreConnectionProviderOptionsForOrbitDb = <DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>>(
+export const getSwarmStoreConnectionProviderOptionsForOrbitDb = <
+  DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>
+>(
   swarmConnection: IConnectionBridgeSwarmConnection<IPFS>,
   connectorBasicFabric: ISwarmStoreConnectorOrbitDbConnecectionBasicFabric<
     TSwarmMessageSerialized,

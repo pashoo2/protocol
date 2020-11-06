@@ -10,7 +10,9 @@ import {
 } from '../swarm-store-connector-orbit-db-subclasses-cache.types';
 
 export class SwarmStoreConnectorOrbitDBSubclassStoreToOpenStorageAdapter
-  implements ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbKeystoreStore, ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore {
+  implements
+    ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbKeystoreStore,
+    ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore {
   public get status(): SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_OPEN_STORAGE_ADAPTER_STATUS {
     const { isClose } = this;
 

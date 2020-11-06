@@ -9,7 +9,9 @@ import { normalizeUrl } from 'utils/common-utils/common-utils-url';
  *
  * @param authProviderUrl
  */
-export const normalizeCAConnectionAuthProviderURL = memoize((authProviderUrl: TCAAuthProviderIdentity): Error | TCAAuthProviderIdentity => {
+export const normalizeCAConnectionAuthProviderURL = memoize((authProviderUrl: TCAAuthProviderIdentity):
+  | Error
+  | TCAAuthProviderIdentity => {
   if (!authProviderUrl) {
     return new Error('Auth provider url is not defined');
   }

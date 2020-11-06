@@ -67,7 +67,10 @@ export async function swarmStoreConnectorOrbitDbUtilsAddresGetHashPathFull(fullP
 
 export async function swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForUserId(userId: string): Promise<string> {
   assert(typeof userId === 'string', 'User id should be a string');
-  return swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForPathPart(userId, SWARM_STORE_CONNECTOR_ORITDB_UTILS_ADDRESS_USER_ID_HASH_CALC_METHOD);
+  return swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForPathPart(
+    userId,
+    SWARM_STORE_CONNECTOR_ORITDB_UTILS_ADDRESS_USER_ID_HASH_CALC_METHOD
+  );
 }
 
 export async function swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForDirectory(directory: string): Promise<string> {
@@ -80,7 +83,10 @@ export async function swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForDire
 
 export async function swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForDb(dbName: string): Promise<string> {
   assert(typeof dbName === 'string', 'Database name shoult be a string');
-  return swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForPathPart(dbName, SWARM_STORE_CONNECTOR_ORITDB_UTILS_ADDRESS_DBNAME_HASH_CALC_METHOD);
+  return swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForPathPart(
+    dbName,
+    SWARM_STORE_CONNECTOR_ORITDB_UTILS_ADDRESS_DBNAME_HASH_CALC_METHOD
+  );
 }
 
 export async function swarmStoreConnectorOrbitDbUtilsAddressCreateRootPath(
@@ -106,7 +112,10 @@ export function swarmStoreConnectorOrbitDbUtilsAddressGetDBNameByAddress(path: s
   }
 }
 
-export async function swarmStoreConnectorOrbitDbUtilsAddressCreateOrbitDbAddressByDatabaseName(rootPath: string, dbName: string): Promise<string> {
+export async function swarmStoreConnectorOrbitDbUtilsAddressCreateOrbitDbAddressByDatabaseName(
+  rootPath: string,
+  dbName: string
+): Promise<string> {
   const dbNamePathPart = await swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForDb(dbName);
   return swarmStoreConnectorOrbitDbUtilsAddressJoinPathParts(rootPath, dbNamePathPart);
 }

@@ -1,6 +1,10 @@
 import { ISwarmStore, ISwarmStoreEvents, ISwarmStoreOptions } from '../swarm-store-class/swarm-store-class.types';
 import { ESwarmStoreConnector } from '../swarm-store-class/swarm-store-class.const';
-import { TSwarmMessageInstance, ISwarmMessageInstanceDecrypted, ISwarmMessageConstructor } from '../swarm-message/swarm-message-constructor.types';
+import {
+  TSwarmMessageInstance,
+  ISwarmMessageInstanceDecrypted,
+  ISwarmMessageConstructor,
+} from '../swarm-message/swarm-message-constructor.types';
 import { EventEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { ESwarmMessageStoreEventNames } from './swarm-message-store.const';
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
@@ -45,7 +49,10 @@ export interface ISwarmMessageStoreSwarmMessageMetadata<P extends ESwarmStoreCon
   key: TSwarmStoreDatabaseEntityKey<P> | undefined;
 }
 
-export type TSwarmMessagesStoreGrantAccessCallback<P extends ESwarmStoreConnector, MSI extends TSwarmMessageSerialized | TSwarmMessageInstance> =
+export type TSwarmMessagesStoreGrantAccessCallback<
+  P extends ESwarmStoreConnector,
+  MSI extends TSwarmMessageSerialized | TSwarmMessageInstance
+> =
   | TSwarmMessageStoreAccessControlGrantAccessCallback<P, MSI>
   | TSwarmMessageStoreAccessControlGrantAccessCallback<P, MSI>
   | undefined;
@@ -190,12 +197,27 @@ export type TSwarmMessageStoreConnectReturnType<
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
   ACO extends ISwarmMessageStoreAccessControlOptions<P, ItemType, MSI, GAC> | undefined,
-  O extends ISwarmMessageStoreOptionsWithConnectorFabric<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain, CFO, MSI, GAC, MCF, ACO>
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
+    P,
+    ItemType,
+    DbType,
+    ConnectorBasic,
+    PO,
+    CO,
+    DBO,
+    ConnectorMain,
+    CFO,
+    MSI,
+    GAC,
+    MCF,
+    ACO
+  >
 > = ReturnType<ISwarmStore<P, ItemType, DbType, ConnectorBasic, PO, DBO, CO, CFO, ConnectorMain, O>['connect']>;
 
-export type TSwarmMessageStoreEntryRaw<P extends ESwarmStoreConnector, T extends TSwarmStoreValueTypes<P>> = P extends ESwarmStoreConnector
-  ? ISwarmStoreConnectorOrbitDbDatabaseValue<T>
-  : never;
+export type TSwarmMessageStoreEntryRaw<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmStoreValueTypes<P>
+> = P extends ESwarmStoreConnector ? ISwarmStoreConnectorOrbitDbDatabaseValue<T> : never;
 
 export type ISwarmMessageStoreDeleteMessageArg<P extends ESwarmStoreConnector> = P extends ESwarmStoreConnector.OrbitDB
   ? TSwarmStoreDatabaseEntityAddress<P> // swarm message address
@@ -228,14 +250,15 @@ export interface ISwarmMessageStoreMessageMeta<P extends ESwarmStoreConnector> {
   key?: Error | TSwarmStoreDatabaseEntityKey<P> | undefined;
 }
 
-export interface ISwarmMessageStoreMessagingRequestWithMetaResult<P extends ESwarmStoreConnector> extends ISwarmMessageStoreMessageMeta<P> {
+export interface ISwarmMessageStoreMessagingRequestWithMetaResult<P extends ESwarmStoreConnector, T extends TSwarmMessageInstance>
+  extends ISwarmMessageStoreMessageMeta<P> {
   /**
    * Message parsed.
    * Error if failed to parse the message.
    *
    * @type {(Error | TSwarmMessageInstance)}
    */
-  message: Error | TSwarmMessageInstance;
+  message: Error | T;
 }
 
 export interface ISwarmMessageStoreMessageWithMeta<P extends ESwarmStoreConnector> {
@@ -286,7 +309,11 @@ export interface ISwarmMessageStoreMessagingMethods<P extends ESwarmStoreConnect
    * @memberof ISwarmMessageStore
    * @throws
    */
-  addMessage(dbName: string, message: TSwarmMessageInstance, key?: TSwarmStoreDatabaseEntityKey<P>): Promise<TSwarmStoreDatabaseEntityAddress<P>>;
+  addMessage(
+    dbName: string,
+    message: TSwarmMessageInstance,
+    key?: TSwarmStoreDatabaseEntityKey<P>
+  ): Promise<TSwarmStoreDatabaseEntityAddress<P>>;
 
   /**
    * add message serialized to a database with the given name
@@ -297,7 +324,11 @@ export interface ISwarmMessageStoreMessagingMethods<P extends ESwarmStoreConnect
    * @memberof ISwarmMessageStore
    * @throws
    */
-  addMessage(dbName: string, message: string, key?: TSwarmStoreDatabaseEntityKey<P>): Promise<TSwarmStoreDatabaseEntityAddress<P>>;
+  addMessage(
+    dbName: string,
+    message: string,
+    key?: TSwarmStoreDatabaseEntityKey<P>
+  ): Promise<TSwarmStoreDatabaseEntityAddress<P>>;
 
   /**
    * construct and add message to a database with the given name.
@@ -337,7 +368,10 @@ export interface ISwarmMessageStoreMessagingMethods<P extends ESwarmStoreConnect
    * @memberof ISwarmMessageStore
    * @throws
    */
-  collect(dbName: string, options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>): Promise<(TSwarmMessageInstance | Error)[]>;
+  collect(
+    dbName: string,
+    options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>
+  ): Promise<(TSwarmMessageInstance | Error)[]>;
 
   /**
    * Collect messages with some metadata info.
@@ -377,7 +411,21 @@ export interface ISwarmMessageStore<
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
   ACO extends ISwarmMessageStoreAccessControlOptions<P, ItemType, MSI, GAC> | undefined,
-  O extends ISwarmMessageStoreOptionsWithConnectorFabric<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain, CFO, MSI, GAC, MCF, ACO>
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
+    P,
+    ItemType,
+    DbType,
+    ConnectorBasic,
+    PO,
+    CO,
+    DBO,
+    ConnectorMain,
+    CFO,
+    MSI,
+    GAC,
+    MCF,
+    ACO
+  >
 > extends ISwarmStore<P, ItemType, DbType, ConnectorBasic, PO, DBO, CO, CFO, ConnectorMain, O>,
     EventEmitter<ISwarmMessageStoreEvents<P, ItemType, DBO>>,
     ISwarmMessageStoreMessagingMethods<P, DbType> {
@@ -391,7 +439,22 @@ export interface ISwarmMessageStore<
    */
   connect(
     options: O
-  ): TSwarmMessageStoreConnectReturnType<P, ItemType, DbType, ConnectorBasic, PO, DBO, CO, CFO, ConnectorMain, MSI, GAC, MCF, ACO, O>;
+  ): TSwarmMessageStoreConnectReturnType<
+    P,
+    ItemType,
+    DbType,
+    ConnectorBasic,
+    PO,
+    DBO,
+    CO,
+    CFO,
+    ConnectorMain,
+    MSI,
+    GAC,
+    MCF,
+    ACO,
+    O
+  >;
 }
 
 export interface ISwarmMessageStoreOptionsWithEntriesCount<
@@ -408,6 +471,20 @@ export interface ISwarmMessageStoreOptionsWithEntriesCount<
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
   ACO extends ISwarmMessageStoreAccessControlOptions<P, ItemType, MSI, GAC> | undefined,
-  O extends ISwarmMessageStoreOptionsWithConnectorFabric<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain, CFO, MSI, GAC, MCF, ACO>
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
+    P,
+    ItemType,
+    DbType,
+    ConnectorBasic,
+    PO,
+    CO,
+    DBO,
+    ConnectorMain,
+    CFO,
+    MSI,
+    GAC,
+    MCF,
+    ACO
+  >
 > extends ISwarmMessageStore<P, ItemType, DbType, ConnectorBasic, PO, DBO, CO, CFO, ConnectorMain, MSI, GAC, MCF, ACO, O>,
     ISwarmStoreWithEntriesCount<P, ItemType, DbType, ConnectorBasic, PO, DBO, CO, CFO, ConnectorMain, O> {}

@@ -24,7 +24,9 @@ export interface ICentralAuthorityUserAuthCredentials {
   session?: ISensitiveDataSessionStorage;
 }
 
-export type TCentralAuthorityUserAuthCredentialsWithPwd = Required<Pick<ICentralAuthorityUserAuthCredentials, 'login' | 'password'>>;
+export type TCentralAuthorityUserAuthCredentialsWithPwd = Required<
+  Pick<ICentralAuthorityUserAuthCredentials, 'login' | 'password'>
+>;
 
 /**
  * this credentials used to authorize the user on a central authority

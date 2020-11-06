@@ -29,7 +29,8 @@ export const isTypedArrayNative = (data: isTypedArrayData): data is TTypedArrays
   data instanceof BigInt64Array ||
   data instanceof BigUint64Array;
 
-export const isTypedArray = (data: isTypedArrayData): data is TTypedArrays => data instanceof ArrayBuffer || ArrayBuffer.isView(data);
+export const isTypedArray = (data: isTypedArrayData): data is TTypedArrays =>
+  data instanceof ArrayBuffer || ArrayBuffer.isView(data);
 
 export const isEqualArrayBufferNative = (arr1: TTypedArraysNative | ArrayBuffer, arr2: TTypedArraysNative | ArrayBuffer) => {
   const arr1Uint8 = new Uint8Array(arr1);

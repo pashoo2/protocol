@@ -1,5 +1,8 @@
 import { ISensitiveDataSessionStorage, ISensitiveDataSessionStorageOptions } from './sensitive-data-session-storage.types';
-import { SENSITIVE_DATA_SESSION_STORAGE_STORAGE_KEY, SENSITIVE_DATA_SESSION_STORAGE_STORAGE_KEY_SALT } from './sensitive-data-session-storage.const';
+import {
+  SENSITIVE_DATA_SESSION_STORAGE_STORAGE_KEY,
+  SENSITIVE_DATA_SESSION_STORAGE_STORAGE_KEY_SALT,
+} from './sensitive-data-session-storage.const';
 import assert from 'assert';
 import { generatePasswordKeyByPasswordSalt, generateSaltForPassword } from 'classes/secret-storage-class';
 import { encryptDataToString, decryptDataByPassword } from 'utils';

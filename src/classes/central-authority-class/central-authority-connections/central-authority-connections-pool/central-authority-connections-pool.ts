@@ -108,7 +108,10 @@ export class CAConnectionsPool implements ICAConnectionPool {
    * @returns {(Promise<ICAConnection | Error>)}
    * @memberof CAConnectionsPool
    */
-  public async connect(authProviderUrl: TCAAuthProviderIdentity, isAuthentificateAnonymousely: boolean = true): Promise<ICAConnection | Error> {
+  public async connect(
+    authProviderUrl: TCAAuthProviderIdentity,
+    isAuthentificateAnonymousely: boolean = true
+  ): Promise<ICAConnection | Error> {
     if (!validateCAConnectionAuthProviderUrl(authProviderUrl)) {
       return new Error('The url provided as the auth provider service url is not valid');
     }
@@ -179,7 +182,9 @@ export class CAConnectionsPool implements ICAConnectionPool {
       const normalizedUrlAuthProviderCurrent = normalizeUrl(currentAuthProviderUrl);
 
       if (normalizedUrlAuthProviderCurrent !== normalizedUrl) {
-        return new Error(`Already authorized on the ${normalizedUrlAuthProviderCurrent} service, differ from the requested ${authProviderUrl}`);
+        return new Error(
+          `Already authorized on the ${normalizedUrlAuthProviderCurrent} service, differ from the requested ${authProviderUrl}`
+        );
       }
       return connection;
     }
@@ -358,7 +363,12 @@ export class CAConnectionsPool implements ICAConnectionPool {
     if (userIdentity.identityDescription instanceof Error) {
       return new Error('The user identity is not valid');
     }
-    if (!compareAuthProvidersIdentities(userIdentity.identityDescription[CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME], authProviderId)) {
+    if (
+      !compareAuthProvidersIdentities(
+        userIdentity.identityDescription[CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME],
+        authProviderId
+      )
+    ) {
       return new Error(`
         The auth provider url from the auth crdentials ${userIdentity.identityDescription[CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]} is not equals to the provider the user authorized on ${authProviderId}
       `);
@@ -383,7 +393,9 @@ export class CAConnectionsPool implements ICAConnectionPool {
    * @returns {(ICAConnectionsPoolCurrentConnections | undefined | Error)}
    * @memberof CAConnectionsPool
    */
-  protected getAuthProviderStateDesc(authProviderUrl: TCAAuthProviderIdentity): ICAConnectionsPoolCurrentConnections | undefined | Error {
+  protected getAuthProviderStateDesc(
+    authProviderUrl: TCAAuthProviderIdentity
+  ): ICAConnectionsPoolCurrentConnections | undefined | Error {
     const normalizedUrl = normalizeUrl(authProviderUrl);
 
     if (normalizedUrl instanceof Error) {
@@ -396,8 +408,14 @@ export class CAConnectionsPool implements ICAConnectionPool {
     return providersConnectionState[normalizedUrl];
   }
 
-  protected async addConectionWithProvider(authProviderUrl: string, connectionWithAuthProvider: ICAConnection): Promise<ICAConnection | Error> {
-    const setConnectionInAuhProviderConnectionStatesStore = this.setConnectionWithAuthProvider(authProviderUrl, connectionWithAuthProvider);
+  protected async addConectionWithProvider(
+    authProviderUrl: string,
+    connectionWithAuthProvider: ICAConnection
+  ): Promise<ICAConnection | Error> {
+    const setConnectionInAuhProviderConnectionStatesStore = this.setConnectionWithAuthProvider(
+      authProviderUrl,
+      connectionWithAuthProvider
+    );
 
     if (setConnectionInAuhProviderConnectionStatesStore instanceof Error) {
       console.error(setConnectionInAuhProviderConnectionStatesStore);

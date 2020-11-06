@@ -127,7 +127,9 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
   }
 
   /** */
-  public construct = async <T extends TSwarmMessageConstructorArgumentBody | TSwarmMessageSerialized>(message: T): Promise<TSwarmMessageInstance> => {
+  public construct = async <T extends TSwarmMessageConstructorArgumentBody | TSwarmMessageSerialized>(
+    message: T
+  ): Promise<TSwarmMessageInstance> => {
     assert(message, 'Message must not be empty');
     if (typeof message === 'string') {
       return this.parse(message);
@@ -235,7 +237,10 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
     const { options } = this;
     const { instances } = options;
 
-    this.validator = instances && instances.validator ? instances.validator : new SwarmMessageSubclassValidator(this.optionsForSwarmMessageValidator);
+    this.validator =
+      instances && instances.validator
+        ? instances.validator
+        : new SwarmMessageSubclassValidator(this.optionsForSwarmMessageValidator);
   }
 
   /**
@@ -277,7 +282,10 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
     const { options } = this;
     const { instances } = options;
 
-    this.serializer = instances && instances.serizlizer ? instances.serizlizer : new SwarmMessageSerializer(this.optionsForSwarmMessageSerizlizer);
+    this.serializer =
+      instances && instances.serizlizer
+        ? instances.serizlizer
+        : new SwarmMessageSerializer(this.optionsForSwarmMessageSerizlizer);
   }
 
   /**
@@ -342,7 +350,9 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
    * @memberof SwarmMessageConstructor
    * @throws
    */
-  protected async serialize(msg: TSwarmMessageConstructorArgumentBody | TSwarmMessageConstructorArgumentBodyPrivate): Promise<TSwarmMessageInstance> {
+  protected async serialize(
+    msg: TSwarmMessageConstructorArgumentBody | TSwarmMessageConstructorArgumentBodyPrivate
+  ): Promise<TSwarmMessageInstance> {
     if (!this.serializer) {
       throw new Error('A swarm message serializer instance is not defined');
     }

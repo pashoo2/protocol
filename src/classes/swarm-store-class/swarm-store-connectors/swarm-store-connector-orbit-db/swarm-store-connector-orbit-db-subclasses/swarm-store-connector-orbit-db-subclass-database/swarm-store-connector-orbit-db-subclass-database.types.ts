@@ -25,8 +25,9 @@ export type TSwarmStoreConnectorOrbitDbDatabaseEntityIndex =
 
 export type TSwarmStoreConnectorOrbitDbDatabase<V> = OrbitDbFeedStore<V> | OrbitDbKeyValueStore<V>;
 
-export interface ISwarmStoreConnectorOrbitDbDatabaseOptions<TStoreValueType extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>>
-  extends ISwarmStoreConnectorOrbitDbDatabaseAccessControlleGrantCallback<TStoreValueType>,
+export interface ISwarmStoreConnectorOrbitDbDatabaseOptions<
+  TStoreValueType extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>
+> extends ISwarmStoreConnectorOrbitDbDatabaseAccessControlleGrantCallback<TStoreValueType>,
     ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess,
     ISwarmStoreDatabaseBaseOptions {
   /**
@@ -98,7 +99,9 @@ export enum ESwarmStoreConnectorOrbitDbDatabaseIteratorOption {
   reverse = 'reverse',
 }
 
-export interface ISwarmStoreConnectorOrbitDbDatabaseIteratorOptionsRequired<DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>> {
+export interface ISwarmStoreConnectorOrbitDbDatabaseIteratorOptionsRequired<
+  DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>
+> {
   // if the equal operator applyied all other will not be applied
   [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq]:
     | TSwarmStoreDatabaseEntityUniqueIndex<ESwarmStoreConnector.OrbitDB, DbType>
@@ -106,16 +109,29 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseIteratorOptionsRequired<DbTy
   [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.neq]:
     | TSwarmStoreDatabaseEntityUniqueIndex<ESwarmStoreConnector.OrbitDB, DbType>
     | TSwarmStoreDatabaseEntityUniqueIndex<ESwarmStoreConnector.OrbitDB, DbType>[];
-  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.gt]: TSwarmStoreDatabaseEntityUniqueIndex<ESwarmStoreConnector.OrbitDB, DbType>;
-  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.gte]: TSwarmStoreDatabaseEntityUniqueIndex<ESwarmStoreConnector.OrbitDB, DbType>;
-  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.lt]: TSwarmStoreDatabaseEntityUniqueIndex<ESwarmStoreConnector.OrbitDB, DbType>;
-  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.lte]: TSwarmStoreDatabaseEntityUniqueIndex<ESwarmStoreConnector.OrbitDB, DbType>;
+  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.gt]: TSwarmStoreDatabaseEntityUniqueIndex<
+    ESwarmStoreConnector.OrbitDB,
+    DbType
+  >;
+  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.gte]: TSwarmStoreDatabaseEntityUniqueIndex<
+    ESwarmStoreConnector.OrbitDB,
+    DbType
+  >;
+  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.lt]: TSwarmStoreDatabaseEntityUniqueIndex<
+    ESwarmStoreConnector.OrbitDB,
+    DbType
+  >;
+  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.lte]: TSwarmStoreDatabaseEntityUniqueIndex<
+    ESwarmStoreConnector.OrbitDB,
+    DbType
+  >;
   [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.limit]: number;
   [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.reverse]: boolean;
 }
 
-export interface ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions<DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>>
-  extends Partial<ISwarmStoreConnectorOrbitDbDatabaseIteratorOptionsRequired<DbType>> {}
+export interface ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions<
+  DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>
+> extends Partial<ISwarmStoreConnectorOrbitDbDatabaseIteratorOptionsRequired<DbType>> {}
 
 export interface ISwarmStoreConnectorOrbitDbDatabaseIteratorAnswer<T> {
   collect(): T[];
@@ -138,7 +154,10 @@ export type TSwarmStoreConnectorOrbitDbDatabaseMethodArgumentDbClose = void;
 // how many items to load
 export type TSwarmStoreConnectorOrbitDbDatabaseMethodArgumentDbLoad = number;
 
-export type TSwarmStoreConnectorOrbitDbDatabaseMethodArgument<TStoreValue, DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>> =
+export type TSwarmStoreConnectorOrbitDbDatabaseMethodArgument<
+  TStoreValue,
+  DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>
+> =
   | TSwarmStoreConnectorOrbitDbDatabaseStoreHash
   | TStoreValue
   | TSwarmStoreConnectorOrbitDbDatabaseAddMethodArgument<TStoreValue>

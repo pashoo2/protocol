@@ -259,7 +259,9 @@ export class CASwarmCredentialsProvider implements ICASwarmCredentialsProvider {
   protected async startConnectionLocalCredentialsStorage(): Promise<Error | ICAIdentityCredentialsStorage> {
     try {
       const connectionLocalCredentialsStorage = new CentralAuthorityIdentityCredentialsStorage();
-      const connectToCredentialsStorageResult = await connectionLocalCredentialsStorage.connect(this.getOptionsForLocalCredentialsStorage());
+      const connectToCredentialsStorageResult = await connectionLocalCredentialsStorage.connect(
+        this.getOptionsForLocalCredentialsStorage()
+      );
 
       if (connectToCredentialsStorageResult instanceof Error) {
         console.error(connectToCredentialsStorageResult);

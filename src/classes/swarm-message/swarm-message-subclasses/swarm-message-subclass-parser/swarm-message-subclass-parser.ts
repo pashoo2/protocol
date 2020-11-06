@@ -1,5 +1,9 @@
 import assert from 'assert';
-import { TSwarmMessageInstance, TSwarmMessageBodyRaw, TSwarmMessageBodyRawEncrypted } from '../../swarm-message-constructor.types';
+import {
+  TSwarmMessageInstance,
+  TSwarmMessageBodyRaw,
+  TSwarmMessageBodyRawEncrypted,
+} from '../../swarm-message-constructor.types';
 import { isCryptoKeyDataDecryption } from '../../../../utils/encryption-keys-utils/encryption-keys-utils';
 import { QueuedEncryptionClassBase } from '../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base';
 import { ISwarmMessgaeEncryptedCache } from '../../../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';

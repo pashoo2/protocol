@@ -37,7 +37,11 @@ export const getItemsCount = <T extends Map<any, any> | Set<any> | Array<any> | 
  * @returns {Promise<R>}
  * @throw - rejects on timeout or if the callback thrown an error
  */
-export const waitFor = <R>(cb: () => NonNullable<R> | undefined, checkIntervalMs: number = 100, timeoutMs: number = 360000): Promise<R> => {
+export const waitFor = <R>(
+  cb: () => NonNullable<R> | undefined,
+  checkIntervalMs: number = 100,
+  timeoutMs: number = 360000
+): Promise<R> => {
   return new Promise((res, rej) => {
     let timeout: NodeJS.Timer | undefined;
     let checkInterval: NodeJS.Timeout | undefined;

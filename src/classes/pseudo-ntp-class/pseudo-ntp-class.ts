@@ -118,7 +118,11 @@ export class PseudoNTPClass extends EventEmitter<IPseudoNTPClassEvents> {
     const { currentServerOptions } = this;
     const consoleMethod = message instanceof Error ? 'error' : 'log';
 
-    console[consoleMethod](PSEUDO_NTP_CLASS_LOGS_PREFIX, `server is ${currentServerOptions ? currentServerOptions.server : 'not defined'}`, message);
+    console[consoleMethod](
+      PSEUDO_NTP_CLASS_LOGS_PREFIX,
+      `server is ${currentServerOptions ? currentServerOptions.server : 'not defined'}`,
+      message
+    );
   };
 
   /**
@@ -152,10 +156,13 @@ export class PseudoNTPClass extends EventEmitter<IPseudoNTPClassEvents> {
     this.serversPool = serversPool;
 
     const optionsInMs = {
-      maxFailedResponses: typeof maxFailedResponses === 'number' ? maxFailedResponses : PSEUDO_NTP_CLASS_DEFAULT_OPTIONS.maxFailedResponses,
+      maxFailedResponses:
+        typeof maxFailedResponses === 'number' ? maxFailedResponses : PSEUDO_NTP_CLASS_DEFAULT_OPTIONS.maxFailedResponses,
       maxOffsetErrorS: typeof maxOffsetErrorS === 'number' ? maxOffsetErrorS : PSEUDO_NTP_CLASS_DEFAULT_OPTIONS.maxOffsetErrorS,
-      responseTimeoutMs: typeof responseTimeoutS === 'number' ? responseTimeoutS * 1000 : PSEUDO_NTP_CLASS_DEFAULT_OPTIONS.responseTimeoutMs,
-      retryRequestDelayMs: typeof retryRequestDelayS === 'number' ? retryRequestDelayS * 1000 : PSEUDO_NTP_CLASS_DEFAULT_OPTIONS.retryRequestDelayMs,
+      responseTimeoutMs:
+        typeof responseTimeoutS === 'number' ? responseTimeoutS * 1000 : PSEUDO_NTP_CLASS_DEFAULT_OPTIONS.responseTimeoutMs,
+      retryRequestDelayMs:
+        typeof retryRequestDelayS === 'number' ? retryRequestDelayS * 1000 : PSEUDO_NTP_CLASS_DEFAULT_OPTIONS.retryRequestDelayMs,
       syncIntervalMs: typeof syncIntervalS === 'number' ? syncIntervalS * 1000 : PSEUDO_NTP_CLASS_DEFAULT_OPTIONS.syncIntervalMs,
     };
 

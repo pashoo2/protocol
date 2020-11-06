@@ -1,3 +1,4 @@
 export const SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_ACCESS_CONTROLLER_TYPE = 'DecentralizedProtocolOrbitDBAccessController_v1';
 
-export const SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_ACCESS_CONTROLLER_LOG_PREFIX = 'SwarmStoreConnectorOrbitDBSubclassAccessController';
+export const SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_ACCESS_CONTROLLER_LOG_PREFIX =
+  'SwarmStoreConnectorOrbitDBSubclassAccessController';

@@ -1,6 +1,11 @@
 import { IHttpRequestOptions } from '../http-request-class-base.types';
 import { HTTP_REQUEST_METHOD, HTTP_REQUEST_CONTENT_TYPE } from '../http-request-class-base.const';
-import { objectToUrlEncodedString, IParamsObject, objectToFormData, IParamsObjectFormData } from '../http-request-class-base.utils';
+import {
+  objectToUrlEncodedString,
+  IParamsObject,
+  objectToFormData,
+  IParamsObjectFormData,
+} from '../http-request-class-base.utils';
 
 export class HttpRequestBodyProcessor {
   protected static logError(methodName: string, err: string | Error) {

@@ -10,7 +10,9 @@ import {
   CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME,
 } from '../central-authority-util-crypto-keys/central-authority-util-crypto-keys.const';
 
-export const getCryptoKeysByCryptoCredentials = (cryptoCredentials: TCentralAuthorityUserCryptoCredentials | null): TCACryptoKeyPairs | null => {
+export const getCryptoKeysByCryptoCredentials = (
+  cryptoCredentials: TCentralAuthorityUserCryptoCredentials | null
+): TCACryptoKeyPairs | null => {
   if (!cryptoCredentials) {
     return null;
   }
@@ -50,15 +52,21 @@ export const getPubKeyByCryptoCredentials = (
   return cryptoKeyPair.publicKey;
 };
 
-export const getDataSignPubKeyByCryptoCredentials = (cryptoCredentials: TCentralAuthorityUserCryptoCredentials | null): CryptoKey | null => {
+export const getDataSignPubKeyByCryptoCredentials = (
+  cryptoCredentials: TCentralAuthorityUserCryptoCredentials | null
+): CryptoKey | null => {
   return getPubKeyByCryptoCredentials(cryptoCredentials, CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME);
 };
 
-export const getDataSignKeyPairByCryptoCredentials = (cryptoCredentials: TCentralAuthorityUserCryptoCredentials | null): CryptoKeyPair | null => {
+export const getDataSignKeyPairByCryptoCredentials = (
+  cryptoCredentials: TCentralAuthorityUserCryptoCredentials | null
+): CryptoKeyPair | null => {
   return getKeyPairByCryptoCredentials(cryptoCredentials, CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME);
 };
 
-export const getDataEncryptionPubKeyByCryptoCredentials = (cryptoCredentials: TCentralAuthorityUserCryptoCredentials | null): CryptoKey | null => {
+export const getDataEncryptionPubKeyByCryptoCredentials = (
+  cryptoCredentials: TCentralAuthorityUserCryptoCredentials | null
+): CryptoKey | null => {
   return getPubKeyByCryptoCredentials(cryptoCredentials, CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME);
 };
 

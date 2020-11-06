@@ -1,6 +1,12 @@
-import { ISwarmMessageDatabaseConstructors, TSwarmMessageStoreAccessControlGrantAccessCallback } from '../../swarm-message-store.types';
+import {
+  ISwarmMessageDatabaseConstructors,
+  TSwarmMessageStoreAccessControlGrantAccessCallback,
+} from '../../swarm-message-store.types';
 import { ISwarmStoreConnectorOrbitDbDatabaseOptions } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
-import { ISwarmStoreDatabaseBaseOptions, TSwarmStoreDatabaseEntryOperation } from '../../../swarm-store-class/swarm-store-class.types';
+import {
+  ISwarmStoreDatabaseBaseOptions,
+  TSwarmStoreDatabaseEntryOperation,
+} from '../../../swarm-store-class/swarm-store-class.types';
 import { TCentralAuthorityUserIdentity } from '../../../central-authority-class/central-authority-class-types/central-authority-class-types-common';
 import { ESwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.const';
 import { EOrbitDbFeedStoreOperation } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
@@ -30,7 +36,10 @@ async function swarmMessageGrantValidator<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   I extends TSwarmMessageInstance,
-  CB extends TSwarmMessageStoreAccessControlGrantAccessCallback<P, T> | TSwarmMessageStoreAccessControlGrantAccessCallback<P, I> | undefined
+  CB extends
+    | TSwarmMessageStoreAccessControlGrantAccessCallback<P, T>
+    | TSwarmMessageStoreAccessControlGrantAccessCallback<P, I>
+    | undefined
 >(
   this: {
     dbName: string;
@@ -66,7 +75,13 @@ async function swarmMessageGrantValidator<
       return false;
     }
     if (grantAccessCb) {
-      return (grantAccessCb as TSwarmMessageStoreAccessControlGrantAccessCallback<P, I>)((swarmMessage as unknown) as I, userId, dbName, key, op);
+      return (grantAccessCb as TSwarmMessageStoreAccessControlGrantAccessCallback<P, I>)(
+        (swarmMessage as unknown) as I,
+        userId,
+        dbName,
+        key,
+        op
+      );
     }
     return true;
   } catch (err) {

@@ -4,7 +4,10 @@ import { createPromisePendingRejectable } from 'utils/common-utils/commom-utils.
 
 import { TSwarmStoreValueTypes, TSwarmStoreDatabaseType } from '../../../../../../swarm-store-class.types';
 import { ESwarmStoreConnector } from '../../../../../../swarm-store-class.const';
-import { IJobResolver, IAsyncQueueConcurent } from '../../../../../../../basic-classes/async-queue-concurent/async-queue-concurent.types';
+import {
+  IJobResolver,
+  IAsyncQueueConcurent,
+} from '../../../../../../../basic-classes/async-queue-concurent/async-queue-concurent.types';
 import { ArgumentTypes } from 'types/helper.types';
 import { ISwarmStoreConnectorBasic } from '../../../../../../swarm-store-class.types';
 

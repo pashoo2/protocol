@@ -74,11 +74,25 @@ export interface ISwarmMessagesDatabaseConnectOptions<
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
   ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined,
-  O extends ISwarmMessageStoreOptionsWithConnectorFabric<P, T, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain, CFO, MSI, GAC, MCF, ACO>
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
+    P,
+    T,
+    DbType,
+    ConnectorBasic,
+    PO,
+    CO,
+    DBO,
+    ConnectorMain,
+    CFO,
+    MSI,
+    GAC,
+    MCF,
+    ACO
+  >
 > {
   user: ISwarmMessagesDatabaseConnectCurrentUserOptions;
   swarmMessageStore: ISwarmMessageStore<P, T, DbType, ConnectorBasic, PO, DBO, CO, CFO, ConnectorMain, MSI, GAC, MCF, ACO, O>;
-  dbOptions: TSwarmStoreDatabaseOptions<P, T>;
+  dbOptions: DBO;
   cacheOptions?: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, DbType>;
 }
 
@@ -100,22 +114,27 @@ export interface ISwarmMessageDatabaseCacheEvents<P extends ESwarmStoreConnector
   ) => unknown;
 }
 
-export interface ISwarmMessageDatabaseEvents<P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>>
-  extends ISwarmMessageDatabaseCacheEvents<P, DbType> {
-  [ESwarmStoreEventNames.UPDATE]: (dbName: string) => unknown;
-  [ESwarmStoreEventNames.DB_LOADING]: (dbName: string, percentage: number) => unknown;
+export interface ISwarmMessageDatabaseEvents<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T>,
+  MSI extends TSwarmMessageInstance | T
+> extends ISwarmMessageDatabaseCacheEvents<P, DbType> {
+  [ESwarmStoreEventNames.UPDATE]: (dbName: DBO['dbName']) => unknown;
+  [ESwarmStoreEventNames.DB_LOADING]: (dbName: DBO['dbName'], percentage: number) => unknown;
   [ESwarmMessageStoreEventNames.NEW_MESSAGE]: (
-    dbName: string,
-    message: ISwarmMessageInstanceDecrypted,
+    dbName: DBO['dbName'],
+    message: Exclude<MSI, ISwarmMessageInstanceDecrypted | T>,
     // the global unique address (hash) of the message in the swarm
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key
     key?: TSwarmStoreDatabaseEntityKey<P>
   ) => unknown;
   [ESwarmMessageStoreEventNames.NEW_MESSAGE_ERROR]: (
-    dbName: string,
+    dbName: DBO['dbName'],
     // swarm message string failed to deserialize
-    messageSerialized: string,
+    messageSerialized: T,
     // error occurred while deserializing the message
     error: Error,
     // the global unique address (hash) of the message in the swarm
@@ -123,13 +142,13 @@ export interface ISwarmMessageDatabaseEvents<P extends ESwarmStoreConnector, DbT
     // for key-value store it will be the key
     key?: TSwarmStoreDatabaseEntityKey<P>
   ) => unknown;
-  [ESwarmStoreEventNames.READY]: (dbName: string) => unknown;
-  [ESwarmStoreEventNames.CLOSE_DATABASE]: (dbName: string) => unknown;
-  [ESwarmStoreEventNames.DROP_DATABASE]: (dbName: string) => unknown;
+  [ESwarmStoreEventNames.READY]: (dbName: DBO['dbName']) => unknown;
+  [ESwarmStoreEventNames.CLOSE_DATABASE]: (dbName: DBO['dbName']) => unknown;
+  [ESwarmStoreEventNames.DROP_DATABASE]: (dbName: DBO['dbName']) => unknown;
   [ESwarmMessageStoreEventNames.DELETE_MESSAGE]: (
-    dbName: string,
+    dbName: DBO['dbName'],
     // the user who removed the message
-    userId: string,
+    userId: TSwarmMessageUserIdentifierSerialized,
     // the global unique address (hash) of the DELETE message in the swarm
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // the global unique address (hash) of the DELETED message in the swarm
@@ -150,7 +169,10 @@ export interface ISwarmMessageDatabaseEvents<P extends ESwarmStoreConnector, DbT
  * @interface ISwarmMessageDatabaseMessagingMethods
  * @template P
  */
-export interface ISwarmMessageDatabaseMessagingMethods<P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>> {
+export interface ISwarmMessageDatabaseMessagingMethods<
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>
+> {
   addMessage: OmitFirstArg<ISwarmMessageStoreMessagingMethods<P, DbType>['addMessage']>;
   deleteMessage: OmitFirstArg<ISwarmMessageStoreMessagingMethods<P, DbType>['deleteMessage']>;
   collect: OmitFirstArg<ISwarmMessageStoreMessagingMethods<P, DbType>['collect']>;
@@ -241,7 +263,21 @@ export interface ISwarmMessagesDatabase<
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
   ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined,
-  O extends ISwarmMessageStoreOptionsWithConnectorFabric<P, T, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain, CFO, MSI, GAC, MCF, ACO>
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
+    P,
+    T,
+    DbType,
+    ConnectorBasic,
+    PO,
+    CO,
+    DBO,
+    ConnectorMain,
+    CFO,
+    MSI,
+    GAC,
+    MCF,
+    ACO
+  >
 > extends ISwarmMessageStoreMessagingMethods<P, DbType>,
     ISwarmMessagesDatabaseProperties<P, DbType> {
   /**
@@ -252,7 +288,22 @@ export interface ISwarmMessagesDatabase<
    * @memberof ISwarmMessagesDatabase
    */
   open(
-    options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>
+    options: ISwarmMessagesDatabaseConnectOptions<
+      P,
+      T,
+      DbType,
+      ConnectorBasic,
+      PO,
+      CO,
+      DBO,
+      ConnectorMain,
+      CFO,
+      MSI,
+      GAC,
+      MCF,
+      ACO,
+      O
+    >
   ): Promise<void>;
 
   /**
@@ -294,7 +345,21 @@ export interface ISwarmMessagesDatabaseReady<
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
   ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined,
-  O extends ISwarmMessageStoreOptionsWithConnectorFabric<P, T, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain, CFO, MSI, GAC, MCF, ACO>
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
+    P,
+    T,
+    DbType,
+    ConnectorBasic,
+    PO,
+    CO,
+    DBO,
+    ConnectorMain,
+    CFO,
+    MSI,
+    GAC,
+    MCF,
+    ACO
+  >
 > {
   _dbName: string;
   _isReady: true;
@@ -303,7 +368,10 @@ export interface ISwarmMessagesDatabaseReady<
   _swarmMessagesCache: ISwarmMessagesDatabaseCache<P, DbType>;
 }
 
-export interface ISwarmMessagesDatabaseCacheOptionsDbInstance<P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>> {
+export interface ISwarmMessagesDatabaseCacheOptionsDbInstance<
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>
+> {
   collectWithMeta: OmitFirstArg<ISwarmMessageStoreMessagingMethods<P, DbType>['collectWithMeta']>;
 }
 
@@ -405,7 +473,10 @@ export interface ISwarmMessagesDatabaseCache<P extends ESwarmStoreConnector, DbT
   ): Promise<void>;
 }
 
-export interface ISwarmMessagesDatabaseCacheConstructor<P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>> {
+export interface ISwarmMessagesDatabaseCacheConstructor<
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>
+> {
   new (options: ISwarmMessagesDatabaseCacheOptions<P, DbType>): ISwarmMessagesDatabaseCache<P, DbType>;
 }
 

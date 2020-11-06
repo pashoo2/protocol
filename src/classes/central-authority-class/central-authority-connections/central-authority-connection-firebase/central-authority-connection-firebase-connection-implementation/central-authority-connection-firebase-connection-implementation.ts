@@ -2,7 +2,11 @@ import firebase from 'firebase';
 import 'firebase/auth';
 import memoize from 'lodash.memoize';
 import CAConnectionWithFirebaseBase from '../central-authority-connection-firebase-base/central-authority-connection-firebase-base';
-import { ICAConnection, ICAConnectionSignUpCredentials, ICAConnectionUserAuthorizedResult } from '../../central-authority-connections.types';
+import {
+  ICAConnection,
+  ICAConnectionSignUpCredentials,
+  ICAConnectionUserAuthorizedResult,
+} from '../../central-authority-connections.types';
 import { isEmptyObject } from 'utils/common-utils/common-utils-objects';
 import {
   ICentralAuthorityUserProfile,
@@ -20,6 +24,7 @@ import { validateUserIdentityVersion } from 'classes/central-authority-class/cen
 import { TUserIdentityVersion } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types';
 import { ICAConnectionConfigurationFirebase } from '../central-authority-connection-firebase.types.configuration';
 import { CA_CONNECTION_STATUS } from '../../central-authority-connections-const/central-authority-connections-const';
+import { TSwarmMessageUserIdentifierSerialized } from '../../../../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 
 /**
  *
@@ -91,7 +96,10 @@ export class CAConnectionWithFirebaseImplementation extends CAConnectionWithFire
    * @type {Array<TUserIdentityVersion>}
    * @memberof CAConnectionWithFirebaseImplementation
    */
-  protected readonly supportedVersions: Array<TUserIdentityVersion> = [CA_USER_IDENTITY_VERSIONS['01'], CA_USER_IDENTITY_VERSIONS['02']];
+  protected readonly supportedVersions: Array<TUserIdentityVersion> = [
+    CA_USER_IDENTITY_VERSIONS['01'],
+    CA_USER_IDENTITY_VERSIONS['02'],
+  ];
 
   /**
    * checks whether the identity version
@@ -160,7 +168,9 @@ export class CAConnectionWithFirebaseImplementation extends CAConnectionWithFire
    * @returns {(Promise<Error | null | TCentralAuthorityUserCryptoCredentials>)}
    * @memberof CAConnectionFirestoreUtilsCredentialsStrorage
    */
-  public async getUserCredentials(userId: string): Promise<Error | null | TCentralAuthorityUserCryptoCredentials> {
+  public async getUserCredentials(
+    userId: TSwarmMessageUserIdentifierSerialized
+  ): Promise<Error | null | TCentralAuthorityUserCryptoCredentials> {
     const { status } = this;
 
     if (status !== CA_CONNECTION_STATUS.DISCONNECTED) {
@@ -270,7 +280,10 @@ export class CAConnectionWithFirebaseImplementation extends CAConnectionWithFire
       // with a credentials
       authHandleResult = await this.returnOnAuthorizedResult(cryptoCredentials);
       if (firebaseCredentials.session) {
-        const setCredentialsInSessionResult = await this.setCurrentUserCryptoCredentialsInSession(firebaseCredentials.session, cryptoCredentials);
+        const setCredentialsInSessionResult = await this.setCurrentUserCryptoCredentialsInSession(
+          firebaseCredentials.session,
+          cryptoCredentials
+        );
 
         if (setCredentialsInSessionResult instanceof Error) {
           console.error('Failed to set the credentials in the user session', setCredentialsInSessionResult);
@@ -454,7 +467,9 @@ export class CAConnectionWithFirebaseImplementation extends CAConnectionWithFire
    *   >)}
    * @memberof CAConnectionWithFirebaseImplementation
    */
-  protected generateNewCryptoCredentialsForConfigurationProvidedV2 = async (): Promise<Error | TCentralAuthorityUserCryptoCredentials> => {
+  protected generateNewCryptoCredentialsForConfigurationProvidedV2 = async (): Promise<
+    Error | TCentralAuthorityUserCryptoCredentials
+  > => {
     const { databaseURL, currentUser } = this;
 
     if (!currentUser) {

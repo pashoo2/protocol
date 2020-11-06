@@ -186,7 +186,9 @@ export class SafeStorage<TYPE extends ESAFE_STORAGE_STORAGE_TYPE> extends getSta
     const { addStorageName } = SafeStorage;
     const dumpInterval = typeof dumpIntervalMs === 'number' ? dumpIntervalMs : DEFAULT_INTERVAL_MS;
     const storageTypeResolved =
-      storageType && Object.values(ESAFE_STORAGE_STORAGE_TYPE).includes(storageType) ? storageType : ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG;
+      storageType && Object.values(ESAFE_STORAGE_STORAGE_TYPE).includes(storageType)
+        ? storageType
+        : ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG;
 
     if (checkOptionsResult instanceof Error) {
       return checkOptionsResult;
@@ -472,7 +474,12 @@ export class SafeStorage<TYPE extends ESAFE_STORAGE_STORAGE_TYPE> extends getSta
       const setPrevStatus = this.setStatus(ESAFE_STORAGE_PROVIDER_STATUS.WORKING_WITH_STORAGE);
 
       while ((attempt += 1) < SAFE_STORAGE_ATTEMPTS_TO_SAVE_DATA_TO_STORAGE) {
-        if (!((secretStorageConnection as InstanceType<typeof SecretStorage>).set(storageName, dataStringified || '') instanceof Error)) {
+        if (
+          !(
+            (secretStorageConnection as InstanceType<typeof SecretStorage>).set(storageName, dataStringified || '') instanceof
+            Error
+          )
+        ) {
           setPrevStatus();
           return true;
         }
@@ -489,7 +496,9 @@ export class SafeStorage<TYPE extends ESAFE_STORAGE_STORAGE_TYPE> extends getSta
    * @param dataAppendLog
    * @returns {Error | string | false} - sating -stringified data, falser - no data, Error - an error has occurred
    */
-  async stringifyDataForStorage(dataAppendLog: TSafeStorageDataType[] | TSafeStorageStoredDataTypeKeyValue): Promise<string | null | Error> {
+  async stringifyDataForStorage(
+    dataAppendLog: TSafeStorageDataType[] | TSafeStorageStoredDataTypeKeyValue
+  ): Promise<string | null | Error> {
     if (this.checkIfEmptyData(dataAppendLog)) {
       return null;
     }
@@ -501,7 +510,9 @@ export class SafeStorage<TYPE extends ESAFE_STORAGE_STORAGE_TYPE> extends getSta
     }
   }
 
-  async writeOverallDataToMainTable(data?: string | null | TSafeStorageDataType[] | TSafeStorageStoredDataTypeKeyValue): Promise<boolean | Error> {
+  async writeOverallDataToMainTable(
+    data?: string | null | TSafeStorageDataType[] | TSafeStorageStoredDataTypeKeyValue
+  ): Promise<boolean | Error> {
     const { storageName } = this;
     let dataStringified;
     if (data && typeof data === 'object') {
@@ -587,11 +598,19 @@ export class SafeStorage<TYPE extends ESAFE_STORAGE_STORAGE_TYPE> extends getSta
     const { storageType } = this;
 
     if (storageType === ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG) {
-      this.tableData = (tableData || SAFE_STORAGE_APPEND_LOG_INITIAL_VALUE) as TSafeStorageStoredDataType<ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG>;
-      this.appendData = SAFE_STORAGE_APPEND_LOG_APPEND_DATA_INITIAL_VALUE as TSafeStorageStoredDataType<ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG>;
+      this.tableData = (tableData || SAFE_STORAGE_APPEND_LOG_INITIAL_VALUE) as TSafeStorageStoredDataType<
+        ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG
+      >;
+      this.appendData = SAFE_STORAGE_APPEND_LOG_APPEND_DATA_INITIAL_VALUE as TSafeStorageStoredDataType<
+        ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG
+      >;
     } else {
-      this.tableData = (tableData || SAFE_STORAGE_KEY_VALUE_INITIAL_VALUE) as TSafeStorageStoredDataType<ESAFE_STORAGE_STORAGE_TYPE.KEY_VALUE>;
-      this.appendData = SAFE_STORAGE_KEY_VALUE_APPEND_DATA_INITIAL_VALUE as TSafeStorageStoredDataType<ESAFE_STORAGE_STORAGE_TYPE.KEY_VALUE>;
+      this.tableData = (tableData || SAFE_STORAGE_KEY_VALUE_INITIAL_VALUE) as TSafeStorageStoredDataType<
+        ESAFE_STORAGE_STORAGE_TYPE.KEY_VALUE
+      >;
+      this.appendData = SAFE_STORAGE_KEY_VALUE_APPEND_DATA_INITIAL_VALUE as TSafeStorageStoredDataType<
+        ESAFE_STORAGE_STORAGE_TYPE.KEY_VALUE
+      >;
     }
   }
 
@@ -618,7 +637,9 @@ export class SafeStorage<TYPE extends ESAFE_STORAGE_STORAGE_TYPE> extends getSta
     }
   }
 
-  checkIfEmptyData(data: TSafeStorageStoredDataType<ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG | ESAFE_STORAGE_STORAGE_TYPE.KEY_VALUE>): boolean {
+  checkIfEmptyData(
+    data: TSafeStorageStoredDataType<ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG | ESAFE_STORAGE_STORAGE_TYPE.KEY_VALUE>
+  ): boolean {
     if (data instanceof Array && !data.length) {
       return true;
     }
@@ -667,7 +688,10 @@ export class SafeStorage<TYPE extends ESAFE_STORAGE_STORAGE_TYPE> extends getSta
     if (writeDumpResult instanceof Error) {
       const { appendData } = this;
 
-      this.appendData = [...(appendData as TSafeStorageStoredDataTypeAppendLog), ...(this.appendDataTemp as TSafeStorageStoredDataTypeAppendLog)];
+      this.appendData = [
+        ...(appendData as TSafeStorageStoredDataTypeAppendLog),
+        ...(this.appendDataTemp as TSafeStorageStoredDataTypeAppendLog),
+      ];
       this.appendDataTemp = [];
       return writeDumpResult;
     }
@@ -819,7 +843,10 @@ export class SafeStorage<TYPE extends ESAFE_STORAGE_STORAGE_TYPE> extends getSta
     return data != null ? JSON.parse(JSON.stringify(data)) : undefined;
   }
 
-  async setDataInAppendLogStorage(data: TSafeStorageDataTypesAvail | undefined | null, key?: TSafeStorageKeyType): Promise<Error | boolean> {
+  async setDataInAppendLogStorage(
+    data: TSafeStorageDataTypesAvail | undefined | null,
+    key?: TSafeStorageKeyType
+  ): Promise<Error | boolean> {
     if (key && typeof key !== 'number') {
       const err = new Error(`For append log storage only a numeric keys are available but ${typeof key} type key was given`);
 
@@ -850,7 +877,10 @@ export class SafeStorage<TYPE extends ESAFE_STORAGE_STORAGE_TYPE> extends getSta
    * then set the data given
    * by the last index
    */
-  async setDataInKeyValueStorage(data: TSafeStorageDataTypesAvail | undefined | null, key?: TSafeStorageKeyType): Promise<Error | boolean> {
+  async setDataInKeyValueStorage(
+    data: TSafeStorageDataTypesAvail | undefined | null,
+    key?: TSafeStorageKeyType
+  ): Promise<Error | boolean> {
     if (typeof key !== 'string') {
       const err = new Error(`For key value storage only a string keys are available but ${typeof key} type key was given`);
 

@@ -25,7 +25,10 @@ export const checkIsCryptoKeyPairsExportedAsString = (v: any): boolean => {
  */
 export const checkIsCryptoKeyPairs = (keyPairs: any, checkPrivateKeys: boolean = true): keyPairs is TCACryptoKeyPairs => {
   if (keyPairs && typeof keyPairs === 'object') {
-    const { [CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME]: encryptionKeyPair, [CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME]: signKeyPair } = keyPairs;
+    const {
+      [CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME]: encryptionKeyPair,
+      [CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME]: signKeyPair,
+    } = keyPairs;
 
     if (!isCryptoKeyPair(encryptionKeyPair, checkPrivateKeys)) {
       console.error('Encryption key pair is not valid');

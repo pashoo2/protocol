@@ -7,7 +7,12 @@ export const checkIsStorageProviderInstance = (storageProviderInstance: any): Er
 
   const { connect, get, set, disconnect } = storageProviderInstance;
 
-  if (typeof connect !== 'function' || typeof get !== 'function' || typeof set !== 'function' || typeof disconnect !== 'function') {
+  if (
+    typeof connect !== 'function' ||
+    typeof get !== 'function' ||
+    typeof set !== 'function' ||
+    typeof disconnect !== 'function'
+  ) {
     return new Error('The instance has a wrong implemntation of a StorageProvider interface');
   }
   return true;

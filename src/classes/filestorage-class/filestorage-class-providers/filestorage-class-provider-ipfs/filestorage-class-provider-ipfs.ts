@@ -1,5 +1,8 @@
 import { IFileStorageService, TFileStorageFileAddress } from '../../filestorage-class.types';
-import { IFileStorageClassProviderIPFSOptions, IFileStorageClassProviderIPFSFileAddOptions } from './filestorage-class-provider-ipfs.types';
+import {
+  IFileStorageClassProviderIPFSOptions,
+  IFileStorageClassProviderIPFSFileAddOptions,
+} from './filestorage-class-provider-ipfs.types';
 import { FILE_STORAGE_PROVIDER_IPFS_IDENTIFIER, FILE_STORAGE_PROVIDER_IPFS_TYPE } from './filestorage-class-provider-ipfs.const';
 import { FILE_STORAGE_SERVICE_STATUS, FILE_STORAGE_SERVICE_TYPE } from '../../filestorage-class.const';
 import { TFileStorageFile } from '../../filestorage-class.types';
@@ -107,7 +110,10 @@ export class FileStorageClassProviderIPFS implements IFileStorageService<FILE_ST
     );
 
     try {
-      files = await Promise.race([ipfs?.add(this.getFileObject(filename, file), opts), timeout(FILE_STORAGE_PROVIDER_IPFS_FILE_UPLOAD_TIMEOUT_MS)]);
+      files = await Promise.race([
+        ipfs?.add(this.getFileObject(filename, file), opts),
+        timeout(FILE_STORAGE_PROVIDER_IPFS_FILE_UPLOAD_TIMEOUT_MS),
+      ]);
       await pending;
     } catch (err) {
       console.error(err);

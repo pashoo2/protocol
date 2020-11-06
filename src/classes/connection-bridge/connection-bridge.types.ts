@@ -37,7 +37,9 @@ export interface IConnectionBridgeOptionsAuth<CD extends boolean = false> {
    *
    * @type {ICentralAuthorityOptions['user']['credentials']}
    */
-  credentials: CD extends true ? IConnectionBridgeOptionsAuthCredentials : IConnectionBridgeOptionsAuthCredentials | undefined | never;
+  credentials: CD extends true
+    ? IConnectionBridgeOptionsAuthCredentials
+    : IConnectionBridgeOptionsAuthCredentials | undefined | never;
   session?: ISensitiveDataSessionStorageOptions;
   /**
    * this is list of auth providers will be used to authorize
@@ -57,7 +59,11 @@ export interface IConnectionBridgeStorageOptions<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  ConnectorBasic extends TConnectionBridgeSwarmStoreConnectorBasic<P, T, DbType> = TConnectionBridgeSwarmStoreConnectorBasic<P, T, DbType>
+  ConnectorBasic extends TConnectionBridgeSwarmStoreConnectorBasic<P, T, DbType> = TConnectionBridgeSwarmStoreConnectorBasic<
+    P,
+    T,
+    DbType
+  >
 > extends Omit<
     ISwarmMessageStoreOptions<P, T, DbType, ConnectorBasic>,
     'userId' | 'credentials' | 'messageConstructors' | 'providerConnectionOptions' | 'databasesListStorage'
@@ -73,7 +79,11 @@ export interface IConnectionBridgeOptions<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  ConnectorBasic extends TConnectionBridgeSwarmStoreConnectorBasic<P, T, DbType> = TConnectionBridgeSwarmStoreConnectorBasic<P, T, DbType>,
+  ConnectorBasic extends TConnectionBridgeSwarmStoreConnectorBasic<P, T, DbType> = TConnectionBridgeSwarmStoreConnectorBasic<
+    P,
+    T,
+    DbType
+  >,
   CD extends boolean = false
 > {
   auth: IConnectionBridgeOptionsAuth<CD>;

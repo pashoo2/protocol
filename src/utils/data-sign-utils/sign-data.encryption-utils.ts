@@ -1,6 +1,10 @@
 import { cryptoModuleDataSign } from './main.data-sign-utils.const';
 import { DATA_SIGN_CRYPTO_UTIL_DATA_SIGN_AND_VERIFY_PARAMS, DATA_SIGN_CRYPTO_UTIL_SIGN_KEY_TYPE } from './data-sign-utils.const';
-import { TDATA_SIGN_UTIL_SIGN_DATA_TYPES, TDATA_SIGN_UTIL_SIGN_DATA_TYPES_NATIVE, TDATA_SIGN_UTIL_SIGN_KEY_TYPES } from './data-sign-utils.types';
+import {
+  TDATA_SIGN_UTIL_SIGN_DATA_TYPES,
+  TDATA_SIGN_UTIL_SIGN_DATA_TYPES_NATIVE,
+  TDATA_SIGN_UTIL_SIGN_KEY_TYPES,
+} from './data-sign-utils.types';
 import { dataSignGetKeyOfType, dataSignExportKey } from './keys.data-sign-utils';
 import { convertToTypedArray, typedArrayToString } from 'utils/typed-array-utils';
 

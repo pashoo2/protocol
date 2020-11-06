@@ -40,7 +40,9 @@ export class AsyncQueueClassBase extends TAsyncQueueBaseClass {
     if (!this.runPromiseProvider) {
       throw new Error('runPromiseProvider is not defined');
     }
-    return Promise.all(promisePendingBatch.map(this.runPromiseProvider)).catch((err) => new Array(promisePendingBatch.length).fill(err)); // fill with an error if the batch was rejected
+    return Promise.all(promisePendingBatch.map(this.runPromiseProvider)).catch((err) =>
+      new Array(promisePendingBatch.length).fill(err)
+    ); // fill with an error if the batch was rejected
   }
 
   protected start = async () => {
@@ -70,7 +72,9 @@ export class AsyncQueueClassBase extends TAsyncQueueBaseClass {
   }
   protected createPromise<T>(promiseProvider: any): Promise<T | Error>;
   protected createPromise<T>(promiseProvider: any[]): Promise<Array<T | Error>>;
-  protected createPromise<T>(promiseProvider: TAsyncQueueBaseClassPromiseProviderPending<T>): Promise<Array<T | Error> | T | Error> {
+  protected createPromise<T>(
+    promiseProvider: TAsyncQueueBaseClassPromiseProviderPending<T>
+  ): Promise<Array<T | Error> | T | Error> {
     let result;
 
     if (!this.runPromiseProvider) {

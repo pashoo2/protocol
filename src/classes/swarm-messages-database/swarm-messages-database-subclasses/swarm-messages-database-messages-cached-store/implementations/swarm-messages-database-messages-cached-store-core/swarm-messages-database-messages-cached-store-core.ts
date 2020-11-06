@@ -5,7 +5,10 @@ import {
   TSwarmMessagesDatabaseMessagesCachedStoreMessagesMetaHash,
 } from '../../swarm-messages-database-messages-cached-store.types';
 import { ISwarmMessagesDatabaseMessagesCacheMessageDescription } from '../../../swarm-messages-database-cache/swarm-messages-database-cache.types';
-import { ISwarmMessagesDatabaseMesssageMeta, TSwarmMessageDatabaseMessagesCached } from '../../../../swarm-messages-database.types';
+import {
+  ISwarmMessagesDatabaseMesssageMeta,
+  TSwarmMessageDatabaseMessagesCached,
+} from '../../../../swarm-messages-database.types';
 import {
   TSwarmStoreDatabaseType,
   TSwarmStoreDatabaseEntityKey,
@@ -104,11 +107,15 @@ export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
     return true;
   }
 
-  protected _getMessageAddressFromMeta(meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>): TSwarmStoreDatabaseEntityAddress<P> | undefined {
+  protected _getMessageAddressFromMeta(
+    meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>
+  ): TSwarmStoreDatabaseEntityAddress<P> | undefined {
     return meta.messageUniqAddress;
   }
 
-  protected _getMessageKeyFromMeta(meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>): TSwarmStoreDatabaseEntityKey<P> | undefined {
+  protected _getMessageKeyFromMeta(
+    meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>
+  ): TSwarmStoreDatabaseEntityKey<P> | undefined {
     return meta.key;
   }
 
@@ -146,7 +153,9 @@ export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
     if (entryFirst === entrySecond) {
       return;
     }
-    if ((entryFirst && this._getMetaHash(entryFirst.messageMeta)) !== (entrySecond && this._getMetaHash(entrySecond.messageMeta))) {
+    if (
+      (entryFirst && this._getMetaHash(entryFirst.messageMeta)) !== (entrySecond && this._getMetaHash(entrySecond.messageMeta))
+    ) {
       this._incMessagesInCacheVersion();
     }
     if (whetherSwarmMessagesDecryptedAreEqual(entryFirst?.messageEntry, entrySecond?.messageEntry)) {

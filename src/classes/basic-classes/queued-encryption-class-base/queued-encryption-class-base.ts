@@ -1,4 +1,7 @@
-import { TCRYPTO_UTIL_ENCRYPT_DATA_TYPES, TCRYPTO_UTIL_DECRYPT_DATA_TYPES } from '../../../utils/encryption-utils/crypto-utils.types';
+import {
+  TCRYPTO_UTIL_ENCRYPT_DATA_TYPES,
+  TCRYPTO_UTIL_DECRYPT_DATA_TYPES,
+} from '../../../utils/encryption-utils/crypto-utils.types';
 import { AsyncQueueClassBase } from '../async-queue-class-base/async-queue-class-base';
 import { IAsyncQueueBaseClassOptions } from '../async-queue-class-base/async-queue-class-base.types';
 import { isCryptoKeyDataEncryption, isCryptoKeyDataDecryption } from '../../../utils/encryption-keys-utils/encryption-keys-utils';

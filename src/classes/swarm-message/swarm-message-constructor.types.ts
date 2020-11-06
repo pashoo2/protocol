@@ -244,9 +244,12 @@ export interface ISwarmMessageConstructor {
   construct(message: TSwarmMessageSerialized): Promise<TSwarmMessageInstance>;
 }
 
-export type TSwarmMessageConstructorArgumentBody = Omit<ISwarmMessageBodyDeserialized, 'ts'> & Partial<ISwarmMessageBodyDeserialized>;
+export type TSwarmMessageConstructorArgumentBody = Omit<ISwarmMessageBodyDeserialized, 'ts'> &
+  Partial<ISwarmMessageBodyDeserialized>;
 
-export type TSwarmMessageConstructorBodyMessage = TSwarmMessageConstructorArgumentBodyPrivate | TSwarmMessageConstructorArgumentBody;
+export type TSwarmMessageConstructorBodyMessage =
+  | TSwarmMessageConstructorArgumentBodyPrivate
+  | TSwarmMessageConstructorArgumentBody;
 
 // construct message from an object which represents message's body
 export interface ISwarmMessageConstructor {

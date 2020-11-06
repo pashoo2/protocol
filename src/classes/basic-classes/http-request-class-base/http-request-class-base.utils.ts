@@ -23,7 +23,9 @@ export const objectToUrlEncodedString = (obj: IParamsObject): string => {
     } else {
       paramValueCasted = String(paramValue);
     }
-    return `${querystring}${querystring.length ? '&' : ''}${encodeURIComponent(paramName)}=${encodeURIComponent(paramValueCasted)}`;
+    return `${querystring}${querystring.length ? '&' : ''}${encodeURIComponent(paramName)}=${encodeURIComponent(
+      paramValueCasted
+    )}`;
   }, '');
 };
 

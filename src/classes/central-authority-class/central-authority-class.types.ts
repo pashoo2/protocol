@@ -1,7 +1,13 @@
 import { TCentralAuthorityUserCryptoCredentials } from './central-authority-class-types/central-authority-class-types-crypto-credentials';
 import { TCAUserIdentityRawTypes } from './central-authority-class-user-identity/central-authority-class-user-identity.types';
-import { ICentralAuthorityUserProfile, TCentralAuthorityUserIdentity } from './central-authority-class-types/central-authority-class-types-common';
-import { TCAAuthProviderIdentity, ICAConnectionSignUpCredentials } from './central-authority-connections/central-authority-connections.types';
+import {
+  ICentralAuthorityUserProfile,
+  TCentralAuthorityUserIdentity,
+} from './central-authority-class-types/central-authority-class-types-common';
+import {
+  TCAAuthProviderIdentity,
+  ICAConnectionSignUpCredentials,
+} from './central-authority-connections/central-authority-connections.types';
 import { IAuthProviderConnectionConfiguration } from 'classes/central-authority-class/central-authority-connections/central-authority-connections-pool/central-authority-connections-pool.types';
 import { ISecretStoreCredentialsSession } from 'classes/secret-storage-class';
 

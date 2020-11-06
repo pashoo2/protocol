@@ -31,7 +31,10 @@ export const checkIsValidCryptoCredentials = (
     return false;
   }
 
-  const { [CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeys, [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: userIdentity } = cryptoCredentials;
+  const {
+    [CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeys,
+    [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: userIdentity,
+  } = cryptoCredentials;
 
   if (!cryptoKeys) {
     console.error('There is a wrong format of the crypto credentials value, case a crypto keys was not found');
@@ -66,7 +69,10 @@ export const checkIsValidCryptoCredentialsWithFunc = (
     return false;
   }
 
-  const { [CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeys, [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: userIdentity } = cryptoCredentials;
+  const {
+    [CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeys,
+    [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: userIdentity,
+  } = cryptoCredentials;
 
   if (!cryptoKeys) {
     console.error('There is a wrong format of the crypto credentials value, case a crypto keys was not found');
@@ -81,7 +87,9 @@ export const checkIsValidCryptoCredentialsWithFunc = (
     return false;
   }
   if (!credentialsValidationFunction(cryptoKeys)) {
-    console.error('There is a wrong format of the crypto credentials value, cause the crypto keys exported as a string value have a wrong type');
+    console.error(
+      'There is a wrong format of the crypto credentials value, cause the crypto keys exported as a string value have a wrong type'
+    );
     return false;
   }
   return true;

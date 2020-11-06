@@ -1,6 +1,9 @@
 import { FILE_STORAGE_SERVICE_STATUS, FILE_STORAGE_SERVICE_TYPE } from '../../filestorage-class.const';
 import HttpRequest from 'classes/basic-classes/http-request-class-base/http-request-class-base';
-import { IFileStorageClassProviderHTTPFileGetOptions, IFileStorageClassProviderHTTPFileAddOptions } from './filestorage-class-provider-http.types';
+import {
+  IFileStorageClassProviderHTTPFileGetOptions,
+  IFileStorageClassProviderHTTPFileAddOptions,
+} from './filestorage-class-provider-http.types';
 import { FILE_STORAGE_PROVIDER_HTTP_TYPE, FILE_STORAGE_PROVIDER_HTTP_IDENTIFIER } from './filestorage-class-provider-http.const';
 import { HTTP_REQUEST_MODE } from 'classes/basic-classes/http-request-class-base';
 import { downloadFileByUrl } from 'utils/files-utils/files-utils-download';

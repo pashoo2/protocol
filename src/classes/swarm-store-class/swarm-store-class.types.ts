@@ -105,13 +105,17 @@ export type TSwarmStoreDatabaseLoadMethodAnswer<P extends ESwarmStoreConnector.O
   ? ISwarmStoreConnectorRequestLoadAnswer
   : never;
 
-export type TSwarmStoreDatabaseCloseMethodAnswer<P extends ESwarmStoreConnector.OrbitDB> = P extends ESwarmStoreConnector.OrbitDB ? void : never;
+export type TSwarmStoreDatabaseCloseMethodAnswer<P extends ESwarmStoreConnector.OrbitDB> = P extends ESwarmStoreConnector.OrbitDB
+  ? void
+  : never;
 
 // arguments avalilable for a database
 export type TSwarmStoreDatabaseIteratorMethodAnswer<
   P extends ESwarmStoreConnector,
   T extends TSwarmStoreValueTypes<P>
-> = P extends ESwarmStoreConnector.OrbitDB ? Error | Array<ISwarmStoreConnectorOrbitDbDatabaseValue<T> | Error | undefined> : never;
+> = P extends ESwarmStoreConnector.OrbitDB
+  ? Error | Array<ISwarmStoreConnectorOrbitDbDatabaseValue<T> | Error | undefined>
+  : never;
 
 // TODO - typescript issue
 // string cannot be assigned to P extends ESwarmStoreConnector.OrbitDB ? TSwarmMessageSerialized : any;
@@ -156,9 +160,10 @@ export type TSwarmStoreDatabaseEntityAddress<P extends ESwarmStoreConnector> = P
  * @export
  * @interface ISwarmStoreDatabaseOptions
  */
-export type TSwarmStoreDatabaseOptions<P extends ESwarmStoreConnector, T extends TSwarmStoreValueTypes<P>> = P extends ESwarmStoreConnector.OrbitDB
-  ? ISwarmStoreConnectorOrbitDbDatabaseOptions<T>
-  : ISwarmStoreDatabaseBaseOptions;
+export type TSwarmStoreDatabaseOptions<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmStoreValueTypes<P>
+> = P extends ESwarmStoreConnector.OrbitDB ? ISwarmStoreConnectorOrbitDbDatabaseOptions<T> : ISwarmStoreDatabaseBaseOptions;
 
 /**
  * options of swarm databases want to connect
@@ -285,19 +290,23 @@ export interface ISwarmStoreOptionsWithConnectorFabric<
  * @export
  * @interface ISwarmStoreDatabasesStatus
  */
-export interface ISwarmStoreDatabasesStatuses extends Record<string, ESwarmStoreDatabaseStatus | typeof SWARM_STORE_DATABASE_STATUS_ABSENT> {}
+export interface ISwarmStoreDatabasesStatuses
+  extends Record<string, ESwarmStoreDatabaseStatus | typeof SWARM_STORE_DATABASE_STATUS_ABSENT> {}
 
 // methods available for a database providers
 export type TSwarmStoreDatabaseMethod<P extends ESwarmStoreConnector> = P extends ESwarmStoreConnector.OrbitDB
   ? TSwarmStoreConnectorOrbitDbDatabaseMethodNames
   : never;
 
-export type TSwarmStoreDatabaseRequestMethodEntitiesReturnType<P extends ESwarmStoreConnector, ItemType extends TSwarmStoreValueTypes<P>> =
-  | Error
-  | TSwarmStoreDatabaseMethodAnswer<P, ItemType>
-  | TSwarmStoreDatabaseIteratorMethodAnswer<P, ItemType>;
+export type TSwarmStoreDatabaseRequestMethodEntitiesReturnType<
+  P extends ESwarmStoreConnector,
+  ItemType extends TSwarmStoreValueTypes<P>
+> = Error | TSwarmStoreDatabaseMethodAnswer<P, ItemType> | TSwarmStoreDatabaseIteratorMethodAnswer<P, ItemType>;
 
-export type TSwarmStoreDatabaseRequestMethodReturnType<P extends ESwarmStoreConnector, ItemType extends TSwarmStoreValueTypes<P>> =
+export type TSwarmStoreDatabaseRequestMethodReturnType<
+  P extends ESwarmStoreConnector,
+  ItemType extends TSwarmStoreValueTypes<P>
+> =
   | Error
   | TSwarmStoreDatabaseLoadMethodAnswer<P>
   | TSwarmStoreDatabaseCloseMethodAnswer<P>
@@ -416,7 +425,9 @@ export interface ISwarmStoreConnectorBasic<
    * @returns {(Promise<E): TSwarmMessageStoreConnectReturnType<P, T, DbType, ConnectorBasic, ConnectorMain, O> {rror | void>)}
    * @memberof ISwarmStoreConnectorOrbitDBDatabase
    */
-  [ESwarmStoreConnectorOrbitDbDatabaseMethodNames.remove](keyOrEntryAddress: TSwarmStoreConnectorOrbitDbDatabaseEntityIndex): Promise<Error | void>;
+  [ESwarmStoreConnectorOrbitDbDatabaseMethodNames.remove](
+    keyOrEntryAddress: TSwarmStoreConnectorOrbitDbDatabaseEntityIndex
+  ): Promise<Error | void>;
 
   /**
    * Iterate over the database values which are follows conditions

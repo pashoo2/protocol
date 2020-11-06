@@ -18,24 +18,24 @@ export class SwarmStoreWithEntriesCount<
     ItemType extends TSwarmStoreValueTypes<P>,
     DbType extends TSwarmStoreDatabaseType<P>,
     E extends ISwarmStoreEvents = ISwarmStoreEvents,
-    ConnectorBasic extends ISwarmStoreConnectorBasicWithEntriesCount<P, ItemType, DbType> = ISwarmStoreConnectorBasicWithEntriesCount<
+    ConnectorBasic extends ISwarmStoreConnectorBasicWithEntriesCount<
       P,
       ItemType,
       DbType
-    >,
-    ConnectorMain extends ISwarmStoreConnectorWithEntriesCount<P, ItemType, DbType, ConnectorBasic> = ISwarmStoreConnectorWithEntriesCount<
+    > = ISwarmStoreConnectorBasicWithEntriesCount<P, ItemType, DbType>,
+    ConnectorMain extends ISwarmStoreConnectorWithEntriesCount<
       P,
       ItemType,
       DbType,
       ConnectorBasic
-    >,
-    Options extends ISwarmStoreOptionsWithConnectorFabric<P, ItemType, DbType, ConnectorBasic, ConnectorMain> = ISwarmStoreOptionsWithConnectorFabric<
+    > = ISwarmStoreConnectorWithEntriesCount<P, ItemType, DbType, ConnectorBasic>,
+    Options extends ISwarmStoreOptionsWithConnectorFabric<
       P,
       ItemType,
       DbType,
       ConnectorBasic,
       ConnectorMain
-    >
+    > = ISwarmStoreOptionsWithConnectorFabric<P, ItemType, DbType, ConnectorBasic, ConnectorMain>
   >
   extends SwarmStore<P, ItemType, DbType, E, ConnectorBasic>
   implements ISwarmStoreWithEntriesCount<P, ItemType, DbType, ConnectorBasic, ConnectorMain, Options> {

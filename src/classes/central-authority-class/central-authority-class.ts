@@ -2,7 +2,10 @@ import { checkIsError } from '../../utils/common-utils/common-utils-check-value'
 import { dataCachingUtilsCachingDecorator } from '../../utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator';
 import { validateVerboseBySchema } from './../../utils/validation-utils/validation-utils';
 import { getErrorScopedClass } from './../basic-classes/error-extended-scoped-class-base/error-extended-scoped-class-base';
-import { ICentralAuthorityUserProfile, TCentralAuthorityUserIdentity } from './central-authority-class-types/central-authority-class-types-common';
+import {
+  ICentralAuthorityUserProfile,
+  TCentralAuthorityUserIdentity,
+} from './central-authority-class-types/central-authority-class-types-common';
 import { TCentralAuthorityUserCryptoCredentials } from './central-authority-class-types/central-authority-class-types-crypto-credentials';
 import {
   TCAUserIdentityRawTypes,
@@ -26,7 +29,10 @@ import {
   ICAConnectionPoolAuthResult,
   ICAConnectionsPoolOptions,
 } from './central-authority-connections/central-authority-connections-pool/central-authority-connections-pool.types';
-import { ICAConnectionSignUpCredentials, TCAAuthProviderIdentity } from './central-authority-connections/central-authority-connections.types';
+import {
+  ICAConnectionSignUpCredentials,
+  TCAAuthProviderIdentity,
+} from './central-authority-connections/central-authority-connections.types';
 import { CentralAuthorityStorageCurrentUserCredentials } from './central-authority-storage-local/central-authority-storage-current-user-auth/central-authority-storage-current-user-credentials/central-authority-storage-current-user-credentials';
 import {
   ICAStorageCurrentUserCredentials,
@@ -199,7 +205,9 @@ export class CentralAuthority implements ICentralAuthority {
    * @returns {(Promise<TCentralAuthorityUserCryptoCredentials | Error | null>)}
    * @memberof CentralAuthority
    */
-  public async getSwarmUserCredentials(identity: TCAUserIdentityRawTypes): Promise<TCentralAuthorityUserCryptoCredentials | Error | null> {
+  public async getSwarmUserCredentials(
+    identity: TCAUserIdentityRawTypes
+  ): Promise<TCentralAuthorityUserCryptoCredentials | Error | null> {
     if (!this.isRunning) {
       return this.errorNotRunning;
     }
@@ -264,7 +272,9 @@ export class CentralAuthority implements ICentralAuthority {
     if (userCryptoCredentials instanceof Error) {
       return userCryptoCredentials;
     }
-    return getUserIdentityFromCryptoCredentials(userCryptoCredentials) || new CAError('there is no credentials of the current user');
+    return (
+      getUserIdentityFromCryptoCredentials(userCryptoCredentials) || new CAError('there is no credentials of the current user')
+    );
   }
   /**
    * retutn a crypto key pair of the current user
@@ -279,7 +289,10 @@ export class CentralAuthority implements ICentralAuthority {
     if (userCryptoCredentials instanceof Error) {
       return userCryptoCredentials;
     }
-    return getDataEncryptionKeyPairByCryptoCredentials(userCryptoCredentials) || new CAError('there is no credentials of the current user');
+    return (
+      getDataEncryptionKeyPairByCryptoCredentials(userCryptoCredentials) ||
+      new CAError('there is no credentials of the current user')
+    );
   }
 
   /**
@@ -295,7 +308,9 @@ export class CentralAuthority implements ICentralAuthority {
     if (userCryptoCredentials instanceof Error) {
       return userCryptoCredentials;
     }
-    return getDataSignKeyPairByCryptoCredentials(userCryptoCredentials) || new CAError('there is no credentials of the current user');
+    return (
+      getDataSignKeyPairByCryptoCredentials(userCryptoCredentials) || new CAError('there is no credentials of the current user')
+    );
   }
 
   /**
@@ -555,7 +570,9 @@ export class CentralAuthority implements ICentralAuthority {
     this.setUserOnAuthResult(userAuthResult);
   }
 
-  protected getOptionsForCAStorageCurrentUserCredentials(optionsUser: ICentralAuthorityUser): ICAStorageCurrentUserCredentialsOptions {
+  protected getOptionsForCAStorageCurrentUserCredentials(
+    optionsUser: ICentralAuthorityUser
+  ): ICAStorageCurrentUserCredentialsOptions {
     const { credentials } = optionsUser;
     let userCredentials: ISecretStoreCredentialsSession | ISecretStoreCredentials;
 
@@ -587,7 +604,9 @@ export class CentralAuthority implements ICentralAuthority {
   protected async connectToUserCredentialsStorage(optionsUser: ICentralAuthorityUser): Promise<Error | void> {
     const caStorageCurrentUserCredentials = new CentralAuthorityStorageCurrentUserCredentials();
     const optionsCAStorageCurrentUserCredentials = this.getOptionsForCAStorageCurrentUserCredentials(optionsUser);
-    const caStorageCurrentUserCredentialsConnectionResult = await caStorageCurrentUserCredentials.connect(optionsCAStorageCurrentUserCredentials);
+    const caStorageCurrentUserCredentialsConnectionResult = await caStorageCurrentUserCredentials.connect(
+      optionsCAStorageCurrentUserCredentials
+    );
 
     if (caStorageCurrentUserCredentialsConnectionResult instanceof Error) {
       console.error(caStorageCurrentUserCredentialsConnectionResult);
@@ -629,13 +648,17 @@ export class CentralAuthority implements ICentralAuthority {
       return new CAError('There is no connection to the storage of the user credntials');
     }
     if (!this.authProviderId) {
-      return new CAError("The auth provider's identifier, the user was authorized on, is not defined to check the user's crypto credntials for it");
+      return new CAError(
+        "The auth provider's identifier, the user was authorized on, is not defined to check the user's crypto credntials for it"
+      );
     }
     if (!this.remoteProvidedUserCryptoCredntials) {
       return new CAError('The user crypto credentials returned by the auth provider are not defined');
     }
 
-    let cryptoCredentials = await this.connectionStorageCurrentUserCrdentials.get(this.remoteProvidedUserCryptoCredntials.userIdentity);
+    let cryptoCredentials = await this.connectionStorageCurrentUserCrdentials.get(
+      this.remoteProvidedUserCryptoCredntials.userIdentity
+    );
 
     if (cryptoCredentials instanceof Error) {
       console.error(cryptoCredentials);
@@ -673,18 +696,25 @@ export class CentralAuthority implements ICentralAuthority {
       return new CAError('There is no credntials for the user provided by the auth provider the user is authentificated on');
     }
     if (!this.locallyStoredUserCryptoCredntials) {
-      console.warn('There is no crypto credentials stored for the user identity and the current auth provider id. Nothing to check.');
+      console.warn(
+        'There is no crypto credentials stored for the user identity and the current auth provider id. Nothing to check.'
+      );
       return;
     }
 
-    const comparationResult = await compareCryptoCredentials(this.locallyStoredUserCryptoCredntials, this.remoteProvidedUserCryptoCredntials);
+    const comparationResult = await compareCryptoCredentials(
+      this.locallyStoredUserCryptoCredntials,
+      this.remoteProvidedUserCryptoCredntials
+    );
 
     if (comparationResult instanceof Error) {
       console.error(comparationResult);
       return new CAError('Failed to compare crypto credentials stored locally and got by the auth provider');
     }
     if (comparationResult !== true) {
-      return new CAError('The crypto credentials stored in the credentials storage does not equals to the credentials provided be the auth provider');
+      return new CAError(
+        'The crypto credentials stored in the credentials storage does not equals to the credentials provided be the auth provider'
+      );
     }
   }
 
@@ -697,7 +727,11 @@ export class CentralAuthority implements ICentralAuthority {
    * @memberof CentralAuthority
    */
   protected async storeCryptoCredentialsFromAuthProvider(): Promise<Error | void> {
-    const { connectionStorageCurrentUserCrdentials, locallyStoredUserCryptoCredntials, remoteProvidedUserCryptoCredntials } = this;
+    const {
+      connectionStorageCurrentUserCrdentials,
+      locallyStoredUserCryptoCredntials,
+      remoteProvidedUserCryptoCredntials,
+    } = this;
 
     if (locallyStoredUserCryptoCredntials) {
       console.warn('storeCryptoCredentialsFromAuthProvider:: locally stored credentials for the current user is already exists');
@@ -804,7 +838,9 @@ export class CentralAuthority implements ICentralAuthority {
    * @memberof CentralAuthority
    */
   @dataCachingUtilsCachingDecorator(CENTRAL_AUTHORITY_CLASS_SWARM_CREDENTIALS_SWARM_USERS_CREDENTIALS_CACHE_CAPACITY)
-  protected async readSwarmUserCredentials(identity: TCAUserIdentityRawTypes): Promise<TCentralAuthorityUserCryptoCredentials | Error | null> {
+  protected async readSwarmUserCredentials(
+    identity: TCAUserIdentityRawTypes
+  ): Promise<TCentralAuthorityUserCryptoCredentials | Error | null> {
     const { connectionSwarmCredentialsProvider } = this;
 
     if (!connectionSwarmCredentialsProvider) {

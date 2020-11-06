@@ -34,7 +34,10 @@ export const getValidatorByIdentityVersion = (identityVersion: string): IUserIde
   return new Error(`There is no validator for the identity version ${identityVersion}`);
 };
 
-export const validateUserIdentityDescriptionVersion = (identityVersion: string, userIdentityDescription: any): boolean | Error => {
+export const validateUserIdentityDescriptionVersion = (
+  identityVersion: string,
+  userIdentityDescription: any
+): boolean | Error => {
   const validatorForVersion = getValidatorByIdentityVersion(identityVersion);
 
   if (validatorForVersion instanceof Error) {

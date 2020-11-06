@@ -40,7 +40,10 @@ export type TSecretStorageAuthOptionsCredentials = ISecretStoreCredentials | ISe
 
 export type TSecretStorageAuthOptions = TSecretStorageAuthOptionsCredentials | ISecretStoreCredentialsCryptoKey;
 
-export type TSecretStorageAuthorizeCredentials = ISecretStoreCredentials | ISecretStoreCredentialsSession | ISecretStoreCredentialsCryptoKey;
+export type TSecretStorageAuthorizeCredentials =
+  | ISecretStoreCredentials
+  | ISecretStoreCredentialsSession
+  | ISecretStoreCredentialsCryptoKey;
 
 export interface ISecretStorage extends IStorageCommon {
   // returns true if connected succesfully to

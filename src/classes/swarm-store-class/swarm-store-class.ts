@@ -312,7 +312,10 @@ export class SwarmStore<
     assert(typeof options.directory === 'string', 'Directory must be a string if specified');
     assert(options.provider, 'Provider must be specified');
     assert(options.connectorFabric, 'Connector fabric must be specified');
-    assert(Object.values(ESwarmStoreConnector).includes(options.provider), `There is unknown provider specified "${options.provider}"`);
+    assert(
+      Object.values(ESwarmStoreConnector).includes(options.provider),
+      `There is unknown provider specified "${options.provider}"`
+    );
     assert(
       options.providerConnectionOptions && typeof options.providerConnectionOptions === 'object',
       'Options specifically for the provider must be set and be an object'
@@ -446,7 +449,8 @@ export class SwarmStore<
    * @throws
    */
   protected async preloadOpenedDatabasesList(): Promise<void> {
-    const databasesOptionsList = this.databasesLisPersistantKey && (await this.databasePersistantListStorage?.get(this.databasesLisPersistantKey));
+    const databasesOptionsList =
+      this.databasesLisPersistantKey && (await this.databasePersistantListStorage?.get(this.databasesLisPersistantKey));
     if (databasesOptionsList) {
       if (databasesOptionsList instanceof Error) {
         throw databasesOptionsList;

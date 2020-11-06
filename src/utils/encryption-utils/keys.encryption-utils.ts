@@ -26,8 +26,15 @@ import { encodeArrayBufferToDOMString } from '../string-encoding-utils';
 import { TCRYPTO_UTIL_KEYPAIR_PREIMPORT_FORMAT_TYPE } from './crypto-utils.types';
 import { typedArrayToString } from '../typed-array-utils';
 
-export const isCryptoKeyPairImported = (key: any, checkPrivateKey: boolean = true): key is TCRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE => {
-  return typeof key === 'object' && !!key[CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME] && (!checkPrivateKey || !!key[CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME]);
+export const isCryptoKeyPairImported = (
+  key: any,
+  checkPrivateKey: boolean = true
+): key is TCRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE => {
+  return (
+    typeof key === 'object' &&
+    !!key[CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME] &&
+    (!checkPrivateKey || !!key[CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME])
+  );
 };
 
 export const generateKeyPair = (): PromiseLike<CryptoKeyPair> =>
@@ -59,7 +66,10 @@ export const exportPublicKeyAsString = async (keyPair: CryptoKeyPair) => {
   return stringify(publicKey);
 };
 
-export const exportKeyPair = async (keyPair: CryptoKeyPair, password?: string): Promise<TCRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE | Error> => {
+export const exportKeyPair = async (
+  keyPair: CryptoKeyPair,
+  password?: string
+): Promise<TCRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE | Error> => {
   try {
     if (isCryptoKeyPair(keyPair, !!password)) {
       // do it in parallel
@@ -185,7 +195,10 @@ export const importKeyPair = async (
   }
 };
 
-export const importKeyPairFromString = async (keyPairString: string, password?: string): Promise<TCRYPTO_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE | Error> => {
+export const importKeyPairFromString = async (
+  keyPairString: string,
+  password?: string
+): Promise<TCRYPTO_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE | Error> => {
   try {
     if (typeof keyPairString === 'string') {
       const keyPairObject = JSON.parse(keyPairString);

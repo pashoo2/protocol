@@ -59,7 +59,9 @@ export const commonUtilsIsTwoArraysEquals = (firstArray: Array<any>, secondArray
  * @returns {S | false}
  */
 export const commonUtilsReturnArrayIfTwoArraysEquals = <S>(firstArray: any, secondArray: S): S extends Array<any> ? S : false =>
-  (commonUtilsIsInstanceOfArray(firstArray) && commonUtilsIsInstanceOfArray(secondArray) && commonUtilsIsTwoArraysEquals(firstArray, secondArray)
+  (commonUtilsIsInstanceOfArray(firstArray) &&
+  commonUtilsIsInstanceOfArray(secondArray) &&
+  commonUtilsIsTwoArraysEquals(firstArray, secondArray)
     ? secondArray
     : false) as S extends Array<any> ? S : false;
 
@@ -137,7 +139,11 @@ export const commonUtilsArrayDoCallbackTillNoError = <T>(arr: T[], cb: (v: T) =>
  * @returns {number | Error} - return a length of the array or an Error
  * if a non-finite or an unsafe number will be met
  */
-export const commonUtilsArrayCalculateLengthOfIntegerArray = (arr: number[], maxNumber?: number, minNumber?: number): number | Error => {
+export const commonUtilsArrayCalculateLengthOfIntegerArray = (
+  arr: number[],
+  maxNumber?: number,
+  minNumber?: number
+): number | Error => {
   if (!(arr instanceof Array)) {
     return new Error('The array value must be an instance of Array');
   }

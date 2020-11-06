@@ -5,7 +5,11 @@ import { STATUS_CLASS_STATUS_CHANGE_EVENT } from './status-class-base.const';
 
 export const STATUS_EVENT = STATUS_CLASS_STATUS_CHANGE_EVENT;
 
-export const getStatusClass = <TStatus extends object>({ errorStatus, instanceName, initialStatus }: TStatusClassBaseOptions<TStatus>) =>
+export const getStatusClass = <TStatus extends object>({
+  errorStatus,
+  instanceName,
+  initialStatus,
+}: TStatusClassBaseOptions<TStatus>) =>
   class StatusClassBase {
     public static error(err: string | Error): Error {
       let errorInstance: Error;

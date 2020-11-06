@@ -1,4 +1,8 @@
-import { TSwarmStoreValueTypes, TSwarmStoreDatabaseType, ISwarmStoreConnectorBasicWithEntriesCount } from '../../../../../../swarm-store-class.types';
+import {
+  TSwarmStoreValueTypes,
+  TSwarmStoreDatabaseType,
+  ISwarmStoreConnectorBasicWithEntriesCount,
+} from '../../../../../../swarm-store-class.types';
 import { ESwarmStoreConnector } from '../../../../../../swarm-store-class.const';
 import { SwarmStoreConnectorOrbitDBDatabaseQueued } from '../swarm-store-connector-orbit-db-subclass-database-queued';
 

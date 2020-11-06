@@ -16,7 +16,10 @@ import { SWARM_MESSAGE_SUBCLASS_VALIDATOR_TIMESTAMP_OPTIONS_DEFAULT } from './sw
  * @param {number} timestamp
  * @throws
  */
-function validateTimestamp(timestamp: TSwarmMessageTimestampSerialized, options: Required<ISwarmMessageTimestampValidationOptions>): void {
+function validateTimestamp(
+  timestamp: TSwarmMessageTimestampSerialized,
+  options: Required<ISwarmMessageTimestampValidationOptions>
+): void {
   assert(timestamp != null, 'Timestamp must be defined');
   if (typeof timestamp !== 'number') {
     assert.fail('Timestamp must be a number');
@@ -34,5 +37,6 @@ function validateTimestamp(timestamp: TSwarmMessageTimestampSerialized, options:
   assert(timestamp - maxDiffErrorSeconds < maxValue, `Timestamp must be less than ${maxValue}`);
 }
 
-export const createValidateTimestamp = (options?: ISwarmMessageTimestampValidationOptions) => (timestamp: TSwarmMessageTimestampSerialized) =>
-  validateTimestamp(timestamp, defaultsDeep(options, SWARM_MESSAGE_SUBCLASS_VALIDATOR_TIMESTAMP_OPTIONS_DEFAULT));
+export const createValidateTimestamp = (options?: ISwarmMessageTimestampValidationOptions) => (
+  timestamp: TSwarmMessageTimestampSerialized
+) => validateTimestamp(timestamp, defaultsDeep(options, SWARM_MESSAGE_SUBCLASS_VALIDATOR_TIMESTAMP_OPTIONS_DEFAULT));

@@ -13,6 +13,7 @@ import {
   IQueuedEncrypyionClassBaseOptions,
 } from '../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
 import { ISwarmMessageSerializerConstructorOptions, ISwarmMessageSerializer } from './swarm-message-subclass-serializer.types';
+import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 
 export class SwarmMessageSerializer implements ISwarmMessageSerializer {
   protected msgSignEncryptQueue?: IQueuedEncrypyionClassBase;
@@ -60,7 +61,10 @@ export class SwarmMessageSerializer implements ISwarmMessageSerializer {
    *
    * @memberof SwarmMessageSerializer
    */
-  public serialize = async (msgBody: ISwarmMessageBodyDeserialized, encryptWithKey?: CryptoKey): Promise<TSwarmMessageInstance> => {
+  public serialize = async (
+    msgBody: ISwarmMessageBodyDeserialized,
+    encryptWithKey?: CryptoKey
+  ): Promise<TSwarmMessageInstance> => {
     this.validateMessageBody(msgBody);
 
     const swarmMessageBody = this.serializeMessageBody(msgBody);
@@ -97,9 +101,18 @@ export class SwarmMessageSerializer implements ISwarmMessageSerializer {
     const { utils } = options;
 
     assert(utils, 'Utils must be provided in options');
-    assert(typeof utils.getDataToSignBySwarmMsg === 'function', 'getDataToSignBySwarmMsg function must be provided in utils option');
-    assert(typeof utils.swarmMessageBodySerializer === 'function', 'swarmMessageBodySerializer function must be provided in utils option');
-    assert(typeof utils.swarmMessageSerializer === 'function', 'swarmMessageSerializer function must be provided in utils option');
+    assert(
+      typeof utils.getDataToSignBySwarmMsg === 'function',
+      'getDataToSignBySwarmMsg function must be provided in utils option'
+    );
+    assert(
+      typeof utils.swarmMessageBodySerializer === 'function',
+      'swarmMessageBodySerializer function must be provided in utils option'
+    );
+    assert(
+      typeof utils.swarmMessageSerializer === 'function',
+      'swarmMessageSerializer function must be provided in utils option'
+    );
   }
 
   /**
@@ -113,7 +126,10 @@ export class SwarmMessageSerializer implements ISwarmMessageSerializer {
     const { caConnection } = this.options;
     const currentUserId = caConnection.getUserIdentity();
 
-    assert(!(currentUserId instanceof Error), 'Failed to read an identity of the crurrent user from connection to the central authority');
+    assert(
+      !(currentUserId instanceof Error),
+      'Failed to read an identity of the crurrent user from connection to the central authority'
+    );
 
     const userIdSerialized = new CentralAuthorityIdentity(currentUserId as string).identityDescritptionSerialized;
 
@@ -125,12 +141,17 @@ export class SwarmMessageSerializer implements ISwarmMessageSerializer {
       throw new Error('Failed to read data sign key pairs of the current user from a connection to the central authority');
     }
 
-    const dataSignKey = isCryptoKeyDataSign(dataSignCryptoKeyPair.privateKey) ? dataSignCryptoKeyPair.privateKey : dataSignCryptoKeyPair.publicKey;
+    const dataSignKey = isCryptoKeyDataSign(dataSignCryptoKeyPair.privateKey)
+      ? dataSignCryptoKeyPair.privateKey
+      : dataSignCryptoKeyPair.publicKey;
 
-    assert(isCryptoKeyDataSign(dataSignKey), 'There is not key may used for data signing returned by the conntion to the central authority');
+    assert(
+      isCryptoKeyDataSign(dataSignKey),
+      'There is not key may used for data signing returned by the conntion to the central authority'
+    );
     this.user = {
       dataSignKey: dataSignCryptoKeyPair.privateKey,
-      userId: userIdSerialized as string,
+      userId: userIdSerialized as TSwarmMessageUserIdentifierSerialized,
     };
   }
 
@@ -207,7 +228,10 @@ export class SwarmMessageSerializer implements ISwarmMessageSerializer {
    * @returns {TSwarmMessageBodyRaw}
    * @memberof SwarmMessageSerializer
    */
-  protected async getMessageBodySerialized(msgBody: ISwarmMessageBody, encryptWithKey?: CryptoKey): Promise<TSwarmMessageBodyRaw> {
+  protected async getMessageBodySerialized(
+    msgBody: ISwarmMessageBody,
+    encryptWithKey?: CryptoKey
+  ): Promise<TSwarmMessageBodyRaw> {
     const { utils } = this.options;
     const bodyRaw = utils.swarmMessageBodySerializer(msgBody);
 
@@ -223,7 +247,10 @@ export class SwarmMessageSerializer implements ISwarmMessageSerializer {
    * @returns {Promise<>}
    * @memberof SwarmMessageSerializer
    */
-  protected async encryptMessageBodyRaw(msgBody: TSwarmMessageBodyRaw, encryptWithKey: CryptoKey): Promise<TSwarmMessageBodyRawEncrypted> {
+  protected async encryptMessageBodyRaw(
+    msgBody: TSwarmMessageBodyRaw,
+    encryptWithKey: CryptoKey
+  ): Promise<TSwarmMessageBodyRawEncrypted> {
     const encrypted = await this.msgSignEncryptQueue?.encryptData(msgBody, encryptWithKey);
 
     if (encrypted instanceof Error) {

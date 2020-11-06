@@ -16,7 +16,10 @@ import { CA_USER_IDENTITY_VERSIONS_LIST } from '../../../../central-authority-cl
 import { TSwarmMessage, TSwarmMessageBodyEncrypted } from '../../../swarm-message-constructor.types';
 import { validateMessageBodyRawFormat } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-body-raw/swarm-message-subclass-validator-fields-validator-body-raw';
 import { validateMessageSignatureFormat } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-signature/swarm-message-subclass-validator-fields-validator-signature';
-import { IMessageFieldsValidatorOptions, ISwarmMessageSubclassFieldsValidator } from './swarm-message-subclass-validator-fields-validator.types';
+import {
+  IMessageFieldsValidatorOptions,
+  ISwarmMessageSubclassFieldsValidator,
+} from './swarm-message-subclass-validator-fields-validator.types';
 import { ISwarmMessageBodyDeserialized, ISwarmMessageRaw } from '../../../swarm-message-constructor.types';
 import {
   SWARM_MESSAGE_SUBCLASS_VALIDATOR_BODY_ENCRYPTED_MAX_LENGTH_BYTES,
@@ -289,7 +292,13 @@ export class SwarmMessageSubclassFieldsValidator implements ISwarmMessageSubclas
     if (options != null) {
       assert(typeof options === 'object', 'The options must be an object');
 
-      const { supportedUserIdentifierVer, payloadValidationOptions, issuersList, typesList, timestampValidationOptions } = options;
+      const {
+        supportedUserIdentifierVer,
+        payloadValidationOptions,
+        issuersList,
+        typesList,
+        timestampValidationOptions,
+      } = options;
 
       if (timestampValidationOptions) {
         this.timestampValidationOptions = timestampValidationOptions; // set time to live in milliseconds

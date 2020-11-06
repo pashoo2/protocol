@@ -20,7 +20,9 @@ export class ConcurentAsyncQueue<T = void, E extends MaybeError = void> implemen
     const promiseToWaitBeforeRunJob = (lastWorkPromise || Promise.resolve()) as IJobPromise<T, E>;
 
     this._addInQueue(jobPromise);
-    return promiseToWaitBeforeRunJob.then(this._createResolverStep(this._createWorkPromiseResolver(jobPromise.resolve, jobPromise)));
+    return promiseToWaitBeforeRunJob.then(
+      this._createResolverStep(this._createWorkPromiseResolver(jobPromise.resolve, jobPromise))
+    );
   };
 
   public destroy = async (err: E): Promise<void> => {
@@ -44,7 +46,10 @@ export class ConcurentAsyncQueue<T = void, E extends MaybeError = void> implemen
     });
   };
 
-  protected _createWorkPromiseResolver = (workPromiseResolve: IJobResolveCallback<T>, workPromise: IJobPromise<T, E>): ((v: T) => void) => {
+  protected _createWorkPromiseResolver = (
+    workPromiseResolve: IJobResolveCallback<T>,
+    workPromise: IJobPromise<T, E>
+  ): ((v: T) => void) => {
     return (v: T): void => {
       this.failIfDestroying();
       this._removePromiseFromQueue(workPromise);

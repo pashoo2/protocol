@@ -8,7 +8,11 @@ import { encodeArrayBufferToDOMString } from 'utils/string-encoding-utils';
 import { commonUtilsArrayIncludesAll } from '../common-utils/common-utils-array';
 import { eCRYPTO_UTILS_KEYS_USAGES } from '../encryption-utils/crypto-utils.const';
 import { calculateHash, calculateHashNative } from './../hash-calculation-utils/hash-calculation-utils';
-import { ENCRYPTIONS_KEYS_UTILS_JWK_FORMAT_OBJECT_KEYS, MIN_JWK_PROPS_COUNT, MIN_JWK_STRING_LENGTH } from './encryption-keys-utils.const';
+import {
+  ENCRYPTIONS_KEYS_UTILS_JWK_FORMAT_OBJECT_KEYS,
+  MIN_JWK_PROPS_COUNT,
+  MIN_JWK_STRING_LENGTH,
+} from './encryption-keys-utils.const';
 import { crypto } from '../data-sign-utils/main.data-sign-utils.const';
 
 export const isCryptoKey = (v: any): v is CryptoKey => v instanceof CryptoKey;
@@ -17,7 +21,10 @@ export const isCryptoKeyPair = (keyPair: any, checkPrivateKeys: boolean = true):
   return typeof keyPair === 'object' && isCryptoKey(keyPair.publicKey) && (!checkPrivateKeys || isCryptoKey(keyPair.privateKey));
 };
 
-export const isCryptoKeyIncludesUsages = (cryptoKey: CryptoKey, expectedUsages: eCRYPTO_UTILS_KEYS_USAGES[] | eCRYPTO_UTILS_KEYS_USAGES): boolean => {
+export const isCryptoKeyIncludesUsages = (
+  cryptoKey: CryptoKey,
+  expectedUsages: eCRYPTO_UTILS_KEYS_USAGES[] | eCRYPTO_UTILS_KEYS_USAGES
+): boolean => {
   const { usages } = cryptoKey;
 
   if (typeof expectedUsages === 'string') {
@@ -147,7 +154,10 @@ export const calcCryptoKeyHash = async (
 };
 
 // allow to absent for a private keys in a pairs
-export const calcCryptoKeyPairHash = async (cryptoPair: CryptoKeyPair, alg?: HASH_CALCULATION_UTILS_HASH_ALHORITHM): Promise<Error | string> => {
+export const calcCryptoKeyPairHash = async (
+  cryptoPair: CryptoKeyPair,
+  alg?: HASH_CALCULATION_UTILS_HASH_ALHORITHM
+): Promise<Error | string> => {
   const pending = [calcCryptoKeyHash(cryptoPair.publicKey)];
 
   if (cryptoPair.privateKey) {

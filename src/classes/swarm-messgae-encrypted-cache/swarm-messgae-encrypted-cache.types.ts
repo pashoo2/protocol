@@ -121,7 +121,8 @@ export interface ISwarmMessageEncryptedCacheFabric {
  * @interface ISwarmMessageConstructorWithEncryptedCacheFabric
  */
 export interface ISwarmMessageConstructorWithEncryptedCacheFabric {
-  (swarmMessageConstructorOptions: Partial<TSwarmMessageConstructorOptions>, storageProviderOptions?: IISecretStorageOptions): Promise<
-    ISwarmMessageConstructor
-  >;
+  (
+    swarmMessageConstructorOptions: Partial<TSwarmMessageConstructorOptions>,
+    storageProviderOptions?: IISecretStorageOptions
+  ): Promise<ISwarmMessageConstructor>;
 }

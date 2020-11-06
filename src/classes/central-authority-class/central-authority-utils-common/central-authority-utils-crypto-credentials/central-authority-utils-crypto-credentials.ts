@@ -35,7 +35,10 @@ export const exportCryptoCredentialsToString = async (
     return new Error('The given value is not a valid crypto credentials');
   }
 
-  const { [CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeys, [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: userIdentity } = userCryptoCredentials;
+  const {
+    [CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeys,
+    [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: userIdentity,
+  } = userCryptoCredentials;
   const exportedCryptoKeys = await exportKeyPairsAsString(cryptoKeys, password);
 
   if (exportedCryptoKeys instanceof Error) {
@@ -95,7 +98,9 @@ export const compareAuthProvidersIdentities = (...authProvidersIds: TCAAuthProvi
   return true;
 };
 
-export const compareCryptoCredentials = async (...credentials: TCentralAuthorityUserCryptoCredentials[]): Promise<boolean | Error> => {
+export const compareCryptoCredentials = async (
+  ...credentials: TCentralAuthorityUserCryptoCredentials[]
+): Promise<boolean | Error> => {
   if (!(credentials instanceof Array)) {
     return new Error('Crdentails to compare must be an array');
   }
@@ -262,7 +267,11 @@ export const getExportedAsStringCryptoCredentials = async (
       return new Error('The crypto keys are not valid or have an unknown format');
     }
 
-    const caUserCryptoCredentials = getUserCredentialsByUserIdentityAndCryptoKeys(identity, cryptoCredentialsKeyPairs, checkPrivateKey);
+    const caUserCryptoCredentials = getUserCredentialsByUserIdentityAndCryptoKeys(
+      identity,
+      cryptoCredentialsKeyPairs,
+      checkPrivateKey
+    );
 
     if (caUserCryptoCredentials instanceof Error) {
       console.error(caUserCryptoCredentials);
@@ -338,7 +347,9 @@ export const getCryptoKeyPairsByCryptoCredentials = (
   return new Error('The crypto key pairs are not valid');
 };
 
-export const getUserIdentityVersion = (userIdentity: TCentralAuthorityUserIdentity | CentralAuthorityIdentity): TUserIdentityVersion | Error => {
+export const getUserIdentityVersion = (
+  userIdentity: TCentralAuthorityUserIdentity | CentralAuthorityIdentity
+): TUserIdentityVersion | Error => {
   if (!(userIdentity instanceof CentralAuthorityIdentity) && typeof userIdentity !== 'string') {
     return new Error('The userIdentity must be a string or an instance of the CentralAuthorityIdentity class');
   }
@@ -351,7 +362,9 @@ export const getUserIdentityVersion = (userIdentity: TCentralAuthorityUserIdenti
   return userIdentityObj.version;
 };
 
-export const getVersionOfCryptoCredentials = (cryptoCredentials: TCentralAuthorityUserCryptoCredentials): TUserIdentityVersion | Error => {
+export const getVersionOfCryptoCredentials = (
+  cryptoCredentials: TCentralAuthorityUserCryptoCredentials
+): TUserIdentityVersion | Error => {
   const userIdentity = getUserIdentityByCryptoCredentials(cryptoCredentials);
 
   if (userIdentity instanceof Error) {

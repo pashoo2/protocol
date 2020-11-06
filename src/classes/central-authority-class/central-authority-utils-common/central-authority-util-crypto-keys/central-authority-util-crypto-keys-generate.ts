@@ -3,8 +3,14 @@ import { CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME } from 'classes/central-aut
 import { generateKeyPair as generateKeyPairDataEncryption } from 'utils/encryption-utils';
 import { dataSignGenerateKeyPair as generateKeyPairSignData } from 'utils/data-sign-utils';
 import { isCryptoKeyPair } from 'utils/encryption-keys-utils/encryption-keys-utils';
-import { TCACryptoKeyPairs, TCentralAuthorityUserCryptoCredentials } from '../../central-authority-class-types/central-authority-class-types';
-import { CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME, CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME } from './central-authority-util-crypto-keys.const';
+import {
+  TCACryptoKeyPairs,
+  TCentralAuthorityUserCryptoCredentials,
+} from '../../central-authority-class-types/central-authority-class-types';
+import {
+  CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME,
+  CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME,
+} from './central-authority-util-crypto-keys.const';
 import { checkIsCryptoKeyPairs } from './central-authority-util-crypto-keys-common';
 import { generateUUID } from 'utils/identity-utils/identity-utils';
 import {

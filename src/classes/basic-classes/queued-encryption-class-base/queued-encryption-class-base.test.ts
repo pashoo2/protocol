@@ -195,7 +195,9 @@ describe('QueuedEncryptionClassBase tests', () => {
       const encryptedString = await instance.encryptData(testString, dataEncryptionKeyPair.publicKey);
 
       expect(encryptedString).toEqual(expect.stringMatching(''));
-      await expect(instance.decryptData(encryptedString as string, dataEncryptionKeyPair.privateKey)).resolves.toEqual(testString);
+      await expect(instance.decryptData(encryptedString as string, dataEncryptionKeyPair.privateKey)).resolves.toEqual(
+        testString
+      );
     });
     test('decrypt object should not failed', async () => {
       const encryptedObject = await instance.encryptData(testObject, dataEncryptionKeyPair.publicKey);

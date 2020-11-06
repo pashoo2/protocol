@@ -4,7 +4,10 @@ import { getInitializationVectorFromData, decryptDataFromString } from 'utils/en
 import { PASSWORD_ENCRYPTION_UTILS_DECRYPTION_PARAMS } from './password-utils.const';
 import { decodeDOMStringToArrayBuffer, encodeArrayBufferToDOMString } from 'utils/string-encoding-utils';
 
-export const decryptDataWithKeyNative = async (key: string | CryptoKey, dataWithIv: ArrayBuffer): Promise<ArrayBuffer | Error> => {
+export const decryptDataWithKeyNative = async (
+  key: string | CryptoKey,
+  dataWithIv: ArrayBuffer
+): Promise<ArrayBuffer | Error> => {
   let cryptoKey;
 
   if (key instanceof CryptoKey) {
@@ -46,7 +49,10 @@ export const decryptDataWithKey = async (key: string | CryptoKey, dataWithIv: st
   return encodeArrayBufferToDOMString(decryptedArrayBuffer);
 };
 
-export const decryptDataWithKeyFromUint8Array = async (key: string | CryptoKey, dataWithIv: Uint8Array): Promise<string | Error> => {
+export const decryptDataWithKeyFromUint8Array = async (
+  key: string | CryptoKey,
+  dataWithIv: Uint8Array
+): Promise<string | Error> => {
   const decryptedArrayBuffer = await decryptDataWithKeyNative(key, dataWithIv);
 
   if (decryptedArrayBuffer instanceof Error) {
@@ -60,7 +66,8 @@ export const decryptDataArrayOrStringWithKeyToUInt8Array = async (
   key: string | CryptoKey,
   dataWithIv: Uint8Array | string
 ): Promise<Uint8Array | Error> => {
-  const dataWithIvArrayBuffer: ArrayBuffer | Error = typeof dataWithIv === 'string' ? decodeDOMStringToArrayBuffer(dataWithIv) : dataWithIv.buffer;
+  const dataWithIvArrayBuffer: ArrayBuffer | Error =
+    typeof dataWithIv === 'string' ? decodeDOMStringToArrayBuffer(dataWithIv) : dataWithIv.buffer;
 
   if (dataWithIvArrayBuffer instanceof Error) {
     return dataWithIvArrayBuffer;
@@ -75,7 +82,11 @@ export const decryptDataArrayOrStringWithKeyToUInt8Array = async (
   return new Uint8Array(decryptedArrayBuffer);
 };
 
-export const decryptDataByPassword = async (password: string, salt: TSaltUtilsSaltType, dataWithIv: string): Promise<string | Error> => {
+export const decryptDataByPassword = async (
+  password: string,
+  salt: TSaltUtilsSaltType,
+  dataWithIv: string
+): Promise<string | Error> => {
   const key = await generatePasswordKeyByPasswordString(password, salt);
 
   if (key instanceof Error) {

@@ -2,7 +2,10 @@
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import { ICAConnectionSignUpCredentials, ICAConnectionUserAuthorizedResult } from '../../central-authority-connections.types';
-import { ICAConnectionConfigurationFirebase, ICAConnectionFirebaseUserProfile } from '../central-authority-connection-firebase.types.configuration';
+import {
+  ICAConnectionConfigurationFirebase,
+  ICAConnectionFirebaseUserProfile,
+} from '../central-authority-connection-firebase.types.configuration';
 import {
   ICentralAuthorityUserAuthCredentials,
   TCentralAuthorityUserCryptoCredentials,
@@ -489,7 +492,9 @@ export class CAConnectionWithFirebaseBase {
     };
   }
 
-  protected mapAppProfileToFirebaseProfileWithoutEmail(profile: Partial<ICentralAuthorityUserProfile>): ICAConnectionFirebaseUserProfile {
+  protected mapAppProfileToFirebaseProfileWithoutEmail(
+    profile: Partial<ICentralAuthorityUserProfile>
+  ): ICAConnectionFirebaseUserProfile {
     return {
       displayName: (profile && profile.name) || null,
       photoURL: (profile && profile.photoURL) || null,
@@ -543,7 +548,9 @@ export class CAConnectionWithFirebaseBase {
    * At no a phone number can't be updated
    * @param profileDataPartialWithoutPhoneNumber
    */
-  protected async setProfileDataWithFirebase(profileDataPartialWithoutPhoneNumber: Partial<ICentralAuthorityUserProfile>): Promise<Error | boolean> {
+  protected async setProfileDataWithFirebase(
+    profileDataPartialWithoutPhoneNumber: Partial<ICentralAuthorityUserProfile>
+  ): Promise<Error | boolean> {
     const isConnected = this.checkIfConnected();
 
     if (isConnected instanceof Error) {
@@ -556,7 +563,9 @@ export class CAConnectionWithFirebaseBase {
       return new Error('There is no current user profile');
     }
 
-    const profileMappedForFirebaseWithoutEmail = this.mapAppProfileToFirebaseProfileWithoutEmail(profileDataPartialWithoutPhoneNumber);
+    const profileMappedForFirebaseWithoutEmail = this.mapAppProfileToFirebaseProfileWithoutEmail(
+      profileDataPartialWithoutPhoneNumber
+    );
 
     try {
       await currentUser.updateProfile(profileMappedForFirebaseWithoutEmail);
@@ -657,7 +666,9 @@ export class CAConnectionWithFirebaseBase {
     return new ErrorExtendedBaseClass('Please verify the email address', CA_CONNECTION_ERROR_ACCOUNT_NOT_VERIFIED_CODE);
   }
 
-  protected generateNewCryptoCredentialsForConfigurationProvided = async (): Promise<Error | TCentralAuthorityUserCryptoCredentials> => {
+  protected generateNewCryptoCredentialsForConfigurationProvided = async (): Promise<
+    Error | TCentralAuthorityUserCryptoCredentials
+  > => {
     const { databaseURL } = this;
 
     if (databaseURL instanceof Error) {
@@ -715,7 +726,9 @@ export class CAConnectionWithFirebaseBase {
     }
 
     const { connectionWithCredentialsStorage } = this;
-    const credentialsForTheCurrentUser = await connectionWithCredentialsStorage!!.getCredentialsForTheCurrentUser(signUpCredentials);
+    const credentialsForTheCurrentUser = await connectionWithCredentialsStorage!!.getCredentialsForTheCurrentUser(
+      signUpCredentials
+    );
 
     if (credentialsForTheCurrentUser instanceof Error) {
       console.error(credentialsForTheCurrentUser);
@@ -737,7 +750,10 @@ export class CAConnectionWithFirebaseBase {
     // set the new generated credentials forcely
     // and rewrite the existing
     // cause it is not valid
-    const setCredentialsResult = await connectionWithCredentialsStorage!!.setUserCredentials(cryptoCredentials, signUpCredentials);
+    const setCredentialsResult = await connectionWithCredentialsStorage!!.setUserCredentials(
+      cryptoCredentials,
+      signUpCredentials
+    );
 
     if (setCredentialsResult instanceof Error) {
       return setCredentialsResult;
@@ -825,7 +841,9 @@ export class CAConnectionWithFirebaseBase {
     }
 
     if (credentialsExistingForTheCurrentUser) {
-      const credentialsValidationResult = this.checkUserIdentityIsValidForConfigurationProvided(credentialsExistingForTheCurrentUser);
+      const credentialsValidationResult = this.checkUserIdentityIsValidForConfigurationProvided(
+        credentialsExistingForTheCurrentUser
+      );
 
       if (credentialsValidationResult instanceof Error) {
         console.error(credentialsValidationResult);
@@ -880,7 +898,9 @@ export class CAConnectionWithFirebaseBase {
     }
   }
 
-  protected async readSessionData(session: ISensitiveDataSessionStorage): Promise<Error | undefined | ICAConnectionFirebaseBaseSessionData> {
+  protected async readSessionData(
+    session: ISensitiveDataSessionStorage
+  ): Promise<Error | undefined | ICAConnectionFirebaseBaseSessionData> {
     try {
       const sessionData = await session.getItem(CENTRAL_AUTHORITY_CONNECTION_FIREBASE_BASE_SESSION_KEY);
 

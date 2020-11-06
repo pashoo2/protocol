@@ -18,6 +18,7 @@ import { validateUserIdentity } from 'classes/central-authority-class/central-au
 import { TCentralAuthorityUserCryptoCredentials } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 import { checkIsValidExportedCryptoCredentialsToString } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
 import { ICAConnectionSignUpCredentials } from '../../../central-authority-connections.types';
+import { TSwarmMessageUserIdentifierSerialized } from '../../../../../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 
 /**
  * This class is used for storing
@@ -81,7 +82,7 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
    * @returns {string}
    * @memberof CAConnectionFirestoreUtilsCredentialsStrorage
    */
-  protected getCredentialsKeyByUserId(userId: string): string {
+  protected getCredentialsKeyByUserId(userId: TSwarmMessageUserIdentifierSerialized): string {
     return `${CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_KEY_PREFIX}${encodeForFirebaseKey(userId)}`;
   }
 
@@ -153,7 +154,10 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
       return false;
     }
     if (storedCredentialsValue && typeof storedCredentialsValue === 'object') {
-      const { credentials, [CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_FIREBASE_USER_ID_PROPERTY]: firebaseId } = storedCredentialsValue;
+      const {
+        credentials,
+        [CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_FIREBASE_USER_ID_PROPERTY]: firebaseId,
+      } = storedCredentialsValue;
 
       // an id set for the user by the Firebase
       if (typeof firebaseId === 'string') {
@@ -368,7 +372,9 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
    * @returns {(Promise<Error | null | TCentralAuthorityUserCryptoCredentials>)}
    * @memberof CAConnectionFirestoreUtilsCredentialsStrorage
    */
-  public async getUserCredentials(userId: string): Promise<Error | null | TCentralAuthorityUserCryptoCredentials> {
+  public async getUserCredentials(
+    userId: TSwarmMessageUserIdentifierSerialized
+  ): Promise<Error | null | TCentralAuthorityUserCryptoCredentials> {
     if (!this.checkIsConnected()) {
       return new Error('There is no active connection to the Firebase');
     }
@@ -377,7 +383,9 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
     }
 
     const keyForValue = this.getCredentialsKeyByUserId(userId);
-    const storedCredentialsValue = await this.getValue<ICAConnectionFirestoreUtilsCredentialsStrorageCredentialsSaveStructure>(keyForValue);
+    const storedCredentialsValue = await this.getValue<ICAConnectionFirestoreUtilsCredentialsStrorageCredentialsSaveStructure>(
+      keyForValue
+    );
 
     return this.getCredentialsByValueStored(storedCredentialsValue);
   }

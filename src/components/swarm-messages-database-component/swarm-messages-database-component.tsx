@@ -16,8 +16,14 @@ import {
   TSwarmStoreDatabaseType,
   TSwarmStoreValueTypes,
 } from '../../classes/swarm-store-class/swarm-store-class.types';
-import { ISwarmMessagesDatabaseMessageDescription, ISwarmMessagesDatabaseDeleteMessageDescription } from './swarm-messages-database-component.types';
-import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from '../../classes/swarm-message/swarm-message-constructor.types';
+import {
+  ISwarmMessagesDatabaseMessageDescription,
+  ISwarmMessagesDatabaseDeleteMessageDescription,
+} from './swarm-messages-database-component.types';
+import {
+  ISwarmMessageInstanceDecrypted,
+  TSwarmMessageSerialized,
+} from '../../classes/swarm-message/swarm-message-constructor.types';
 import {
   ISwarmMessageStoreDeleteMessageArg,
   ISwarmMessageStoreOptionsWithConnectorFabric,
@@ -205,7 +211,10 @@ export class SwarmMessagesDatabaseComponent<
 
         let key: string | undefined;
 
-        if ((databaseOptions as ISwarmStoreConnectorOrbitDbDatabaseOptions<string>).dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE) {
+        if (
+          (databaseOptions as ISwarmStoreConnectorOrbitDbDatabaseOptions<string>).dbType ===
+          ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+        ) {
           key = prompt('Key for the message', '') || undefined;
           if (!key) {
             return;
@@ -248,7 +257,8 @@ export class SwarmMessagesDatabaseComponent<
 
     return (
       <div style={{ border: '1px solid black' }}>
-        Database: {dbName}, {isOpened ? 'opened' : 'closed'}, {isPublic ? 'is public' : ''}, {isOpening && 'is opening'}, {isClosing && 'is closing'};
+        Database: {dbName}, {isOpened ? 'opened' : 'closed'}, {isPublic ? 'is public' : ''}, {isOpening && 'is opening'},{' '}
+        {isClosing && 'is closing'};
         <br />
         {isOpened ? <button onClick={this.handleDbClose}>Close</button> : <button onClick={this.handleDbOpen}>Open</button>}
         <br />

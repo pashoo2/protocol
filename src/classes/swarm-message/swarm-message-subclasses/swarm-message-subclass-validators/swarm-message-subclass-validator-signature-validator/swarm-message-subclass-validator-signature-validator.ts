@@ -41,7 +41,10 @@ export class SwarmMessgeSubclassSignatureValidator {
     const userSignPubKey = await this.getSenderSignPubKey(uid);
 
     assert(isCryptoKeyDataVerify(userSignPubKey), 'Failed to get a valid key for the signature verification');
-    assert(!((await this.validateSig(messageRaw, userSignPubKey as CryptoKey)) instanceof Error), 'The signature of the message is not valid');
+    assert(
+      !((await this.validateSig(messageRaw, userSignPubKey as CryptoKey)) instanceof Error),
+      'The signature of the message is not valid'
+    );
   };
 
   protected validateOptions(options: IMessageSignatureValidatorOptions) {
@@ -51,7 +54,10 @@ export class SwarmMessgeSubclassSignatureValidator {
     const { queueOptions, caConnection } = options;
 
     assert(!!caConnection, 'Central authority connection must be provided in options');
-    assert(typeof caConnection.getSwarmUserSignPubKey === 'function', 'Central authority connection must have the method getSwarmUserSignPubKey');
+    assert(
+      typeof caConnection.getSwarmUserSignPubKey === 'function',
+      'Central authority connection must have the method getSwarmUserSignPubKey'
+    );
     assert(options.utils, 'Utils must be provided in options');
     assert(typeof options.utils === 'object', 'Utils must be an object');
 

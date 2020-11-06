@@ -178,7 +178,10 @@ export class HttpRequest extends HttpRequestBodyProcessor {
    */
   protected resolveTargetUrl(url: string): string {
     const { baseUrl, queryStringParams } = this;
-    const urlInstance = new URL(baseUrl ? url : prefixUrlWithHTTPProtocol(url), baseUrl ? prefixUrlWithHTTPProtocol(baseUrl) : undefined);
+    const urlInstance = new URL(
+      baseUrl ? url : prefixUrlWithHTTPProtocol(url),
+      baseUrl ? prefixUrlWithHTTPProtocol(baseUrl) : undefined
+    );
 
     if (queryStringParams) {
       urlInstance.search = queryStringParams;

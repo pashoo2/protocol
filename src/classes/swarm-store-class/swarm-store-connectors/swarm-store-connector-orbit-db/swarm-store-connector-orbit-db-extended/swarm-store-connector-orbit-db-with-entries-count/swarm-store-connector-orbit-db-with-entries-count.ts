@@ -11,10 +11,15 @@ import {
 export class SwarmStoreConnectorOrbitDBWithEntriesCount<
     ISwarmDatabaseValueTypes extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>,
     DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>,
-    ConnectorBasic extends ISwarmStoreConnectorBasicWithEntriesCount<ESwarmStoreConnector.OrbitDB, ISwarmDatabaseValueTypes, DbType>
+    ConnectorBasic extends ISwarmStoreConnectorBasicWithEntriesCount<
+      ESwarmStoreConnector.OrbitDB,
+      ISwarmDatabaseValueTypes,
+      DbType
+    >
   >
   extends SwarmStoreConnectorOrbitDB<ISwarmDatabaseValueTypes, DbType, ConnectorBasic>
-  implements ISwarmStoreConnectorWithEntriesCount<ESwarmStoreConnector.OrbitDB, ISwarmDatabaseValueTypes, DbType, ConnectorBasic> {
+  implements
+    ISwarmStoreConnectorWithEntriesCount<ESwarmStoreConnector.OrbitDB, ISwarmDatabaseValueTypes, DbType, ConnectorBasic> {
   async getCountEntriesLoaded(
     dbName: TSwarmStoreDatabaseOptions<ESwarmStoreConnector.OrbitDB, ISwarmDatabaseValueTypes>['dbName']
   ): Promise<number | Error> {

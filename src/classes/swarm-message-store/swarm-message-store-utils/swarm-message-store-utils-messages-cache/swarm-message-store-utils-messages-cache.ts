@@ -206,8 +206,14 @@ export class SwarmMessageStoreUtilsMessagesCache implements ISwarmMessageStoreUt
     assert(typeof options.dbName === 'string', 'A database name should be a string');
     assert(!!options.cache, 'A cache storage implementation should be defined');
     assert(typeof options.cache === 'object', 'Cache implementation should be an object');
-    assert(typeof options.cache.get === 'function', 'Cache implementation is not related to the interface - should have the "get" method');
-    assert(typeof options.cache.set === 'function', 'Cache implementation is not related to the interface - should have the "set" method');
+    assert(
+      typeof options.cache.get === 'function',
+      'Cache implementation is not related to the interface - should have the "get" method'
+    );
+    assert(
+      typeof options.cache.set === 'function',
+      'Cache implementation is not related to the interface - should have the "set" method'
+    );
   }
 
   /**

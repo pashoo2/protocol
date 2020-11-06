@@ -44,7 +44,9 @@ export class CentralAuthorityIdentity implements ICAIdentityCommonInstance {
     if (validateUserIdentitySilent(identity)) {
       this.parseUserIdentity(identity);
     } else {
-      const userIdentityDescription = this.extendDescriptionWithVersion(identity as ICAUserUniqueIdentifierDescriptionWithOptionalVersion);
+      const userIdentityDescription = this.extendDescriptionWithVersion(
+        identity as ICAUserUniqueIdentifierDescriptionWithOptionalVersion
+      );
 
       this.serializeUserIdentityDescription(userIdentityDescription);
     }

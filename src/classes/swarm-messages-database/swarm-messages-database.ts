@@ -8,10 +8,20 @@ import {
 } from './swarm-messages-database.types';
 import { ESwarmStoreConnector, ESwarmStoreEventNames } from '../swarm-store-class/swarm-store-class.const';
 import assert from 'assert';
-import { ISwarmMessageStore, ISwarmMessageStoreDeleteMessageArg } from '../swarm-message-store/swarm-message-store.types';
+import {
+  ISwarmMessageStore,
+  ISwarmMessageStoreDeleteMessageArg,
+  TSwarmMessagesStoreGrantAccessCallback,
+  ISwarmMessageStoreAccessControlOptions,
+  ISwarmMessageStoreOptionsWithConnectorFabric,
+} from '../swarm-message-store/swarm-message-store.types';
 import { getEventEmitterInstance } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { ESwarmMessageStoreEventNames } from '../swarm-message-store/swarm-message-store.const';
-import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from '../swarm-message/swarm-message-constructor.types';
+import {
+  ISwarmMessageInstanceDecrypted,
+  TSwarmMessageSerialized,
+  TSwarmMessageInstance,
+} from '../swarm-message/swarm-message-constructor.types';
 import { TTypedEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 import {
   TSwarmStoreDatabaseEntityAddress,
@@ -34,20 +44,49 @@ import {
   SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_UPDATE_RETRY_DELAY_MS,
   SWARM_MESSAGES_DATABASE_MESSAGES_EMITTED_UNIQ_ID_ADDRESS_PREFIX,
 } from './swarm-messages-database.const';
-import { ISwarmMessageStoreMessageWithMeta, ISwarmMessageStoreOptionsWithConnectorFabric } from '../swarm-message-store/swarm-message-store.types';
+import { ISwarmMessageStoreMessageWithMeta } from '../swarm-message-store/swarm-message-store.types';
 import { delay } from '../../utils/common-utils/common-utils-timer';
 import { SWARM_MESSAGES_DATABASE_MESSAGES_MAX_ATTEMPTS_CACHE_UPDATE } from './swarm-messages-database.const';
-import { ISwarmStoreConnectorBasic, ISwarmStoreConnector } from '../swarm-store-class/swarm-store-class.types';
+import {
+  ISwarmStoreConnectorBasic,
+  ISwarmStoreConnector,
+  TSwarmStoreConnectorConnectionOptions,
+  ISwarmStoreProviderOptions,
+  ISwarmStoreOptionsConnectorFabric,
+} from '../swarm-store-class/swarm-store-class.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 
 export class SwarmMessagesDatabase<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, T, DbType>,
-  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, ConnectorBasic>,
-  O extends ISwarmMessageStoreOptionsWithConnectorFabric<P, T, DbType, ConnectorBasic, ConnectorMain>
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType>,
+  PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, ConnectorBasic>,
+  CO extends ISwarmStoreProviderOptions<P, T, DbType, ConnectorBasic, PO>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T>,
+  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, ConnectorBasic, PO, DBO>,
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain>,
+  MSI extends TSwarmMessageInstance | T,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
+  MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined,
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
+    P,
+    T,
+    DbType,
+    ConnectorBasic,
+    PO,
+    CO,
+    DBO,
+    ConnectorMain,
+    CFO,
+    MSI,
+    GAC,
+    MCF,
+    ACO
+  >
 > implements ISwarmMessageDatabaseMessagingMethods<P, DbType> {
-  get dbName(): string | undefined {
+  get dbName(): DBO['dbName'] | undefined {
     return this._dbName;
   }
 
@@ -242,7 +281,9 @@ export class SwarmMessagesDatabase<
     return true;
   }
 
-  protected _validateOptions(options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType, ConnectorBasic, ConnectorMain, O>): void {
+  protected _validateOptions(
+    options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType, ConnectorBasic, ConnectorMain, O>
+  ): void {
     assert(!!options, 'An options object must be provided');
     assert(typeof options === 'object', 'Options must be an object');
     assert(!!options.dbOptions, 'An options for database must be provided');
@@ -301,7 +342,10 @@ export class SwarmMessagesDatabase<
     }
   }
 
-  protected _checkDatabaseProps(): this is Omit<ISwarmMessagesDatabaseReady<P, T, DbType, ConnectorBasic, ConnectorMain, O>, 'isReady'> {
+  protected _checkDatabaseProps(): this is Omit<
+    ISwarmMessagesDatabaseReady<P, T, DbType, ConnectorBasic, ConnectorMain, O>,
+    'isReady'
+  > {
     const swarmMessageStore = this._swarmMessageStore;
 
     if (!swarmMessageStore) {
@@ -522,7 +566,14 @@ export class SwarmMessagesDatabase<
       return;
     }
 
-    this._emitter.emit(ESwarmMessageStoreEventNames.DELETE_MESSAGE, dbName, userID, messageAddress, messageDeletedAddress, keyOrHash);
+    this._emitter.emit(
+      ESwarmMessageStoreEventNames.DELETE_MESSAGE,
+      dbName,
+      userID,
+      messageAddress,
+      messageDeletedAddress,
+      keyOrHash
+    );
     this._addMessageToListOfEmitted(messageAddress, keyToCheckAlreadyEmitted);
     this._handleCacheUpdateOnDeleteMessage(userID, messageAddress, messageDeletedAddress, keyOrHash);
   };

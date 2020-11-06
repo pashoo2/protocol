@@ -43,7 +43,10 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
   // to the database
   protected _isPublic: boolean = false;
 
-  protected _grantAccessCallback?: TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<ESwarmStoreConnector.OrbitDB, T>;
+  protected _grantAccessCallback?: TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<
+    ESwarmStoreConnector.OrbitDB,
+    T
+  >;
 
   protected _orbitdb?: OrbitDB;
 

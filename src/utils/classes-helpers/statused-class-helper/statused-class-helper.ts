@@ -126,9 +126,15 @@ export class StatusedClassHelper<StatusChangedEventName extends string, Status e
     assert(!!statusChanesEmitter, 'An event emitter must be provided for listening an event leads to a status chage');
     assert(typeof statusChanesEmitter === 'object', 'An event emitter instance must be an object');
     assert(typeof statusChanesEmitter.addListener === 'function', 'An event emitter instance must have "addListener" method');
-    assert(statusChanesEmitter.addListener.length > 0, 'An event emitter instance must have "addListener" method which accepts an event name');
+    assert(
+      statusChanesEmitter.addListener.length > 0,
+      'An event emitter instance must have "addListener" method which accepts an event name'
+    );
     assert(typeof statusChanesEmitter.emit === 'function', 'An event emitter instance must have "emit" method');
-    assert(statusChanesEmitter.emit.length > 1, 'An event emitter instance must have "emit" method which accepts an event name with a new status');
+    assert(
+      statusChanesEmitter.emit.length > 1,
+      'An event emitter instance must have "emit" method which accepts an event name with a new status'
+    );
   }
 
   protected __setOptionsStatusClassHelper(options: IStatusedClassHelperOptions<StatusChangedEventName, Status>): void {

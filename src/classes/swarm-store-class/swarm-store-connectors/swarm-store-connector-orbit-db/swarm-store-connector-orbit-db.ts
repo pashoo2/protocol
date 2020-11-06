@@ -48,6 +48,7 @@ import { ISwarmStoreConnectorOrbitDbConnecectionBasicFabric } from './swarm-stor
 import { TSwarmStoreDatabaseOptions, TSwarmStoreConnectorConnectionOptions } from '../../swarm-store-class.types';
 import { ISwarmStoreConnector, TSwarmStoreValueTypes } from '../../swarm-store-class.types';
 import { ESwarmStoreConnector, ESwarmStoreEventNames } from '../../swarm-store-class.const';
+import { TSwarmMessageUserIdentifierSerialized } from '../../../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 
 export class SwarmStoreConnectorOrbitDB<
     ItemType extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>,
@@ -82,7 +83,7 @@ export class SwarmStoreConnectorOrbitDB<
 
   public isClosed: boolean = false;
 
-  protected userId: string = '';
+  protected userId: TSwarmMessageUserIdentifierSerialized = '';
 
   protected directory: string = SWARM_STORE_CONNECTOR_ORBITDB_KEYSTORE_DEFAULT_DIRECTORY;
 
@@ -128,7 +129,9 @@ export class SwarmStoreConnectorOrbitDB<
      * @returns {(Promise<void | Error>)}
      * @memberof SwarmStoreConnectorOrbitDB
      */
-  public async connect(connectionOptions: ISwarmStoreConnectorOrbitDBConnectionOptions<ItemType, DbType, ConnectorBasic>): Promise<void | Error> {
+  public async connect(
+    connectionOptions: ISwarmStoreConnectorOrbitDBConnectionOptions<ItemType, DbType, ConnectorBasic>
+  ): Promise<void | Error> {
     // waiting for the instance initialization
     await this.initializationPromise;
     const resultCreateIdentity = await this.createIdentity();
@@ -377,7 +380,10 @@ export class SwarmStoreConnectorOrbitDB<
     }
   }
 
-  protected handleErrorOnDbOpen(database: ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, ItemType, DbType>, error: Error | string): Error {
+  protected handleErrorOnDbOpen(
+    database: ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, ItemType, DbType>,
+    error: Error | string
+  ): Error {
     if (database) {
       const { dbName } = database;
 
@@ -401,7 +407,9 @@ export class SwarmStoreConnectorOrbitDB<
     >>)}
    * @memberof SwarmStoreConnectorOrbitDB
    */
-  protected async waitingDbOpened(dbName: string): Promise<Error | ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, ItemType, DbType>> {
+  protected async waitingDbOpened(
+    dbName: string
+  ): Promise<Error | ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, ItemType, DbType>> {
     const { getDbConnection } = this;
     const db = getDbConnection(dbName);
     const dbOptsIdx = this.getIdxDbOptions(dbName);
@@ -629,7 +637,10 @@ export class SwarmStoreConnectorOrbitDB<
     this.storage = new SwarmStoreConnectorOrbitDBSubclassStorageFabric(options);
   }
 
-  protected createKeystore(credentials: ISwarmStoreConnectorOrbitDBOptions<ItemType>['credentials'], keystoreNamePrefix?: string): Keystore | Error {
+  protected createKeystore(
+    credentials: ISwarmStoreConnectorOrbitDBOptions<ItemType>['credentials'],
+    keystoreNamePrefix?: string
+  ): Keystore | Error {
     const keystoreName = `${keystoreNamePrefix || ''}${SWARM_STORE_CONNECTOR_ORBITDB_KEYSTORE_DEFAULT_DBNAME}`;
 
     if (!credentials) {
@@ -720,7 +731,10 @@ export class SwarmStoreConnectorOrbitDB<
    * @returns {(void | Error)}
    * @memberof SwarmStoreConnectorOrbitDB
    */
-  protected setDbOptions(dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType>, checkIfExists: boolean = false): void | Error {
+  protected setDbOptions(
+    dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType>,
+    checkIfExists: boolean = false
+  ): void | Error {
     if (!this.checkDbOptions(dbOptions)) {
       return new Error('The database options have a wrong format');
     }
@@ -797,7 +811,9 @@ export class SwarmStoreConnectorOrbitDB<
     }
   }
 
-  private setConnectionOptions(connectionOptions: ISwarmStoreConnectorOrbitDBConnectionOptions<ItemType, DbType, ConnectorBasic>): void | Error {
+  private setConnectionOptions(
+    connectionOptions: ISwarmStoreConnectorOrbitDBConnectionOptions<ItemType, DbType, ConnectorBasic>
+  ): void | Error {
     if (!connectionOptions) {
       return this.emitError('Connection options must be specified');
     }
@@ -902,7 +918,9 @@ export class SwarmStoreConnectorOrbitDB<
    * @returns
    * @memberof SwarmStoreConnectorOrbitDB
    */
-  private openDatabaseNotCheckOptionsExists(optionsForDb: ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType>): Promise<void | Error> {
+  private openDatabaseNotCheckOptionsExists(
+    optionsForDb: ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType>
+  ): Promise<void | Error> {
     return this.openDatabase(optionsForDb, 0, false);
   }
 
@@ -933,7 +951,10 @@ export class SwarmStoreConnectorOrbitDB<
     }
   }
 
-  private handleDatabaseStoreClosed = (database: ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, ItemType, DbType>, error: Error) => {
+  private handleDatabaseStoreClosed = (
+    database: ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, ItemType, DbType>,
+    error: Error
+  ) => {
     if (database) {
       const { dbName } = database;
 
@@ -1064,7 +1085,9 @@ export class SwarmStoreConnectorOrbitDB<
     }
   }
 
-  private waitDatabaseOpened(database: ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, ItemType, DbType>): Promise<Error | boolean> {
+  private waitDatabaseOpened(
+    database: ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, ItemType, DbType>
+  ): Promise<Error | boolean> {
     return new Promise<Error | boolean>(async (res) => {
       let timeout: NodeJS.Timer | undefined = undefined;
 
@@ -1191,7 +1214,9 @@ export class SwarmStoreConnectorOrbitDB<
     await this.storage.addSecretDatabaseName(dbName);
   }
 
-  protected _setConnectorBasicFabric(connectionOptions: ISwarmStoreConnectorOrbitDBConnectionOptions<ItemType, DbType, ConnectorBasic>): void {
+  protected _setConnectorBasicFabric(
+    connectionOptions: ISwarmStoreConnectorOrbitDBConnectionOptions<ItemType, DbType, ConnectorBasic>
+  ): void {
     const { connectorFabric } = connectionOptions;
     assert(connectorFabric, 'Basic connector for OrbitDb must be defined in the options');
     this._connectorFabric = connectorFabric;

@@ -28,7 +28,10 @@ export const extendsOptionsWithStore = (options: TOrbitDBKeystoreOptions): TOrbi
     dbName = options.path;
   }
 
-  const adapterToSecretStore = new SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter({ dbName }, credentials as ISecretStoreCredentials);
+  const adapterToSecretStore = new SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter(
+    { dbName },
+    credentials as ISecretStoreCredentials
+  );
 
   return Object.assign({}, options, { store: adapterToSecretStore });
 };

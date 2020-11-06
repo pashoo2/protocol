@@ -24,9 +24,13 @@ export type TFileStorageServiceOptions<T extends FILE_STORAGE_SERVICE_TYPE> = T 
   ? IFileStorageClassProviderHTTPOptions
   : never;
 
-export type TFileStorageServiceFileAddOptions = IFileStorageClassProviderIPFSFileAddOptions | IFileStorageClassProviderHTTPFileAddOptions;
+export type TFileStorageServiceFileAddOptions =
+  | IFileStorageClassProviderIPFSFileAddOptions
+  | IFileStorageClassProviderHTTPFileAddOptions;
 
-export type TFileStorageServiceFileGetOptions = IFileStorageClassProviderIPFSFileGetOptions | IFileStorageClassProviderHTTPFileGetOptions;
+export type TFileStorageServiceFileGetOptions =
+  | IFileStorageClassProviderIPFSFileGetOptions
+  | IFileStorageClassProviderHTTPFileGetOptions;
 
 export type TFileStorageServiceFileDownloadOptions =
   | IFileStorageClassProviderHTTPFileDownloadOptions
@@ -118,7 +122,11 @@ export interface IFileStorageService<T extends FILE_STORAGE_SERVICE_TYPE> {
    * @throws
    * @memberof IFileStorageService
    */
-  add(filename: string, file: TFileStorageFile, options?: IFileStorageServiceFileAddCommonOptions): Promise<TFileStorageFileAddress>;
+  add(
+    filename: string,
+    file: TFileStorageFile,
+    options?: IFileStorageServiceFileAddCommonOptions
+  ): Promise<TFileStorageFileAddress>;
   /**
    * get the file
    * TODO - add download progress callback

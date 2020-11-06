@@ -1,6 +1,10 @@
 import { cryptoModule } from './main.crypto-utils.const';
 import { crypto } from '../data-sign-utils/main.data-sign-utils.const';
-import { CRYPTO_UTIL_KEY_DESC, CRYPTO_UTIL_ENCRYPTION_KEY_TYPE, INITIALIZATION_VECTOR_DEFAULT_LENGTH } from './crypto-utils.const';
+import {
+  CRYPTO_UTIL_KEY_DESC,
+  CRYPTO_UTIL_ENCRYPTION_KEY_TYPE,
+  INITIALIZATION_VECTOR_DEFAULT_LENGTH,
+} from './crypto-utils.const';
 import {
   TCRYPTO_UTIL_ENCRYPT_DATA_TYPES,
   TCRYPTO_UTIL_ENCRYPT_DATA_TYPES_NATIVE,
@@ -23,7 +27,9 @@ import { decodeDOMStringToArrayBuffer } from 'utils/string-encoding-utils';
  * encryption
  * @param vectorLength - lenght of the vector generated
  */
-export const generateInitializationVectorNative = (vectorLength: number = INITIALIZATION_VECTOR_DEFAULT_LENGTH): Uint8Array | Error => {
+export const generateInitializationVectorNative = (
+  vectorLength: number = INITIALIZATION_VECTOR_DEFAULT_LENGTH
+): Uint8Array | Error => {
   try {
     return crypto.getRandomValues(new Uint8Array(vectorLength));
   } catch (err) {
@@ -40,7 +46,9 @@ export const generateInitializationVectorNativeArrayBuffer = (vectorLength?: num
   return arrayBufferFromTypedArray(iv);
 };
 
-export const concatDataWithInitializationVector = (options: TCRYPTO_UTILS_DATA_WITH_INITIALIZATION_VECTOR): ArrayBuffer | Error => {
+export const concatDataWithInitializationVector = (
+  options: TCRYPTO_UTILS_DATA_WITH_INITIALIZATION_VECTOR
+): ArrayBuffer | Error => {
   try {
     return concatArrayBuffers(options.iv, options.data);
   } catch (err) {

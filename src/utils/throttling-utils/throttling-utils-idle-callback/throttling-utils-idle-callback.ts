@@ -1,5 +1,9 @@
 import { THROTTLING_UTILS_IDLE_CALLBACK_TIMEOUT_DEFAULT_MS } from './throttling-utils-idle-callback.const';
-import { RequestIdleCallback, CancelRequestIdleCallback, RequestIdleCallbackArgument } from './throttling-utils-idle-callback.types';
+import {
+  RequestIdleCallback,
+  CancelRequestIdleCallback,
+  RequestIdleCallbackArgument,
+} from './throttling-utils-idle-callback.types';
 
 export const getRequestIdleCallback = (): RequestIdleCallback =>
   (window as any).requestIdleCallback ||

@@ -9,7 +9,11 @@ import {
   CONNECT_TO_SWARM_AUTH_CREDENTIALS_1,
   CONNECT_TO_SWARM_AUTH_CREDENTIALS_2,
 } from './connect-to-swarm.const';
-import { ESwarmStoreConnectorOrbitDbDatabaseMethodNames, ISwarmStoreDatabasesCommonStatusList, ESwarmStoreEventNames } from 'classes';
+import {
+  ESwarmStoreConnectorOrbitDbDatabaseMethodNames,
+  ISwarmStoreDatabasesCommonStatusList,
+  ESwarmStoreEventNames,
+} from 'classes';
 import { SwarmStoreDbComponent } from '../swarm-store-db-component/swarm-store-db-component';
 import { ESwarmMessageStoreEventNames } from '../../classes/swarm-message-store/swarm-message-store.const';
 import { ConnectionBridge } from '../../classes/connection-bridge/connection-bridge';
@@ -175,7 +179,9 @@ export class ConnectToSwarm extends React.PureComponent<IConnectToSwarmProps> {
       <div>
         <div>Is connected with user identity ${userId}</div>
         <button onClick={() => this.toggleMessagesSending()}>{messagingSending ? 'Stop' : 'Start'} messages sending</button>
-        <button onClick={() => this.toggleMessagesSending(true)}>{messagingSending ? 'Stop' : 'Start'} private messages sending</button>
+        <button onClick={() => this.toggleMessagesSending(true)}>
+          {messagingSending ? 'Stop' : 'Start'} private messages sending
+        </button>
         {this.renderUserProfile()}
         {this.renderDatabasesList()}
         {this.renderSwarmMessagesDatabasesList()}
@@ -310,7 +316,9 @@ export class ConnectToSwarm extends React.PureComponent<IConnectToSwarmProps> {
     }
   };
 
-  protected handleOpenNewSwarmStoreMessagesDatabase = async (dbOptionsToConnectImmediate?: Partial<ISwarmStoreDatabaseBaseOptions>) => {
+  protected handleOpenNewSwarmStoreMessagesDatabase = async (
+    dbOptionsToConnectImmediate?: Partial<ISwarmStoreDatabaseBaseOptions>
+  ) => {
     const dbNameToOpen = dbOptionsToConnectImmediate?.dbName;
     const dbName = dbNameToOpen || window.prompt('Enter database name', '');
 

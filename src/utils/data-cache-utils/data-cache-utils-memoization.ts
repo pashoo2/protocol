@@ -2,7 +2,9 @@ import { FirstPrameter } from '../../types';
 import { commonUtilsAreAllArraysEqual } from '../common-utils';
 import { mapValuesForFurtherComparision } from './data-cache-utils-main';
 
-export const memoize = <F extends (arg: any) => any, A extends FirstPrameter<F>, R extends ReturnType<F>>(functionToMemoize: F): ((arg: A) => R) => {
+export const memoize = <F extends (arg: any) => any, A extends FirstPrameter<F>, R extends ReturnType<F>>(
+  functionToMemoize: F
+): ((arg: A) => R) => {
   const cachedResults = new Map<A, R>();
   const memoized = (a: A): R => {
     const cachedResult = cachedResults.get(a);

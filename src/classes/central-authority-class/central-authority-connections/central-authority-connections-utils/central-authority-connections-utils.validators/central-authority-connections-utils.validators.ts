@@ -1,4 +1,7 @@
-import { CA_CONNECTION_AUTH_PROVIDERS, CA_CONNECTIONS_POOL_AUTH_PROVIDERS_CONNECTION_CONSTRUCTORS } from '../../central-authority-connections.const';
+import {
+  CA_CONNECTION_AUTH_PROVIDERS,
+  CA_CONNECTIONS_POOL_AUTH_PROVIDERS_CONNECTION_CONSTRUCTORS,
+} from '../../central-authority-connections.const';
 import { CA_CONNECTIONS_AUTH_PROVIDERS_VALUES } from './central-authority-connections-utils.validators.const';
 import validator from 'validator';
 import { TCAAuthProviderIdentity } from '../../central-authority-connections.types';

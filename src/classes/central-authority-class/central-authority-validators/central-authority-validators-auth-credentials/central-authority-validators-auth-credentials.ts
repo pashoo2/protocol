@@ -20,7 +20,8 @@ import { dataValidatorUtilSafeLogin } from 'utils/data-validators-utils/data-val
 
 export const validateUserIdentityType = (v: any): boolean => typeof v === CA_USER_IDENTITY_TYPE;
 
-export const validateUserIdentityVersion = (v: any): v is TUserIdentityVersion => typeof v === 'string' && CA_USER_IDENTITY_VERSIONS_LIST.includes(v);
+export const validateUserIdentityVersion = (v: any): v is TUserIdentityVersion =>
+  typeof v === 'string' && CA_USER_IDENTITY_VERSIONS_LIST.includes(v);
 
 export const validateUserIdentity = (v: any, isSilentMode: boolean = false): v is TCentralAuthorityUserIdentity => {
   if (!validateUserIdentityType(v)) {

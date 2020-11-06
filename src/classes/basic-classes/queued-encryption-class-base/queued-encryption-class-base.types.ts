@@ -1,6 +1,9 @@
 import { TCRYPTO_UTIL_ENCRYPT_DATA_TYPES } from '../../../utils/encryption-utils/crypto-utils.types';
 import { IAsyncQueueBaseClassOptions } from '../async-queue-class-base/async-queue-class-base.types';
-import { TDATA_SIGN_UTIL_SIGN_DATA_TYPES, TDATA_SIGN_UTIL_VERIFY_DATA_TYPES } from '../../../utils/data-sign-utils/data-sign-utils.types';
+import {
+  TDATA_SIGN_UTIL_SIGN_DATA_TYPES,
+  TDATA_SIGN_UTIL_VERIFY_DATA_TYPES,
+} from '../../../utils/data-sign-utils/data-sign-utils.types';
 
 export interface IQueuedEncrypyionClassBaseOptions {
   /** crypto keys used as default keys */
@@ -74,5 +77,9 @@ export interface IQueuedEncrypyionClassBase {
    * @returns {(Promise<string | Error>)}
    * @memberof IQueuedEncrypyionClassBase
    */
-  verifyData(data: TDATA_SIGN_UTIL_VERIFY_DATA_TYPES, signature: TDATA_SIGN_UTIL_VERIFY_DATA_TYPES, key: CryptoKey): Promise<boolean | Error>;
+  verifyData(
+    data: TDATA_SIGN_UTIL_VERIFY_DATA_TYPES,
+    signature: TDATA_SIGN_UTIL_VERIFY_DATA_TYPES,
+    key: CryptoKey
+  ): Promise<boolean | Error>;
 }

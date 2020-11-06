@@ -1,5 +1,6 @@
 import { TSwarmStoreDatabaseEntryOperation, TSwarmStoreValueTypes } from '../../../../swarm-store-class.types';
 import { ESwarmStoreConnector } from '../../../../swarm-store-class.const';
+import { TSwarmMessageUserIdentifierSerialized } from '../../../../../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 export interface ISwarmStoreConnectorOrbitDbDatabaseAccessControllerManifest {
   /**
    * do not use the manifest to
@@ -23,7 +24,7 @@ export type TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<
 > = (
   // value
   payload: T | I,
-  userId: string,
+  userId: TSwarmMessageUserIdentifierSerialized,
   // key of the value
   key?: string,
   // operation which is processed (like delete, add or something else)

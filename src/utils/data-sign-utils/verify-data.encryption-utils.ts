@@ -1,7 +1,10 @@
 import { isTypedArray, stringToTypedArray, typedArrayToString } from 'utils/typed-array-utils';
 import { stringify } from 'utils/main-utils';
 import { cryptoModuleDataSign } from './main.data-sign-utils.const';
-import { DATA_SIGN_CRYPTO_UTIL_VERIFY_KEY_TYPE, DATA_SIGN_CRYPTO_UTIL_DATA_SIGN_AND_VERIFY_PARAMS } from './data-sign-utils.const';
+import {
+  DATA_SIGN_CRYPTO_UTIL_VERIFY_KEY_TYPE,
+  DATA_SIGN_CRYPTO_UTIL_DATA_SIGN_AND_VERIFY_PARAMS,
+} from './data-sign-utils.const';
 import {
   TDATA_SIGN_UTIL_VERIFY_DATA_TYPES,
   TDATA_SIGN_UTIL_VERIFY_DATA_TYPES_EXTENDED,

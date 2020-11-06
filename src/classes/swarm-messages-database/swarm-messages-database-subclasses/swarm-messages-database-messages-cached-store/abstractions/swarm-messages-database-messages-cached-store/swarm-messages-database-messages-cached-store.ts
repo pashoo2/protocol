@@ -5,7 +5,10 @@ import { ESwarmStoreConnector } from '../../../../../swarm-store-class/swarm-sto
 import { TSwarmStoreDatabaseType } from '../../../../../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessagesDatabaseMessagesCacheStoreExtendedDefferedMethods } from '../../swarm-messages-database-messages-cached-store.types';
 import { SwarmMessagesDatabaseMessagesCachedStoreTemp } from '../swarm-messages-database-messages-cached-store-temp/swarm-messages-database-messages-cached-store-temp';
-import { ISwarmMessagesDatabaseMesssageMeta, TSwarmMessageDatabaseMessagesCached } from '../../../../swarm-messages-database.types';
+import {
+  ISwarmMessagesDatabaseMesssageMeta,
+  TSwarmMessageDatabaseMessagesCached,
+} from '../../../../swarm-messages-database.types';
 import {
   ISwarmMessagesDatabaseMessagesCacheMessageDescription,
   ISwarmMessagesDatabaseMessagesCacheStoreTemp,

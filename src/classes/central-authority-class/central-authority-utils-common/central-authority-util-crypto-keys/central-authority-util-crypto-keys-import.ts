@@ -15,7 +15,11 @@ import {
   CA_CRYPTO_KEY_PAIRS_PUBLIC_KEYS_STRINGIFIED_MIN_LENGTH,
 } from './central-authority-util-crypto-keys.const';
 import { caValidateCryptoKeyPairExportedObject } from '../../central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
-import { checkIsPublicKeys, checkIsCryptoKeyPairs, checkIsCryptoKeyPairsExportedAsString } from './central-authority-util-crypto-keys-common';
+import {
+  checkIsPublicKeys,
+  checkIsCryptoKeyPairs,
+  checkIsCryptoKeyPairsExportedAsString,
+} from './central-authority-util-crypto-keys-common';
 import { decompressString } from 'utils/data-compression-utils/data-compression-utils-strings';
 
 /**

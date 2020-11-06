@@ -43,11 +43,15 @@ export class CAConnectionWithFirebaseUtilDatabase {
     const keyLen = key.length;
 
     if (keyLen > CA_CONNECTION_FIREBASE_UTILS_DATABASE_KEY_MAX_LENGTH) {
-      console.error(`Key must be less than ${CA_CONNECTION_FIREBASE_UTILS_DATABASE_KEY_MAX_LENGTH}, but the value is ${keyLen} characters len`);
+      console.error(
+        `Key must be less than ${CA_CONNECTION_FIREBASE_UTILS_DATABASE_KEY_MAX_LENGTH}, but the value is ${keyLen} characters len`
+      );
       return false;
     }
     if (keyLen < CA_CONNECTION_FIREBASE_UTILS_DATABASE_KEY_MIN_LENGTH) {
-      console.error(`Key must be greater than ${CA_CONNECTION_FIREBASE_UTILS_DATABASE_KEY_MAX_LENGTH}, but the value is ${keyLen} characters len`);
+      console.error(
+        `Key must be greater than ${CA_CONNECTION_FIREBASE_UTILS_DATABASE_KEY_MAX_LENGTH}, but the value is ${keyLen} characters len`
+      );
       return false;
     }
     return true;
