@@ -400,14 +400,14 @@ export class SwarmMessagesDatabase<
     }
   }
 
-  protected _getSwarmMessageWithMeta(
+  protected _getSwarmMessageWithMeta<MD extends ISwarmMessageInstanceDecrypted>(
     dbName: string,
-    message: ISwarmMessageInstanceDecrypted,
+    message: MD,
     // the global unique address (hash) of the message in the swarm
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key
     key?: TSwarmStoreDatabaseEntityKey<P>
-  ): ISwarmMessageStoreMessageWithMeta<P> {
+  ): ISwarmMessageStoreMessageWithMeta<P, MD> {
     return {
       dbName,
       message,

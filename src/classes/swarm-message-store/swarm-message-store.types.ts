@@ -9,7 +9,12 @@ import { EventEmitter } from '../basic-classes/event-emitter-class-base/event-em
 import { ESwarmMessageStoreEventNames } from './swarm-message-store.const';
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import { TSwarmStoreDatabaseIteratorMethodArgument, TSwarmStoreDatabaseType } from '../swarm-store-class/swarm-store-class.types';
-import { TSwarmMessageSerialized, TSwarmMessageConstructorBodyMessage } from '../swarm-message/swarm-message-constructor.types';
+import {
+  TSwarmMessageSerialized,
+  TSwarmMessageConstructorBodyMessage,
+  TSwarmMessageInstance,
+  ISwarmMessageInstanceEncrypted,
+} from '../swarm-message/swarm-message-constructor.types';
 import { TCentralAuthorityUserIdentity } from '../central-authority-class/central-authority-class-types/central-authority-class-types-common';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { IStorageCommon } from 'types/storage.types';
@@ -250,18 +255,20 @@ export interface ISwarmMessageStoreMessageMeta<P extends ESwarmStoreConnector> {
   key?: Error | TSwarmStoreDatabaseEntityKey<P> | undefined;
 }
 
-export interface ISwarmMessageStoreMessagingRequestWithMetaResult<P extends ESwarmStoreConnector, T extends TSwarmMessageInstance>
-  extends ISwarmMessageStoreMessageMeta<P> {
+export interface ISwarmMessageStoreMessagingRequestWithMetaResult<
+  P extends ESwarmStoreConnector,
+  MD extends ISwarmMessageInstanceDecrypted
+> extends ISwarmMessageStoreMessageMeta<P> {
   /**
    * Message parsed.
    * Error if failed to parse the message.
    *
    * @type {(Error | TSwarmMessageInstance)}
    */
-  message: Error | T;
+  message: Error | MD;
 }
 
-export interface ISwarmMessageStoreMessageWithMeta<P extends ESwarmStoreConnector> {
+export interface ISwarmMessageStoreMessageWithMeta<P extends ESwarmStoreConnector, MD extends ISwarmMessageInstanceDecrypted> {
   /**
    * A name of a database where the name is from
    *
@@ -288,7 +295,7 @@ export interface ISwarmMessageStoreMessageWithMeta<P extends ESwarmStoreConnecto
    *
    * @type {(Error | TSwarmMessageInstance)}
    */
-  message: ISwarmMessageInstanceDecrypted;
+  message: MD;
 }
 
 /**
@@ -298,7 +305,12 @@ export interface ISwarmMessageStoreMessageWithMeta<P extends ESwarmStoreConnecto
  * @interface ISwarmMessageStoreMessagingMethods
  * @template P
  */
-export interface ISwarmMessageStoreMessagingMethods<P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>> {
+export interface ISwarmMessageStoreMessagingMethods<
+  P extends ESwarmStoreConnector,
+  ItemType extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  MI extends TSwarmMessageInstance
+> {
   /**
    * add message to a database with the given name
    *
@@ -309,11 +321,7 @@ export interface ISwarmMessageStoreMessagingMethods<P extends ESwarmStoreConnect
    * @memberof ISwarmMessageStore
    * @throws
    */
-  addMessage(
-    dbName: string,
-    message: TSwarmMessageInstance,
-    key?: TSwarmStoreDatabaseEntityKey<P>
-  ): Promise<TSwarmStoreDatabaseEntityAddress<P>>;
+  addMessage(dbName: string, message: MI, key?: TSwarmStoreDatabaseEntityKey<P>): Promise<TSwarmStoreDatabaseEntityAddress<P>>;
 
   /**
    * add message serialized to a database with the given name
@@ -326,7 +334,7 @@ export interface ISwarmMessageStoreMessagingMethods<P extends ESwarmStoreConnect
    */
   addMessage(
     dbName: string,
-    message: string,
+    message: ItemType,
     key?: TSwarmStoreDatabaseEntityKey<P>
   ): Promise<TSwarmStoreDatabaseEntityAddress<P>>;
 
@@ -384,7 +392,7 @@ export interface ISwarmMessageStoreMessagingMethods<P extends ESwarmStoreConnect
   collectWithMeta(
     dbName: string,
     options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>
-  ): Promise<Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P> | undefined>>;
+  ): Promise<Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P, Exclude<MI, ISwarmMessageInstanceEncrypted>> | undefined>>;
 }
 
 /**
@@ -428,7 +436,7 @@ export interface ISwarmMessageStore<
   >
 > extends ISwarmStore<P, ItemType, DbType, ConnectorBasic, PO, DBO, CO, CFO, ConnectorMain, O>,
     EventEmitter<ISwarmMessageStoreEvents<P, ItemType, DBO>>,
-    ISwarmMessageStoreMessagingMethods<P, DbType> {
+    ISwarmMessageStoreMessagingMethods<P, ItemType, DbType, Exclude<MSI, ItemType>> {
   /**
    * connect to the swarm storage
    *

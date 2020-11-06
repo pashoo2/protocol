@@ -14,6 +14,7 @@ import {
 import { TSwarmStoreDatabaseEntityUniqueIndex } from '../../../swarm-store-class/swarm-store-class.types';
 import { isValidSwarmMessageDecryptedFormat } from '../../../swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-swarm-message';
 import { whetherSwarmMessagesDecryptedAreEqual } from '../../../swarm-message/swarm-message-utils/swarm-message-utils-common/swarm-message-utils-common-decrypted';
+import { ISwarmMessageInstanceDecrypted } from '../../../swarm-message/swarm-message-constructor.types';
 
 export const checkMessageAddress = <P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>>(
   messageUniqAddress: any,
@@ -100,8 +101,12 @@ export const createMessagesMetaByAddressAndKey = <P extends ESwarmStoreConnector
   );
 };
 
-export const getMessageMetaForMessageWithMeta = <P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>>(
-  swarmMessageWithMeta: ISwarmMessageStoreMessageWithMeta<P>,
+export const getMessageMetaForMessageWithMeta = <
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  MD extends ISwarmMessageInstanceDecrypted
+>(
+  swarmMessageWithMeta: ISwarmMessageStoreMessageWithMeta<P, MD>,
   dbType: DbType
 ): ISwarmMessagesDatabaseMesssageMeta<P, DbType> => {
   const { key, messageAddress } = swarmMessageWithMeta;
@@ -151,9 +156,10 @@ export const getMessagesUniqIndexesByMeta = <P extends ESwarmStoreConnector, DbT
 
 export const getMessageDescriptionForMessageWithMeta = <
   P extends ESwarmStoreConnector,
-  DbType extends TSwarmStoreDatabaseType<P>
+  DbType extends TSwarmStoreDatabaseType<P>,
+  MD extends ISwarmMessageInstanceDecrypted
 >(
-  swarmMessageWithMeta: ISwarmMessageStoreMessageWithMeta<P>,
+  swarmMessageWithMeta: ISwarmMessageStoreMessageWithMeta<P, MD>,
   dbType: DbType
 ): ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType> => {
   const messageMeta = getMessageMetaForMessageWithMeta(swarmMessageWithMeta, dbType);

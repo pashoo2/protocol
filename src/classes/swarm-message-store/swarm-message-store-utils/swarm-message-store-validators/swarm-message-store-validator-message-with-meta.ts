@@ -2,6 +2,7 @@ import assert from 'assert';
 import { ISwarmMessageStoreMessageWithMeta } from '../../swarm-message-store.types';
 import { ESwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.const';
 import { isValidSwarmMessageDecryptedFormat } from './swarm-message-store-validator-swarm-message';
+import { TSwarmMessageSerialized, ISwarmMessageInstanceDecrypted } from '../../../swarm-message/swarm-message-constructor.types';
 
 /**
  * Validates swarm message with meta format
@@ -12,9 +13,11 @@ import { isValidSwarmMessageDecryptedFormat } from './swarm-message-store-valida
  * @returns {true}
  * @throws - is format is not valid
  */
-export function validateSwarmMessageWithMeta<P extends ESwarmStoreConnector>(
-  swarmMessageWithMeta: any
-): swarmMessageWithMeta is ISwarmMessageStoreMessageWithMeta<P> {
+export function validateSwarmMessageWithMeta<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  MD extends ISwarmMessageInstanceDecrypted
+>(swarmMessageWithMeta: any): swarmMessageWithMeta is ISwarmMessageStoreMessageWithMeta<P, MD> {
   if (!swarmMessageWithMeta) {
     alert('No swarm message with meta');
   }

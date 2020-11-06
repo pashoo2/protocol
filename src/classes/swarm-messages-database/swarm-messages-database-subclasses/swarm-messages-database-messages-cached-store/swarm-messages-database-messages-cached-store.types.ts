@@ -3,6 +3,7 @@ import { TSwarmStoreDatabaseType } from '../../../swarm-store-class/swarm-store-
 import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../swarm-message-store/swarm-message-store.types';
 import { ISwarmMessagesDatabaseMessagesCacheStoreTemp } from '../swarm-messages-database-cache/swarm-messages-database-cache.types';
 import { ISwarmMessagesDatabaseMesssageMeta, TSwarmMessageDatabaseMessagesCached } from '../../swarm-messages-database.types';
+import { ISwarmMessageInstanceDecrypted } from '../../../swarm-message/swarm-message-constructor.types';
 import {
   ISwarmMessagesDatabaseMessagesCacheStoreNonTemp,
   ISwarmMessagesDatabaseMessagesCacheMessageDescription,
@@ -11,6 +12,7 @@ import {
 export interface ISwarmMessagesDatabaseMessagesCachedStoreCore<
   P extends ESwarmStoreConnector,
   DbType extends TSwarmStoreDatabaseType<P>,
+  MD extends ISwarmMessageInstanceDecrypted,
   IsTemp extends boolean = false
 > {
   /**
@@ -27,7 +29,7 @@ export interface ISwarmMessagesDatabaseMessagesCachedStoreCore<
    * @type {TSwarmMessageDatabaseMessagesCached<P, DbType>}
    * @memberof ISwarmMessagesDatabaseMessagesCachedStoreCore
    */
-  readonly entriesCached: TSwarmMessageDatabaseMessagesCached<P, DbType>;
+  readonly entriesCached: TSwarmMessageDatabaseMessagesCached<P, DbType, MD>;
 
   /**
    * Is it a temporary cache store.
@@ -46,7 +48,7 @@ export interface ISwarmMessagesDatabaseMessagesCachedStoreCore<
    */
   get(
     meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>
-  ): ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector> | undefined | undefined;
+  ): ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined | undefined;
 
   /**
    * Set the entry in the cache right at this moment
@@ -79,7 +81,7 @@ export interface ISwarmMessagesDatabaseMessagesCachedStoreCore<
    * @memberof ISwarmMessagesDatabaseMessagesCachedStoreCore
    * @returns {boolean} - whether any messages were updated
    */
-  updateWithEntries(entries: TSwarmMessageDatabaseMessagesCached<P, DbType>): boolean;
+  updateWithEntries(entries: TSwarmMessageDatabaseMessagesCached<P, DbType, MD>): boolean;
   /**
    * Remove an existing message from the store. Can be a deffered operation.
    *
@@ -101,8 +103,9 @@ export type TSwarmMessagesDatabaseMessagesCachedStoreMessagesMetaHash = string;
 
 export interface ISwarmMessagesDatabaseMessagesCacheStoreExtendedDefferedMethods<
   P extends ESwarmStoreConnector,
-  DbType extends TSwarmStoreDatabaseType<P>
-> extends ISwarmMessagesDatabaseMessagesCacheStoreNonTemp<P, DbType> {
+  DbType extends TSwarmStoreDatabaseType<P>,
+  MD extends ISwarmMessageInstanceDecrypted
+> extends ISwarmMessagesDatabaseMessagesCacheStoreNonTemp<P, DbType, MD> {
   /**
    * Add the entry for reading it directly from the store after the current
    * batch update will be done.
@@ -124,14 +127,15 @@ export interface ISwarmMessagesDatabaseMessagesCacheStoreExtendedDefferedMethods
 export interface ISwarmMessagesDatabaseMessagesCachedStoreCoreConstructor<
   P extends ESwarmStoreConnector,
   DbType extends TSwarmStoreDatabaseType<P>,
+  MD extends ISwarmMessageInstanceDecrypted,
   IsTemp extends boolean = false
 > {
   constructor(
     cachedStore: IsTemp extends true
-      ? ISwarmMessagesDatabaseMessagesCacheStoreTemp<P, DbType, IsTemp>
-      : ISwarmMessagesDatabaseMessagesCacheStoreExtendedDefferedMethods<P, DbType>,
+      ? ISwarmMessagesDatabaseMessagesCacheStoreTemp<P, DbType, MD, IsTemp>
+      : ISwarmMessagesDatabaseMessagesCacheStoreExtendedDefferedMethods<P, DbType, MD>,
     isTemp: IsTemp,
     dbType: DbType,
     dbName: string
-  ): ISwarmMessagesDatabaseMessagesCachedStoreCore<P, DbType, IsTemp>;
+  ): ISwarmMessagesDatabaseMessagesCachedStoreCore<P, DbType, MD, IsTemp>;
 }

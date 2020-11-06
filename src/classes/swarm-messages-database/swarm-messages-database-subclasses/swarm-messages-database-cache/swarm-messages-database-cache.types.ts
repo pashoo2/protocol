@@ -27,6 +27,7 @@ export interface ISwarmMessagesDatabaseMessagesCacheMessageDescription<
 export interface ISwarmMessagesDatabaseMessagesCacheStoreTemp<
   P extends ESwarmStoreConnector,
   DbType extends TSwarmStoreDatabaseType<P>,
+  MD extends ISwarmMessageInstanceDecrypted,
   IsTemp extends boolean
 > {
   /**
@@ -42,7 +43,7 @@ export interface ISwarmMessagesDatabaseMessagesCacheStoreTemp<
    * @returns {TSwarmMessageDatabaseMessagesCached<P, DbType>}
    * @memberof ISwarmMessagesDatabaseMessagesCacheStore
    */
-  readonly entries: TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined;
+  readonly entries: TSwarmMessageDatabaseMessagesCached<P, DbType, MD> | undefined;
   /**
    * Read message from the cache
    *
@@ -52,7 +53,7 @@ export interface ISwarmMessagesDatabaseMessagesCacheStoreTemp<
    */
   get(
     messageCharacteristic: ISwarmMessagesDatabaseMesssageMeta<P, DbType>
-  ): ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector> | undefined | undefined;
+  ): ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined | undefined;
   /**
    * Add message to cache forcely.
    *
@@ -73,13 +74,14 @@ export interface ISwarmMessagesDatabaseMessagesCacheStoreTemp<
    * @memberof ISwarmMessagesDatabaseMessagesCacheStoreTemp
    * @returns {boolean} - whether some messages were updated in the cache
    */
-  update(entries: TSwarmMessageDatabaseMessagesCached<P, DbType>): boolean;
+  update(entries: TSwarmMessageDatabaseMessagesCached<P, DbType, MD>): boolean;
 }
 
 export interface ISwarmMessagesDatabaseMessagesCacheStoreNonTemp<
   P extends ESwarmStoreConnector,
-  DbType extends TSwarmStoreDatabaseType<P>
-> extends ISwarmMessagesDatabaseMessagesCacheStoreTemp<P, DbType, false> {
+  DbType extends TSwarmStoreDatabaseType<P>,
+  MD extends ISwarmMessageInstanceDecrypted
+> extends ISwarmMessagesDatabaseMessagesCacheStoreTemp<P, DbType, MD, false> {
   readonly isTemp: false;
   /**
    * Get messages to read after the current batch of update will be performed.
@@ -139,7 +141,7 @@ export interface ISwarmMessagesDatabaseMessagesCacheStoreNonTemp<
    *     >} tempCacheStore
    * @memberof ISwarmMessagesDatabaseMessagesCacheStoreNonTemp
    */
-  linkWithTempStore(tempCacheStore: ISwarmMessagesDatabaseMessagesCacheStoreTemp<P, DbType, any>): void;
+  linkWithTempStore(tempCacheStore: ISwarmMessagesDatabaseMessagesCacheStoreTemp<P, DbType, MD, true>): void;
   /**
    * Update messages with a messages from a temporary store
    * linked earlier.
@@ -161,15 +163,17 @@ export interface ISwarmMessagesDatabaseMessagesCacheStoreNonTemp<
 export type TSwarmMessagesDatabaseMessagesCacheStore<
   P extends ESwarmStoreConnector,
   DbType extends TSwarmStoreDatabaseType<P>,
+  MD extends ISwarmMessageInstanceDecrypted,
   IsTemp extends boolean
 > = IsTemp extends true
-  ? ISwarmMessagesDatabaseMessagesCacheStoreTemp<P, DbType, IsTemp>
-  : ISwarmMessagesDatabaseMessagesCacheStoreNonTemp<P, DbType>;
+  ? ISwarmMessagesDatabaseMessagesCacheStoreTemp<P, DbType, MD, IsTemp>
+  : ISwarmMessagesDatabaseMessagesCacheStoreNonTemp<P, DbType, MD>;
 
 export interface ISwarmMessagesDatabaseMessagesCacheStoreFabric<
   P extends ESwarmStoreConnector,
   DbType extends TSwarmStoreDatabaseType<P>,
+  MD extends ISwarmMessageInstanceDecrypted,
   IsTemp extends boolean
 > {
-  (dbType: DbType, dbName: string, isTemp: IsTemp): TSwarmMessagesDatabaseMessagesCacheStore<P, DbType, IsTemp>;
+  (dbType: DbType, dbName: string, isTemp: IsTemp): TSwarmMessagesDatabaseMessagesCacheStore<P, DbType, MD, IsTemp>;
 }

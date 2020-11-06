@@ -474,24 +474,24 @@ export class SwarmMessageStore<
     return messageConstructor;
   }
 
-  protected getMessagesWithMeta(
-    messages: Array<Error | Exclude<MSI, ItemType>>,
+  protected getMessagesWithMeta<M extends Exclude<MSI, ItemType>>(
+    messages: Array<Error | M>,
     rawEntriesIterator: TSwarmStoreDatabaseRequestMethodEntitiesReturnType<P, ItemType>,
     dbName: DBO['dbName'],
     dbType: DbType
-  ): Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P> | undefined> {
+  ): Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P, M> | undefined> {
     if (this.connectorType === ESwarmStoreConnector.OrbitDB) {
       return this.joinMessagesWithRawOrbitDBEntries(messages, rawEntriesIterator, dbName, dbType);
     }
     return [];
   }
 
-  protected joinMessagesWithRawOrbitDBEntries(
-    messages: Array<Error | Exclude<MSI, ItemType>>,
+  protected joinMessagesWithRawOrbitDBEntries<M extends Exclude<MSI, ItemType>>(
+    messages: Array<Error | M>,
     rawEntriesIterator: TSwarmStoreDatabaseRequestMethodEntitiesReturnType<P, ItemType>,
     dbName: DBO['dbName'],
     dbType: DbType
-  ): Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P> | undefined> {
+  ): Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P, M> | undefined> {
     const messagesWithMeta = messages.map((messageInstance, idx) => {
       const entriesIterator = rawEntriesIterator instanceof Array ? rawEntriesIterator : [rawEntriesIterator];
       const logEntry = entriesIterator[idx];
@@ -505,7 +505,7 @@ export class SwarmMessageStore<
         message: messageInstance,
         messageAddress: messageMetadata.messageAddress,
         key: messageMetadata.key,
-      } as ISwarmMessageStoreMessagingRequestWithMetaResult<P>;
+      } as ISwarmMessageStoreMessagingRequestWithMetaResult<P, M>;
     });
     return messagesWithMeta;
   }
