@@ -2,13 +2,7 @@ import { FirstPrameter } from '../../types';
 import { commonUtilsAreAllArraysEqual } from '../common-utils';
 import { mapValuesForFurtherComparision } from './data-cache-utils-main';
 
-export const memoize = <
-  F extends (arg: any) => any,
-  A extends FirstPrameter<F>,
-  R extends ReturnType<F>
->(
-  functionToMemoize: F
-): ((arg: A) => R) => {
+export const memoize = <F extends (arg: any) => any, A extends FirstPrameter<F>, R extends ReturnType<F>>(functionToMemoize: F): ((arg: A) => R) => {
   const cachedResults = new Map<A, R>();
   const memoized = (a: A): R => {
     const cachedResult = cachedResults.get(a);
@@ -38,19 +32,14 @@ export const memoize = <
  * @param {F} func
  * @returns {(...arg: A) => R} - returns a function which only the last result will be memoized
  */
-export const memoizeLastReturnedValue = <F extends (...arg: any[]) => any>(
-  func: F
-) => {
+export const memoizeLastReturnedValue = <F extends (...arg: any[]) => any>(func: F) => {
   let lastArgs: any[];
   let lastReturnValue: ReturnType<F>;
 
   return (...args: Parameters<F>): ReturnType<F> => {
     const argsMappedForComparision = mapValuesForFurtherComparision(args);
 
-    if (
-      !lastArgs ||
-      !commonUtilsAreAllArraysEqual(lastArgs, argsMappedForComparision)
-    ) {
+    if (!lastArgs || !commonUtilsAreAllArraysEqual(lastArgs, argsMappedForComparision)) {
       lastArgs = argsMappedForComparision;
       lastReturnValue = func(...args);
     }

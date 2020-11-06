@@ -17,10 +17,7 @@ import { SwarmMessagePayloadValidationOptionsDefault } from './swarm-message-sub
  * @param {} pld
  * @throws
  */
-function validatePayloadFunc(
-  pld: TSwarmMessagePayloadSerialized,
-  options: Required<ISwarmMessagePayloadValidationOptions>
-): void {
+function validatePayloadFunc(pld: TSwarmMessagePayloadSerialized, options: Required<ISwarmMessagePayloadValidationOptions>): void {
   assert(pld != null, 'A payload must be specified');
 
   const { payloadMaxLengthBytes, payloadMinLengthBytes } = options;
@@ -30,9 +27,7 @@ function validatePayloadFunc(
     len = commonUtilsArrayCalculateLengthOfIntegerArray(pld);
     if (len instanceof Error) {
       console.error(len);
-      assert.fail(
-        'The value of the payload is not a valid array with byte-length integers'
-      );
+      assert.fail('The value of the payload is not a valid array with byte-length integers');
     }
   } else if (typeof pld === 'string') {
     len = pld.length;
@@ -43,14 +38,10 @@ function validatePayloadFunc(
   } else if (pld instanceof SharedArrayBuffer) {
     len = pld.byteLength;
   } else {
-    assert.fail(
-      'The payload value must be a string, an instance of a byte-integers Array, Uint8Array, ArrayBuffer or SharedArrayBuffer'
-    );
+    assert.fail('The payload value must be a string, an instance of a byte-integers Array, Uint8Array, ArrayBuffer or SharedArrayBuffer');
   }
   if (typeof len !== 'number') {
-    assert.fail(
-      'Unknown error has occurred while calculating the lenght of the payload'
-    );
+    assert.fail('Unknown error has occurred while calculating the lenght of the payload');
     return;
   }
   assert(Number.isFinite(len), 'The length of the payload is too big');
@@ -58,10 +49,5 @@ function validatePayloadFunc(
   assert(len >= payloadMinLengthBytes, 'The payload value is too small');
 }
 
-export const createValidatePayload = (
-  opts?: ISwarmMessagePayloadValidationOptions
-) => (pld: TSwarmMessagePayloadSerialized) =>
-  validatePayloadFunc(
-    pld,
-    defaultsDeep(opts, SwarmMessagePayloadValidationOptionsDefault)
-  );
+export const createValidatePayload = (opts?: ISwarmMessagePayloadValidationOptions) => (pld: TSwarmMessagePayloadSerialized) =>
+  validatePayloadFunc(pld, defaultsDeep(opts, SwarmMessagePayloadValidationOptionsDefault));

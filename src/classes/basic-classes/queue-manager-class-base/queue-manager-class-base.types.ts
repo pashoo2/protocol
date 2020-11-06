@@ -1,8 +1,4 @@
-import {
-  QUEUE_MANAGER_EVENT_READY,
-  QUEUE_MANAGER_EVENT_STOP,
-  QUEUE_MANAGER_EVENT_START,
-} from './queue-manager-class-base.const';
+import { QUEUE_MANAGER_EVENT_READY, QUEUE_MANAGER_EVENT_STOP, QUEUE_MANAGER_EVENT_START } from './queue-manager-class-base.const';
 
 export type TQueue<T> = T[]; // a queue of an items
 

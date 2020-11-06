@@ -1,22 +1,10 @@
 // @ts-nocheck
 import assert from 'assert';
-import {
-  IConnectionBridgeOptions,
-  IConnectionBridge,
-} from './connection-bridge.types';
+import { IConnectionBridgeOptions, IConnectionBridge } from './connection-bridge.types';
 import { ESwarmStoreConnector } from '../swarm-store-class/swarm-store-class.const';
-import {
-  ICentralAuthorityOptions,
-  ICentralAuthority,
-} from '../central-authority-class/central-authority-class.types';
-import {
-  TSwarmMessageConstructorOptions,
-  ISwarmMessageConstructor,
-} from '../swarm-message/swarm-message-constructor.types';
-import {
-  ISwarmMessageStoreOptions,
-  ISwarmMessageStore,
-} from '../swarm-message-store/swarm-message-store.types';
+import { ICentralAuthorityOptions, ICentralAuthority } from '../central-authority-class/central-authority-class.types';
+import { TSwarmMessageConstructorOptions, ISwarmMessageConstructor } from '../swarm-message/swarm-message-constructor.types';
+import { ISwarmMessageStoreOptions, ISwarmMessageStore } from '../swarm-message-store/swarm-message-store.types';
 import { extend } from '../../utils/common-utils/common-utils-objects';
 import {
   CONNECTION_BRIDGE_OPTIONS_DEFAULT_AUTH_PROVIDERS_POOL,
@@ -39,16 +27,10 @@ import {
 } from '../swarm-messgae-encrypted-cache/swarm-message-encrypted-cache.utils';
 import { ISwarmMessgaeEncryptedCache } from '../swarm-messgae-encrypted-cache';
 import { ISensitiveDataSessionStorageOptions } from '../sensitive-data-session-storage/sensitive-data-session-storage.types';
-import {
-  ISecretStorage,
-  TSecretStorageAuthorizeCredentials,
-} from '../secret-storage-class/secret-storage-class.types';
+import { ISecretStorage, TSecretStorageAuthorizeCredentials } from '../secret-storage-class/secret-storage-class.types';
 import { SecretStorage } from '../secret-storage-class/secret-storage-class';
 import { IStorageProviderOptions } from '../storage-providers/storage-providers.types';
-import {
-  TSwarmStoreDatabaseType,
-  TSwarmStoreConnectorConnectionOptions,
-} from '../swarm-store-class/swarm-store-class.types';
+import { TSwarmStoreDatabaseType, TSwarmStoreConnectorConnectionOptions } from '../swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageSerialized } from '../swarm-message/swarm-message-constructor.types';
 import { IConnectionBridgeSwarmConnection } from './connection-bridge.types';
 import { getSwarmStoreConnectionProviderOptionsForOrbitDb } from './connection-bridge.utils';
@@ -77,67 +59,16 @@ export class ConnectionBridge<
   T extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType>,
-  PO extends TSwarmStoreConnectorConnectionOptions<
-    P,
-    T,
-    DbType,
-    ConnectorBasic
-  >,
+  PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, ConnectorBasic>,
   DBO extends TSwarmStoreDatabaseOptions<P, T>,
   CO extends ISwarmStoreProviderOptions<P, T, DbType, ConnectorBasic, PO>,
-  CFO extends ISwarmStoreOptionsConnectorFabric<
-    P,
-    T,
-    DbType,
-    ConnectorBasic,
-    PO,
-    CO,
-    DBO,
-    ConnectorMain
-  >,
-  ConnectorMain extends ISwarmStoreConnector<
-    P,
-    T,
-    DbType,
-    ConnectorBasic,
-    PO,
-    DBO
-  >,
-  O extends ISwarmStoreOptionsWithConnectorFabric<
-    P,
-    T,
-    DbType,
-    ConnectorBasic,
-    PO,
-    CO,
-    DBO,
-    ConnectorMain,
-    CFO
-  >
->
-  implements
-    IConnectionBridge<
-      P,
-      T,
-      DbType,
-      ConnectorBasic,
-      PO,
-      DBO,
-      CO,
-      CFO,
-      ConnectorMain,
-      O
-    > {
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain>,
+  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, ConnectorBasic, PO, DBO>,
+  O extends ISwarmStoreOptionsWithConnectorFabric<P, T, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain, CFO>
+> implements IConnectionBridge<P, T, DbType, ConnectorBasic, PO, DBO, CO, CFO, ConnectorMain, O> {
   public caConnection?: ICentralAuthority;
 
-  public storage?: ISwarmMessageStore<
-    P,
-    T,
-    DbType,
-    ConnectorBasic,
-    ConnectorMain,
-    O
-  >;
+  public storage?: ISwarmMessageStore<P, T, DbType, ConnectorBasic, ConnectorMain, O>;
 
   public messageConstructor?: ISwarmMessageConstructor;
 
@@ -149,13 +80,7 @@ export class ConnectionBridge<
     return this._secretStorage;
   }
 
-  protected options?: IConnectionBridgeOptions<
-    P,
-    T,
-    DbType,
-    ConnectorBasic,
-    true
-  >;
+  protected options?: IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, true>;
 
   protected optionsCA?: ICentralAuthorityOptions;
 
@@ -163,12 +88,7 @@ export class ConnectionBridge<
 
   protected optionsSwarmConnection?: any;
 
-  protected optionsMessageStorage?: ISwarmMessageStoreOptions<
-    P,
-    T,
-    DbType,
-    ConnectorBasic
-  >;
+  protected optionsMessageStorage?: ISwarmMessageStoreOptions<P, T, DbType, ConnectorBasic>;
 
   protected session?: ISensitiveDataSessionStorage;
 
@@ -178,9 +98,7 @@ export class ConnectionBridge<
 
   protected _secretStorage?: ISecretStorage;
 
-  protected swarmConnection:
-    | IConnectionBridgeSwarmConnection<unknown>
-    | undefined;
+  protected swarmConnection: IConnectionBridgeSwarmConnection<unknown> | undefined;
 
   /**
    * Connect to the central authority,
@@ -191,9 +109,7 @@ export class ConnectionBridge<
    * @memberof ConnectionBridge
    * @throws
    */
-  public async connect(
-    options: IConnectionBridgeOptions<P, T, DbType>
-  ): Promise<void> {
+  public async connect(options: IConnectionBridgeOptions<P, T, DbType>): Promise<void> {
     await this.setOptions(options);
     try {
       await this.startSession();
@@ -218,13 +134,8 @@ export class ConnectionBridge<
    * @returns
    * @memberof ConnectionBridge
    */
-  public async checkSessionAvailable(
-    options?:
-      | ISensitiveDataSessionStorageOptions
-      | IConnectionBridgeOptions<P, T, DbType>
-  ) {
-    const sessionParams = (options as IConnectionBridgeOptions<P, T, DbType>)
-      ?.auth
+  public async checkSessionAvailable(options?: ISensitiveDataSessionStorageOptions | IConnectionBridgeOptions<P, T, DbType>) {
+    const sessionParams = (options as IConnectionBridgeOptions<P, T, DbType>)?.auth
       ? (options as IConnectionBridgeOptions<P, T, DbType>)?.auth.session
       : (options as ISensitiveDataSessionStorageOptions | undefined);
 
@@ -232,11 +143,7 @@ export class ConnectionBridge<
       return false;
     }
     await this.startUserDataStore();
-    if (
-      !(await this.userDataStore?.getItem(
-        CONNECTION_BRIDGE_SESSION_STORAGE_KEYS.USER_LOGIN
-      ))
-    ) {
+    if (!(await this.userDataStore?.getItem(CONNECTION_BRIDGE_SESSION_STORAGE_KEYS.USER_LOGIN))) {
       return false;
     }
 
@@ -245,9 +152,7 @@ export class ConnectionBridge<
       clearStorageAfterConnect: false,
     });
 
-    return !!(await session.getItem(
-      CONNECTION_BRIDGE_SESSION_STORAGE_KEYS.SESSION_DATA_AVAILABLE
-    ));
+    return !!(await session.getItem(CONNECTION_BRIDGE_SESSION_STORAGE_KEYS.SESSION_DATA_AVAILABLE));
   }
 
   /**
@@ -278,10 +183,7 @@ export class ConnectionBridge<
     const { auth: authOptions, user: userOptions } = options!;
 
     assert(authOptions, 'Authorization options must be defined');
-    assert(
-      typeof authOptions === 'object',
-      'Authorization options must be an object'
-    );
+    assert(typeof authOptions === 'object', 'Authorization options must be an object');
     assert(userOptions, 'User options must be defined');
     assert(typeof userOptions === 'object', 'User options must be an object');
 
@@ -337,21 +239,11 @@ export class ConnectionBridge<
 
   protected getSwarmStoreConnectionProviderOptions<T>(
     swarmConnection: IConnectionBridgeSwarmConnection<T>
-  ): TSwarmStoreConnectorConnectionOptions<
-    P,
-    TSwarmMessageSerialized,
-    DbType,
-    ConnectorBasic
-  > {
+  ): TSwarmStoreConnectorConnectionOptions<P, TSwarmMessageSerialized, DbType, ConnectorBasic> {
     return getSwarmStoreConnectionProviderOptionsForOrbitDb(
       (swarmConnection as unknown) as IConnectionBridgeSwarmConnection<IPFS>,
       this.options?.storage.connectorBasicFabric
-    ) as TSwarmStoreConnectorConnectionOptions<
-      P,
-      TSwarmMessageSerialized,
-      DbType,
-      ConnectorBasic
-    >;
+    ) as TSwarmStoreConnectorConnectionOptions<P, TSwarmMessageSerialized, DbType, ConnectorBasic>;
   }
 
   /**
@@ -374,9 +266,7 @@ export class ConnectionBridge<
       throw new Error('There is no message constructor defined');
     }
     if (!caConnection) {
-      throw new Error(
-        'There is no message central authority connection defined'
-      );
+      throw new Error('There is no message central authority connection defined');
     }
     if (!swarmConnection) {
       throw new Error('There is no swarm connection provider');
@@ -397,16 +287,12 @@ export class ConnectionBridge<
       ...storageOptions,
       // credentials: authCredentials,
       userId,
-      databasesListStorage: await this.startEncryptedCache(
-        CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX.DATABASE_LIST_STORAGE
-      ),
+      databasesListStorage: await this.startEncryptedCache(CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX.DATABASE_LIST_STORAGE),
       swarmMessageConstructorFabric: this.swarmMessageConstructorFabric,
       messageConstructors: {
         default: messageConstructor,
       },
-      providerConnectionOptions: this.getSwarmStoreConnectionProviderOptions(
-        swarmConnection
-      ),
+      providerConnectionOptions: this.getSwarmStoreConnectionProviderOptions(swarmConnection),
     } as any;
 
     return messageStorageOptions;
@@ -417,8 +303,7 @@ export class ConnectionBridge<
       const userDataStore = new SensitiveDataSessionStorage();
 
       await userDataStore.connect({
-        storagePrefix:
-          CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX.USER_DATA_STORAGE,
+        storagePrefix: CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX.USER_DATA_STORAGE,
       });
       this.userDataStore = userDataStore;
     }
@@ -432,38 +317,20 @@ export class ConnectionBridge<
    * @memberof ConnectionBridge
    * @throws
    */
-  protected async setOptions(
-    options: IConnectionBridgeOptions<P, T, DbType, ConnectorBasic>
-  ) {
+  protected async setOptions(options: IConnectionBridgeOptions<P, T, DbType, ConnectorBasic>) {
     await this.startUserDataStore();
     assert(options, 'Options must be provided');
     assert(typeof options === 'object', 'Options must be an object');
     if (options.auth.credentials?.login) {
-      await this.userDataStore?.setItem(
-        CONNECTION_BRIDGE_SESSION_STORAGE_KEYS.USER_LOGIN,
-        options.auth.credentials.login
-      );
-      this.options = (options as unknown) as IConnectionBridgeOptions<
-        P,
-        T,
-        DbType,
-        ConnectorBasic,
-        true
-      >;
+      await this.userDataStore?.setItem(CONNECTION_BRIDGE_SESSION_STORAGE_KEYS.USER_LOGIN, options.auth.credentials.login);
+      this.options = (options as unknown) as IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, true>;
     } else {
-      assert(
-        options.auth.session,
-        'A session must be started if there is no credentials provided'
-      );
+      assert(options.auth.session, 'A session must be started if there is no credentials provided');
 
-      const login = await this.userDataStore?.getItem(
-        CONNECTION_BRIDGE_SESSION_STORAGE_KEYS.USER_LOGIN
-      );
+      const login = await this.userDataStore?.getItem(CONNECTION_BRIDGE_SESSION_STORAGE_KEYS.USER_LOGIN);
 
       if (!login) {
-        throw new Error(
-          'There is no login provided in options and no session data found to get it'
-        );
+        throw new Error('There is no login provided in options and no session data found to get it');
       }
       this.options = {
         ...options,
@@ -478,16 +345,12 @@ export class ConnectionBridge<
     }
   }
 
-  protected async createSessionFromStorage(
-    sessionParams: ISensitiveDataSessionStorageOptions
-  ): Promise<ISensitiveDataSessionStorage> {
+  protected async createSessionFromStorage(sessionParams: ISensitiveDataSessionStorageOptions): Promise<ISensitiveDataSessionStorage> {
     const session = new SensitiveDataSessionStorage();
 
     await session.connect({
       ...sessionParams,
-      storagePrefix: sessionParams.storagePrefix
-        ? `${sessionParams.storagePrefix}${this.options?.auth.credentials?.login}`
-        : undefined,
+      storagePrefix: sessionParams.storagePrefix ? `${sessionParams.storagePrefix}${this.options?.auth.credentials?.login}` : undefined,
     });
     return session;
   }
@@ -537,9 +400,7 @@ export class ConnectionBridge<
     const options = this.setOptionsMessageConstructor();
 
     if (!this.swarmMessageConstructorFabric) {
-      throw new Error(
-        'Swarm message constructor fabric must be created before'
-      );
+      throw new Error('Swarm message constructor fabric must be created before');
     }
     this.messageConstructor = await this.swarmMessageConstructorFabric(options);
   }
@@ -555,9 +416,7 @@ export class ConnectionBridge<
   protected async startSwarmConnection(): Promise<void> {
     this.setOptionsSwarmConnection();
 
-    const ipfs = await ipfsUtilsConnectBasic(
-      this.options ? this.options.swarm : undefined
-    );
+    const ipfs = await ipfsUtilsConnectBasic(this.options ? this.options.swarm : undefined);
 
     this.swarmConnection = {
       getNativeConnection() {
@@ -597,9 +456,7 @@ export class ConnectionBridge<
     );
   }
 
-  protected startEncryptedCache(
-    dbNamePrefix: string
-  ): Promise<ISwarmMessgaeEncryptedCache> {
+  protected startEncryptedCache(dbNamePrefix: string): Promise<ISwarmMessgaeEncryptedCache> {
     const login = this.options!.auth.credentials.login;
 
     if (!this.swarmMessageEncryptedCacheFabric) {
@@ -614,9 +471,7 @@ export class ConnectionBridge<
     if (!this.swarmMessageEncryptedCacheFabric) {
       throw new Error('Encrypted cache fabric must be started before');
     }
-    this.swarmMessageEncryptedCache = await this.startEncryptedCache(
-      CONNECTION_BRIDGE_STORAGE_DATABASE_NAME.MESSAGE_CACHE_STORAGE
-    );
+    this.swarmMessageEncryptedCache = await this.startEncryptedCache(CONNECTION_BRIDGE_STORAGE_DATABASE_NAME.MESSAGE_CACHE_STORAGE);
   }
 
   /**
@@ -628,29 +483,13 @@ export class ConnectionBridge<
    */
   protected async startSwarmMessageStorageConnection(): Promise<void> {
     const swarmMessageStorageOptions = await this.getOptionsMessageStorage();
-    const swarmMessageStorage = new SwarmMessageStore<
-      P,
-      T,
-      DbType,
-      ConnectorBasic,
-      ConnectorMain,
-      O
-    >();
-    const result = await swarmMessageStorage.connect(
-      swarmMessageStorageOptions
-    );
+    const swarmMessageStorage = new SwarmMessageStore<P, T, DbType, ConnectorBasic, ConnectorMain, O>();
+    const result = await swarmMessageStorage.connect(swarmMessageStorageOptions);
 
     if (result instanceof Error) {
       throw result;
     }
-    this.storage = swarmMessageStorage as ISwarmMessageStore<
-      P,
-      T,
-      DbType,
-      ConnectorBasic,
-      ConnectorMain,
-      O
-    >;
+    this.storage = swarmMessageStorage as ISwarmMessageStore<P, T, DbType, ConnectorBasic, ConnectorMain, O>;
   }
 
   /**
@@ -668,10 +507,7 @@ export class ConnectionBridge<
       try {
         await storage.close();
       } catch (err) {
-        console.error(
-          'Failed to close the connection to the swarm message storage',
-          err
-        );
+        console.error('Failed to close the connection to the swarm message storage', err);
       }
     } else {
       console.warn('closeSwarmMessageStorage - there is no connection');
@@ -709,10 +545,7 @@ export class ConnectionBridge<
       try {
         await (nativeConnection as IPFS).stop();
       } catch (error) {
-        console.error(
-          'closeSwarmConnection failed to stop the ipfs node!',
-          error
-        );
+        console.error('closeSwarmConnection failed to stop the ipfs node!', error);
       }
     }
     this.swarmConnection = undefined;
@@ -753,10 +586,7 @@ export class ConnectionBridge<
       try {
         await caConnection.disconnect();
       } catch (err) {
-        console.error(
-          'closeCentralAuthorityConnection failed to close the connection to the central authority',
-          err
-        );
+        console.error('closeCentralAuthorityConnection failed to close the connection to the central authority', err);
       }
     }
     this.caConnection = undefined;
@@ -771,10 +601,7 @@ export class ConnectionBridge<
    * @memberof ConnectionBridge
    */
   protected async setSessionExists() {
-    await this.session?.setItem(
-      CONNECTION_BRIDGE_SESSION_STORAGE_KEYS.SESSION_DATA_AVAILABLE,
-      true
-    );
+    await this.session?.setItem(CONNECTION_BRIDGE_SESSION_STORAGE_KEYS.SESSION_DATA_AVAILABLE, true);
   }
 
   protected getSecretStorageDBOptions(): Partial<IStorageProviderOptions> {
@@ -785,9 +612,7 @@ export class ConnectionBridge<
 
   protected getSecretStorageAuthCredentials(): TSecretStorageAuthorizeCredentials {
     if (!this.session && !this.options?.auth.credentials.password) {
-      throw new Error(
-        'Session storage or password must be provided to authorize in SecretStorage'
-      );
+      throw new Error('Session storage or password must be provided to authorize in SecretStorage');
     }
     return {
       ...this.options?.auth.credentials,
@@ -797,14 +622,9 @@ export class ConnectionBridge<
 
   protected async startSecretStorage() {
     const secretStorage = new SecretStorage();
-    const authResult = await secretStorage.authorize(
-      this.getSecretStorageAuthCredentials(),
-      this.getSecretStorageDBOptions()
-    );
+    const authResult = await secretStorage.authorize(this.getSecretStorageAuthCredentials(), this.getSecretStorageDBOptions());
     if (authResult !== true) {
-      throw authResult === false
-        ? new Error('Conntection to the secret storage failed')
-        : authResult;
+      throw authResult === false ? new Error('Conntection to the secret storage failed') : authResult;
     }
     this._secretStorage = secretStorage;
   }

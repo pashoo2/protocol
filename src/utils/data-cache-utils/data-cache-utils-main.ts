@@ -54,9 +54,5 @@ const getValueStateMeasurement = <T = unknown>(value: T): TSimpleTypes | T => {
  * @returns {any[]}
  */
 export const mapValuesForFurtherComparision = (values: any[]): any[] => {
-  return values.reduce(
-    (acc, argument) =>
-      acc.concat([argument, getValueStateMeasurement(argument)]),
-    []
-  );
+  return values.reduce((acc, argument) => acc.concat([argument, getValueStateMeasurement(argument)]), []);
 };

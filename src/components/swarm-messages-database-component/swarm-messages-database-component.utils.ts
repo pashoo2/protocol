@@ -4,20 +4,11 @@ import {
   ISwarmMessagesDatabaseConnectOptions,
   TSwarmMessageDatabaseMessagesCached,
 } from '../../classes/swarm-messages-database/swarm-messages-database.types';
-import {
-  ISwarmMessageInstanceDecrypted,
-  TSwarmMessageSerialized,
-} from '../../classes/swarm-message/swarm-message-constructor.types';
-import {
-  ISwarmMessagesDatabaseMessageDescription,
-  ISwarmMessagesDatabaseDeleteMessageDescription,
-} from './swarm-messages-database-component.types';
+import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from '../../classes/swarm-message/swarm-message-constructor.types';
+import { ISwarmMessagesDatabaseMessageDescription, ISwarmMessagesDatabaseDeleteMessageDescription } from './swarm-messages-database-component.types';
 import { ESwarmMessageStoreEventNames } from '../../classes/swarm-message-store/swarm-message-store.const';
 import { ESwarmMessagesDatabaseCacheEventsNames } from '../../classes/swarm-messages-database/swarm-messages-database.const';
-import {
-  ISwarmStoreConnectorBasic,
-  ISwarmStoreConnector,
-} from '../../classes/swarm-store-class/swarm-store-class.types';
+import { ISwarmStoreConnectorBasic, ISwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageStoreOptionsWithConnectorFabric } from '../../classes/swarm-message-store/swarm-message-store.types';
 import {
   TSwarmStoreDatabaseType,
@@ -29,24 +20,13 @@ export const connectToDatabase = async <
   P extends ESwarmStoreConnector = ESwarmStoreConnector.OrbitDB,
   T extends TSwarmMessageSerialized = TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P> = TSwarmStoreDatabaseType<P>,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<
+  ConnectorBasic extends ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, T, DbType> = ISwarmStoreConnectorBasic<
     ESwarmStoreConnector.OrbitDB,
     T,
     DbType
-  > = ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, T, DbType>,
-  ConnectorMain extends ISwarmStoreConnector<
-    P,
-    T,
-    DbType,
-    ConnectorBasic
-  > = ISwarmStoreConnector<P, T, DbType, ConnectorBasic>,
-  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
-    P,
-    T,
-    DbType,
-    ConnectorBasic,
-    ConnectorMain
-  > = ISwarmMessageStoreOptionsWithConnectorFabric<
+  >,
+  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, ConnectorBasic> = ISwarmStoreConnector<P, T, DbType, ConnectorBasic>,
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<P, T, DbType, ConnectorBasic, ConnectorMain> = ISwarmMessageStoreOptionsWithConnectorFabric<
     P,
     T,
     DbType,
@@ -54,30 +34,9 @@ export const connectToDatabase = async <
     ConnectorMain
   >
 >(
-  options: ISwarmMessagesDatabaseConnectOptions<
-    P,
-    T,
-    DbType,
-    ConnectorBasic,
-    ConnectorMain,
-    O
-  >
-): Promise<SwarmMessagesDatabase<
-  P,
-  T,
-  DbType,
-  ConnectorBasic,
-  ConnectorMain,
-  O
->> => {
-  const db = new SwarmMessagesDatabase<
-    P,
-    T,
-    DbType,
-    ConnectorBasic,
-    ConnectorMain,
-    O
-  >();
+  options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType, ConnectorBasic, ConnectorMain, O>
+): Promise<SwarmMessagesDatabase<P, T, DbType, ConnectorBasic, ConnectorMain, O>> => {
+  const db = new SwarmMessagesDatabase<P, T, DbType, ConnectorBasic, ConnectorMain, O>();
 
   await db.connect(options);
   return db;
@@ -87,32 +46,13 @@ export const setMessageListener = <
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<
-    ESwarmStoreConnector.OrbitDB,
-    T,
-    DbType
-  >,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, T, DbType>,
   ConnectorMain extends ISwarmStoreConnector<P, T, DbType, ConnectorBasic>,
-  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
-    P,
-    T,
-    DbType,
-    ConnectorBasic,
-    ConnectorMain
-  >,
-  DB extends SwarmMessagesDatabase<
-    P,
-    T,
-    DbType,
-    ConnectorBasic,
-    ConnectorMain,
-    O
-  >
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<P, T, DbType, ConnectorBasic, ConnectorMain>,
+  DB extends SwarmMessagesDatabase<P, T, DbType, ConnectorBasic, ConnectorMain, O>
 >(
   db: DB,
-  messagesListener: (
-    message: ISwarmMessagesDatabaseMessageDescription<P>
-  ) => void
+  messagesListener: (message: ISwarmMessagesDatabaseMessageDescription<P>) => void
 ): (() => void) => {
   const listener = (
     dbName: string,
@@ -130,10 +70,7 @@ export const setMessageListener = <
   };
   db.emitter.addListener(ESwarmMessageStoreEventNames.NEW_MESSAGE, listener);
   return () => {
-    db.emitter.removeListener(
-      ESwarmMessageStoreEventNames.NEW_MESSAGE,
-      listener
-    );
+    db.emitter.removeListener(ESwarmMessageStoreEventNames.NEW_MESSAGE, listener);
   };
 };
 
@@ -141,32 +78,13 @@ export const setMessageDeleteListener = <
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<
-    ESwarmStoreConnector.OrbitDB,
-    T,
-    DbType
-  >,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, T, DbType>,
   ConnectorMain extends ISwarmStoreConnector<P, T, DbType, ConnectorBasic>,
-  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
-    P,
-    T,
-    DbType,
-    ConnectorBasic,
-    ConnectorMain
-  >,
-  DB extends SwarmMessagesDatabase<
-    P,
-    T,
-    DbType,
-    ConnectorBasic,
-    ConnectorMain,
-    O
-  >
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<P, T, DbType, ConnectorBasic, ConnectorMain>,
+  DB extends SwarmMessagesDatabase<P, T, DbType, ConnectorBasic, ConnectorMain, O>
 >(
   db: DB,
-  messagesDeleteListener: (
-    message: ISwarmMessagesDatabaseDeleteMessageDescription<P>
-  ) => void
+  messagesDeleteListener: (message: ISwarmMessagesDatabaseDeleteMessageDescription<P>) => void
 ): (() => void) => {
   const listener = (
     dbName: string,
@@ -189,56 +107,24 @@ export const setMessageDeleteListener = <
   };
 
   db.emitter.addListener(ESwarmMessageStoreEventNames.DELETE_MESSAGE, listener);
-  return () =>
-    db.emitter.removeListener(
-      ESwarmMessageStoreEventNames.DELETE_MESSAGE,
-      listener
-    );
+  return () => db.emitter.removeListener(ESwarmMessageStoreEventNames.DELETE_MESSAGE, listener);
 };
 
 export const setCacheUpdateListener = <
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<
-    ESwarmStoreConnector.OrbitDB,
-    T,
-    DbType
-  >,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, T, DbType>,
   ConnectorMain extends ISwarmStoreConnector<P, T, DbType, ConnectorBasic>,
-  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
-    P,
-    T,
-    DbType,
-    ConnectorBasic,
-    ConnectorMain
-  >,
-  DB extends SwarmMessagesDatabase<
-    P,
-    T,
-    DbType,
-    ConnectorBasic,
-    ConnectorMain,
-    O
-  >
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<P, T, DbType, ConnectorBasic, ConnectorMain>,
+  DB extends SwarmMessagesDatabase<P, T, DbType, ConnectorBasic, ConnectorMain, O>
 >(
   db: DB,
-  cacheUpdateListener: (
-    messages: TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined
-  ) => unknown
+  cacheUpdateListener: (messages: TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined) => unknown
 ) => {
-  const listener = (
-    messages: TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined
-  ) => {
+  const listener = (messages: TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined) => {
     cacheUpdateListener(messages);
   };
-  db.emitter.addListener(
-    ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATED,
-    listener
-  );
-  return () =>
-    db.emitter.removeListener(
-      ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATED,
-      listener
-    );
+  db.emitter.addListener(ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATED, listener);
+  return () => db.emitter.removeListener(ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATED, listener);
 };

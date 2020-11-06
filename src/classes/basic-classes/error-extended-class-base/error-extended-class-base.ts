@@ -1,10 +1,7 @@
 export class ErrorExtendedBaseClass extends Error {
   public code?: number | string;
 
-  constructor(
-    arg?: Error | ErrorExtendedBaseClass | string,
-    code?: number | string
-  ) {
+  constructor(arg?: Error | ErrorExtendedBaseClass | string, code?: number | string) {
     if (arg instanceof ErrorExtendedBaseClass) {
       return arg;
     }

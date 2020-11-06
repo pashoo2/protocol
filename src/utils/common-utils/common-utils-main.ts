@@ -10,11 +10,7 @@ export const isDefined = <T>(v: T): v is NonNullable<T> => v != null;
  * @param {T} arg - argument which is able to count it's items number
  * @returns {number} - chars in string, bytes in typed arrays, keys in object, members in map, items in set, items in array
  */
-export const getItemsCount = <
-  T extends Map<any, any> | Set<any> | Array<any> | {} | string | TTypedArrays
->(
-  arg: T
-): number => {
+export const getItemsCount = <T extends Map<any, any> | Set<any> | Array<any> | {} | string | TTypedArrays>(arg: T): number => {
   if (arg instanceof Map || arg instanceof Set) {
     return arg.size;
   } else if (Array.isArray(arg)) {
@@ -41,11 +37,7 @@ export const getItemsCount = <
  * @returns {Promise<R>}
  * @throw - rejects on timeout or if the callback thrown an error
  */
-export const waitFor = <R>(
-  cb: () => NonNullable<R> | undefined,
-  checkIntervalMs: number = 100,
-  timeoutMs: number = 360000
-): Promise<R> => {
+export const waitFor = <R>(cb: () => NonNullable<R> | undefined, checkIntervalMs: number = 100, timeoutMs: number = 360000): Promise<R> => {
   return new Promise((res, rej) => {
     let timeout: NodeJS.Timer | undefined;
     let checkInterval: NodeJS.Timeout | undefined;

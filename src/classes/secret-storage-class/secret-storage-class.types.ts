@@ -1,7 +1,4 @@
-import {
-  IStorageProviderOptions,
-  TStorageProviderName,
-} from './../storage-providers/storage-providers.types';
+import { IStorageProviderOptions, TStorageProviderName } from './../storage-providers/storage-providers.types';
 import { ISensitiveDataSessionStorage } from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
 import { IStorageCommon } from '../../types/storage.types';
 export * from 'classes/storage-providers/storage-providers.types';
@@ -10,7 +7,7 @@ export interface ISecretStoreConfiguration {
   storageProviderName: TStorageProviderName;
 }
 
-export interface IISecretStorageOptions extends IStorageProviderOptions { }
+export interface IISecretStorageOptions extends IStorageProviderOptions {}
 
 export interface ISecretStorageSessionInfoStored {
   login: string;
@@ -33,25 +30,17 @@ export interface ISecretStoreCredentialsPassword {
   password: string;
 }
 
-export interface ISecretStoreCredentials
-  extends ISecretStoreCredentialsPassword { }
+export interface ISecretStoreCredentials extends ISecretStoreCredentialsPassword {}
 
 export interface ISecretStoreCredentialsCryptoKey {
   key: CryptoKey;
 }
 
-export type TSecretStorageAuthOptionsCredentials =
-  | ISecretStoreCredentials
-  | ISecretStoreCredentialsSession;
+export type TSecretStorageAuthOptionsCredentials = ISecretStoreCredentials | ISecretStoreCredentialsSession;
 
-export type TSecretStorageAuthOptions =
-  | TSecretStorageAuthOptionsCredentials
-  | ISecretStoreCredentialsCryptoKey;
+export type TSecretStorageAuthOptions = TSecretStorageAuthOptionsCredentials | ISecretStoreCredentialsCryptoKey;
 
-export type TSecretStorageAuthorizeCredentials =
-  | ISecretStoreCredentials
-  | ISecretStoreCredentialsSession
-  | ISecretStoreCredentialsCryptoKey;
+export type TSecretStorageAuthorizeCredentials = ISecretStoreCredentials | ISecretStoreCredentialsSession | ISecretStoreCredentialsCryptoKey;
 
 export interface ISecretStorage extends IStorageCommon {
   // returns true if connected succesfully to
@@ -59,23 +48,11 @@ export interface ISecretStorage extends IStorageCommon {
   isActive: boolean;
   connect(options?: IISecretStorageOptions): Promise<boolean | Error>;
   // authorize and connect to the storage
-  authorize(
-    credentials: ISecretStoreCredentials,
-    options?: IISecretStorageOptions
-  ): Promise<boolean | Error>;
-  authorize(
-    credentials: ISecretStoreCredentialsSession,
-    options?: IISecretStorageOptions
-  ): Promise<boolean | Error>;
-  authorize(
-    credentials: ISecretStoreCredentialsCryptoKey,
-    options?: IISecretStorageOptions
-  ): Promise<boolean | Error>;
+  authorize(credentials: ISecretStoreCredentials, options?: IISecretStorageOptions): Promise<boolean | Error>;
+  authorize(credentials: ISecretStoreCredentialsSession, options?: IISecretStorageOptions): Promise<boolean | Error>;
+  authorize(credentials: ISecretStoreCredentialsCryptoKey, options?: IISecretStorageOptions): Promise<boolean | Error>;
   // authorize by the crypto key provided
-  authorizeByKey(
-    credentials: ISecretStoreCredentialsCryptoKey,
-    options?: IStorageProviderOptions
-  ): Promise<boolean | Error>;
+  authorizeByKey(credentials: ISecretStoreCredentialsCryptoKey, options?: IStorageProviderOptions): Promise<boolean | Error>;
   // disconnect from the storage
   disconnect(): Promise<boolean | Error>;
   /**
@@ -131,11 +108,7 @@ export interface ISecretStorage extends IStorageCommon {
    * @returns {(Promise<CryptoKey | Error>)}
    * @memberof ISecretStorage
    */
-  generateCryptoKey(
-    credentialsOrSession:
-      | ISecretStoreCredentials
-      | ISecretStoreCredentialsSession
-  ): Promise<CryptoKey | Error>;
+  generateCryptoKey(credentialsOrSession: ISecretStoreCredentials | ISecretStoreCredentialsSession): Promise<CryptoKey | Error>;
   /**
    * remove all content withting the database
    * connected to.

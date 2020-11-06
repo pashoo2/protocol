@@ -6,9 +6,7 @@ type TUserProfileComponentProps = {
   profile: ICentralAuthorityUserProfile | undefined;
 };
 
-export class UserProfile extends React.PureComponent<
-  TUserProfileComponentProps
-> {
+export class UserProfile extends React.PureComponent<TUserProfileComponentProps> {
   render() {
     const { id, profile } = this.props;
     return (

@@ -1,13 +1,7 @@
 import { ASYNC_QUEUE_BASE_CLASS_OPTIONS } from './async-queue-class-base.const';
 import { extend } from '../../../utils/common-utils/common-utils-objects';
-import {
-  TAsyncQueueBaseClassPromiseProviderPending,
-  TAsyncQueueBaseClassPromiseProvider,
-} from './async-queue-class-base.types';
-import {
-  TAsyncQueueBaseClass,
-  IAsyncQueueBaseClassOptions,
-} from './async-queue-class-base.types';
+import { TAsyncQueueBaseClassPromiseProviderPending, TAsyncQueueBaseClassPromiseProvider } from './async-queue-class-base.types';
+import { TAsyncQueueBaseClass, IAsyncQueueBaseClassOptions } from './async-queue-class-base.types';
 import { getRun } from './async-queue-class-base.utils';
 import { delay } from '../../../utils/common-utils/common-utils-timer';
 import { TAsyncQueueBaseClassPromiseProviderBatch } from './async-queue-class-base.types';
@@ -20,12 +14,7 @@ export class AsyncQueueClassBase extends TAsyncQueueBaseClass {
   protected runPromiseProvider?: ReturnType<typeof getRun>;
 
   constructor(options?: Partial<IAsyncQueueBaseClassOptions>) {
-    super(
-      extend(
-        options || {},
-        ASYNC_QUEUE_BASE_CLASS_OPTIONS
-      ) as IAsyncQueueBaseClassOptions
-    );
+    super(extend(options || {}, ASYNC_QUEUE_BASE_CLASS_OPTIONS) as IAsyncQueueBaseClassOptions);
     this.runPromiseProvider = getRun(this.options.promiseTimeout);
   }
 
@@ -34,9 +23,7 @@ export class AsyncQueueClassBase extends TAsyncQueueBaseClass {
   ): Promise<T | Error | (T extends any[] ? Array<T | Error> : never)> => {
     return new Promise((res) => {
       this.queue.push(() => {
-        return this.createPromise<T>(promiseProvider)
-          .then(res)
-          .catch(res);
+        return this.createPromise<T>(promiseProvider).then(res).catch(res);
       });
       this.start();
     });
@@ -53,9 +40,7 @@ export class AsyncQueueClassBase extends TAsyncQueueBaseClass {
     if (!this.runPromiseProvider) {
       throw new Error('runPromiseProvider is not defined');
     }
-    return Promise.all(
-      promisePendingBatch.map(this.runPromiseProvider)
-    ).catch((err) => new Array(promisePendingBatch.length).fill(err)); // fill with an error if the batch was rejected
+    return Promise.all(promisePendingBatch.map(this.runPromiseProvider)).catch((err) => new Array(promisePendingBatch.length).fill(err)); // fill with an error if the batch was rejected
   }
 
   protected start = async () => {
@@ -80,16 +65,12 @@ export class AsyncQueueClassBase extends TAsyncQueueBaseClass {
     this.start();
   };
 
-  protected isBatch<T>(
-    promiseProvider: any
-  ): promiseProvider is TAsyncQueueBaseClassPromiseProviderBatch<T> {
+  protected isBatch<T>(promiseProvider: any): promiseProvider is TAsyncQueueBaseClassPromiseProviderBatch<T> {
     return promiseProvider instanceof Array;
   }
   protected createPromise<T>(promiseProvider: any): Promise<T | Error>;
   protected createPromise<T>(promiseProvider: any[]): Promise<Array<T | Error>>;
-  protected createPromise<T>(
-    promiseProvider: TAsyncQueueBaseClassPromiseProviderPending<T>
-  ): Promise<Array<T | Error> | T | Error> {
+  protected createPromise<T>(promiseProvider: TAsyncQueueBaseClassPromiseProviderPending<T>): Promise<Array<T | Error> | T | Error> {
     let result;
 
     if (!this.runPromiseProvider) {

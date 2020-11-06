@@ -1,8 +1,5 @@
 import { ESwarmStoreConnector } from '../classes/swarm-store-class/swarm-store-class.const';
-import {
-  TSwarmStoreValueTypes,
-  TSwarmStoreDatabaseType,
-} from '../classes/swarm-store-class/swarm-store-class.types';
+import { TSwarmStoreValueTypes, TSwarmStoreDatabaseType } from '../classes/swarm-store-class/swarm-store-class.types';
 import {
   ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions,
   ISwarmStoreConnectorOrbitDbDatabaseValue,
@@ -37,9 +34,7 @@ export interface ISwarmStoreConnectorBasic<
    * @returns {(Promise<string | Error>)}
    * @memberof ISwarmStoreConnectorOrbitDBDatabase
    */
-  add(
-    addArg: TSwarmStoreConnectorOrbitDbDatabaseAddMethodArgument<TStoreValue>
-  ): Promise<string | Error>;
+  add(addArg: TSwarmStoreConnectorOrbitDbDatabaseAddMethodArgument<TStoreValue>): Promise<string | Error>;
 
   /**
    * Read entry from the database by the given argument.
@@ -53,11 +48,7 @@ export interface ISwarmStoreConnectorBasic<
    *   >)}
    * @memberof ISwarmStoreConnectorOrbitDBDatabase
    */
-  get(
-    keyOrHash: TSwarmStoreConnectorOrbitDbDatabaseEntityIndex
-  ): Promise<
-    Error | ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue> | undefined
-  >;
+  get(keyOrHash: TSwarmStoreConnectorOrbitDbDatabaseEntityIndex): Promise<Error | ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue> | undefined>;
 
   /**
    * Remove a value located in the key provided if it is a key value
@@ -68,9 +59,7 @@ export interface ISwarmStoreConnectorBasic<
    * @returns {(Promise<Error | void>)}
    * @memberof ISwarmStoreConnectorOrbitDBDatabase
    */
-  remove(
-    keyOrEntryAddress: TSwarmStoreConnectorOrbitDbDatabaseEntityIndex
-  ): Promise<Error | void>;
+  remove(keyOrEntryAddress: TSwarmStoreConnectorOrbitDbDatabaseEntityIndex): Promise<Error | void>;
 
   /**
    * Iterate over the database values which are follows conditions
@@ -89,14 +78,7 @@ export interface ISwarmStoreConnectorBasic<
    */
   iterator(
     options?: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions<DbType>
-  ): Promise<
-    | Error
-    | Array<
-        | ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue>
-        | Error
-        | undefined
-      >
-  >;
+  ): Promise<Error | Array<ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValue> | Error | undefined>>;
 
   /**
    * Drop the database and clear all local stored entries.

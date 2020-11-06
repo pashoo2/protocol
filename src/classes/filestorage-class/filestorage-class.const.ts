@@ -46,13 +46,10 @@ export const FILE_STORAGE_SERVICES_IMPLEMENTATIONS: Record<
   FILE_STORAGE_SERVICE_TYPE,
   () => Promise<any> // Promise<new () => IFileStorageService<any>>
 > = {
-  [FILE_STORAGE_SERVICE_TYPE.IPFS]: () =>
-    import('./filestorage-class-providers/filestorage-class-provider-ipfs'),
-  [FILE_STORAGE_SERVICE_TYPE.HTTP]: () =>
-    import('./filestorage-class-providers/filestorage-class-provider-http'),
+  [FILE_STORAGE_SERVICE_TYPE.IPFS]: () => import('./filestorage-class-providers/filestorage-class-provider-ipfs'),
+  [FILE_STORAGE_SERVICE_TYPE.HTTP]: () => import('./filestorage-class-providers/filestorage-class-provider-http'),
 };
 
 export const FILE_STORAGE_SERVICE_PREFIX = '/file';
 
-export const FILE_STORAGE_SERVICE_PREFIX_LENGTH =
-  FILE_STORAGE_SERVICE_PREFIX.length;
+export const FILE_STORAGE_SERVICE_PREFIX_LENGTH = FILE_STORAGE_SERVICE_PREFIX.length;

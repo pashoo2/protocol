@@ -24,8 +24,7 @@ export interface IFileStorageClassProviderIPFSOptions {
   rootPath?: string;
 }
 
-export interface IFileStorageClassProviderIPFSFileAddOptions
-  extends IFileStorageServiceFileAddCommonOptions {
+export interface IFileStorageClassProviderIPFSFileAddOptions extends IFileStorageServiceFileAddCommonOptions {
   /**
    * hunking algorithm used to build ipfs DAGs. Available formats:
    * size-{size}
@@ -50,5 +49,4 @@ export interface IFileStorageClassProviderIPFSFileAddOptions
 
 export interface IFileStorageClassProviderIPFSFileGetOptions {}
 
-export interface IFileStorageClassProviderIPFSFileDownloadOptions
-  extends IFileStorageClassProviderIPFSFileGetOptions {}
+export interface IFileStorageClassProviderIPFSFileDownloadOptions extends IFileStorageClassProviderIPFSFileGetOptions {}

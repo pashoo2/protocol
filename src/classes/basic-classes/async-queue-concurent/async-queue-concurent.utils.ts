@@ -1,19 +1,13 @@
 import { MaybeError } from 'types/common.types';
 import { IPromisePendingRejectableCreator } from 'types/promise.types';
 
-import {
-  IJobPromise,
-  IAsyncQueueConcurent,
-} from './async-queue-concurent.types';
+import { IJobPromise, IAsyncQueueConcurent } from './async-queue-concurent.types';
 
 export const createJobPromise = <T, E extends MaybeError = void>(
   promisePendingRejectableCreator: IPromisePendingRejectableCreator<T, E>
 ): IJobPromise<T, E> => promisePendingRejectableCreator();
 
-export const wrapAllMethodsWithAsyncQueue = <
-  F extends Function,
-  E extends MaybeError = void
->(
+export const wrapAllMethodsWithAsyncQueue = <F extends Function, E extends MaybeError = void>(
   target: F,
   asyncQueueCreator: (object: any) => IAsyncQueueConcurent<void, E>,
   methodsNamesList?: string[]
@@ -33,7 +27,7 @@ export const wrapAllMethodsWithAsyncQueue = <
     if (!isMethod) continue;
 
     const originalMethod = descriptor.value;
-    descriptor.value = async function(...args: any[]) {
+    descriptor.value = async function (...args: any[]) {
       const job = await asyncQueueCreator(this).wait();
       try {
         return originalMethod.apply(this, args);

@@ -69,11 +69,7 @@ export class SwarmStoreDbComponent extends React.PureComponent<IProps> {
 
         let key: string | undefined;
 
-        if (
-          (databaseOptions as ISwarmStoreConnectorOrbitDbDatabaseOptions<
-            string
-          >).dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
-        ) {
+        if ((databaseOptions as ISwarmStoreConnectorOrbitDbDatabaseOptions<string>).dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE) {
           key = prompt('Key for the message', '') || undefined;
           if (!key) {
             return;
@@ -104,31 +100,15 @@ export class SwarmStoreDbComponent extends React.PureComponent<IProps> {
 
     return (
       <div style={{ border: '1px solid black' }}>
-        Database: {dbName}, {isOpened ? 'opened' : 'closed'},{' '}
-        {isPublic ? 'is public' : ''}, {isOpening && 'is opening'},{' '}
-        {isClosing && 'is closing'};
+        Database: {dbName}, {isOpened ? 'opened' : 'closed'}, {isPublic ? 'is public' : ''}, {isOpening && 'is opening'}, {isClosing && 'is closing'};
         <br />
-        {isOpened ? (
-          <button onClick={this.handleDbClose}>Close</button>
-        ) : (
-          <button onClick={this.handleDbOpen}>Open</button>
-        )}
+        {isOpened ? <button onClick={this.handleDbClose}>Close</button> : <button onClick={this.handleDbOpen}>Open</button>}
         <br />
-        {isOpened && (
-          <button onClick={this.sendSwarmMessage}>Send message</button>
-        )}
+        {isOpened && <button onClick={this.sendSwarmMessage}>Send message</button>}
         <div>
           Messages:
           {messages.map((message) => {
-            return (
-              <MessageComponent
-                key={message.id}
-                dbName={dbName}
-                id={message.id}
-                k={message.key}
-                message={message.message}
-              />
-            );
+            return <MessageComponent key={message.id} dbName={dbName} id={message.id} k={message.key} message={message.message} />;
           })}
         </div>
       </div>

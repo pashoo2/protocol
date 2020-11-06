@@ -11,9 +11,7 @@ import { ISecretStoreCredentials } from '../../../../../secret-storage-class/sec
  * @returns {TOrbitDBKeystoreOptions}
  * @throws
  */
-export const extendsOptionsWithStore = (
-  options: TOrbitDBKeystoreOptions
-): TOrbitDBKeystoreOptions => {
+export const extendsOptionsWithStore = (options: TOrbitDBKeystoreOptions): TOrbitDBKeystoreOptions => {
   if (!options) {
     throw new Error('Options must be provided');
   }
@@ -30,10 +28,7 @@ export const extendsOptionsWithStore = (
     dbName = options.path;
   }
 
-  const adapterToSecretStore = new SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter(
-    { dbName },
-    credentials as ISecretStoreCredentials
-  );
+  const adapterToSecretStore = new SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter({ dbName }, credentials as ISecretStoreCredentials);
 
   return Object.assign({}, options, { store: adapterToSecretStore });
 };

@@ -6,10 +6,7 @@ import normalizeUrlModule, { Options } from 'normalize-url';
  *
  * @param {string} url
  */
-export const normalizeUrl = (
-  url: string,
-  options?: Options
-): string | Error => {
+export const normalizeUrl = (url: string, options?: Options): string | Error => {
   try {
     return normalizeUrlModule(url, {
       defaultProtocol: 'https:', // the default protocol must be https:

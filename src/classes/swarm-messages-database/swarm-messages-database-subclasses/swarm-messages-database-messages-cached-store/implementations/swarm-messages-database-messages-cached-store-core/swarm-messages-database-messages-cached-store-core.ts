@@ -5,10 +5,7 @@ import {
   TSwarmMessagesDatabaseMessagesCachedStoreMessagesMetaHash,
 } from '../../swarm-messages-database-messages-cached-store.types';
 import { ISwarmMessagesDatabaseMessagesCacheMessageDescription } from '../../../swarm-messages-database-cache/swarm-messages-database-cache.types';
-import {
-  ISwarmMessagesDatabaseMesssageMeta,
-  TSwarmMessageDatabaseMessagesCached,
-} from '../../../../swarm-messages-database.types';
+import { ISwarmMessagesDatabaseMesssageMeta, TSwarmMessageDatabaseMessagesCached } from '../../../../swarm-messages-database.types';
 import {
   TSwarmStoreDatabaseType,
   TSwarmStoreDatabaseEntityKey,
@@ -28,8 +25,7 @@ export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
   DbType extends TSwarmStoreDatabaseType<P>,
   IsTemp extends boolean,
   MetaHash extends TSwarmMessagesDatabaseMessagesCachedStoreMessagesMetaHash
->
-  implements
+> implements
     Omit<
       ISwarmMessagesDatabaseMessagesCachedStoreCore<P, DbType, IsTemp>,
       'entriesCached' | 'get' | 'set' | 'unset' | 'updateWithEntries' | 'clear'
@@ -49,11 +45,7 @@ export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
   }
 
   constructor(
-    protected _cachedStore: TSwarmMessagesDatabaseMessagesCacheStore<
-      P,
-      DbType,
-      IsTemp
-    >,
+    protected _cachedStore: TSwarmMessagesDatabaseMessagesCacheStore<P, DbType, IsTemp>,
     protected _isTemp: IsTemp,
     protected _dbType: DbType,
     protected _dbName: string
@@ -62,23 +54,15 @@ export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
   // eslint-disable-next-line @typescript-eslint/member-ordering
   add = (this._isTemp === true
     ? undefined
-    : (
-        entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>
-      ): void => {
+    : (entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>): void => {
         this._checkIsInitialized();
         this._checkEntryWithMeta(entry);
         if (this._whetherEntryIsExists(entry)) {
           return;
         }
-        this._addDefferedReadEntryAfterCurrentBatchOfCacheUpdate(
-          entry.messageMeta
-        );
+        this._addDefferedReadEntryAfterCurrentBatchOfCacheUpdate(entry.messageMeta);
         this._addDefferedReadEntryAfterOverallCaheUpdate(entry.messageMeta);
-      }) as ISwarmMessagesDatabaseMessagesCachedStoreCore<
-    P,
-    DbType,
-    IsTemp
-  >['add'];
+      }) as ISwarmMessagesDatabaseMessagesCachedStoreCore<P, DbType, IsTemp>['add'];
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   remove = (this._isTemp === true
@@ -88,83 +72,57 @@ export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
         this._checkMeta(meta);
         this._addDefferedReadEntryAfterCurrentBatchOfCacheUpdate(meta);
         this._addDefferedReadEntryAfterOverallCaheUpdate(meta);
-      }) as ISwarmMessagesDatabaseMessagesCachedStoreCore<
-    P,
-    DbType,
-    IsTemp
-  >['remove'];
+      }) as ISwarmMessagesDatabaseMessagesCachedStoreCore<P, DbType, IsTemp>['remove'];
 
-  protected _beforeGet = (
-    meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>
-  ): void => {
+  protected _beforeGet = (meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>): void => {
     this._checkIsInitialized();
     this._checkMeta(meta);
   };
 
-  protected _beforeSet = (
-    entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>
-  ): void => {
+  protected _beforeSet = (entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>): void => {
     this._checkIsInitialized();
     this._checkEntryWithMeta(entry);
   };
 
-  protected _beforeUnset = (
-    meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>
-  ): void => {
+  protected _beforeUnset = (meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>): void => {
     this._checkIsInitialized();
     this._checkMeta(meta);
   };
 
   protected _checkIsInitialized(): this is {
-    _cachedStore: ISwarmMessagesDatabaseMessagesCacheStoreExtendedDefferedMethods<
-      P,
-      DbType
-    >;
+    _cachedStore: ISwarmMessagesDatabaseMessagesCacheStoreExtendedDefferedMethods<P, DbType>;
   } {
     assert(this._cachedStore, 'The isnstance is not initialized');
     assert(
-      typeof ((this._cachedStore as unknown) as any)
-        ?._addToDefferedReadAfterCurrentCacheUpdateBatch === 'function',
+      typeof ((this._cachedStore as unknown) as any)?._addToDefferedReadAfterCurrentCacheUpdateBatch === 'function',
       'The cached store should have the "_addToDefferedReadAfterCurrentCacheUpdateBatch" method'
     );
     assert(
-      typeof ((this._cachedStore as unknown) as any)?._addToDefferedUpdate ===
-        'function',
+      typeof ((this._cachedStore as unknown) as any)?._addToDefferedUpdate === 'function',
       'The cached store should have the "_addToDefferedUpdate" method'
     );
     return true;
   }
 
-  protected _getMessageAddressFromMeta(
-    meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>
-  ): TSwarmStoreDatabaseEntityAddress<P> | undefined {
+  protected _getMessageAddressFromMeta(meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>): TSwarmStoreDatabaseEntityAddress<P> | undefined {
     return meta.messageUniqAddress;
   }
 
-  protected _getMessageKeyFromMeta(
-    meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>
-  ): TSwarmStoreDatabaseEntityKey<P> | undefined {
+  protected _getMessageKeyFromMeta(meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>): TSwarmStoreDatabaseEntityKey<P> | undefined {
     return meta.key;
   }
 
-  protected _checkMeta(
-    meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>
-  ): void {
+  protected _checkMeta(meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>): void {
     assert(meta, 'The meta information must be defined');
     assert(typeof meta === 'object', 'The meta must be an object');
-    assert(
-      meta.messageUniqAddress,
-      'The meta information must includes message address'
-    );
+    assert(meta.messageUniqAddress, 'The meta information must includes message address');
   }
 
   protected _checkMessageEntry(message: ISwarmMessageInstanceDecrypted): void {
     isValidSwarmMessageDecryptedFormat(message);
   }
 
-  protected _checkEntryWithMeta(
-    entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>
-  ): void {
+  protected _checkEntryWithMeta(entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>): void {
     assert(entry, 'The enty must be defined');
     assert(typeof entry === 'object', 'The enty must be an object');
     assert(entry.messageMeta, 'A meta information must be defined');
@@ -173,9 +131,7 @@ export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
     this._checkMessageEntry(entry.messageEntry);
   }
 
-  protected _getMetaHash(
-    meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>
-  ): MetaHash {
+  protected _getMetaHash(meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>): MetaHash {
     return `${meta.messageUniqAddress}${SWARM_MESSGES_DATABASE_SWARM_MESSAGES_CACHED_SWARM_MESSAGES_META_HASH_DELIMETER}${meta.key}` as MetaHash;
   }
 
@@ -184,43 +140,27 @@ export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
   }
 
   protected _incMessagesInCacheVersionIfMessagesNotEquals(
-    entryFirst:
-      | ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>
-      | undefined,
-    entrySecond:
-      | ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>
-      | undefined
+    entryFirst: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType> | undefined,
+    entrySecond: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType> | undefined
   ) {
     if (entryFirst === entrySecond) {
       return;
     }
-    if (
-      (entryFirst && this._getMetaHash(entryFirst.messageMeta)) !==
-      (entrySecond && this._getMetaHash(entrySecond.messageMeta))
-    ) {
+    if ((entryFirst && this._getMetaHash(entryFirst.messageMeta)) !== (entrySecond && this._getMetaHash(entrySecond.messageMeta))) {
       this._incMessagesInCacheVersion();
     }
-    if (
-      whetherSwarmMessagesDecryptedAreEqual(
-        entryFirst?.messageEntry,
-        entrySecond?.messageEntry
-      )
-    ) {
+    if (whetherSwarmMessagesDecryptedAreEqual(entryFirst?.messageEntry, entrySecond?.messageEntry)) {
       this._incMessagesInCacheVersion();
     }
   }
 
-  protected _addDefferedReadEntryAfterCurrentBatchOfCacheUpdate(
-    meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>
-  ): void {
+  protected _addDefferedReadEntryAfterCurrentBatchOfCacheUpdate(meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>): void {
     if (this._checkIsInitialized()) {
       this._cachedStore._addToDefferedReadAfterCurrentCacheUpdateBatch(meta);
     }
   }
 
-  protected _addDefferedReadEntryAfterOverallCaheUpdate(
-    meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>
-  ): void {
+  protected _addDefferedReadEntryAfterOverallCaheUpdate(meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>): void {
     if (this._checkIsInitialized()) {
       this._cachedStore._addToDefferedUpdate(meta);
     }
@@ -231,12 +171,8 @@ export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
   }
 
   protected _checkWhetherUpdatValue(
-    source:
-      | ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector>
-      | undefined,
-    target:
-      | ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector>
-      | undefined
+    source: ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector> | undefined,
+    target: ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector> | undefined
   ): boolean {
     if (!target && !this._canUpdateWithEmptyValue()) {
       return false;
@@ -255,17 +191,13 @@ export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
 
   protected _checkWhetherUpdateKey(
     key: string,
-    value: ISwarmMessageStoreMessagingRequestWithMetaResult<
-      ESwarmStoreConnector
-    >,
+    value: ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector>,
     entriesCached: TSwarmMessageDatabaseMessagesCached<P, DbType>
   ) {
     return this._checkWhetherUpdatValue(entriesCached.get(key), value);
   }
 
-  protected _clearEntriesCached(
-    entriesCached: TSwarmMessageDatabaseMessagesCached<P, DbType>
-  ) {
+  protected _clearEntriesCached(entriesCached: TSwarmMessageDatabaseMessagesCached<P, DbType>) {
     entriesCached.clear();
   }
 
@@ -279,10 +211,7 @@ export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
     const wetherToCheckUpdateNeccessary = !!entriesCached.size;
 
     entries.forEach((value, key) => {
-      if (
-        wetherToCheckUpdateNeccessary ||
-        this._checkWhetherUpdateKey(key, value, entriesCached)
-      ) {
+      if (wetherToCheckUpdateNeccessary || this._checkWhetherUpdateKey(key, value, entriesCached)) {
         entriesCached.set(key, value);
         hasMessagesUpdated = true;
       } else {
@@ -292,7 +221,5 @@ export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
     return hasMessagesUpdated;
   }
 
-  protected abstract _whetherEntryIsExists(
-    entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>
-  ): boolean;
+  protected abstract _whetherEntryIsExists(entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>): boolean;
 }

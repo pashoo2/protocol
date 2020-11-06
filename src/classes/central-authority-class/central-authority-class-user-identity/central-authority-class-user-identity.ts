@@ -35,9 +35,7 @@ export class CentralAuthorityIdentity implements ICAIdentityCommonInstance {
 
     if (typeof _userIdentity === 'object') {
       //check may be it is a crypto credentials object
-      const identityVal = ((_userIdentity as unknown) as any)[
-        CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME
-      ];
+      const identityVal = ((_userIdentity as unknown) as any)[CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME];
 
       if (typeof identityVal === 'string') {
         identity = identityVal;
@@ -46,9 +44,7 @@ export class CentralAuthorityIdentity implements ICAIdentityCommonInstance {
     if (validateUserIdentitySilent(identity)) {
       this.parseUserIdentity(identity);
     } else {
-      const userIdentityDescription = this.extendDescriptionWithVersion(
-        identity as ICAUserUniqueIdentifierDescriptionWithOptionalVersion
-      );
+      const userIdentityDescription = this.extendDescriptionWithVersion(identity as ICAUserUniqueIdentifierDescriptionWithOptionalVersion);
 
       this.serializeUserIdentityDescription(userIdentityDescription);
     }
@@ -57,9 +53,7 @@ export class CentralAuthorityIdentity implements ICAIdentityCommonInstance {
   protected extendDescriptionWithVersion(
     _userIdentityDescription: ICAUserUniqueIdentifierDescriptionWithOptionalVersion
   ): ICAUserUniqueIdentifierDescription {
-    const {
-      [CA_USER_IDENTITY_VERSION_PROP_NAME]: version,
-    } = _userIdentityDescription;
+    const { [CA_USER_IDENTITY_VERSION_PROP_NAME]: version } = _userIdentityDescription;
 
     if (!version) {
       // extend the description with the
@@ -90,9 +84,7 @@ export class CentralAuthorityIdentity implements ICAIdentityCommonInstance {
     return _userIdentityParsed;
   }
 
-  public get identityDescritptionSerialized():
-    | TCentralAuthorityUserIdentity
-    | Error {
+  public get identityDescritptionSerialized(): TCentralAuthorityUserIdentity | Error {
     const res = this.checkUserIdentityDescriptionIsValid();
 
     if (res instanceof Error) {
@@ -117,8 +109,7 @@ export class CentralAuthorityIdentity implements ICAIdentityCommonInstance {
       return res;
     }
 
-    const { authorityProviderURI, userUniqueIdentifier } = this
-      .identityDescription as ICAUserUniqueIdentifierDescription;
+    const { authorityProviderURI, userUniqueIdentifier } = this.identityDescription as ICAUserUniqueIdentifierDescription;
 
     return `${authorityProviderURI}${CA_USER_IDENTITY_AUTH_PROVIDER_URL_DELIMETER}${userUniqueIdentifier}`;
   }
@@ -130,8 +121,7 @@ export class CentralAuthorityIdentity implements ICAIdentityCommonInstance {
       return res;
     }
 
-    return (((this.identityDescription as ICAUserUniqueIdentifierDescription)
-      .version ||
+    return (((this.identityDescription as ICAUserUniqueIdentifierDescription).version ||
       CA_USER_IDENTITY_VERSION_CURRENT) as unknown) as TUserIdentityVersion;
   }
 
@@ -175,17 +165,13 @@ export class CentralAuthorityIdentity implements ICAIdentityCommonInstance {
     }
   }
 
-  protected parseUserIdentity(
-    userIdentity: TCentralAuthorityUserIdentity
-  ): void {
+  protected parseUserIdentity(userIdentity: TCentralAuthorityUserIdentity): void {
     if (userIdentity) {
       const parsedUserIdentity = parseIdentity(userIdentity);
       if (parsedUserIdentity instanceof Error) {
         console.error(parsedUserIdentity);
         this._userIdentityParsed = parsedUserIdentity;
-        this._userIdentitySerialized = new Error(
-          'Failed to parse the user identity'
-        );
+        this._userIdentitySerialized = new Error('Failed to parse the user identity');
       } else {
         this._userIdentityParsed = parsedUserIdentity;
         this._userIdentitySerialized = userIdentity;
@@ -201,16 +187,12 @@ export class CentralAuthorityIdentity implements ICAIdentityCommonInstance {
     this.isValid = false;
   }
 
-  protected serializeUserIdentityDescription(
-    userIdentityDescription: ICAUserUniqueIdentifierDescription
-  ) {
+  protected serializeUserIdentityDescription(userIdentityDescription: ICAUserUniqueIdentifierDescription) {
     if (userIdentityDescription) {
       const serializedDescription = serializeIdentity(userIdentityDescription);
 
       if (serializedDescription instanceof Error) {
-        this._userIdentityParsed = new Error(
-          'Failed to serialize the user identity description'
-        );
+        this._userIdentityParsed = new Error('Failed to serialize the user identity description');
         this._userIdentitySerialized = serializedDescription;
       } else {
         this._userIdentityParsed = userIdentityDescription;

@@ -11,8 +11,7 @@ import {
 } from './swarm-message-store-utils-messages-cache.types';
 import assert from 'assert';
 
-export class SwarmMessageStoreUtilsMessagesCache
-  implements ISwarmMessageStoreUtilsMessagesCache {
+export class SwarmMessageStoreUtilsMessagesCache implements ISwarmMessageStoreUtilsMessagesCache {
   /**
    * Falag means the instance is opened and ready to use.
    *
@@ -32,9 +31,7 @@ export class SwarmMessageStoreUtilsMessagesCache
    * @returns {Promise<void>}
    * @memberof ISwarmMessageStoreUtilsMessagesCache
    */
-  async connect(
-    options: ISwarmMessageStoreUtilsMessagesCacheOptions
-  ): Promise<void> {
+  async connect(options: ISwarmMessageStoreUtilsMessagesCacheOptions): Promise<void> {
     if (this._isReady) {
       return;
     }
@@ -49,13 +46,9 @@ export class SwarmMessageStoreUtilsMessagesCache
    * @memberof ISwarmMessageStoreUtilsMessagesCache
    * @returns {(Promise<TSwarmMessageInstance | undefined>)} - undefined if not exist or swarm message instance
    */
-  getMessageByAddress = async (
-    messageAddress: string
-  ): Promise<TSwarmMessageInstance | undefined> => {
+  getMessageByAddress = async (messageAddress: string): Promise<TSwarmMessageInstance | undefined> => {
     if (this._checkIsReady()) {
-      const cacheKey = this.getCacheKeyForMessageAddressAndDbName(
-        messageAddress
-      );
+      const cacheKey = this.getCacheKeyForMessageAddressAndDbName(messageAddress);
       const value = await this._cache.get(cacheKey);
 
       if (value instanceof Error) {
@@ -77,14 +70,9 @@ export class SwarmMessageStoreUtilsMessagesCache
    * @memberof ISwarmMessageStoreUtilsMessagesCache
    * @throws
    */
-  setMessageByAddress = async (
-    messageAddress: string,
-    message: TSwarmMessageInstance
-  ): Promise<void> => {
+  setMessageByAddress = async (messageAddress: string, message: TSwarmMessageInstance): Promise<void> => {
     if (this._checkIsReady()) {
-      const cacheKey = this.getCacheKeyForMessageAddressAndDbName(
-        messageAddress
-      );
+      const cacheKey = this.getCacheKeyForMessageAddressAndDbName(messageAddress);
       const value = await this._cache.set(cacheKey, message);
 
       if (value instanceof Error) {
@@ -103,9 +91,7 @@ export class SwarmMessageStoreUtilsMessagesCache
    */
   unsetMessageByAddress = async (messageAddress: string): Promise<void> => {
     if (this._checkIsReady()) {
-      const cacheKey = this.getCacheKeyForMessageAddressAndDbName(
-        messageAddress
-      );
+      const cacheKey = this.getCacheKeyForMessageAddressAndDbName(messageAddress);
       const value = await this._cache.unset(cacheKey);
 
       if (value instanceof Error) {
@@ -122,9 +108,7 @@ export class SwarmMessageStoreUtilsMessagesCache
    * @returns {(Promise<string | undefined>)} - message address or undefined if not exists for the key
    * @memberof ISwarmMessageStoreUtilsMessagesCache
    */
-  getMessageAddressByKey = async (
-    dbKey: string
-  ): Promise<string | undefined> => {
+  getMessageAddressByKey = async (dbKey: string): Promise<string | undefined> => {
     if (this._checkIsReady()) {
       const cacheKey = this.getCacheKeyForDbKeyAndDbName(dbKey);
       const value = await this._cache.get(cacheKey);
@@ -148,10 +132,7 @@ export class SwarmMessageStoreUtilsMessagesCache
    * @memberof ISwarmMessageStoreUtilsMessagesCache
    * @throws
    */
-  setMessageAddressForKey = async (
-    dbKey: string,
-    messageAddress: string
-  ): Promise<void> => {
+  setMessageAddressForKey = async (dbKey: string, messageAddress: string): Promise<void> => {
     if (this._checkIsReady()) {
       const cacheKey = this.getCacheKeyForDbKeyAndDbName(dbKey);
       const value = await this._cache.set(cacheKey, messageAddress);
@@ -189,9 +170,7 @@ export class SwarmMessageStoreUtilsMessagesCache
    * @memberof ISwarmMessageStoreUtilsMessagesCache
    * @throws
    */
-  getMessageByKey = async (
-    dbKey: string
-  ): Promise<TSwarmMessageInstance | undefined> => {
+  getMessageByKey = async (dbKey: string): Promise<TSwarmMessageInstance | undefined> => {
     const messageAddress = await this.getMessageAddressByKey(dbKey);
 
     if (!messageAddress) {
@@ -221,28 +200,14 @@ export class SwarmMessageStoreUtilsMessagesCache
    * @memberof SwarmMessageStoreUtilsMessagesCache
    * @throws
    */
-  protected _validateOptions(
-    options: ISwarmMessageStoreUtilsMessagesCacheOptions
-  ): void {
+  protected _validateOptions(options: ISwarmMessageStoreUtilsMessagesCacheOptions): void {
     assert(!!options, 'Options should not be empty');
     assert(typeof options === 'object', 'Options should be an object');
-    assert(
-      typeof options.dbName === 'string',
-      'A database name should be a string'
-    );
+    assert(typeof options.dbName === 'string', 'A database name should be a string');
     assert(!!options.cache, 'A cache storage implementation should be defined');
-    assert(
-      typeof options.cache === 'object',
-      'Cache implementation should be an object'
-    );
-    assert(
-      typeof options.cache.get === 'function',
-      'Cache implementation is not related to the interface - should have the "get" method'
-    );
-    assert(
-      typeof options.cache.set === 'function',
-      'Cache implementation is not related to the interface - should have the "set" method'
-    );
+    assert(typeof options.cache === 'object', 'Cache implementation should be an object');
+    assert(typeof options.cache.get === 'function', 'Cache implementation is not related to the interface - should have the "get" method');
+    assert(typeof options.cache.set === 'function', 'Cache implementation is not related to the interface - should have the "set" method');
   }
 
   /**
@@ -252,9 +217,7 @@ export class SwarmMessageStoreUtilsMessagesCache
    * @param {ISwarmMessageStoreUtilsMessagesCacheOptions} options
    * @memberof SwarmMessageStoreUtilsMessagesCache
    */
-  protected _validateAndSetOptions(
-    options: ISwarmMessageStoreUtilsMessagesCacheOptions
-  ): void {
+  protected _validateAndSetOptions(options: ISwarmMessageStoreUtilsMessagesCacheOptions): void {
     this._validateOptions(options);
     this._cache = options.cache;
     this._dbName = options.dbName;
@@ -284,9 +247,7 @@ export class SwarmMessageStoreUtilsMessagesCache
    * @returns {string}
    * @memberof SwarmMessageStore
    */
-  protected getCacheKeyForMessageAddressAndDbName(
-    messageAddress: string
-  ): string {
+  protected getCacheKeyForMessageAddressAndDbName(messageAddress: string): string {
     return `${this._dbName}${SWARM_MESSAGE_STORE_UTILS_MESSAGES_CACHE_KEY_PARTS_DELIMETER}${messageAddress}`;
   }
 

@@ -8,10 +8,7 @@ import {
   ESwarmStoreConnectorOrbitDbDatabaseIteratorOption,
 } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import { MessageComponent } from '../message-component/message-component';
-import {
-  connectToDatabase,
-  setMessageListener,
-} from './swarm-messages-database-component.utils';
+import { connectToDatabase, setMessageListener } from './swarm-messages-database-component.utils';
 import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
 import { SwarmMessagesDatabase } from '../../classes/swarm-messages-database';
 import {
@@ -19,29 +16,17 @@ import {
   TSwarmStoreDatabaseType,
   TSwarmStoreValueTypes,
 } from '../../classes/swarm-store-class/swarm-store-class.types';
-import {
-  ISwarmMessagesDatabaseMessageDescription,
-  ISwarmMessagesDatabaseDeleteMessageDescription,
-} from './swarm-messages-database-component.types';
-import {
-  ISwarmMessageInstanceDecrypted,
-  TSwarmMessageSerialized,
-} from '../../classes/swarm-message/swarm-message-constructor.types';
+import { ISwarmMessagesDatabaseMessageDescription, ISwarmMessagesDatabaseDeleteMessageDescription } from './swarm-messages-database-component.types';
+import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from '../../classes/swarm-message/swarm-message-constructor.types';
 import {
   ISwarmMessageStoreDeleteMessageArg,
   ISwarmMessageStoreOptionsWithConnectorFabric,
 } from '../../classes/swarm-message-store/swarm-message-store.types';
-import {
-  setMessageDeleteListener,
-  setCacheUpdateListener,
-} from './swarm-messages-database-component.utils';
+import { setMessageDeleteListener, setCacheUpdateListener } from './swarm-messages-database-component.utils';
 import { TSwarmMessageDatabaseMessagesCached } from '../../classes/swarm-messages-database/swarm-messages-database.types';
 import { isValidSwarmMessageDecryptedFormat } from '../../classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-swarm-message';
 import { TSwarmMessageUserIdentifierSerialized } from '../../classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
-import {
-  ISwarmStoreConnectorBasic,
-  ISwarmStoreConnector,
-} from '../../classes/swarm-store-class/swarm-store-class.types';
+import { ISwarmStoreConnectorBasic, ISwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.types';
 
 interface IProps {
   userId: TSwarmMessageUserIdentifierSerialized;
@@ -54,19 +39,9 @@ interface IState<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<
-    ESwarmStoreConnector.OrbitDB,
-    T,
-    DbType
-  >,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, T, DbType>,
   ConnectorMain extends ISwarmStoreConnector<P, T, DbType, ConnectorBasic>,
-  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
-    P,
-    T,
-    DbType,
-    ConnectorBasic,
-    ConnectorMain
-  >
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<P, T, DbType, ConnectorBasic, ConnectorMain>
 > {
   messages: TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined;
   isOpening: boolean;
@@ -78,30 +53,15 @@ export class SwarmMessagesDatabaseComponent<
   P extends ESwarmStoreConnector,
   T extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<
-    ESwarmStoreConnector.OrbitDB,
-    T,
-    DbType
-  >,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, T, DbType>,
   ConnectorMain extends ISwarmStoreConnector<P, T, DbType, ConnectorBasic>,
-  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
-    P,
-    T,
-    DbType,
-    ConnectorBasic,
-    ConnectorMain
-  >
-> extends React.PureComponent<
-  IProps,
-  IState<P, T, DbType, ConnectorBasic, ConnectorMain, O>
-> {
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<P, T, DbType, ConnectorBasic, ConnectorMain>
+> extends React.PureComponent<IProps, IState<P, T, DbType, ConnectorBasic, ConnectorMain, O>> {
   state: IState<P, T, DbType, ConnectorBasic, ConnectorMain, O> = {
     messages: undefined,
     isOpening: false,
     isClosing: false,
-    db: undefined as
-      | SwarmMessagesDatabase<P, T, DbType, ConnectorBasic, ConnectorMain, O>
-      | undefined,
+    db: undefined as SwarmMessagesDatabase<P, T, DbType, ConnectorBasic, ConnectorMain, O> | undefined,
   };
 
   get isOpened(): boolean {
@@ -114,9 +74,7 @@ export class SwarmMessagesDatabaseComponent<
     return !!this.state.db?.whetherMessagesListUpdateInProgress;
   }
 
-  get messagesCached():
-    | TSwarmMessageDatabaseMessagesCached<P, DbType>
-    | undefined {
+  get messagesCached(): TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined {
     return this.state.db?.cachedMessages;
   }
 
@@ -142,21 +100,15 @@ export class SwarmMessagesDatabaseComponent<
     }
   };
 
-  onNewMessage = (
-    message: ISwarmMessagesDatabaseMessageDescription<P>
-  ): void => {
+  onNewMessage = (message: ISwarmMessagesDatabaseMessageDescription<P>): void => {
     console.log('New message', message);
   };
 
-  onMessageDelete = (
-    deleteMessageDescription: ISwarmMessagesDatabaseDeleteMessageDescription<P>
-  ) => {
+  onMessageDelete = (deleteMessageDescription: ISwarmMessagesDatabaseDeleteMessageDescription<P>) => {
     console.log('Message removed', deleteMessageDescription);
   };
 
-  onMessagesCacheUpdated = (
-    messages: TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined
-  ) => {
+  onMessagesCacheUpdated = (messages: TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined) => {
     console.log('Cache updated', messages);
     this.setState({
       messages,
@@ -184,12 +136,7 @@ export class SwarmMessagesDatabaseComponent<
     const { connectionBridge, databaseOptions } = this.props;
     const { isOpening } = this.state;
 
-    if (
-      connectionBridge &&
-      connectionBridge.storage &&
-      !this.isOpened &&
-      !isOpening
-    ) {
+    if (connectionBridge && connectionBridge.storage && !this.isOpened && !isOpening) {
       try {
         this.setState({ isOpening: true });
 
@@ -226,20 +173,14 @@ export class SwarmMessagesDatabaseComponent<
     key: string | undefined
   ): Promise<void> => {
     const { db } = this.state;
-    let removeArg:
-      | TSwarmStoreDatabaseEntityKey<P>
-      | string
-      | ISwarmMessageInstanceDecrypted
-      | undefined;
+    let removeArg: TSwarmStoreDatabaseEntityKey<P> | string | ISwarmMessageInstanceDecrypted | undefined;
 
     if (this.isOpened && db?.isReady) {
       const { dbType } = db;
 
       if (dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE) {
         if (!key) {
-          throw new Error(
-            'For key-value database type a key must be provided to delete a message'
-          );
+          throw new Error('For key-value database type a key must be provided to delete a message');
         }
         removeArg = key;
       } else if (db.dbType === ESwarmStoreConnectorOrbitDbDatabaseType.FEED) {
@@ -247,9 +188,7 @@ export class SwarmMessagesDatabaseComponent<
       } else {
         removeArg = message;
       }
-      return db.deleteMessage(
-        removeArg as ISwarmMessageStoreDeleteMessageArg<P>
-      );
+      return db.deleteMessage(removeArg as ISwarmMessageStoreDeleteMessageArg<P>);
     }
   };
 
@@ -266,11 +205,7 @@ export class SwarmMessagesDatabaseComponent<
 
         let key: string | undefined;
 
-        if (
-          (databaseOptions as ISwarmStoreConnectorOrbitDbDatabaseOptions<
-            string
-          >).dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
-        ) {
+        if ((databaseOptions as ISwarmStoreConnectorOrbitDbDatabaseOptions<string>).dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE) {
           key = prompt('Key for the message', '') || undefined;
           if (!key) {
             return;
@@ -313,29 +248,17 @@ export class SwarmMessagesDatabaseComponent<
 
     return (
       <div style={{ border: '1px solid black' }}>
-        Database: {dbName}, {isOpened ? 'opened' : 'closed'},{' '}
-        {isPublic ? 'is public' : ''}, {isOpening && 'is opening'},{' '}
-        {isClosing && 'is closing'};
+        Database: {dbName}, {isOpened ? 'opened' : 'closed'}, {isPublic ? 'is public' : ''}, {isOpening && 'is opening'}, {isClosing && 'is closing'};
         <br />
-        {isOpened ? (
-          <button onClick={this.handleDbClose}>Close</button>
-        ) : (
-          <button onClick={this.handleDbOpen}>Open</button>
-        )}
+        {isOpened ? <button onClick={this.handleDbClose}>Close</button> : <button onClick={this.handleDbOpen}>Open</button>}
         <br />
-        {isOpened && (
-          <button onClick={this.sendSwarmMessage}>Send message</button>
-        )}
+        {isOpened && <button onClick={this.sendSwarmMessage}>Send message</button>}
         {isUpdating && <div>Updating...</div>}
         <div>
           Messages:
           {messages &&
             Array.from(messages.entries()).map(([key, messageWithMeta]) => {
-              const {
-                messageAddress,
-                dbName: messageDbName,
-                message,
-              } = messageWithMeta;
+              const { messageAddress, dbName: messageDbName, message } = messageWithMeta;
               let messageId = '';
 
               if (message instanceof Error) {

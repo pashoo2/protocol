@@ -19,6 +19,4 @@ export interface IChannelMemberDescription {
  * the full description of the member
  * including signing and public keys
  */
-export interface IMemberFullDescription
-  extends IChannelMemberDescription,
-    IUserDescription {}
+export interface IMemberFullDescription extends IChannelMemberDescription, IUserDescription {}

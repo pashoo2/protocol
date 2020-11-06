@@ -1,7 +1,4 @@
-import {
-  CONST_CRYPTO_KEYS_TYPES,
-  CONST_CRYPTO_KEYS_TYPES_EXPORT_FORMATS,
-} from 'const/const-crypto-keys/const-crypto-keys';
+import { CONST_CRYPTO_KEYS_TYPES, CONST_CRYPTO_KEYS_TYPES_EXPORT_FORMATS } from 'const/const-crypto-keys/const-crypto-keys';
 import {
   HASH_CALCULATION_UTILS_DEFAULT_HASH_ALHORITHM,
   HASH_CALCULATION_UTILS_HASH_ALHORITHM,
@@ -10,34 +7,17 @@ import { encodeArrayBufferToDOMString } from 'utils/string-encoding-utils';
 
 import { commonUtilsArrayIncludesAll } from '../common-utils/common-utils-array';
 import { eCRYPTO_UTILS_KEYS_USAGES } from '../encryption-utils/crypto-utils.const';
-import {
-  calculateHash,
-  calculateHashNative,
-} from './../hash-calculation-utils/hash-calculation-utils';
-import {
-  ENCRYPTIONS_KEYS_UTILS_JWK_FORMAT_OBJECT_KEYS,
-  MIN_JWK_PROPS_COUNT,
-  MIN_JWK_STRING_LENGTH,
-} from './encryption-keys-utils.const';
+import { calculateHash, calculateHashNative } from './../hash-calculation-utils/hash-calculation-utils';
+import { ENCRYPTIONS_KEYS_UTILS_JWK_FORMAT_OBJECT_KEYS, MIN_JWK_PROPS_COUNT, MIN_JWK_STRING_LENGTH } from './encryption-keys-utils.const';
 import { crypto } from '../data-sign-utils/main.data-sign-utils.const';
 
 export const isCryptoKey = (v: any): v is CryptoKey => v instanceof CryptoKey;
 
-export const isCryptoKeyPair = (
-  keyPair: any,
-  checkPrivateKeys: boolean = true
-): keyPair is CryptoKeyPair => {
-  return (
-    typeof keyPair === 'object' &&
-    isCryptoKey(keyPair.publicKey) &&
-    (!checkPrivateKeys || isCryptoKey(keyPair.privateKey))
-  );
+export const isCryptoKeyPair = (keyPair: any, checkPrivateKeys: boolean = true): keyPair is CryptoKeyPair => {
+  return typeof keyPair === 'object' && isCryptoKey(keyPair.publicKey) && (!checkPrivateKeys || isCryptoKey(keyPair.privateKey));
 };
 
-export const isCryptoKeyIncludesUsages = (
-  cryptoKey: CryptoKey,
-  expectedUsages: eCRYPTO_UTILS_KEYS_USAGES[] | eCRYPTO_UTILS_KEYS_USAGES
-): boolean => {
+export const isCryptoKeyIncludesUsages = (cryptoKey: CryptoKey, expectedUsages: eCRYPTO_UTILS_KEYS_USAGES[] | eCRYPTO_UTILS_KEYS_USAGES): boolean => {
   const { usages } = cryptoKey;
 
   if (typeof expectedUsages === 'string') {
@@ -47,33 +27,22 @@ export const isCryptoKeyIncludesUsages = (
 };
 
 export const isCryptoKeyDataSign = (cryptoKey: any): cryptoKey is CryptoKey =>
-  isCryptoKey(cryptoKey) &&
-  isCryptoKeyIncludesUsages(cryptoKey, eCRYPTO_UTILS_KEYS_USAGES.sign);
+  isCryptoKey(cryptoKey) && isCryptoKeyIncludesUsages(cryptoKey, eCRYPTO_UTILS_KEYS_USAGES.sign);
 
 export const isCryptoKeyDataVerify = (cryptoKey: any): cryptoKey is CryptoKey =>
-  isCryptoKey(cryptoKey) &&
-  isCryptoKeyIncludesUsages(cryptoKey, eCRYPTO_UTILS_KEYS_USAGES.verify);
+  isCryptoKey(cryptoKey) && isCryptoKeyIncludesUsages(cryptoKey, eCRYPTO_UTILS_KEYS_USAGES.verify);
 
-export const isCryptoKeyDataEncryption = (
-  cryptoKey: any
-): cryptoKey is CryptoKey =>
-  isCryptoKey(cryptoKey) &&
-  isCryptoKeyIncludesUsages(cryptoKey, eCRYPTO_UTILS_KEYS_USAGES.encrypt);
+export const isCryptoKeyDataEncryption = (cryptoKey: any): cryptoKey is CryptoKey =>
+  isCryptoKey(cryptoKey) && isCryptoKeyIncludesUsages(cryptoKey, eCRYPTO_UTILS_KEYS_USAGES.encrypt);
 
-export const isCryptoKeyDataDecryption = (
-  cryptoKey: any
-): cryptoKey is CryptoKey =>
-  isCryptoKey(cryptoKey) &&
-  isCryptoKeyIncludesUsages(cryptoKey, eCRYPTO_UTILS_KEYS_USAGES.decrypt);
+export const isCryptoKeyDataDecryption = (cryptoKey: any): cryptoKey is CryptoKey =>
+  isCryptoKey(cryptoKey) && isCryptoKeyIncludesUsages(cryptoKey, eCRYPTO_UTILS_KEYS_USAGES.decrypt);
 
 export const isCryptoKeyPairExportedAsString = (keyPair: any): boolean => {
   return typeof keyPair === 'string' && keyPair.length >= MIN_JWK_STRING_LENGTH;
 };
 
-export const isJWK = (
-  keyObject: object,
-  isReturnError: boolean = false
-): Error | boolean => {
+export const isJWK = (keyObject: object, isReturnError: boolean = false): Error | boolean => {
   if (keyObject && typeof keyObject === 'object') {
     const options = Object.keys(keyObject);
     const optionsCount = options.length;
@@ -84,12 +53,8 @@ export const isJWK = (
 
       for (; idx < optionsCount; idx += 1) {
         optionName = options[idx];
-        if (
-          !ENCRYPTIONS_KEYS_UTILS_JWK_FORMAT_OBJECT_KEYS.includes(optionName)
-        ) {
-          return isReturnError
-            ? new Error(`There is an unknown property ${optionName}`)
-            : false;
+        if (!ENCRYPTIONS_KEYS_UTILS_JWK_FORMAT_OBJECT_KEYS.includes(optionName)) {
+          return isReturnError ? new Error(`There is an unknown property ${optionName}`) : false;
         }
       }
       return true;
@@ -98,10 +63,7 @@ export const isJWK = (
   return isReturnError ? new Error('There is a wrong format of JWK') : false;
 };
 
-export const getJWK = (
-  key: any,
-  isReturnError: boolean = false
-): JsonWebKey | boolean | Error => {
+export const getJWK = (key: any, isReturnError: boolean = false): JsonWebKey | boolean | Error => {
   let keyObject = key;
 
   if (typeof key === 'string' && key.length > MIN_JWK_STRING_LENGTH) {
@@ -117,16 +79,12 @@ export const getJWK = (
   if (isJWKValid === true) {
     return keyObject as JsonWebKey;
   }
-  return isJWKValid instanceof Error
-    ? isJWKValid
-    : new Error('There is a wrong format of JWK');
+  return isJWKValid instanceof Error ? isJWKValid : new Error('There is a wrong format of JWK');
 };
 
-export const getJWKOrError = (key: any): JsonWebKey | Error =>
-  getJWK(key, true) as JsonWebKey | Error;
+export const getJWKOrError = (key: any): JsonWebKey | Error => getJWK(key, true) as JsonWebKey | Error;
 
-export const getJWKOrBool = (key: any): JsonWebKey | boolean =>
-  getJWK(key, false) as JsonWebKey | boolean;
+export const getJWKOrBool = (key: any): JsonWebKey | boolean => getJWK(key, false) as JsonWebKey | boolean;
 
 export const exportCryptokeyInFormat = async (
   key: CryptoKey,
@@ -137,16 +95,12 @@ export const exportCryptokeyInFormat = async (
 
     if (result instanceof Error) {
       console.error(result);
-      return new Error(
-        'exportCryptokeyInFormat::error returned from the exportKey'
-      );
+      return new Error('exportCryptokeyInFormat::error returned from the exportKey');
     }
     return result;
   } catch (err) {
     console.error(err);
-    return new Error(
-      'exportCryptokeyInFormat::An error thrown when export the crypto key'
-    );
+    return new Error('exportCryptokeyInFormat::An error thrown when export the crypto key');
   }
 };
 
@@ -165,8 +119,7 @@ export const calcCryptoKeyHash = async (
     return new Error('The crypto key is not extractable');
   }
 
-  let format: CONST_CRYPTO_KEYS_TYPES_EXPORT_FORMATS =
-    CONST_CRYPTO_KEYS_TYPES_EXPORT_FORMATS.RAW;
+  let format: CONST_CRYPTO_KEYS_TYPES_EXPORT_FORMATS = CONST_CRYPTO_KEYS_TYPES_EXPORT_FORMATS.RAW;
   const keyAlgName = key.algorithm.name.toLowerCase();
 
   if (keyAlgName.includes('rsa-') || keyAlgName.includes('ecdsa')) {
@@ -184,10 +137,7 @@ export const calcCryptoKeyHash = async (
     return new Error('Failed to export the crypto key in the RAW format');
   }
 
-  const hashCalcResult = await calculateHashNative(
-    exportedCryptoKey as ArrayBuffer,
-    alg
-  );
+  const hashCalcResult = await calculateHashNative(exportedCryptoKey as ArrayBuffer, alg);
 
   if (hashCalcResult instanceof Error) {
     console.error(hashCalcResult);
@@ -197,10 +147,7 @@ export const calcCryptoKeyHash = async (
 };
 
 // allow to absent for a private keys in a pairs
-export const calcCryptoKeyPairHash = async (
-  cryptoPair: CryptoKeyPair,
-  alg?: HASH_CALCULATION_UTILS_HASH_ALHORITHM
-): Promise<Error | string> => {
+export const calcCryptoKeyPairHash = async (cryptoPair: CryptoKeyPair, alg?: HASH_CALCULATION_UTILS_HASH_ALHORITHM): Promise<Error | string> => {
   const pending = [calcCryptoKeyHash(cryptoPair.publicKey)];
 
   if (cryptoPair.privateKey) {

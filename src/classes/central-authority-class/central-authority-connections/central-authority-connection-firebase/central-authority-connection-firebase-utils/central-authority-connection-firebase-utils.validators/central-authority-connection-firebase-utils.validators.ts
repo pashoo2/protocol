@@ -6,12 +6,7 @@ import validator from 'validator';
 export const valiateCAAuthConnectionFirebaseUtilsConnetionConfiguration = (
   configuration: any
 ): configuration is ICAConnectionConfigurationFirebase => {
-  if (
-    !validateBySchema(
-      CA_AUTH_CONNECTION_FIREBASE_UTILS_VALIDATOR_SCHEME_CONNECTION_OPTIONS,
-      configuration
-    )
-  ) {
+  if (!validateBySchema(CA_AUTH_CONNECTION_FIREBASE_UTILS_VALIDATOR_SCHEME_CONNECTION_OPTIONS, configuration)) {
     return false;
   }
   return validator.isURL(configuration.databaseURL);

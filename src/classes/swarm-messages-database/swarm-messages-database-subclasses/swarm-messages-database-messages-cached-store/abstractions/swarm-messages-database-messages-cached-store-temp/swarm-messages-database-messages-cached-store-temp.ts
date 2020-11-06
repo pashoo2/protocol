@@ -7,10 +7,7 @@ import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../../../swarm-st
 import { SwarmMessagesDatabaseMessagesCachedStoreKeyValue } from '../../implementations/swarm-messages-database-messages-cached-store-keyvalue/swarm-messages-database-messages-cached-store-keyvalue';
 import { SwarmMessagesDatabaseMessagesCachedStoreFeed } from '../../implementations/swarm-messages-database-messages-cached-store-feed/index';
 import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../../../swarm-message-store/swarm-message-store.types';
-import {
-  ISwarmMessagesDatabaseMesssageMeta,
-  TSwarmMessageDatabaseMessagesCached,
-} from '../../../../swarm-messages-database.types';
+import { ISwarmMessagesDatabaseMesssageMeta, TSwarmMessageDatabaseMessagesCached } from '../../../../swarm-messages-database.types';
 import {
   ISwarmMessagesDatabaseMessagesCacheMessageDescription,
   ISwarmMessagesDatabaseMessagesCacheStoreTemp,
@@ -25,27 +22,17 @@ export class SwarmMessagesDatabaseMessagesCachedStoreTemp<
     return this._isTemp;
   }
 
-  public get entries():
-    | TSwarmMessageDatabaseMessagesCached<P, DbType>
-    | undefined {
+  public get entries(): TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined {
     return this._mapCachedStoreItemsToMessagesWithMeta();
   }
 
-  protected _cachedStoreImplementation: ISwarmMessagesDatabaseMessagesCachedStoreCore<
-    P,
-    DbType,
-    IsTemp
-  >;
+  protected _cachedStoreImplementation: ISwarmMessagesDatabaseMessagesCachedStoreCore<P, DbType, IsTemp>;
 
   protected get _isReady(): boolean {
     return !!this._cachedStoreImplementation;
   }
 
-  constructor(
-    protected _dbType: DbType,
-    protected _dbName: string,
-    protected _isTemp: IsTemp
-  ) {
+  constructor(protected _dbType: DbType, protected _dbName: string, protected _isTemp: IsTemp) {
     this._cachedStoreImplementation = this._createCachedStoreImplementation();
   }
 
@@ -58,24 +45,15 @@ export class SwarmMessagesDatabaseMessagesCachedStoreTemp<
    */
   get(
     messageCharacteristic: ISwarmMessagesDatabaseMesssageMeta<P, DbType>
-  ):
-    | ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector>
-    | undefined {
+  ): ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector> | undefined {
     return this._cachedStoreImplementation.get(messageCharacteristic);
   }
 
-  set(
-    description: ISwarmMessagesDatabaseMessagesCacheMessageDescription<
-      P,
-      DbType
-    >
-  ): void {
+  set(description: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>): void {
     return this._cachedStoreImplementation.set(description);
   }
 
-  unset(
-    messageCharacteristic: ISwarmMessagesDatabaseMesssageMeta<P, DbType>
-  ): void {
+  unset(messageCharacteristic: ISwarmMessagesDatabaseMesssageMeta<P, DbType>): void {
     return this._cachedStoreImplementation.unset(messageCharacteristic);
   }
 
@@ -83,11 +61,7 @@ export class SwarmMessagesDatabaseMessagesCachedStoreTemp<
     return this._cachedStoreImplementation.updateWithEntries(entries);
   }
 
-  protected _createCachedStoreImplementation(): ISwarmMessagesDatabaseMessagesCachedStoreCore<
-    P,
-    DbType,
-    IsTemp
-  > {
+  protected _createCachedStoreImplementation(): ISwarmMessagesDatabaseMessagesCachedStoreCore<P, DbType, IsTemp> {
     if (this._dbType === ESwarmStoreConnectorOrbitDbDatabaseType.FEED) {
       return new SwarmMessagesDatabaseMessagesCachedStoreFeed(
         (this as unknown) as any,
@@ -104,35 +78,23 @@ export class SwarmMessagesDatabaseMessagesCachedStoreTemp<
         this._dbName
       ) as ISwarmMessagesDatabaseMessagesCachedStoreCore<P, DbType, IsTemp>;
     }
-    throw new Error(
-      'Failed to create cache store implementation for a given store type'
-    );
+    throw new Error('Failed to create cache store implementation for a given store type');
   }
 
   protected _checkIsReady(): this is {
-    _cachedStoreImplementation: ISwarmMessagesDatabaseMessagesCachedStoreCore<
-      P,
-      DbType,
-      IsTemp
-    >;
+    _cachedStoreImplementation: ISwarmMessagesDatabaseMessagesCachedStoreCore<P, DbType, IsTemp>;
   } {
     return this._isReady;
   }
 
   protected _throwIfNotReady(): this is {
-    _cachedStoreImplementation: ISwarmMessagesDatabaseMessagesCachedStoreCore<
-      P,
-      DbType,
-      IsTemp
-    >;
+    _cachedStoreImplementation: ISwarmMessagesDatabaseMessagesCachedStoreCore<P, DbType, IsTemp>;
   } {
     assert(this._checkIsReady(), 'The instance is not ready');
     return true;
   }
 
-  protected _mapCachedStoreItemsToMessagesWithMeta():
-    | TSwarmMessageDatabaseMessagesCached<P, DbType>
-    | undefined {
+  protected _mapCachedStoreItemsToMessagesWithMeta(): TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined {
     if (!this._checkIsReady()) {
       return undefined;
     }

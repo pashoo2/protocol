@@ -1,13 +1,7 @@
-import {
-  TCRYPTO_UTIL_ENCRYPT_DATA_TYPES,
-  TCRYPTO_UTIL_DECRYPT_DATA_TYPES,
-} from '../../../utils/encryption-utils/crypto-utils.types';
+import { TCRYPTO_UTIL_ENCRYPT_DATA_TYPES, TCRYPTO_UTIL_DECRYPT_DATA_TYPES } from '../../../utils/encryption-utils/crypto-utils.types';
 import { AsyncQueueClassBase } from '../async-queue-class-base/async-queue-class-base';
 import { IAsyncQueueBaseClassOptions } from '../async-queue-class-base/async-queue-class-base.types';
-import {
-  isCryptoKeyDataEncryption,
-  isCryptoKeyDataDecryption,
-} from '../../../utils/encryption-keys-utils/encryption-keys-utils';
+import { isCryptoKeyDataEncryption, isCryptoKeyDataDecryption } from '../../../utils/encryption-keys-utils/encryption-keys-utils';
 import { encryptToString } from '../../../utils/encryption-utils/encrypt-data.encryption-utils';
 import { decryptData } from '../../../utils/encryption-utils/decrypt-data.encryption-utils';
 import {
@@ -15,19 +9,14 @@ import {
   TDATA_SIGN_UTIL_VERIFY_DATA_TYPES,
   TDATA_SIGN_UTIL_VERIFY_DATA_TYPES_EXTENDED,
 } from '../../../utils/data-sign-utils/data-sign-utils.types';
-import {
-  isCryptoKeyDataSign,
-  isCryptoKeyDataVerify,
-} from '../../../utils/encryption-keys-utils/encryption-keys-utils';
+import { isCryptoKeyDataSign, isCryptoKeyDataVerify } from '../../../utils/encryption-keys-utils/encryption-keys-utils';
 import { signToString } from '../../../utils/data-sign-utils/sign-data.encryption-utils';
 import { verifyData } from '../../../utils/data-sign-utils/verify-data.encryption-utils';
 import { IQueuedEncrypyionClassBase } from './queued-encryption-class-base.types';
 import { IQueuedEncrypyionClassBaseOptions } from './queued-encryption-class-base.types';
 
 export class QueuedEncryptionClassBase implements IQueuedEncrypyionClassBase {
-  protected defaultKeys: Required<
-    IQueuedEncrypyionClassBaseOptions
-  >['keys'] = {};
+  protected defaultKeys: Required<IQueuedEncrypyionClassBaseOptions>['keys'] = {};
 
   protected asyncQueue = new AsyncQueueClassBase();
 
@@ -36,58 +25,35 @@ export class QueuedEncryptionClassBase implements IQueuedEncrypyionClassBase {
     return this;
   }
 
-  public encryptData = (
-    data: TCRYPTO_UTIL_ENCRYPT_DATA_TYPES,
-    key: CryptoKey
-  ): Promise<string | Error> => {
+  public encryptData = (data: TCRYPTO_UTIL_ENCRYPT_DATA_TYPES, key: CryptoKey): Promise<string | Error> => {
     if (!isCryptoKeyDataEncryption(key)) {
-      return Promise.resolve(
-        new Error('Crypto key is not the valid key for data encryption')
-      );
+      return Promise.resolve(new Error('Crypto key is not the valid key for data encryption'));
     }
     return this.addInQueue(() => encryptToString(key, data));
   };
 
-  public decryptData = (
-    data: TCRYPTO_UTIL_DECRYPT_DATA_TYPES,
-    key?: CryptoKey
-  ): Promise<string | Error> => {
+  public decryptData = (data: TCRYPTO_UTIL_DECRYPT_DATA_TYPES, key?: CryptoKey): Promise<string | Error> => {
     if (key && !isCryptoKeyDataDecryption(key)) {
-      return Promise.resolve(
-        new Error('Crypto key is not the valid key for data encryption')
-      );
+      return Promise.resolve(new Error('Crypto key is not the valid key for data encryption'));
     }
 
     const keyToUse = key || this.defaultKeys.decryptKey;
 
     if (!keyToUse) {
-      return Promise.resolve(
-        new Error(
-          'A key must be provided cause there is no default key was set'
-        )
-      );
+      return Promise.resolve(new Error('A key must be provided cause there is no default key was set'));
     }
     return this.addInQueue(() => decryptData(keyToUse, data));
   };
 
-  public signData = (
-    data: TDATA_SIGN_UTIL_SIGN_DATA_TYPES,
-    key?: CryptoKey
-  ): Promise<string | Error> => {
+  public signData = (data: TDATA_SIGN_UTIL_SIGN_DATA_TYPES, key?: CryptoKey): Promise<string | Error> => {
     if (key && !isCryptoKeyDataSign(key)) {
-      return Promise.resolve(
-        new Error('Crypto key is not the valid key for data encryption')
-      );
+      return Promise.resolve(new Error('Crypto key is not the valid key for data encryption'));
     }
 
     const keyToUse = key || this.defaultKeys.signKey;
 
     if (!keyToUse) {
-      return Promise.resolve(
-        new Error(
-          'A key must be provided cause there is no default key was set'
-        )
-      );
+      return Promise.resolve(new Error('A key must be provided cause there is no default key was set'));
     }
     return this.addInQueue(() => signToString(keyToUse, data));
   };
@@ -98,9 +64,7 @@ export class QueuedEncryptionClassBase implements IQueuedEncrypyionClassBase {
     key: CryptoKey
   ): Promise<boolean | Error> => {
     if (!isCryptoKeyDataVerify(key)) {
-      return Promise.resolve(
-        new Error('A crypto key must provide a data verification functionality')
-      );
+      return Promise.resolve(new Error('A crypto key must provide a data verification functionality'));
     }
     return this.addInQueue(() => verifyData(key, data, signature));
   };

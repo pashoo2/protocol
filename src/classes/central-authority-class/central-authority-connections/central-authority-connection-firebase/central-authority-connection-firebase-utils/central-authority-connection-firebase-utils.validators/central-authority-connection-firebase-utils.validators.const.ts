@@ -25,12 +25,5 @@ export const CA_AUTH_CONNECTION_FIREBASE_UTILS_VALIDATOR_SCHEME_CONNECTION_OPTIO
       minLength: 5,
     },
   },
-  required: [
-    'apiKey',
-    'authDomain',
-    'databaseURL',
-    'projectId',
-    'storageBucket',
-    'messagingSenderId',
-  ],
+  required: ['apiKey', 'authDomain', 'databaseURL', 'projectId', 'storageBucket', 'messagingSenderId'],
 };

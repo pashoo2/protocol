@@ -4,11 +4,7 @@ export const getFilenameByUrl = (url: string) => {
   if (url.startsWith('data:')) {
     return undefined;
   }
-  return (
-    path.basename(url) ||
-    (url.split('/').pop() || '').split('#')[0].split('?')[0] ||
-    undefined
-  );
+  return path.basename(url) || (url.split('/').pop() || '').split('#')[0].split('?')[0] || undefined;
 };
 
 export const downloadFileByUrl = (url: string, filename: string = '') => {

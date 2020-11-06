@@ -1,7 +1,4 @@
-import {
-  isClientSideError,
-  getNetworkError,
-} from '../http-request-class-base-utils';
+import { isClientSideError, getNetworkError } from '../http-request-class-base-utils';
 
 export class HttpResponseError extends Error {
   public code?: number;

@@ -9,13 +9,9 @@ export const isEmptyObject = (o: any): boolean => {
   return !isNotEmptyObject(o);
 };
 
-export const getObjectKeys = (o: object): Array<TObjectKeys> =>
-  (Object.keys(o) as Array<TObjectKeys>).concat(
-    Object.getOwnPropertySymbols(o)
-  );
+export const getObjectKeys = (o: object): Array<TObjectKeys> => (Object.keys(o) as Array<TObjectKeys>).concat(Object.getOwnPropertySymbols(o));
 
-export const isSimpleObject = (o: any): o is object =>
-  typeof o === 'object' && Object.getPrototypeOf(o) === Object.prototype;
+export const isSimpleObject = (o: any): o is object => typeof o === 'object' && Object.getPrototypeOf(o) === Object.prototype;
 
 /**
  * extends object with another object if the object
@@ -28,11 +24,7 @@ export const isSimpleObject = (o: any): o is object =>
  * @param {E} ext
  * @returns {T}
  */
-export function extend<T extends TDictionary<any>, E extends TDictionary<any>>(
-  o: T | undefined,
-  ext: E,
-  replaceExisting?: boolean
-): T & E {
+export function extend<T extends TDictionary<any>, E extends TDictionary<any>>(o: T | undefined, ext: E, replaceExisting?: boolean): T & E {
   if (!o) {
     return ext;
   }

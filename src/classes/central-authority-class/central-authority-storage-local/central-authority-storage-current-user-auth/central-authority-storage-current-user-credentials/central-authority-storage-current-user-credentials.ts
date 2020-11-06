@@ -9,10 +9,7 @@ import { ICAUserUniqueIdentifierDescription } from './../../../central-authority
 import { CentralAuthorityIdentity } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
 import { checkIsValidCryptoCredentials } from './../../../central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
 import { TCentralAuthorityUserCryptoCredentials } from './../../../central-authority-class-types/central-authority-class-types-crypto-credentials';
-import {
-  ISecretStoreCredentials,
-  ISecretStoreCredentialsSession,
-} from 'classes/secret-storage-class/secret-storage-class.types';
+import { ISecretStoreCredentials, ISecretStoreCredentialsSession } from 'classes/secret-storage-class/secret-storage-class.types';
 import {
   CA_STORAGE_CURRENT_USER_CREDENTIALS_SECRET_STORAGE_CONFIGURATION,
   CA_STORAGE_CURRENT_USER_CREDENTIALS_SECRET_STORAGE_DATABASE_NAME,
@@ -34,19 +31,13 @@ import { exportPasswordKeyAsString, importPasswordKeyFromString } from 'utils';
  * public and private keys along with the
  * user's identity
  */
-export class CentralAuthorityStorageCurrentUserCredentials
-  implements ICAStorageCurrentUserCredentials {
-  protected static async authorizeInStorage(
-    secretStorageConnection: SecretStorage,
-    cryptoKey: CryptoKey
-  ): Promise<Error | void> {
+export class CentralAuthorityStorageCurrentUserCredentials implements ICAStorageCurrentUserCredentials {
+  protected static async authorizeInStorage(secretStorageConnection: SecretStorage, cryptoKey: CryptoKey): Promise<Error | void> {
     if (!(cryptoKey instanceof CryptoKey)) {
       return new Error('Crypto key must be an instance of the Crypto key');
     }
     if (!(secretStorageConnection instanceof SecretStorage)) {
-      return new Error(
-        'The secret storage connection must be an instance of the SecretStorage'
-      );
+      return new Error('The secret storage connection must be an instance of the SecretStorage');
     }
 
     const authorizeByKeyResult = await secretStorageConnection.authorizeByKey(
@@ -62,11 +53,7 @@ export class CentralAuthorityStorageCurrentUserCredentials
   }
 
   protected get isSecretStorageActive(): boolean {
-    return (
-      !this.isDisconnected &&
-      !!this.secretStorageConnection &&
-      this.secretStorageConnection.isActive
-    );
+    return !this.isDisconnected && !!this.secretStorageConnection && this.secretStorageConnection.isActive;
   }
 
   private isDisconnected: boolean = false;
@@ -80,21 +67,15 @@ export class CentralAuthorityStorageCurrentUserCredentials
    *
    * @memberof CentralAuthorityStorageCurrentUserCredentials
    */
-  public connect = async (
-    options: ICAStorageCurrentUserCredentialsOptions
-  ): Promise<Error | void> => {
+  public connect = async (options: ICAStorageCurrentUserCredentialsOptions): Promise<Error | void> => {
     const { isSecretStorageActive } = this;
 
     if (isSecretStorageActive) {
-      return new Error(
-        'The instance is already connected to the secret storage'
-      );
+      return new Error('The instance is already connected to the secret storage');
     }
 
     const { credentials } = options;
-    const connectToSecretStorageResult = await this.createSecretStorageConnection(
-      credentials
-    );
+    const connectToSecretStorageResult = await this.createSecretStorageConnection(credentials);
 
     if (connectToSecretStorageResult instanceof Error) {
       return connectToSecretStorageResult;
@@ -118,32 +99,22 @@ export class CentralAuthorityStorageCurrentUserCredentials
    *
    * @memberof CentralAuthorityStorageCurrentUserCredentials
    */
-  public set = async (
-    userCryptoCredentials: TCentralAuthorityUserCryptoCredentials
-  ): Promise<void | Error> => {
+  public set = async (userCryptoCredentials: TCentralAuthorityUserCryptoCredentials): Promise<void | Error> => {
     const connectionCheckResult = await this.checkConnectionAndReconnect();
 
     if (connectionCheckResult instanceof Error) {
       return connectionCheckResult;
     }
 
-    const credentialsExportedToString = await this.exportCredentialsToString(
-      userCryptoCredentials
-    );
+    const credentialsExportedToString = await this.exportCredentialsToString(userCryptoCredentials);
 
     if (credentialsExportedToString instanceof Error) {
       return credentialsExportedToString;
     }
 
     const [resultSetWithUserId, resultSetWithAuthProvider] = await Promise.all([
-      this.setCredentialsForUserIdentity(
-        userCryptoCredentials,
-        credentialsExportedToString
-      ),
-      this.setCredentialsForAuthProvider(
-        userCryptoCredentials,
-        credentialsExportedToString
-      ),
+      this.setCredentialsForUserIdentity(userCryptoCredentials, credentialsExportedToString),
+      this.setCredentialsForAuthProvider(userCryptoCredentials, credentialsExportedToString),
     ]);
 
     let err = false;
@@ -154,21 +125,15 @@ export class CentralAuthorityStorageCurrentUserCredentials
     }
     if (resultSetWithAuthProvider instanceof Error) {
       console.error(resultSetWithAuthProvider);
-      console.error(
-        new Error('Failed to set credentials for the auth provider')
-      );
+      console.error(new Error('Failed to set credentials for the auth provider'));
       err = true;
     }
     if (err) {
-      const resultUnsetAll = await this.unsetCredentialsForUser(
-        userCryptoCredentials
-      );
+      const resultUnsetAll = await this.unsetCredentialsForUser(userCryptoCredentials);
 
       if (resultUnsetAll instanceof Error) {
         console.error(resultUnsetAll);
-        console.error(
-          new Error('Failed to unset credentials for the user identity')
-        );
+        console.error(new Error('Failed to unset credentials for the user identity'));
       }
       return new Error('Failed to store credentials');
     }
@@ -179,9 +144,7 @@ export class CentralAuthorityStorageCurrentUserCredentials
    *
    * @memberof CentralAuthorityStorageCurrentUserCredentials
    */
-  public get = async (
-    userIdentity: TCentralAuthorityUserIdentity
-  ): Promise<TCentralAuthorityUserCryptoCredentials | Error | void> => {
+  public get = async (userIdentity: TCentralAuthorityUserIdentity): Promise<TCentralAuthorityUserCryptoCredentials | Error | void> => {
     if (!this.validateUserIdentity(userIdentity)) {
       return new Error('The user identity is not valid');
     }
@@ -194,9 +157,7 @@ export class CentralAuthorityStorageCurrentUserCredentials
    *
    * @memberof CentralAuthorityStorageCurrentUserCredentials
    */
-  public unset = async (
-    userIdentity: TCentralAuthorityUserIdentity
-  ): Promise<Error | void> => {
+  public unset = async (userIdentity: TCentralAuthorityUserIdentity): Promise<Error | void> => {
     return this.unsetCredentialsForUser(userIdentity);
   };
 
@@ -226,9 +187,7 @@ export class CentralAuthorityStorageCurrentUserCredentials
     const { secretStorageEncryptionKey, isDisconnected } = this;
 
     if (isDisconnected) {
-      return new Error(
-        'The instance was disconnected from the secret storage from the outside by calling the "disconnect" method'
-      );
+      return new Error('The instance was disconnected from the secret storage from the outside by calling the "disconnect" method');
     }
     if (!secretStorageEncryptionKey) {
       return new Error('There is no encryption key');
@@ -265,9 +224,7 @@ export class CentralAuthorityStorageCurrentUserCredentials
     return `${CA_STORAGE_CURRENT_USER_CREDENTIALS_SECRET_STORAGE_DATABASE_NAME}_${key}`;
   }
 
-  protected async getCredentials(
-    key: string
-  ): Promise<TCentralAuthorityUserCryptoCredentials | Error | void> {
+  protected async getCredentials(key: string): Promise<TCentralAuthorityUserCryptoCredentials | Error | void> {
     const connectionCheckResult = await this.checkConnectionAndReconnect();
 
     if (connectionCheckResult instanceof Error) {
@@ -316,25 +273,18 @@ export class CentralAuthorityStorageCurrentUserCredentials
     return !!caUserIdentity.isValid;
   }
 
-  protected getAuthProviderIdentityByUserId(
-    userIdentity: string
-  ): Error | string {
+  protected getAuthProviderIdentityByUserId(userIdentity: string): Error | string {
     const caUserIdentity = new CentralAuthorityIdentity(userIdentity);
 
     if (!caUserIdentity.isValid) {
       return new Error('The user identity is not valid');
     }
-    return (caUserIdentity.identityDescription as ICAUserUniqueIdentifierDescription)
-      .authorityProviderURI;
+    return (caUserIdentity.identityDescription as ICAUserUniqueIdentifierDescription).authorityProviderURI;
   }
 
-  protected async exportCredentialsToString(
-    userCryptoCredentials: TCentralAuthorityUserCryptoCredentials
-  ): Promise<string | Error> {
+  protected async exportCredentialsToString(userCryptoCredentials: TCentralAuthorityUserCryptoCredentials): Promise<string | Error> {
     // on export validation has occurred
-    const userCredentialsExported = exportCryptoCredentialsToString(
-      userCryptoCredentials
-    );
+    const userCredentialsExported = exportCryptoCredentialsToString(userCryptoCredentials);
 
     if (userCredentialsExported instanceof Error) {
       console.error(userCredentialsExported);
@@ -359,13 +309,8 @@ export class CentralAuthorityStorageCurrentUserCredentials
       return new Error('There is no active connection with the SecretStorage');
     }
 
-    const userIdentity = getUserIdentityByCryptoCredentials(
-      userCryptoCredentials
-    );
-    const resultSetInStorage = await secretStorageConnection.set(
-      this.keyWithPrefix(userIdentity as string),
-      userCryptoCredentialsExported
-    );
+    const userIdentity = getUserIdentityByCryptoCredentials(userCryptoCredentials);
+    const resultSetInStorage = await secretStorageConnection.set(this.keyWithPrefix(userIdentity as string), userCryptoCredentialsExported);
 
     if (resultSetInStorage instanceof Error) {
       console.error(resultSetInStorage);
@@ -389,21 +334,14 @@ export class CentralAuthorityStorageCurrentUserCredentials
       return new Error('There is no active connection with the SecretStorage');
     }
 
-    const userIdentity = getUserIdentityByCryptoCredentials(
-      userCryptoCredentials
-    );
-    const authorityProviderURL = this.getAuthProviderIdentityByUserId(
-      userIdentity as string
-    );
+    const userIdentity = getUserIdentityByCryptoCredentials(userCryptoCredentials);
+    const authorityProviderURL = this.getAuthProviderIdentityByUserId(userIdentity as string);
 
     if (authorityProviderURL instanceof Error) {
       return authorityProviderURL;
     }
 
-    const resultSetInStorage = await secretStorageConnection.set(
-      this.keyWithPrefix(authorityProviderURL),
-      userCryptoCredentialsExported
-    );
+    const resultSetInStorage = await secretStorageConnection.set(this.keyWithPrefix(authorityProviderURL), userCryptoCredentialsExported);
 
     if (resultSetInStorage instanceof Error) {
       console.error(resultSetInStorage);
@@ -411,9 +349,7 @@ export class CentralAuthorityStorageCurrentUserCredentials
     }
   }
 
-  protected async unsetCredentialsForUser(
-    identityOrCredentials: string | TCentralAuthorityUserCryptoCredentials
-  ): Promise<Error | void> {
+  protected async unsetCredentialsForUser(identityOrCredentials: string | TCentralAuthorityUserCryptoCredentials): Promise<Error | void> {
     const connectionCheckResult = await this.checkConnectionAndReconnect();
 
     if (connectionCheckResult instanceof Error) {
@@ -427,28 +363,19 @@ export class CentralAuthorityStorageCurrentUserCredentials
     }
 
     const userIdentity =
-      typeof identityOrCredentials === 'string'
-        ? identityOrCredentials
-        : getUserIdentityByCryptoCredentials(identityOrCredentials);
+      typeof identityOrCredentials === 'string' ? identityOrCredentials : getUserIdentityByCryptoCredentials(identityOrCredentials);
 
     if (userIdentity instanceof Error) {
       console.error(userIdentity);
-      return new Error(
-        'Failed to get the user identity by the crypto credentials value'
-      );
+      return new Error('Failed to get the user identity by the crypto credentials value');
     }
 
-    const authorityProviderURL = this.getAuthProviderIdentityByUserId(
-      userIdentity
-    );
+    const authorityProviderURL = this.getAuthProviderIdentityByUserId(userIdentity);
 
     if (authorityProviderURL instanceof Error) {
       return authorityProviderURL;
     }
-    return secretStorageConnection.unset([
-      this.keyWithPrefix(userIdentity),
-      this.keyWithPrefix(authorityProviderURL),
-    ]);
+    return secretStorageConnection.unset([this.keyWithPrefix(userIdentity), this.keyWithPrefix(authorityProviderURL)]);
   }
 
   protected validateCryptoCredentials(
@@ -466,22 +393,13 @@ export class CentralAuthorityStorageCurrentUserCredentials
     this.isDisconnected = false;
   }
 
-  private async setSecretStorageCryptoKey(
-    key: CryptoKey,
-    session?: ISensitiveDataSessionStorage
-  ) {
+  private async setSecretStorageCryptoKey(key: CryptoKey, session?: ISensitiveDataSessionStorage) {
     this.secretStorageEncryptionKey = key;
     if (session) {
-      const result = await this.setSecretStorageCryptoKeyInSession(
-        session,
-        key
-      );
+      const result = await this.setSecretStorageCryptoKeyInSession(session, key);
 
       if (result instanceof Error) {
-        console.error(
-          '"createSecretStorageConnection"::failed to set key in session',
-          result
-        );
+        console.error('"createSecretStorageConnection"::failed to set key in session', result);
       }
     }
   }
@@ -499,18 +417,12 @@ export class CentralAuthorityStorageCurrentUserCredentials
   }
 
   private createConnectionToSecretStorage(): SecretStorage {
-    return new SecretStorage(
-      CA_STORAGE_CURRENT_USER_CREDENTIALS_SECRET_STORAGE_CONFIGURATION
-    );
+    return new SecretStorage(CA_STORAGE_CURRENT_USER_CREDENTIALS_SECRET_STORAGE_CONFIGURATION);
   }
 
-  private async readSecretStorageCryptoKeyFromSession(
-    session: ISensitiveDataSessionStorage
-  ): Promise<Error | CryptoKey | undefined> {
+  private async readSecretStorageCryptoKeyFromSession(session: ISensitiveDataSessionStorage): Promise<Error | CryptoKey | undefined> {
     try {
-      const k = await session.getItem(
-        CA_STORAGE_CURRENT_USER_CREDENTIALS_SESSION_KEY
-      );
+      const k = await session.getItem(CA_STORAGE_CURRENT_USER_CREDENTIALS_SESSION_KEY);
 
       if (k) {
         return await importPasswordKeyFromString(k);
@@ -520,42 +432,28 @@ export class CentralAuthorityStorageCurrentUserCredentials
     }
   }
 
-  private async setSecretStorageCryptoKeyInSession(
-    session: ISensitiveDataSessionStorage,
-    key: CryptoKey
-  ) {
+  private async setSecretStorageCryptoKeyInSession(session: ISensitiveDataSessionStorage, key: CryptoKey) {
     try {
-      return await session.setItem(
-        CA_STORAGE_CURRENT_USER_CREDENTIALS_SESSION_KEY,
-        await exportPasswordKeyAsString(key)
-      );
+      return await session.setItem(CA_STORAGE_CURRENT_USER_CREDENTIALS_SESSION_KEY, await exportPasswordKeyAsString(key));
     } catch (err) {
       return err;
     }
   }
 
-  private async createSecretStorageConnection(
-    credentials: TCAStorageCurrentUserCredentials
-  ): Promise<Error | void> {
+  private async createSecretStorageConnection(credentials: TCAStorageCurrentUserCredentials): Promise<Error | void> {
     let { secretStorageEncryptionKey } = this;
     const secretStorageConnection = this.createConnectionToSecretStorage();
     const session = (credentials as ISecretStoreCredentialsSession).session;
 
     if (!secretStorageEncryptionKey && session) {
-      const k = await this.readSecretStorageCryptoKeyFromSession(
-        (credentials as ISecretStoreCredentialsSession).session
-      );
+      const k = await this.readSecretStorageCryptoKeyFromSession((credentials as ISecretStoreCredentialsSession).session);
 
       if (k && !(k instanceof Error)) {
         secretStorageEncryptionKey = k;
       }
     }
 
-    const cryptoKey =
-      secretStorageEncryptionKey ||
-      (await secretStorageConnection.generateCryptoKey(
-        credentials as ISecretStoreCredentials
-      ));
+    const cryptoKey = secretStorageEncryptionKey || (await secretStorageConnection.generateCryptoKey(credentials as ISecretStoreCredentials));
 
     if (cryptoKey instanceof Error) {
       return new Error('Failed to generate crypto key by the credentials');
@@ -564,10 +462,7 @@ export class CentralAuthorityStorageCurrentUserCredentials
       await this.setSecretStorageCryptoKey(cryptoKey, session);
     }
 
-    const authToSecretStorageResult = await CentralAuthorityStorageCurrentUserCredentials.authorizeInStorage(
-      secretStorageConnection,
-      cryptoKey
-    );
+    const authToSecretStorageResult = await CentralAuthorityStorageCurrentUserCredentials.authorizeInStorage(secretStorageConnection, cryptoKey);
 
     if (authToSecretStorageResult instanceof Error) {
       console.error(authToSecretStorageResult);
@@ -598,9 +493,7 @@ export class CentralAuthorityStorageCurrentUserCredentials
 
       if (reconnect instanceof Error) {
         console.error(reconnect);
-        return new Error(
-          'Connection to the SecretStorage is not active and failed to reconnect'
-        );
+        return new Error('Connection to the SecretStorage is not active and failed to reconnect');
       }
     }
   }

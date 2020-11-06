@@ -14,9 +14,7 @@ import {
   QUEUE_MANAGER_EVENT_STOP,
 } from './queue-manager-class-base.const';
 
-export class QueueManagerClassBase<T> extends EventEmitter<
-  TQueueManagerEvents<T>
-> {
+export class QueueManagerClassBase<T> extends EventEmitter<TQueueManagerEvents<T>> {
   public static logError = (methodName: string, error: Error) => {
     console.error(`QueueManagerClassBase::${methodName}`, error);
   };
@@ -57,9 +55,7 @@ export class QueueManagerClassBase<T> extends EventEmitter<
     this.queue = this.queue.filter((itemQueued) => items.includes(itemQueued));
   }
 
-  emitEvent(
-    event: typeof QUEUE_MANAGER_EVENT_READY | typeof QUEUE_MANAGER_EVENT_STOP
-  ) {
+  emitEvent(event: typeof QUEUE_MANAGER_EVENT_READY | typeof QUEUE_MANAGER_EVENT_STOP) {
     const itemsInBatch = this.getBatchOfItems();
 
     this.lastEmitMs = this.getTimestamp();

@@ -1,44 +1,26 @@
 import { MaybeError } from 'types/common.types';
 import { IPromisePendingRejectableCreator } from 'types/promise.types';
 
-import {
-  IAsyncQueueConcurent,
-  IJobPromise,
-  IJobResolver,
-  IJobResolveCallback,
-} from './async-queue-concurent.types';
+import { IAsyncQueueConcurent, IJobPromise, IJobResolver, IJobResolveCallback } from './async-queue-concurent.types';
 import { createJobPromise } from './async-queue-concurent.utils';
 
-export class ConcurentAsyncQueue<T = void, E extends MaybeError = void>
-  implements IAsyncQueueConcurent<T, E> {
+export class ConcurentAsyncQueue<T = void, E extends MaybeError = void> implements IAsyncQueueConcurent<T, E> {
   private queue: Array<IJobPromise<T, E>> = [];
 
   private _isDestroying: boolean = false;
 
-  constructor(
-    protected _promisePendingRejectableCreator: IPromisePendingRejectableCreator<
-      T,
-      E
-    >
-  ) {}
+  constructor(protected _promisePendingRejectableCreator: IPromisePendingRejectableCreator<T, E>) {}
 
   public wait = (): Promise<IJobResolver<T>> => {
     this.failIfDestroying();
 
     const { queue } = this;
     const lastWorkPromise = !!queue.length && queue[queue.length - 1];
-    const jobPromise = createJobPromise<T, E>(
-      this._promisePendingRejectableCreator
-    );
-    const promiseToWaitBeforeRunJob = (lastWorkPromise ||
-      Promise.resolve()) as IJobPromise<T, E>;
+    const jobPromise = createJobPromise<T, E>(this._promisePendingRejectableCreator);
+    const promiseToWaitBeforeRunJob = (lastWorkPromise || Promise.resolve()) as IJobPromise<T, E>;
 
     this._addInQueue(jobPromise);
-    return promiseToWaitBeforeRunJob.then(
-      this._createResolverStep(
-        this._createWorkPromiseResolver(jobPromise.resolve, jobPromise)
-      )
-    );
+    return promiseToWaitBeforeRunJob.then(this._createResolverStep(this._createWorkPromiseResolver(jobPromise.resolve, jobPromise)));
   };
 
   public destroy = async (err: E): Promise<void> => {
@@ -56,18 +38,13 @@ export class ConcurentAsyncQueue<T = void, E extends MaybeError = void>
     this.queue = [...this.queue, jobPromise];
   };
 
-  protected _createResolverStep = (
-    resolver: IJobResolveCallback<T>
-  ): (() => IJobResolver<T>) => {
+  protected _createResolverStep = (resolver: IJobResolveCallback<T>): (() => IJobResolver<T>) => {
     return () => ({
       done: resolver,
     });
   };
 
-  protected _createWorkPromiseResolver = (
-    workPromiseResolve: IJobResolveCallback<T>,
-    workPromise: IJobPromise<T, E>
-  ): ((v: T) => void) => {
+  protected _createWorkPromiseResolver = (workPromiseResolve: IJobResolveCallback<T>, workPromise: IJobPromise<T, E>): ((v: T) => void) => {
     return (v: T): void => {
       this.failIfDestroying();
       this._removePromiseFromQueue(workPromise);

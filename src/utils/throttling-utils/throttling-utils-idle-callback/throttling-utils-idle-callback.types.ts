@@ -10,10 +10,7 @@ export interface RequestIdleCallbackOptions {
 export type RequestIdleCallbackId = number;
 
 export interface RequestIdleCallback {
-  (
-    cb: (deadline: RequestIdleCallbackArgument) => any,
-    options?: RequestIdleCallbackOptions
-  ): RequestIdleCallbackId;
+  (cb: (deadline: RequestIdleCallbackArgument) => any, options?: RequestIdleCallbackOptions): RequestIdleCallbackId;
 }
 
 export interface CancelRequestIdleCallback {

@@ -23,8 +23,7 @@ export interface ICAUserIdentityDescription {
   [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]: TCAuthProviderUserIdentifier;
 }
 
-export interface ICAUserUniqueIdentifierDescription
-  extends ICAUserIdentityDescription {
+export interface ICAUserUniqueIdentifierDescription extends ICAUserIdentityDescription {
   [CA_USER_IDENTITY_VERSION_PROP_NAME]: string;
 }
 
@@ -42,8 +41,7 @@ export interface ICAUserUniqueIdentifierDescription
  * @export
  * @interface ICAUserUniqueIdentifierDescription
  */
-export interface ICAUserUniqueIdentifierDescriptionWithOptionalVersion
-  extends ICAUserIdentityDescription {
+export interface ICAUserUniqueIdentifierDescriptionWithOptionalVersion extends ICAUserIdentityDescription {
   [CA_USER_IDENTITY_VERSION_PROP_NAME]?: string;
 }
 

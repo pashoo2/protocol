@@ -72,11 +72,7 @@ export class HttpRequest extends HttpRequestBodyProcessor {
     const resultSetOptions = this.setOptions(options);
 
     if (resultSetOptions instanceof Error) {
-      console.error(
-        'HttpRequest::setOptions::failed',
-        resultSetOptions,
-        options
-      );
+      console.error('HttpRequest::setOptions::failed', resultSetOptions, options);
       throw resultSetOptions;
     }
   }
@@ -90,16 +86,7 @@ export class HttpRequest extends HttpRequestBodyProcessor {
    * @memberof HttpRequest
    *  @returns {(Promise<string | object | Error | FormData | Blob | HttpResponseError | File | undefined>)}
    */
-  public send = async (): Promise<
-    | string
-    | object
-    | Error
-    | FormData
-    | Blob
-    | HttpResponseError
-    | File
-    | undefined
-  > => {
+  public send = async (): Promise<string | object | Error | FormData | Blob | HttpResponseError | File | undefined> => {
     const { url, method, credentials, mode } = this;
     const body = this.getBody();
     const headers = this.getRequestHeaders();
@@ -122,10 +109,7 @@ export class HttpRequest extends HttpRequestBodyProcessor {
     }
   };
 
-  protected getRequestMethod(
-    method: string | undefined,
-    options: IHttpRequestOptions
-  ): Error | HTTP_REQUEST_METHOD {
+  protected getRequestMethod(method: string | undefined, options: IHttpRequestOptions): Error | HTTP_REQUEST_METHOD {
     if (!method) {
       const { body } = options;
 
@@ -138,16 +122,12 @@ export class HttpRequest extends HttpRequestBodyProcessor {
     const methodRes = method.trim().toUpperCase();
 
     if (HTTP_REQUEST_METHOD.hasOwnProperty(methodRes)) {
-      return (HTTP_REQUEST_METHOD as any)[methodRes] as ownValueOf<
-        typeof HTTP_REQUEST_METHOD
-      >;
+      return (HTTP_REQUEST_METHOD as any)[methodRes] as ownValueOf<typeof HTTP_REQUEST_METHOD>;
     }
     return new Error(`An unknown request method "${method}"`);
   }
 
-  protected getCredentials(
-    options: IHttpRequestOptions
-  ): RequestCredentials | undefined {
+  protected getCredentials(options: IHttpRequestOptions): RequestCredentials | undefined {
     const { withCookie, credentials } = options;
 
     if (credentials) {
@@ -158,20 +138,14 @@ export class HttpRequest extends HttpRequestBodyProcessor {
     }
   }
 
-  protected getRequestMode(
-    method: HTTP_REQUEST_METHOD,
-    options: IHttpRequestOptions
-  ): RequestMode | Error | undefined {
+  protected getRequestMode(method: HTTP_REQUEST_METHOD, options: IHttpRequestOptions): RequestMode | Error | undefined {
     const { mode, contentType, body, token } = options;
 
     if (!mode) {
       if (token) {
         return 'cors';
       }
-      if (
-        method === HTTP_REQUEST_METHOD.DELETE ||
-        method === HTTP_REQUEST_METHOD.PUT
-      ) {
+      if (method === HTTP_REQUEST_METHOD.DELETE || method === HTTP_REQUEST_METHOD.PUT) {
         return 'cors';
       }
       if (
@@ -204,10 +178,7 @@ export class HttpRequest extends HttpRequestBodyProcessor {
    */
   protected resolveTargetUrl(url: string): string {
     const { baseUrl, queryStringParams } = this;
-    const urlInstance = new URL(
-      baseUrl ? url : prefixUrlWithHTTPProtocol(url),
-      baseUrl ? prefixUrlWithHTTPProtocol(baseUrl) : undefined
-    );
+    const urlInstance = new URL(baseUrl ? url : prefixUrlWithHTTPProtocol(url), baseUrl ? prefixUrlWithHTTPProtocol(baseUrl) : undefined);
 
     if (queryStringParams) {
       urlInstance.search = queryStringParams;
@@ -217,10 +188,7 @@ export class HttpRequest extends HttpRequestBodyProcessor {
 
   protected getQueryStringParams(params: TQueryStringParams): string {
     const { queryStringParams } = this;
-    const resolvedParams = resolveQueryStringParams(
-      queryStringParams || '',
-      params
-    );
+    const resolvedParams = resolveQueryStringParams(queryStringParams || '', params);
 
     return resolvedParams;
   }
@@ -305,9 +273,7 @@ export class HttpRequest extends HttpRequestBodyProcessor {
     return cache as RequestCache;
   }
 
-  protected preProcessResponse(
-    response: Response
-  ): Promise<Error | HttpResponseError | THttpResponseResult> {
+  protected preProcessResponse(response: Response): Promise<Error | HttpResponseError | THttpResponseResult> {
     const responseProcessor = new HttpRequestResponseProcessor(response);
 
     return responseProcessor.getResult();

@@ -1,9 +1,4 @@
-export type TSwarmMessagePayloadSerialized =
-  | string
-  | number[]
-  | Uint8Array
-  | ArrayBuffer
-  | SharedArrayBuffer;
+export type TSwarmMessagePayloadSerialized = string | number[] | Uint8Array | ArrayBuffer | SharedArrayBuffer;
 
 export interface ISwarmMessagePayloadValidationOptions {
   payloadMaxLengthBytes: number;

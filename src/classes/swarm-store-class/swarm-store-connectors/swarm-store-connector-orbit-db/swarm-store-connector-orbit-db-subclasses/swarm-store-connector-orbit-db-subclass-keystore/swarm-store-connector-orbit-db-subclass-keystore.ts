@@ -1,6 +1,4 @@
-import KeystoreClass, {
-  IOrbitDBKeystoreOptionsForSecretStorage,
-} from 'orbit-db-keystore';
+import KeystoreClass, { IOrbitDBKeystoreOptionsForSecretStorage } from 'orbit-db-keystore';
 import { extendsOptionsWithStore } from './swarm-store-connector-orbit-db-subclass-keystore.utils';
 
 /**

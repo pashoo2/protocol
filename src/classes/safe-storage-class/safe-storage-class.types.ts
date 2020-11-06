@@ -1,11 +1,5 @@
-import {
-  ISecretStoreCredentials,
-  TSecretStorageProviderName,
-} from 'classes/secret-storage-class/secret-storage-class.types';
-import {
-  ESAFE_STORAGE_STORAGE_TYPE,
-  ESAFE_STORAGE_PROVIDER_STATUS,
-} from './safe-storage-class.const';
+import { ISecretStoreCredentials, TSecretStorageProviderName } from 'classes/secret-storage-class/secret-storage-class.types';
+import { ESAFE_STORAGE_STORAGE_TYPE, ESAFE_STORAGE_PROVIDER_STATUS } from './safe-storage-class.const';
 
 export type TSafeStorageProviderName = TSecretStorageProviderName;
 
@@ -21,9 +15,7 @@ export type TSafeStorageStoredDataTypeKeyValue = {
 
 export type TSafeStorageStoredDataTypeAppendLog = Array<TSafeStorageDataType>;
 
-export type TSafeStorageStoredDataType<
-  T extends ESAFE_STORAGE_STORAGE_TYPE
-> = T extends ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG
+export type TSafeStorageStoredDataType<T extends ESAFE_STORAGE_STORAGE_TYPE> = T extends ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG
   ? TSafeStorageStoredDataTypeAppendLog
   : TSafeStorageStoredDataTypeKeyValue;
 

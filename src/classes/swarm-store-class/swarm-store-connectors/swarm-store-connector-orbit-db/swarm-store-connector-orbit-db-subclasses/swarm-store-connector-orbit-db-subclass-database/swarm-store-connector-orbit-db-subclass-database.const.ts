@@ -1,5 +1,4 @@
-export const SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_LOG_PREFIX =
-  'SwarmStoreConnectorOrbitDBDatabase';
+export const SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_LOG_PREFIX = 'SwarmStoreConnectorOrbitDBDatabase';
 
 export enum ESwarmStoreConnectorOrbitDbDatabaseType {
   FEED = 'feed_store',

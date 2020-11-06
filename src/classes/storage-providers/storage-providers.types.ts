@@ -23,9 +23,7 @@ export abstract class StorageProvider<V = string> implements IStorage<V> {
    * @returns {(Promise<boolean | Error>)}
    * @memberof StorageProvider
    */
-  public abstract connect(
-    options?: IStorageProviderOptions
-  ): Promise<boolean | Error>;
+  public abstract connect(options?: IStorageProviderOptions): Promise<boolean | Error>;
   public abstract disconnect(): Promise<boolean | Error>;
   /**
    * remove all content of the database connected to.
@@ -42,15 +40,10 @@ export abstract class StorageProvider<V = string> implements IStorage<V> {
 
   public abstract unset(key: string): Promise<boolean | Error>;
 
-  public abstract setUInt8Array?(
-    key: string,
-    value: Uint8Array
-  ): Promise<boolean | Error>;
+  public abstract setUInt8Array?(key: string, value: Uint8Array): Promise<boolean | Error>;
   public abstract get(key: string): Promise<V | undefined | Error>;
 
-  public abstract getUInt8Array?(
-    key: string
-  ): Promise<Uint8Array | undefined | Error>;
+  public abstract getUInt8Array?(key: string): Promise<Uint8Array | undefined | Error>;
 }
 
 export type TStorageProvider = typeof StorageProvider;

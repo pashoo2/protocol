@@ -8,10 +8,7 @@ import {
   IPromisePendingRejectableCreator,
 } from 'types/promise.types';
 
-export const createCustomPromise = <
-  T,
-  E extends MaybeError = void
->(): ICustomPromiseDescription<T, E> => {
+export const createCustomPromise = <T, E extends MaybeError = void>(): ICustomPromiseDescription<T, E> => {
   let resolve: ((v: T) => void) | undefined = undefined;
   let reject: ((err: E) => void) | undefined = undefined;
   const promise = new Promise<T>((res, rej) => {
@@ -58,10 +55,7 @@ export const createPromisePendingRejectable = <T, E extends MaybeError = void>(
  * @returns {IPromisePending<T>}
  */
 export const createPromisePending = <T, E extends MaybeError = void>(
-  promisePendingRejectableCreator: IPromisePendingRejectableCreator<
-    T,
-    E
-  > = createPromisePendingRejectable
+  promisePendingRejectableCreator: IPromisePendingRejectableCreator<T, E> = createPromisePendingRejectable
 ): IPromisePending<T> => {
   return promisePendingRejectableCreator();
 };
@@ -74,9 +68,6 @@ export const createPromisePending = <T, E extends MaybeError = void>(
  * @param {IPromisePending<T>} promisePending
  * @param {T} value
  */
-export const resolvePromisePending = <T>(
-  promisePending: IPromisePending<T>,
-  value: T
-): void => {
+export const resolvePromisePending = <T>(promisePending: IPromisePending<T>, value: T): void => {
   promisePending.resolve(value);
 };

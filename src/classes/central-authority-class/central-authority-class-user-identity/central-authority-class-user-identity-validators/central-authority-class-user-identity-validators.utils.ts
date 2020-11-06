@@ -9,17 +9,13 @@ import {
 import { ICAUserUniqueIdentifierMetadata } from '../central-authority-class-user-identity.types';
 import { dataValidatorUtilURL } from 'utils/data-validators-utils/data-validators-utils';
 
-export const validateIdentityDescriptionVersion = (
-  version: any
-): version is string => {
+export const validateIdentityDescriptionVersion = (version: any): version is string => {
   if (typeof version !== 'string') {
     console.error('An identity description version must be a string');
     return false;
   }
   if (version.length !== CA_USER_IDENTITY_VERSION_CHARACTERS_COUNT) {
-    console.error(
-      `An identity description version length must be a ${CA_USER_IDENTITY_VERSION_CHARACTERS_COUNT} characters`
-    );
+    console.error(`An identity description version length must be a ${CA_USER_IDENTITY_VERSION_CHARACTERS_COUNT} characters`);
     return false;
   }
   if (!CA_USER_IDENTITY_PARSER_VERSIONS_SUPPORTED.includes(version)) {
@@ -29,30 +25,21 @@ export const validateIdentityDescriptionVersion = (
   return true;
 };
 
-export const getValidatorByIdentityVersion = (
-  identityVersion: string
-): IUserIdentityDescriptionValidator | Error => {
+export const getValidatorByIdentityVersion = (identityVersion: string): IUserIdentityDescriptionValidator | Error => {
   const validator = CA_USER_IDENTITY_VALIDATORS_BY_VERSION[identityVersion];
 
   if (typeof validator === 'function') {
     return validator;
   }
-  return new Error(
-    `There is no validator for the identity version ${identityVersion}`
-  );
+  return new Error(`There is no validator for the identity version ${identityVersion}`);
 };
 
-export const validateUserIdentityDescriptionVersion = (
-  identityVersion: string,
-  userIdentityDescription: any
-): boolean | Error => {
+export const validateUserIdentityDescriptionVersion = (identityVersion: string, userIdentityDescription: any): boolean | Error => {
   const validatorForVersion = getValidatorByIdentityVersion(identityVersion);
 
   if (validatorForVersion instanceof Error) {
     console.error(validatorForVersion);
-    return new Error(
-      `Can't define a validator for the user's identity version ${validatorForVersion}`
-    );
+    return new Error(`Can't define a validator for the user's identity version ${validatorForVersion}`);
   }
 
   const validationResult = validatorForVersion(userIdentityDescription);
@@ -63,35 +50,22 @@ export const validateUserIdentityDescriptionVersion = (
   return true;
 };
 
-export const validateUserIdentityDescription = (
-  userIdetnityDescription: any
-): boolean | Error => {
+export const validateUserIdentityDescription = (userIdetnityDescription: any): boolean | Error => {
   if (userIdetnityDescription && typeof userIdetnityDescription === 'object') {
-    const {
-      [CA_USER_IDENTITY_VERSION_PROP_NAME]: version,
-    } = userIdetnityDescription;
+    const { [CA_USER_IDENTITY_VERSION_PROP_NAME]: version } = userIdetnityDescription;
 
     if (!version) {
-      return new Error(
-        'There is no version defined in the user identity description object'
-      );
+      return new Error('There is no version defined in the user identity description object');
     }
     if (validateIdentityDescriptionVersion(version)) {
-      return validateUserIdentityDescriptionVersion(
-        version,
-        userIdetnityDescription
-      );
+      return validateUserIdentityDescriptionVersion(version, userIdetnityDescription);
     }
-    return new Error(
-      'There is a wrong version in the user identity description object'
-    );
+    return new Error('There is a wrong version in the user identity description object');
   }
   return new Error('There is a wrong format of the user identity description');
 };
 
-export const checkIsValidUserIdentityMetadata = (
-  identityMetadata: ICAUserUniqueIdentifierMetadata
-): boolean | Error => {
+export const checkIsValidUserIdentityMetadata = (identityMetadata: ICAUserUniqueIdentifierMetadata): boolean | Error => {
   if (typeof identityMetadata !== 'object') {
     return new Error('Identity metadata must be an object');
   }

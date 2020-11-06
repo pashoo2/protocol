@@ -29,8 +29,7 @@ export const SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_UPDATE_RETRY_DELAY_MS = 100;
  * Prefix for a message's address which used as a uniq messge's identity (e.g. for DELETE
  * messages) to put into the list of messages already emitted as a new or delete
  */
-export const SWARM_MESSAGES_DATABASE_MESSAGES_EMITTED_UNIQ_ID_ADDRESS_PREFIX =
-  'ADDR::';
+export const SWARM_MESSAGES_DATABASE_MESSAGES_EMITTED_UNIQ_ID_ADDRESS_PREFIX = 'ADDR::';
 
 /**
  * Maximum attempts to upate cache

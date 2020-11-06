@@ -16,9 +16,7 @@ export const stringify = (data: TStringifyData): string | Error => {
     try {
       // it's necessary to sort a keys of the object to give
       // the same strings for all objects with the same keys
-      return JSON.stringify(
-        sortKeys(data as { [key: string]: unknown }, { deep: true })
-      );
+      return JSON.stringify(sortKeys(data as { [key: string]: unknown }, { deep: true }));
     } catch (err) {
       return err;
     }

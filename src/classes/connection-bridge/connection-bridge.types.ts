@@ -1,32 +1,17 @@
 // @ts-nocheck
-import {
-  ISwarmMessageStoreOptions,
-  ISwarmMessageStore,
-} from '../swarm-message-store/swarm-message-store.types';
+import { ISwarmMessageStoreOptions, ISwarmMessageStore } from '../swarm-message-store/swarm-message-store.types';
 import { ESwarmStoreConnector } from '../swarm-store-class/swarm-store-class.const';
 import { ICentralAuthority } from '../central-authority-class/central-authority-class.types';
 import { ICentralAuthorityOptions } from '../central-authority-class/central-authority-class.types';
-import {
-  ISwarmMessageConstructor,
-  TSwarmMessageSerialized,
-} from '../swarm-message/swarm-message-constructor.types';
+import { ISwarmMessageConstructor, TSwarmMessageSerialized } from '../swarm-message/swarm-message-constructor.types';
 import { ISensitiveDataSessionStorageOptions } from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { ISwarmMessageEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
-import {
-  TSwarmStoreDatabaseType,
-  ISwarmStoreConnectorBasicWithEntriesCount,
-} from '../swarm-store-class/swarm-store-class.types';
+import { TSwarmStoreDatabaseType, ISwarmStoreConnectorBasicWithEntriesCount } from '../swarm-store-class/swarm-store-class.types';
 import { ISwarmStoreConnectorOrbitDbConnecectionBasicFabric } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.types';
-import {
-  ISwarmStoreConnector,
-  ISwarmStoreOptionsWithConnectorFabric,
-} from '../swarm-store-class/swarm-store-class.types';
+import { ISwarmStoreConnector, ISwarmStoreOptionsWithConnectorFabric } from '../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageStoreOptionsWithConnectorFabric } from '../swarm-message-store/swarm-message-store.types';
-import {
-  TSwarmStoreValueTypes,
-  ISwarmStoreConnectorBasic,
-} from '../swarm-store-class/swarm-store-class.types';
+import { TSwarmStoreValueTypes, ISwarmStoreConnectorBasic } from '../swarm-store-class/swarm-store-class.types';
 
 export type TConnectionBridgeSwarmStoreConnectorBasic<
   P extends ESwarmStoreConnector,
@@ -34,10 +19,7 @@ export type TConnectionBridgeSwarmStoreConnectorBasic<
   DbType extends TSwarmStoreDatabaseType<P>
 > = ISwarmStoreConnectorBasicWithEntriesCount<P, T, DbType>;
 
-export type IConnectionBridgeOptionsAuthCredentials = Omit<
-  ICentralAuthorityOptions['user']['credentials'],
-  'session'
->;
+export type IConnectionBridgeOptionsAuthCredentials = Omit<ICentralAuthorityOptions['user']['credentials'], 'session'>;
 
 export interface IConnectionBridgeOptionsAuth<CD extends boolean = false> {
   /**
@@ -55,9 +37,7 @@ export interface IConnectionBridgeOptionsAuth<CD extends boolean = false> {
    *
    * @type {ICentralAuthorityOptions['user']['credentials']}
    */
-  credentials: CD extends true
-    ? IConnectionBridgeOptionsAuthCredentials
-    : IConnectionBridgeOptionsAuthCredentials | undefined | never;
+  credentials: CD extends true ? IConnectionBridgeOptionsAuthCredentials : IConnectionBridgeOptionsAuthCredentials | undefined | never;
   session?: ISensitiveDataSessionStorageOptions;
   /**
    * this is list of auth providers will be used to authorize
@@ -77,28 +57,15 @@ export interface IConnectionBridgeStorageOptions<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  ConnectorBasic extends TConnectionBridgeSwarmStoreConnectorBasic<
-    P,
-    T,
-    DbType
-  > = TConnectionBridgeSwarmStoreConnectorBasic<P, T, DbType>
->
-  extends Omit<
+  ConnectorBasic extends TConnectionBridgeSwarmStoreConnectorBasic<P, T, DbType> = TConnectionBridgeSwarmStoreConnectorBasic<P, T, DbType>
+> extends Omit<
     ISwarmMessageStoreOptions<P, T, DbType, ConnectorBasic>,
-    | 'userId'
-    | 'credentials'
-    | 'messageConstructors'
-    | 'providerConnectionOptions'
-    | 'databasesListStorage'
+    'userId' | 'credentials' | 'messageConstructors' | 'providerConnectionOptions' | 'databasesListStorage'
   > {
   connectorBasicFabric?: ISwarmStoreConnectorOrbitDbConnecectionBasicFabric<
     T,
     DbType,
-    ISwarmStoreConnectorBasicWithEntriesCount<
-      ESwarmStoreConnector.OrbitDB,
-      T,
-      DbType
-    >
+    ISwarmStoreConnectorBasicWithEntriesCount<ESwarmStoreConnector.OrbitDB, T, DbType>
   >;
 }
 
@@ -106,11 +73,7 @@ export interface IConnectionBridgeOptions<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  ConnectorBasic extends TConnectionBridgeSwarmStoreConnectorBasic<
-    P,
-    T,
-    DbType
-  > = TConnectionBridgeSwarmStoreConnectorBasic<P, T, DbType>,
+  ConnectorBasic extends TConnectionBridgeSwarmStoreConnectorBasic<P, T, DbType> = TConnectionBridgeSwarmStoreConnectorBasic<P, T, DbType>,
   CD extends boolean = false
 > {
   auth: IConnectionBridgeOptionsAuth<CD>;
@@ -144,49 +107,12 @@ export interface IConnectionBridge<
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType>,
-  PO extends TSwarmStoreConnectorConnectionOptions<
-    P,
-    ItemType,
-    DbType,
-    ConnectorBasic
-  >,
+  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, ConnectorBasic>,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType>,
-  CO extends ISwarmStoreProviderOptions<
-    P,
-    ItemType,
-    DbType,
-    ConnectorBasic,
-    PO
-  >,
-  CFO extends ISwarmStoreOptionsConnectorFabric<
-    P,
-    ItemType,
-    DbType,
-    ConnectorBasic,
-    PO,
-    CO,
-    DBO,
-    ConnectorMain
-  >,
-  ConnectorMain extends ISwarmStoreConnector<
-    P,
-    ItemType,
-    DbType,
-    ConnectorBasic,
-    PO,
-    DBO
-  >,
-  O extends ISwarmStoreOptionsWithConnectorFabric<
-    P,
-    ItemType,
-    DbType,
-    ConnectorBasic,
-    PO,
-    CO,
-    DBO,
-    ConnectorMain,
-    CFO
-  >
+  CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, ConnectorBasic, PO>,
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain>,
+  ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic, PO, DBO>,
+  O extends ISwarmStoreOptionsWithConnectorFabric<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain, CFO>
 > {
   /**
    * used to authorize the user or get
@@ -243,9 +169,7 @@ export interface IConnectionBridge<
    * @returns {(Promise<Error | void>)}
    * @memberof IConnectionBridge
    */
-  connect(
-    options: IConnectionBridgeOptions<P, T, DbType>
-  ): Promise<Error | void>;
+  connect(options: IConnectionBridgeOptions<P, T, DbType>): Promise<Error | void>;
 
   /**
    * checks was a session started before and
@@ -257,11 +181,7 @@ export interface IConnectionBridge<
    * @returns {Promise<boolean>}
    * @memberof IConnectionBridge
    */
-  checkSessionAvailable(
-    options?:
-      | ISensitiveDataSessionStorageOptions
-      | IConnectionBridgeOptions<P, T, DbType>
-  ): Promise<boolean>;
+  checkSessionAvailable(options?: ISensitiveDataSessionStorageOptions | IConnectionBridgeOptions<P, T, DbType>): Promise<boolean>;
   /**
    * Close all connections and release the options.
    * The connection can't be used anymore.

@@ -32,37 +32,24 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
    * @returns
    * @memberof SwarmStoreConnectorOrbitDBSubclassAccessController
    */
-  public static async create<
-    T extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>
-  >(
+  public static async create<T extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>>(
     orbitdb: OrbitDB,
     options: ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions<T> = {}
   ): Promise<SwarmStoreConnectorOrbitDBSubclassAccessController<T>> {
-    return new SwarmStoreConnectorOrbitDBSubclassAccessController<T>(
-      orbitdb,
-      options
-    );
+    return new SwarmStoreConnectorOrbitDBSubclassAccessController<T>(orbitdb, options);
   }
 
   // if true then anyone have access
   // to the database
   protected _isPublic: boolean = false;
 
-  protected _grantAccessCallback?: TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<
-    ESwarmStoreConnector.OrbitDB,
-    T
-  >;
+  protected _grantAccessCallback?: TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<ESwarmStoreConnector.OrbitDB, T>;
 
   protected _orbitdb?: OrbitDB;
 
-  protected _options?: ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions<
-    T
-  >;
+  protected _options?: ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions<T>;
 
-  constructor(
-    orbitdb: OrbitDB,
-    options: ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions<T> = {}
-  ) {
+  constructor(orbitdb: OrbitDB, options: ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions<T> = {}) {
     super();
     this._orbitdb = orbitdb;
     this.setOptions(options);
@@ -78,14 +65,9 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
    * @returns
    * @memberof SwarmStoreConnectorOrbitDBSubclassAccessController
    */
-  public async canAppend(
-    entry: LogEntry<T>,
-    identityProvider: IdentityProvider
-  ): Promise<boolean> {
+  public async canAppend(entry: LogEntry<T>, identityProvider: IdentityProvider): Promise<boolean> {
     if (!this.verifyEntryFormat(entry)) {
-      console.warn(
-        `${SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_ACCESS_CONTROLLER_LOG_PREFIX}::entry have an unknown format`
-      );
+      console.warn(`${SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_ACCESS_CONTROLLER_LOG_PREFIX}::entry have an unknown format`);
       return false;
     }
 
@@ -105,10 +87,7 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
     const { write: accessListForUsers } = _options;
 
     // If the ACL contains the writer's public key or it contains '*'
-    if (
-      accessListForUsers &&
-      accessListForUsers.includes(userPerformedActionOnEntryId)
-    ) {
+    if (accessListForUsers && accessListForUsers.includes(userPerformedActionOnEntryId)) {
       return this.checkAccess(entry, identityProvider);
     }
     return false;
@@ -120,9 +99,7 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
    * @returns
    * @memberof SwarmStoreConnectorOrbitDBSubclassAccessController
    */
-  public async save(): Promise<
-    ISwarmStoreConnectorOrbitDbDatabaseAccessControllerManifest
-  > {
+  public async save(): Promise<ISwarmStoreConnectorOrbitDbDatabaseAccessControllerManifest> {
     return {};
   }
 
@@ -160,10 +137,7 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
    * @returns {Promise<boolean>}
    * @memberof SwarmStoreConnectorOrbitDBSubclassAccessController
    */
-  protected verifyIdentity(
-    identity: IdentityJson,
-    identityProvider: IdentityProvider
-  ): Promise<boolean> {
+  protected verifyIdentity(identity: IdentityJson, identityProvider: IdentityProvider): Promise<boolean> {
     return (identityProvider as any).verifyIdentity(identity);
   }
 
@@ -188,12 +162,7 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
     const { _grantAccessCallback } = this;
 
     if (typeof _grantAccessCallback === 'function') {
-      return _grantAccessCallback(
-        value,
-        id,
-        key,
-        op as EOrbitDbFeedStoreOperation | undefined
-      );
+      return _grantAccessCallback(value, id, key, op as EOrbitDbFeedStoreOperation | undefined);
     }
     return true;
   }
@@ -208,20 +177,14 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
    * @returns {Promise<boolean>}
    * @memberof SwarmStoreConnectorOrbitDBSubclassAccessController
    */
-  protected async checkAccess(
-    entry: LogEntry<T>,
-    identityProvider: IdentityProvider
-  ): Promise<boolean> {
+  protected async checkAccess(entry: LogEntry<T>, identityProvider: IdentityProvider): Promise<boolean> {
     try {
       if (!this.verifyEntryFormat(entry)) {
         return false;
       }
 
       const { identity } = entry;
-      const validateIdentityResult = await this.verifyIdentity(
-        identity,
-        identityProvider
-      );
+      const validateIdentityResult = await this.verifyIdentity(identity, identityProvider);
 
       if (validateIdentityResult !== true) {
         return false;
@@ -233,9 +196,7 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
     }
   }
 
-  protected setOptions(
-    options: ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions<T>
-  ) {
+  protected setOptions(options: ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions<T>) {
     if (options) {
       const { write, grantAccess } = options;
 
@@ -244,9 +205,7 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
           this._isPublic = true;
         }
       } else {
-        console.warn(
-          `${SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_ACCESS_CONTROLLER_LOG_PREFIX}::Noone have access on the database`
-        );
+        console.warn(`${SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_ACCESS_CONTROLLER_LOG_PREFIX}::Noone have access on the database`);
       }
       if (typeof grantAccess === 'function') {
         if (grantAccess.length !== 2) {

@@ -6,20 +6,14 @@ import {
   dataSignExportKeyPairAsString as exportKeyPairDataSignAsString,
   dataSignExportKeyAsString as exportPublicKeyDataSignAsString,
 } from 'utils/data-sign-utils';
-import {
-  TCACryptoKeyPairs,
-  TCACryptoPubilicKeys,
-} from '../../central-authority-class-types/central-authority-class-types';
+import { TCACryptoKeyPairs, TCACryptoPubilicKeys } from '../../central-authority-class-types/central-authority-class-types';
 import {
   CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME,
   CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME,
   CA_CRYPTO_KEY_PAIRS_ENCRYPTION_PUBLIC_KEY_NAME,
   CA_CRYPTO_KEY_PAIRS_SIGN_PUBLIC_KEY_NAME,
 } from './central-authority-util-crypto-keys.const';
-import {
-  checkIsCryptoKeyPairs,
-  getPublicKeysFromCryptoKeyPairs,
-} from './central-authority-util-crypto-keys-common';
+import { checkIsCryptoKeyPairs, getPublicKeysFromCryptoKeyPairs } from './central-authority-util-crypto-keys-common';
 import { compressString } from 'utils/data-compression-utils/data-compression-utils-strings';
 import { stringify } from 'utils/main-utils';
 
@@ -30,10 +24,7 @@ import { stringify } from 'utils/main-utils';
  * @param {object} cryptoKeyPairs
  * @returns {Promise<string | Error>}
  */
-export const exportKeyPairsAsString = async (
-  cryptoKeyPairs: TCACryptoKeyPairs,
-  password?: string
-): Promise<string | Error> => {
+export const exportKeyPairsAsString = async (cryptoKeyPairs: TCACryptoKeyPairs, password?: string): Promise<string | Error> => {
   if (!checkIsCryptoKeyPairs(cryptoKeyPairs, !!password)) {
     return new Error('The keypair is not valid');
   }
@@ -74,9 +65,7 @@ export const exportKeyPairsAsString = async (
  * @param {object} keyPairs
  * @returns {string | Error}
  */
-export const exportPublicKeysAsString = async (
-  keyPairs: TCACryptoKeyPairs
-): Promise<string | Error> => {
+export const exportPublicKeysAsString = async (keyPairs: TCACryptoKeyPairs): Promise<string | Error> => {
   const publicKeys = getPublicKeysFromCryptoKeyPairs(keyPairs);
 
   if (publicKeys instanceof Error) {
@@ -87,10 +76,7 @@ export const exportPublicKeysAsString = async (
     [CA_CRYPTO_KEY_PAIRS_SIGN_PUBLIC_KEY_NAME]: signPublicKey,
   } = publicKeys;
 
-  const [
-    encryptionPublicKeyExported,
-    signPublicKeyExported,
-  ] = await Promise.all([
+  const [encryptionPublicKeyExported, signPublicKeyExported] = await Promise.all([
     exportPublicKeyDataEncryptAsString(encryptionPublicKey),
     exportPublicKeyDataSignAsString(signPublicKey),
   ]);

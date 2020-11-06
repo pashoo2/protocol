@@ -2,17 +2,11 @@ import { MaybeError, IResolvable, IRejectable } from './common.types';
 
 export interface IPromisePending<T> extends Promise<T>, IResolvable<T> {}
 
-export interface IPromiseRejectable<T, E extends MaybeError>
-  extends Promise<T>,
-    IRejectable<E> {}
+export interface IPromiseRejectable<T, E extends MaybeError> extends Promise<T>, IRejectable<E> {}
 
-export interface IPromisePendingRejectable<T, E extends MaybeError>
-  extends IPromisePending<T>,
-    IPromiseRejectable<T, E> {}
+export interface IPromisePendingRejectable<T, E extends MaybeError> extends IPromisePending<T>, IPromiseRejectable<T, E> {}
 
-export interface ICustomPromiseDescription<T, E extends MaybeError>
-  extends IRejectable<E>,
-    IResolvable<T> {
+export interface ICustomPromiseDescription<T, E extends MaybeError> extends IRejectable<E>, IResolvable<T> {
   promise: Promise<T>;
 }
 

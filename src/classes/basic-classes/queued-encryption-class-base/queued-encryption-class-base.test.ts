@@ -99,15 +99,11 @@ describe('QueuedEncryptionClassBase tests', () => {
       });
     });
     it('sign a string should not failed', async () => {
-      await expect(instance.signData(testString)).resolves.toEqual(
-        expect.stringContaining('')
-      );
+      await expect(instance.signData(testString)).resolves.toEqual(expect.stringContaining(''));
     });
     it('sign an object should not failed', async () => {
       let result;
-      await expect(instance.signData(testObject)).resolves.toEqual(
-        expect.stringContaining('')
-      );
+      await expect(instance.signData(testObject)).resolves.toEqual(expect.stringContaining(''));
     });
   });
   describe('test data verify', () => {
@@ -135,13 +131,7 @@ describe('QueuedEncryptionClassBase tests', () => {
 
       expect(signature).not.toEqual(expect.any(Error));
       expect(signature).toEqual(expect.any(String));
-      await expect(
-        instance.verifyData(
-          testValue,
-          signature as string,
-          dataSignKeyPair.publicKey
-        )
-      ).resolves.toEqual(true);
+      await expect(instance.verifyData(testValue, signature as string, dataSignKeyPair.publicKey)).resolves.toEqual(true);
     });
     it('verify an object signed should not failed', async () => {
       const testValue = testObject;
@@ -149,13 +139,7 @@ describe('QueuedEncryptionClassBase tests', () => {
 
       expect(signature).not.toEqual(expect.any(Error));
       expect(signature).toEqual(expect.any(String));
-      await expect(
-        instance.verifyData(
-          testValue,
-          signature as string,
-          dataSignKeyPair.publicKey
-        )
-      ).resolves.toEqual(true);
+      await expect(instance.verifyData(testValue, signature as string, dataSignKeyPair.publicKey)).resolves.toEqual(true);
     });
   });
 
@@ -180,14 +164,10 @@ describe('QueuedEncryptionClassBase tests', () => {
     });
 
     test('encrypt string should not failed', async () => {
-      await expect(
-        instance.encryptData(testString, dataEncryptionKeyPair.publicKey)
-      ).resolves.toEqual(expect.stringMatching(''));
+      await expect(instance.encryptData(testString, dataEncryptionKeyPair.publicKey)).resolves.toEqual(expect.stringMatching(''));
     });
     test('encrypt object should not failed', async () => {
-      await expect(
-        instance.encryptData(testObject, dataEncryptionKeyPair.publicKey)
-      ).resolves.toEqual(expect.stringMatching(''));
+      await expect(instance.encryptData(testObject, dataEncryptionKeyPair.publicKey)).resolves.toEqual(expect.stringMatching(''));
     });
   });
 
@@ -212,30 +192,16 @@ describe('QueuedEncryptionClassBase tests', () => {
     });
 
     test('decrypt string should not failed', async () => {
-      const encryptedString = await instance.encryptData(
-        testString,
-        dataEncryptionKeyPair.publicKey
-      );
+      const encryptedString = await instance.encryptData(testString, dataEncryptionKeyPair.publicKey);
 
       expect(encryptedString).toEqual(expect.stringMatching(''));
-      await expect(
-        instance.decryptData(
-          encryptedString as string,
-          dataEncryptionKeyPair.privateKey
-        )
-      ).resolves.toEqual(testString);
+      await expect(instance.decryptData(encryptedString as string, dataEncryptionKeyPair.privateKey)).resolves.toEqual(testString);
     });
     test('decrypt object should not failed', async () => {
-      const encryptedObject = await instance.encryptData(
-        testObject,
-        dataEncryptionKeyPair.publicKey
-      );
+      const encryptedObject = await instance.encryptData(testObject, dataEncryptionKeyPair.publicKey);
 
       expect(encryptedObject).toEqual(expect.stringMatching(''));
-      const decryptedObject = await instance.decryptData(
-        encryptedObject as string,
-        dataEncryptionKeyPair.privateKey
-      );
+      const decryptedObject = await instance.decryptData(encryptedObject as string, dataEncryptionKeyPair.privateKey);
       expect(JSON.parse(decryptedObject as any)).toEqual(testObject);
     });
   });

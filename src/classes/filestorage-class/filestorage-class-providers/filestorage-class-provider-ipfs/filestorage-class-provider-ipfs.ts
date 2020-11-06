@@ -1,19 +1,7 @@
-import {
-  IFileStorageService,
-  TFileStorageFileAddress,
-} from '../../filestorage-class.types';
-import {
-  IFileStorageClassProviderIPFSOptions,
-  IFileStorageClassProviderIPFSFileAddOptions,
-} from './filestorage-class-provider-ipfs.types';
-import {
-  FILE_STORAGE_PROVIDER_IPFS_IDENTIFIER,
-  FILE_STORAGE_PROVIDER_IPFS_TYPE,
-} from './filestorage-class-provider-ipfs.const';
-import {
-  FILE_STORAGE_SERVICE_STATUS,
-  FILE_STORAGE_SERVICE_TYPE,
-} from '../../filestorage-class.const';
+import { IFileStorageService, TFileStorageFileAddress } from '../../filestorage-class.types';
+import { IFileStorageClassProviderIPFSOptions, IFileStorageClassProviderIPFSFileAddOptions } from './filestorage-class-provider-ipfs.types';
+import { FILE_STORAGE_PROVIDER_IPFS_IDENTIFIER, FILE_STORAGE_PROVIDER_IPFS_TYPE } from './filestorage-class-provider-ipfs.const';
+import { FILE_STORAGE_SERVICE_STATUS, FILE_STORAGE_SERVICE_TYPE } from '../../filestorage-class.const';
 import { TFileStorageFile } from '../../filestorage-class.types';
 import { extend } from 'utils';
 import { getFileSize } from 'utils/files-utils';
@@ -31,8 +19,7 @@ import {
   IFileStorageClassProviderIPFSFileDownloadOptions,
 } from './filestorage-class-provider-ipfs.types';
 
-export class FileStorageClassProviderIPFS
-  implements IFileStorageService<FILE_STORAGE_SERVICE_TYPE.IPFS> {
+export class FileStorageClassProviderIPFS implements IFileStorageService<FILE_STORAGE_SERVICE_TYPE.IPFS> {
   public type = FILE_STORAGE_PROVIDER_IPFS_TYPE;
 
   public readonly isSingleton = true;
@@ -92,10 +79,7 @@ export class FileStorageClassProviderIPFS
     const ipfs = this._ipfs;
     const fileSize = getFileSize(file);
 
-    assert(
-      this.status === FILE_STORAGE_SERVICE_STATUS.READY,
-      'Service is not ready to use'
-    );
+    assert(this.status === FILE_STORAGE_SERVICE_STATUS.READY, 'Service is not ready to use');
     assert(fileSize, 'Failed to get a size of the file');
     let files: IPFSFile[] | Error | undefined;
     const progressCallback = options?.progress;
@@ -123,10 +107,7 @@ export class FileStorageClassProviderIPFS
     );
 
     try {
-      files = await Promise.race([
-        ipfs?.add(this.getFileObject(filename, file), opts),
-        timeout(FILE_STORAGE_PROVIDER_IPFS_FILE_UPLOAD_TIMEOUT_MS),
-      ]);
+      files = await Promise.race([ipfs?.add(this.getFileObject(filename, file), opts), timeout(FILE_STORAGE_PROVIDER_IPFS_FILE_UPLOAD_TIMEOUT_MS)]);
       await pending;
     } catch (err) {
       console.error(err);
@@ -142,14 +123,8 @@ export class FileStorageClassProviderIPFS
     return this.getMultiaddr(files[0]);
   };
 
-  public get = async (
-    addr: TFileStorageFileAddress,
-    options?: IFileStorageClassProviderIPFSFileGetOptions
-  ): Promise<File> => {
-    assert(
-      this.status === FILE_STORAGE_SERVICE_STATUS.READY,
-      'Service is not ready to use'
-    );
+  public get = async (addr: TFileStorageFileAddress, options?: IFileStorageClassProviderIPFSFileGetOptions): Promise<File> => {
+    assert(this.status === FILE_STORAGE_SERVICE_STATUS.READY, 'Service is not ready to use');
     assert(this.isFileServed(addr), 'The file is not supported by the service');
 
     const ipfs = this._ipfs;
@@ -172,10 +147,7 @@ export class FileStorageClassProviderIPFS
         lastModified = this.getMSByUnix(chunk.mtime);
       }
       const buff = content.slice();
-      fileBlob = buff.buffer.slice(
-        buff.byteOffset,
-        buff.byteOffset + buff.byteLength
-      );
+      fileBlob = buff.buffer.slice(buff.byteOffset, buff.byteOffset + buff.byteLength);
     } else {
       if (!filesOrChunks.content) {
         throw new Error("Failed to read the file's content");
@@ -195,10 +167,7 @@ export class FileStorageClassProviderIPFS
     });
   };
 
-  public download = async (
-    addr: TFileStorageFileAddress,
-    options?: IFileStorageClassProviderIPFSFileDownloadOptions
-  ) => {
+  public download = async (addr: TFileStorageFileAddress, options?: IFileStorageClassProviderIPFSFileDownloadOptions) => {
     const file = await this.get(addr, options);
 
     downloadFile(file);
@@ -207,14 +176,10 @@ export class FileStorageClassProviderIPFS
   protected setOptions(options: IFileStorageClassProviderIPFSOptions) {
     assert(options.ipfs, 'An instance of IPFS must be provided in the options');
     this._ipfs = options.ipfs;
-    this._rootPath =
-      options.rootPath || FILE_STORAGE_PROVIDER_ROOT_PATH_DEFAULT;
+    this._rootPath = options.rootPath || FILE_STORAGE_PROVIDER_ROOT_PATH_DEFAULT;
   }
 
-  protected getFileObject(
-    filename: string,
-    file: TFileStorageFile
-  ): FileObject {
+  protected getFileObject(filename: string, file: TFileStorageFile): FileObject {
     const filePath = path.join('/', this._rootPath, filename);
 
     return {

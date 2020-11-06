@@ -1,8 +1,4 @@
-import {
-  isCryptoKeyPair,
-  isCryptoKey,
-  isCryptoKeyPairExportedAsString,
-} from 'utils/encryption-keys-utils/encryption-keys-utils';
+import { isCryptoKeyPair, isCryptoKey, isCryptoKeyPairExportedAsString } from 'utils/encryption-keys-utils/encryption-keys-utils';
 import {
   TCACryptoKeyPairs,
   TCACryptoPubilicKeys,
@@ -17,10 +13,7 @@ import {
 } from './central-authority-util-crypto-keys.const';
 
 export const checkIsCryptoKeyPairsExportedAsString = (v: any): boolean => {
-  return (
-    typeof v === 'string' &&
-    v.length >= CA_CRYPTO_KEY_PAIRS_STRINGIFIED_MIN_LENGTH
-  );
+  return typeof v === 'string' && v.length >= CA_CRYPTO_KEY_PAIRS_STRINGIFIED_MIN_LENGTH;
 };
 
 /**
@@ -30,15 +23,9 @@ export const checkIsCryptoKeyPairsExportedAsString = (v: any): boolean => {
  * @param keyPairs
  * @returns {boolean}
  */
-export const checkIsCryptoKeyPairs = (
-  keyPairs: any,
-  checkPrivateKeys: boolean = true
-): keyPairs is TCACryptoKeyPairs => {
+export const checkIsCryptoKeyPairs = (keyPairs: any, checkPrivateKeys: boolean = true): keyPairs is TCACryptoKeyPairs => {
   if (keyPairs && typeof keyPairs === 'object') {
-    const {
-      [CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME]: encryptionKeyPair,
-      [CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME]: signKeyPair,
-    } = keyPairs;
+    const { [CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME]: encryptionKeyPair, [CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME]: signKeyPair } = keyPairs;
 
     if (!isCryptoKeyPair(encryptionKeyPair, checkPrivateKeys)) {
       console.error('Encryption key pair is not valid');
@@ -61,9 +48,7 @@ export const checkIsCryptoKeyPairs = (
  * @param keyPairs
  * @returns {boolean}
  */
-export const checkIsCryptoKeyPairsExported = (
-  keyPairs: any
-): keyPairs is TCACryptoKeyPairsExported => {
+export const checkIsCryptoKeyPairsExported = (keyPairs: any): keyPairs is TCACryptoKeyPairsExported => {
   if (keyPairs && typeof keyPairs === 'object') {
     const {
       [CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME]: encryptionKeyPairExported,
@@ -84,13 +69,9 @@ export const checkIsCryptoKeyPairsExported = (
   return false;
 };
 
-export const checkIsPublicKeys = (
-  keysPublic: any
-): keysPublic is TCACryptoPubilicKeys => {
+export const checkIsPublicKeys = (keysPublic: any): keysPublic is TCACryptoPubilicKeys => {
   if (keysPublic && typeof keysPublic === 'object') {
-    if (
-      !isCryptoKey(keysPublic[CA_CRYPTO_KEY_PAIRS_ENCRYPTION_PUBLIC_KEY_NAME])
-    ) {
+    if (!isCryptoKey(keysPublic[CA_CRYPTO_KEY_PAIRS_ENCRYPTION_PUBLIC_KEY_NAME])) {
       console.error('Encryption public key is not valid');
       return false;
     }
@@ -110,9 +91,7 @@ export const checkIsPublicKeys = (
  * @param keyPairs
  * @returns {Error | object}
  */
-export const getPublicKeysFromCryptoKeyPairs = (
-  keyPairs: TCACryptoKeyPairs
-): TCACryptoPubilicKeys | Error => {
+export const getPublicKeysFromCryptoKeyPairs = (keyPairs: TCACryptoKeyPairs): TCACryptoPubilicKeys | Error => {
   if (!checkIsCryptoKeyPairs(keyPairs)) {
     return new Error('There is a wrong format of the key pairs');
   }
@@ -122,15 +101,12 @@ export const getPublicKeysFromCryptoKeyPairs = (
     [CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME]: dataSignKeyPair,
   }: TCACryptoKeyPairs = keyPairs;
   const publicKeys = {
-    [CA_CRYPTO_KEY_PAIRS_ENCRYPTION_PUBLIC_KEY_NAME]:
-      encryptionKeyPair.publicKey,
+    [CA_CRYPTO_KEY_PAIRS_ENCRYPTION_PUBLIC_KEY_NAME]: encryptionKeyPair.publicKey,
     [CA_CRYPTO_KEY_PAIRS_SIGN_PUBLIC_KEY_NAME]: dataSignKeyPair.publicKey,
   };
 
   if (checkIsPublicKeys(publicKeys)) {
     return publicKeys;
   }
-  return new Error(
-    'Failed to receive a valid public keys from the encryption key pairs'
-  );
+  return new Error('Failed to receive a valid public keys from the encryption key pairs');
 };

@@ -5,11 +5,7 @@ import {
   HTTP_REQUEST_CONTENT_TYPES_KNOWN,
   HTTP_RESPONSE_TYPES,
 } from './http-request-class-base.const';
-import {
-  TQueryStringParamsObject,
-  TQueryStringAllowedParamValue,
-  TQueryStringParams,
-} from './http-request-class-base.types';
+import { TQueryStringParamsObject, TQueryStringAllowedParamValue, TQueryStringParams } from './http-request-class-base.types';
 import { concatStrings } from 'utils/string-utilities';
 
 const { NO_ERROR, CLIENT_ERROR } = HTTP_REQUEST_ERROR_CODES_RANGE;
@@ -48,9 +44,7 @@ export const getContentType = (response: Response): void | string => {
   const { headers } = response;
 
   if (headers) {
-    const contentType = headers.get(
-      HTTP_REQUEST_HEADERS_NAMES.CONTENT_TYPE
-    ) as HTTP_REQUEST_CONTENT_TYPE;
+    const contentType = headers.get(HTTP_REQUEST_HEADERS_NAMES.CONTENT_TYPE) as HTTP_REQUEST_CONTENT_TYPE;
 
     if (contentType && HTTP_REQUEST_CONTENT_TYPES_KNOWN.includes(contentType)) {
       return contentType;
@@ -87,9 +81,7 @@ export const getNetworkError = (response: Response): Error | void => {
  * @param {object | string | number | Array<object | string | number> } paramValue
  * @returns string
  */
-export const resolveQueryStringParam = (
-  paramValue: TQueryStringAllowedParamValue
-): string => {
+export const resolveQueryStringParam = (paramValue: TQueryStringAllowedParamValue): string => {
   if (paramValue instanceof Array) {
     return `[${paramValue.map(resolveQueryStringParam)}]`;
   }
@@ -124,9 +116,7 @@ export const resolveQueryStringParam = (
  * @returns {string} - string in the format of
  * param1=value1....&paramN=valueN
  */
-export const queryStringFromObject = (
-  obj: TQueryStringParamsObject
-): string => {
+export const queryStringFromObject = (obj: TQueryStringParamsObject): string => {
   if (obj && typeof obj === 'object') {
     const paramNames = Object.keys(obj);
     const paramsCount = paramNames.length;
@@ -141,18 +131,14 @@ export const queryStringFromObject = (
       paramName = paramNames[idx];
       paramValue = obj[paramName];
       paramValueString = resolveQueryStringParam(paramValue);
-      result = `${encodeURIComponent(paramName)}=${paramValueString}${
-        idx !== paramsLastIdx ? '&' : ''
-      }`;
+      result = `${encodeURIComponent(paramName)}=${paramValueString}${idx !== paramsLastIdx ? '&' : ''}`;
     }
     return result;
   }
   return '';
 };
 
-export const resolveQueryStringParams = (
-  ...params: TQueryStringParams[]
-): string => {
+export const resolveQueryStringParams = (...params: TQueryStringParams[]): string => {
   const paramsCount = params.length;
   let idx = 0;
   let result = '';
@@ -162,9 +148,7 @@ export const resolveQueryStringParams = (
   for (; idx < paramsCount; idx += 1) {
     paramValue = params[idx];
     if (paramValue && typeof paramValue === 'object') {
-      paramStringValue = queryStringFromObject(
-        paramValue as TQueryStringParamsObject
-      );
+      paramStringValue = queryStringFromObject(paramValue as TQueryStringParamsObject);
     } else {
       paramStringValue = resolveQueryStringParam(paramValue);
     }

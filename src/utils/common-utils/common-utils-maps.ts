@@ -1,7 +1,4 @@
-export function filterMapKeys<M extends Map<any, any>, F extends Array<any>>(
-  map: M,
-  filterKeys: F
-): M {
+export function filterMapKeys<M extends Map<any, any>, F extends Array<any>>(map: M, filterKeys: F): M {
   if (!filterKeys.length) {
     return map;
   }
@@ -25,10 +22,7 @@ export function filterMapKeys<M extends Map<any, any>, F extends Array<any>>(
  * @param {...M[]} maps
  * @returns {M}
  */
-export function concatMaps<M extends Map<any, any>>(
-  mapTarget: M,
-  ...maps: M[]
-): M {
+export function concatMaps<M extends Map<any, any>>(mapTarget: M, ...maps: M[]): M {
   const mergedMap = mapTarget;
 
   for (let idx = 0, len = maps.length; idx < len; idx += 1) {

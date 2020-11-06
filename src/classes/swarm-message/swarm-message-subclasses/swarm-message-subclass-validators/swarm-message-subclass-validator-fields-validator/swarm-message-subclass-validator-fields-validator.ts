@@ -1,8 +1,5 @@
 import assert from 'assert';
-import {
-  commonUtilsArrayDeleteFromArray,
-  commonUtilsArrayDoCallbackTillNoError,
-} from 'utils/common-utils/common-utils';
+import { commonUtilsArrayDeleteFromArray, commonUtilsArrayDoCallbackTillNoError } from 'utils/common-utils/common-utils';
 import { TSwarmMessageUserIdentifierVersion } from '../swarm-message-subclass-validator.types';
 import { validateIssuerDesirizlizedFormat } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-issuer-deserizlied/swarm-message-subclass-validator-fields-validator-validator-issuer-deserizlied';
 import validateIssuerSerializedFormat from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-issuer-serialized/swarm-message-subclass-validator-fields-validator-validator-issuer-serialized';
@@ -16,27 +13,17 @@ import { ISwarmMessagePayloadValidationOptions } from './swarm-message-subclass-
 import { ISwarmMessageTimestampValidationOptions } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-timestamp/swarm-message-subclass-validator-fields-validator-validator-timestamp.types';
 import { TSwarmMessageUserIdentifierSerialized } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import { CA_USER_IDENTITY_VERSIONS_LIST } from '../../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
-import {
-  TSwarmMessage,
-  TSwarmMessageBodyEncrypted,
-} from '../../../swarm-message-constructor.types';
+import { TSwarmMessage, TSwarmMessageBodyEncrypted } from '../../../swarm-message-constructor.types';
 import { validateMessageBodyRawFormat } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-body-raw/swarm-message-subclass-validator-fields-validator-body-raw';
 import { validateMessageSignatureFormat } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-signature/swarm-message-subclass-validator-fields-validator-signature';
-import {
-  IMessageFieldsValidatorOptions,
-  ISwarmMessageSubclassFieldsValidator,
-} from './swarm-message-subclass-validator-fields-validator.types';
-import {
-  ISwarmMessageBodyDeserialized,
-  ISwarmMessageRaw,
-} from '../../../swarm-message-constructor.types';
+import { IMessageFieldsValidatorOptions, ISwarmMessageSubclassFieldsValidator } from './swarm-message-subclass-validator-fields-validator.types';
+import { ISwarmMessageBodyDeserialized, ISwarmMessageRaw } from '../../../swarm-message-constructor.types';
 import {
   SWARM_MESSAGE_SUBCLASS_VALIDATOR_BODY_ENCRYPTED_MAX_LENGTH_BYTES,
   SWARM_MESSAGE_SUBCLASS_VALIDATOR_BODY_ENCRYPTED_MIN_LENGTH_BYTES,
 } from '../swarm-message-subclass-validator.const';
 
-export class SwarmMessageSubclassFieldsValidator
-  implements ISwarmMessageSubclassFieldsValidator {
+export class SwarmMessageSubclassFieldsValidator implements ISwarmMessageSubclassFieldsValidator {
   /**
    * list of a valid issuers.
    * If it is empty then any issuer will
@@ -75,13 +62,9 @@ export class SwarmMessageSubclassFieldsValidator
 
   protected timestampValidationOptions?: ISwarmMessageTimestampValidationOptions;
 
-  protected validatePayload = createValidatePayload(
-    this.payloadValidationOptions
-  );
+  protected validatePayload = createValidatePayload(this.payloadValidationOptions);
 
-  protected validateTimestamp = createValidateTimestamp(
-    this.timestampValidationOptions
-  );
+  protected validateTimestamp = createValidateTimestamp(this.timestampValidationOptions);
 
   /**
    * Creates an instance of SwarmMessageSubclassValidator.
@@ -111,22 +94,15 @@ export class SwarmMessageSubclassFieldsValidator
     this.validateTimestamp(ts);
   }
 
-  public validateMessageBodyEncrypted(
-    messsageBodyEncrypted: TSwarmMessageBodyEncrypted
-  ): void {
+  public validateMessageBodyEncrypted(messsageBodyEncrypted: TSwarmMessageBodyEncrypted): void {
     assert(!!messsageBodyEncrypted, 'Message body must be specefied');
+    assert(typeof messsageBodyEncrypted === 'string', 'Message body must be a string for a private messages');
     assert(
-      typeof messsageBodyEncrypted === 'string',
-      'Message body must be a string for a private messages'
-    );
-    assert(
-      messsageBodyEncrypted.length <
-        SWARM_MESSAGE_SUBCLASS_VALIDATOR_BODY_ENCRYPTED_MAX_LENGTH_BYTES,
+      messsageBodyEncrypted.length < SWARM_MESSAGE_SUBCLASS_VALIDATOR_BODY_ENCRYPTED_MAX_LENGTH_BYTES,
       'Private message body is increased the maximum length'
     );
     assert(
-      messsageBodyEncrypted.length >
-        SWARM_MESSAGE_SUBCLASS_VALIDATOR_BODY_ENCRYPTED_MIN_LENGTH_BYTES,
+      messsageBodyEncrypted.length > SWARM_MESSAGE_SUBCLASS_VALIDATOR_BODY_ENCRYPTED_MIN_LENGTH_BYTES,
       'Private message body is less then the minimal length'
     );
   }
@@ -218,10 +194,7 @@ export class SwarmMessageSubclassFieldsValidator
   protected checkIssuerIsInList(issuer: string): void {
     const { issuersList } = this;
 
-    assert(
-      !issuersList.length || issuersList.includes(issuer),
-      'The issuer is not into the list of the valid issuers'
-    );
+    assert(!issuersList.length || issuersList.includes(issuer), 'The issuer is not into the list of the valid issuers');
   }
 
   protected validateIsPrivateField(isPrivateField?: any) {
@@ -283,10 +256,7 @@ export class SwarmMessageSubclassFieldsValidator
   protected checkTypeInList(type: TSwarmMessageType): void {
     const { typesList } = this;
 
-    assert(
-      !typesList.length || typesList.includes(type),
-      'The type is not into the list of the valid types'
-    );
+    assert(!typesList.length || typesList.includes(type), 'The type is not into the list of the valid types');
   }
 
   /**
@@ -303,9 +273,7 @@ export class SwarmMessageSubclassFieldsValidator
     this.checkTypeInList(type);
   }
 
-  protected validateUserIdentifier = (
-    userId: TSwarmMessageUserIdentifierSerialized
-  ): void => {
+  protected validateUserIdentifier = (userId: TSwarmMessageUserIdentifierSerialized): void => {
     validateUserIdentifier(userId, this.supportedUserIdentifierVer);
   };
 
@@ -321,41 +289,27 @@ export class SwarmMessageSubclassFieldsValidator
     if (options != null) {
       assert(typeof options === 'object', 'The options must be an object');
 
-      const {
-        supportedUserIdentifierVer,
-        payloadValidationOptions,
-        issuersList,
-        typesList,
-        timestampValidationOptions,
-      } = options;
+      const { supportedUserIdentifierVer, payloadValidationOptions, issuersList, typesList, timestampValidationOptions } = options;
 
       if (timestampValidationOptions) {
         this.timestampValidationOptions = timestampValidationOptions; // set time to live in milliseconds
-        this.validateTimestamp = createValidateTimestamp(
-          timestampValidationOptions
-        );
+        this.validateTimestamp = createValidateTimestamp(timestampValidationOptions);
       }
       if (payloadValidationOptions) {
         this.payloadValidationOptions = payloadValidationOptions;
         this.validatePayload = createValidatePayload(payloadValidationOptions);
       }
       if (supportedUserIdentifierVer instanceof Array) {
-        this.supportedUserIdentifierVer = supportedUserIdentifierVer.map(
-          (userIdentifierVersion) => {
-            if (typeof userIdentifierVersion === 'string') {
-              return userIdentifierVersion;
-            }
-            assert.fail(
-              `The version ${userIdentifierVersion} must be a string`
-            );
+        this.supportedUserIdentifierVer = supportedUserIdentifierVer.map((userIdentifierVersion) => {
+          if (typeof userIdentifierVersion === 'string') {
+            return userIdentifierVersion;
           }
-        );
+          assert.fail(`The version ${userIdentifierVersion} must be a string`);
+        });
       }
       if (issuersList) {
         if (issuersList instanceof Array) {
-          const setIssuersListResult = commonUtilsArrayDoCallbackTillNoError<
-            string
-          >(issuersList, this.addIssuerToValidList);
+          const setIssuersListResult = commonUtilsArrayDoCallbackTillNoError<string>(issuersList, this.addIssuerToValidList);
 
           if (setIssuersListResult instanceof Error) {
             assert.fail(setIssuersListResult);
@@ -366,9 +320,7 @@ export class SwarmMessageSubclassFieldsValidator
       }
       if (typesList) {
         if (typesList instanceof Array) {
-          const setTypesListResult = commonUtilsArrayDoCallbackTillNoError<
-            TSwarmMessageType
-          >(typesList, this.addType);
+          const setTypesListResult = commonUtilsArrayDoCallbackTillNoError<TSwarmMessageType>(typesList, this.addType);
 
           if (setTypesListResult instanceof Error) {
             throw setTypesListResult;

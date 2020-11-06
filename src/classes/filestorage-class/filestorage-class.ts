@@ -1,43 +1,18 @@
-import {
-  FILE_STORAGE_SERVICE_TYPE,
-  FILE_STORAGE_SERVICES_IMPLEMENTATIONS,
-} from './filestorage-class.const';
-import {
-  IFileStorageServiceConnectOptions,
-  IFileStorageService,
-} from './filestorage-class.types';
+import { FILE_STORAGE_SERVICE_TYPE, FILE_STORAGE_SERVICES_IMPLEMENTATIONS } from './filestorage-class.const';
+import { IFileStorageServiceConnectOptions, IFileStorageService } from './filestorage-class.types';
 import assert from 'assert';
 import path from 'path';
-import {
-  FILE_STORAGE_SERVICE_PREFIX,
-  FILE_STORAGE_SERVICE_PREFIX_LENGTH,
-} from './filestorage-class.const';
-import {
-  TFileStorageFileAddress,
-  TFileStorageServiceFileGetOptions,
-} from './filestorage-class.types';
-import {
-  TFileStorageServiceIdentifier,
-  TFileStorageFile,
-  TFileStorageServiceFileAddOptions,
-} from './filestorage-class.types';
-import {
-  IFileStorage,
-  TFileStorageServiceFileDownloadOptions,
-} from './filestorage-class.types';
+import { FILE_STORAGE_SERVICE_PREFIX, FILE_STORAGE_SERVICE_PREFIX_LENGTH } from './filestorage-class.const';
+import { TFileStorageFileAddress, TFileStorageServiceFileGetOptions } from './filestorage-class.types';
+import { TFileStorageServiceIdentifier, TFileStorageFile, TFileStorageServiceFileAddOptions } from './filestorage-class.types';
+import { IFileStorage, TFileStorageServiceFileDownloadOptions } from './filestorage-class.types';
 
-export class FileStorage<T extends FILE_STORAGE_SERVICE_TYPE>
-  implements IFileStorage<T> {
-  protected readonly services = new Map<
-    TFileStorageServiceIdentifier,
-    IFileStorageService<T>
-  >();
+export class FileStorage<T extends FILE_STORAGE_SERVICE_TYPE> implements IFileStorage<T> {
+  protected readonly services = new Map<TFileStorageServiceIdentifier, IFileStorageService<T>>();
 
   protected readonly servicesByTypes = new Map<T, IFileStorageService<T>>();
 
-  public connect = async (
-    configurations: IFileStorageServiceConnectOptions<T>[]
-  ) => {
+  public connect = async (configurations: IFileStorageServiceConnectOptions<T>[]) => {
     return Promise.all(configurations.map(this.connectToService));
   };
 
@@ -45,9 +20,7 @@ export class FileStorage<T extends FILE_STORAGE_SERVICE_TYPE>
     const service = this.getServiceByTypeOrId(s);
 
     if (!service) {
-      throw new Error(
-        `Service with the given identifier = "${s}" was not found`
-      );
+      throw new Error(`Service with the given identifier = "${s}" was not found`);
     }
     return this.removeService(service);
   };
@@ -61,19 +34,12 @@ export class FileStorage<T extends FILE_STORAGE_SERVICE_TYPE>
     const service = this.getServiceByTypeOrId(s);
 
     if (!service) {
-      throw new Error(
-        `Service with the given identifier or type = "${s}" was not found`
-      );
+      throw new Error(`Service with the given identifier or type = "${s}" was not found`);
     }
-    return this.addPrefixToFileAddress(
-      await service.add(filename, file, options)
-    );
+    return this.addPrefixToFileAddress(await service.add(filename, file, options));
   };
 
-  public get = async (
-    addr: TFileStorageFileAddress,
-    options?: TFileStorageServiceFileGetOptions
-  ) => {
+  public get = async (addr: TFileStorageFileAddress, options?: TFileStorageServiceFileGetOptions) => {
     const addrWOPrefix = this.getAddrWOPrefix(addr);
     const service = this.getServiceByFileAddr(addrWOPrefix);
 
@@ -83,10 +49,7 @@ export class FileStorage<T extends FILE_STORAGE_SERVICE_TYPE>
     return service.get(addrWOPrefix, options);
   };
 
-  public async download(
-    addr: TFileStorageFileAddress,
-    options?: TFileStorageServiceFileDownloadOptions
-  ) {
+  public async download(addr: TFileStorageFileAddress, options?: TFileStorageServiceFileDownloadOptions) {
     const addrWOPrefix = this.getAddrWOPrefix(addr);
     const service = this.getServiceByFileAddr(addrWOPrefix);
 
@@ -103,9 +66,7 @@ export class FileStorage<T extends FILE_STORAGE_SERVICE_TYPE>
     return addr.slice(FILE_STORAGE_SERVICE_PREFIX_LENGTH);
   }
 
-  protected addPrefixToFileAddress(
-    addrWOPrefix: TFileStorageFileAddress
-  ): string {
+  protected addPrefixToFileAddress(addrWOPrefix: TFileStorageFileAddress): string {
     if (typeof addrWOPrefix !== 'string') {
       throw new Error('The result is not a valid file address');
     }
@@ -121,10 +82,7 @@ export class FileStorage<T extends FILE_STORAGE_SERVICE_TYPE>
   }
 
   protected getServiceByTypeOrId(s: TFileStorageServiceIdentifier | T) {
-    return (
-      this.getServiceById(s as TFileStorageServiceIdentifier) ||
-      this.getServiceByType(s as T)
-    );
+    return this.getServiceById(s as TFileStorageServiceIdentifier) || this.getServiceByType(s as T);
   }
 
   protected getServiceConstructorByType(type: FILE_STORAGE_SERVICE_TYPE) {
@@ -140,10 +98,7 @@ export class FileStorage<T extends FILE_STORAGE_SERVICE_TYPE>
     }
   }
 
-  protected addService<ST extends T>(
-    type: ST,
-    service: IFileStorageService<ST>
-  ) {
+  protected addService<ST extends T>(type: ST, service: IFileStorageService<ST>) {
     this.services.set(service.identifier, service);
     this.servicesByTypes.set(type, service);
   }
@@ -153,9 +108,7 @@ export class FileStorage<T extends FILE_STORAGE_SERVICE_TYPE>
     this.servicesByTypes.delete(service.type as T);
   }
 
-  protected connectToService = async (
-    configuration: IFileStorageServiceConnectOptions<T>
-  ): Promise<TFileStorageServiceIdentifier> => {
+  protected connectToService = async (configuration: IFileStorageServiceConnectOptions<T>): Promise<TFileStorageServiceIdentifier> => {
     assert(configuration, 'Service configuration was not provided');
 
     const { type, options } = configuration;
@@ -163,9 +116,7 @@ export class FileStorage<T extends FILE_STORAGE_SERVICE_TYPE>
     assert(type, 'Service type must be defined');
     assert(options, `Options for the service "${type}" must be defined`);
 
-    const ServiceConstuctor = await this.getServiceConstructorByType(
-      configuration.type
-    );
+    const ServiceConstuctor = await this.getServiceConstructorByType(configuration.type);
     const service = new (ServiceConstuctor.default ?? ServiceConstuctor)();
 
     await service.connect(options);

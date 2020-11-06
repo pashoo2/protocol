@@ -1,21 +1,13 @@
-import {
-  IMessageValidatorOptions,
-  ISwarmMessageSubclassValidator,
-} from './swarm-message-subclass-validator.types';
+import { IMessageValidatorOptions, ISwarmMessageSubclassValidator } from './swarm-message-subclass-validator.types';
 import { ISwarmMessgeSubclassSignatureValidator } from './swarm-message-subclass-validator-signature-validator/swarm-message-subclass-validator-signature-validator.types';
 import { ISwarmMessageSubclassFieldsValidator } from './swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator.types';
 import SwarmMessageSubclassFieldsValidator from './swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator';
 import { SwarmMessgeSubclassSignatureValidator } from './swarm-message-subclass-validator-signature-validator/swarm-message-subclass-validator-signature-validator';
-import {
-  ISwarmMessageRaw,
-  TSwarmMessage,
-  ISwarmMessageBodyDeserialized,
-} from '../../swarm-message-constructor.types';
+import { ISwarmMessageRaw, TSwarmMessage, ISwarmMessageBodyDeserialized } from '../../swarm-message-constructor.types';
 import assert from 'assert';
 import { TSwarmMessageBodyEncrypted } from '../../swarm-message-constructor.types';
 
-export class SwarmMessageSubclassValidator
-  implements ISwarmMessageSubclassValidator {
+export class SwarmMessageSubclassValidator implements ISwarmMessageSubclassValidator {
   protected messageFormatValidator?: ISwarmMessageSubclassFieldsValidator;
 
   protected signatureValidator?: ISwarmMessgeSubclassSignatureValidator;
@@ -24,20 +16,12 @@ export class SwarmMessageSubclassValidator
     this.startValidators();
   }
 
-  public valiadateSwarmMessageRaw = async (
-    msgRaw: ISwarmMessageRaw
-  ): Promise<void> => {
+  public valiadateSwarmMessageRaw = async (msgRaw: ISwarmMessageRaw): Promise<void> => {
     const { messageFormatValidator, signatureValidator } = this;
 
     if (!messageFormatValidator || !signatureValidator) {
-      assert(
-        !!messageFormatValidator,
-        'Validator of a message fields format is not defined'
-      );
-      assert(
-        !!signatureValidator,
-        'Validator of a message signature is not defined'
-      );
+      assert(!!messageFormatValidator, 'Validator of a message fields format is not defined');
+      assert(!!signatureValidator, 'Validator of a message signature is not defined');
       return;
     }
     messageFormatValidator.validateMessageRaw(msgRaw);
@@ -48,40 +32,27 @@ export class SwarmMessageSubclassValidator
     const { messageFormatValidator } = this;
 
     if (!messageFormatValidator) {
-      assert(
-        !!messageFormatValidator,
-        'Validator of a message fields format is not defined'
-      );
+      assert(!!messageFormatValidator, 'Validator of a message fields format is not defined');
       return;
     }
     return messageFormatValidator.validateMessage(msg);
   };
 
-  public validateMessageBodyEncrypted = (
-    bdy: TSwarmMessageBodyEncrypted
-  ): void => {
+  public validateMessageBodyEncrypted = (bdy: TSwarmMessageBodyEncrypted): void => {
     const { messageFormatValidator } = this;
 
     if (!messageFormatValidator) {
-      assert(
-        !!messageFormatValidator,
-        'Validator of a message fields format is not defined'
-      );
+      assert(!!messageFormatValidator, 'Validator of a message fields format is not defined');
       return;
     }
     return messageFormatValidator.validateMessageBodyEncrypted(bdy);
   };
 
-  public validateMessageBody = (
-    msgBody: ISwarmMessageBodyDeserialized
-  ): void => {
+  public validateMessageBody = (msgBody: ISwarmMessageBodyDeserialized): void => {
     const { messageFormatValidator } = this;
 
     if (!messageFormatValidator) {
-      assert(
-        !!messageFormatValidator,
-        'Validator of a message fields format is not defined'
-      );
+      assert(!!messageFormatValidator, 'Validator of a message fields format is not defined');
       return;
     }
     return messageFormatValidator.validateMessageBody(msgBody);
@@ -98,11 +69,7 @@ export class SwarmMessageSubclassValidator
   protected startValidators() {
     const { formatValidatorOpts, signatureValidationOpts } = this.options;
 
-    this.messageFormatValidator = new SwarmMessageSubclassFieldsValidator(
-      formatValidatorOpts
-    );
-    this.signatureValidator = new SwarmMessgeSubclassSignatureValidator(
-      signatureValidationOpts
-    );
+    this.messageFormatValidator = new SwarmMessageSubclassFieldsValidator(formatValidatorOpts);
+    this.signatureValidator = new SwarmMessgeSubclassSignatureValidator(signatureValidationOpts);
   }
 }

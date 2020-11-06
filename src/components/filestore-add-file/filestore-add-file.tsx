@@ -5,11 +5,7 @@ import { FILE_STORAGE_SERVICE_TYPE } from '../../classes/filestorage-class/files
 import { connectToFileStorage } from './filestore-add-file.utils';
 
 export class FileStoreAddFile extends React.Component {
-  protected fileStorage:
-    | IFileStorage<
-        FILE_STORAGE_SERVICE_TYPE.HTTP | FILE_STORAGE_SERVICE_TYPE.IPFS
-      >
-    | undefined;
+  protected fileStorage: IFileStorage<FILE_STORAGE_SERVICE_TYPE.HTTP | FILE_STORAGE_SERVICE_TYPE.IPFS> | undefined;
 
   protected loadingProgress: number | undefined = undefined;
 
@@ -44,9 +40,7 @@ export class FileStoreAddFile extends React.Component {
     this.forceUpdate();
   }
 
-  protected handleFileChosen = async (
-    ev: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  protected handleFileChosen = async (ev: React.ChangeEvent<HTMLInputElement>) => {
     if (this.loadingProgress != null) {
       return;
     }
@@ -115,12 +109,7 @@ export class FileStoreAddFile extends React.Component {
     return uploadedFiles.map((fileAddr, idx) => (
       <div key={fileAddr}>
         <pre>{idx}. </pre>
-        <a
-          href="#"
-          role="button"
-          data-name={fileAddr}
-          onClick={this.handleFileDownload}
-        >
+        <a href="#" role="button" data-name={fileAddr} onClick={this.handleFileDownload}>
           {fileAddr}
         </a>
       </div>
@@ -133,9 +122,7 @@ export class FileStoreAddFile extends React.Component {
     }
     return (
       <div>
-        <div style={this.styles.filesLoadedContainer}>
-          {this.renderFilesLoadedList()}
-        </div>
+        <div style={this.styles.filesLoadedContainer}>{this.renderFilesLoadedList()}</div>
         <label htmlFor="fileUpload">File: </label>
         <input id="fileUpload" type="file" onChange={this.handleFileChosen} />
       </div>

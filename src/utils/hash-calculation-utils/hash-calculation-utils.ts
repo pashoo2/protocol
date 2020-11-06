@@ -1,24 +1,12 @@
 import { TStringifyData, stringify } from 'utils/main-utils';
-import {
-  decodeDOMStringToArrayBuffer,
-  encodeArrayBufferToDOMString,
-} from 'utils/string-encoding-utils';
+import { decodeDOMStringToArrayBuffer, encodeArrayBufferToDOMString } from 'utils/string-encoding-utils';
 import { TTypedArrays } from 'types/main.types';
-import {
-  HASH_CALCULATION_UTILS_DEFAULT_HASH_ALHORITHM,
-  HASH_CALCULATION_UTILS_HASH_ALHORITHM,
-} from './hash-calculation-utils.const';
-import {
-  cryptoModuleDataSign,
-  crypto,
-} from '../data-sign-utils/main.data-sign-utils.const';
+import { HASH_CALCULATION_UTILS_DEFAULT_HASH_ALHORITHM, HASH_CALCULATION_UTILS_HASH_ALHORITHM } from './hash-calculation-utils.const';
+import { cryptoModuleDataSign, crypto } from '../data-sign-utils/main.data-sign-utils.const';
 
 export const hashCalculator = cryptoModuleDataSign.digest.bind(crypto.subtle);
 
-export const calculateHashNative = async (
-  data: TTypedArrays,
-  alg: HASH_CALCULATION_UTILS_HASH_ALHORITHM
-): Promise<ArrayBuffer | Error> => {
+export const calculateHashNative = async (data: TTypedArrays, alg: HASH_CALCULATION_UTILS_HASH_ALHORITHM): Promise<ArrayBuffer | Error> => {
   try {
     const hashString = await hashCalculator(alg, data);
 

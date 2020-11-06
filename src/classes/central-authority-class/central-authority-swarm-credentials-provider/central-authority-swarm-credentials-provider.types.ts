@@ -41,7 +41,5 @@ export interface ICASwarmCredentialsProvider {
   // disconnect from the local cache
   disconnect(): Promise<Error | void>;
   // get credentials for the user with identity
-  get(
-    identity: TCAUserIdentityRawTypes
-  ): Promise<TCentralAuthorityUserCryptoCredentials | Error | null>;
+  get(identity: TCAUserIdentityRawTypes): Promise<TCentralAuthorityUserCryptoCredentials | Error | null>;
 }

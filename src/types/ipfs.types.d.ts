@@ -14,11 +14,7 @@ export class IPFS extends EventEmitter {
   init(options: InitOptions, callback: Callback<boolean>): void;
   init(callback: Callback<boolean>): void;
 
-  add(
-    data: FileContent | FileObject,
-    options: any,
-    callback: Callback<IPFSFile[]>
-  ): void;
+  add(data: FileContent | FileObject, options: any, callback: Callback<IPFSFile[]>): void;
   add(data: FileContent | FileObject, options: any): Promise<IPFSFile[]>;
   add(data: FileContent | FileObject, callback: Callback<IPFSFile[]>): void;
   add(data: FileContent | FileObject): Promise<IPFSFile[]>;
@@ -31,10 +27,7 @@ export class IPFS extends EventEmitter {
   stop(callback?: (error?: Error) => void): Pomise<void>;
   isOnline(): boolean;
 
-  version(
-    options: any,
-    callback: (error: Error, version: Version) => void
-  ): void;
+  version(options: any, callback: (error: Error, version: Version) => void): void;
   version(options: any): Promise<Version>;
   version(callback: (error: Error, version: Version) => void): void;
   version(): Promise<Version>;
@@ -231,63 +224,23 @@ export interface GetObjectOptions {
 }
 
 export interface ObjectPatchAPI {
-  addLink(
-    multihash: Multihash,
-    link: DAGLink,
-    options: GetObjectOptions,
-    callback: Callback<any>
-  ): void;
-  addLink(
-    multihash: Multihash,
-    link: DAGLink,
-    options: GetObjectOptions
-  ): Promise<any>;
+  addLink(multihash: Multihash, link: DAGLink, options: GetObjectOptions, callback: Callback<any>): void;
+  addLink(multihash: Multihash, link: DAGLink, options: GetObjectOptions): Promise<any>;
   addLink(multihash: Multihash, link: DAGLink, callback: Callback<any>): void;
   addLink(multihash: Multihash, link: DAGLink): Promise<any>;
 
-  rmLink(
-    multihash: Multihash,
-    linkRef: DAGLinkRef,
-    options: GetObjectOptions,
-    callback: Callback<any>
-  ): void;
-  rmLink(
-    multihash: Multihash,
-    linkRef: DAGLinkRef,
-    options: GetObjectOptions
-  ): Promise<any>;
-  rmLink(
-    multihash: Multihash,
-    linkRef: DAGLinkRef,
-    callback: Callback<any>
-  ): void;
+  rmLink(multihash: Multihash, linkRef: DAGLinkRef, options: GetObjectOptions, callback: Callback<any>): void;
+  rmLink(multihash: Multihash, linkRef: DAGLinkRef, options: GetObjectOptions): Promise<any>;
+  rmLink(multihash: Multihash, linkRef: DAGLinkRef, callback: Callback<any>): void;
   rmLink(multihash: Multihash, linkRef: DAGLinkRef): Promise<any>;
 
-  appendData(
-    multihash: Multihash,
-    data: any,
-    options: GetObjectOptions,
-    callback: Callback<any>
-  ): void;
-  appendData(
-    multihash: Multihash,
-    data: any,
-    options: GetObjectOptions
-  ): Promise<any>;
+  appendData(multihash: Multihash, data: any, options: GetObjectOptions, callback: Callback<any>): void;
+  appendData(multihash: Multihash, data: any, options: GetObjectOptions): Promise<any>;
   appendData(multihash: Multihash, data: any, callback: Callback<any>): void;
   appendData(multihash: Multihash, data: any): Promise<any>;
 
-  setData(
-    multihash: Multihash,
-    data: any,
-    options: GetObjectOptions,
-    callback: Callback<any>
-  ): void;
-  setData(
-    multihash: Multihash,
-    data: any,
-    options: GetObjectOptions
-  ): Promise<any>;
+  setData(multihash: Multihash, data: any, options: GetObjectOptions, callback: Callback<any>): void;
+  setData(multihash: Multihash, data: any, options: GetObjectOptions): Promise<any>;
   setData(multihash: Multihash, data: any, callback: Callback<any>): void;
   setData(multihash: Multihash, data: any): Promise<any>;
 }
@@ -302,38 +255,22 @@ export interface ObjectAPI {
   put(obj: Obj, callback: Callback<any>): void;
   put(obj: Obj): Promise<any>;
 
-  get(
-    multihash: Multihash,
-    options: GetObjectOptions,
-    callback: Callback<any>
-  ): void;
+  get(multihash: Multihash, options: GetObjectOptions, callback: Callback<any>): void;
   get(multihash: Multihash, options: GetObjectOptions): Promise<any>;
   get(multihash: Multihash, callback: Callback<any>): void;
   get(multihash: Multihash): Promise<any>;
 
-  data(
-    multihash: Multihash,
-    options: GetObjectOptions,
-    callback: Callback<any>
-  ): void;
+  data(multihash: Multihash, options: GetObjectOptions, callback: Callback<any>): void;
   data(multihash: Multihash, options: GetObjectOptions): Promise<any>;
   data(multihash: Multihash, callback: Callback<any>): void;
   data(multihash: Multihash): Promise<any>;
 
-  links(
-    multihash: Multihash,
-    options: GetObjectOptions,
-    callback: Callback<DAGLink[]>
-  ): void;
+  links(multihash: Multihash, options: GetObjectOptions, callback: Callback<DAGLink[]>): void;
   links(multihash: Multihash, options: GetObjectOptions): Promise<DAGLink[]>;
   links(multihash: Multihash, callback: Callback<DAGLink[]>): void;
   links(multihash: Multihash): Promise<DAGLink[]>;
 
-  stat(
-    multihash: Multihash,
-    options: GetObjectOptions,
-    callback: Callback<ObjectStat>
-  ): void;
+  stat(multihash: Multihash, options: GetObjectOptions, callback: Callback<ObjectStat>): void;
   stat(multihash: Multihash, options: GetObjectOptions): Promise<ObjectStat>;
   stat(multihash: Multihash, callback: Callback<ObjectStat>): void;
   stat(multihash: Multihash): Promise<ObjectStat>;
@@ -345,24 +282,14 @@ export interface DagAPI {
   put(dagNode: any, options: any, callback: Callback<any>): void;
   put(dagNode: any, options: any): Promise<any>;
 
-  get(
-    cid: string | CID,
-    path: string,
-    options: any,
-    callback: Callback<any>
-  ): void;
+  get(cid: string | CID, path: string, options: any, callback: Callback<any>): void;
   get(cid: string | CID, path: string, options: any): Promise<any>;
   get(cid: string | CID, path: string, callback: Callback<any>): void;
   get(cid: string | CID, path: string): Promise<any>;
   get(cid: string | CID, callback: Callback<any>): void;
   get(cid: string | CID): Promise<any>;
 
-  tree(
-    cid: string | CID,
-    path: string,
-    options: any,
-    callback: Callback<any>
-  ): void;
+  tree(cid: string | CID, path: string, options: any, callback: Callback<any>): void;
   tree(cid: string | CID, path: string, options: any): Promise<any>;
   tree(cid: string | CID, path: string, callback: Callback<any>): void;
   tree(cid: string | CID, path: string): Promise<any>;
@@ -383,30 +310,13 @@ type TPubSubTopicOptions = {
 type TPubSubData = string | Buffer;
 
 export interface Pubsub {
-  subscribe(
-    topic: TPubSubTopic,
-    handler: TpubSubTopicHandler,
-    options: TPubSubTopicOptions,
-    callback: Callback<any>
-  ): void;
-  subscribe(
-    topic: TPubSubTopic,
-    handler: TpubSubTopicHandler,
-    options: TPubSubTopicOptions
-  ): Promise<void>;
+  subscribe(topic: TPubSubTopic, handler: TpubSubTopicHandler, options: TPubSubTopicOptions, callback: Callback<any>): void;
+  subscribe(topic: TPubSubTopic, handler: TpubSubTopicHandler, options: TPubSubTopicOptions): Promise<void>;
 
-  unsubscribe(
-    topic: TPubSubTopic,
-    handler: TpubSubTopicHandler,
-    callback: Callback<void>
-  ): void;
+  unsubscribe(topic: TPubSubTopic, handler: TpubSubTopicHandler, callback: Callback<void>): void;
   unsubscribe(topic: TPubSubTopic, handler: TpubSubTopicHandler): Promise<void>;
 
-  publish(
-    topic: TPubSubTopic,
-    data: TPubSubData,
-    callback: Callback<any>
-  ): void;
+  publish(topic: TPubSubTopic, data: TPubSubData, callback: Callback<any>): void;
   publish(topic: TPubSubTopic, data: TPubSubData): Promise<any>;
 
   ls(callback: Callback<any>): void;

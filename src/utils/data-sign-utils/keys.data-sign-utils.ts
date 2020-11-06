@@ -18,10 +18,7 @@ import {
   TDATA_SIGN_UTIL_SIGN_KEY_TYPES,
   TDATA_SIGN_UTIL_IMPORT_KEY_TYPES,
 } from './data-sign-utils.types';
-import {
-  isCryptoKeyPair,
-  getJWKOrBool,
-} from 'utils/encryption-keys-utils/encryption-keys-utils';
+import { isCryptoKeyPair, getJWKOrBool } from 'utils/encryption-keys-utils/encryption-keys-utils';
 import { TEncryptionKeyStoreFormatType } from 'types/encryption-keys.types';
 import { isTypedArray } from 'utils/typed-array-utils';
 import { stringify } from 'utils/main-utils';
@@ -32,10 +29,7 @@ import { encryptDataWithPassword } from '../password-utils/encrypt.password-util
 import { TDATA_SIGN_UTIL_KEYPAIR_IMPORT_TYPE } from './data-sign-utils.types';
 import { typedArrayToString } from '../typed-array-utils';
 
-export const dataSignIsCryptoKeyPairImported = (
-  key: any,
-  checkPrivateKey: boolean = true
-): key is TDATA_SIGN_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE => {
+export const dataSignIsCryptoKeyPairImported = (key: any, checkPrivateKey: boolean = true): key is TDATA_SIGN_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE => {
   return (
     typeof key === 'object' &&
     !!key[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME] &&
@@ -50,22 +44,15 @@ export const dataSignGenerateKeyPair = (): PromiseLike<CryptoKeyPair> =>
     DATA_SIGN_CRYPTO_UTIL_KEYPAIR_USAGES
   );
 
-export const dataSignExportKey = async (
-  key: CryptoKey
-): Promise<TDATA_SIGN_UTIL_KEY_EXPORT_FORMAT_TYPE | Error> => {
+export const dataSignExportKey = async (key: CryptoKey): Promise<TDATA_SIGN_UTIL_KEY_EXPORT_FORMAT_TYPE | Error> => {
   try {
-    return cryptoModuleDataSign.exportKey(
-      DATA_SIGN_CRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT,
-      key
-    );
+    return cryptoModuleDataSign.exportKey(DATA_SIGN_CRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT, key);
   } catch (err) {
     return err;
   }
 };
 
-export const dataSignExportKeyAsString = async (
-  key: CryptoKey
-): Promise<string | Error> => {
+export const dataSignExportKeyAsString = async (key: CryptoKey): Promise<string | Error> => {
   const keyExported = await dataSignExportKey(key);
 
   if (keyExported instanceof Error) {
@@ -78,18 +65,14 @@ export const dataSignExportKeyAsString = async (
   }
 };
 
-export const dataSignExportPublicKey = async (
-  keyPair: CryptoKeyPair
-): Promise<TDATA_SIGN_UTIL_KEY_EXPORT_FORMAT_TYPE | Error> => {
+export const dataSignExportPublicKey = async (keyPair: CryptoKeyPair): Promise<TDATA_SIGN_UTIL_KEY_EXPORT_FORMAT_TYPE | Error> => {
   if (isCryptoKeyPair(keyPair)) {
     return dataSignExportKey(keyPair.publicKey);
   }
   return new Error('Argument must be a CryptoKeyPair');
 };
 
-export const dataSignExportPublicKeyAsString = async (
-  keyPair: CryptoKeyPair
-): Promise<Error | string> => {
+export const dataSignExportPublicKeyAsString = async (keyPair: CryptoKeyPair): Promise<Error | string> => {
   try {
     const keyPublicExported = await dataSignExportPublicKey(keyPair);
 
@@ -110,9 +93,7 @@ export const dataSignExportKeyPair = async (
     if (isCryptoKeyPair(keyPair, !!password)) {
       // do it in parallel
       const [privateKey, publicKey] = await Promise.all([
-        password || keyPair.privateKey
-          ? dataSignExportKey(keyPair.privateKey)
-          : Promise.resolve(undefined),
+        password || keyPair.privateKey ? dataSignExportKey(keyPair.privateKey) : Promise.resolve(undefined),
         dataSignExportKey(keyPair.publicKey),
       ]).catch((err) => [err, err]);
 
@@ -135,39 +116,25 @@ export const dataSignExportKeyPair = async (
           return new Error('Failed to generate a unique salt value');
         }
 
-        const encryptedPrivateKey = await encryptDataWithPassword(
-          password,
-          salt,
-          privateKey
-        );
+        const encryptedPrivateKey = await encryptDataWithPassword(password, salt, privateKey);
 
         if (encryptedPrivateKey instanceof Error) {
-          return new Error(
-            'Failed to encrypt private key with password provided'
-          );
+          return new Error('Failed to encrypt private key with password provided');
         }
 
         const saltStringified = typedArrayToString(salt);
 
         if (saltStringified instanceof Error) {
-          return new Error(
-            'Failed to stringify the salt value for the private data sign key'
-          );
+          return new Error('Failed to stringify the salt value for the private data sign key');
         }
 
-        const decryptedPrivateKey = await decryptDataByPassword(
-          password,
-          saltStringified,
-          encryptedPrivateKey
-        );
+        const decryptedPrivateKey = await decryptDataByPassword(password, saltStringified, encryptedPrivateKey);
 
         if (decryptedPrivateKey instanceof Error) {
           return new Error('Failed to decrypt private key for data encryption');
         }
         result[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_SALT_KEY_NAME] = saltStringified;
-        result[
-          DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME
-        ] = encryptedPrivateKey;
+        result[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME] = encryptedPrivateKey;
       }
       return result;
     }
@@ -177,10 +144,7 @@ export const dataSignExportKeyPair = async (
   }
 };
 
-export const dataSignExportKeyPairAsString = async (
-  keyPair: CryptoKeyPair,
-  password?: string
-): Promise<string | Error> => {
+export const dataSignExportKeyPairAsString = async (keyPair: CryptoKeyPair, password?: string): Promise<string | Error> => {
   try {
     const res = await dataSignExportKeyPair(keyPair, password);
 
@@ -193,10 +157,7 @@ export const dataSignExportKeyPairAsString = async (
   }
 };
 
-export const dataSignImportKey = async (
-  key: TDATA_SIGN_UTIL_IMPORT_KEY_TYPES,
-  isPublic: boolean = true
-): Promise<CryptoKey | Error> => {
+export const dataSignImportKey = async (key: TDATA_SIGN_UTIL_IMPORT_KEY_TYPES, isPublic: boolean = true): Promise<CryptoKey | Error> => {
   try {
     if (typeof key !== 'object') {
       return new Error('Unsupported argument type');
@@ -206,11 +167,7 @@ export const dataSignImportKey = async (
       key,
       DATA_SIGN_CRYPTO_UTIL_KEY_DESC,
       DATA_SIGN_CRYPTO_UTIL_KEYS_EXTRACTABLE,
-      [
-        isPublic
-          ? DATA_SIGN_CRYPTO_UTIL_PUBLIC_KEY_USAGE
-          : DATA_SIGN_CRYPTO_UTIL_PRIVATE_KEY_USAGE,
-      ]
+      [isPublic ? DATA_SIGN_CRYPTO_UTIL_PUBLIC_KEY_USAGE : DATA_SIGN_CRYPTO_UTIL_PRIVATE_KEY_USAGE]
     );
 
     if (!(res instanceof CryptoKey)) {
@@ -222,13 +179,9 @@ export const dataSignImportKey = async (
   }
 };
 
-export const dataSignImportPublicKey = (
-  key: TDATA_SIGN_UTIL_IMPORT_KEY_TYPES
-): PromiseLike<CryptoKey | Error> => dataSignImportKey(key, true);
+export const dataSignImportPublicKey = (key: TDATA_SIGN_UTIL_IMPORT_KEY_TYPES): PromiseLike<CryptoKey | Error> => dataSignImportKey(key, true);
 
-export const dataSignImportPrivateKey = (
-  key: TDATA_SIGN_UTIL_IMPORT_KEY_TYPES
-): PromiseLike<CryptoKey | Error> => dataSignImportKey(key, false);
+export const dataSignImportPrivateKey = (key: TDATA_SIGN_UTIL_IMPORT_KEY_TYPES): PromiseLike<CryptoKey | Error> => dataSignImportKey(key, false);
 
 export const dataSignImportKeyPair = async (
   keyPair: TDATA_SIGN_UTIL_KEYPAIR_IMPORT_TYPE,
@@ -236,18 +189,13 @@ export const dataSignImportKeyPair = async (
 ): Promise<TDATA_SIGN_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE | Error> => {
   try {
     if (dataSignIsCryptoKeyPairImported(keyPair, checkPrivateKey)) {
-      const privateKeyToImport =
-        keyPair[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME];
+      const privateKeyToImport = keyPair[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME];
       if (checkPrivateKey && !privateKeyToImport) {
         return new Error('The private key is empty');
       }
       const importResult = await Promise.all([
-        dataSignImportPublicKey(
-          keyPair[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]
-        ),
-        checkPrivateKey || privateKeyToImport
-          ? dataSignImportPrivateKey(privateKeyToImport!)
-          : (Promise.resolve(undefined) as any),
+        dataSignImportPublicKey(keyPair[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]),
+        checkPrivateKey || privateKeyToImport ? dataSignImportPrivateKey(privateKeyToImport!) : (Promise.resolve(undefined) as any),
       ]).catch((err) => [err, err]);
       const publicKey = importResult[0];
       let privateKey = importResult[1];
@@ -280,14 +228,8 @@ export const dataSignImportKeyPairFromString = async (
     if (typeof keyPairString === 'string') {
       const keyPairObject = JSON.parse(keyPairString);
 
-      if (
-        password &&
-        keyPairObject[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_SALT_KEY_NAME]
-      ) {
-        if (
-          typeof keyPairObject[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_SALT_KEY_NAME] !==
-          'string'
-        ) {
+      if (password && keyPairObject[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_SALT_KEY_NAME]) {
+        if (typeof keyPairObject[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_SALT_KEY_NAME] !== 'string') {
           return new Error('A salt value must be a string');
         }
 
@@ -302,21 +244,14 @@ export const dataSignImportKeyPairFromString = async (
           return decryptedPrivateKey;
         }
         try {
-          keyPairObject[
-            DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME
-          ] = JSON.parse(decryptedPrivateKey);
+          keyPairObject[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME] = JSON.parse(decryptedPrivateKey);
         } catch (err) {
           console.error(err);
-          return new Error(
-            'Failed to parse datasign Private key from the string decrypted'
-          );
+          return new Error('Failed to parse datasign Private key from the string decrypted');
         }
       }
       if (dataSignIsCryptoKeyPairImported(keyPairObject, !!password)) {
-        return dataSignImportKeyPair(
-          keyPairObject as TDATA_SIGN_UTIL_KEYPAIR_IMPORT_TYPE,
-          !!password
-        );
+        return dataSignImportKeyPair(keyPairObject as TDATA_SIGN_UTIL_KEYPAIR_IMPORT_TYPE, !!password);
       }
       return new Error('There is a wrong format for the imported key pair');
     }
@@ -326,10 +261,7 @@ export const dataSignImportKeyPairFromString = async (
   }
 };
 
-export const dataSignImportKeyFromString = (
-  keyString: string,
-  isPublic: boolean = true
-): PromiseLike<CryptoKey | Error> | Error => {
+export const dataSignImportKeyFromString = (keyString: string, isPublic: boolean = true): PromiseLike<CryptoKey | Error> | Error => {
   try {
     if (typeof keyString !== 'string') {
       return new Error('The key must be a string');
@@ -343,27 +275,15 @@ export const dataSignImportKeyFromString = (
   }
 };
 
-export const dataSignImportPublicKeyFromString = (
-  key: string
-): PromiseLike<CryptoKey | Error> | Error =>
-  dataSignImportKeyFromString(key, true);
+export const dataSignImportPublicKeyFromString = (key: string): PromiseLike<CryptoKey | Error> | Error => dataSignImportKeyFromString(key, true);
 
-export const dataSignImportPrivateKeyFromString = (
-  key: string
-): PromiseLike<CryptoKey | Error> | Error =>
-  dataSignImportKeyFromString(key, false);
+export const dataSignImportPrivateKeyFromString = (key: string): PromiseLike<CryptoKey | Error> | Error => dataSignImportKeyFromString(key, false);
 
 export const dataSignCheckIfStringIsKeyPair = (keyString: string): boolean => {
-  return (
-    keyString.includes(DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME) &&
-    keyString.includes(DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME)
-  );
+  return keyString.includes(DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME) && keyString.includes(DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME);
 };
 
-export const dataSignGetKeyOfType = async (
-  key: TDATA_SIGN_UTIL_SIGN_KEY_TYPES,
-  type: KeyType
-): Promise<CryptoKey | Error> => {
+export const dataSignGetKeyOfType = async (key: TDATA_SIGN_UTIL_SIGN_KEY_TYPES, type: KeyType): Promise<CryptoKey | Error> => {
   if (typeof key === 'string') {
     if (dataSignCheckIfStringIsKeyPair(key)) {
       const keyPair = await dataSignImportKeyPairFromString(key);
@@ -373,10 +293,7 @@ export const dataSignGetKeyOfType = async (
       }
       return dataSignGetKeyOfType(keyPair, type);
     } else {
-      const keyFromString = await dataSignImportKeyFromString(
-        key,
-        type === 'public'
-      );
+      const keyFromString = await dataSignImportKeyFromString(key, type === 'public');
 
       if (keyFromString instanceof Error) {
         return keyFromString;
@@ -389,9 +306,7 @@ export const dataSignGetKeyOfType = async (
   }
   if (typeof key === 'object') {
     const keys = Object.values(key);
-    const keyResulted = keys.find(
-      (k: CryptoKey) => k && k.type && k.type === type
-    );
+    const keyResulted = keys.find((k: CryptoKey) => k && k.type && k.type === type);
 
     return keyResulted || new Error(KEY_NOT_FOUND_ERROR_MESSAGE);
   }
@@ -405,9 +320,7 @@ export const dataSignGetKeyOfType = async (
  * format
  * @param {} key
  */
-export const dataSignImportEncryptionKey = async (
-  key: TEncryptionKeyStoreFormatType
-): Promise<CryptoKey | Error> => {
+export const dataSignImportEncryptionKey = async (key: TEncryptionKeyStoreFormatType): Promise<CryptoKey | Error> => {
   if (isTypedArray(key)) {
     return dataSignImportKey(key);
   } else {
@@ -428,9 +341,7 @@ export const dataSignImportEncryptionKey = async (
  * and returns a crypto key as a string
  * @param {} key
  */
-export const dataSignConvertAndExportKeyAsString = async (
-  key: TEncryptionKeyStoreFormatType
-): Promise<string | Error> => {
+export const dataSignConvertAndExportKeyAsString = async (key: TEncryptionKeyStoreFormatType): Promise<string | Error> => {
   const cryptoKeyImported = await dataSignImportEncryptionKey(key);
 
   if (cryptoKeyImported instanceof Error) {

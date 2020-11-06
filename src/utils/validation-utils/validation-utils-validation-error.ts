@@ -2,12 +2,9 @@ import { ErrorObject } from 'ajv';
 
 export class ValidationError extends Error {
   static mergeErrorObjects(errors: ErrorObject[]): string {
-    return errors.reduce(
-      (errMessage: string, err: ErrorObject, idx: number) => {
-        return `${errMessage}. ${idx}::${err.message}`;
-      },
-      ''
-    );
+    return errors.reduce((errMessage: string, err: ErrorObject, idx: number) => {
+      return `${errMessage}. ${idx}::${err.message}`;
+    }, '');
   }
 
   constructor(error: ErrorObject[] | undefined | null) {

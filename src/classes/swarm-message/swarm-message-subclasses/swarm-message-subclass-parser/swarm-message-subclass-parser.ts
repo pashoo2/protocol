@@ -1,9 +1,5 @@
 import assert from 'assert';
-import {
-  TSwarmMessageInstance,
-  TSwarmMessageBodyRaw,
-  TSwarmMessageBodyRawEncrypted,
-} from '../../swarm-message-constructor.types';
+import { TSwarmMessageInstance, TSwarmMessageBodyRaw, TSwarmMessageBodyRawEncrypted } from '../../swarm-message-constructor.types';
 import { isCryptoKeyDataDecryption } from '../../../../utils/encryption-keys-utils/encryption-keys-utils';
 import { QueuedEncryptionClassBase } from '../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base';
 import { ISwarmMessgaeEncryptedCache } from '../../../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
@@ -11,15 +7,8 @@ import {
   IQueuedEncrypyionClassBaseOptions,
   IQueuedEncrypyionClassBase,
 } from '../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
-import {
-  ISwarmMessageRaw,
-  TSwarmMessage,
-  TSwarmMessageSerialized,
-} from '../../swarm-message-constructor.types';
-import {
-  ISwarmMessageSubclassParserOptions,
-  ISwarmMessageSubclassParser,
-} from './swarm-message-subclass-parser.types';
+import { ISwarmMessageRaw, TSwarmMessage, TSwarmMessageSerialized } from '../../swarm-message-constructor.types';
+import { ISwarmMessageSubclassParserOptions, ISwarmMessageSubclassParser } from './swarm-message-subclass-parser.types';
 
 export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
   protected constructorOptions?: ISwarmMessageSubclassParserOptions;
@@ -64,9 +53,7 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
    *
    * @memberof SwarmMessageSubclassParser
    */
-  public parse = async (
-    message: TSwarmMessageSerialized
-  ): Promise<TSwarmMessageInstance> => {
+  public parse = async (message: TSwarmMessageSerialized): Promise<TSwarmMessageInstance> => {
     const messageRaw = await this.parseMessageToRaw(message);
     const messageParsed = await this.parseMessageRaw(messageRaw);
 
@@ -75,23 +62,14 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
 
   protected validateOptions(options: ISwarmMessageSubclassParserOptions): void {
     assert(options, 'Options must be provided');
-    assert(
-      typeof options === 'object',
-      'The options provided must be an object'
-    );
+    assert(typeof options === 'object', 'The options provided must be an object');
 
     const { utils, validator, decryptionKey } = options;
 
     assert(utils, 'Utils must be provided');
     assert(typeof utils === 'object', 'Utils must be an object');
-    assert(
-      typeof utils.messageBodyRawParser === 'function',
-      'messageBodyRawParser utility must be a function'
-    );
-    assert(
-      typeof utils.messageParser === 'function',
-      'messageParser utility must be a function'
-    );
+    assert(typeof utils.messageBodyRawParser === 'function', 'messageBodyRawParser utility must be a function');
+    assert(typeof utils.messageParser === 'function', 'messageParser utility must be a function');
     assert(validator, 'Validator is not provided');
     assert(
       typeof validator.valiadateSwarmMessageRaw === 'function',
@@ -102,14 +80,9 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
       'Validator incorrectly implements the interface, cause the valiadateSwarmMessage method is absent'
     );
     if (!decryptionKey) {
-      console.warn(
-        'There is no key for private messages decryption provided in options'
-      );
+      console.warn('There is no key for private messages decryption provided in options');
     } else {
-      assert(
-        isCryptoKeyDataDecryption(decryptionKey),
-        "The key provided can't be used for data decryption"
-      );
+      assert(isCryptoKeyDataDecryption(decryptionKey), "The key provided can't be used for data decryption");
     }
   }
 
@@ -120,9 +93,7 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
   }
 
   protected startMessageDecryptQueue() {
-    this.msgDecryptQueue = new QueuedEncryptionClassBase(
-      this.messageDecryptQueueOptions
-    );
+    this.msgDecryptQueue = new QueuedEncryptionClassBase(this.messageDecryptQueueOptions);
   }
 
   /**
@@ -135,9 +106,7 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
    * @memberof SwarmMessageSubclassParser
    * @throws
    */
-  protected async parseMessageToRaw(
-    mesage: TSwarmMessageSerialized
-  ): Promise<ISwarmMessageRaw> {
+  protected async parseMessageToRaw(mesage: TSwarmMessageSerialized): Promise<ISwarmMessageRaw> {
     const { utils, validator } = this.options;
     const { messageParser } = utils;
     const messageRaw = messageParser(mesage);
@@ -156,9 +125,7 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
    * @memberof SwarmMessageSubclassParser
    * @throws
    */
-  protected async parseMessageRaw(
-    messageRaw: ISwarmMessageRaw
-  ): Promise<TSwarmMessage> {
+  protected async parseMessageRaw(messageRaw: ISwarmMessageRaw): Promise<TSwarmMessage> {
     const { utils, validator } = this.options;
     const { messageBodyRawParser } = utils;
     const { bdy: bodyRaw, isPrivate } = messageRaw;
@@ -175,9 +142,7 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
       }
     }
     if (!bodyRawDecrypted) {
-      bodyRawDecrypted = isPrivate
-        ? await this.decryptMessageBodyRaw(bodyRaw)
-        : bodyRaw;
+      bodyRawDecrypted = isPrivate ? await this.decryptMessageBodyRaw(bodyRaw) : bodyRaw;
     }
 
     const bodyRawParsed = messageBodyRawParser(bodyRawDecrypted);
@@ -192,13 +157,9 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
     return swarmMessage;
   }
 
-  protected async decryptMessageBodyRaw(
-    bodyRaw: TSwarmMessageBodyRawEncrypted
-  ): Promise<TSwarmMessageBodyRaw> {
+  protected async decryptMessageBodyRaw(bodyRaw: TSwarmMessageBodyRawEncrypted): Promise<TSwarmMessageBodyRaw> {
     if (!this.msgDecryptQueue) {
-      throw new Error(
-        'Message decrypt queue must be started to read private messgaes'
-      );
+      throw new Error('Message decrypt queue must be started to read private messgaes');
     }
     const decryptedBody = await this.msgDecryptQueue.decryptData(bodyRaw);
 
@@ -212,13 +173,10 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
     return decryptedBody;
   }
 
-  protected getSwarmMessageInstance(
-    msg: TSwarmMessage,
-    msgSerizlized: TSwarmMessageSerialized
-  ): TSwarmMessageInstance {
+  protected getSwarmMessageInstance(msg: TSwarmMessage, msgSerizlized: TSwarmMessageSerialized): TSwarmMessageInstance {
     return {
       ...msg,
-      toString: function(a: TSwarmMessageSerialized) {
+      toString: function (a: TSwarmMessageSerialized) {
         return a;
       }.bind(undefined, msgSerizlized),
     };

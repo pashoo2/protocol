@@ -2,17 +2,13 @@ import { ISwarmMessageInstanceDecrypted } from '../../classes/swarm-message/swar
 import { TSwarmStoreDatabaseEntityKey } from '../../classes/swarm-store-class/swarm-store-class.types';
 import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
 
-export interface ISwarmMessagesDatabaseMessageDescription<
-  P extends ESwarmStoreConnector.OrbitDB
-> {
+export interface ISwarmMessagesDatabaseMessageDescription<P extends ESwarmStoreConnector.OrbitDB> {
   id: TSwarmStoreDatabaseEntityKey<P>;
   key?: string;
   message: ISwarmMessageInstanceDecrypted;
 }
 
-export interface ISwarmMessagesDatabaseDeleteMessageDescription<
-  P extends ESwarmStoreConnector.OrbitDB
-> {
+export interface ISwarmMessagesDatabaseDeleteMessageDescription<P extends ESwarmStoreConnector.OrbitDB> {
   /**
    * Id of the message which removed another message.
    *

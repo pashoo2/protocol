@@ -9,8 +9,7 @@ export interface IJobResolver<T> {
   done: IJobResolveCallback<T>;
 }
 
-export interface IJobPromise<T, E extends MaybeError>
-  extends IPromisePendingRejectable<T, E> {}
+export interface IJobPromise<T, E extends MaybeError> extends IPromisePendingRejectable<T, E> {}
 
 export interface IAsyncQueueConcurent<T, E extends MaybeError> {
   /**

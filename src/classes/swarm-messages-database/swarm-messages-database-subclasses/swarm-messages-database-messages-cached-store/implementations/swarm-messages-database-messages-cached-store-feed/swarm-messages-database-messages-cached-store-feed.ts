@@ -6,82 +6,42 @@ import {
 } from '../../swarm-messages-database-messages-cached-store.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { ISwarmMessagesDatabaseMessagesCacheMessageDescription } from '../../../swarm-messages-database-cache/swarm-messages-database-cache.types';
-import {
-  ISwarmMessagesDatabaseMesssageMeta,
-  TSwarmMessageDatabaseMessagesCached,
-} from '../../../../swarm-messages-database.types';
+import { ISwarmMessagesDatabaseMesssageMeta, TSwarmMessageDatabaseMessagesCached } from '../../../../swarm-messages-database.types';
 import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../../../swarm-message-store/swarm-message-store.types';
 
-export class SwarmMessagesDatabaseMessagesCachedStoreFeed<
-  P extends ESwarmStoreConnector,
-  IsTemp extends boolean
->
+export class SwarmMessagesDatabaseMessagesCachedStoreFeed<P extends ESwarmStoreConnector, IsTemp extends boolean>
   extends SwarmMessagesDatabaseMessagesCachedStoreCore<
     P,
     ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
     IsTemp,
     TSwarmMessagesDatabaseMessagesCachedStoreMessagesMetaHash
   >
-  implements
-    ISwarmMessagesDatabaseMessagesCachedStoreCore<
-      P,
-      ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
-      IsTemp
-    > {
-  get entriesCached(): TSwarmMessageDatabaseMessagesCached<
-    P,
-    ESwarmStoreConnectorOrbitDbDatabaseType.FEED
-  > {
+  implements ISwarmMessagesDatabaseMessagesCachedStoreCore<P, ESwarmStoreConnectorOrbitDbDatabaseType.FEED, IsTemp> {
+  get entriesCached(): TSwarmMessageDatabaseMessagesCached<P, ESwarmStoreConnectorOrbitDbDatabaseType.FEED> {
     return this._entriesCached;
   }
-  protected _entriesCached = new Map() as TSwarmMessageDatabaseMessagesCached<
-    P,
-    ESwarmStoreConnectorOrbitDbDatabaseType.FEED
-  >;
+  protected _entriesCached = new Map() as TSwarmMessageDatabaseMessagesCached<P, ESwarmStoreConnectorOrbitDbDatabaseType.FEED>;
 
   get = (
-    meta: ISwarmMessagesDatabaseMesssageMeta<
-      P,
-      ESwarmStoreConnectorOrbitDbDatabaseType.FEED
-    >
-  ):
-    | ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector>
-    | undefined => {
+    meta: ISwarmMessagesDatabaseMesssageMeta<P, ESwarmStoreConnectorOrbitDbDatabaseType.FEED>
+  ): ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector> | undefined => {
     this._beforeGet(meta);
     return this._getMessageCachedByMeta(meta);
   };
 
-  set = (
-    entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<
-      P,
-      ESwarmStoreConnectorOrbitDbDatabaseType.FEED
-    >
-  ): void => {
+  set = (entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, ESwarmStoreConnectorOrbitDbDatabaseType.FEED>): void => {
     this._beforeSet(entry);
     this._setMessageInEntriesCached(entry);
   };
 
-  unset = (
-    meta: ISwarmMessagesDatabaseMesssageMeta<
-      P,
-      ESwarmStoreConnectorOrbitDbDatabaseType.FEED
-    >
-  ): void => {
+  unset = (meta: ISwarmMessagesDatabaseMesssageMeta<P, ESwarmStoreConnectorOrbitDbDatabaseType.FEED>): void => {
     this._beforeUnset(meta);
     this._unsetMessageInEntriesCached(meta);
   };
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  updateWithEntries(
-    entries: TSwarmMessageDatabaseMessagesCached<
-      P,
-      ESwarmStoreConnectorOrbitDbDatabaseType.FEED
-    >
-  ): boolean {
-    const hasUpdatedMessages = this._updateCacheWithEntries(
-      entries,
-      this._entriesCached
-    );
+  updateWithEntries(entries: TSwarmMessageDatabaseMessagesCached<P, ESwarmStoreConnectorOrbitDbDatabaseType.FEED>): boolean {
+    const hasUpdatedMessages = this._updateCacheWithEntries(entries, this._entriesCached);
 
     this._incMessagesInCacheVersion();
     return hasUpdatedMessages;
@@ -92,22 +52,14 @@ export class SwarmMessagesDatabaseMessagesCachedStoreFeed<
   }
 
   protected _whetherEntryIsExists(
-    entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<
-      P,
-      ESwarmStoreConnectorOrbitDbDatabaseType.FEED
-    >
+    entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, ESwarmStoreConnectorOrbitDbDatabaseType.FEED>
   ): boolean {
     return !!this._getMessageCachedByMeta(entry.messageMeta);
   }
 
   protected _getMessageCachedByMeta = (
-    meta: ISwarmMessagesDatabaseMesssageMeta<
-      P,
-      ESwarmStoreConnectorOrbitDbDatabaseType.FEED
-    >
-  ):
-    | ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector>
-    | undefined => {
+    meta: ISwarmMessagesDatabaseMesssageMeta<P, ESwarmStoreConnectorOrbitDbDatabaseType.FEED>
+  ): ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector> | undefined => {
     const messageAddress = this._getMessageAddressFromMeta(meta);
 
     if (!messageAddress) {
@@ -118,10 +70,7 @@ export class SwarmMessagesDatabaseMessagesCachedStoreFeed<
   };
 
   protected _getMessageInfo(
-    entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<
-      P,
-      ESwarmStoreConnectorOrbitDbDatabaseType.FEED
-    >
+    entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, ESwarmStoreConnectorOrbitDbDatabaseType.FEED>
   ): Omit<ISwarmMessageStoreMessagingRequestWithMetaResult<P>, 'key'> {
     const { messageMeta: meta, messageEntry: message } = entry;
     const address = this._getMessageAddressFromMeta(meta);
@@ -136,12 +85,7 @@ export class SwarmMessagesDatabaseMessagesCachedStoreFeed<
     };
   }
 
-  protected _unsetMessageInEntriesCached(
-    meta: ISwarmMessagesDatabaseMesssageMeta<
-      P,
-      ESwarmStoreConnectorOrbitDbDatabaseType.FEED
-    >
-  ): void {
+  protected _unsetMessageInEntriesCached(meta: ISwarmMessagesDatabaseMesssageMeta<P, ESwarmStoreConnectorOrbitDbDatabaseType.FEED>): void {
     const address = this._getMessageAddressFromMeta(meta);
 
     if (!address) {
@@ -151,10 +95,7 @@ export class SwarmMessagesDatabaseMessagesCachedStoreFeed<
   }
 
   protected _setMessageInEntriesCached(
-    entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<
-      P,
-      ESwarmStoreConnectorOrbitDbDatabaseType.FEED
-    >
+    entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, ESwarmStoreConnectorOrbitDbDatabaseType.FEED>
   ): void {
     const { messageMeta } = entry;
     const address = this._getMessageAddressFromMeta(messageMeta);

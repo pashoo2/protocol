@@ -41,9 +41,7 @@ export interface ISwarmMessageStoreUtilsMessagesCache {
    * @memberof ISwarmMessageStoreUtilsMessagesCache
    * @returns {(Promise<TSwarmMessageInstance | undefined>)} - undefined if not exist or swarm message instance
    */
-  getMessageByAddress(
-    messageAddress: string
-  ): Promise<TSwarmMessageInstance | undefined>;
+  getMessageByAddress(messageAddress: string): Promise<TSwarmMessageInstance | undefined>;
 
   /**
    * Set a swarm message for the messages's unique address.
@@ -54,10 +52,7 @@ export interface ISwarmMessageStoreUtilsMessagesCache {
    * @memberof ISwarmMessageStoreUtilsMessagesCache
    * @throws
    */
-  setMessageByAddress(
-    messageAddress: string,
-    message: TSwarmMessageInstance
-  ): Promise<void>;
+  setMessageByAddress(messageAddress: string, message: TSwarmMessageInstance): Promise<void>;
 
   /**
    * Unset message in cache by it's address

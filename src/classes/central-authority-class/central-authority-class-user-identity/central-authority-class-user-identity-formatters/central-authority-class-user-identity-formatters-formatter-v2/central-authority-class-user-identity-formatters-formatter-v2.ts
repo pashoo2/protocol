@@ -9,16 +9,9 @@ import {
 import { validateUserIdentityDescriptionVersion } from '../../central-authority-class-user-identity-validators/central-authority-class-user-identity-validators.utils';
 import { CA_USER_IDENTITY_V2_FORMATTER_AUTH_PROVIDER_URL_DELIMETER } from './central-authority-class-user-identity-formatters-formatter-v2.const';
 
-export const formatterV2 = (
-  userIdentityDescription: ICAUserUniqueIdentifierDescription
-): TCentralAuthorityUserIdentity | Error => {
-  const {
-    [CA_USER_IDENTITY_VERSION_PROP_NAME]: version,
-  } = userIdentityDescription;
-  const validationResult = validateUserIdentityDescriptionVersion(
-    version,
-    userIdentityDescription
-  );
+export const formatterV2 = (userIdentityDescription: ICAUserUniqueIdentifierDescription): TCentralAuthorityUserIdentity | Error => {
+  const { [CA_USER_IDENTITY_VERSION_PROP_NAME]: version } = userIdentityDescription;
+  const validationResult = validateUserIdentityDescriptionVersion(version, userIdentityDescription);
 
   if (validationResult instanceof Error) {
     return validationResult;

@@ -19,14 +19,9 @@ import {
   PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_IMPORT_FORMAT,
 } from './password-utils.const';
 import { decodeDOMStringToArrayBuffer } from 'utils/string-encoding-utils';
-import {
-  crypto,
-  cryptoModuleDataSign,
-} from '../data-sign-utils/main.data-sign-utils.const';
+import { crypto, cryptoModuleDataSign } from '../data-sign-utils/main.data-sign-utils.const';
 
-export const generatePasswordKey = async (
-  password: TPASSWORD_ENCRYPTION_SUPPORTED_PASSWORD_NATIVE_TYPES
-): Promise<CryptoKey | Error> => {
+export const generatePasswordKey = async (password: TPASSWORD_ENCRYPTION_SUPPORTED_PASSWORD_NATIVE_TYPES): Promise<CryptoKey | Error> => {
   if (!isTypedArray(password)) {
     return new Error('The password must have a TypedArray type');
   }
@@ -43,10 +38,7 @@ export const generatePasswordKey = async (
   }
 };
 
-export const getDeriviationNative = async (
-  passwordKey: CryptoKey,
-  saltValue: Uint8Array
-): Promise<Error | CryptoKey> => {
+export const getDeriviationNative = async (passwordKey: CryptoKey, saltValue: Uint8Array): Promise<Error | CryptoKey> => {
   if (!saltValue) {
     return new Error('The generated random value of salt is empty');
   }
@@ -75,10 +67,7 @@ export const getDeriviationNative = async (
   }
 };
 
-export const generatePasswordKeyByPasswordString = async (
-  passwordString: string,
-  saltValue: TSaltUtilsSaltType
-): Promise<CryptoKey | Error> => {
+export const generatePasswordKeyByPasswordString = async (passwordString: string, saltValue: TSaltUtilsSaltType): Promise<CryptoKey | Error> => {
   const passwordArrayBuffer = decodeDOMStringToArrayBuffer(passwordString);
 
   if (passwordArrayBuffer instanceof Error) {
@@ -99,30 +88,18 @@ export const generatePasswordKeyByPasswordString = async (
   return getDeriviationNative(passwordBaseKey, saltImported);
 };
 
-export const exportPasswordKey = (
-  passwordKey: CryptoKey
-):
-  | PromiseLike<TPASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_EXPORT_FORMAT>
-  | Error => {
+export const exportPasswordKey = (passwordKey: CryptoKey): PromiseLike<TPASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_EXPORT_FORMAT> | Error => {
   try {
-    return cryptoModuleDataSign.exportKey(
-      PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_EXPORT_FORMAT,
-      passwordKey
-    );
+    return cryptoModuleDataSign.exportKey(PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_EXPORT_FORMAT, passwordKey);
   } catch (err) {
     console.error(err);
     return err;
   }
 };
 
-export const exportPasswordKeyAsString = async (
-  passwordKey: CryptoKey
-): Promise<string | Error> => {
+export const exportPasswordKeyAsString = async (passwordKey: CryptoKey): Promise<string | Error> => {
   try {
-    const cryptoKey = await cryptoModuleDataSign.exportKey(
-      PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_EXPORT_FORMAT,
-      passwordKey
-    );
+    const cryptoKey = await cryptoModuleDataSign.exportKey(PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_EXPORT_FORMAT, passwordKey);
 
     if (cryptoKey instanceof Error) {
       return cryptoKey;
@@ -137,13 +114,8 @@ export const exportPasswordKeyAsString = async (
 export const generatePasswordKeyInExportFormat = async (
   passwordString: string,
   salt: TSaltUtilsSaltType
-): Promise<
-  TPASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_EXPORT_FORMAT | Error
-> => {
-  const passwordKey = await generatePasswordKeyByPasswordString(
-    passwordString,
-    salt
-  );
+): Promise<TPASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_EXPORT_FORMAT | Error> => {
+  const passwordKey = await generatePasswordKeyByPasswordString(passwordString, salt);
 
   if (passwordKey instanceof Error) {
     return passwordKey;
@@ -152,14 +124,8 @@ export const generatePasswordKeyInExportFormat = async (
   return exportPasswordKey(passwordKey);
 };
 
-export const generatePasswordKeyAsString = async (
-  passwordString: string,
-  salt: TSaltUtilsSaltType
-): Promise<string | Error> => {
-  const passwordKeyExported = await generatePasswordKeyInExportFormat(
-    passwordString,
-    salt
-  );
+export const generatePasswordKeyAsString = async (passwordString: string, salt: TSaltUtilsSaltType): Promise<string | Error> => {
+  const passwordKeyExported = await generatePasswordKeyInExportFormat(passwordString, salt);
 
   if (passwordKeyExported instanceof Error) {
     return passwordKeyExported;
@@ -168,9 +134,7 @@ export const generatePasswordKeyAsString = async (
   return JSON.stringify(passwordKeyExported);
 };
 
-export const importPasswordKey = async (
-  passwordKey: TPASSWORD_ENCRYPTION_KEY_IMPORT_NATIVE_SUPPORTED_TYPES
-): Promise<CryptoKey | Error> => {
+export const importPasswordKey = async (passwordKey: TPASSWORD_ENCRYPTION_KEY_IMPORT_NATIVE_SUPPORTED_TYPES): Promise<CryptoKey | Error> => {
   try {
     return await cryptoModuleDataSign.importKey(
       PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_IMPORT_FORMAT,
@@ -186,13 +150,9 @@ export const importPasswordKey = async (
   }
 };
 
-export const importPasswordKeyFromString = async (
-  passwordKey: string
-): Promise<CryptoKey | Error> => {
+export const importPasswordKeyFromString = async (passwordKey: string): Promise<CryptoKey | Error> => {
   try {
-    const keyExportedFormat: TPASSWORD_ENCRYPTION_KEY_IMPORT_NATIVE_SUPPORTED_TYPES = JSON.parse(
-      passwordKey
-    );
+    const keyExportedFormat: TPASSWORD_ENCRYPTION_KEY_IMPORT_NATIVE_SUPPORTED_TYPES = JSON.parse(passwordKey);
 
     return importPasswordKey(keyExportedFormat);
   } catch (err) {

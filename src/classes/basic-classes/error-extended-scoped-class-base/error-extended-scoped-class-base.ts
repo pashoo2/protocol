@@ -6,10 +6,7 @@ import ErrorExtendedBaseClass from '../error-extended-class-base/error-extended-
  */
 export const getErrorScopedClass = (errorScopeName: string) => {
   class ErrorExtendedBaseScopedClass extends ErrorExtendedBaseClass {
-    constructor(
-      arg: Error | ErrorExtendedBaseClass | string,
-      code?: string | number
-    ) {
+    constructor(arg: Error | ErrorExtendedBaseClass | string, code?: string | number) {
       super(`${errorScopeName}::${arg}`, code);
     }
   }

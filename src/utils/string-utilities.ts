@@ -1,7 +1,4 @@
-export const concatStrings = (
-  delimeter: string,
-  ...strings: string[]
-): string => {
+export const concatStrings = (delimeter: string, ...strings: string[]): string => {
   const stringsCount = strings.length;
   let stringPart = '';
   let idx = 1;
@@ -9,11 +6,7 @@ export const concatStrings = (
 
   for (; idx < stringsCount; idx += 1) {
     stringPart = strings[idx];
-    resultedString = `${strings}${
-      stringPart.endsWith(delimeter) || stringPart.startsWith(delimeter)
-        ? ''
-        : ''
-    }${stringPart}`;
+    resultedString = `${strings}${stringPart.endsWith(delimeter) || stringPart.startsWith(delimeter) ? '' : ''}${stringPart}`;
   }
   return resultedString;
 };

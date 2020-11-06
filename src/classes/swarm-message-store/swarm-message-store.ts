@@ -1,53 +1,26 @@
 import assert from 'assert';
 import { SwarmStore } from '../swarm-store-class/swarm-store-class';
-import {
-  ESwarmStoreConnector,
-  ESwarmStoreEventNames,
-} from '../swarm-store-class/swarm-store-class.const';
-import {
-  ISwarmMessageStoreAccessControlOptions,
-  ISwarmMessageDatabaseConstructors,
-} from './swarm-message-store.types';
-import {
-  ISwarmMessageConstructor,
-  TSwarmMessageInstance,
-} from '../swarm-message/swarm-message-constructor.types';
-import {
-  ESwarmMessageStoreEventNames,
-  SWARM_MESSAGE_STORE_CONNECTOR_ORBIT_DB_ITERATOR_OPTIONS_DEFAULT,
-} from './swarm-message-store.const';
+import { ESwarmStoreConnector, ESwarmStoreEventNames } from '../swarm-store-class/swarm-store-class.const';
+import { ISwarmMessageStoreAccessControlOptions, ISwarmMessageDatabaseConstructors } from './swarm-message-store.types';
+import { ISwarmMessageConstructor, TSwarmMessageInstance } from '../swarm-message/swarm-message-constructor.types';
+import { ESwarmMessageStoreEventNames, SWARM_MESSAGE_STORE_CONNECTOR_ORBIT_DB_ITERATOR_OPTIONS_DEFAULT } from './swarm-message-store.const';
 import { extend } from '../../utils/common-utils/common-utils-objects';
 import {
   TSwarmStoreDatabaseIteratorMethodAnswer,
   TSwarmStoreDatabaseMethodAnswer,
   TSwarmStoreDatabaseEntityAddress,
 } from '../swarm-store-class/swarm-store-class.types';
-import {
-  TSwarmStoreDatabaseMethodArgument,
-  TSwarmStoreDatabaseIteratorMethodArgument,
-} from '../swarm-store-class/swarm-store-class.types';
+import { TSwarmStoreDatabaseMethodArgument, TSwarmStoreDatabaseIteratorMethodArgument } from '../swarm-store-class/swarm-store-class.types';
 import { TSwarmStoreConnectorOrbitDbDatabaseMethodNames } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
-import {
-  TSwarmStoreValueTypes,
-  TSwarmStoreDatabaseMethod,
-} from '../swarm-store-class/swarm-store-class.types';
+import { TSwarmStoreValueTypes, TSwarmStoreDatabaseMethod } from '../swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageStoreConnectReturnType } from './swarm-message-store.types';
-import {
-  ISwarmMessageStoreEvents,
-  ISwarmMessageStore,
-} from './swarm-message-store.types';
+import { ISwarmMessageStoreEvents, ISwarmMessageStore } from './swarm-message-store.types';
 import { swarmMessageStoreUtilsConnectorOptionsProvider } from './swarm-message-store-utils/swarm-message-store-utils-connector-options-provider';
 import { getMessageConstructorForDatabase } from './swarm-message-store-utils/swarm-message-store-utils-common/swarm-message-store-utils-common';
 import { ISwarmMessageStoreDeleteMessageArg } from './swarm-message-store.types';
-import {
-  TSwarmMessageSerialized,
-  TSwarmMessageConstructorBodyMessage,
-} from '../swarm-message/swarm-message-constructor.types';
+import { TSwarmMessageSerialized, TSwarmMessageConstructorBodyMessage } from '../swarm-message/swarm-message-constructor.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
-import {
-  TSwarmStoreDatabaseOptions,
-  TSwarmStoreDatabaseType,
-} from '../swarm-store-class/swarm-store-class.types';
+import { TSwarmStoreDatabaseOptions, TSwarmStoreDatabaseType } from '../swarm-store-class/swarm-store-class.types';
 import { swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl } from './swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider';
 
 import {
@@ -55,10 +28,7 @@ import {
   ISwarmMessageStoreSwarmMessageMetadata,
   TSwarmMessageStoreEntryRaw,
 } from './swarm-message-store.types';
-import {
-  TSwarmStoreDatabaseRequestMethodReturnType,
-  TSwarmStoreDatabaseEntityKey,
-} from '../swarm-store-class/swarm-store-class.types';
+import { TSwarmStoreDatabaseRequestMethodReturnType, TSwarmStoreDatabaseEntityKey } from '../swarm-store-class/swarm-store-class.types';
 import { StorageProviderInMemory } from '../storage-providers/storage-in-memory-provider/storage-in-memory-provider';
 import { StorageProvider } from '../storage-providers/storage-providers.types';
 import {
@@ -77,14 +47,8 @@ import {
   TSwarmStoreDatabaseLoadMethodAnswer,
   TSwarmStoreDatabaseCloseMethodAnswer,
 } from '../swarm-store-class/swarm-store-class.types';
-import {
-  ISwarmStoreConnectorBasic,
-  ISwarmStoreConnector,
-} from '../swarm-store-class/swarm-store-class.types';
-import {
-  ISwarmMessageStoreOptionsWithConnectorFabric,
-  TSwarmMessagesStoreGrantAccessCallback,
-} from './swarm-message-store.types';
+import { ISwarmStoreConnectorBasic, ISwarmStoreConnector } from '../swarm-store-class/swarm-store-class.types';
+import { ISwarmMessageStoreOptionsWithConnectorFabric, TSwarmMessagesStoreGrantAccessCallback } from './swarm-message-store.types';
 import {
   TSwarmStoreConnectorConnectionOptions,
   ISwarmStoreProviderOptions,
@@ -93,104 +57,30 @@ import {
 } from '../swarm-store-class/swarm-store-class.types';
 
 export class SwarmMessageStore<
-  P extends ESwarmStoreConnector,
-  ItemType extends TSwarmMessageSerialized,
-  DbType extends TSwarmStoreDatabaseType<P>,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType>,
-  PO extends TSwarmStoreConnectorConnectionOptions<
-    P,
-    ItemType,
-    DbType,
-    ConnectorBasic
-  >,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>,
-  CO extends ISwarmStoreProviderOptions<
-    P,
-    ItemType,
-    DbType,
-    ConnectorBasic,
-    PO
-  >,
-  CFO extends ISwarmStoreOptionsConnectorFabric<
-    P,
-    ItemType,
-    DbType,
-    ConnectorBasic,
-    PO,
-    CO,
-    DBO,
-    ConnectorMain
-  >,
-  ConnectorMain extends ISwarmStoreConnector<
-    P,
-    ItemType,
-    DbType,
-    ConnectorBasic,
-    PO,
-    DBO
-  >,
-  MSI extends TSwarmMessageInstance | ItemType,
-  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
-  MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
-  ACO extends
-    | ISwarmMessageStoreAccessControlOptions<P, ItemType, MSI, GAC>
-    | undefined,
-  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
-    P,
-    ItemType,
-    DbType,
-    ConnectorBasic,
-    PO,
-    CO,
-    DBO,
-    ConnectorMain,
-    CFO,
-    MSI,
-    GAC,
-    MCF,
-    ACO
-  >,
-  E extends ISwarmMessageStoreEvents<P, ItemType, DBO>,
-  DBL extends TSwarmStoreOptionsOfDatabasesKnownList<P, ItemType, DBO>
->
-  extends SwarmStore<
-    P,
-    ItemType,
-    DbType,
-    ConnectorBasic,
-    PO,
-    DBO,
-    CO,
-    CFO,
-    ConnectorMain,
-    O,
-    E,
-    DBL
+    P extends ESwarmStoreConnector,
+    ItemType extends TSwarmMessageSerialized,
+    DbType extends TSwarmStoreDatabaseType<P>,
+    ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType>,
+    PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, ConnectorBasic>,
+    DBO extends TSwarmStoreDatabaseOptions<P, ItemType>,
+    CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, ConnectorBasic, PO>,
+    CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain>,
+    ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic, PO, DBO>,
+    MSI extends TSwarmMessageInstance | ItemType,
+    GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
+    MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
+    ACO extends ISwarmMessageStoreAccessControlOptions<P, ItemType, MSI, GAC> | undefined,
+    O extends ISwarmMessageStoreOptionsWithConnectorFabric<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain, CFO, MSI, GAC, MCF, ACO>,
+    E extends ISwarmMessageStoreEvents<P, ItemType, DBO>,
+    DBL extends TSwarmStoreOptionsOfDatabasesKnownList<P, ItemType, DBO>
   >
-  implements
-    ISwarmMessageStore<
-      P,
-      ItemType,
-      DbType,
-      ConnectorBasic,
-      PO,
-      DBO,
-      CO,
-      CFO,
-      ConnectorMain,
-      MSI,
-      GAC,
-      MCF,
-      ACO,
-      O
-    > {
+  extends SwarmStore<P, ItemType, DbType, ConnectorBasic, PO, DBO, CO, CFO, ConnectorMain, O, E, DBL>
+  implements ISwarmMessageStore<P, ItemType, DbType, ConnectorBasic, PO, DBO, CO, CFO, ConnectorMain, MSI, GAC, MCF, ACO, O> {
   protected connectorType: P | undefined;
 
   protected accessControl?: ACO;
 
-  protected messageConstructors?: ISwarmMessageDatabaseConstructors<
-    PromiseResolveType<ReturnType<NonNullable<MCF>>>
-  >;
+  protected messageConstructors?: ISwarmMessageDatabaseConstructors<PromiseResolveType<ReturnType<NonNullable<MCF>>>>;
 
   protected swarmMessageConstructorFabric?: MCF;
 
@@ -198,23 +88,16 @@ export class SwarmMessageStore<
 
   protected _dbTypes: Record<string, DbType> = {};
 
-  protected _cache?: StorageProvider<
-    Exclude<MSI, ItemType>
-  > = new StorageProviderInMemory<Exclude<MSI, ItemType>>();
+  protected _cache?: StorageProvider<Exclude<MSI, ItemType>> = new StorageProviderInMemory<Exclude<MSI, ItemType>>();
 
-  protected _databasesMessagesCaches: Record<
-    string,
-    ISwarmMessageStoreUtilsMessagesCache
-  > = {};
+  protected _databasesMessagesCaches: Record<string, ISwarmMessageStoreUtilsMessagesCache> = {};
 
   protected get dbMethodAddMessage(): TSwarmStoreDatabaseMethod<P> {
     const { connectorType } = this;
 
     switch (connectorType as P) {
       case ESwarmStoreConnector.OrbitDB:
-        return (ESwarmStoreConnectorOrbitDbDatabaseMethodNames.add as TSwarmStoreConnectorOrbitDbDatabaseMethodNames) as TSwarmStoreDatabaseMethod<
-          P
-        >;
+        return (ESwarmStoreConnectorOrbitDbDatabaseMethodNames.add as TSwarmStoreConnectorOrbitDbDatabaseMethodNames) as TSwarmStoreDatabaseMethod<P>;
       default:
         throw new Error('Failed to define the method for adding message');
     }
@@ -248,22 +131,7 @@ export class SwarmMessageStore<
 
   public async connect(
     options: O
-  ): TSwarmMessageStoreConnectReturnType<
-    P,
-    ItemType,
-    DbType,
-    ConnectorBasic,
-    PO,
-    DBO,
-    CO,
-    CFO,
-    ConnectorMain,
-    MSI,
-    GAC,
-    MCF,
-    ACO,
-    O
-  > {
+  ): TSwarmMessageStoreConnectReturnType<P, ItemType, DbType, ConnectorBasic, PO, DBO, CO, CFO, ConnectorMain, MSI, GAC, MCF, ACO, O> {
     const extendsWithAccessControl = swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl<
       P,
       ItemType,
@@ -300,10 +168,7 @@ export class SwarmMessageStore<
     this.extendsWithAccessControl = extendsWithAccessControl;
     this.setOptions(optionsSwarmStore);
 
-    const connectionResult = await super.connect(
-      optionsSwarmStore,
-      optionsSwarmStore.databasesListStorage
-    );
+    const connectionResult = await super.connect(optionsSwarmStore, optionsSwarmStore.databasesListStorage);
 
     if (connectionResult instanceof Error) {
       throw connectionResult;
@@ -321,8 +186,7 @@ export class SwarmMessageStore<
    */
   public async openDatabase(dbOptions: DBO): Promise<void | Error> {
     try {
-      const optionsWithAcessControl =
-        this.extendsWithAccessControl?.(dbOptions) || dbOptions;
+      const optionsWithAcessControl = this.extendsWithAccessControl?.(dbOptions) || dbOptions;
       const dbOpenResult = await super.openDatabase(optionsWithAcessControl);
 
       if (!(dbOpenResult instanceof Error)) {
@@ -338,9 +202,7 @@ export class SwarmMessageStore<
       this._setDatabaseType(dbOptions.dbName, dbType);
     } catch (err) {
       console.error(err);
-      return new Error(
-        `Swarm message store:failed to open the database ${dbOptions.dbName}: ${err.message}`
-      );
+      return new Error(`Swarm message store:failed to open the database ${dbOptions.dbName}: ${err.message}`);
     }
   }
 
@@ -367,41 +229,29 @@ export class SwarmMessageStore<
       await this.unsetDatabaseMessagesCache(dbName);
       this._unsetDatabaseType(dbName);
     } catch (err) {
-      console.error(
-        `Failed to clear messages encrypted cache for the database ${dbName}`
-      );
+      console.error(`Failed to clear messages encrypted cache for the database ${dbName}`);
       return err;
     }
   }
 
-  public async addMessage<
-    ValueType extends MSI | TSwarmMessageConstructorBodyMessage,
-    DT extends DbType
-  >(
+  public async addMessage<ValueType extends MSI | TSwarmMessageConstructorBodyMessage, DT extends DbType>(
     dbName: DBO['dbName'],
     msg: ValueType,
     key?: TSwarmStoreDatabaseEntityKey<P>
   ): Promise<TSwarmStoreDatabaseEntityAddress<P>> {
     assert(dbName, 'Database name must be provided');
 
-    const message =
-      typeof msg === 'string'
-        ? (msg as ItemType)
-        : ((await this.constructMessage(dbName, msg)) as MSI);
+    const message = typeof msg === 'string' ? (msg as ItemType) : ((await this.constructMessage(dbName, msg)) as MSI);
 
-    this.validateMessageFormat(
-      message as MSI | TSwarmMessageConstructorBodyMessage
-    );
+    this.validateMessageFormat(message as MSI | TSwarmMessageConstructorBodyMessage);
 
     const requestAddArgument = {
       value: this.serializeMessage(message as MSI),
       key,
     } as TSwarmStoreDatabaseMethodArgument<P, ItemType, DT>;
-    const response = (await this.request<ItemType, DT>(
-      dbName,
-      this.dbMethodAddMessage,
-      requestAddArgument
-    )) as TSwarmStoreDatabaseMethodAnswer<P, ItemType> | Error;
+    const response = (await this.request<ItemType, DT>(dbName, this.dbMethodAddMessage, requestAddArgument)) as
+      | TSwarmStoreDatabaseMethodAnswer<P, ItemType>
+      | Error;
 
     if (response instanceof Error) {
       throw response;
@@ -414,36 +264,21 @@ export class SwarmMessageStore<
     return deserializedResponse;
   }
 
-  public async deleteMessage(
-    dbName: DBO['dbName'],
-    messageAddressOrDbKey: ISwarmMessageStoreDeleteMessageArg<P>
-  ): Promise<void> {
+  public async deleteMessage(dbName: DBO['dbName'], messageAddressOrDbKey: ISwarmMessageStoreDeleteMessageArg<P>): Promise<void> {
     assert(dbName, 'Database name must be provided');
     if (!messageAddressOrDbKey || typeof messageAddressOrDbKey !== 'string') {
       throw new Error('Message address must be a non empty string');
     }
 
-    const result = await this.request<ItemType, DbType>(
-      dbName,
-      this.dbMethodRemoveMessage,
-      this.getArgRemoveMessage(messageAddressOrDbKey)
-    );
+    const result = await this.request<ItemType, DbType>(dbName, this.dbMethodRemoveMessage, this.getArgRemoveMessage(messageAddressOrDbKey));
 
     if (result instanceof Error) {
       throw result;
     }
     try {
-      await this.removeSwarmMessageFromCacheByAddressOrKey(
-        dbName,
-        messageAddressOrDbKey
-      );
+      await this.removeSwarmMessageFromCacheByAddressOrKey(dbName, messageAddressOrDbKey);
     } catch (err) {
-      console.error(
-        new Error(
-          `Failed to remove a message by address or key "${messageAddressOrDbKey}" from cache for database "${dbName}"`
-        ),
-        err
-      );
+      console.error(new Error(`Failed to remove a message by address or key "${messageAddressOrDbKey}" from cache for database "${dbName}"`), err);
     }
   }
 
@@ -459,28 +294,18 @@ export class SwarmMessageStore<
       throw new Error("The database's type can't be defined");
     }
 
-    const iterator = await this.request<ValueType, DT>(
-      dbName,
-      this.dbMethodIterator,
-      this.getArgIterateDb<ValueType, DT>(dbName, options)
-    );
+    const iterator = await this.request<ValueType, DT>(dbName, this.dbMethodIterator, this.getArgIterateDb<ValueType, DT>(dbName, options));
 
     if (iterator instanceof Error) {
       throw iterator;
     }
-    return this.collectMessages(
-      dbName,
-      iterator as TSwarmStoreDatabaseIteratorMethodAnswer<P, ValueType>,
-      dbType
-    );
+    return this.collectMessages(dbName, iterator as TSwarmStoreDatabaseIteratorMethodAnswer<P, ValueType>, dbType);
   }
 
   public async collectWithMeta<ValueType extends ItemType, DT extends DbType>(
     dbName: DBO['dbName'],
     options: TSwarmStoreDatabaseIteratorMethodArgument<P, DT>
-  ): Promise<
-    Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P> | undefined>
-  > {
+  ): Promise<Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P> | undefined>> {
     assert(dbName, 'Database name should be defined');
 
     const dbType = this._getDatabaseType(dbName);
@@ -489,27 +314,14 @@ export class SwarmMessageStore<
       throw new Error("The database's type can't be defined");
     }
 
-    const rawEntries = await this.request<ValueType, DT>(
-      dbName,
-      this.dbMethodIterator,
-      this.getArgIterateDb<ValueType, DT>(dbName, options)
-    );
+    const rawEntries = await this.request<ValueType, DT>(dbName, this.dbMethodIterator, this.getArgIterateDb<ValueType, DT>(dbName, options));
 
     if (!this.checkIsRequestMethodReturnEntries(rawEntries)) {
       throw new Error('The request returns unexpected result');
     }
 
-    const collectMessagesResult = await this.collectMessages(
-      dbName,
-      rawEntries,
-      dbType
-    );
-    return this.getMessagesWithMeta(
-      collectMessagesResult,
-      rawEntries,
-      dbName,
-      dbType
-    );
+    const collectMessagesResult = await this.collectMessages(dbName, rawEntries, dbType);
+    return this.getMessagesWithMeta(collectMessagesResult, rawEntries, dbName, dbType);
   }
 
   protected validateOpts(options: O): void {
@@ -518,45 +330,21 @@ export class SwarmMessageStore<
     const { messageConstructors } = options;
 
     assert(messageConstructors, 'messages constructors must be specified');
-    assert(
-      typeof messageConstructors === 'object',
-      'messages constructors must an object'
-    );
+    assert(typeof messageConstructors === 'object', 'messages constructors must an object');
 
     const validateMessageConstructor = (mc: any) => {
-      assert(
-        typeof mc === 'object',
-        'the message constructor must be specified'
-      );
-      assert(
-        typeof mc.construct === 'function',
-        'the message constructor must have the "construct" method'
-      );
+      assert(typeof mc === 'object', 'the message constructor must be specified');
+      assert(typeof mc.construct === 'function', 'the message constructor must have the "construct" method');
     };
 
-    assert(
-      typeof messageConstructors.default === 'object',
-      'the default message constructor must be cpecified'
-    );
+    assert(typeof messageConstructors.default === 'object', 'the default message constructor must be cpecified');
     validateMessageConstructor(messageConstructors.default);
     Object.values(messageConstructors).forEach(validateMessageConstructor);
     if (options.cache) {
-      assert(
-        typeof options.cache === 'object',
-        'Cache option must be an object'
-      );
-      assert(
-        typeof options.cache.get === 'function',
-        'Cache option must implements StorageProvider and have a "get" method'
-      );
-      assert(
-        typeof options.cache.set === 'function',
-        'Cache option must implements StorageProvider and have a "set" method'
-      );
-      assert(
-        typeof options.cache.clearDb === 'function',
-        'Cache option must implements StorageProvider and have a "clearDb" method'
-      );
+      assert(typeof options.cache === 'object', 'Cache option must be an object');
+      assert(typeof options.cache.get === 'function', 'Cache option must implements StorageProvider and have a "get" method');
+      assert(typeof options.cache.set === 'function', 'Cache option must implements StorageProvider and have a "set" method');
+      assert(typeof options.cache.clearDb === 'function', 'Cache option must implements StorageProvider and have a "clearDb" method');
     }
   }
 
@@ -580,9 +368,7 @@ export class SwarmMessageStore<
    * @returns {ESwarmStoreConnectorOrbitDbDatabaseType}
    * @memberof SwarmMessageStore
    */
-  protected getOrbitDBDatabaseTypeByOptions(
-    dbOptions: DBO
-  ): ESwarmStoreConnectorOrbitDbDatabaseType {
+  protected getOrbitDBDatabaseTypeByOptions(dbOptions: DBO): ESwarmStoreConnectorOrbitDbDatabaseType {
     return dbOptions.dbType || ESwarmStoreConnectorOrbitDbDatabaseType.FEED;
   }
 
@@ -614,15 +400,11 @@ export class SwarmMessageStore<
    * @returns {(ISwarmMessageConstructor | undefined)}
    * @memberof SwarmMessageStore
    */
-  protected async getMessageConstructor(
-    dbName: DBO['dbName']
-  ): Promise<ISwarmMessageConstructor | undefined> {
+  protected async getMessageConstructor(dbName: DBO['dbName']): Promise<ISwarmMessageConstructor | undefined> {
     if (!dbName) {
       return;
     }
-    const messageConstructor =
-      this.messageConstructors &&
-      getMessageConstructorForDatabase(dbName, this.messageConstructors);
+    const messageConstructor = this.messageConstructors && getMessageConstructorForDatabase(dbName, this.messageConstructors);
 
     if (!messageConstructor) {
       return this.createMessageConstructorForDb(dbName);
@@ -632,43 +414,26 @@ export class SwarmMessageStore<
 
   protected getMessagesWithMeta(
     messages: Array<Error | Exclude<MSI, ItemType>>,
-    rawEntriesIterator: TSwarmStoreDatabaseRequestMethodEntitiesReturnType<
-      P,
-      ItemType
-    >,
+    rawEntriesIterator: TSwarmStoreDatabaseRequestMethodEntitiesReturnType<P, ItemType>,
     dbName: DBO['dbName'],
     dbType: DbType
   ): Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P> | undefined> {
     if (this.connectorType === ESwarmStoreConnector.OrbitDB) {
-      return this.joinMessagesWithRawOrbitDBEntries(
-        messages,
-        rawEntriesIterator,
-        dbName,
-        dbType
-      );
+      return this.joinMessagesWithRawOrbitDBEntries(messages, rawEntriesIterator, dbName, dbType);
     }
     return [];
   }
 
   protected joinMessagesWithRawOrbitDBEntries(
     messages: Array<Error | Exclude<MSI, ItemType>>,
-    rawEntriesIterator: TSwarmStoreDatabaseRequestMethodEntitiesReturnType<
-      P,
-      ItemType
-    >,
+    rawEntriesIterator: TSwarmStoreDatabaseRequestMethodEntitiesReturnType<P, ItemType>,
     dbName: DBO['dbName'],
     dbType: DbType
   ): Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P> | undefined> {
     const messagesWithMeta = messages.map((messageInstance, idx) => {
-      const entriesIterator =
-        rawEntriesIterator instanceof Array
-          ? rawEntriesIterator
-          : [rawEntriesIterator];
+      const entriesIterator = rawEntriesIterator instanceof Array ? rawEntriesIterator : [rawEntriesIterator];
       const logEntry = entriesIterator[idx];
-      const messageMetadata = this.getSwarmMessageMetadata<ItemType>(
-        logEntry as TSwarmMessageStoreEntryRaw<P, ItemType>,
-        dbType
-      );
+      const messageMetadata = this.getSwarmMessageMetadata<ItemType>(logEntry as TSwarmMessageStoreEntryRaw<P, ItemType>, dbType);
 
       if (!messageMetadata) {
         return undefined;
@@ -696,14 +461,7 @@ export class SwarmMessageStore<
     key: TSwarmStoreDatabaseEntityKey<P> | undefined, // message key
     error: Error
   ) => {
-    this.emit(
-      ESwarmMessageStoreEventNames.NEW_MESSAGE_ERROR,
-      dbName,
-      message,
-      error,
-      messageAddr,
-      key
-    );
+    this.emit(ESwarmMessageStoreEventNames.NEW_MESSAGE_ERROR, dbName, message, error, messageAddr, key);
   };
 
   /**
@@ -724,13 +482,7 @@ export class SwarmMessageStore<
       messageAddr,
       messageKey,
     });
-    this.emit(
-      ESwarmMessageStoreEventNames.NEW_MESSAGE,
-      dbName,
-      message,
-      messageAddr,
-      messageKey
-    );
+    this.emit(ESwarmMessageStoreEventNames.NEW_MESSAGE, dbName, message, messageAddr, messageKey);
   };
 
   /**
@@ -752,14 +504,7 @@ export class SwarmMessageStore<
       messageHash,
       messageKey,
     });
-    this.emit(
-      ESwarmMessageStoreEventNames.DELETE_MESSAGE,
-      dbName,
-      userId,
-      messageHash,
-      messageDeletedHash,
-      messageKey
-    );
+    this.emit(ESwarmMessageStoreEventNames.DELETE_MESSAGE, dbName, userId, messageHash, messageDeletedHash, messageKey);
   };
 
   /**
@@ -784,15 +529,12 @@ export class SwarmMessageStore<
       typeof message.payload === 'object' &&
       typeof message.hash === 'string' &&
       typeof message.payload.value === 'string' &&
-      (dbType !== ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ||
-        typeof message.payload.key === 'string')
+      (dbType !== ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE || typeof message.payload.key === 'string')
     );
   }
 
   protected getSwarmMessageMetadataOrbitDb<T extends ItemType>(
-    message:
-      | TSwarmMessageStoreEntryRaw<ESwarmStoreConnector.OrbitDB, T>
-      | undefined,
+    message: TSwarmMessageStoreEntryRaw<ESwarmStoreConnector.OrbitDB, T> | undefined,
     dbType: DbType
   ): ISwarmMessageStoreSwarmMessageMetadata<P> | undefined {
     if (!message) {
@@ -800,10 +542,7 @@ export class SwarmMessageStore<
     }
     return {
       messageAddress: message.hash,
-      key:
-        dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
-          ? message.payload.key
-          : undefined,
+      key: dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? message.payload.key : undefined,
     } as ISwarmMessageStoreSwarmMessageMetadata<P>;
   }
 
@@ -844,11 +583,7 @@ export class SwarmMessageStore<
     }
 
     const messageMetadata = this.getSwarmMessageMetadata<T>(message, dbType);
-    const swarmMessageInstance = await this.constructMessage(
-      dbName,
-      (message.payload.value as unknown) as MSI,
-      messageMetadata
-    );
+    const swarmMessageInstance = await this.constructMessage(dbName, (message.payload.value as unknown) as MSI, messageMetadata);
 
     if (swarmMessageInstance instanceof Error) {
       throw swarmMessageInstance;
@@ -872,26 +607,14 @@ export class SwarmMessageStore<
     let swarmMessageInstance: TSwarmMessageInstance | undefined;
 
     try {
-      swarmMessageInstance = await this.getSwarmMessageFromCacheByRawEntry<T>(
-        dbName,
-        dbType,
-        message
-      );
+      swarmMessageInstance = await this.getSwarmMessageFromCacheByRawEntry<T>(dbName, dbType, message);
     } catch (err) {
-      console.error(
-        new Error(
-          `Failed to read a swarm message because the error: ${err.message}`
-        )
-      );
+      console.error(new Error(`Failed to read a swarm message because the error: ${err.message}`));
     }
 
     if (!swarmMessageInstance) {
       try {
-        swarmMessageInstance = await this.constructNewSwarmMessageFromRawEntry(
-          dbName,
-          dbType,
-          message
-        );
+        swarmMessageInstance = await this.constructNewSwarmMessageFromRawEntry(dbName, dbType, message);
       } catch (err) {
         return this.emitMessageConstructionFails(
           dbName,
@@ -909,12 +632,7 @@ export class SwarmMessageStore<
         return;
       }
       const { messageAddress, key } = messageWithMeta;
-      return this.emitMessageNew(
-        dbName,
-        swarmMessageInstance as Exclude<MSI, ItemType>,
-        messageAddress,
-        key
-      );
+      return this.emitMessageNew(dbName, swarmMessageInstance as Exclude<MSI, ItemType>, messageAddress, key);
     }
   };
 
@@ -923,13 +641,7 @@ export class SwarmMessageStore<
    *
    * @memberof SwarmMessageStore
    */
-  protected handleNewMessage = async <T extends ItemType>([
-    dbName,
-    message,
-    messageAddress,
-    heads,
-    dbType,
-  ]: [
+  protected handleNewMessage = async <T extends ItemType>([dbName, message, messageAddress, heads, dbType]: [
     DBO['dbName'],
     TSwarmMessageStoreEntryRaw<P, T>,
     TSwarmStoreDatabaseEntityAddress<P>,
@@ -947,15 +659,12 @@ export class SwarmMessageStore<
         dbName,
         message.identity.id,
         message.hash as TSwarmStoreDatabaseEntityAddress<P>,
-        (message.payload
-          .value as unknown) as DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+        (message.payload.value as unknown) as DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
           ? TSwarmStoreDatabaseEntityAddress<P> | undefined
           : TSwarmStoreDatabaseEntityAddress<P>,
         (dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
           ? message.payload.key
-          : undefined) as DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
-          ? TSwarmStoreDatabaseEntityKey<P>
-          : undefined
+          : undefined) as DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined
       );
     }
     return this.handleNewDataMessage<T>(dbName, dbType, message);
@@ -972,28 +681,14 @@ export class SwarmMessageStore<
    * @param {(TSwarmMessageInstance | string)} message
    * @memberof SwarmMessageStore
    */
-  protected validateMessageFormat(
-    message: MSI | TSwarmMessageConstructorBodyMessage
-  ): message is MSI | TSwarmMessageConstructorBodyMessage {
+  protected validateMessageFormat(message: MSI | TSwarmMessageConstructorBodyMessage): message is MSI | TSwarmMessageConstructorBodyMessage {
     assert(message, 'Message must be provided');
     if (typeof message === 'object') {
-      assert(
-        typeof (message as TSwarmMessageInstance).bdy === 'object',
-        'Message must be an object which has bdy property with an object value'
-      );
-      assert(
-        typeof (message as TSwarmMessageInstance).uid === 'string',
-        'Message must be an object which has uid property with a string value'
-      );
-      assert(
-        typeof (message as TSwarmMessageInstance).sig === 'string',
-        'Message must be an object which has sig property with a string value'
-      );
+      assert(typeof (message as TSwarmMessageInstance).bdy === 'object', 'Message must be an object which has bdy property with an object value');
+      assert(typeof (message as TSwarmMessageInstance).uid === 'string', 'Message must be an object which has uid property with a string value');
+      assert(typeof (message as TSwarmMessageInstance).sig === 'string', 'Message must be an object which has sig property with a string value');
     } else {
-      assert(
-        typeof message === 'string',
-        'Message must be a string or an object'
-      );
+      assert(typeof message === 'string', 'Message must be a string or an object');
     }
     return true;
   }
@@ -1013,13 +708,9 @@ export class SwarmMessageStore<
     switch (connectorType) {
       case ESwarmStoreConnector.OrbitDB:
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-        return (String(message) as TSwarmStoreValueTypes<
-          ESwarmStoreConnector.OrbitDB
-        >) as ItemType;
+        return (String(message) as TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>) as ItemType;
       default:
-        throw new Error(
-          'Failed to serizlize the message to the store connector compatible format'
-        );
+        throw new Error('Failed to serizlize the message to the store connector compatible format');
     }
   }
 
@@ -1039,15 +730,9 @@ export class SwarmMessageStore<
 
     switch (connectorType) {
       case ESwarmStoreConnector.OrbitDB:
-        return messageAddress as TSwarmStoreDatabaseMethodArgument<
-          P,
-          ItemType,
-          DBT
-        >;
+        return messageAddress as TSwarmStoreDatabaseMethodArgument<P, ItemType, DBT>;
       default:
-        throw new Error(
-          'Failed to define argument value for a swarm message removing'
-        );
+        throw new Error('Failed to define argument value for a swarm message removing');
     }
   }
 
@@ -1069,27 +754,19 @@ export class SwarmMessageStore<
       case ESwarmStoreConnector.OrbitDB:
         assert(options, 'The iteratro opti');
         return (options
-          ? (extend(
-              options,
-              SWARM_MESSAGE_STORE_CONNECTOR_ORBIT_DB_ITERATOR_OPTIONS_DEFAULT
-            ) as TSwarmStoreDatabaseIteratorMethodArgument<P, DBT>)
+          ? (extend(options, SWARM_MESSAGE_STORE_CONNECTOR_ORBIT_DB_ITERATOR_OPTIONS_DEFAULT) as TSwarmStoreDatabaseIteratorMethodArgument<P, DBT>)
           : (SWARM_MESSAGE_STORE_CONNECTOR_ORBIT_DB_ITERATOR_OPTIONS_DEFAULT as TSwarmStoreDatabaseIteratorMethodArgument<
               P,
               DBT
             >)) as TSwarmStoreDatabaseMethodArgument<P, V, DBT>;
       default:
-        throw new Error(
-          'Failed to define argument value for a swarm message collecting'
-        );
+        throw new Error('Failed to define argument value for a swarm message collecting');
     }
   }
 
   protected async collectMessagesFromOrbitDBIterator<T extends ItemType>(
     dbName: DBO['dbName'],
-    rawEnties: TSwarmStoreDatabaseRequestMethodEntitiesReturnType<
-      ESwarmStoreConnector.OrbitDB,
-      T
-    >, // TODO - may not be a string,
+    rawEnties: TSwarmStoreDatabaseRequestMethodEntitiesReturnType<ESwarmStoreConnector.OrbitDB, T>, // TODO - may not be a string,
     dbType: DbType
   ): Promise<Array<Exclude<MSI, ItemType> | Error>> {
     if (rawEnties instanceof Error) {
@@ -1108,15 +785,8 @@ export class SwarmMessageStore<
         return logEntry;
       }
       try {
-        const messageMetadata = this.getSwarmMessageMetadata<T>(
-          logEntry as TSwarmMessageStoreEntryRaw<P, T>,
-          dbType
-        );
-        const message = await this.constructMessage(
-          dbName,
-          (logEntry.payload.value as ItemType) as MSI,
-          messageMetadata
-        );
+        const messageMetadata = this.getSwarmMessageMetadata<T>(logEntry as TSwarmMessageStoreEntryRaw<P, T>, dbType);
+        const message = await this.constructMessage(dbName, (logEntry.payload.value as ItemType) as MSI, messageMetadata);
 
         return message;
       } catch (err) {
@@ -1131,12 +801,9 @@ export class SwarmMessageStore<
   ): rawEntries is TSwarmStoreDatabaseLoadMethodAnswer<P> {
     if (typeof rawEntries === 'object') {
       if (
-        typeof (rawEntries as TSwarmStoreDatabaseLoadMethodAnswer<P>).count ===
-          'number' &&
-        typeof (rawEntries as TSwarmStoreDatabaseLoadMethodAnswer<P>)
-          .loadedCount === 'number' &&
-        typeof (rawEntries as TSwarmStoreDatabaseLoadMethodAnswer<P>)
-          .overallCount === 'number'
+        typeof (rawEntries as TSwarmStoreDatabaseLoadMethodAnswer<P>).count === 'number' &&
+        typeof (rawEntries as TSwarmStoreDatabaseLoadMethodAnswer<P>).loadedCount === 'number' &&
+        typeof (rawEntries as TSwarmStoreDatabaseLoadMethodAnswer<P>).overallCount === 'number'
       ) {
         return true;
       }
@@ -1171,14 +838,10 @@ export class SwarmMessageStore<
       throw rawEntries;
     }
     if (this.isSwarmStoreDatabaseLoadMethodAnswer(rawEntries)) {
-      throw new Error(
-        'The argument is TSwarmStoreDatabaseLoadMethodAnswer type'
-      );
+      throw new Error('The argument is TSwarmStoreDatabaseLoadMethodAnswer type');
     }
     if (this.isSwarmStoreDatabaseCloseMethodAnswer(rawEntries)) {
-      throw new Error(
-        'The argument is TSwarmStoreDatabaseCloseMethodAnswer type'
-      );
+      throw new Error('The argument is TSwarmStoreDatabaseCloseMethodAnswer type');
     }
     return true;
   }
@@ -1202,15 +865,9 @@ export class SwarmMessageStore<
 
     switch (connectorType) {
       case ESwarmStoreConnector.OrbitDB:
-        return this.collectMessagesFromOrbitDBIterator<T>(
-          dbName,
-          rawEntries,
-          dbType
-        );
+        return this.collectMessagesFromOrbitDBIterator<T>(dbName, rawEntries, dbType);
       default:
-        throw new Error(
-          'Failed to define argument value for a swarm message collecting'
-        );
+        throw new Error('Failed to define argument value for a swarm message collecting');
     }
   }
 
@@ -1242,9 +899,7 @@ export class SwarmMessageStore<
     }
   }
 
-  protected async createMessageConstructorForDb(
-    dbName: DBO['dbName']
-  ): Promise<ISwarmMessageConstructor | undefined> {
+  protected async createMessageConstructorForDb(dbName: DBO['dbName']): Promise<ISwarmMessageConstructor | undefined> {
     if (!this.swarmMessageConstructorFabric) {
       return;
     }
@@ -1272,10 +927,7 @@ export class SwarmMessageStore<
       // try to read message from the cache at first
       // by it's unique address
       const { messageAddress } = metadata;
-      const messageCached = await this.getSwarmMessageInstanceFromCacheByAddress(
-        dbName,
-        messageAddress
-      );
+      const messageCached = await this.getSwarmMessageInstanceFromCacheByAddress(dbName, messageAddress);
 
       if (messageCached) {
         return messageCached;
@@ -1284,10 +936,7 @@ export class SwarmMessageStore<
 
     let swarmMessageInstance: TSwarmMessageInstance;
 
-    if (
-      (message as TSwarmMessageInstance).bdy &&
-      (message as TSwarmMessageInstance).sig
-    ) {
+    if ((message as TSwarmMessageInstance).bdy && (message as TSwarmMessageInstance).sig) {
       // if the message argument is already instance of a swarm message
       swarmMessageInstance = message as TSwarmMessageInstance;
     } else {
@@ -1296,31 +945,19 @@ export class SwarmMessageStore<
       const messageConsturctor = await this.getMessageConstructor(dbName);
 
       if (!messageConsturctor) {
-        throw new Error(
-          `A message consturctor is not specified for the database ${dbName}`
-        );
+        throw new Error(`A message consturctor is not specified for the database ${dbName}`);
       }
-      swarmMessageInstance = await messageConsturctor.construct(
-        message as TSwarmMessageConstructorBodyMessage
-      );
+      swarmMessageInstance = await messageConsturctor.construct(message as TSwarmMessageConstructorBodyMessage);
     }
     if (swarmMessageInstance && metadata) {
-      await this.addMessageToCacheByMetadata(
-        dbName,
-        metadata,
-        swarmMessageInstance as Exclude<MSI, ItemType>
-      );
+      await this.addMessageToCacheByMetadata(dbName, metadata, swarmMessageInstance as Exclude<MSI, ItemType>);
     }
     return swarmMessageInstance as Exclude<MSI, ItemType>;
   }
 
-  protected getOptionsForDatabaseMessagesCache(
-    dbName: DBO['dbName']
-  ): ISwarmMessageStoreUtilsMessagesCacheOptions {
+  protected getOptionsForDatabaseMessagesCache(dbName: DBO['dbName']): ISwarmMessageStoreUtilsMessagesCacheOptions {
     if (!this._cache) {
-      throw new Error(
-        'Instance of storage used as messages cache is not defined'
-      );
+      throw new Error('Instance of storage used as messages cache is not defined');
     }
     return {
       dbName,
@@ -1335,9 +972,7 @@ export class SwarmMessageStore<
    * @memberof SwarmMessageStore
    * @throws
    */
-  protected openDatabaseMessagesCache = async (
-    dbName: DBO['dbName']
-  ): Promise<void> => {
+  protected openDatabaseMessagesCache = async (dbName: DBO['dbName']): Promise<void> => {
     const messagesCache = new SwarmMessageStoreUtilsMessagesCache();
     const options = this.getOptionsForDatabaseMessagesCache(dbName);
 
@@ -1352,9 +987,7 @@ export class SwarmMessageStore<
    * @returns {Promise<void>}
    * @throws
    */
-  protected unsetDatabaseMessagesCache = async (
-    dbName: DBO['dbName']
-  ): Promise<void> => {
+  protected unsetDatabaseMessagesCache = async (dbName: DBO['dbName']): Promise<void> => {
     const messagesCache = this._databasesMessagesCaches[dbName];
 
     if (messagesCache) {
@@ -1370,9 +1003,7 @@ export class SwarmMessageStore<
    * @returns {(ISwarmMessageStoreUtilsMessagesCache | undefined)}
    * @memberof SwarmMessageStore
    */
-  protected getMessagesCacheForDb(
-    dbName: DBO['dbName']
-  ): ISwarmMessageStoreUtilsMessagesCache | undefined {
+  protected getMessagesCacheForDb(dbName: DBO['dbName']): ISwarmMessageStoreUtilsMessagesCache | undefined {
     return this._databasesMessagesCaches[dbName];
   }
 
@@ -1396,9 +1027,7 @@ export class SwarmMessageStore<
 
     if (cache) {
       const { messageAddress, key } = messageMetadata;
-      const pending = [
-        cache.setMessageByAddress(messageAddress, messageInstance),
-      ];
+      const pending = [cache.setMessageByAddress(messageAddress, messageInstance)];
 
       if (key) {
         pending.push(cache.setMessageAddressForKey(key, messageAddress));
@@ -1407,10 +1036,7 @@ export class SwarmMessageStore<
     }
   }
 
-  protected async removeSwarmMessageFromCacheByKey(
-    dbName: DBO['dbName'],
-    key: TSwarmStoreDatabaseEntityKey<P>
-  ): Promise<void> {
+  protected async removeSwarmMessageFromCacheByKey(dbName: DBO['dbName'], key: TSwarmStoreDatabaseEntityKey<P>): Promise<void> {
     const cache = this.getMessagesCacheForDb(dbName);
 
     if (cache) {
@@ -1418,10 +1044,7 @@ export class SwarmMessageStore<
     }
   }
 
-  protected async removeSwarmMessageFromCacheByAddress(
-    dbName: DBO['dbName'],
-    messageAddress: TSwarmStoreDatabaseEntityAddress<P>
-  ): Promise<void> {
+  protected async removeSwarmMessageFromCacheByAddress(dbName: DBO['dbName'], messageAddress: TSwarmStoreDatabaseEntityAddress<P>): Promise<void> {
     const cache = this.getMessagesCacheForDb(dbName);
 
     if (cache) {
@@ -1438,29 +1061,16 @@ export class SwarmMessageStore<
    * @param {ISwarmMessageStoreDeleteMessageArg} deleteMessageArg
    * @memberof SwarmMessageStore
    */
-  protected async removeSwarmMessageFromCacheByAddressOrKey(
-    dbName: DBO['dbName'],
-    deleteMessageArg: ISwarmMessageStoreDeleteMessageArg<P>
-  ) {
+  protected async removeSwarmMessageFromCacheByAddressOrKey(dbName: DBO['dbName'], deleteMessageArg: ISwarmMessageStoreDeleteMessageArg<P>) {
     const databaseType = this._getDatabaseType(dbName);
 
-    if (
-      deleteMessageArg &&
-      databaseType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
-    ) {
+    if (deleteMessageArg && databaseType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE) {
       return this.removeSwarmMessageFromCacheByKey(dbName, deleteMessageArg);
     }
     if (deleteMessageArg) {
-      return this.removeSwarmMessageFromCacheByAddress(
-        dbName,
-        deleteMessageArg
-      );
+      return this.removeSwarmMessageFromCacheByAddress(dbName, deleteMessageArg);
     }
-    console.warn(
-      'The message address or key is not provided',
-      dbName,
-      deleteMessageArg
-    );
+    console.warn('The message address or key is not provided', dbName, deleteMessageArg);
   }
 
   protected async getSwarmMessageInstanceFromCacheByAddress(
@@ -1470,9 +1080,7 @@ export class SwarmMessageStore<
     const cache = this.getMessagesCacheForDb(dbName);
 
     if (cache) {
-      return cache.getMessageByAddress(messageAddress) as Promise<
-        Exclude<MSI, ItemType> | undefined
-      >;
+      return cache.getMessageByAddress(messageAddress) as Promise<Exclude<MSI, ItemType> | undefined>;
     }
   }
 
@@ -1485,10 +1093,7 @@ export class SwarmMessageStore<
     if (!messageMetadata) {
       return;
     }
-    return await this.getSwarmMessageInstanceFromCacheByAddress(
-      dbName,
-      messageMetadata.messageAddress
-    );
+    return await this.getSwarmMessageInstanceFromCacheByAddress(dbName, messageMetadata.messageAddress);
   }
 
   /**
@@ -1513,8 +1118,7 @@ export class SwarmMessageStore<
    * @param {string} dbName
    * @returns {(ESwarmStoreConnectorOrbitDbDatabaseType | undefined)}
    */
-  protected _getDatabaseType = (dbName: DBO['dbName']): DbType | undefined =>
-    this._dbTypes[dbName];
+  protected _getDatabaseType = (dbName: DBO['dbName']): DbType | undefined => this._dbTypes[dbName];
 
   /**
    * Connect to the cache store
@@ -1531,9 +1135,7 @@ export class SwarmMessageStore<
 
     const connectToCacheResult = await cacheStore.connect();
     if (connectToCacheResult instanceof Error) {
-      throw new Error(
-        `Failed to connect to cache store: ${connectToCacheResult.message}`
-      );
+      throw new Error(`Failed to connect to cache store: ${connectToCacheResult.message}`);
     }
   };
 }

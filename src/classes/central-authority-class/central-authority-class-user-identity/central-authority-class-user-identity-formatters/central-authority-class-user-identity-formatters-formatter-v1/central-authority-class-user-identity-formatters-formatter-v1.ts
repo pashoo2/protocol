@@ -8,16 +8,9 @@ import {
 } from '../../central-authority-class-user-identity.const';
 import { validateUserIdentityDescriptionVersion } from '../../central-authority-class-user-identity-validators/central-authority-class-user-identity-validators.utils';
 
-export const formatterV1 = (
-  userIdentityDescription: ICAUserUniqueIdentifierDescription
-): TCentralAuthorityUserIdentity | Error => {
-  const {
-    [CA_USER_IDENTITY_VERSION_PROP_NAME]: version,
-  } = userIdentityDescription;
-  const validationResult = validateUserIdentityDescriptionVersion(
-    version,
-    userIdentityDescription
-  );
+export const formatterV1 = (userIdentityDescription: ICAUserUniqueIdentifierDescription): TCentralAuthorityUserIdentity | Error => {
+  const { [CA_USER_IDENTITY_VERSION_PROP_NAME]: version } = userIdentityDescription;
+  const validationResult = validateUserIdentityDescriptionVersion(version, userIdentityDescription);
 
   if (validationResult instanceof Error) {
     return validationResult;

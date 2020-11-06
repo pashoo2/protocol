@@ -1,14 +1,8 @@
-import {
-  TSwarmMessageBodyRaw,
-  ISwarmMessageConstructor,
-} from '../swarm-message/swarm-message-constructor.types';
+import { TSwarmMessageBodyRaw, ISwarmMessageConstructor } from '../swarm-message/swarm-message-constructor.types';
 import { TSecretStorageAuthOptions } from '../secret-storage-class/secret-storage-class.types';
 import { TSwarmMessageConstructorOptions } from '../swarm-message/swarm-message-constructor.types';
 import { IStorageCommon } from 'types/storage.types';
-import {
-  ISecretStorage,
-  IISecretStorageOptions,
-} from '../secret-storage-class/secret-storage-class.types';
+import { ISecretStorage, IISecretStorageOptions } from '../secret-storage-class/secret-storage-class.types';
 
 export interface ISwarmMessgaeEncryptedCacheOptionsStorageProvider {
   storageProvider: ISecretStorage;
@@ -116,9 +110,7 @@ export interface ISwarmMessgaeEncryptedCache extends IStorageCommon {
  * @throws
  */
 export interface ISwarmMessageEncryptedCacheFabric {
-  (storageProviderOptions?: IISecretStorageOptions): Promise<
-    ISwarmMessgaeEncryptedCache
-  >;
+  (storageProviderOptions?: IISecretStorageOptions): Promise<ISwarmMessgaeEncryptedCache>;
 }
 
 /**
@@ -129,8 +121,7 @@ export interface ISwarmMessageEncryptedCacheFabric {
  * @interface ISwarmMessageConstructorWithEncryptedCacheFabric
  */
 export interface ISwarmMessageConstructorWithEncryptedCacheFabric {
-  (
-    swarmMessageConstructorOptions: Partial<TSwarmMessageConstructorOptions>,
-    storageProviderOptions?: IISecretStorageOptions
-  ): Promise<ISwarmMessageConstructor>;
+  (swarmMessageConstructorOptions: Partial<TSwarmMessageConstructorOptions>, storageProviderOptions?: IISecretStorageOptions): Promise<
+    ISwarmMessageConstructor
+  >;
 }

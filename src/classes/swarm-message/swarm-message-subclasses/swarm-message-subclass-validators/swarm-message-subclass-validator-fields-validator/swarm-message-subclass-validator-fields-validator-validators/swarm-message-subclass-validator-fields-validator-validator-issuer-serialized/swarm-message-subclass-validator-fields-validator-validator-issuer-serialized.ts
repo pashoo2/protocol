@@ -7,9 +7,7 @@ import { TSwarmMessaggeIssuerSerialized } from './swarm-message-subclass-validat
  * @param {string} issuer
  * @throws
  */
-export function validateIssuerSerializedFormat(
-  issuer: TSwarmMessaggeIssuerSerialized
-): void {
+export function validateIssuerSerializedFormat(issuer: TSwarmMessaggeIssuerSerialized): void {
   validateIssuerDesirizlizedFormat(issuer);
 }
 

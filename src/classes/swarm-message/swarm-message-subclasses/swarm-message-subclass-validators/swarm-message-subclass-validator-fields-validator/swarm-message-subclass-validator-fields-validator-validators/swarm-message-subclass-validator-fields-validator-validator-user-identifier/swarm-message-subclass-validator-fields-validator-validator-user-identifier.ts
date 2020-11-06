@@ -13,28 +13,17 @@ import { CA_USER_IDENTITY_VERSION_PROP_NAME } from '../../../../../../central-au
  * @param {string} userId
  * @throws
  */
-export function validateUserIdentifier(
-  userId: TSwarmMessageUserIdentifierSerialized,
-  validVersions?: TSwarmMessageUserIdentifierVersion[]
-): void {
+export function validateUserIdentifier(userId: TSwarmMessageUserIdentifierSerialized, validVersions?: TSwarmMessageUserIdentifierVersion[]): void {
   assert(userId != null, 'User id must be specified');
   assert(typeof userId === 'string', 'User id must be a string');
-  assert(
-    userId.length <
-      SWARM_MESSAGE_SUBCLASS_VALIDATOR_USER_IDENTITY_SERIALIZED_MAX_LENGTH,
-    'User ientity if too large'
-  );
+  assert(userId.length < SWARM_MESSAGE_SUBCLASS_VALIDATOR_USER_IDENTITY_SERIALIZED_MAX_LENGTH, 'User ientity if too large');
 
   const uid = new CentralAuthorityIdentity(userId);
 
   assert(uid.isValid, 'The user identity is not valid');
   if (validVersions) {
     assert(
-      validVersions.includes(
-        (uid.identityDescription as ICAUserUniqueIdentifierDescription)[
-          CA_USER_IDENTITY_VERSION_PROP_NAME
-        ]
-      ),
+      validVersions.includes((uid.identityDescription as ICAUserUniqueIdentifierDescription)[CA_USER_IDENTITY_VERSION_PROP_NAME]),
       'The version of the user identity is not supported'
     );
   }

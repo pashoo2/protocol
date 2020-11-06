@@ -1,27 +1,14 @@
-import {
-  FILE_STORAGE_SERVICE_STATUS,
-  FILE_STORAGE_SERVICE_TYPE,
-} from '../../filestorage-class.const';
+import { FILE_STORAGE_SERVICE_STATUS, FILE_STORAGE_SERVICE_TYPE } from '../../filestorage-class.const';
 import HttpRequest from 'classes/basic-classes/http-request-class-base/http-request-class-base';
-import {
-  IFileStorageClassProviderHTTPFileGetOptions,
-  IFileStorageClassProviderHTTPFileAddOptions,
-} from './filestorage-class-provider-http.types';
-import {
-  FILE_STORAGE_PROVIDER_HTTP_TYPE,
-  FILE_STORAGE_PROVIDER_HTTP_IDENTIFIER,
-} from './filestorage-class-provider-http.const';
+import { IFileStorageClassProviderHTTPFileGetOptions, IFileStorageClassProviderHTTPFileAddOptions } from './filestorage-class-provider-http.types';
+import { FILE_STORAGE_PROVIDER_HTTP_TYPE, FILE_STORAGE_PROVIDER_HTTP_IDENTIFIER } from './filestorage-class-provider-http.const';
 import { HTTP_REQUEST_MODE } from 'classes/basic-classes/http-request-class-base';
 import { downloadFileByUrl } from 'utils/files-utils/files-utils-download';
 
-import {
-  IFileStorageService,
-  TFileStorageFileAddress,
-} from '../../filestorage-class.types';
+import { IFileStorageService, TFileStorageFileAddress } from '../../filestorage-class.types';
 import { TFileStorageFile } from '../../filestorage-class.types';
 
-export class FileStorageClassProviderHTTP
-  implements IFileStorageService<FILE_STORAGE_SERVICE_TYPE.HTTP> {
+export class FileStorageClassProviderHTTP implements IFileStorageService<FILE_STORAGE_SERVICE_TYPE.HTTP> {
   public type = FILE_STORAGE_PROVIDER_HTTP_TYPE;
 
   public readonly isSingleton = true;
@@ -42,18 +29,11 @@ export class FileStorageClassProviderHTTP
 
   public async close() {}
 
-  public add = async (
-    filename: string,
-    file: TFileStorageFile,
-    options?: {}
-  ): Promise<TFileStorageFileAddress> => {
+  public add = async (filename: string, file: TFileStorageFile, options?: {}): Promise<TFileStorageFileAddress> => {
     throw new Error('The HTTP provider does not supports files uploading');
   };
 
-  public get = async (
-    addr: TFileStorageFileAddress,
-    options?: IFileStorageClassProviderHTTPFileGetOptions
-  ): Promise<File> => {
+  public get = async (addr: TFileStorageFileAddress, options?: IFileStorageClassProviderHTTPFileGetOptions): Promise<File> => {
     const urlNormalized = this.getFileURL(addr);
     const req = new HttpRequest({
       credentials: 'include',
@@ -69,10 +49,7 @@ export class FileStorageClassProviderHTTP
     return result;
   };
 
-  public download = async (
-    addr: TFileStorageFileAddress,
-    options?: IFileStorageClassProviderHTTPFileAddOptions
-  ) => {
+  public download = async (addr: TFileStorageFileAddress, options?: IFileStorageClassProviderHTTPFileAddOptions) => {
     const urlNormalized = this.getFileURL(addr);
 
     downloadFileByUrl(urlNormalized);
@@ -89,10 +66,7 @@ export class FileStorageClassProviderHTTP
 
     const isHttps = addr.startsWith('/https');
     const protocol = isHttps ? 'https://' : 'http://';
-    const addrWithoutPrefix = (isHttps ? addr.slice(6) : addr.slice(5)).replace(
-      /^\W+/,
-      ''
-    );
+    const addrWithoutPrefix = (isHttps ? addr.slice(6) : addr.slice(5)).replace(/^\W+/, '');
     const resultedUrl = `${protocol}${addrWithoutPrefix}`;
 
     return String(new URL(resultedUrl));

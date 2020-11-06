@@ -127,20 +127,12 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
   }
 
   /** */
-  public construct = async <
-    T extends TSwarmMessageConstructorArgumentBody | TSwarmMessageSerialized
-  >(
-    message: T
-  ): Promise<TSwarmMessageInstance> => {
+  public construct = async <T extends TSwarmMessageConstructorArgumentBody | TSwarmMessageSerialized>(message: T): Promise<TSwarmMessageInstance> => {
     assert(message, 'Message must not be empty');
     if (typeof message === 'string') {
       return this.parse(message);
     } else if (typeof message === 'object') {
-      return this.serialize(
-        message as
-          | TSwarmMessageConstructorArgumentBody
-          | TSwarmMessageConstructorArgumentBodyPrivate
-      );
+      return this.serialize(message as TSwarmMessageConstructorArgumentBody | TSwarmMessageConstructorArgumentBodyPrivate);
     }
     throw new Error('A message must be an object or a string');
   };
@@ -160,18 +152,9 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
 
     const { utils, caConnection, instances, validation } = options;
 
-    assert(
-      caConnection,
-      'There is no connection to the central authority provided'
-    );
-    assert(
-      typeof caConnection === 'object',
-      'Connection to the central authority must be an object'
-    );
-    assert(
-      caConnection.isRunning === true,
-      'Connection to the central authority must be already running'
-    );
+    assert(caConnection, 'There is no connection to the central authority provided');
+    assert(typeof caConnection === 'object', 'Connection to the central authority must be an object');
+    assert(caConnection.isRunning === true, 'Connection to the central authority must be already running');
     assert(
       typeof caConnection.getUserIdentity === 'function',
       'Connection to the central authority incorrectly implements the interface, cause there is no method to get the current user identity'
@@ -180,21 +163,12 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
       assert(typeof utils === 'object', 'The utils must be an object');
     }
     if (validation) {
-      assert(
-        typeof validation === 'object',
-        'The validation options must be an object'
-      );
+      assert(typeof validation === 'object', 'The validation options must be an object');
       if (validation.formatValidatorOpts) {
-        assert(
-          typeof validation.formatValidatorOpts === 'object',
-          'The formatValidatorOpts options must be an object'
-        );
+        assert(typeof validation.formatValidatorOpts === 'object', 'The formatValidatorOpts options must be an object');
       }
       if (validation.signatureValidationOpts) {
-        assert(
-          typeof validation.signatureValidationOpts === 'object',
-          'The signatureValidationOpts options must be an object'
-        );
+        assert(typeof validation.signatureValidationOpts === 'object', 'The signatureValidationOpts options must be an object');
       }
     }
 
@@ -203,28 +177,16 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
     if (instances) {
       assert(typeof instances === 'object', 'The instances must be an object');
       if (instances.parser) {
-        assert(
-          typeof instances.parser === 'object',
-          'A parser instance must be an object'
-        );
+        assert(typeof instances.parser === 'object', 'A parser instance must be an object');
       }
       if (instances.serizlizer) {
-        assert(
-          typeof instances.serizlizer === 'object',
-          'A serizlizer instance must be an object'
-        );
+        assert(typeof instances.serizlizer === 'object', 'A serizlizer instance must be an object');
       }
       if (instances.validator) {
-        assert(
-          typeof instances.validator === 'object',
-          'A validator instance must be an object'
-        );
+        assert(typeof instances.validator === 'object', 'A validator instance must be an object');
       }
       if (instances.encryptedCache) {
-        assert(
-          typeof instances.encryptedCache === 'object',
-          'Encrypted cache storage must be an object'
-        );
+        assert(typeof instances.encryptedCache === 'object', 'Encrypted cache storage must be an object');
         assert(
           typeof instances.encryptedCache.connect === 'function' &&
             typeof instances.encryptedCache.add === 'function' &&
@@ -236,9 +198,7 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
       }
     }
     if (warnAboutNoCryptoCache) {
-      console.warn(
-        'The encrypted cache must be provided to support private messages as decrypted'
-      );
+      console.warn('The encrypted cache must be provided to support private messages as decrypted');
     }
   }
 
@@ -250,9 +210,7 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
    * @returns {ISwarmMessageConstructorOptionsRequired}
    * @memberof SwarmMessageConstructor
    */
-  protected extendOptionsByDefaults(
-    options: TSwarmMessageConstructorOptions
-  ): ISwarmMessageConstructorOptionsRequired {
+  protected extendOptionsByDefaults(options: TSwarmMessageConstructorOptions): ISwarmMessageConstructorOptionsRequired {
     return {
       ...options,
       validation: extend(options.validation || {}, {
@@ -262,10 +220,7 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
           caConnection: options.caConnection,
         },
       }),
-      utils: extend(
-        options.utils || {},
-        SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_UTILS
-      ),
+      utils: extend(options.utils || {}, SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_UTILS),
     };
   }
 
@@ -280,12 +235,7 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
     const { options } = this;
     const { instances } = options;
 
-    this.validator =
-      instances && instances.validator
-        ? instances.validator
-        : new SwarmMessageSubclassValidator(
-            this.optionsForSwarmMessageValidator
-          );
+    this.validator = instances && instances.validator ? instances.validator : new SwarmMessageSubclassValidator(this.optionsForSwarmMessageValidator);
   }
 
   /**
@@ -327,10 +277,7 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
     const { options } = this;
     const { instances } = options;
 
-    this.serializer =
-      instances && instances.serizlizer
-        ? instances.serizlizer
-        : new SwarmMessageSerializer(this.optionsForSwarmMessageSerizlizer);
+    this.serializer = instances && instances.serizlizer ? instances.serizlizer : new SwarmMessageSerializer(this.optionsForSwarmMessageSerizlizer);
   }
 
   /**
@@ -361,10 +308,7 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
    */
   protected async addPrivateMessageToCache(msg: TSwarmMessageInstance) {
     if (msg.isPrivate) {
-      await this.addPrivateMessageBodyToCache(
-        msg.sig,
-        msg.bdy as TSwarmMessageConstructorArgumentBodyPrivate
-      );
+      await this.addPrivateMessageBodyToCache(msg.sig, msg.bdy as TSwarmMessageConstructorArgumentBodyPrivate);
     }
   }
 
@@ -376,9 +320,7 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
    * @memberof SwarmMessageConstructor
    * @throws
    */
-  protected async parse(
-    msg: TSwarmMessageSerialized
-  ): Promise<TSwarmMessageInstance> {
+  protected async parse(msg: TSwarmMessageSerialized): Promise<TSwarmMessageInstance> {
     if (!this.parser) {
       throw new Error('A swarm message parser instance is not defined');
     }
@@ -400,17 +342,12 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
    * @memberof SwarmMessageConstructor
    * @throws
    */
-  protected async serialize(
-    msg:
-      | TSwarmMessageConstructorArgumentBody
-      | TSwarmMessageConstructorArgumentBodyPrivate
-  ): Promise<TSwarmMessageInstance> {
+  protected async serialize(msg: TSwarmMessageConstructorArgumentBody | TSwarmMessageConstructorArgumentBodyPrivate): Promise<TSwarmMessageInstance> {
     if (!this.serializer) {
       throw new Error('A swarm message serializer instance is not defined');
     }
 
-    const receiverId = (msg as TSwarmMessageConstructorArgumentBodyPrivate)
-      .receiverId;
+    const receiverId = (msg as TSwarmMessageConstructorArgumentBodyPrivate).receiverId;
     let cryptoKey: CryptoKey | undefined;
 
     if (receiverId) {
@@ -418,9 +355,7 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
         throw new Error('There is no connection with the CentralAuthority');
       }
 
-      const receiverPubKey = await this.caConnection.getSwarmUserEncryptionPubKey(
-        receiverId
-      );
+      const receiverPubKey = await this.caConnection.getSwarmUserEncryptionPubKey(receiverId);
 
       if (receiverPubKey instanceof Error) {
         console.error("Failed to get the user's public key");
@@ -436,17 +371,11 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
       ...msg,
       ts: getDateNowInSeconds(),
     };
-    const swarmMessageSerialized = await this.serializer.serialize(
-      bodyWithTs,
-      cryptoKey
-    );
+    const swarmMessageSerialized = await this.serializer.serialize(bodyWithTs, cryptoKey);
     const { sig, isPrivate } = swarmMessageSerialized;
 
     if (isPrivate) {
-      await this.addPrivateMessageBodyToCache(
-        sig,
-        bodyWithTs as TSwarmMessageConstructorArgumentBodyPrivate
-      );
+      await this.addPrivateMessageBodyToCache(sig, bodyWithTs as TSwarmMessageConstructorArgumentBodyPrivate);
     }
     return swarmMessageSerialized;
   }
@@ -458,10 +387,7 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
    * @private
    * @memberof SwarmMessageConstructor
    */
-  private async addPrivateMessageBodyToCache(
-    sig: string,
-    msgBody: TSwarmMessageConstructorArgumentBodyPrivate
-  ) {
+  private async addPrivateMessageBodyToCache(sig: string, msgBody: TSwarmMessageConstructorArgumentBodyPrivate) {
     if (this.encryptedCache && this.encryptedCache.isRunning) {
       await this.encryptedCache.add(sig, JSON.stringify(msgBody));
     }

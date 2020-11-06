@@ -1,14 +1,6 @@
 import { IHttpRequestOptions } from '../http-request-class-base.types';
-import {
-  HTTP_REQUEST_METHOD,
-  HTTP_REQUEST_CONTENT_TYPE,
-} from '../http-request-class-base.const';
-import {
-  objectToUrlEncodedString,
-  IParamsObject,
-  objectToFormData,
-  IParamsObjectFormData,
-} from '../http-request-class-base.utils';
+import { HTTP_REQUEST_METHOD, HTTP_REQUEST_CONTENT_TYPE } from '../http-request-class-base.const';
+import { objectToUrlEncodedString, IParamsObject, objectToFormData, IParamsObjectFormData } from '../http-request-class-base.utils';
 
 export class HttpRequestBodyProcessor {
   protected static logError(methodName: string, err: string | Error) {
@@ -39,10 +31,7 @@ export class HttpRequestBodyProcessor {
     if (bodyType === 'object') {
       return objectToFormData(body as IParamsObjectFormData);
     }
-    HttpRequestBodyProcessor.logError(
-      'checkBodyIsMultipart',
-      'a wrong type of the body'
-    );
+    HttpRequestBodyProcessor.logError('checkBodyIsMultipart', 'a wrong type of the body');
     return undefined;
   }
 
@@ -55,10 +44,7 @@ export class HttpRequestBodyProcessor {
       case 'object':
         return objectToUrlEncodedString(body as IParamsObject);
       default: {
-        HttpRequestBodyProcessor.logError(
-          'processBodyAsUrlEncoded',
-          'a wrong type of the body'
-        );
+        HttpRequestBodyProcessor.logError('processBodyAsUrlEncoded', 'a wrong type of the body');
         return undefined;
       }
     }
@@ -100,10 +86,7 @@ export class HttpRequestBodyProcessor {
     const { options } = this;
     const { method } = options;
 
-    if (
-      method === HTTP_REQUEST_METHOD.GET ||
-      method === HTTP_REQUEST_METHOD.DELETE
-    ) {
+    if (method === HTTP_REQUEST_METHOD.GET || method === HTTP_REQUEST_METHOD.DELETE) {
       return undefined;
     }
     return this.preProcessBody();

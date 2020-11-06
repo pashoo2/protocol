@@ -1,8 +1,5 @@
 import assert from 'assert';
-import {
-  StorageProvider,
-  IStorageProviderOptions,
-} from '../storage-providers.types';
+import { StorageProvider, IStorageProviderOptions } from '../storage-providers.types';
 
 export class SecretStorageProvideSessionStorage implements StorageProvider {
   public static isDbNameSupported = true;
@@ -10,14 +7,10 @@ export class SecretStorageProvideSessionStorage implements StorageProvider {
 
   protected dbName?: string;
 
-  public async connect(
-    options?: IStorageProviderOptions
-  ): Promise<true | Error> {
+  public async connect(options?: IStorageProviderOptions): Promise<true | Error> {
     try {
       if (!window || !window.sessionStorage) {
-        return new Error(
-          'There is no sessionStorage available for this context'
-        );
+        return new Error('There is no sessionStorage available for this context');
       }
       this.setOptions(options);
       this.sessionStorage = window.sessionStorage; // set the instance to use
@@ -41,9 +34,7 @@ export class SecretStorageProvideSessionStorage implements StorageProvider {
         return new Error('There is no database connected to');
       }
       if (!sessionStorage) {
-        return new Error(
-          'Does not connected to a session storage to remove the database'
-        );
+        return new Error('Does not connected to a session storage to remove the database');
       }
       Object.keys(sessionStorage).forEach((key) => {
         if (key.startsWith(dbName)) {

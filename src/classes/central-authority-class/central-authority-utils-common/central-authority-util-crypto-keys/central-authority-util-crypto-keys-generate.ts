@@ -3,14 +3,8 @@ import { CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME } from 'classes/central-aut
 import { generateKeyPair as generateKeyPairDataEncryption } from 'utils/encryption-utils';
 import { dataSignGenerateKeyPair as generateKeyPairSignData } from 'utils/data-sign-utils';
 import { isCryptoKeyPair } from 'utils/encryption-keys-utils/encryption-keys-utils';
-import {
-  TCACryptoKeyPairs,
-  TCentralAuthorityUserCryptoCredentials,
-} from '../../central-authority-class-types/central-authority-class-types';
-import {
-  CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME,
-  CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME,
-} from './central-authority-util-crypto-keys.const';
+import { TCACryptoKeyPairs, TCentralAuthorityUserCryptoCredentials } from '../../central-authority-class-types/central-authority-class-types';
+import { CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME, CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME } from './central-authority-util-crypto-keys.const';
 import { checkIsCryptoKeyPairs } from './central-authority-util-crypto-keys-common';
 import { generateUUID } from 'utils/identity-utils/identity-utils';
 import {
@@ -30,9 +24,7 @@ import { dataValidatorUtilSafeLogin } from 'utils/data-validators-utils/data-val
 /**
  * generate a key pair, used for data encryption
  */
-export const generateEncryptKeyPair = async (): Promise<
-  CryptoKeyPair | Error
-> => {
+export const generateEncryptKeyPair = async (): Promise<CryptoKeyPair | Error> => {
   const keyPair = await generateKeyPairDataEncryption();
   const isKeyPair = isCryptoKeyPair(keyPair);
 
@@ -60,13 +52,8 @@ export const generateSignKeyPair = async (): Promise<CryptoKeyPair | Error> => {
  * one is used to sign a data
  * second is used to encrypt a data
  */
-export const generateKeyPairs = async (): Promise<
-  TCACryptoKeyPairs | Error
-> => {
-  const [encryptionKeyPair, signDataKeyPair] = await Promise.all([
-    generateEncryptKeyPair(),
-    generateSignKeyPair(),
-  ]);
+export const generateKeyPairs = async (): Promise<TCACryptoKeyPairs | Error> => {
+  const [encryptionKeyPair, signDataKeyPair] = await Promise.all([generateEncryptKeyPair(), generateSignKeyPair()]);
 
   if (encryptionKeyPair instanceof Error) {
     return encryptionKeyPair;
@@ -90,9 +77,7 @@ export const generateKeyPairs = async (): Promise<
  * generates a random crypto credentials
  * or return an Error if failed
  */
-export const generateCryptoCredentialsV1 = async (): Promise<
-  TCentralAuthorityUserCryptoCredentials | Error
-> => {
+export const generateCryptoCredentialsV1 = async (): Promise<TCentralAuthorityUserCryptoCredentials | Error> => {
   const cryptoKeyPair = await generateKeyPairs();
 
   if (cryptoKeyPair instanceof Error) {
@@ -112,29 +97,21 @@ export const generateCryptoCredentialsV1 = async (): Promise<
 export const generateCryptoCredentialsWithUserIdentityV1 = async (
   identityMetadata: ICAUserUniqueIdentifierMetadata
 ): Promise<TCentralAuthorityUserCryptoCredentials | Error> => {
-  const validationIdentityMetadataResult = checkIsValidUserIdentityMetadata(
-    identityMetadata
-  );
+  const validationIdentityMetadataResult = checkIsValidUserIdentityMetadata(identityMetadata);
 
   if (validationIdentityMetadataResult instanceof Error) {
     console.error(validationIdentityMetadataResult);
     return new Error('The identity metadata is not valid');
   }
 
-  const uuidProvided =
-    identityMetadata[CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME];
-  const userUUID =
-    typeof uuidProvided === 'string' && validator.isUUID(uuidProvided)
-      ? uuidProvided
-      : generateUUID();
+  const uuidProvided = identityMetadata[CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME];
+  const userUUID = typeof uuidProvided === 'string' && validator.isUUID(uuidProvided) ? uuidProvided : generateUUID();
   const userUniqueIdentityDescription: ICAUserUniqueIdentifierDescriptionWithOptionalVersion = {
     ...identityMetadata,
     [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]: userUUID,
     [CA_USER_IDENTITY_VERSION_PROP_NAME]: CA_USER_IDENTITY_VERSIONS['01'],
   };
-  const userUniqueIdentityInstance = new CentralAuthorityIdentity(
-    userUniqueIdentityDescription
-  );
+  const userUniqueIdentityInstance = new CentralAuthorityIdentity(userUniqueIdentityDescription);
 
   if (!userUniqueIdentityInstance.isValid) {
     return new Error('Failed to generate a valid user unique identity');
@@ -143,9 +120,7 @@ export const generateCryptoCredentialsWithUserIdentityV1 = async (
   const userUniqueId = userUniqueIdentityInstance.toString();
 
   if (!userUniqueId) {
-    return new Error(
-      'Failed to get stringified version of the user unique identity generated'
-    );
+    return new Error('Failed to get stringified version of the user unique identity generated');
   }
 
   const cryptoKeyPair = await generateKeyPairs();
@@ -167,17 +142,14 @@ export const generateCryptoCredentialsWithUserIdentityV1 = async (
 export const generateCryptoCredentialsWithUserIdentityV2 = async (
   identityMetadata: ICAUserUniqueIdentifierMetadata
 ): Promise<TCentralAuthorityUserCryptoCredentials | Error> => {
-  const validationIdentityMetadataResult = checkIsValidUserIdentityMetadata(
-    identityMetadata
-  );
+  const validationIdentityMetadataResult = checkIsValidUserIdentityMetadata(identityMetadata);
 
   if (validationIdentityMetadataResult instanceof Error) {
     console.error(validationIdentityMetadataResult);
     return new Error('The identity metadata is not valid');
   }
 
-  const userIdentifier =
-    identityMetadata[CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME];
+  const userIdentifier = identityMetadata[CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME];
 
   if (!userIdentifier) {
     return new Error('A user identifier must be specified');
@@ -190,9 +162,7 @@ export const generateCryptoCredentialsWithUserIdentityV2 = async (
     ...identityMetadata,
     [CA_USER_IDENTITY_VERSION_PROP_NAME]: CA_USER_IDENTITY_VERSIONS['02'],
   } as ICAUserUniqueIdentifierDescriptionWithOptionalVersion;
-  const userUniqueIdentityInstance = new CentralAuthorityIdentity(
-    userUniqueIdentityDescription
-  );
+  const userUniqueIdentityInstance = new CentralAuthorityIdentity(userUniqueIdentityDescription);
 
   if (!userUniqueIdentityInstance.isValid) {
     return new Error('Failed to generate a valid user unique identity');
@@ -201,9 +171,7 @@ export const generateCryptoCredentialsWithUserIdentityV2 = async (
   const userUniqueId = userUniqueIdentityInstance.toString();
 
   if (!userUniqueId) {
-    return new Error(
-      'Failed to get stringified version of the user unique identity generated'
-    );
+    return new Error('Failed to get stringified version of the user unique identity generated');
   }
 
   const cryptoKeyPair = await generateKeyPairs();

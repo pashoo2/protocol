@@ -31,27 +31,16 @@ export function addStartSlash(path: string): string {
 
 export function removeDuplicateOrbitDBPrefixInPath(path: string): string {
   if (
-    path.indexOf(
-      SWARM_STORE_CONNECTOR_ORITDB_UTILS_ADDRESS_ORBITDB_PATH_PREFIX
-    ) !==
-    path.lastIndexOf(
-      SWARM_STORE_CONNECTOR_ORITDB_UTILS_ADDRESS_ORBITDB_PATH_PREFIX
-    )
+    path.indexOf(SWARM_STORE_CONNECTOR_ORITDB_UTILS_ADDRESS_ORBITDB_PATH_PREFIX) !==
+    path.lastIndexOf(SWARM_STORE_CONNECTOR_ORITDB_UTILS_ADDRESS_ORBITDB_PATH_PREFIX)
   ) {
-    const pathWithoutPrefixDuplication = relative(
-      SWARM_STORE_CONNECTOR_ORITDB_UTILS_ADDRESS_ORBITDB_PATH_PREFIX,
-      path
-    );
-    return checkIfPathStartedWithSlash(path)
-      ? addStartSlash(pathWithoutPrefixDuplication)
-      : pathWithoutPrefixDuplication;
+    const pathWithoutPrefixDuplication = relative(SWARM_STORE_CONNECTOR_ORITDB_UTILS_ADDRESS_ORBITDB_PATH_PREFIX, path);
+    return checkIfPathStartedWithSlash(path) ? addStartSlash(pathWithoutPrefixDuplication) : pathWithoutPrefixDuplication;
   }
   return path;
 }
 
-export function swarmStoreConnectorOrbitDbUtilsAddressJoinPathParts(
-  ...parts: string[]
-): string {
+export function swarmStoreConnectorOrbitDbUtilsAddressJoinPathParts(...parts: string[]): string {
   return removeDuplicateOrbitDBPrefixInPath(OrbitDbAddress.join(...parts));
 }
 
@@ -68,9 +57,7 @@ export async function swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForPath
   return result;
 }
 
-export async function swarmStoreConnectorOrbitDbUtilsAddresGetHashPathFull(
-  fullPath: string
-): Promise<string> {
+export async function swarmStoreConnectorOrbitDbUtilsAddresGetHashPathFull(fullPath: string): Promise<string> {
   assert(typeof fullPath === 'string', 'Full path shoult be a string');
   return swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForPathPart(
     fullPath,
@@ -78,19 +65,12 @@ export async function swarmStoreConnectorOrbitDbUtilsAddresGetHashPathFull(
   );
 }
 
-export async function swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForUserId(
-  userId: string
-): Promise<string> {
+export async function swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForUserId(userId: string): Promise<string> {
   assert(typeof userId === 'string', 'User id should be a string');
-  return swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForPathPart(
-    userId,
-    SWARM_STORE_CONNECTOR_ORITDB_UTILS_ADDRESS_USER_ID_HASH_CALC_METHOD
-  );
+  return swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForPathPart(userId, SWARM_STORE_CONNECTOR_ORITDB_UTILS_ADDRESS_USER_ID_HASH_CALC_METHOD);
 }
 
-export async function swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForDirectory(
-  directory: string
-): Promise<string> {
+export async function swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForDirectory(directory: string): Promise<string> {
   assert(typeof directory === 'string', 'Directory shoult be a string');
   return swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForPathPart(
     directory,
@@ -98,61 +78,35 @@ export async function swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForDire
   );
 }
 
-export async function swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForDb(
-  dbName: string
-): Promise<string> {
+export async function swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForDb(dbName: string): Promise<string> {
   assert(typeof dbName === 'string', 'Database name shoult be a string');
-  return swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForPathPart(
-    dbName,
-    SWARM_STORE_CONNECTOR_ORITDB_UTILS_ADDRESS_DBNAME_HASH_CALC_METHOD
-  );
+  return swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForPathPart(dbName, SWARM_STORE_CONNECTOR_ORITDB_UTILS_ADDRESS_DBNAME_HASH_CALC_METHOD);
 }
 
 export async function swarmStoreConnectorOrbitDbUtilsAddressCreateRootPath(
   options: ISwarmStoreConnectorOrbitDbUtilsAddressCreateRootPathOptions
 ): Promise<string> {
   const { directory, userId } = options;
-  const directoryHash = await swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForDirectory(
-    directory
-  );
-  const userIdHash = await swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForUserId(
-    userId
-  );
+  const directoryHash = await swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForDirectory(directory);
+  const userIdHash = await swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForUserId(userId);
 
-  return swarmStoreConnectorOrbitDbUtilsAddressJoinPathParts(
-    directoryHash,
-    userIdHash
-  );
+  return swarmStoreConnectorOrbitDbUtilsAddressJoinPathParts(directoryHash, userIdHash);
 }
 
-export function swarmStoreConnectorOrbitDbUtilsAddressGetValidPath(
-  path: string
-): string {
+export function swarmStoreConnectorOrbitDbUtilsAddressGetValidPath(path: string): string {
   // return path.startsWith('/') ? path : `/${path}`;
   return swarmStoreConnectorOrbitDbUtilsAddressJoinPathParts(path);
 }
 
-export function swarmStoreConnectorOrbitDbUtilsAddressGetDBNameByAddress(
-  path: string
-): undefined | string {
+export function swarmStoreConnectorOrbitDbUtilsAddressGetDBNameByAddress(path: string): undefined | string {
   try {
-    return OrbitDbAddress.parseAddress(
-      swarmStoreConnectorOrbitDbUtilsAddressGetValidPath(path)
-    ).path;
+    return OrbitDbAddress.parseAddress(swarmStoreConnectorOrbitDbUtilsAddressGetValidPath(path)).path;
   } catch (err) {
     console.error('Cant parse the path', err);
   }
 }
 
-export async function swarmStoreConnectorOrbitDbUtilsAddressCreateOrbitDbAddressByDatabaseName(
-  rootPath: string,
-  dbName: string
-): Promise<string> {
-  const dbNamePathPart = await swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForDb(
-    dbName
-  );
-  return swarmStoreConnectorOrbitDbUtilsAddressJoinPathParts(
-    rootPath,
-    dbNamePathPart
-  );
+export async function swarmStoreConnectorOrbitDbUtilsAddressCreateOrbitDbAddressByDatabaseName(rootPath: string, dbName: string): Promise<string> {
+  const dbNamePathPart = await swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForDb(dbName);
+  return swarmStoreConnectorOrbitDbUtilsAddressJoinPathParts(rootPath, dbNamePathPart);
 }

@@ -2,7 +2,5 @@ import { TCentralAuthorityUserIdentity } from 'classes/central-authority-class/c
 import { ICAUserUniqueIdentifierDescription } from '../central-authority-class-user-identity.types';
 
 export interface IUserIdentityFormatter {
-  (v: ICAUserUniqueIdentifierDescription):
-    | TCentralAuthorityUserIdentity
-    | Error;
+  (v: ICAUserUniqueIdentifierDescription): TCentralAuthorityUserIdentity | Error;
 }

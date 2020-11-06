@@ -1,37 +1,15 @@
 import { cryptoModuleDataSign } from './main.data-sign-utils.const';
-import {
-  DATA_SIGN_CRYPTO_UTIL_DATA_SIGN_AND_VERIFY_PARAMS,
-  DATA_SIGN_CRYPTO_UTIL_SIGN_KEY_TYPE,
-} from './data-sign-utils.const';
-import {
-  TDATA_SIGN_UTIL_SIGN_DATA_TYPES,
-  TDATA_SIGN_UTIL_SIGN_DATA_TYPES_NATIVE,
-  TDATA_SIGN_UTIL_SIGN_KEY_TYPES,
-} from './data-sign-utils.types';
-import {
-  dataSignGetKeyOfType,
-  dataSignExportKey,
-} from './keys.data-sign-utils';
-import {
-  convertToTypedArray,
-  typedArrayToString,
-} from 'utils/typed-array-utils';
+import { DATA_SIGN_CRYPTO_UTIL_DATA_SIGN_AND_VERIFY_PARAMS, DATA_SIGN_CRYPTO_UTIL_SIGN_KEY_TYPE } from './data-sign-utils.const';
+import { TDATA_SIGN_UTIL_SIGN_DATA_TYPES, TDATA_SIGN_UTIL_SIGN_DATA_TYPES_NATIVE, TDATA_SIGN_UTIL_SIGN_KEY_TYPES } from './data-sign-utils.types';
+import { dataSignGetKeyOfType, dataSignExportKey } from './keys.data-sign-utils';
+import { convertToTypedArray, typedArrayToString } from 'utils/typed-array-utils';
 
-export const signNative = async (
-  key: CryptoKey,
-  data: TDATA_SIGN_UTIL_SIGN_DATA_TYPES_NATIVE
-): Promise<ArrayBuffer | Error> => {
+export const signNative = async (key: CryptoKey, data: TDATA_SIGN_UTIL_SIGN_DATA_TYPES_NATIVE): Promise<ArrayBuffer | Error> => {
   if (key.type !== DATA_SIGN_CRYPTO_UTIL_SIGN_KEY_TYPE) {
-    return new Error(
-      `The type of the key ${key.type} may not be used for data signing`
-    );
+    return new Error(`The type of the key ${key.type} may not be used for data signing`);
   }
   try {
-    const res = await cryptoModuleDataSign.sign(
-      { ...DATA_SIGN_CRYPTO_UTIL_DATA_SIGN_AND_VERIFY_PARAMS },
-      key,
-      data
-    );
+    const res = await cryptoModuleDataSign.sign({ ...DATA_SIGN_CRYPTO_UTIL_DATA_SIGN_AND_VERIFY_PARAMS }, key, data);
 
     return res;
   } catch (err) {
@@ -45,10 +23,7 @@ export const signToTypedArray = async (
   key: TDATA_SIGN_UTIL_SIGN_KEY_TYPES,
   data: TDATA_SIGN_UTIL_SIGN_DATA_TYPES
 ): Promise<ArrayBuffer | Error> => {
-  const k = await dataSignGetKeyOfType(
-    key,
-    DATA_SIGN_CRYPTO_UTIL_SIGN_KEY_TYPE
-  );
+  const k = await dataSignGetKeyOfType(key, DATA_SIGN_CRYPTO_UTIL_SIGN_KEY_TYPE);
 
   if (k instanceof Error) {
     return k;

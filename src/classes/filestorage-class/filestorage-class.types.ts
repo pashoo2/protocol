@@ -18,21 +18,15 @@ import {
   FILE_STORAGE_SERVICE_STATUS as FileStorageServiceStatus,
 } from './filestorage-class.const';
 
-export type TFileStorageServiceOptions<
-  T extends FILE_STORAGE_SERVICE_TYPE
-> = T extends FILE_STORAGE_SERVICE_TYPE.IPFS
+export type TFileStorageServiceOptions<T extends FILE_STORAGE_SERVICE_TYPE> = T extends FILE_STORAGE_SERVICE_TYPE.IPFS
   ? IFileStorageClassProviderIPFSOptions
   : T extends FILE_STORAGE_SERVICE_TYPE.HTTP
   ? IFileStorageClassProviderHTTPOptions
   : never;
 
-export type TFileStorageServiceFileAddOptions =
-  | IFileStorageClassProviderIPFSFileAddOptions
-  | IFileStorageClassProviderHTTPFileAddOptions;
+export type TFileStorageServiceFileAddOptions = IFileStorageClassProviderIPFSFileAddOptions | IFileStorageClassProviderHTTPFileAddOptions;
 
-export type TFileStorageServiceFileGetOptions =
-  | IFileStorageClassProviderIPFSFileGetOptions
-  | IFileStorageClassProviderHTTPFileGetOptions;
+export type TFileStorageServiceFileGetOptions = IFileStorageClassProviderIPFSFileGetOptions | IFileStorageClassProviderHTTPFileGetOptions;
 
 export type TFileStorageServiceFileDownloadOptions =
   | IFileStorageClassProviderHTTPFileDownloadOptions
@@ -96,9 +90,7 @@ export interface IFileStorageService<T extends FILE_STORAGE_SERVICE_TYPE> {
    * @returns {Promise<TFileStorageServiceIdentifier>}
    * @memberof IFileStorageService
    */
-  connect(
-    options: TFileStorageServiceOptions<T>
-  ): Promise<TFileStorageServiceIdentifier>;
+  connect(options: TFileStorageServiceOptions<T>): Promise<TFileStorageServiceIdentifier>;
   /**
    * close connection to the service
    *
@@ -126,11 +118,7 @@ export interface IFileStorageService<T extends FILE_STORAGE_SERVICE_TYPE> {
    * @throws
    * @memberof IFileStorageService
    */
-  add(
-    filename: string,
-    file: TFileStorageFile,
-    options?: IFileStorageServiceFileAddCommonOptions
-  ): Promise<TFileStorageFileAddress>;
+  add(filename: string, file: TFileStorageFile, options?: IFileStorageServiceFileAddCommonOptions): Promise<TFileStorageFileAddress>;
   /**
    * get the file
    * TODO - add download progress callback
@@ -140,10 +128,7 @@ export interface IFileStorageService<T extends FILE_STORAGE_SERVICE_TYPE> {
    * @memberof IFileStorageService
    * @throws
    */
-  get(
-    addr: TFileStorageFileAddress,
-    options?: TFileStorageServiceFileGetOptions
-  ): Promise<File>;
+  get(addr: TFileStorageFileAddress, options?: TFileStorageServiceFileGetOptions): Promise<File>;
   /**
    * download the file, do net necessary
    * to read it's content
@@ -152,15 +137,10 @@ export interface IFileStorageService<T extends FILE_STORAGE_SERVICE_TYPE> {
    * @returns {Promise<void>}
    * @memberof IFileStorageService
    */
-  download(
-    addr: TFileStorageFileAddress,
-    options?: TFileStorageServiceFileDownloadOptions
-  ): Promise<void>;
+  download(addr: TFileStorageFileAddress, options?: TFileStorageServiceFileDownloadOptions): Promise<void>;
 }
 
-export interface IFileStorageServiceConnectOptions<
-  T extends FILE_STORAGE_SERVICE_TYPE
-> {
+export interface IFileStorageServiceConnectOptions<T extends FILE_STORAGE_SERVICE_TYPE> {
   /**
    * type of the service provider
    *
@@ -186,9 +166,7 @@ export interface IFileStorage<T extends FILE_STORAGE_SERVICE_TYPE> {
    * @returns {Promise<TFileStorageServiceIdentifier>}
    * @memberof IFileStorage
    */
-  connect(
-    configurations: IFileStorageServiceConnectOptions<T>[]
-  ): Promise<TFileStorageServiceIdentifier[]>;
+  connect(configurations: IFileStorageServiceConnectOptions<T>[]): Promise<TFileStorageServiceIdentifier[]>;
   /**
    * close the existing connection with the service
    * have the identifier provided
@@ -229,10 +207,7 @@ export interface IFileStorage<T extends FILE_STORAGE_SERVICE_TYPE> {
    * @memberof IFileStorage
    * @throws
    */
-  get(
-    addr: TFileStorageFileAddress,
-    options?: TFileStorageServiceFileGetOptions
-  ): Promise<File>;
+  get(addr: TFileStorageFileAddress, options?: TFileStorageServiceFileGetOptions): Promise<File>;
   /**
    * download the file, do net necessary
    * to read it's content
@@ -244,8 +219,5 @@ export interface IFileStorage<T extends FILE_STORAGE_SERVICE_TYPE> {
    * @returns {Promise<void>}
    * @memberof IFileStorage
    */
-  download(
-    addr: TFileStorageFileAddress,
-    options?: TFileStorageServiceFileDownloadOptions
-  ): Promise<void>;
+  download(addr: TFileStorageFileAddress, options?: TFileStorageServiceFileDownloadOptions): Promise<void>;
 }

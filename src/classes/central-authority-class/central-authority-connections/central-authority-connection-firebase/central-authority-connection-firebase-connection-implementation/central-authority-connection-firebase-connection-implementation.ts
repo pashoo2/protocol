@@ -2,11 +2,7 @@ import firebase from 'firebase';
 import 'firebase/auth';
 import memoize from 'lodash.memoize';
 import CAConnectionWithFirebaseBase from '../central-authority-connection-firebase-base/central-authority-connection-firebase-base';
-import {
-  ICAConnection,
-  ICAConnectionSignUpCredentials,
-  ICAConnectionUserAuthorizedResult,
-} from '../../central-authority-connections.types';
+import { ICAConnection, ICAConnectionSignUpCredentials, ICAConnectionUserAuthorizedResult } from '../../central-authority-connections.types';
 import { isEmptyObject } from 'utils/common-utils/common-utils-objects';
 import {
   ICentralAuthorityUserProfile,
@@ -38,12 +34,8 @@ import { CA_CONNECTION_STATUS } from '../../central-authority-connections-const/
  * @class CAConnectionWithFirebase
  * @implements {ICAConnection}
  */
-export class CAConnectionWithFirebaseImplementation
-  extends CAConnectionWithFirebaseBase
-  implements ICAConnection {
-  public get cryptoCredentials():
-    | TCentralAuthorityUserCryptoCredentials
-    | undefined {
+export class CAConnectionWithFirebaseImplementation extends CAConnectionWithFirebaseBase implements ICAConnection {
+  public get cryptoCredentials(): TCentralAuthorityUserCryptoCredentials | undefined {
     const { valueofCredentialsSignUpOnAuthorizedSuccess } = this;
 
     if (valueofCredentialsSignUpOnAuthorizedSuccess) {
@@ -99,10 +91,7 @@ export class CAConnectionWithFirebaseImplementation
    * @type {Array<TUserIdentityVersion>}
    * @memberof CAConnectionWithFirebaseImplementation
    */
-  protected readonly supportedVersions: Array<TUserIdentityVersion> = [
-    CA_USER_IDENTITY_VERSIONS['01'],
-    CA_USER_IDENTITY_VERSIONS['02'],
-  ];
+  protected readonly supportedVersions: Array<TUserIdentityVersion> = [CA_USER_IDENTITY_VERSIONS['01'], CA_USER_IDENTITY_VERSIONS['02']];
 
   /**
    * checks whether the identity version
@@ -110,10 +99,7 @@ export class CAConnectionWithFirebaseImplementation
    *
    * @memberof CAConnectionWithFirebaseImplementation
    */
-  public isVersionSupported = memoize(
-    (version: TUserIdentityVersion): boolean =>
-      this.supportedVersions.includes(version)
-  );
+  public isVersionSupported = memoize((version: TUserIdentityVersion): boolean => this.supportedVersions.includes(version));
 
   /**
    * connect to the Firebase database. To authorize
@@ -127,15 +113,11 @@ export class CAConnectionWithFirebaseImplementation
    * @returns {(Promise<boolean | Error>)}
    * @memberof CAConnectionWithFirebaseBase
    */
-  public async connect(
-    configuration: ICAConnectionConfigurationFirebase
-  ): Promise<boolean | Error> {
+  public async connect(configuration: ICAConnectionConfigurationFirebase): Promise<boolean | Error> {
     // if there is an active apps exists then it is necessary
     // to provide the app name, elswere the Firebase will throw
     // an error.
-    const appName = firebase.apps.length
-      ? configuration.databaseURL
-      : undefined;
+    const appName = firebase.apps.length ? configuration.databaseURL : undefined;
     const resultConnection = await super.connect(configuration, appName);
 
     if (resultConnection instanceof Error) {
@@ -148,9 +130,7 @@ export class CAConnectionWithFirebaseImplementation
     try {
       // may be authentificated with session
       //await this.signInWithSessionPersisted();
-      const connectAnonymouselyResult = await this.app
-        .auth()
-        .signInAnonymously();
+      const connectAnonymouselyResult = await this.app.auth().signInAnonymously();
       if (connectAnonymouselyResult instanceof Error) {
         return connectAnonymouselyResult;
       }
@@ -180,9 +160,7 @@ export class CAConnectionWithFirebaseImplementation
    * @returns {(Promise<Error | null | TCentralAuthorityUserCryptoCredentials>)}
    * @memberof CAConnectionFirestoreUtilsCredentialsStrorage
    */
-  public async getUserCredentials(
-    userId: string
-  ): Promise<Error | null | TCentralAuthorityUserCryptoCredentials> {
+  public async getUserCredentials(userId: string): Promise<Error | null | TCentralAuthorityUserCryptoCredentials> {
     const { status } = this;
 
     if (status !== CA_CONNECTION_STATUS.DISCONNECTED) {
@@ -265,21 +243,13 @@ export class CAConnectionWithFirebaseImplementation
       // crypto credentials
       this.setUserLogin(firebaseCredentials.login);
 
-      let cryptoCredentials:
-        | TCentralAuthorityUserCryptoCredentials
-        | Error
-        | undefined;
+      let cryptoCredentials: TCentralAuthorityUserCryptoCredentials | Error | undefined;
 
       if (firebaseCredentials.session) {
-        const sessionCryptoCredentials = await this.readCryptoCrdentialsFromSession(
-          firebaseCredentials.session
-        );
+        const sessionCryptoCredentials = await this.readCryptoCrdentialsFromSession(firebaseCredentials.session);
 
         if (sessionCryptoCredentials instanceof Error) {
-          console.error(
-            'Failed to get credentials from the session cause the error',
-            sessionCryptoCredentials
-          );
+          console.error('Failed to get credentials from the session cause the error', sessionCryptoCredentials);
         }
         cryptoCredentials = sessionCryptoCredentials;
       }
@@ -289,9 +259,7 @@ export class CAConnectionWithFirebaseImplementation
       // it will be used to set in the Firebase credentials
       // storage
       if (!cryptoCredentials || cryptoCredentials instanceof Error) {
-        cryptoCredentials = await this.createOrReturnExistingCredentialsForUser(
-          firebaseCredentials
-        );
+        cryptoCredentials = await this.createOrReturnExistingCredentialsForUser(firebaseCredentials);
       }
       if (cryptoCredentials instanceof Error) {
         console.error('Failed to get a crypto credentials valid for the user');
@@ -302,16 +270,10 @@ export class CAConnectionWithFirebaseImplementation
       // with a credentials
       authHandleResult = await this.returnOnAuthorizedResult(cryptoCredentials);
       if (firebaseCredentials.session) {
-        const setCredentialsInSessionResult = await this.setCurrentUserCryptoCredentialsInSession(
-          firebaseCredentials.session,
-          cryptoCredentials
-        );
+        const setCredentialsInSessionResult = await this.setCurrentUserCryptoCredentialsInSession(firebaseCredentials.session, cryptoCredentials);
 
         if (setCredentialsInSessionResult instanceof Error) {
-          console.error(
-            'Failed to set the credentials in the user session',
-            setCredentialsInSessionResult
-          );
+          console.error('Failed to set the credentials in the user session', setCredentialsInSessionResult);
         }
       }
     }
@@ -374,9 +336,7 @@ export class CAConnectionWithFirebaseImplementation
     return this.disconnectFromTheApp();
   }
 
-  public async delete(
-    firebaseCredentials: ICAConnectionSignUpCredentials
-  ): Promise<Error | boolean> {
+  public async delete(firebaseCredentials: ICAConnectionSignUpCredentials): Promise<Error | boolean> {
     const isConnected = this.checkIfConnected();
 
     if (isConnected instanceof Error) {
@@ -444,9 +404,7 @@ export class CAConnectionWithFirebaseImplementation
     this.isAnonymousely = false;
   }
 
-  protected setValueofCredentialsSignUpOnAuthorizedSuccess(
-    authResult: ICAConnectionUserAuthorizedResult
-  ) {
+  protected setValueofCredentialsSignUpOnAuthorizedSuccess(authResult: ICAConnectionUserAuthorizedResult) {
     this.valueofCredentialsSignUpOnAuthorizedSuccess = authResult;
   }
 
@@ -464,9 +422,7 @@ export class CAConnectionWithFirebaseImplementation
    * @returns {(Error | void)}
    * @memberof CAConnectionWithFirebaseImplementation
    */
-  protected setVersionsSupported(
-    supportedVersions?: Array<TUserIdentityVersion>
-  ): Error | void {
+  protected setVersionsSupported(supportedVersions?: Array<TUserIdentityVersion>): Error | void {
     if (supportedVersions instanceof Array) {
       const len = supportedVersions.length;
       let idx = 0;
@@ -498,9 +454,7 @@ export class CAConnectionWithFirebaseImplementation
    *   >)}
    * @memberof CAConnectionWithFirebaseImplementation
    */
-  protected generateNewCryptoCredentialsForConfigurationProvidedV2 = async (): Promise<
-    Error | TCentralAuthorityUserCryptoCredentials
-  > => {
+  protected generateNewCryptoCredentialsForConfigurationProvidedV2 = async (): Promise<Error | TCentralAuthorityUserCryptoCredentials> => {
     const { databaseURL, currentUser } = this;
 
     if (!currentUser) {
@@ -510,12 +464,10 @@ export class CAConnectionWithFirebaseImplementation
       return databaseURL;
     }
 
-    const cryptoCredentials = await generateCryptoCredentialsWithUserIdentityV2(
-      {
-        [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: databaseURL,
-        [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]: currentUser.uid,
-      }
-    );
+    const cryptoCredentials = await generateCryptoCredentialsWithUserIdentityV2({
+      [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: databaseURL,
+      [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]: currentUser.uid,
+    });
 
     if (cryptoCredentials instanceof Error) {
       console.error(cryptoCredentials);
@@ -535,9 +487,7 @@ export class CAConnectionWithFirebaseImplementation
   protected async generateAndSetCredentialsForTheCurrentUser(
     signUpCredentials: ICAConnectionSignUpCredentials
   ): Promise<Error | TCentralAuthorityUserCryptoCredentials> {
-    const credentialsProvidedCheckResult = this.checkSignUpCredentials(
-      signUpCredentials
-    );
+    const credentialsProvidedCheckResult = this.checkSignUpCredentials(signUpCredentials);
 
     if (credentialsProvidedCheckResult instanceof Error) {
       console.error(credentialsProvidedCheckResult);
@@ -549,21 +499,16 @@ export class CAConnectionWithFirebaseImplementation
     let credentialsForV1 = false;
 
     if (this.isVersionSupported(V1)) {
-      credentialsForV1 =
-        CA_USER_IDENTITY_VERSION_CURRENT === CA_USER_IDENTITY_VERSIONS['01'];
+      credentialsForV1 = CA_USER_IDENTITY_VERSION_CURRENT === CA_USER_IDENTITY_VERSIONS['01'];
 
       if (cryptoCredentials) {
         // check a version of the credentials
         // to decide what to do next
-        const cryptoCredentialsVersion = getVersionOfCryptoCredentials(
-          cryptoCredentials
-        );
+        const cryptoCredentialsVersion = getVersionOfCryptoCredentials(cryptoCredentials);
 
         if (cryptoCredentialsVersion instanceof Error) {
           console.error(cryptoCredentialsVersion);
-          return new Error(
-            'Failed to define a version of the crypto credentials'
-          );
+          return new Error('Failed to define a version of the crypto credentials');
         }
         if (cryptoCredentialsVersion === CA_USER_IDENTITY_VERSIONS['01']) {
           // if the credentials version is 01 we may use the
@@ -581,10 +526,7 @@ export class CAConnectionWithFirebaseImplementation
     }
     // if the version is not 01, then provide another implementations
     // of the methods to generate and set the crypto credentials
-    return this.createOrSetCredentialsInDB(
-      signUpCredentials,
-      this.generateNewCryptoCredentialsForConfigurationProvidedV2
-    );
+    return this.createOrSetCredentialsInDB(signUpCredentials, this.generateNewCryptoCredentialsForConfigurationProvidedV2);
   }
 
   /**

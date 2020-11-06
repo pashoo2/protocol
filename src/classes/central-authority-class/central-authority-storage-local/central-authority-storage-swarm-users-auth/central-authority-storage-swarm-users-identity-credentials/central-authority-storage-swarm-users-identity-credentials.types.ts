@@ -64,34 +64,23 @@ export interface ICAIdentityCredentialsStorage {
   isActive: boolean;
   // connect to the storage with the credentials
   // to decrypt a values stored
-  connect(
-    options?: ICAIdentityCredentialsStorageConntionOptions
-  ): Promise<boolean | Error>;
+  connect(options?: ICAIdentityCredentialsStorageConntionOptions): Promise<boolean | Error>;
   // disconnect from the stor`age
   disconnect(): Promise<boolean | Error>;
   // read credentials from the storage
-  getCredentials(
-    identity: TCAUserIdentityRawTypes
-  ): Promise<TCentralAuthorityUserCryptoCredentials | Error | null>;
+  getCredentials(identity: TCAUserIdentityRawTypes): Promise<TCentralAuthorityUserCryptoCredentials | Error | null>;
   // store credentials for the identity
   // in the storage
-  setCredentials(
-    identity: TCAUserIdentityRawTypes,
-    cryptoCredentials: TCACryptoKeyPairs
-  ): Promise<boolean | Error>;
+  setCredentials(identity: TCAUserIdentityRawTypes, cryptoCredentials: TCACryptoKeyPairs): Promise<boolean | Error>;
   // Store the crypto credentials.
   // It will be parsed to
   // identity and key pairs
-  setCredentials(
-    cryptoCredentials: TCAUserIdentityRawTypes
-  ): Promise<boolean | Error>;
+  setCredentials(cryptoCredentials: TCAUserIdentityRawTypes): Promise<boolean | Error>;
   // store the crypto credentials
   // exported to a string.
   // It will be parsed to
   // identity and key pairs
-  setCredentials(
-    cryptoCredentialsExportedAsString: string
-  ): Promise<boolean | Error>;
+  setCredentials(cryptoCredentialsExportedAsString: string): Promise<boolean | Error>;
   /**
    * save credentials in the storage and do not validate
    * the private key if not exists.
@@ -100,9 +89,7 @@ export interface ICAIdentityCredentialsStorage {
    * @returns {(Promise<boolean | Error>)}
    * @memberof ICAIdentityCredentialsStorage
    */
-  setCredentialsNoCheckPrivateKey(
-    cryptoCredentials: TCAUserIdentityRawTypes | string
-  ): Promise<boolean | Error>;
+  setCredentialsNoCheckPrivateKey(cryptoCredentials: TCAUserIdentityRawTypes | string): Promise<boolean | Error>;
   /**
    * save credentials in the storage and do not validate
    * the private key if not exists.
@@ -111,7 +98,5 @@ export interface ICAIdentityCredentialsStorage {
    * @returns {(Promise<boolean | Error>)}
    * @memberof ICAIdentityCredentialsStorage
    */
-  setCredentialsNoCheckPrivateKey(
-    cryptoCredentials: TCAUserIdentityRawTypes | string
-  ): Promise<boolean | Error>;
+  setCredentialsNoCheckPrivateKey(cryptoCredentials: TCAUserIdentityRawTypes | string): Promise<boolean | Error>;
 }

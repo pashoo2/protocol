@@ -1,9 +1,6 @@
 import { HttpResponseError } from './http-request-class-base-response-error';
 import { THttpResponseResult } from '../http-request-class-base.types';
-import {
-  isSucceedResponse,
-  getContentTypeRAW,
-} from '../http-request-class-base-utils';
+import { isSucceedResponse, getContentTypeRAW } from '../http-request-class-base-utils';
 import { HTTP_RESPONSE_TYPES } from '../http-request-class-base.const';
 import { MimeTypeClass } from 'classes/basic-classes/mime-types-class-base/mime-types-class-base';
 import { getFilenameByUrl } from '../../../../utils/files-utils/files-utils-download';
@@ -29,9 +26,7 @@ export class HttpRequestResponseProcessor {
     }
 
     if (extension) {
-      return fileName && fileName.endsWith(extension)
-        ? fileName
-        : `${fileName}.${extension}`;
+      return fileName && fileName.endsWith(extension) ? fileName : `${fileName}.${extension}`;
     }
     return fileName;
   }
@@ -81,23 +76,16 @@ export class HttpRequestResponseProcessor {
     }
   }
 
-  protected async processAsFile(
-    mimeType?: string | null,
-    extension?: string | null
-  ): Promise<Error | object> {
+  protected async processAsFile(mimeType?: string | null, extension?: string | null): Promise<Error | object> {
     const { response } = this;
 
     try {
       const result = await response.blob();
 
       if (result instanceof Blob) {
-        return new File(
-          [result],
-          this.getFileNameByResponse(extension) || 'unknown',
-          {
-            type: mimeType || undefined,
-          }
-        );
+        return new File([result], this.getFileNameByResponse(extension) || 'unknown', {
+          type: mimeType || undefined,
+        });
       }
       return new Error("Can't process the response as a file");
     } catch (err) {
@@ -145,9 +133,7 @@ export class HttpRequestResponseProcessor {
     return new Error('There is no "Content-Type" in the response headers');
   }
 
-  public async getResult(): Promise<
-    Error | HttpResponseError | THttpResponseResult
-  > {
+  public async getResult(): Promise<Error | HttpResponseError | THttpResponseResult> {
     const { response } = this;
 
     if (response.type === HTTP_RESPONSE_TYPES.OPAQUE) {

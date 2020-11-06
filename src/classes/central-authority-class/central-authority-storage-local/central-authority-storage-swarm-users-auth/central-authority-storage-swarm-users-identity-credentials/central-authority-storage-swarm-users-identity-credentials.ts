@@ -47,11 +47,7 @@ export class CentralAuthorityIdentityCredentialsStorage
   public get isActive(): boolean {
     const { status, storageConnection } = this;
 
-    return (
-      status === CA_IDENTITY_CREDENTIALS_STORAGE_STATUS.CONNECTED &&
-      !!storageConnection &&
-      storageConnection.isActive
-    );
+    return status === CA_IDENTITY_CREDENTIALS_STORAGE_STATUS.CONNECTED && !!storageConnection && storageConnection.isActive;
   }
 
   protected storageConnection?: OpenStorage;
@@ -63,9 +59,7 @@ export class CentralAuthorityIdentityCredentialsStorage
    * the user's credentials
    * @param storageCredentials
    */
-  public async connect(
-    options?: ICAIdentityCredentialsStorageConntionOptions
-  ): Promise<boolean | Error> {
+  public async connect(options?: ICAIdentityCredentialsStorageConntionOptions): Promise<boolean | Error> {
     const resultSetOptions = this.setOptions(options);
 
     if (resultSetOptions instanceof Error) {
@@ -77,15 +71,11 @@ export class CentralAuthorityIdentityCredentialsStorage
 
     if (connection instanceof Error) {
       console.error(connection);
-      return this.setErrorStatus(
-        'Failed to create an instance of SecretStorage'
-      );
+      return this.setErrorStatus('Failed to create an instance of SecretStorage');
     }
     this.setStatus(CA_IDENTITY_CREDENTIALS_STORAGE_STATUS.CONNECTING);
 
-    const connectionResult = await connection.connect(
-      CA_IDENTITY_CREDENTIALS_STORAGE_CONFIGURATION
-    );
+    const connectionResult = await connection.connect(CA_IDENTITY_CREDENTIALS_STORAGE_CONFIGURATION);
 
     if (connectionResult instanceof Error) {
       console.error(connectionResult);
@@ -105,9 +95,7 @@ export class CentralAuthorityIdentityCredentialsStorage
    * @returns {(Promise<TCentralAuthorityUserCryptoCredentials | Error | null>)}
    * @memberof CentralAuthorityIdentityCredentialsStorage
    */
-  public async getCredentials(
-    identity: TCentralAuthorityUserIdentity
-  ): Promise<TCentralAuthorityUserCryptoCredentials | Error | null> {
+  public async getCredentials(identity: TCentralAuthorityUserIdentity): Promise<TCentralAuthorityUserCryptoCredentials | Error | null> {
     const { isActive } = this;
 
     if (!isActive) {
@@ -144,25 +132,15 @@ export class CentralAuthorityIdentityCredentialsStorage
       const caCryptoCredentials = args[0];
 
       if (checkIsValidExportedCryptoCredentialsToString(caCryptoCredentials)) {
-        return this.setCredentialsByCACryptoCredentialsExportedToString(
-          caCryptoCredentials,
-          checkPrivateKey
-        );
-      } else if (
-        checkIsValidCryptoCredentials(caCryptoCredentials, checkPrivateKey)
-      ) {
-        return this.setCredentialsByCACryptoCredentials(
-          caCryptoCredentials,
-          checkPrivateKey
-        );
+        return this.setCredentialsByCACryptoCredentialsExportedToString(caCryptoCredentials, checkPrivateKey);
+      } else if (checkIsValidCryptoCredentials(caCryptoCredentials, checkPrivateKey)) {
+        return this.setCredentialsByCACryptoCredentials(caCryptoCredentials, checkPrivateKey);
       }
     }
     return new Error('An unknown arguments');
   }
 
-  public setCredentialsNoCheckPrivateKey(
-    cryptoCredentials: TCAUserIdentityRawTypes | string
-  ) {
+  public setCredentialsNoCheckPrivateKey(cryptoCredentials: TCAUserIdentityRawTypes | string) {
     return this.setCredentials(cryptoCredentials, false);
   }
 
@@ -176,21 +154,12 @@ export class CentralAuthorityIdentityCredentialsStorage
     const { status, storageConnection } = this;
 
     if (status === CA_IDENTITY_CREDENTIALS_STORAGE_STATUS.DISCONNECTED) {
-      console.error(
-        new Error('The instance is already disconnected from the storage')
-      );
+      console.error(new Error('The instance is already disconnected from the storage'));
       // return false cause already disconnected
       return false;
     }
-    if (
-      status !== CA_IDENTITY_CREDENTIALS_STORAGE_STATUS.CONNECTED ||
-      status === CA_IDENTITY_CREDENTIALS_STORAGE_STATUS.ERROR
-    ) {
-      return this.setErrorStatus(
-        new Error(
-          "Can't disconnect cause the instance is not in the Connected state"
-        )
-      );
+    if (status !== CA_IDENTITY_CREDENTIALS_STORAGE_STATUS.CONNECTED || status === CA_IDENTITY_CREDENTIALS_STORAGE_STATUS.ERROR) {
+      return this.setErrorStatus(new Error("Can't disconnect cause the instance is not in the Connected state"));
     }
     if (!(storageConnection instanceof OpenStorage)) {
       return this.setErrorStatus('There is no connection to the SecretStorage');
@@ -218,9 +187,7 @@ export class CentralAuthorityIdentityCredentialsStorage
     this.setStorageName();
   }
 
-  protected setOptions(
-    options?: ICAIdentityCredentialsStorageConntionOptions
-  ): void | Error {
+  protected setOptions(options?: ICAIdentityCredentialsStorageConntionOptions): void | Error {
     this.setDefaultOptions();
     if (!options) {
       return;
@@ -229,13 +196,8 @@ export class CentralAuthorityIdentityCredentialsStorage
       if (typeof options.storageName !== 'string') {
         return new Error('The storage name must be a string');
       }
-      if (
-        options.storageName.length >
-        CA_IDENTITY_CREDENTIALS_STORAGE_NAME_OPTIONS_MAX_LENGTH
-      ) {
-        return new Error(
-          `The maximum length of a storage name is ${CA_IDENTITY_CREDENTIALS_STORAGE_NAME_OPTIONS_MAX_LENGTH}`
-        );
+      if (options.storageName.length > CA_IDENTITY_CREDENTIALS_STORAGE_NAME_OPTIONS_MAX_LENGTH) {
+        return new Error(`The maximum length of a storage name is ${CA_IDENTITY_CREDENTIALS_STORAGE_NAME_OPTIONS_MAX_LENGTH}`);
       }
       this.setStorageName(options.storageName);
     }
@@ -262,13 +224,9 @@ export class CentralAuthorityIdentityCredentialsStorage
    * @returns {(string | Error)}
    * @memberof CentralAuthorityIdentityCredentialsStorage
    */
-  protected getStorageKeyByCAIdentity(
-    identity: TCAUserIdentityRawTypes
-  ): string | Error {
+  protected getStorageKeyByCAIdentity(identity: TCAUserIdentityRawTypes): string | Error {
     if (!(identity instanceof CentralAuthorityIdentity)) {
-      return new Error(
-        'The argument must be an instance of CentralAuthorityIdentity'
-      );
+      return new Error('The argument must be an instance of CentralAuthorityIdentity');
     }
     if (!identity.isValid) {
       return new Error('The CA identity is not valid');
@@ -286,9 +244,7 @@ export class CentralAuthorityIdentityCredentialsStorage
   }
 
   @caching(CA_IDENTITY_CREDENTIALS_STORAGE_READ_RAW_CACHE_CAPACITY)
-  protected async getCredentialsRaw(
-    identityKey: string
-  ): Promise<string | Error | undefined> {
+  protected async getCredentialsRaw(identityKey: string): Promise<string | Error | undefined> {
     const { isActive, storageConnection } = this;
 
     if (!isActive || !storageConnection) {
@@ -304,9 +260,7 @@ export class CentralAuthorityIdentityCredentialsStorage
       return caCryptoCredentials ? caCryptoCredentials : undefined;
     } catch (err) {
       console.error(err);
-      return new Error(
-        'Failed to read a credentials for identity from the storage'
-      );
+      return new Error('Failed to read a credentials for identity from the storage');
     }
   }
 
@@ -329,40 +283,28 @@ export class CentralAuthorityIdentityCredentialsStorage
         return new Error('The identity is not valid');
       }
 
-      const cryptoCredentialsExported = await getExportedCryptoCredentialsByCAIdentity(
-        caIdentity,
-        cryptoKeyPairs,
-        checkPrivateKey
-      );
+      const cryptoCredentialsExported = await getExportedCryptoCredentialsByCAIdentity(caIdentity, cryptoKeyPairs, checkPrivateKey);
 
       if (cryptoCredentialsExported instanceof Error) {
         console.error(cryptoCredentialsExported);
         return new Error('Failed to export the credentials to a string');
       }
 
-      const credentialsStoredForIdentity = await this.getCredentialsRaw(
-        caIdentityStorageKey
-      );
+      const credentialsStoredForIdentity = await this.getCredentialsRaw(caIdentityStorageKey);
 
       // if a credentials was already
       // stored for the identity
       // do not modify it.
       // Cause it's value
       // must be immutable
-      if (
-        credentialsStoredForIdentity &&
-        !(credentialsStoredForIdentity instanceof Error)
-      ) {
+      if (credentialsStoredForIdentity && !(credentialsStoredForIdentity instanceof Error)) {
         return false;
       }
 
       // if the given values are valid
       // then can put it to the storage
       // connected to
-      return storageConnection.set(
-        caIdentityStorageKey,
-        cryptoCredentialsExported
-      );
+      return storageConnection.set(caIdentityStorageKey, cryptoCredentialsExported);
     } catch (err) {
       console.error(err);
       return new Error('Failed to store the credentials');
@@ -377,52 +319,34 @@ export class CentralAuthorityIdentityCredentialsStorage
 
     if (identity instanceof Error) {
       console.error(identity);
-      return new Error(
-        'The user identity is not valid or have an unknown format'
-      );
+      return new Error('The user identity is not valid or have an unknown format');
     }
 
-    const cryptoKeyPairs = getCryptoKeyPairsByCryptoCredentials(
-      caCryptoCredentials,
-      checkPrivateKey
-    );
+    const cryptoKeyPairs = getCryptoKeyPairsByCryptoCredentials(caCryptoCredentials, checkPrivateKey);
 
     if (cryptoKeyPairs instanceof Error) {
       console.error(cryptoKeyPairs);
-      return new Error(
-        'The crypto key pairs are not valid or have an unknown format'
-      );
+      return new Error('The crypto key pairs are not valid or have an unknown format');
     }
 
-    return this.setCredentialsByIdentity(
-      identity,
-      cryptoKeyPairs,
-      checkPrivateKey
-    );
+    return this.setCredentialsByIdentity(identity, cryptoKeyPairs, checkPrivateKey);
   }
 
   protected async setCredentialsByCACryptoCredentialsExportedToString(
     caCryptoCredentialsExportedToString: string,
     checkPrivateKey: boolean = true
   ): Promise<boolean | Error> {
-    const cryptoCredentials = await importCryptoCredentialsFromAString(
-      caCryptoCredentialsExportedToString
-    );
+    const cryptoCredentials = await importCryptoCredentialsFromAString(caCryptoCredentialsExportedToString);
 
     if (cryptoCredentials instanceof Error) {
       console.error(cryptoCredentials);
       return new Error('Failed to import crypto credentials from the string');
     }
-    return this.setCredentialsByCACryptoCredentials(
-      cryptoCredentials,
-      checkPrivateKey
-    );
+    return this.setCredentialsByCACryptoCredentials(cryptoCredentials, checkPrivateKey);
   }
 
   @caching(CA_IDENTITY_CREDENTIALS_STORAGE_READ_CACHE_CAPACITY)
-  protected async getCredentialsCached(
-    identity: TCAUserIdentityRawTypes
-  ): Promise<TCentralAuthorityUserCryptoCredentials | Error | null> {
+  protected async getCredentialsCached(identity: TCAUserIdentityRawTypes): Promise<TCentralAuthorityUserCryptoCredentials | Error | null> {
     try {
       // parse the identity
       const caIdentity = new CentralAuthorityIdentity(identity);
@@ -443,9 +367,7 @@ export class CentralAuthorityIdentityCredentialsStorage
         return null;
       }
 
-      const importedCryptoCredentials = await importCryptoCredentialsFromAString(
-        caCryptoCredentials
-      );
+      const importedCryptoCredentials = await importCryptoCredentialsFromAString(caCryptoCredentials);
 
       if (importedCryptoCredentials instanceof Error) {
         console.error(importedCryptoCredentials);
@@ -459,24 +381,16 @@ export class CentralAuthorityIdentityCredentialsStorage
       // version may be different
       // from the requested. It may
       // cause an unexpected issues
-      const resultedValue = replaceCryptoCredentialsIdentity(
-        importedCryptoCredentials,
-        String(caIdentity),
-        false
-      );
+      const resultedValue = replaceCryptoCredentialsIdentity(importedCryptoCredentials, String(caIdentity), false);
 
       if (resultedValue instanceof Error) {
         console.error(resultedValue);
-        return new Error(
-          'Failed to replace the identity in the credentials read from the storage'
-        );
+        return new Error('Failed to replace the identity in the credentials read from the storage');
       }
       return resultedValue;
     } catch (err) {
       console.error(err);
-      return new Error(
-        'Failed to read a credentials for identity from the storage'
-      );
+      return new Error('Failed to read a credentials for identity from the storage');
     }
   }
 }

@@ -1,12 +1,10 @@
 import { IStore } from 'orbit-db-cache';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbKeystoreStore
-  extends IStore {}
+export interface ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbKeystoreStore extends IStore {}
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore
-  extends IStore {
+export interface ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore extends IStore {
   /**
    * close() method will not close the instance. It's
    * necessary when restart the database, it's cache

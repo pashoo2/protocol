@@ -15,18 +15,12 @@ import { TSwarmStoreDatabaseEntityUniqueIndex } from '../../../swarm-store-class
 import { isValidSwarmMessageDecryptedFormat } from '../../../swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-swarm-message';
 import { whetherSwarmMessagesDecryptedAreEqual } from '../../../swarm-message/swarm-message-utils/swarm-message-utils-common/swarm-message-utils-common-decrypted';
 
-export const checkMessageAddress = <
-  P extends ESwarmStoreConnector,
-  DbType extends TSwarmStoreDatabaseType<P>
->(
+export const checkMessageAddress = <P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>>(
   messageUniqAddress: any,
   dbType: DbType
-): messageUniqAddress is DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
-  ? undefined
-  : TSwarmStoreDatabaseEntityAddress<P> => {
+): messageUniqAddress is DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? undefined : TSwarmStoreDatabaseEntityAddress<P> => {
   const isFeedStore = dbType === ESwarmStoreConnectorOrbitDbDatabaseType.FEED;
-  const isKeyValueStore =
-    dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE;
+  const isKeyValueStore = dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE;
 
   if (isFeedStore) {
     if (!messageUniqAddress) {
@@ -35,26 +29,18 @@ export const checkMessageAddress = <
   }
   if (isKeyValueStore) {
     if (messageUniqAddress) {
-      throw new Error(
-        'The message should not have an address for a key-value store'
-      );
+      throw new Error('The message should not have an address for a key-value store');
     }
   }
   return true;
 };
 
-export const checkMessageKey = <
-  P extends ESwarmStoreConnector,
-  DbType extends TSwarmStoreDatabaseType<P>
->(
+export const checkMessageKey = <P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>>(
   key: any,
   dbType: DbType
-): key is DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
-  ? TSwarmStoreDatabaseEntityKey<P>
-  : undefined => {
+): key is DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined => {
   const isFeedStore = dbType === ESwarmStoreConnectorOrbitDbDatabaseType.FEED;
-  const isKeyValueStore =
-    dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE;
+  const isKeyValueStore = dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE;
 
   if (isFeedStore) {
     if (key) {
@@ -69,22 +55,12 @@ export const checkMessageKey = <
   return true;
 };
 
-export const getMessagesMetaByAddressAndKey = <
-  P extends ESwarmStoreConnector,
-  DbType extends TSwarmStoreDatabaseType<P>
->(
-  messageUniqAddress: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
-    ? undefined
-    : TSwarmStoreDatabaseEntityAddress<P>,
-  key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
-    ? TSwarmStoreDatabaseEntityKey<P>
-    : undefined,
+export const getMessagesMetaByAddressAndKey = <P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>>(
+  messageUniqAddress: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? undefined : TSwarmStoreDatabaseEntityAddress<P>,
+  key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined,
   dbType: DbType
 ): ISwarmMessagesDatabaseMesssageMeta<P, DbType> => {
-  if (
-    checkMessageAddress(messageUniqAddress, dbType) &&
-    checkMessageKey(key, dbType)
-  ) {
+  if (checkMessageAddress(messageUniqAddress, dbType) && checkMessageKey(key, dbType)) {
     return {
       messageUniqAddress,
       key,
@@ -93,21 +69,15 @@ export const getMessagesMetaByAddressAndKey = <
   throw new Error('Meta information is not valid for this database type');
 };
 
-export const createMessagesMetaByAddressAndKey = <
-  P extends ESwarmStoreConnector,
-  DbType extends TSwarmStoreDatabaseType<P>
->(
+export const createMessagesMetaByAddressAndKey = <P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>>(
   messageUniqAddress: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
     ? TSwarmStoreDatabaseEntityAddress<P> | undefined
     : TSwarmStoreDatabaseEntityAddress<P>,
-  key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
-    ? TSwarmStoreDatabaseEntityKey<P>
-    : undefined,
+  key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined,
   dbType: DbType
 ): ISwarmMessagesDatabaseMesssageMeta<P, DbType> => {
   const isFeedStore = dbType === ESwarmStoreConnectorOrbitDbDatabaseType.FEED;
-  const isKeyValueStore =
-    dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE;
+  const isKeyValueStore = dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE;
 
   if (isFeedStore) {
     checkMessageAddress(messageUniqAddress, dbType);
@@ -116,24 +86,15 @@ export const createMessagesMetaByAddressAndKey = <
     checkMessageKey(key, dbType);
   }
   return getMessagesMetaByAddressAndKey<P, DbType>(
-    (isKeyValueStore
-      ? undefined
-      : messageUniqAddress) as DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+    (isKeyValueStore ? undefined : messageUniqAddress) as DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
       ? undefined
       : TSwarmStoreDatabaseEntityAddress<P>,
-    (isFeedStore
-      ? undefined
-      : key) as DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
-      ? TSwarmStoreDatabaseEntityKey<P>
-      : undefined,
+    (isFeedStore ? undefined : key) as DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined,
     dbType
   );
 };
 
-export const getMessageMetaForMessageWithMeta = <
-  P extends ESwarmStoreConnector,
-  DbType extends TSwarmStoreDatabaseType<P>
->(
+export const getMessageMetaForMessageWithMeta = <P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>>(
   swarmMessageWithMeta: ISwarmMessageStoreMessageWithMeta<P>,
   dbType: DbType
 ): ISwarmMessagesDatabaseMesssageMeta<P, DbType> => {
@@ -142,17 +103,12 @@ export const getMessageMetaForMessageWithMeta = <
     (messageAddress as unknown) as DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
       ? TSwarmStoreDatabaseEntityAddress<P> | undefined
       : TSwarmStoreDatabaseEntityAddress<P>,
-    (key as unknown) as DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
-      ? TSwarmStoreDatabaseEntityKey<P>
-      : undefined,
+    (key as unknown) as DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined,
     dbType
   );
 };
 
-export const getMessageUniqIndexByMeta = <
-  P extends ESwarmStoreConnector,
-  DbType extends TSwarmStoreDatabaseType<P>
->(
+export const getMessageUniqIndexByMeta = <P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>>(
   messageMeta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>,
   dbType: DbType
 ): TSwarmStoreDatabaseEntityUniqueIndex<P, DbType> => {
@@ -160,14 +116,9 @@ export const getMessageUniqIndexByMeta = <
     const { messageUniqAddress } = messageMeta;
 
     if (!messageUniqAddress) {
-      throw new Error(
-        'Message unique address should be defined for a feed store'
-      );
+      throw new Error('Message unique address should be defined for a feed store');
     }
-    return (messageUniqAddress as unknown) as TSwarmStoreDatabaseEntityUniqueIndex<
-      P,
-      DbType
-    >;
+    return (messageUniqAddress as unknown) as TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>;
   } else {
     const { key } = messageMeta;
 
@@ -178,10 +129,7 @@ export const getMessageUniqIndexByMeta = <
   }
 };
 
-export const getMessagesUniqIndexesByMeta = <
-  P extends ESwarmStoreConnector,
-  DbType extends TSwarmStoreDatabaseType<P>
->(
+export const getMessagesUniqIndexesByMeta = <P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>>(
   messagesMeta: Set<ISwarmMessagesDatabaseMesssageMeta<P, DbType>>,
   dbType: DbType
 ): Array<TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>> => {
@@ -193,17 +141,11 @@ export const getMessagesUniqIndexesByMeta = <
   return resultedArray;
 };
 
-export const getMessageDescriptionForMessageWithMeta = <
-  P extends ESwarmStoreConnector,
-  DbType extends TSwarmStoreDatabaseType<P>
->(
+export const getMessageDescriptionForMessageWithMeta = <P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>>(
   swarmMessageWithMeta: ISwarmMessageStoreMessageWithMeta<P>,
   dbType: DbType
 ): ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType> => {
-  const messageMeta = getMessageMetaForMessageWithMeta(
-    swarmMessageWithMeta,
-    dbType
-  );
+  const messageMeta = getMessageMetaForMessageWithMeta(swarmMessageWithMeta, dbType);
   return {
     messageMeta,
     messageEntry: swarmMessageWithMeta.message,
@@ -218,19 +160,13 @@ export const getMessageDescriptionForMessageWithMeta = <
  * @returns {boolean}
  */
 export const _checkWhetherSameSwarmMessagesDecrypted = (
-  first:
-    | ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector>
-    | undefined,
-  second:
-    | ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector>
-    | undefined
+  first: ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector> | undefined,
+  second: ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector> | undefined
 ): boolean => {
   if (!first || !second || first instanceof Error || second instanceof Error) {
     return false;
   }
   return (
-    isValidSwarmMessageDecryptedFormat(first) &&
-    isValidSwarmMessageDecryptedFormat(second) &&
-    whetherSwarmMessagesDecryptedAreEqual(first, second)
+    isValidSwarmMessageDecryptedFormat(first) && isValidSwarmMessageDecryptedFormat(second) && whetherSwarmMessagesDecryptedAreEqual(first, second)
   );
 };

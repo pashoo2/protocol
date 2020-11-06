@@ -40,9 +40,7 @@ export class CASwarmCredentialsProvider implements ICASwarmCredentialsProvider {
    * @returns {(Promise<void | Error>)}
    * @memberof CASwarmCredentialsProvider
    */
-  public connect = async (
-    options: ICASwarmCredentialsProviderOptions
-  ): Promise<void | Error> => {
+  public connect = async (options: ICASwarmCredentialsProviderOptions): Promise<void | Error> => {
     if (this.isRunning) {
       console.warn('The instance is already running');
       return;
@@ -74,10 +72,7 @@ export class CASwarmCredentialsProvider implements ICASwarmCredentialsProvider {
       return;
     }
 
-    const [
-      resDisconnectFromCredentialsStorage,
-      resultDisconnectFromSwarmConnectionsPool,
-    ] = await Promise.all([
+    const [resDisconnectFromCredentialsStorage, resultDisconnectFromSwarmConnectionsPool] = await Promise.all([
       this.disconnectFromCredentialsStorage(),
       this.disconnectFromSwarmConnectionsPool(),
     ]);
@@ -108,9 +103,7 @@ export class CASwarmCredentialsProvider implements ICASwarmCredentialsProvider {
    * @returns {(Promise<TCentralAuthorityUserCryptoCredentials | Error | null>)}
    * @memberof CASwarmCredentialsProvider
    */
-  public async get(
-    identity: TCAUserIdentityRawTypes
-  ): Promise<TCentralAuthorityUserCryptoCredentials | Error | null> {
+  public async get(identity: TCAUserIdentityRawTypes): Promise<TCentralAuthorityUserCryptoCredentials | Error | null> {
     if (!this.isRunning) {
       return new Error('The instance is not running');
     }
@@ -121,37 +114,25 @@ export class CASwarmCredentialsProvider implements ICASwarmCredentialsProvider {
       return identityInstance;
     }
 
-    const credentialsFromLocalCredentialsStorage = await this.readCredentialsFromLocalCredentialsStorage(
-      identityInstance
-    );
+    const credentialsFromLocalCredentialsStorage = await this.readCredentialsFromLocalCredentialsStorage(identityInstance);
 
     if (credentialsFromLocalCredentialsStorage instanceof Error) {
       console.error(credentialsFromLocalCredentialsStorage);
-      console.error(
-        new Error(
-          'Failed to read credentials from the local credentials storage'
-        )
-      );
+      console.error(new Error('Failed to read credentials from the local credentials storage'));
     }
     if (credentialsFromLocalCredentialsStorage) {
       return credentialsFromLocalCredentialsStorage;
     }
 
-    const crdentialsFromSwarm = await this.readCredentialsFromTheSwarm(
-      identityInstance
-    );
+    const crdentialsFromSwarm = await this.readCredentialsFromTheSwarm(identityInstance);
 
     if (crdentialsFromSwarm instanceof Error) {
       console.error(crdentialsFromSwarm);
-      return new Error(
-        'Failed to get credentials from the credentials provider'
-      );
+      return new Error('Failed to get credentials from the credentials provider');
     }
     // set the crdentials read from the swarm in the local credentials storage
     if (crdentialsFromSwarm) {
-      const result = await this.setCredentialsInCredentialsStorageNoCheckPrivateKey(
-        crdentialsFromSwarm
-      );
+      const result = await this.setCredentialsInCredentialsStorageNoCheckPrivateKey(crdentialsFromSwarm);
 
       if (result instanceof Error) {
         console.error(result);
@@ -160,9 +141,7 @@ export class CASwarmCredentialsProvider implements ICASwarmCredentialsProvider {
     return crdentialsFromSwarm;
   }
 
-  protected validateOptions(
-    options: ICASwarmCredentialsProviderOptions
-  ): Error | void {
+  protected validateOptions(options: ICASwarmCredentialsProviderOptions): Error | void {
     if (!options) {
       return new Error('An options must be provided');
     }
@@ -173,23 +152,17 @@ export class CASwarmCredentialsProvider implements ICASwarmCredentialsProvider {
     const { connections, storageDb } = options;
 
     if (!connections) {
-      return new Error(
-        'The connections parameter is absent in the options object'
-      );
+      return new Error('The connections parameter is absent in the options object');
     }
     if (!connections.swarmConnectionPool) {
-      return new Error(
-        'Connection to the swarm connections pool is not provided in the options'
-      );
+      return new Error('Connection to the swarm connections pool is not provided in the options');
     }
     if (storageDb && typeof storageDb !== 'string') {
       return new Error('The storage db name must be a string');
     }
   }
 
-  protected setOptions(
-    options: ICASwarmCredentialsProviderOptions
-  ): Error | void {
+  protected setOptions(options: ICASwarmCredentialsProviderOptions): Error | void {
     const validationResult = this.validateOptions(options);
 
     if (validationResult instanceof Error) {
@@ -223,17 +196,13 @@ export class CASwarmCredentialsProvider implements ICASwarmCredentialsProvider {
    * @param userIdentity
    * @returns auth provider id by user identity
    */
-  protected getAuthProviderIdByUserIdentity(
-    userIdentity: CentralAuthorityIdentity
-  ): TCAuthProviderIdentifier | Error {
+  protected getAuthProviderIdByUserIdentity(userIdentity: CentralAuthorityIdentity): TCAuthProviderIdentifier | Error {
     const { identityDescription } = userIdentity;
 
     if (identityDescription instanceof Error) {
       return new Error('The identity is not valid');
     }
-    return identityDescription[
-      CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME
-    ];
+    return identityDescription[CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME];
   }
 
   /**
@@ -253,9 +222,7 @@ export class CASwarmCredentialsProvider implements ICASwarmCredentialsProvider {
 
     if (localCredentialsStorageInstance instanceof Error) {
       console.error(localCredentialsStorageInstance);
-      return new Error(
-        'Failed to start an instance of the Local credentials storage'
-      );
+      return new Error('Failed to start an instance of the Local credentials storage');
     }
     this.connectionLocalCredentialsStorage = localCredentialsStorageInstance;
   }
@@ -269,15 +236,11 @@ export class CASwarmCredentialsProvider implements ICASwarmCredentialsProvider {
    * @returns {(Promise<Error | void>)}
    * @memberof CASwarmCredentialsProvider
    */
-  protected async runConnections(
-    connections: ICASwarmCredentialsProviderOptionsConnections
-  ): Promise<Error | void> {
+  protected async runConnections(connections: ICASwarmCredentialsProviderOptionsConnections): Promise<Error | void> {
     const { swarmConnectionPool, localCredentialsStorage } = connections;
 
     if (!swarmConnectionPool) {
-      return new Error(
-        'A connection to the Swarm connections pool must be provided in the options'
-      );
+      return new Error('A connection to the Swarm connections pool must be provided in the options');
     }
     this.connectionSwarmConnectionPool = swarmConnectionPool;
     if (!localCredentialsStorage) {
@@ -285,9 +248,7 @@ export class CASwarmCredentialsProvider implements ICASwarmCredentialsProvider {
     }
   }
 
-  protected getOptionsForLocalCredentialsStorage():
-    | ICAIdentityCredentialsStorageConntionOptions
-    | undefined {
+  protected getOptionsForLocalCredentialsStorage(): ICAIdentityCredentialsStorageConntionOptions | undefined {
     if (this.options && this.options.storageDb) {
       return {
         storageName: this.options.storageDb || '',
@@ -295,27 +256,19 @@ export class CASwarmCredentialsProvider implements ICASwarmCredentialsProvider {
     }
   }
 
-  protected async startConnectionLocalCredentialsStorage(): Promise<
-    Error | ICAIdentityCredentialsStorage
-  > {
+  protected async startConnectionLocalCredentialsStorage(): Promise<Error | ICAIdentityCredentialsStorage> {
     try {
       const connectionLocalCredentialsStorage = new CentralAuthorityIdentityCredentialsStorage();
-      const connectToCredentialsStorageResult = await connectionLocalCredentialsStorage.connect(
-        this.getOptionsForLocalCredentialsStorage()
-      );
+      const connectToCredentialsStorageResult = await connectionLocalCredentialsStorage.connect(this.getOptionsForLocalCredentialsStorage());
 
       if (connectToCredentialsStorageResult instanceof Error) {
         console.error(connectToCredentialsStorageResult);
-        return new Error(
-          'Failed to connect with the local credentials storage'
-        );
+        return new Error('Failed to connect with the local credentials storage');
       }
       return connectionLocalCredentialsStorage;
     } catch (err) {
       console.error(err);
-      return new Error(
-        'An unknown error has thrown on starting a new connection to the local credentials storage'
-      );
+      return new Error('An unknown error has thrown on starting a new connection to the local credentials storage');
     }
   }
 
@@ -353,9 +306,7 @@ export class CASwarmCredentialsProvider implements ICASwarmCredentialsProvider {
     const connection = this.connectionSwarmConnectionPool;
 
     if (!connection) {
-      console.warn(
-        'There is no active connection to the swarm connections pool'
-      );
+      console.warn('There is no active connection to the swarm connections pool');
       return;
     }
     // do not disconnect from the connections swarm connection pool cause
@@ -372,9 +323,7 @@ export class CASwarmCredentialsProvider implements ICASwarmCredentialsProvider {
    * @returns {(Error | CentralAuthorityIdentity)}
    * @memberof CASwarmCredentialsProvider
    */
-  protected getUserIdentityInstance(
-    userIdentity: TCAUserIdentityRawTypes
-  ): Error | CentralAuthorityIdentity {
+  protected getUserIdentityInstance(userIdentity: TCAUserIdentityRawTypes): Error | CentralAuthorityIdentity {
     const identityInstance = new CentralAuthorityIdentity(userIdentity);
 
     if (!identityInstance.isValid) {
@@ -395,19 +344,12 @@ export class CASwarmCredentialsProvider implements ICASwarmCredentialsProvider {
     userIdentity: CentralAuthorityIdentity
   ): Promise<Error | null | TCentralAuthorityUserCryptoCredentials> {
     if (!this.connectionLocalCredentialsStorage) {
-      console.warn(
-        'There is no connection to the local credentials storage - start a new one'
-      );
+      console.warn('There is no connection to the local credentials storage - start a new one');
       const connectionResult = await this.connectToTheLocalCredentialsStorage();
 
-      if (
-        connectionResult instanceof Error ||
-        !this.connectionLocalCredentialsStorage
-      ) {
+      if (connectionResult instanceof Error || !this.connectionLocalCredentialsStorage) {
         console.error(connectionResult);
-        return new Error(
-          'Failed to start a new connection to the local credentials storage'
-        );
+        return new Error('Failed to start a new connection to the local credentials storage');
       }
     }
     return this.connectionLocalCredentialsStorage.getCredentials(userIdentity);
@@ -442,9 +384,7 @@ export class CASwarmCredentialsProvider implements ICASwarmCredentialsProvider {
 
     if (connection instanceof Error) {
       console.error(connection);
-      return new Error(
-        `Failed to connect to the auth provider ${authProviderId}`
-      );
+      return new Error(`Failed to connect to the auth provider ${authProviderId}`);
     }
     return connection.getUserCredentials(String(userIdentity));
   }
@@ -464,25 +404,16 @@ export class CASwarmCredentialsProvider implements ICASwarmCredentialsProvider {
     isCheckPrivateKey: boolean = true
   ): Promise<void | Error> {
     if (!this.connectionLocalCredentialsStorage) {
-      console.warn(
-        'There is no connection to the local credentials storage - start a new one'
-      );
+      console.warn('There is no connection to the local credentials storage - start a new one');
       const connectionResult = await this.connectToTheLocalCredentialsStorage();
 
-      if (
-        connectionResult instanceof Error ||
-        !this.connectionLocalCredentialsStorage
-      ) {
+      if (connectionResult instanceof Error || !this.connectionLocalCredentialsStorage) {
         console.error(connectionResult);
-        return new Error(
-          'Failed to start a new connection to the local credentials storage'
-        );
+        return new Error('Failed to start a new connection to the local credentials storage');
       }
     }
 
-    const setCredntialsResult = await this.connectionLocalCredentialsStorage.setCredentialsNoCheckPrivateKey(
-      credentials
-    );
+    const setCredntialsResult = await this.connectionLocalCredentialsStorage.setCredentialsNoCheckPrivateKey(credentials);
 
     if (setCredntialsResult instanceof Error) {
       console.error(setCredntialsResult);
@@ -490,9 +421,7 @@ export class CASwarmCredentialsProvider implements ICASwarmCredentialsProvider {
     }
   }
 
-  protected setCredentialsInCredentialsStorageNoCheckPrivateKey(
-    credentials: TCentralAuthorityUserCryptoCredentials
-  ) {
+  protected setCredentialsInCredentialsStorageNoCheckPrivateKey(credentials: TCentralAuthorityUserCryptoCredentials) {
     return this.setCredentialsInCredentialsStorage(credentials, false);
   }
 }

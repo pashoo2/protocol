@@ -52,9 +52,7 @@ export interface IPseudoNTPClassServerConnectionCb {
   server: string;
   parseCallback: (response: TPseudoNTPClassServerResponse) => Date | Error;
 }
-export type IPseudoNTPClassServerConnection =
-  | IPseudoNTPClassServerConnectionCb
-  | IPseudoNTPClassServerConnectionField;
+export type IPseudoNTPClassServerConnection = IPseudoNTPClassServerConnectionCb | IPseudoNTPClassServerConnectionField;
 
 export type TPseudoNTPClassServersPoolOption = IPseudoNTPClassServerConnection[];
 

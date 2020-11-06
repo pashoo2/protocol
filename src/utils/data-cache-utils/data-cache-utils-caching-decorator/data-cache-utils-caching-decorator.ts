@@ -1,7 +1,4 @@
-import {
-  IDataCachingDecoratorDecoratedFunction,
-  IDataCachingDecoratorCachedValue,
-} from './data-cache-utils-caching-decorator.types';
+import { IDataCachingDecoratorDecoratedFunction, IDataCachingDecoratorCachedValue } from './data-cache-utils-caching-decorator.types';
 import { commonUtilsArrayOrderByDec } from 'utils/common-utils/common-utils';
 import { DATA_CACHING_DECORATOR_DEFAULT_CACHE_CAPACITY } from './data-cache-utils-caching-decorator.const';
 
@@ -24,15 +21,10 @@ export const dataCachingUtilsCachingDecorator = <T, V, I extends object>(
    * @param {PropertyDescriptor} descriptor
    * @returns
    */
-  return (
-    target: object,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) => {
+  return (target: object, propertyKey: string, descriptor: PropertyDescriptor) => {
     let newDescriptor;
     // the original method, will be wrapped
-    const methodOrigin: IDataCachingDecoratorDecoratedFunction<T, V> =
-      descriptor.value;
+    const methodOrigin: IDataCachingDecoratorDecoratedFunction<T, V> = descriptor.value;
     // key - rating
     const keysRaiting = new Map<T, number>();
     let keysHighestRatings: number[] = [];
@@ -40,9 +32,7 @@ export const dataCachingUtilsCachingDecorator = <T, V, I extends object>(
     const cachedValuesCountLastIndex = cacheItemsCapacity - 1;
 
     if (typeof methodOrigin !== 'function') {
-      throw new Error(
-        'dataCachingUtilsCachingDecorator failed to decorate a non function property'
-      );
+      throw new Error('dataCachingUtilsCachingDecorator failed to decorate a non function property');
     }
 
     async function cachingWrapper(this: I, key: T): Promise<V> {
@@ -57,22 +47,17 @@ export const dataCachingUtilsCachingDecorator = <T, V, I extends object>(
       const resultedValue = await methodOrigin.call(this, key);
 
       if (!(resultedValue instanceof Error) && resultedValue != null) {
-        const theMinimalRaitingValue =
-          keysHighestRatings[cachedValuesCountLastIndex];
+        const theMinimalRaitingValue = keysHighestRatings[cachedValuesCountLastIndex];
         // increase the key raiting on each read of the key
         const keyRaiting = Number(keysRaiting.get(key) || 0) + 1;
 
         keysRaiting.set(key, keyRaiting);
         if (!theMinimalRaitingValue || theMinimalRaitingValue < keyRaiting) {
           // put the key rating on the last index
-          keysHighestRatings[
-            Math.min(cachedValuesCountLastIndex, keysHighestRatings.length)
-          ] = keyRaiting;
+          keysHighestRatings[Math.min(cachedValuesCountLastIndex, keysHighestRatings.length)] = keyRaiting;
           // sort the resulted array an replace the highest rating
           // array with the ordered copy of it
-          keysHighestRatings = commonUtilsArrayOrderByDec<number>(
-            keysHighestRatings
-          );
+          keysHighestRatings = commonUtilsArrayOrderByDec<number>(keysHighestRatings);
 
           // if the minimal rating value is exists.
           // Means that the cache is overflow

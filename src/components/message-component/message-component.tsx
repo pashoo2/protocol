@@ -8,16 +8,10 @@ export interface IMessageComponentProps<P extends ESwarmStoreConnector> {
   k?: string;
   dbName: string;
   message: ISwarmMessageInstanceDecrypted;
-  deleteMessage?(
-    id: TSwarmStoreDatabaseEntityKey<P>,
-    message: ISwarmMessageInstanceDecrypted,
-    key: string | undefined
-  ): Promise<void>;
+  deleteMessage?(id: TSwarmStoreDatabaseEntityKey<P>, message: ISwarmMessageInstanceDecrypted, key: string | undefined): Promise<void>;
 }
 
-export class MessageComponent<
-  P extends ESwarmStoreConnector
-> extends React.PureComponent<IMessageComponentProps<P>> {
+export class MessageComponent<P extends ESwarmStoreConnector> extends React.PureComponent<IMessageComponentProps<P>> {
   get payload() {
     return this.props.message.bdy.pld;
   }

@@ -66,8 +66,7 @@ export interface ICAConnectionsPoolConnections {
   [key: string]: ICAConnectionsPoolCurrentConnections;
 }
 
-export interface ICAConnectionPoolAuthResult
-  extends ICAConnectionUserAuthorizedResult {
+export interface ICAConnectionPoolAuthResult extends ICAConnectionUserAuthorizedResult {
   authProviderId: TCAuthProviderIdentifier;
 }
 
@@ -77,9 +76,7 @@ export interface ICAConnectionPool {
   // it will be undefined.
   userAuthResult?: ICAConnectionUserAuthorizedResult;
   // establish a new connection with the auth provider or returns an existing
-  getConnection(
-    authProviderUrl: TCAAuthProviderIdentity
-  ): Promise<Error | ICAConnection>;
+  getConnection(authProviderUrl: TCAAuthProviderIdentity): Promise<Error | ICAConnection>;
   /**
    *
    *
@@ -114,7 +111,5 @@ export interface ICAConnectionPool {
    * @returns {(Promise<Partial<ICentralAuthorityUserProfile> | undefined | Error>)}
    * @memberof ICAConnection
    */
-  getCAUserProfile(): Promise<
-    Partial<ICentralAuthorityUserProfile> | undefined | Error
-  >;
+  getCAUserProfile(): Promise<Partial<ICentralAuthorityUserProfile> | undefined | Error>;
 }

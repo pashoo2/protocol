@@ -1,7 +1,4 @@
-export const debounce = <F extends (...args: unknown[]) => unknown>(
-  fn: F,
-  timeoutMs: number
-) => {
+export const debounce = <F extends (...args: unknown[]) => unknown>(fn: F, timeoutMs: number) => {
   let latestArgs: Parameters<F>;
   let isTimeoutExists: boolean;
 

@@ -3,10 +3,7 @@ import {
   CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME,
 } from 'classes/central-authority-class/central-authority-class-const/central-authority-class-const';
 import { TCACryptoKeyPairs } from './central-authority-class-types-crypto-keys';
-import {
-  TCentralAuthorityUserIdentity,
-  TCentralAuthorityAuthCredentials,
-} from './central-authority-class-types-common';
+import { TCentralAuthorityUserIdentity, TCentralAuthorityAuthCredentials } from './central-authority-class-types-common';
 
 export type TCentralAuthorityUserCryptoCredentials = {
   [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: TCentralAuthorityUserIdentity;

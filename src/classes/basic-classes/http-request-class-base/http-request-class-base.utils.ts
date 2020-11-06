@@ -23,9 +23,7 @@ export const objectToUrlEncodedString = (obj: IParamsObject): string => {
     } else {
       paramValueCasted = String(paramValue);
     }
-    return `${querystring}${querystring.length ? '&' : ''}${encodeURIComponent(
-      paramName
-    )}=${encodeURIComponent(paramValueCasted)}`;
+    return `${querystring}${querystring.length ? '&' : ''}${encodeURIComponent(paramName)}=${encodeURIComponent(paramValueCasted)}`;
   }, '');
 };
 
@@ -57,9 +55,7 @@ export const objectToFormData = (obj: IParamsObjectFormData): FormData => {
     if (paramValueCasted) {
       formData.append(paramName, paramValueCasted, paramValueType);
     } else {
-      console.error(
-        `Can't append the ${paramName} field as the form data value`
-      );
+      console.error(`Can't append the ${paramName} field as the form data value`);
     }
     return formData;
   }, new FormData());
@@ -73,8 +69,5 @@ export const prefixUrlWithHTTPProtocol = (urlString: string): string => {
   }
   return urlTrimmed.startsWith('http://') || urlTrimmed.startsWith('https://')
     ? urlTrimmed
-    : `${CONST_API_CONF_CURRENT_PROTOCOL_USED}//${urlTrimmed.replace(
-        HTTP_REQUEST_URL_PROTOCOL_DELIIMETR_REGEXP,
-        ''
-      )}`;
+    : `${CONST_API_CONF_CURRENT_PROTOCOL_USED}//${urlTrimmed.replace(HTTP_REQUEST_URL_PROTOCOL_DELIIMETR_REGEXP, '')}`;
 };

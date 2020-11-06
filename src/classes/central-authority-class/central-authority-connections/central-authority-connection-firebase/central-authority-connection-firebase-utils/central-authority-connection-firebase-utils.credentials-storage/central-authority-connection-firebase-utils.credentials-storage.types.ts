@@ -4,13 +4,8 @@ import { TCentralAuthorityUserCryptoCredentials } from 'classes/central-authorit
 import { CA_CONNECTION_STATUS } from 'classes/central-authority-class/central-authority-connections/central-authority-connections-const/central-authority-connections-const';
 
 export interface ICAConnectionFirestoreUtilsCredentialsStrorage {
-  setUserCredentials(
-    userId: string,
-    cryptoCredentials: TCentralAuthorityUserCryptoCredentials
-  ): Promise<Error | boolean>;
-  getUserCredentials(
-    userId: string
-  ): Promise<Error | null | TCentralAuthorityUserCryptoCredentials>;
+  setUserCredentials(userId: string, cryptoCredentials: TCentralAuthorityUserCryptoCredentials): Promise<Error | boolean>;
+  getUserCredentials(userId: string): Promise<Error | null | TCentralAuthorityUserCryptoCredentials>;
 }
 
 export interface ICAConnectionFirestoreUtilsCredentialsStrorageCredentialsSaveStructure {

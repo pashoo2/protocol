@@ -16,11 +16,7 @@ import {
   PSEUDO_NTP_CLASS_EVENTS,
   PSEUDO_NTP_CLASS_REQUEST_OPTIONS,
 } from './pseudo-ntp-class.const';
-import {
-  getTimestampSeconds,
-  addSecondsToDate,
-  datesDifferenceSeconds,
-} from './pseudo-ntp-class.utils';
+import { getTimestampSeconds, addSecondsToDate, datesDifferenceSeconds } from './pseudo-ntp-class.utils';
 import HttpRequest from 'classes/basic-classes/http-request-class-base/http-request-class-base';
 import { IHttpRequestOptions } from 'classes/basic-classes/http-request-class-base/http-request-class-base.types';
 
@@ -122,13 +118,7 @@ export class PseudoNTPClass extends EventEmitter<IPseudoNTPClassEvents> {
     const { currentServerOptions } = this;
     const consoleMethod = message instanceof Error ? 'error' : 'log';
 
-    console[consoleMethod](
-      PSEUDO_NTP_CLASS_LOGS_PREFIX,
-      `server is ${
-        currentServerOptions ? currentServerOptions.server : 'not defined'
-      }`,
-      message
-    );
+    console[consoleMethod](PSEUDO_NTP_CLASS_LOGS_PREFIX, `server is ${currentServerOptions ? currentServerOptions.server : 'not defined'}`, message);
   };
 
   /**
@@ -139,15 +129,8 @@ export class PseudoNTPClass extends EventEmitter<IPseudoNTPClassEvents> {
    * @returns {options is IPseudoNTPClassServerConnection}
    * @memberof PseudoNTPClass
    */
-  protected checkServerOptions(
-    options: any
-  ): options is IPseudoNTPClassServerConnection {
-    return (
-      !!options &&
-      typeof options === 'object' &&
-      typeof options.server === 'string' &&
-      !!options.server.length
-    );
+  protected checkServerOptions(options: any): options is IPseudoNTPClassServerConnection {
+    return !!options && typeof options === 'object' && typeof options.server === 'string' && !!options.server.length;
   }
 
   /**
@@ -161,14 +144,7 @@ export class PseudoNTPClass extends EventEmitter<IPseudoNTPClassEvents> {
    * @throws
    */
   protected setOptions(options: IPseudoNTPClassOptions) {
-    const {
-      serversPool,
-      maxFailedResponses,
-      maxOffsetErrorS,
-      responseTimeoutS,
-      retryRequestDelayS,
-      syncIntervalS,
-    } = options;
+    const { serversPool, maxFailedResponses, maxOffsetErrorS, responseTimeoutS, retryRequestDelayS, syncIntervalS } = options;
 
     if (!(serversPool instanceof Array) || !serversPool.length) {
       throw new Error('The "servers pool" option must be defined');
@@ -176,26 +152,11 @@ export class PseudoNTPClass extends EventEmitter<IPseudoNTPClassEvents> {
     this.serversPool = serversPool;
 
     const optionsInMs = {
-      maxFailedResponses:
-        typeof maxFailedResponses === 'number'
-          ? maxFailedResponses
-          : PSEUDO_NTP_CLASS_DEFAULT_OPTIONS.maxFailedResponses,
-      maxOffsetErrorS:
-        typeof maxOffsetErrorS === 'number'
-          ? maxOffsetErrorS
-          : PSEUDO_NTP_CLASS_DEFAULT_OPTIONS.maxOffsetErrorS,
-      responseTimeoutMs:
-        typeof responseTimeoutS === 'number'
-          ? responseTimeoutS * 1000
-          : PSEUDO_NTP_CLASS_DEFAULT_OPTIONS.responseTimeoutMs,
-      retryRequestDelayMs:
-        typeof retryRequestDelayS === 'number'
-          ? retryRequestDelayS * 1000
-          : PSEUDO_NTP_CLASS_DEFAULT_OPTIONS.retryRequestDelayMs,
-      syncIntervalMs:
-        typeof syncIntervalS === 'number'
-          ? syncIntervalS * 1000
-          : PSEUDO_NTP_CLASS_DEFAULT_OPTIONS.syncIntervalMs,
+      maxFailedResponses: typeof maxFailedResponses === 'number' ? maxFailedResponses : PSEUDO_NTP_CLASS_DEFAULT_OPTIONS.maxFailedResponses,
+      maxOffsetErrorS: typeof maxOffsetErrorS === 'number' ? maxOffsetErrorS : PSEUDO_NTP_CLASS_DEFAULT_OPTIONS.maxOffsetErrorS,
+      responseTimeoutMs: typeof responseTimeoutS === 'number' ? responseTimeoutS * 1000 : PSEUDO_NTP_CLASS_DEFAULT_OPTIONS.responseTimeoutMs,
+      retryRequestDelayMs: typeof retryRequestDelayS === 'number' ? retryRequestDelayS * 1000 : PSEUDO_NTP_CLASS_DEFAULT_OPTIONS.retryRequestDelayMs,
+      syncIntervalMs: typeof syncIntervalS === 'number' ? syncIntervalS * 1000 : PSEUDO_NTP_CLASS_DEFAULT_OPTIONS.syncIntervalMs,
     };
 
     this.commonOptions = optionsInMs;
@@ -246,9 +207,7 @@ export class PseudoNTPClass extends EventEmitter<IPseudoNTPClassEvents> {
     if (!this.checkServerOptions(currentServerOptions)) {
       // if the options is not defined for the server or there is no url for it
       // choose another server from the pool
-      this.log(
-        `Options is not defined for the server under the index ${currentServerIndex} in the pool`
-      );
+      this.log(`Options is not defined for the server under the index ${currentServerIndex} in the pool`);
       this.setCurrentServerFromPoolIndex();
       return this.setCurrentServerFromPoolOptions();
     }
@@ -366,23 +325,14 @@ export class PseudoNTPClass extends EventEmitter<IPseudoNTPClassEvents> {
    * @private
    * @memberof PseudoNTPClass
    */
-  protected parseServerResponse = (
-    response: TPseudoNTPClassServerResponse
-  ): Error | Date => {
+  protected parseServerResponse = (response: TPseudoNTPClassServerResponse): Error | Date => {
     const { currentServerOptions } = this;
 
-    if (
-      typeof (currentServerOptions as IPseudoNTPClassServerConnectionField)
-        .fieldName === 'string'
-    ) {
-      const {
-        fieldName,
-      } = currentServerOptions as IPseudoNTPClassServerConnectionField;
+    if (typeof (currentServerOptions as IPseudoNTPClassServerConnectionField).fieldName === 'string') {
+      const { fieldName } = currentServerOptions as IPseudoNTPClassServerConnectionField;
 
       if (typeof response !== 'object') {
-        return new Error(
-          `Response must be an object to get the date from the field ${fieldName}`
-        );
+        return new Error(`Response must be an object to get the date from the field ${fieldName}`);
       }
 
       const fieldValue = (response as any)[fieldName];
@@ -396,20 +346,13 @@ export class PseudoNTPClass extends EventEmitter<IPseudoNTPClassEvents> {
         if (resultParse instanceof Date) {
           return resultParse;
         }
-        return new Error(
-          `Failed to parse string from the server response from field ${fieldName}`
-        );
+        return new Error(`Failed to parse string from the server response from field ${fieldName}`);
       } catch (err) {
         return err;
       }
     }
-    if (
-      typeof (currentServerOptions as IPseudoNTPClassServerConnectionCb)
-        .parseCallback === 'function'
-    ) {
-      const {
-        parseCallback,
-      } = currentServerOptions as IPseudoNTPClassServerConnectionCb;
+    if (typeof (currentServerOptions as IPseudoNTPClassServerConnectionCb).parseCallback === 'function') {
+      const { parseCallback } = currentServerOptions as IPseudoNTPClassServerConnectionCb;
 
       if (!parseCallback.length) {
         this.log('The callback seems to have no arguments accepted');
@@ -458,37 +401,25 @@ export class PseudoNTPClass extends EventEmitter<IPseudoNTPClassEvents> {
    * @param {Date} dateRes - Date when the responce received
    * @memberof PseudoNTPClass
    */
-  protected handleServerDate(
-    serverDate: Date,
-    timestampReq: number,
-    timestampRes: number,
-    dateRes: Date
-  ): void {
+  protected handleServerDate(serverDate: Date, timestampReq: number, timestampRes: number, dateRes: Date): void {
     // we think that the request was received on the
     // server at half of the request-response time
     const adjustmentS = (timestampRes - timestampReq) / 2;
     const clientDate = addSecondsToDate(dateRes, adjustmentS);
-    const offsetClientTimeFromServer = datesDifferenceSeconds(
-      clientDate,
-      serverDate
-    );
+    const offsetClientTimeFromServer = datesDifferenceSeconds(clientDate, serverDate);
 
     if (offsetClientTimeFromServer) {
       const { commonOptions } = this;
       const { maxOffsetErrorS } = commonOptions;
 
       if (Math.abs(offsetClientTimeFromServer) > maxOffsetErrorS) {
-        this.log(
-          `The client-server time difference is equals to ${offsetClientTimeFromServer}`
-        );
+        this.log(`The client-server time difference is equals to ${offsetClientTimeFromServer}`);
         this.emitClientServerTimeDifference(offsetClientTimeFromServer);
       }
     }
   }
 
-  protected convertServerResponseRaw(responseRaw: {
-    [key: string]: string;
-  }): TPseudoNTPClassServerResponse | Error {
+  protected convertServerResponseRaw(responseRaw: { [key: string]: string }): TPseudoNTPClassServerResponse | Error {
     return responseRaw;
   }
 
@@ -498,15 +429,8 @@ export class PseudoNTPClass extends EventEmitter<IPseudoNTPClassEvents> {
    * @private
    * @memberof PseudoNTPClass
    */
-  private handleServerResponse = async (
-    responseWithTimestamps: TPseudoNTPClassResponseWithTimesamps
-  ): Promise<void | Error> => {
-    const {
-      responseRaw,
-      timestampReq,
-      timestempRes,
-      dateRes,
-    } = responseWithTimestamps;
+  private handleServerResponse = async (responseWithTimestamps: TPseudoNTPClassResponseWithTimesamps): Promise<void | Error> => {
+    const { responseRaw, timestampReq, timestempRes, dateRes } = responseWithTimestamps;
     const response = this.convertServerResponseRaw(responseRaw);
 
     if (response instanceof Error) {
@@ -519,12 +443,7 @@ export class PseudoNTPClass extends EventEmitter<IPseudoNTPClassEvents> {
       return responseResult;
     }
     if (responseResult instanceof Date) {
-      return this.handleServerDate(
-        responseResult,
-        timestampReq,
-        timestempRes,
-        dateRes
-      );
+      return this.handleServerDate(responseResult, timestampReq, timestempRes, dateRes);
     }
     return new Error('An unknown result of parsing the response');
   };
@@ -536,9 +455,7 @@ export class PseudoNTPClass extends EventEmitter<IPseudoNTPClassEvents> {
    * @private
    * @memberof PseudoNTPClass
    */
-  private async sendRequestToCurrentServer(): Promise<
-    Error | TPseudoNTPClassResponseWithTimesamps
-  > {
+  private async sendRequestToCurrentServer(): Promise<Error | TPseudoNTPClassResponseWithTimesamps> {
     const { currentServerRequestOptions } = this;
     // timestamp when the request sent
     const timestampReq = getTimestampSeconds();

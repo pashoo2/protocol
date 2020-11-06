@@ -16,24 +16,21 @@ export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_1 = {
   password: 'qawsde1234',
 };
 
-export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_1 =
-  '02https://watcha3-191815.firebaseio.com|sgFtcpibSAaMUwNZwR88jLD7uF82';
+export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_1 = '02https://watcha3-191815.firebaseio.com|sgFtcpibSAaMUwNZwR88jLD7uF82';
 
 export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_2 = {
   login: 'cecaye9745@emailhost99.com',
   password: 'sdfwmfgjk12kH',
 };
 
-export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_2 =
-  '02https://watcha3-191815.firebaseio.com|c2wDISuQVBaVANDrTdTWGVi5F0C3';
+export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_2 = '02https://watcha3-191815.firebaseio.com|c2wDISuQVBaVANDrTdTWGVi5F0C3';
 
 export enum CONNECT_TO_SWARM_AUTH_PROVIDERS {
   FIREBASE_WATCHA = 'https://watcha3-191815.firebaseio.com',
   FIREBASE_PRTOCOL = 'https://protocol-f251b.firebaseio.com',
 }
 
-export const CONNECT_TO_SWARM_STORAGE_PROVIDER_DEFAULT =
-  ESwarmStoreConnector.OrbitDB;
+export const CONNECT_TO_SWARM_STORAGE_PROVIDER_DEFAULT = ESwarmStoreConnector.OrbitDB;
 
 const CONNECT_TO_SWARM_DATABASE_PREFIX = 'chat/test';
 
@@ -55,9 +52,7 @@ export const CONNECT_TO_SWARM_DATABASE_MAIN_2 = {
   dbType: ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
 };
 
-export const CONNECT_TO_SWARM_DATABASES_DEFAULT = [
-  CONNECT_TO_SWARM_DATABASE_MAIN,
-];
+export const CONNECT_TO_SWARM_DATABASES_DEFAULT = [CONNECT_TO_SWARM_DATABASE_MAIN];
 
 export const CONNECT_TO_SWARM_CONNECTION_OPTIONS = {
   storage: {

@@ -107,9 +107,7 @@ export interface ISwarmMessageSerializer {
    * @memberof ISwarmMessageSerializer
    * @throws
    */
-  serialize(
-    msgBody: ISwarmMessageBodyDeserialized
-  ): Promise<TSwarmMessageInstance>;
+  serialize(msgBody: ISwarmMessageBodyDeserialized): Promise<TSwarmMessageInstance>;
   /**
    * serialize the message as a private and
    * encrypt it's body with the key provided.
@@ -120,8 +118,5 @@ export interface ISwarmMessageSerializer {
    * @returns {Promise<TSwarmMessageInstance>}
    * @memberof ISwarmMessageSerializer
    */
-  serialize(
-    msgBody: ISwarmMessageBodyDeserialized,
-    encryptWithKey?: CryptoKey
-  ): Promise<TSwarmMessageInstance>;
+  serialize(msgBody: ISwarmMessageBodyDeserialized, encryptWithKey?: CryptoKey): Promise<TSwarmMessageInstance>;
 }

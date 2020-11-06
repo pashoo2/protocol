@@ -6,9 +6,7 @@ export const getArrayBufSize = (o: ArrayBuffer): number => o.byteLength;
 
 export const getBufferSize = (o: Buffer): number => o.byteLength;
 
-export const getFileSize = (
-  o: File | Blob | ArrayBuffer | Buffer
-): number | undefined => {
+export const getFileSize = (o: File | Blob | ArrayBuffer | Buffer): number | undefined => {
   if (o instanceof File) {
     return getFileObjectSize(o);
   }

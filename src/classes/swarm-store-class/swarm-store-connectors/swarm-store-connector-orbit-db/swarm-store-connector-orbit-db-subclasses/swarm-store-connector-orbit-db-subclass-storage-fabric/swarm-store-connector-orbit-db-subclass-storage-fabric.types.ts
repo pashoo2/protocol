@@ -9,9 +9,7 @@ export interface ISwarmStoreConnectorOrbitDBSubclassStorageFabric {
    * @returns {Promise<ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore>}
    * @memberof ISwarmStoreConnectorOrbitDBSubclassStorageFabric
    */
-  createStore(
-    path: string
-  ): Promise<ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore>;
+  createStore(path: string): Promise<ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore>;
   /**
    * create cache store for the database
    *
@@ -19,9 +17,7 @@ export interface ISwarmStoreConnectorOrbitDBSubclassStorageFabric {
    * @returns {Promise<ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore>}
    * @memberof ISwarmStoreConnectorOrbitDBSubclassStorageFabric
    */
-  createStoreForDb(
-    dbName: string
-  ): Promise<ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore>;
+  createStoreForDb(dbName: string): Promise<ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore>;
   /**
    * add database name to the list of database have
    * secret cache store

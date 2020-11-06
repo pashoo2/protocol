@@ -1,30 +1,16 @@
-import {
-  ISwarmMessageDatabaseConstructors,
-  TSwarmMessageStoreAccessControlGrantAccessCallback,
-} from '../../swarm-message-store.types';
+import { ISwarmMessageDatabaseConstructors, TSwarmMessageStoreAccessControlGrantAccessCallback } from '../../swarm-message-store.types';
 import { ISwarmStoreConnectorOrbitDbDatabaseOptions } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
-import {
-  ISwarmStoreDatabaseBaseOptions,
-  TSwarmStoreDatabaseEntryOperation,
-} from '../../../swarm-store-class/swarm-store-class.types';
+import { ISwarmStoreDatabaseBaseOptions, TSwarmStoreDatabaseEntryOperation } from '../../../swarm-store-class/swarm-store-class.types';
 import { TCentralAuthorityUserIdentity } from '../../../central-authority-class/central-authority-class-types/central-authority-class-types-common';
 import { ESwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.const';
 import { EOrbitDbFeedStoreOperation } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types';
 import { TSwarmMessageInstance } from '../../../swarm-message/swarm-message-constructor.types';
-import {
-  TSwarmStoreDatabaseEntityKey,
-  TSwarmStoreDatabaseOptions,
-} from '../../../swarm-store-class/swarm-store-class.types';
+import { TSwarmStoreDatabaseEntityKey, TSwarmStoreDatabaseOptions } from '../../../swarm-store-class/swarm-store-class.types';
 import { TSwarmMessagesStoreGrantAccessCallback } from '../../swarm-message-store.types';
-import {
-  TSwarmMessageSerialized,
-  ISwarmMessageConstructor,
-} from '../../../swarm-message/swarm-message-constructor.types';
+import { TSwarmMessageSerialized, ISwarmMessageConstructor } from '../../../swarm-message/swarm-message-constructor.types';
 
-export const getMessageConstructorForDatabase = <
-  SMC extends ISwarmMessageConstructor
->(
+export const getMessageConstructorForDatabase = <SMC extends ISwarmMessageConstructor>(
   dbName: string,
   messageConstructors: ISwarmMessageDatabaseConstructors<SMC>
 ) => {
@@ -44,10 +30,7 @@ async function swarmMessageGrantValidator<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   I extends TSwarmMessageInstance,
-  CB extends
-    | TSwarmMessageStoreAccessControlGrantAccessCallback<P, T>
-    | TSwarmMessageStoreAccessControlGrantAccessCallback<P, I>
-    | undefined
+  CB extends TSwarmMessageStoreAccessControlGrantAccessCallback<P, T> | TSwarmMessageStoreAccessControlGrantAccessCallback<P, I> | undefined
 >(
   this: {
     dbName: string;
@@ -62,14 +45,7 @@ async function swarmMessageGrantValidator<
   key?: TSwarmStoreDatabaseEntityKey<P>,
   op?: TSwarmStoreDatabaseEntryOperation<P>
 ) {
-  const {
-    dbName,
-    messageConstructor,
-    grantAccessCb,
-    isPublic,
-    isUserCanWrite,
-    currentUserId,
-  } = this;
+  const { dbName, messageConstructor, grantAccessCb, isPublic, isUserCanWrite, currentUserId } = this;
 
   if ((isPublic || isUserCanWrite) && userId === currentUserId) {
     // TODO - may be it's necessary to parse a message and compare
@@ -90,10 +66,7 @@ async function swarmMessageGrantValidator<
       return false;
     }
     if (grantAccessCb) {
-      return (grantAccessCb as TSwarmMessageStoreAccessControlGrantAccessCallback<
-        P,
-        I
-      >)((swarmMessage as unknown) as I, userId, dbName, key, op);
+      return (grantAccessCb as TSwarmMessageStoreAccessControlGrantAccessCallback<P, I>)((swarmMessage as unknown) as I, userId, dbName, key, op);
     }
     return true;
   } catch (err) {
@@ -114,25 +87,14 @@ export const getMessageValidator = <
   messageConstructors: ISwarmMessageDatabaseConstructors<SMC>,
   grantAccessCb: GAC,
   currentUserId: TCentralAuthorityUserIdentity
-): TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<
-  P,
-  T,
-  MSI
-> => {
+): TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<P, T, MSI> => {
   const { dbName, isPublic, write } = dboptions;
-  const messageConstructor = getMessageConstructorForDatabase(
-    dbName,
-    messageConstructors
-  );
+  const messageConstructor = getMessageConstructorForDatabase(dbName, messageConstructors);
 
   if (!messageConstructor) {
     throw new Error(`There is no message contructor found for the ${dbName}`);
   }
-  return (swarmMessageGrantValidator as TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<
-    P,
-    T,
-    MSI
-  >).bind({
+  return (swarmMessageGrantValidator as TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<P, T, MSI>).bind({
     messageConstructor,
     dbName,
     grantAccessCb,

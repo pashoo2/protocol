@@ -20,18 +20,14 @@ import {
   validateIdentityDescriptionVersion,
 } from '../central-authority-class-user-identity-validators/central-authority-class-user-identity-validators.utils';
 
-export function getIdentifierVersionByIdentityString(
-  identityString: TCentralAuthorityUserIdentity
-): Error | string {
+export function getIdentifierVersionByIdentityString(identityString: TCentralAuthorityUserIdentity): Error | string {
   if (validateUserIdentity(identityString)) {
     return identityString.slice(0, CA_USER_IDENTITY_VERSION_CHARACTERS_COUNT);
   }
   return new Error('The user identity is not valid');
 }
 
-export const getParserFunctionByVersion = (
-  version: string
-): IParser | Error => {
+export const getParserFunctionByVersion = (version: string): IParser | Error => {
   if (validateIdentityDescriptionVersion(version)) {
     if (!CA_USER_IDENTITY_PARSER_VERSIONS_SUPPORTED.includes(version)) {
       return new Error(`The version ${version} is not supported`);
@@ -59,9 +55,7 @@ export const getUserIdentityDescription = (
   return description;
 };
 
-export const parseIdentity = (
-  identityString: TCentralAuthorityUserIdentity
-): ICAUserUniqueIdentifierDescription | Error => {
+export const parseIdentity = (identityString: TCentralAuthorityUserIdentity): ICAUserUniqueIdentifierDescription | Error => {
   const version = getIdentifierVersionByIdentityString(identityString);
 
   if (version instanceof Error) {
@@ -77,9 +71,7 @@ export const parseIdentity = (
   }
 
   const versionStringLength = version.length;
-  const identityStringWithoutVersion = identityString.slice(
-    versionStringLength
-  );
+  const identityStringWithoutVersion = identityString.slice(versionStringLength);
   const parsedIdentity = parser(identityStringWithoutVersion);
 
   if (parsedIdentity instanceof Error) {
@@ -91,10 +83,7 @@ export const parseIdentity = (
     ...parsedIdentity,
     [CA_USER_IDENTITY_VERSION_PROP_NAME]: version,
   };
-  const validationResult = validateUserIdentityDescriptionVersion(
-    version,
-    resultedUserIdentityDescription
-  );
+  const validationResult = validateUserIdentityDescriptionVersion(version, resultedUserIdentityDescription);
 
   if (validationResult instanceof Error) {
     return validationResult;

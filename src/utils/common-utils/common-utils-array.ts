@@ -1,8 +1,7 @@
 import { bytesInInteger } from './common-utils-number';
 import { isDefined } from './common-utils-main';
 
-export const commonUtilsIsInstanceOfArray = (a: any): a is Array<any> =>
-  !a || typeof a !== 'object' || a instanceof Array;
+export const commonUtilsIsInstanceOfArray = (a: any): a is Array<any> => !a || typeof a !== 'object' || a instanceof Array;
 /**
  * Checks whether two array items are equal
  *
@@ -19,10 +18,7 @@ export const commonUtilsIsInstanceOfArray = (a: any): a is Array<any> =>
  * @param {Array<any>} secondArray
  * @returns {boolean}
  */
-export const commonUtilsIsTwoArraysHaveSameItems = (
-  firstArray: Array<any>,
-  secondArray: Array<any>
-): boolean => {
+export const commonUtilsIsTwoArraysHaveSameItems = (firstArray: Array<any>, secondArray: Array<any>): boolean => {
   if (firstArray === secondArray) {
     return true;
   }
@@ -40,10 +36,7 @@ export const commonUtilsIsTwoArraysHaveSameItems = (
  * @param {Array<any>} secondArray
  * @returns {boolean}
  */
-export const commonUtilsIsTwoArraysEquals = (
-  firstArray: Array<any>,
-  secondArray: Array<any>
-): boolean => {
+export const commonUtilsIsTwoArraysEquals = (firstArray: Array<any>, secondArray: Array<any>): boolean => {
   if (firstArray === secondArray) {
     return true;
   }
@@ -65,13 +58,8 @@ export const commonUtilsIsTwoArraysEquals = (
  * @param {S} secondArray
  * @returns {S | false}
  */
-export const commonUtilsReturnArrayIfTwoArraysEquals = <S>(
-  firstArray: any,
-  secondArray: S
-): S extends Array<any> ? S : false =>
-  (commonUtilsIsInstanceOfArray(firstArray) &&
-  commonUtilsIsInstanceOfArray(secondArray) &&
-  commonUtilsIsTwoArraysEquals(firstArray, secondArray)
+export const commonUtilsReturnArrayIfTwoArraysEquals = <S>(firstArray: any, secondArray: S): S extends Array<any> ? S : false =>
+  (commonUtilsIsInstanceOfArray(firstArray) && commonUtilsIsInstanceOfArray(secondArray) && commonUtilsIsTwoArraysEquals(firstArray, secondArray)
     ? secondArray
     : false) as S extends Array<any> ? S : false;
 
@@ -81,9 +69,7 @@ export const commonUtilsReturnArrayIfTwoArraysEquals = <S>(
  * @param {...Array<Array<any>>} arrays
  * @returns {boolean}
  */
-export const commonUtilsAreAllArraysEqual = (
-  ...arrays: Array<Array<any>>
-): boolean => {
+export const commonUtilsAreAllArraysEqual = (...arrays: Array<Array<any>>): boolean => {
   if (!arrays.length) {
     return true;
   }
@@ -93,18 +79,14 @@ export const commonUtilsAreAllArraysEqual = (
   return !!arrays.reduce(commonUtilsReturnArrayIfTwoArraysEquals, arrays[0]);
 };
 
-export const commonUtilsArrayOrderByDecComparationFunction = <T>(
-  a: T,
-  b: T
-): number => Number(b) - Number(a);
+export const commonUtilsArrayOrderByDecComparationFunction = <T>(a: T, b: T): number => Number(b) - Number(a);
 
 /**
  * sort array by decreasing
  * value on increased index
  * @param {any[]} arr
  */
-export const commonUtilsArrayOrderByDec = <T>(arr: T[]): T[] =>
-  arr.sort(commonUtilsArrayOrderByDecComparationFunction);
+export const commonUtilsArrayOrderByDec = <T>(arr: T[]): T[] => arr.sort(commonUtilsArrayOrderByDecComparationFunction);
 
 /**
  * delete an item from the array
@@ -128,10 +110,7 @@ export const commonUtilsArrayDeleteFromArray = <T>(arr: T[], item: T) => {
  * Error. If any callback resulted with an Error
  * then the execution will break.
  */
-export const commonUtilsArrayDoCallbackTillNoError = <T>(
-  arr: T[],
-  cb: (v: T) => Error | any
-): Error | void => {
+export const commonUtilsArrayDoCallbackTillNoError = <T>(arr: T[], cb: (v: T) => Error | any): Error | void => {
   if (!(arr instanceof Array)) {
     return new Error('The array value must be an instance of Array');
   }
@@ -158,17 +137,12 @@ export const commonUtilsArrayDoCallbackTillNoError = <T>(
  * @returns {number | Error} - return a length of the array or an Error
  * if a non-finite or an unsafe number will be met
  */
-export const commonUtilsArrayCalculateLengthOfIntegerArray = (
-  arr: number[],
-  maxNumber?: number,
-  minNumber?: number
-): number | Error => {
+export const commonUtilsArrayCalculateLengthOfIntegerArray = (arr: number[], maxNumber?: number, minNumber?: number): number | Error => {
   if (!(arr instanceof Array)) {
     return new Error('The array value must be an instance of Array');
   }
 
-  const maxNumberRes =
-    typeof maxNumber === 'number' ? maxNumber : Number.MAX_SAFE_INTEGER;
+  const maxNumberRes = typeof maxNumber === 'number' ? maxNumber : Number.MAX_SAFE_INTEGER;
   const minNumberRes = typeof minNumber === 'number' ? minNumber : 0;
   const len = arr.length;
   let idx = 0;
@@ -212,10 +186,7 @@ export const commonUtilsArrayCalculateLengthOfIntegerArray = (
  * @param testedArray
  * @param requiredItems
  */
-export const commonUtilsArrayIncludesAll = (
-  testedArray: any[],
-  requiredItems: any[]
-): boolean => {
+export const commonUtilsArrayIncludesAll = (testedArray: any[], requiredItems: any[]): boolean => {
   const len = requiredItems.length;
   let idx = 0;
 
@@ -235,8 +206,7 @@ export const commonUtilsArrayIncludesAll = (
  * @param {T[]} arr
  * @returns {T[]}
  */
-export const commonUtilsArrayDefinedOnly = <T>(arr: T[]): NonNullable<T>[] =>
-  arr.filter(isDefined);
+export const commonUtilsArrayDefinedOnly = <T>(arr: T[]): NonNullable<T>[] => arr.filter(isDefined);
 
 /**
  * Returns uniq items of an array
@@ -245,5 +215,4 @@ export const commonUtilsArrayDefinedOnly = <T>(arr: T[]): NonNullable<T>[] =>
  * @param {T[]} arr
  * @returns {T[]}
  */
-export const commonUtilsArrayUniq = <T>(arr: T[]): T[] =>
-  Array.from(new Set(arr));
+export const commonUtilsArrayUniq = <T>(arr: T[]): T[] => Array.from(new Set(arr));

@@ -19,22 +19,15 @@ export const validatorV1 = (
       [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: authProviderURI,
     } = v;
 
-    if (
-      typeof version !== 'string' ||
-      version.length !== CA_USER_IDENTITY_VERSION_CHARACTERS_COUNT
-    ) {
+    if (typeof version !== 'string' || version.length !== CA_USER_IDENTITY_VERSION_CHARACTERS_COUNT) {
       return false;
     }
     if (!validateAuthProviderIdentity(authProviderURI)) {
-      console.warn(
-        `The auth provider's uri ${authProviderURI} have a wrong format`
-      );
+      console.warn(`The auth provider's uri ${authProviderURI} have a wrong format`);
       return false;
     }
     if (!dataValidatorUtilUUIDV4(userUniqueIdentifier)) {
-      console.warn(
-        `The user unique identifier ${userUniqueIdentifier} have a format different from the UUIDv4`
-      );
+      console.warn(`The user unique identifier ${userUniqueIdentifier} have a format different from the UUIDv4`);
       return false;
     }
     return true;

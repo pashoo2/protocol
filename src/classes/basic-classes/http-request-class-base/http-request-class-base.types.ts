@@ -22,21 +22,15 @@ export type TQueryStringParamsObject = {
   [paramName: string]: TQueryStringAllowedParamValue;
 };
 
-export type TQueryStringParams =
-  | TQueryStringAllowedParamValue
-  | TQueryStringParamsObject;
+export type TQueryStringParams = TQueryStringAllowedParamValue | TQueryStringParamsObject;
 
 export type THttpRequestUrl = string;
 
 export type THttpRequestMethod = ownValueOf<typeof HTTP_REQUEST_METHOD>;
 
-export type THttpRequestContentType = ownValueOf<
-  typeof HTTP_REQUEST_CONTENT_TYPE
->;
+export type THttpRequestContentType = ownValueOf<typeof HTTP_REQUEST_CONTENT_TYPE>;
 
-export type THttpRequestCacheControl = ownValueOf<
-  typeof HTTP_REQUEST_CACHE_CONTROL
->;
+export type THttpRequestCacheControl = ownValueOf<typeof HTTP_REQUEST_CACHE_CONTROL>;
 
 export type THttpRequestMode = ownValueOf<typeof HTTP_REQUEST_MODE>;
 
@@ -57,13 +51,7 @@ export interface IHttpRequestOptions {
   credentials?: RequestCredentials;
 }
 
-export type THttpResponseResult =
-  | undefined
-  | object
-  | string
-  | File
-  | Blob
-  | FormData;
+export type THttpResponseResult = undefined | object | string | File | Blob | FormData;
 
 export interface IHttpRequestHeaders {
   [HTTP_REQUEST_HEADERS_NAMES.AUTHORIZATION]?: string;

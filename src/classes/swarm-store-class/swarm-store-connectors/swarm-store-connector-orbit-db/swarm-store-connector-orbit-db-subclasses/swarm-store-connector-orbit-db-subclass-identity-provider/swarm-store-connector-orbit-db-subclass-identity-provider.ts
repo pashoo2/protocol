@@ -1,9 +1,5 @@
 import KeystoreClass, { Keystore } from 'orbit-db-keystore';
-import {
-  IdentityProvider,
-  IdentityProviderOptions,
-  IdentityAsJson,
-} from 'orbit-db-identity-provider';
+import { IdentityProvider, IdentityProviderOptions, IdentityAsJson } from 'orbit-db-identity-provider';
 import { IOrbitDBKeystoreStoreCustom } from 'types';
 import { SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_IDENTITY_PROVIDER_TYPE } from './swarm-store-connector-orbit-db-subclass-identity-provider.const';
 
@@ -28,11 +24,9 @@ export class SwarmStoreConnectorOrbitDBSubclassIdentityProvider extends Identity
    * @returns {Promise<boolean>}
    * @memberof SwarmStoreConnectorOrbitDBSubclassIdentityProvider
    */
-  public static async verifyIdentity(
-    identity: IdentityAsJson
-  ): Promise<boolean> {
+  public static async verifyIdentity(identity: IdentityAsJson): Promise<boolean> {
     // TODO - may be verify the identity with central authority
-    const verifyResult = await (KeystoreClass as unknown as IOrbitDBKeystoreStoreCustom).verify(
+    const verifyResult = await ((KeystoreClass as unknown) as IOrbitDBKeystoreStoreCustom).verify(
       identity.signatures.publicKey,
       identity.publicKey,
       identity.publicKey + identity.signatures.id
@@ -46,9 +40,7 @@ export class SwarmStoreConnectorOrbitDBSubclassIdentityProvider extends Identity
   constructor(options: IdentityProviderOptions = {}) {
     super(options);
     if (!options.keystore) {
-      throw new Error(
-        'IdentityProvider.createIdentity requires options.keystore'
-      );
+      throw new Error('IdentityProvider.createIdentity requires options.keystore');
     }
     if (!options.signingKeystore) {
       options.signingKeystore = options.keystore;
@@ -82,10 +74,7 @@ export class SwarmStoreConnectorOrbitDBSubclassIdentityProvider extends Identity
    * @memberof SwarmStoreConnectorOrbitDBSubclassIdentityProvider
    * @throws Error
    */
-  async signIdentity(
-    data: any,
-    options: IdentityProviderOptions = {}
-  ): Promise<string> {
+  async signIdentity(data: any, options: IdentityProviderOptions = {}): Promise<string> {
     const id = options.id;
 
     if (!id) {

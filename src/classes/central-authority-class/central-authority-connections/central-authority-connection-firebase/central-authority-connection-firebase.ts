@@ -11,8 +11,6 @@ import { CAConnectionWithFirebaseImplementation } from './central-authority-conn
  * @class CAConnectionWithFirebase
  * @implements {ICAConnection}
  */
-export class CAConnectionWithFirebase
-  extends CAConnectionWithFirebaseImplementation
-  implements ICAConnection {}
+export class CAConnectionWithFirebase extends CAConnectionWithFirebaseImplementation implements ICAConnection {}
 
 export default CAConnectionWithFirebase;

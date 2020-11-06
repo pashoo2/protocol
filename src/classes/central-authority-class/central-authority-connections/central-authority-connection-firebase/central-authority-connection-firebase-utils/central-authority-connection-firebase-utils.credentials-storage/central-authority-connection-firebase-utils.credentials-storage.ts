@@ -82,9 +82,7 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
    * @memberof CAConnectionFirestoreUtilsCredentialsStrorage
    */
   protected getCredentialsKeyByUserId(userId: string): string {
-    return `${CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_KEY_PREFIX}${encodeForFirebaseKey(
-      userId
-    )}`;
+    return `${CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_KEY_PREFIX}${encodeForFirebaseKey(userId)}`;
   }
 
   protected checkIsConnected(): boolean | Error {
@@ -97,14 +95,10 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
     const { app, connectionToFirebase } = this;
 
     if (!connectionToFirebase) {
-      return new Error(
-        'There is no instance implements a connection to the Firebase application'
-      );
+      return new Error('There is no instance implements a connection to the Firebase application');
     }
     if (!connectionToFirebase.isConnected) {
-      return new Error(
-        'There is no active connection to the firebase appliction'
-      );
+      return new Error('There is no active connection to the firebase appliction');
     }
     if (!app) {
       return new Error('There is no app connection');
@@ -122,9 +116,7 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
     const { firebaseUserId, connectionToFirebase } = this;
 
     if (!connectionToFirebase || !connectionToFirebase.isUserSignedIn) {
-      return new Error(
-        'The user is not authorized in the Firebase application'
-      );
+      return new Error('The user is not authorized in the Firebase application');
     }
     if (firebaseUserId instanceof Error) {
       console.error(firebaseUserId);
@@ -139,9 +131,7 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
     const app = connectionToFirebase.getApp();
 
     if (!app) {
-      throw new Error(
-        'There is no insatnce which implements a connection to the Firebase app'
-      );
+      throw new Error('There is no insatnce which implements a connection to the Firebase app');
     }
     this.app = app;
   }
@@ -163,23 +153,16 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
       return false;
     }
     if (storedCredentialsValue && typeof storedCredentialsValue === 'object') {
-      const {
-        credentials,
-        [CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_FIREBASE_USER_ID_PROPERTY]: firebaseId,
-      } = storedCredentialsValue;
+      const { credentials, [CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_FIREBASE_USER_ID_PROPERTY]: firebaseId } = storedCredentialsValue;
 
       // an id set for the user by the Firebase
       if (typeof firebaseId === 'string') {
         if (checkIsValidExportedCryptoCredentialsToString(credentials)) {
           return true;
         }
-        console.error(
-          "Credentials are't exists or invalid in the stored credentials"
-        );
+        console.error("Credentials are't exists or invalid in the stored credentials");
       } else {
-        console.error(
-          'Firebase user id is not valid in the stored credentials'
-        );
+        console.error('Firebase user id is not valid in the stored credentials');
       }
     }
     return false;
@@ -200,10 +183,7 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
     }
 
     const { credentials: exportedCredentials } = storedCredentialsValue;
-    const importedCredentials = await importCryptoCredentialsFromAString(
-      exportedCredentials,
-      signUpCredentials?.password
-    );
+    const importedCredentials = await importCryptoCredentialsFromAString(exportedCredentials, signUpCredentials?.password);
 
     if (importedCredentials instanceof Error) {
       console.error(importedCredentials);
@@ -242,10 +222,7 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
       return null;
     }
 
-    const len = Math.min(
-      keys.length,
-      CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_FIREBASE_MAXIMUM_STORED_VALUES_CHECK
-    );
+    const len = Math.min(keys.length, CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_FIREBASE_MAXIMUM_STORED_VALUES_CHECK);
     let idx = 0;
     let keyValueStored;
     let valueValueStored;
@@ -257,10 +234,7 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
     for (; idx < len; idx++) {
       keyValueStored = keys[idx];
       valueValueStored = valueStored[keyValueStored];
-      credentialsImported = await this.getCredentialsByValueStored(
-        valueValueStored,
-        signUpCredentials
-      );
+      credentialsImported = await this.getCredentialsByValueStored(valueValueStored, signUpCredentials);
 
       if (!(credentialsImported instanceof Error)) {
         return credentialsImported;
@@ -298,9 +272,7 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
       // credentials in the database
       const snapshot = await database
         .ref(CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_KEY_PREFIX)
-        .orderByChild(
-          CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_FIREBASE_USER_ID_PROPERTY
-        )
+        .orderByChild(CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_FIREBASE_USER_ID_PROPERTY)
         .equalTo(firebaseUserId)
         .once('value');
       if (snapshot.exists()) {
@@ -336,14 +308,9 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
 
     // check if a credentials value is
     // already exists for the user
-    const credentialsForTheCurrentUser = await this.getCredentialsForTheCurrentUser(
-      signUpCredentials
-    );
+    const credentialsForTheCurrentUser = await this.getCredentialsForTheCurrentUser(signUpCredentials);
 
-    if (
-      credentialsForTheCurrentUser != null &&
-      !(credentialsForTheCurrentUser instanceof Error)
-    ) {
+    if (credentialsForTheCurrentUser != null && !(credentialsForTheCurrentUser instanceof Error)) {
       // if a credentials are already stored for the user
       // return it
       return credentialsForTheCurrentUser;
@@ -359,11 +326,7 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
       return new Error('The password is required to encrypt the private keys');
     }
 
-    const exportedCryptoCredentials = await exportCryptoCredentialsToString(
-      credentials,
-      undefined,
-      signUpCredentials.password
-    );
+    const exportedCryptoCredentials = await exportCryptoCredentialsToString(credentials, undefined, signUpCredentials.password);
 
     if (exportedCryptoCredentials instanceof Error) {
       console.error(exportedCryptoCredentials);
@@ -375,19 +338,12 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
     // TODO - it's necessary to implement on the Firebase server to check whether the user can update credentials for the userid
     const credentialsForTheUserId = await this.getUserCredentials(userId);
 
-    if (
-      credentialsForTheUserId != null &&
-      !(credentialsForTheUserId instanceof Error)
-    ) {
-      return new Error(
-        'A crypto credentials is already exists for the user id'
-      );
+    if (credentialsForTheUserId != null && !(credentialsForTheUserId instanceof Error)) {
+      return new Error('A crypto credentials is already exists for the user id');
     }
 
     const keyForValue = this.getCredentialsKeyByUserId(userId);
-    const storeResult = await this.setValue<
-      ICAConnectionFirestoreUtilsCredentialsStrorageCredentialsSaveStructure
-    >(keyForValue, {
+    const storeResult = await this.setValue<ICAConnectionFirestoreUtilsCredentialsStrorageCredentialsSaveStructure>(keyForValue, {
       credentials: exportedCryptoCredentials,
       [CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_FIREBASE_USER_ID_PROPERTY]: firebaseUserId,
     });
@@ -412,9 +368,7 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
    * @returns {(Promise<Error | null | TCentralAuthorityUserCryptoCredentials>)}
    * @memberof CAConnectionFirestoreUtilsCredentialsStrorage
    */
-  public async getUserCredentials(
-    userId: string
-  ): Promise<Error | null | TCentralAuthorityUserCryptoCredentials> {
+  public async getUserCredentials(userId: string): Promise<Error | null | TCentralAuthorityUserCryptoCredentials> {
     if (!this.checkIsConnected()) {
       return new Error('There is no active connection to the Firebase');
     }
@@ -423,9 +377,7 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
     }
 
     const keyForValue = this.getCredentialsKeyByUserId(userId);
-    const storedCredentialsValue = await this.getValue<
-      ICAConnectionFirestoreUtilsCredentialsStrorageCredentialsSaveStructure
-    >(keyForValue);
+    const storedCredentialsValue = await this.getValue<ICAConnectionFirestoreUtilsCredentialsStrorageCredentialsSaveStructure>(keyForValue);
 
     return this.getCredentialsByValueStored(storedCredentialsValue);
   }

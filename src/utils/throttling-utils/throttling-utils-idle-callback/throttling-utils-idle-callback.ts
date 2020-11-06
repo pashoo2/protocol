@@ -1,18 +1,14 @@
 import { THROTTLING_UTILS_IDLE_CALLBACK_TIMEOUT_DEFAULT_MS } from './throttling-utils-idle-callback.const';
-import {
-  RequestIdleCallback,
-  CancelRequestIdleCallback,
-  RequestIdleCallbackArgument,
-} from './throttling-utils-idle-callback.types';
+import { RequestIdleCallback, CancelRequestIdleCallback, RequestIdleCallbackArgument } from './throttling-utils-idle-callback.types';
 
 export const getRequestIdleCallback = (): RequestIdleCallback =>
   (window as any).requestIdleCallback ||
-  function(cb) {
-    return setTimeout(function() {
+  function (cb) {
+    return setTimeout(function () {
       const start = Date.now();
       cb({
         didTimeout: false,
-        timeRemaining: function() {
+        timeRemaining: function () {
           return Math.max(0, 50 - (Date.now() - start));
         },
       });
@@ -21,7 +17,7 @@ export const getRequestIdleCallback = (): RequestIdleCallback =>
 
 export const getCancelRequestIdleCallback = (): CancelRequestIdleCallback =>
   (window as any).cancelIdleCallback ||
-  function(id: number) {
+  function (id: number) {
     clearTimeout(id);
   };
 

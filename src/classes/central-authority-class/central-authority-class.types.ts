@@ -1,13 +1,7 @@
 import { TCentralAuthorityUserCryptoCredentials } from './central-authority-class-types/central-authority-class-types-crypto-credentials';
 import { TCAUserIdentityRawTypes } from './central-authority-class-user-identity/central-authority-class-user-identity.types';
-import {
-  ICentralAuthorityUserProfile,
-  TCentralAuthorityUserIdentity,
-} from './central-authority-class-types/central-authority-class-types-common';
-import {
-  TCAAuthProviderIdentity,
-  ICAConnectionSignUpCredentials,
-} from './central-authority-connections/central-authority-connections.types';
+import { ICentralAuthorityUserProfile, TCentralAuthorityUserIdentity } from './central-authority-class-types/central-authority-class-types-common';
+import { TCAAuthProviderIdentity, ICAConnectionSignUpCredentials } from './central-authority-connections/central-authority-connections.types';
 import { IAuthProviderConnectionConfiguration } from 'classes/central-authority-class/central-authority-connections/central-authority-connections-pool/central-authority-connections-pool.types';
 import { ISecretStoreCredentialsSession } from 'classes/secret-storage-class';
 
@@ -28,8 +22,7 @@ export interface ICentralAuthorityAuthProvidersOptions {
   providersConfigurations: IAuthProviderConnectionConfiguration[];
 }
 
-export type ICentralAuthorityUserCredentials = ICAConnectionSignUpCredentials &
-  Partial<ISecretStoreCredentialsSession>;
+export type ICentralAuthorityUserCredentials = ICAConnectionSignUpCredentials & Partial<ISecretStoreCredentialsSession>;
 
 /**
  * This configuration determines the user's credentials
@@ -113,9 +106,7 @@ export interface ICentralAuthority {
    * @returns {(Promise<TCentralAuthorityUserCryptoCredentials | Error | null>)}
    * @memberof ICentralAuthority
    */
-  getSwarmUserCredentials(
-    identity: TCAUserIdentityRawTypes
-  ): Promise<TCentralAuthorityUserCryptoCredentials | Error | null>;
+  getSwarmUserCredentials(identity: TCAUserIdentityRawTypes): Promise<TCentralAuthorityUserCryptoCredentials | Error | null>;
 
   /**
    * returns a crypto key of the swarm user used
@@ -125,9 +116,7 @@ export interface ICentralAuthority {
    * @returns {(Promise<Error | null | CryptoKey>)}
    * @memberof ICentralAuthority
    */
-  getSwarmUserEncryptionPubKey(
-    identity: TCAUserIdentityRawTypes
-  ): Promise<Error | null | CryptoKey>;
+  getSwarmUserEncryptionPubKey(identity: TCAUserIdentityRawTypes): Promise<Error | null | CryptoKey>;
   /**
    * returns a crypto key of the swarm user used
    * for data sign
@@ -136,9 +125,7 @@ export interface ICentralAuthority {
    * @returns {(Promise<Error | null | CryptoKey>)}
    * @memberof ICentralAuthority
    */
-  getSwarmUserSignPubKey(
-    identity: TCAUserIdentityRawTypes
-  ): Promise<Error | null | CryptoKey>;
+  getSwarmUserSignPubKey(identity: TCAUserIdentityRawTypes): Promise<Error | null | CryptoKey>;
   /**
    * return the identity of the current user
    *

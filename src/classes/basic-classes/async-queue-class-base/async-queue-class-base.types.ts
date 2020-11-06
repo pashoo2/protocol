@@ -24,13 +24,9 @@ export interface IAsyncQueueBaseClassOptions {
 
 export type TAsyncQueueBaseClassPromiseProvider<T> = () => Promise<T>;
 
-export type TAsyncQueueBaseClassPromiseProviderBatch<
-  T
-> = TAsyncQueueBaseClassPromiseProvider<T>[];
+export type TAsyncQueueBaseClassPromiseProviderBatch<T> = TAsyncQueueBaseClassPromiseProvider<T>[];
 
-export type TAsyncQueueBaseClassPromiseProviderPending<T> =
-  | TAsyncQueueBaseClassPromiseProvider<T>
-  | TAsyncQueueBaseClassPromiseProviderBatch<T>;
+export type TAsyncQueueBaseClassPromiseProviderPending<T> = TAsyncQueueBaseClassPromiseProvider<T> | TAsyncQueueBaseClassPromiseProviderBatch<T>;
 
 export interface IAsyncQueueBaseClass {
   /**
@@ -41,9 +37,7 @@ export interface IAsyncQueueBaseClass {
    * @returns {(Promise<T | Error>)}
    * @memberof IAsyncQueueBaseClass
    */
-  do<T>(
-    pending: TAsyncQueueBaseClassPromiseProviderBatch<T>
-  ): Promise<Array<T | Error> | Error>;
+  do<T>(pending: TAsyncQueueBaseClassPromiseProviderBatch<T>): Promise<Array<T | Error> | Error>;
   do<T>(pending: TAsyncQueueBaseClassPromiseProvider<T>): Promise<T | Error>;
 }
 
@@ -70,7 +64,5 @@ export abstract class TAsyncQueueBaseClass implements IAsyncQueueBaseClass {
 
   constructor(protected options: IAsyncQueueBaseClassOptions) {}
 
-  public abstract async do<T>(
-    pending: TAsyncQueueBaseClassPromiseProviderPending<T>
-  ): Promise<T | Error | Array<T | Error>>;
+  public abstract async do<T>(pending: TAsyncQueueBaseClassPromiseProviderPending<T>): Promise<T | Error | Array<T | Error>>;
 }

@@ -35,10 +35,7 @@ export const exportCryptoCredentialsToString = async (
     return new Error('The given value is not a valid crypto credentials');
   }
 
-  const {
-    [CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeys,
-    [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: userIdentity,
-  } = userCryptoCredentials;
+  const { [CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeys, [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: userIdentity } = userCryptoCredentials;
   const exportedCryptoKeys = await exportKeyPairsAsString(cryptoKeys, password);
 
   if (exportedCryptoKeys instanceof Error) {
@@ -60,23 +57,13 @@ export const exportCryptoCredentialsToString = async (
   }
 
   if (!checkIsValidCryptoCredentialsExportedFormat(cryptoCredentialsExported)) {
-    return new Error(
-      'Failed to create a crypto credentials in the exported format'
-    );
+    return new Error('Failed to create a crypto credentials in the exported format');
   }
   try {
-    const exportedCryptoCredentialsAsString = stringify(
-      cryptoCredentialsExported
-    );
+    const exportedCryptoCredentialsAsString = stringify(cryptoCredentialsExported);
 
-    if (
-      !checkIsValidExportedCryptoCredentialsToString(
-        exportedCryptoCredentialsAsString
-      )
-    ) {
-      return new Error(
-        'Failed cause the crypto credentials exported as a sting have a wrong format'
-      );
+    if (!checkIsValidExportedCryptoCredentialsToString(exportedCryptoCredentialsAsString)) {
+      return new Error('Failed cause the crypto credentials exported as a sting have a wrong format');
     }
     return exportedCryptoCredentialsAsString;
   } catch (err) {
@@ -88,41 +75,27 @@ export const exportCryptoCredentialsToString = async (
 // allow to absent for a private keys in a pairs
 export const exportCryptoCredentialsToStringWithoutTheCAIdentityVersion = (
   userCryptoCredentials: TCentralAuthorityUserCryptoCredentials
-): Promise<Error | string> =>
-  exportCryptoCredentialsToString(userCryptoCredentials, true);
+): Promise<Error | string> => exportCryptoCredentialsToString(userCryptoCredentials, true);
 
-export const compareAuthProvidersIdentities = (
-  ...authProvidersIds: TCAAuthProviderIdentity[]
-): boolean => {
+export const compareAuthProvidersIdentities = (...authProvidersIds: TCAAuthProviderIdentity[]): boolean => {
   const { length: len } = authProvidersIds;
 
   if (len < 2) {
     return true;
   }
 
-  const firstAuthProviderId = normalizeUrl(
-    authProvidersIds[0],
-    CA_UTILS_CRYPTO_CREDENTIALS_NORMALIZE_URL_OPTIONS
-  );
+  const firstAuthProviderId = normalizeUrl(authProvidersIds[0], CA_UTILS_CRYPTO_CREDENTIALS_NORMALIZE_URL_OPTIONS);
   let idx = 0;
 
   while (++idx < len) {
-    if (
-      firstAuthProviderId !==
-      normalizeUrl(
-        authProvidersIds[idx],
-        CA_UTILS_CRYPTO_CREDENTIALS_NORMALIZE_URL_OPTIONS
-      )
-    ) {
+    if (firstAuthProviderId !== normalizeUrl(authProvidersIds[idx], CA_UTILS_CRYPTO_CREDENTIALS_NORMALIZE_URL_OPTIONS)) {
       return false;
     }
   }
   return true;
 };
 
-export const compareCryptoCredentials = async (
-  ...credentials: TCentralAuthorityUserCryptoCredentials[]
-): Promise<boolean | Error> => {
+export const compareCryptoCredentials = async (...credentials: TCentralAuthorityUserCryptoCredentials[]): Promise<boolean | Error> => {
   if (!(credentials instanceof Array)) {
     return new Error('Crdentails to compare must be an array');
   }
@@ -136,34 +109,23 @@ export const compareCryptoCredentials = async (
     return true;
   }
 
-  const userIdentityBase = new CentralAuthorityIdentity(
-    cryptoCredentialsBase[CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]
-  );
+  const userIdentityBase = new CentralAuthorityIdentity(cryptoCredentialsBase[CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]);
 
   if (!userIdentityBase.isValid) {
-    return new Error(
-      'The user identity is not valid in the crypto credentials base'
-    );
+    return new Error('The user identity is not valid in the crypto credentials base');
   }
 
-  const cryptoCredentialsKeysBase =
-    cryptoCredentialsBase[CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME];
-  const cryptoCredentialsEncryptKeyPairHashBase = await calcCryptoKeyPairHash(
-    cryptoCredentialsKeysBase.encryptionKeyPair
-  );
+  const cryptoCredentialsKeysBase = cryptoCredentialsBase[CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME];
+  const cryptoCredentialsEncryptKeyPairHashBase = await calcCryptoKeyPairHash(cryptoCredentialsKeysBase.encryptionKeyPair);
 
   if (cryptoCredentialsEncryptKeyPairHashBase instanceof Error) {
     return new Error('Failed to calculate hash of the encrypt key pairs base');
   }
 
-  const cryptoCredentialsSignKeyPairHashBase = await calcCryptoKeyPairHash(
-    cryptoCredentialsKeysBase.signDataKeyPair
-  );
+  const cryptoCredentialsSignKeyPairHashBase = await calcCryptoKeyPairHash(cryptoCredentialsKeysBase.signDataKeyPair);
 
   if (cryptoCredentialsSignKeyPairHashBase instanceof Error) {
-    return new Error(
-      'Failed to calculate hash of the data sign key pairs base'
-    );
+    return new Error('Failed to calculate hash of the data sign key pairs base');
   }
 
   let idx = 1;
@@ -181,28 +143,20 @@ export const compareCryptoCredentials = async (
       return new Error(`The crypto credentials on index ${idx} is not valid`);
     }
 
-    userIdentity = new CentralAuthorityIdentity(
-      nextCryptoCredentials[CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]
-    );
+    userIdentity = new CentralAuthorityIdentity(nextCryptoCredentials[CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]);
 
     if (!userIdentity.isValid) {
-      return new Error(
-        `The user identity is not valid in the crypto credentials on index ${idx}`
-      );
+      return new Error(`The user identity is not valid in the crypto credentials on index ${idx}`);
     }
     if (userIdentity.id !== userIdentityBase.id) {
       return new Error(`The user identity are different on index ${idx}`);
     }
 
     keyPairs = nextCryptoCredentials[CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME];
-    encryptionKeyPairsHash = await calcCryptoKeyPairHash(
-      keyPairs.encryptionKeyPair
-    );
+    encryptionKeyPairsHash = await calcCryptoKeyPairHash(keyPairs.encryptionKeyPair);
 
     if (cryptoCredentialsEncryptKeyPairHashBase !== encryptionKeyPairsHash) {
-      return new Error(
-        `The encryption key pairs are different on index ${idx}`
-      );
+      return new Error(`The encryption key pairs are different on index ${idx}`);
     }
 
     signPairsHash = await calcCryptoKeyPairHash(keyPairs.signDataKeyPair);
@@ -226,16 +180,11 @@ export const importCryptoCredentialsFromExportedFromat = async (
     [CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeysExported,
     [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: userIdentityExported,
   } = cryptoCredentialsExported;
-  const cryptoKeysImported = await importKeyPairsFromString(
-    cryptoKeysExported,
-    password
-  );
+  const cryptoKeysImported = await importKeyPairsFromString(cryptoKeysExported, password);
 
   if (cryptoKeysImported instanceof Error) {
     console.error(cryptoKeysImported);
-    return new Error(
-      'Failed to import a crypto key pairs from the given string'
-    );
+    return new Error('Failed to import a crypto key pairs from the given string');
   }
 
   const cryptoCredentials = {
@@ -244,9 +193,7 @@ export const importCryptoCredentialsFromExportedFromat = async (
   };
 
   if (!checkIsValidCryptoCredentials(cryptoCredentials, !!password)) {
-    return new Error(
-      'Failed to return the crypto credentials imorted in the valid format'
-    );
+    return new Error('Failed to return the crypto credentials imorted in the valid format');
   }
   return cryptoCredentials;
 };
@@ -258,9 +205,7 @@ export const importCryptoCredentialsFromAString = async (
   const typeCryptoCredentials = typeof cryptoCredentialsString;
 
   if (typeCryptoCredentials !== 'string') {
-    return new Error(
-      `The cryptoCredentials value have the wrong type::${typeCryptoCredentials}::`
-    );
+    return new Error(`The cryptoCredentials value have the wrong type::${typeCryptoCredentials}::`);
   }
   if (!checkIsValidExportedCryptoCredentialsToString(cryptoCredentialsString)) {
     return new Error('The cryptoCredentials value have a wrong format');
@@ -274,10 +219,7 @@ export const importCryptoCredentialsFromAString = async (
     console.error(err);
     return new Error('Failed to parse the given crypto credentials string');
   }
-  return importCryptoCredentialsFromExportedFromat(
-    cryptoCredentialsExported,
-    password
-  );
+  return importCryptoCredentialsFromExportedFromat(cryptoCredentialsExported, password);
 };
 
 export const getUserCredentialsByUserIdentityAndCryptoKeys = (
@@ -317,16 +259,10 @@ export const getExportedAsStringCryptoCredentials = async (
       return new Error('The identity is not valid or have an unknown format');
     }
     if (!checkIsCryptoKeyPairs(cryptoCredentialsKeyPairs, checkPrivateKey)) {
-      return new Error(
-        'The crypto keys are not valid or have an unknown format'
-      );
+      return new Error('The crypto keys are not valid or have an unknown format');
     }
 
-    const caUserCryptoCredentials = getUserCredentialsByUserIdentityAndCryptoKeys(
-      identity,
-      cryptoCredentialsKeyPairs,
-      checkPrivateKey
-    );
+    const caUserCryptoCredentials = getUserCredentialsByUserIdentityAndCryptoKeys(identity, cryptoCredentialsKeyPairs, checkPrivateKey);
 
     if (caUserCryptoCredentials instanceof Error) {
       console.error(caUserCryptoCredentials);
@@ -378,9 +314,7 @@ export const getUserIdentityByCryptoCredentials = (
     return new Error('The crypto credentials have an unknown format');
   }
 
-  const {
-    [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: userIdentity,
-  } = cryptoCredentials;
+  const { [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: userIdentity } = cryptoCredentials;
 
   if (validateUserIdentity(userIdentity)) {
     return userIdentity;
@@ -396,9 +330,7 @@ export const getCryptoKeyPairsByCryptoCredentials = (
     return new Error('The crypto credentials have an unknown format');
   }
 
-  const {
-    [CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeyPairs,
-  } = cryptoCredentials;
+  const { [CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeyPairs } = cryptoCredentials;
 
   if (checkIsCryptoKeyPairs(cryptoKeyPairs, checkPrivateKey)) {
     return cryptoKeyPairs;
@@ -406,16 +338,9 @@ export const getCryptoKeyPairsByCryptoCredentials = (
   return new Error('The crypto key pairs are not valid');
 };
 
-export const getUserIdentityVersion = (
-  userIdentity: TCentralAuthorityUserIdentity | CentralAuthorityIdentity
-): TUserIdentityVersion | Error => {
-  if (
-    !(userIdentity instanceof CentralAuthorityIdentity) &&
-    typeof userIdentity !== 'string'
-  ) {
-    return new Error(
-      'The userIdentity must be a string or an instance of the CentralAuthorityIdentity class'
-    );
+export const getUserIdentityVersion = (userIdentity: TCentralAuthorityUserIdentity | CentralAuthorityIdentity): TUserIdentityVersion | Error => {
+  if (!(userIdentity instanceof CentralAuthorityIdentity) && typeof userIdentity !== 'string') {
+    return new Error('The userIdentity must be a string or an instance of the CentralAuthorityIdentity class');
   }
 
   const userIdentityObj = new CentralAuthorityIdentity(userIdentity);
@@ -426,9 +351,7 @@ export const getUserIdentityVersion = (
   return userIdentityObj.version;
 };
 
-export const getVersionOfCryptoCredentials = (
-  cryptoCredentials: TCentralAuthorityUserCryptoCredentials
-): TUserIdentityVersion | Error => {
+export const getVersionOfCryptoCredentials = (cryptoCredentials: TCentralAuthorityUserCryptoCredentials): TUserIdentityVersion | Error => {
   const userIdentity = getUserIdentityByCryptoCredentials(cryptoCredentials);
 
   if (userIdentity instanceof Error) {

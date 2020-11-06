@@ -13,6 +13,5 @@ export const CA_CONNECTIONS_POOL_AUTH_PROVIDERS_CONNECTION_CONSTRUCTORS = {
  * provider type's connection
  */
 export const CA_CONNECTIONS_POOL_AUTH_PROVIDERS_CONNECTION_CONFIGURATION_VALIDATORS = {
-  [CA_CONNECTION_AUTH_PROVIDERS.FIREBASE]:
-    CAConnectionWithFirebase.validateConfiguration,
+  [CA_CONNECTION_AUTH_PROVIDERS.FIREBASE]: CAConnectionWithFirebase.validateConfiguration,
 };

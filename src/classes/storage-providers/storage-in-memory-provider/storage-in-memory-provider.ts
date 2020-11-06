@@ -2,10 +2,7 @@ import assert from 'assert';
 
 import { isTypedArrayNative } from 'utils/typed-array-utils';
 
-import {
-  StorageProvider,
-  IStorageProviderOptions,
-} from '../storage-providers.types';
+import { StorageProvider, IStorageProviderOptions } from '../storage-providers.types';
 import { TStorageInMemory } from './storage-in-memory-provider.types';
 
 export class StorageProviderInMemory<V = any> extends StorageProvider<V> {
@@ -17,9 +14,7 @@ export class StorageProviderInMemory<V = any> extends StorageProvider<V> {
 
   private _storage?: TStorageInMemory<V>;
 
-  public async connect(
-    options?: IStorageProviderOptions
-  ): Promise<true | Error> {
+  public async connect(options?: IStorageProviderOptions): Promise<true | Error> {
     try {
       if (!this._isConnected) {
         this._storage = new Map();
@@ -108,9 +103,7 @@ export class StorageProviderInMemory<V = any> extends StorageProvider<V> {
     }
   }
 
-  public async getUInt8Array(
-    key: string
-  ): Promise<Error | Uint8Array | undefined> {
+  public async getUInt8Array(key: string): Promise<Error | Uint8Array | undefined> {
     try {
       this._checkIsReady();
 
@@ -133,10 +126,7 @@ export class StorageProviderInMemory<V = any> extends StorageProvider<V> {
 
   protected _setOptions(options?: IStorageProviderOptions): void {
     if (options) {
-      assert(
-        options && typeof options !== 'object',
-        'Options must be an object'
-      );
+      assert(options && typeof options !== 'object', 'Options must be an object');
       this._options = options;
     }
   }

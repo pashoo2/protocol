@@ -2,8 +2,7 @@ import { IHttpRequestOptions } from 'classes/basic-classes/http-request-class-ba
 
 export interface IFileStorageClassProviderHTTPOptions {}
 
-export interface IFileStorageClassProviderHTTPFileGetOptions
-  extends IHttpRequestOptions {}
+export interface IFileStorageClassProviderHTTPFileGetOptions extends IHttpRequestOptions {}
 
 export interface IFileStorageClassProviderHTTPFileAddOptions {}
 

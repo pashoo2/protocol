@@ -16,14 +16,9 @@ const swarmMessageFieldsValidator = new SwarmMessageSubclassFieldsValidator();
  * @returns {true}
  * @throws - throw error if format is not valid
  */
-export function isValidSwarmMessageDecryptedFormat(
-  message: any
-): message is ISwarmMessageInstanceDecrypted {
+export function isValidSwarmMessageDecryptedFormat(message: any): message is ISwarmMessageInstanceDecrypted {
   assert(!!message, 'Swarm message should be defined');
-  assert(
-    typeof message.bdy === 'object',
-    'Body of a decrypted message should be an object'
-  );
+  assert(typeof message.bdy === 'object', 'Body of a decrypted message should be an object');
   swarmMessageFieldsValidator.validateMessage(message);
   return true;
 }
@@ -36,14 +31,9 @@ export function isValidSwarmMessageDecryptedFormat(
  * @returns {true}
  * @throws - throw an error if format is not valid
  */
-export function isValidSwarmMessageEncryptedFormat(
-  message: any
-): message is ISwarmMessageEncrypted {
+export function isValidSwarmMessageEncryptedFormat(message: any): message is ISwarmMessageEncrypted {
   assert(!!message, 'Swarm message should be defined');
-  assert(
-    typeof message.bdy === 'string',
-    'Body of an encrypted message should be a string'
-  );
+  assert(typeof message.bdy === 'string', 'Body of an encrypted message should be a string');
   swarmMessageFieldsValidator.validateMessage(message);
   return true;
 }
@@ -56,14 +46,9 @@ export function isValidSwarmMessageEncryptedFormat(
  * @returns {true}
  * @throws - if a message hasn't a valid format
  */
-export function isValidSwarmMessageEncryptedOrDescryptedFormat(
-  message: any
-): message is TSwarmMessageInstance {
+export function isValidSwarmMessageEncryptedOrDescryptedFormat(message: any): message is TSwarmMessageInstance {
   assert(!!message, 'Swarm message should be defined');
-  assert(
-    typeof message.bdy === 'string',
-    'Body of an encrypted message should be a string'
-  );
+  assert(typeof message.bdy === 'string', 'Body of an encrypted message should be a string');
   swarmMessageFieldsValidator.validateMessage(message);
   return true;
 }

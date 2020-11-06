@@ -36,9 +36,7 @@ describe('AsyncQueueClassBase', () => {
       return Promise.resolve(expectedResolve2);
     });
 
-    await expect(
-      asyncQueue.do([promiseProvider1, promiseProvider2])
-    ).resolves.toEqual([expectedResolve1, expectedResolve2]);
+    await expect(asyncQueue.do([promiseProvider1, promiseProvider2])).resolves.toEqual([expectedResolve1, expectedResolve2]);
     expect(promiseProvider1).toBeCalledTimes(1);
     expect(promiseProvider2).toBeCalledTimes(1);
   });
@@ -53,12 +51,10 @@ describe('AsyncQueueClassBase', () => {
       return Promise.resolve(expectedResolve2);
     });
 
-    await expect(
-      Promise.all([
-        asyncQueue.do(promiseProvider1),
-        asyncQueue.do(promiseProvider2),
-      ])
-    ).resolves.toEqual([expectedResolve1, expectedResolve2]);
+    await expect(Promise.all([asyncQueue.do(promiseProvider1), asyncQueue.do(promiseProvider2)])).resolves.toEqual([
+      expectedResolve1,
+      expectedResolve2,
+    ]);
     expect(promiseProvider1).toBeCalledTimes(1);
     expect(promiseProvider2).toBeCalledTimes(1);
   });
@@ -75,12 +71,10 @@ describe('AsyncQueueClassBase', () => {
       return Promise.resolve(expectedResolve2);
     });
 
-    await expect(
-      Promise.all([
-        asyncQueue.do(promiseProvider1),
-        asyncQueue.do(promiseProvider2),
-      ])
-    ).resolves.toEqual([expectedResolve1, expectedResolve2]);
+    await expect(Promise.all([asyncQueue.do(promiseProvider1), asyncQueue.do(promiseProvider2)])).resolves.toEqual([
+      expectedResolve1,
+      expectedResolve2,
+    ]);
     expect(promiseProvider1).toBeCalledTimes(1);
     expect(promiseProvider2).toBeCalledTimes(1);
   });
@@ -106,13 +100,9 @@ describe('AsyncQueueClassBase', () => {
       isTimer2Triggers = true;
     }, 2 * delayMs);
 
-    await expect(asyncQueue.do(promiseProvider1)).resolves.toEqual(
-      expectedResolve1
-    );
+    await expect(asyncQueue.do(promiseProvider1)).resolves.toEqual(expectedResolve1);
     expect(promiseProvider1).toBeCalledTimes(1);
-    await expect(asyncQueue.do(promiseProvider2)).resolves.toEqual(
-      expectedResolve2
-    );
+    await expect(asyncQueue.do(promiseProvider2)).resolves.toEqual(expectedResolve2);
     expect(promiseProvider2).toBeCalledTimes(1);
     expect(isTimer1Triggers).toBe(true);
     expect(isTimer2Triggers).toBe(false);

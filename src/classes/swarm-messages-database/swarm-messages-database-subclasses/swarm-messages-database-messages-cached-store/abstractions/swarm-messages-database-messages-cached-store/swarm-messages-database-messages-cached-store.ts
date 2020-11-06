@@ -5,10 +5,7 @@ import { ESwarmStoreConnector } from '../../../../../swarm-store-class/swarm-sto
 import { TSwarmStoreDatabaseType } from '../../../../../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessagesDatabaseMessagesCacheStoreExtendedDefferedMethods } from '../../swarm-messages-database-messages-cached-store.types';
 import { SwarmMessagesDatabaseMessagesCachedStoreTemp } from '../swarm-messages-database-messages-cached-store-temp/swarm-messages-database-messages-cached-store-temp';
-import {
-  ISwarmMessagesDatabaseMesssageMeta,
-  TSwarmMessageDatabaseMessagesCached,
-} from '../../../../swarm-messages-database.types';
+import { ISwarmMessagesDatabaseMesssageMeta, TSwarmMessageDatabaseMessagesCached } from '../../../../swarm-messages-database.types';
 import {
   ISwarmMessagesDatabaseMessagesCacheMessageDescription,
   ISwarmMessagesDatabaseMessagesCacheStoreTemp,
@@ -19,36 +16,20 @@ import { isValidSwarmMessageDecryptedFormat } from '../../../../../swarm-message
 import { ISwarmMessageInstanceDecrypted } from '../../../../../swarm-message/swarm-message-constructor.types';
 import { commonUtilsIsTwoArraysHaveSameItems } from '../../../../../../utils/common-utils/common-utils-array';
 
-export class SwarmMessagesDatabaseMessagesCachedStore<
-  P extends ESwarmStoreConnector,
-  DbType extends TSwarmStoreDatabaseType<P>
-> extends SwarmMessagesDatabaseMessagesCachedStoreTemp<P, DbType, false>
-  implements
-    ISwarmMessagesDatabaseMessagesCacheStoreExtendedDefferedMethods<P, DbType> {
-  protected _listDefferedReadAfterCurrentCacheUpdateBatch = new Set<
-    ISwarmMessagesDatabaseMesssageMeta<P, DbType>
-  >();
+export class SwarmMessagesDatabaseMessagesCachedStore<P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>>
+  extends SwarmMessagesDatabaseMessagesCachedStoreTemp<P, DbType, false>
+  implements ISwarmMessagesDatabaseMessagesCacheStoreExtendedDefferedMethods<P, DbType> {
+  protected _listDefferedReadAfterCurrentCacheUpdateBatch = new Set<ISwarmMessagesDatabaseMesssageMeta<P, DbType>>();
 
-  protected _listDefferedRead = new Set<
-    ISwarmMessagesDatabaseMesssageMeta<P, DbType>
-  >();
+  protected _listDefferedRead = new Set<ISwarmMessagesDatabaseMesssageMeta<P, DbType>>();
 
-  protected _tempMessagesCachedStoreLinked?: ISwarmMessagesDatabaseMessagesCacheStoreTemp<
-    P,
-    DbType,
-    false
-  >;
+  protected _tempMessagesCachedStoreLinked?: ISwarmMessagesDatabaseMessagesCacheStoreTemp<P, DbType, false>;
 
   constructor(protected _dbType: DbType, protected _dbName: string) {
     super(_dbType, _dbName, false);
   }
 
-  public add(
-    description: ISwarmMessagesDatabaseMessagesCacheMessageDescription<
-      P,
-      DbType
-    >
-  ): boolean {
+  public add(description: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>): boolean {
     if (this._checkIfMessageInTempStore(description)) {
       return true;
     }
@@ -56,27 +37,16 @@ export class SwarmMessagesDatabaseMessagesCachedStore<
     return true;
   }
 
-  public remove = (
-    messageCharacteristic: ISwarmMessagesDatabaseMesssageMeta<P, DbType>
-  ): void => {
+  public remove = (messageCharacteristic: ISwarmMessagesDatabaseMesssageMeta<P, DbType>): void => {
     return this._cachedStoreImplementation.remove(messageCharacteristic);
   };
 
-  public linkWithTempStore(
-    tempCacheStore: ISwarmMessagesDatabaseMessagesCacheStoreTemp<
-      P,
-      DbType,
-      false
-    >
-  ) {}
+  public linkWithTempStore(tempCacheStore: ISwarmMessagesDatabaseMessagesCacheStoreTemp<P, DbType, false>) {}
 
   public updateByTempStore = (): boolean => {
     const { _tempMessagesCachedStoreLinked } = this;
 
-    if (
-      !_tempMessagesCachedStoreLinked ||
-      !_tempMessagesCachedStoreLinked.entries
-    ) {
+    if (!_tempMessagesCachedStoreLinked || !_tempMessagesCachedStoreLinked.entries) {
       return false;
     }
 
@@ -85,18 +55,14 @@ export class SwarmMessagesDatabaseMessagesCachedStore<
     if (!whetherSameKeysInTempAndMainStorage) {
       this._cachedStoreImplementation.clear();
     }
-    return this._cachedStoreImplementation.updateWithEntries(
-      _tempMessagesCachedStoreLinked.entries
-    );
+    return this._cachedStoreImplementation.updateWithEntries(_tempMessagesCachedStoreLinked.entries);
   };
 
   public unlinkWithTempStore() {
     this._tempMessagesCachedStoreLinked = undefined;
   }
 
-  public getDefferedReadAfterCurrentCacheUpdateBatch(): Set<
-    ISwarmMessagesDatabaseMesssageMeta<P, DbType>
-  > {
+  public getDefferedReadAfterCurrentCacheUpdateBatch(): Set<ISwarmMessagesDatabaseMesssageMeta<P, DbType>> {
     return this._listDefferedReadAfterCurrentCacheUpdateBatch;
   }
   /**
@@ -126,42 +92,28 @@ export class SwarmMessagesDatabaseMessagesCachedStore<
     this._listDefferedRead.clear();
   }
 
-  public _addToDefferedUpdate = (
-    meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>
-  ): void => {
+  public _addToDefferedUpdate = (meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>): void => {
     this._listDefferedRead.add(meta);
   };
 
-  public _addToDefferedReadAfterCurrentCacheUpdateBatch = (
-    meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>
-  ): void => {
+  public _addToDefferedReadAfterCurrentCacheUpdateBatch = (meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>): void => {
     this._listDefferedReadAfterCurrentCacheUpdateBatch.add(meta);
   };
 
   protected _checkIsReady(): this is {
-    _cachedStoreImplementation: ISwarmMessagesDatabaseMessagesCachedStoreCore<
-      P,
-      DbType,
-      false
-    >;
+    _cachedStoreImplementation: ISwarmMessagesDatabaseMessagesCachedStoreCore<P, DbType, false>;
   } {
     return this._isReady;
   }
 
   protected _throwIfNotReady(): this is {
-    _cachedStoreImplementation: ISwarmMessagesDatabaseMessagesCachedStoreCore<
-      P,
-      DbType,
-      false
-    >;
+    _cachedStoreImplementation: ISwarmMessagesDatabaseMessagesCachedStoreCore<P, DbType, false>;
   } {
     assert(this._checkIsReady(), 'The instance is not ready');
     return true;
   }
 
-  protected _mapCachedStoreItemsToMessagesWithMeta():
-    | TSwarmMessageDatabaseMessagesCached<P, DbType>
-    | undefined {
+  protected _mapCachedStoreItemsToMessagesWithMeta(): TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined {
     if (!this._checkIsReady()) {
       return undefined;
     }
@@ -170,9 +122,7 @@ export class SwarmMessagesDatabaseMessagesCachedStore<
 
   protected _getEntryFromTempStoreLinked(
     messageCharacteristic: ISwarmMessagesDatabaseMesssageMeta<P, DbType>
-  ):
-    | ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector>
-    | undefined {
+  ): ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector> | undefined {
     const { _cachedStoreImplementation } = this;
 
     if (!_cachedStoreImplementation) {
@@ -198,26 +148,13 @@ export class SwarmMessagesDatabaseMessagesCachedStore<
     return message;
   }
 
-  protected _checkIfMessageInTempStore(
-    description: ISwarmMessagesDatabaseMessagesCacheMessageDescription<
-      P,
-      DbType
-    >
-  ): boolean {
-    const messageInTempStore = this._getMessageDecryptedFromTempStoreLinked(
-      description.messageMeta
-    );
+  protected _checkIfMessageInTempStore(description: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>): boolean {
+    const messageInTempStore = this._getMessageDecryptedFromTempStoreLinked(description.messageMeta);
 
     if (!messageInTempStore) {
       return false;
     }
-    return (
-      !!messageInTempStore &&
-      whetherSwarmMessagesDecryptedAreEqual(
-        messageInTempStore,
-        description.messageEntry
-      )
-    );
+    return !!messageInTempStore && whetherSwarmMessagesDecryptedAreEqual(messageInTempStore, description.messageEntry);
   }
 
   protected _whetherSameKeysBetweenTempStorageLinkedEntriesAndMain(): boolean {
@@ -230,9 +167,6 @@ export class SwarmMessagesDatabaseMessagesCachedStore<
     if (!linkedStorageKeys) {
       return false;
     }
-    return commonUtilsIsTwoArraysHaveSameItems(
-      Array.from(mainStorageKeys),
-      Array.from(linkedStorageKeys)
-    );
+    return commonUtilsIsTwoArraysHaveSameItems(Array.from(mainStorageKeys), Array.from(linkedStorageKeys));
   }
 }

@@ -35,8 +35,7 @@ export interface ICAConnectionUserAuthorizedResult {
  * @export
  * @interface ICAConnectionSignUpCredentials
  */
-export interface ICAConnectionSignUpCredentials
-  extends ICentralAuthorityUserAuthCredentials {
+export interface ICAConnectionSignUpCredentials extends ICentralAuthorityUserAuthCredentials {
   cryptoCredentials?: TCentralAuthorityUserCryptoCredentials;
 }
 
@@ -74,9 +73,7 @@ export interface ICAConnection {
    * @returns {(Promise<boolean | Error>)}
    * @memberof ICAConnection
    */
-  connect(
-    configuration: ICAConnectionConfigurationFirebase
-  ): Promise<boolean | Error>;
+  connect(configuration: ICAConnectionConfigurationFirebase): Promise<boolean | Error>;
   /** sign in anonymousely to the database */
   signInAnonymousely(): Promise<Error | void>;
   /**
@@ -106,9 +103,7 @@ export interface ICAConnection {
   ): Promise<Error | ICAConnectionUserAuthorizedResult>;
   signOut(): Promise<Error | boolean>;
   // delete the user data from the central authority
-  delete(
-    signUpCredentials?: ICAConnectionSignUpCredentials
-  ): Promise<Error | boolean>;
+  delete(signUpCredentials?: ICAConnectionSignUpCredentials): Promise<Error | boolean>;
   /**
    * return a credentials for the user
    * with the id = userId.
@@ -117,9 +112,7 @@ export interface ICAConnection {
    * under which the user was registered the
    * Firebase account.
    */
-  getUserCredentials(
-    userId: string
-  ): Promise<Error | null | TCentralAuthorityUserCryptoCredentials>;
+  getUserCredentials(userId: string): Promise<Error | null | TCentralAuthorityUserCryptoCredentials>;
   // disconnect from the remote server
   disconnect(): Promise<Error | void>;
   /**
@@ -129,7 +122,5 @@ export interface ICAConnection {
    * @returns {(Promise<Partial<ICentralAuthorityUserProfile> | undefined | Error>)}
    * @memberof ICAConnection
    */
-  getCAUserProfile(): Promise<
-    Partial<ICentralAuthorityUserProfile> | undefined | Error
-  >;
+  getCAUserProfile(): Promise<Partial<ICentralAuthorityUserProfile> | undefined | Error>;
 }

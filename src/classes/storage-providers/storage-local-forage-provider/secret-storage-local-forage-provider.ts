@@ -1,9 +1,6 @@
 import localforage from 'localforage';
 import assert from 'assert';
-import {
-  StorageProvider,
-  IStorageProviderOptions,
-} from '../storage-providers.types';
+import { StorageProvider, IStorageProviderOptions } from '../storage-providers.types';
 import {
   SECRET_STORAGE_LOCAL_FORAGE_PROVIDER_DEFAULTS_DB_NAME,
   SECRET_STORAGE_LOCAL_FORAGE_PROVIDER_DRIVER,
@@ -31,16 +28,12 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
 
   private isDisconnected: boolean = false;
 
-  public async connect(
-    options?: IStorageProviderOptions
-  ): Promise<true | Error> {
+  public async connect(options?: IStorageProviderOptions): Promise<true | Error> {
     try {
       const { isDisconnected } = this;
 
       if (isDisconnected) {
-        return new Error(
-          'The instance of the SecretStorageProvider was closed before'
-        );
+        return new Error('The instance of the SecretStorageProvider was closed before');
       }
       this.setOptions(options);
 
@@ -118,10 +111,7 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
    * @returns {(Promise<Error | true>)}
    * @memberof SecretStorageProviderLevelJS
    */
-  public async setUInt8Array(
-    key: string,
-    value?: Uint8Array
-  ): Promise<Error | boolean> {
+  public async setUInt8Array(key: string, value?: Uint8Array): Promise<Error | boolean> {
     try {
       const isDisconnected = this.checkIsReady();
 
@@ -197,9 +187,7 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
       if (!localForage) {
         return new Error('There is no connection to the local forage');
       }
-      if (
-        this.dbName === SECRET_STORAGE_LOCAL_FORAGE_PROVIDER_DEFAULTS_DB_NAME
-      ) {
+      if (this.dbName === SECRET_STORAGE_LOCAL_FORAGE_PROVIDER_DEFAULTS_DB_NAME) {
         return new Error("The DEFAULT database can't be removed");
       }
       await localForage.clear();
@@ -209,9 +197,7 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
     }
   }
 
-  public async getUInt8Array(
-    key: string
-  ): Promise<Error | Uint8Array | undefined> {
+  public async getUInt8Array(key: string): Promise<Error | Uint8Array | undefined> {
     try {
       const isDisconnected = this.checkIsReady();
       const { localForage } = this;
@@ -243,10 +229,7 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
       const { dbName } = options;
 
       if (dbName) {
-        assert(
-          typeof dbName === 'string',
-          'A name of the database must be a string'
-        );
+        assert(typeof dbName === 'string', 'A name of the database must be a string');
         this.dbName = dbName;
       }
     }

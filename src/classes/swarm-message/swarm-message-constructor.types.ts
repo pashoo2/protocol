@@ -24,17 +24,13 @@ export enum ESwarmMessageSignatureAlgorithmsDescription {
   'ep256' = 'ECDSA_P-256',
 }
 
-export const SwarmMessageSignatureSupprotedAlgorithms = Object.keys(
-  ESwarmMessageSignatureAlgorithmsDescription
-);
+export const SwarmMessageSignatureSupprotedAlgorithms = Object.keys(ESwarmMessageSignatureAlgorithmsDescription);
 
 export interface ISwarmMessageReceiver {
   receiverId: TSwarmMessageUserIdentifierSerialized;
 }
 
-export type TSwarmMessageSignatureAlgorithm = ownKeyOf<
-  typeof ESwarmMessageSignatureAlgorithmsDescription
->;
+export type TSwarmMessageSignatureAlgorithm = ownKeyOf<typeof ESwarmMessageSignatureAlgorithmsDescription>;
 
 /**
  * message serizlized and ready to send
@@ -137,8 +133,7 @@ export interface ISwarmMessageRaw {
 
 // this is for a private messages construction. Message body will be encrypted
 // with the public key of the user with id = receiverId
-export type TSwarmMessageConstructorArgumentBodyPrivate = TSwarmMessageConstructorArgumentBody &
-  ISwarmMessageReceiver;
+export type TSwarmMessageConstructorArgumentBodyPrivate = TSwarmMessageConstructorArgumentBody & ISwarmMessageReceiver;
 
 /**
  * body of a swarm message
@@ -147,9 +142,7 @@ export type TSwarmMessageConstructorArgumentBodyPrivate = TSwarmMessageConstruct
  * @interface ISwarmMessageBody
  * @extends {Omit<ISwarmMessageBodyDeserialized, 'pld'>}
  */
-export interface ISwarmMessageBody
-  extends Omit<ISwarmMessageBodyDeserialized, 'pld'>,
-    Partial<ISwarmMessageReceiver> {
+export interface ISwarmMessageBody extends Omit<ISwarmMessageBodyDeserialized, 'pld'>, Partial<ISwarmMessageReceiver> {
   pld: TSwarmMessagePayloadDeserialized;
 }
 
@@ -179,24 +172,19 @@ export interface ISwarmMessageEncrypted extends Omit<ISwarmMessageRaw, 'bdy'> {
 
 export type TSwarmMessage = ISwarmMessageEncrypted | ISwarmMessageDecrypted;
 
-export interface ISwarmMessageInstanceBase
-  extends Omit<ISwarmMessageRaw, 'bdy'> {
+export interface ISwarmMessageInstanceBase extends Omit<ISwarmMessageRaw, 'bdy'> {
   toString(): TSwarmMessageSerialized;
 }
 
-export interface ISwarmMessageInstanceDecrypted
-  extends Omit<ISwarmMessageInstanceBase, 'bdy'> {
+export interface ISwarmMessageInstanceDecrypted extends Omit<ISwarmMessageInstanceBase, 'bdy'> {
   bdy: ISwarmMessageBody;
 }
 
-export interface ISwarmMessageInstanceEncrypted
-  extends Omit<ISwarmMessageInstanceBase, 'bdy'> {
+export interface ISwarmMessageInstanceEncrypted extends Omit<ISwarmMessageInstanceBase, 'bdy'> {
   bdy: TSwarmMessageBodyEncrypted;
 }
 
-export type TSwarmMessageInstance =
-  | ISwarmMessageInstanceDecrypted
-  | ISwarmMessageInstanceEncrypted;
+export type TSwarmMessageInstance = ISwarmMessageInstanceDecrypted | ISwarmMessageInstanceEncrypted;
 
 /**
  * utilities used for messages parsing,
@@ -233,10 +221,7 @@ export interface ISwarmMessageConstructorOptionsRequired {
   utils: ISwarmMessageConstructorUtils;
   caConnection: ICentralAuthority;
   validation: IMessageValidatorOptions & {
-    signatureValidationOpts: Omit<
-      IMessageValidatorOptions['signatureValidationOpts'],
-      'caConnection'
-    >;
+    signatureValidationOpts: Omit<IMessageValidatorOptions['signatureValidationOpts'], 'caConnection'>;
   };
   instances: Partial<ISwarmMessageConstructorOptionsInstances>;
 }
@@ -247,10 +232,7 @@ export interface ISwarmMessageConstructorOptionsRequired {
  * @export
  * @interface ISwarmMessageConstructorOptions
  */
-export type TSwarmMessageConstructorOptions = Omit<
-  ISwarmMessageConstructorOptionsRequired,
-  'utils' | 'validation'
-> & {
+export type TSwarmMessageConstructorOptions = Omit<ISwarmMessageConstructorOptionsRequired, 'utils' | 'validation'> & {
   utils?: Partial<ISwarmMessageConstructorOptionsRequired['utils']>;
   validation?: Partial<ISwarmMessageConstructorOptionsRequired['validation']>;
 };
@@ -262,21 +244,13 @@ export interface ISwarmMessageConstructor {
   construct(message: TSwarmMessageSerialized): Promise<TSwarmMessageInstance>;
 }
 
-export type TSwarmMessageConstructorArgumentBody = Omit<
-  ISwarmMessageBodyDeserialized,
-  'ts'
-> &
-  Partial<ISwarmMessageBodyDeserialized>;
+export type TSwarmMessageConstructorArgumentBody = Omit<ISwarmMessageBodyDeserialized, 'ts'> & Partial<ISwarmMessageBodyDeserialized>;
 
-export type TSwarmMessageConstructorBodyMessage =
-  | TSwarmMessageConstructorArgumentBodyPrivate
-  | TSwarmMessageConstructorArgumentBody;
+export type TSwarmMessageConstructorBodyMessage = TSwarmMessageConstructorArgumentBodyPrivate | TSwarmMessageConstructorArgumentBody;
 
 // construct message from an object which represents message's body
 export interface ISwarmMessageConstructor {
-  construct(
-    messageBody: TSwarmMessageConstructorArgumentBody
-  ): Promise<TSwarmMessageInstance>;
+  construct(messageBody: TSwarmMessageConstructorArgumentBody): Promise<TSwarmMessageInstance>;
 }
 
 /**
@@ -288,7 +262,5 @@ export interface ISwarmMessageConstructor {
  * @interface ISwarmMessageConstructor
  */
 export interface ISwarmMessageConstructor {
-  construct(
-    messageBody: TSwarmMessageConstructorArgumentBodyPrivate
-  ): Promise<TSwarmMessageInstance>;
+  construct(messageBody: TSwarmMessageConstructorArgumentBodyPrivate): Promise<TSwarmMessageInstance>;
 }

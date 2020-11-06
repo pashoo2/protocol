@@ -8,9 +8,7 @@ export class SecretStorageProviderLocalStorage implements StorageProvider {
 
   protected dbName?: string;
 
-  public async connect(
-    options?: IStorageProviderOptions
-  ): Promise<true | Error> {
+  public async connect(options?: IStorageProviderOptions): Promise<true | Error> {
     try {
       if (!window || !window.localStorage) {
         return new Error('There is no localStorage available for this context');
@@ -37,9 +35,7 @@ export class SecretStorageProviderLocalStorage implements StorageProvider {
         return new Error('There is no database connected to');
       }
       if (!localStorage) {
-        return new Error(
-          'Does not connected to a session storage to remove the database'
-        );
+        return new Error('Does not connected to a session storage to remove the database');
       }
       Object.keys(localStorage).forEach((key) => {
         if (key.startsWith(dbName)) {

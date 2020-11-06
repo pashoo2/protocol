@@ -1,9 +1,4 @@
-export const MIME_TYPES_CLASS_TEXT_EXTENSIONS: string[] = [
-  'txt',
-  'text',
-  'html',
-  'html',
-];
+export const MIME_TYPES_CLASS_TEXT_EXTENSIONS: string[] = ['txt', 'text', 'html', 'html'];
 
 export const MIME_TYPES_CLASS_TEXT_TYPES: string[] = [
   'message/http',
@@ -28,6 +23,4 @@ export const MIME_TYPES_CLASS_BLOB_TYPES: string[] = [
   'multipart/encrypted',
 ];
 
-export const MIME_TYPES_CLASS_MULTIPART_FORM_TYPES: string[] = [
-  'multipart/form-data',
-];
+export const MIME_TYPES_CLASS_MULTIPART_FORM_TYPES: string[] = ['multipart/form-data'];

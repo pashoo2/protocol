@@ -1,14 +1,8 @@
 import { OPEN_STORAGE_KEY_PREFIX } from './open-storage.const';
 import { STORAGE_PROVIDERS_NAME } from './../storage-providers/storage-providers.const';
-import {
-  StorageProvider,
-  IStorageProviderOptions,
-} from 'classes/storage-providers/storage-providers.types';
+import { StorageProvider, IStorageProviderOptions } from 'classes/storage-providers/storage-providers.types';
 import { getStorageProviderByName } from 'classes/storage-providers';
-import {
-  OpenStorageClass,
-  IOpenStorageConfiguration,
-} from './open-storage.types';
+import { OpenStorageClass, IOpenStorageConfiguration } from './open-storage.types';
 
 /**
  * This class used to store values
@@ -46,9 +40,7 @@ export class OpenStorage implements OpenStorageClass {
 
   protected connectingPromise: Promise<void> | undefined;
 
-  public connect = async (
-    configuration?: IOpenStorageConfiguration
-  ): Promise<void | Error> => {
+  public connect = async (configuration?: IOpenStorageConfiguration): Promise<void | Error> => {
     const { connectingPromise } = this;
     if (connectingPromise) {
       return connectingPromise;
@@ -82,10 +74,7 @@ export class OpenStorage implements OpenStorageClass {
     throw new Error('disconnect');
   };
 
-  public set = async (
-    key: string,
-    value?: string
-  ): Promise<boolean | Error> => {
+  public set = async (key: string, value?: string): Promise<boolean | Error> => {
     await this.waitTillConnecting();
     const { isActive, storageProvider } = this;
 
@@ -95,20 +84,14 @@ export class OpenStorage implements OpenStorageClass {
     return storageProvider.set(this.keyNameInStorage(key), value);
   };
 
-  public setUInt8Array = async (
-    key: string,
-    value: Uint8Array
-  ): Promise<boolean | Error> => {
+  public setUInt8Array = async (key: string, value: Uint8Array): Promise<boolean | Error> => {
     await this.waitTillConnecting();
     const { isActive, storageProvider, isBufferSupported } = this;
 
     if (!isActive || !storageProvider) {
       return new Error('There is no connection to a StorageProvider');
     }
-    if (
-      !isBufferSupported ||
-      typeof storageProvider.setUInt8Array !== 'function'
-    ) {
+    if (!isBufferSupported || typeof storageProvider.setUInt8Array !== 'function') {
       return new Error('The storage provider is not support this operation');
     }
     return storageProvider.setUInt8Array(this.keyNameInStorage(key), value);
@@ -124,19 +107,14 @@ export class OpenStorage implements OpenStorageClass {
     return storageProvider.get(this.keyNameInStorage(key));
   };
 
-  public getUInt8Array = async (
-    key: string
-  ): Promise<Uint8Array | undefined | Error> => {
+  public getUInt8Array = async (key: string): Promise<Uint8Array | undefined | Error> => {
     await this.waitTillConnecting();
     const { isActive, storageProvider, isBufferSupported } = this;
 
     if (!isActive || !storageProvider) {
       return new Error('There is no connection to a StorageProvider');
     }
-    if (
-      !isBufferSupported ||
-      typeof storageProvider.getUInt8Array !== 'function'
-    ) {
+    if (!isBufferSupported || typeof storageProvider.getUInt8Array !== 'function') {
       return new Error('The storage provider is not support this operation');
     }
     return storageProvider.getUInt8Array(this.keyNameInStorage(key));
@@ -183,9 +161,7 @@ export class OpenStorage implements OpenStorageClass {
     this.dbName = undefined;
   }
 
-  protected setStorageProviderConnection(
-    storageProviderConnection: StorageProvider
-  ) {
+  protected setStorageProviderConnection(storageProviderConnection: StorageProvider) {
     this.storageProvider = storageProviderConnection;
   }
 
@@ -193,23 +169,15 @@ export class OpenStorage implements OpenStorageClass {
     this.storageProvider = undefined;
   }
 
-  protected async connectToStore(
-    configuration?: IOpenStorageConfiguration
-  ): Promise<void> {
+  protected async connectToStore(configuration?: IOpenStorageConfiguration): Promise<void> {
     const { options, storageProviderName } = configuration || {};
-    const storageProvider = getStorageProviderByName(
-      storageProviderName || STORAGE_PROVIDERS_NAME.LOCAL_FORAGE
-    );
+    const storageProvider = getStorageProviderByName(storageProviderName || STORAGE_PROVIDERS_NAME.LOCAL_FORAGE);
 
     if (!storageProvider) {
-      throw new Error(
-        `There is no storage provider with the name ${storageProviderName}`
-      );
+      throw new Error(`There is no storage provider with the name ${storageProviderName}`);
     }
 
-    const connectToStorageProviderResult = await storageProvider.connect(
-      options
-    );
+    const connectToStorageProviderResult = await storageProvider.connect(options);
 
     if (connectToStorageProviderResult instanceof Error) {
       console.error(connectToStorageProviderResult);

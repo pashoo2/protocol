@@ -18,12 +18,7 @@ import * as PubSubGossip from 'libp2p-gossipsub';
 import DelegatedPeerRouter from 'libp2p-delegated-peer-routing';
 import DelegatedContentRouter from 'libp2p-delegated-content-routing';
 import multiaddr from 'multiaddr';
-import {
-  STARDUST_SERVER,
-  DELEGATE_CONTENT_ROUTER,
-  DELEGATE_PEER_ROUTER,
-  WEB_RTC_STAR_SERVER,
-} from './ipfs-utils-libp2p.const';
+import { STARDUST_SERVER, DELEGATE_CONTENT_ROUTER, DELEGATE_PEER_ROUTER, WEB_RTC_STAR_SERVER } from './ipfs-utils-libp2p.const';
 
 const upgrader = {
   upgradeInbound: (maConn: any) => maConn,
@@ -40,20 +35,13 @@ export const getLibPeerToPeer = (opts: any) => {
   const bootstrapList = opts.config.Bootstrap;
 
   // Create our WebRTC transport and give it our PeerId, straight from the ipfs node
-  peerInfo.multiaddrs.add(
-    multiaddr(
-      `/ip4/${WEB_RTC_STAR_SERVER.host}/tcp/${WEB_RTC_STAR_SERVER.port}/ws/p2p-webrtc-star`
-    )
-  );
+  peerInfo.multiaddrs.add(multiaddr(`/ip4/${WEB_RTC_STAR_SERVER.host}/tcp/${WEB_RTC_STAR_SERVER.port}/ws/p2p-webrtc-star`));
 
   // Content and peer routing
   // https://github.com/libp2p/js-libp2p/tree/master/examples/peer-and-content-routing
   // https://github.com/libp2p/js-libp2p/tree/master/examples/delegated-routing
   const delegatePeerRouter = new DelegatedPeerRouter(DELEGATE_PEER_ROUTER);
-  const delegateContentRouter = new DelegatedContentRouter(
-    peerInfo.id,
-    DELEGATE_CONTENT_ROUTER
-  );
+  const delegateContentRouter = new DelegatedContentRouter(peerInfo.id, DELEGATE_CONTENT_ROUTER);
 
   // Build and return our libp2p node
   return new Libp2p(

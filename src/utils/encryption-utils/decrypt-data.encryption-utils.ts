@@ -1,13 +1,6 @@
-import {
-  isTypedArray,
-  stringToTypedArray,
-  typedArrayToString,
-} from 'utils/typed-array-utils';
+import { isTypedArray, stringToTypedArray, typedArrayToString } from 'utils/typed-array-utils';
 import { cryptoModule } from './main.crypto-utils.const';
-import {
-  CRYPTO_UTIL_DECRIPTION_KEY_TYPE,
-  CRYPTO_UTIL_KEY_DESC,
-} from './crypto-utils.const';
+import { CRYPTO_UTIL_DECRIPTION_KEY_TYPE, CRYPTO_UTIL_KEY_DESC } from './crypto-utils.const';
 import {
   TCRYPTO_UTIL_DECRYPT_DATA_TYPES,
   TCRYPTO_UTIL_DECRYPT_DATA_TYPES_NATIVE,
@@ -77,11 +70,7 @@ export const decryptData = async (
   data: TCRYPTO_UTIL_DECRYPT_DATA_TYPES,
   decryptKeyParams?: TCRYPTO_UTILS_DECRYPT_DATA_KEY_CONFIG
 ): Promise<string | Error> => {
-  const decryptedData = await decryptDataFromString(
-    key,
-    data,
-    decryptKeyParams
-  );
+  const decryptedData = await decryptDataFromString(key, data, decryptKeyParams);
 
   if (decryptedData instanceof Error) {
     return decryptedData;

@@ -1,7 +1,4 @@
-export const lazyLoadScript = (
-  url: string,
-  crossOrigin: string = 'anonymous'
-): Promise<Error | boolean> => {
+export const lazyLoadScript = (url: string, crossOrigin: string = 'anonymous'): Promise<Error | boolean> => {
   try {
     const script = window.document.createElement('script');
 

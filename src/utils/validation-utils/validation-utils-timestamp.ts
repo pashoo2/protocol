@@ -10,9 +10,7 @@ import { CONST_VALIDATION_VALUES_TIMESTAMP_UNIX_MIN_S } from 'const/const-valida
  * @param {number} timestampSeconds
  * @returns {(Error | boolean)}
  */
-export function validateUtilsTimestampNewMessage(
-  timestampSeconds: number
-): Error | boolean {
+export function validateUtilsTimestampNewMessage(timestampSeconds: number): Error | boolean {
   if (!timestampSeconds) {
     return new Error('Timestamp of a message must be defined');
   }
@@ -23,9 +21,7 @@ export function validateUtilsTimestampNewMessage(
     return new Error('The timestamp is less than the minimal valid timestamp');
   }
   if (timestampSeconds > getDateNowInSeconds()) {
-    return new Error(
-      'The timestamp is greater than the maximum valid timestamp'
-    );
+    return new Error('The timestamp is greater than the maximum valid timestamp');
   }
   return true;
 }

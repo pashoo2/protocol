@@ -1,18 +1,9 @@
 import { IMessageFieldsValidatorOptions } from './swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator.types';
 import { IMessageSignatureValidatorOptions } from './swarm-message-subclass-validator-signature-validator/swarm-message-subclass-validator-signature-validator.types';
 import { TSwarmMessageBodyEncrypted } from '../../swarm-message-constructor.types';
-import {
-  TSwarmMessage,
-  ISwarmMessageRaw,
-  ISwarmMessageBodyDeserialized,
-} from '../../swarm-message-constructor.types';
+import { TSwarmMessage, ISwarmMessageRaw, ISwarmMessageBodyDeserialized } from '../../swarm-message-constructor.types';
 
-export type TPayload =
-  | string
-  | number[]
-  | Uint8Array
-  | ArrayBuffer
-  | SharedArrayBuffer;
+export type TPayload = string | number[] | Uint8Array | ArrayBuffer | SharedArrayBuffer;
 
 export type TSwarmMessageUserIdentifierVersion = string;
 

@@ -24,9 +24,7 @@ export interface ICentralAuthorityUserAuthCredentials {
   session?: ISensitiveDataSessionStorage;
 }
 
-export type TCentralAuthorityUserAuthCredentialsWithPwd = Required<
-  Pick<ICentralAuthorityUserAuthCredentials, 'login' | 'password'>
->;
+export type TCentralAuthorityUserAuthCredentialsWithPwd = Required<Pick<ICentralAuthorityUserAuthCredentials, 'login' | 'password'>>;
 
 /**
  * this credentials used to authorize the user on a central authority
@@ -50,13 +48,9 @@ export interface ICentralAuthorityUserProfile {
 }
 
 export interface ICentralAuthorityStorageCryptoCredentials {
-  connect(
-    credentials?: TCentralAuthorityCredentialsStorageAuthCredentials
-  ): Promise<boolean | Error>;
+  connect(credentials?: TCentralAuthorityCredentialsStorageAuthCredentials): Promise<boolean | Error>;
   setCredentials(cryptoKeyPairs: TCACryptoKeyPairs): Promise<Error | boolean>;
-  getCredentials(): Promise<
-    TCentralAuthorityUserCryptoCredentials | Error | null
-  >;
+  getCredentials(): Promise<TCentralAuthorityUserCryptoCredentials | Error | null>;
   disconnect(): Promise<boolean | Error>;
 }
 
@@ -70,15 +64,11 @@ export abstract class CentralAuthorityConnection {
   /**
    * request the users descriptions by the user identities
    */
-  public abstract getUsersDescription(
-    users: TUesrIdentity[]
-  ): Promise<(IUserDescription | null)[] | Error>;
+  public abstract getUsersDescription(users: TUesrIdentity[]): Promise<(IUserDescription | null)[] | Error>;
 }
 
 export interface ICentralAuthorityConnection {
   new (): CentralAuthorityConnection;
 }
 
-export type TInstanceOfCentralAuthorityConnection = InstanceType<
-  ICentralAuthorityConnection
->;
+export type TInstanceOfCentralAuthorityConnection = InstanceType<ICentralAuthorityConnection>;

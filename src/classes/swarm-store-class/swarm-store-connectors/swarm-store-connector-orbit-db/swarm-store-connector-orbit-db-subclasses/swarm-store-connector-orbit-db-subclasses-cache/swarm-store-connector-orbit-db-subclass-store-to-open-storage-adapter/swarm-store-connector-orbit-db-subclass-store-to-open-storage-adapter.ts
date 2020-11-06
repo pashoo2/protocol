@@ -10,9 +10,7 @@ import {
 } from '../swarm-store-connector-orbit-db-subclasses-cache.types';
 
 export class SwarmStoreConnectorOrbitDBSubclassStoreToOpenStorageAdapter
-  implements
-    ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbKeystoreStore,
-    ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore {
+  implements ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbKeystoreStore, ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore {
   public get status(): SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_OPEN_STORAGE_ADAPTER_STATUS {
     const { isClose } = this;
 
@@ -56,9 +54,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToOpenStorageAdapter
    */
   protected isPreventedClose: boolean = false;
 
-  constructor(
-    options: ISwarmStoreConnectorOrbitDBSubclassStoreToOpenStorageAdapterConstructorOptions
-  ) {
+  constructor(options: ISwarmStoreConnectorOrbitDBSubclassStoreToOpenStorageAdapterConstructorOptions) {
     this.setOptions(options);
   }
 
@@ -99,10 +95,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToOpenStorageAdapter
     }
   };
 
-  public async get(
-    k: string,
-    cb?: TCallbackErrorValue
-  ): Promise<string | undefined> {
+  public async get(k: string, cb?: TCallbackErrorValue): Promise<string | undefined> {
     this.throwIfClosed();
     // open connection to the secret storage
     // before any operations
@@ -128,11 +121,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToOpenStorageAdapter
     return resulted;
   }
 
-  public async put(
-    k: string,
-    v: string | Buffer,
-    cb?: TCallbackError
-  ): Promise<void> {
+  public async put(k: string, v: string | Buffer, cb?: TCallbackError): Promise<void> {
     this.throwIfClosed();
     await this.openIfNecessary();
 
@@ -242,15 +231,11 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToOpenStorageAdapter
     return new Error('There is no connection to the OpenStorage');
   }
 
-  protected setStorageImplementationToUse(
-    storageImplementation: IStorageCommon
-  ) {
+  protected setStorageImplementationToUse(storageImplementation: IStorageCommon) {
     this.storage = storageImplementation;
   }
 
-  protected setOptions(
-    options: ISwarmStoreConnectorOrbitDBSubclassStoreToOpenStorageAdapterConstructorOptions
-  ): void {
+  protected setOptions(options: ISwarmStoreConnectorOrbitDBSubclassStoreToOpenStorageAdapterConstructorOptions): void {
     if (!options) {
       throw new Error('Options must be provided');
     }
@@ -278,12 +263,10 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToOpenStorageAdapter
 
   private async createDefaultStorageImplementation(): Promise<IStorageCommon> {
     const storageImplementation = new OpenStorage();
-    const storageImplementationConnectionResult = await storageImplementation.connect(
-      {
-        ...SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_STORAGE_ADAPTER_DEFAULT_OPTIONS_STORAGE,
-        options: this.options,
-      }
-    );
+    const storageImplementationConnectionResult = await storageImplementation.connect({
+      ...SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_STORAGE_ADAPTER_DEFAULT_OPTIONS_STORAGE,
+      options: this.options,
+    });
 
     if (storageImplementationConnectionResult instanceof Error) {
       console.error(storageImplementationConnectionResult);

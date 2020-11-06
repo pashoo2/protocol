@@ -6,16 +6,11 @@ export interface IOrbitDBKeystoreStoreCustom {
   close(): Promise<void>;
   put(k: string, v: any): Promise<void>;
   get(k: string): string | Uint8Array;
-  verify(
-    publicKeySignature: string,
-    publicKey: string,
-    publicKeyAndId: string
-  ): Promise<boolen>;
+  verify(publicKeySignature: string, publicKey: string, publicKeyAndId: string): Promise<boolen>;
 }
 
 declare module 'orbit-db-keystore' {
-  export interface IOrbitDBKeystoreStore extends IOrbitDBKeystoreStoreCustom {
-  }
+  export interface IOrbitDBKeystoreStore extends IOrbitDBKeystoreStoreCustom {}
 
   export interface IOrbitDBKeystoreCache {
     length: number;
@@ -42,11 +37,9 @@ declare module 'orbit-db-keystore' {
     };
   }
 
-  export type TOrbitDBKeystoreOptions =
-    | IOrbitDBKeystoreOptionsForSecretStorage
-    | string;
+  export type TOrbitDBKeystoreOptions = IOrbitDBKeystoreOptionsForSecretStorage | string;
 
   export = class Keystore implements IOrbitDBKeystoreStore {
-    constructor(options: any) { }
-  }
+    constructor(options: any) {}
+  };
 }

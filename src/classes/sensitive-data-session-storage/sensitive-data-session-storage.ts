@@ -1,20 +1,10 @@
-import {
-  ISensitiveDataSessionStorage,
-  ISensitiveDataSessionStorageOptions,
-} from './sensitive-data-session-storage.types';
-import {
-  SENSITIVE_DATA_SESSION_STORAGE_STORAGE_KEY,
-  SENSITIVE_DATA_SESSION_STORAGE_STORAGE_KEY_SALT,
-} from './sensitive-data-session-storage.const';
+import { ISensitiveDataSessionStorage, ISensitiveDataSessionStorageOptions } from './sensitive-data-session-storage.types';
+import { SENSITIVE_DATA_SESSION_STORAGE_STORAGE_KEY, SENSITIVE_DATA_SESSION_STORAGE_STORAGE_KEY_SALT } from './sensitive-data-session-storage.const';
 import assert from 'assert';
-import {
-  generatePasswordKeyByPasswordSalt,
-  generateSaltForPassword,
-} from 'classes/secret-storage-class';
+import { generatePasswordKeyByPasswordSalt, generateSaltForPassword } from 'classes/secret-storage-class';
 import { encryptDataToString, decryptDataByPassword } from 'utils';
 
-export class SensitiveDataSessionStorage
-  implements ISensitiveDataSessionStorage {
+export class SensitiveDataSessionStorage implements ISensitiveDataSessionStorage {
   protected isConnected: boolean = false;
 
   protected connectingPromise: undefined | Promise<void> = undefined;
@@ -67,9 +57,7 @@ export class SensitiveDataSessionStorage
     this.stringifyTemp();
   };
 
-  private async connectToStorage(
-    options?: ISensitiveDataSessionStorageOptions
-  ) {
+  private async connectToStorage(options?: ISensitiveDataSessionStorageOptions) {
     let error: Error | undefined;
     try {
       let k: CryptoKey | undefined;
@@ -83,10 +71,7 @@ export class SensitiveDataSessionStorage
       this.subscribeOnWindowUnload();
       if (pinCode) {
         assert(typeof pinCode === 'string', 'Pin code must be a string');
-        const pinCodeNewCryptoKey = await generatePasswordKeyByPasswordSalt(
-          pinCode,
-          this.generateSalt()
-        );
+        const pinCodeNewCryptoKey = await generatePasswordKeyByPasswordSalt(pinCode, this.generateSalt());
 
         if (pinCodeNewCryptoKey instanceof Error) {
           throw pinCodeNewCryptoKey;
@@ -146,8 +131,7 @@ export class SensitiveDataSessionStorage
       return;
     }
     const salt = !!pinCode && this.readSalt();
-    const decrypted =
-      salt && pinCode ? await decryptDataByPassword(pinCode, salt, v) : v;
+    const decrypted = salt && pinCode ? await decryptDataByPassword(pinCode, salt, v) : v;
 
     if (decrypted instanceof Error) {
       throw decrypted;
