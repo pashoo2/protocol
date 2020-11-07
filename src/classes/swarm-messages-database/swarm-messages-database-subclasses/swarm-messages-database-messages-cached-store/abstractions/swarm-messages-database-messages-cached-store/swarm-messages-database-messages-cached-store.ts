@@ -19,14 +19,18 @@ import { isValidSwarmMessageDecryptedFormat } from '../../../../../swarm-message
 import { ISwarmMessageInstanceDecrypted } from '../../../../../swarm-message/swarm-message-constructor.types';
 import { commonUtilsIsTwoArraysHaveSameItems } from '../../../../../../utils/common-utils/common-utils-array';
 
-export class SwarmMessagesDatabaseMessagesCachedStore<P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>>
-  extends SwarmMessagesDatabaseMessagesCachedStoreTemp<P, DbType, false>
-  implements ISwarmMessagesDatabaseMessagesCacheStoreExtendedDefferedMethods<P, DbType> {
+export class SwarmMessagesDatabaseMessagesCachedStore<
+    P extends ESwarmStoreConnector,
+    DbType extends TSwarmStoreDatabaseType<P>,
+    MD extends ISwarmMessageInstanceDecrypted
+  >
+  extends SwarmMessagesDatabaseMessagesCachedStoreTemp<P, DbType, MD, false>
+  implements ISwarmMessagesDatabaseMessagesCacheStoreExtendedDefferedMethods<P, DbType, MD> {
   protected _listDefferedReadAfterCurrentCacheUpdateBatch = new Set<ISwarmMessagesDatabaseMesssageMeta<P, DbType>>();
 
   protected _listDefferedRead = new Set<ISwarmMessagesDatabaseMesssageMeta<P, DbType>>();
 
-  protected _tempMessagesCachedStoreLinked?: ISwarmMessagesDatabaseMessagesCacheStoreTemp<P, DbType, false>;
+  protected _tempMessagesCachedStoreLinked?: ISwarmMessagesDatabaseMessagesCacheStoreTemp<P, DbType, MD, false>;
 
   constructor(protected _dbType: DbType, protected _dbName: string) {
     super(_dbType, _dbName, false);
@@ -44,7 +48,9 @@ export class SwarmMessagesDatabaseMessagesCachedStore<P extends ESwarmStoreConne
     return this._cachedStoreImplementation.remove(messageCharacteristic);
   };
 
-  public linkWithTempStore(tempCacheStore: ISwarmMessagesDatabaseMessagesCacheStoreTemp<P, DbType, false>) {}
+  public linkWithTempStore<isTemp extends boolean>(
+    tempCacheStore: ISwarmMessagesDatabaseMessagesCacheStoreTemp<P, DbType, MD, isTemp>
+  ) {}
 
   public updateByTempStore = (): boolean => {
     const { _tempMessagesCachedStoreLinked } = this;
@@ -104,19 +110,19 @@ export class SwarmMessagesDatabaseMessagesCachedStore<P extends ESwarmStoreConne
   };
 
   protected _checkIsReady(): this is {
-    _cachedStoreImplementation: ISwarmMessagesDatabaseMessagesCachedStoreCore<P, DbType, false>;
+    _cachedStoreImplementation: ISwarmMessagesDatabaseMessagesCachedStoreCore<P, DbType, MD, false>;
   } {
     return this._isReady;
   }
 
   protected _throwIfNotReady(): this is {
-    _cachedStoreImplementation: ISwarmMessagesDatabaseMessagesCachedStoreCore<P, DbType, false>;
+    _cachedStoreImplementation: ISwarmMessagesDatabaseMessagesCachedStoreCore<P, DbType, MD, false>;
   } {
     assert(this._checkIsReady(), 'The instance is not ready');
     return true;
   }
 
-  protected _mapCachedStoreItemsToMessagesWithMeta(): TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined {
+  protected _mapCachedStoreItemsToMessagesWithMeta(): TSwarmMessageDatabaseMessagesCached<P, DbType, MD> | undefined {
     if (!this._checkIsReady()) {
       return undefined;
     }
@@ -125,7 +131,7 @@ export class SwarmMessagesDatabaseMessagesCachedStore<P extends ESwarmStoreConne
 
   protected _getEntryFromTempStoreLinked(
     messageCharacteristic: ISwarmMessagesDatabaseMesssageMeta<P, DbType>
-  ): ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector> | undefined {
+  ): ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined {
     const { _cachedStoreImplementation } = this;
 
     if (!_cachedStoreImplementation) {

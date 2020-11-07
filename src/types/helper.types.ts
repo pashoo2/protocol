@@ -25,6 +25,8 @@ export type Defined<T extends {}> = {
   [k in keyof T]: T[k] extends undefined ? NonNullable<T[k]> : T[k];
 };
 
+export type ParametersWithoutFirst<F extends (...args: any[]) => any> = F extends (any, ...array: infer U) => any ? U : never;
+
 export type OmitFirstArg<F extends Function> = F extends (x: any, ...args: infer P) => infer R ? (...args: P) => R : never;
 
 export type ArrayElement<ArrayType extends readonly unknown[]> = ArrayType[number];

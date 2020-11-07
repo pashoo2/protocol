@@ -15,7 +15,10 @@ import {
   TSwarmStoreDatabaseEntityAddress,
 } from '../../../../../swarm-store-class/swarm-store-class.types';
 import { isValidSwarmMessageDecryptedFormat } from '../../../../../swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-swarm-message';
-import { ISwarmMessageInstanceDecrypted } from '../../../../../swarm-message/swarm-message-constructor.types';
+import {
+  ISwarmMessageInstanceDecrypted,
+  ISwarmMessageDecrypted,
+} from '../../../../../swarm-message/swarm-message-constructor.types';
 import { SWARM_MESSGES_DATABASE_SWARM_MESSAGES_CACHED_SWARM_MESSAGES_META_HASH_DELIMETER } from 'classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-cached-store/swarm-messages-database-messages-cached-store.const';
 import { whetherSwarmMessagesDecryptedAreEqual } from '../../../../../swarm-message/swarm-message-utils/swarm-message-utils-common/swarm-message-utils-common-decrypted';
 import { TSwarmMessagesDatabaseMessagesCacheStore } from '../../../swarm-messages-database-cache/swarm-messages-database-cache.types';
@@ -26,11 +29,12 @@ import { _checkWhetherSameSwarmMessagesDecrypted } from '../../../swarm-messages
 export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
   P extends ESwarmStoreConnector,
   DbType extends TSwarmStoreDatabaseType<P>,
+  MD extends ISwarmMessageDecrypted,
   IsTemp extends boolean,
   MetaHash extends TSwarmMessagesDatabaseMessagesCachedStoreMessagesMetaHash
 > implements
     Omit<
-      ISwarmMessagesDatabaseMessagesCachedStoreCore<P, DbType, IsTemp>,
+      ISwarmMessagesDatabaseMessagesCachedStoreCore<P, DbType, MD, IsTemp>,
       'entriesCached' | 'get' | 'set' | 'unset' | 'updateWithEntries' | 'clear'
     > {
   public get isTemp(): IsTemp {
@@ -48,7 +52,7 @@ export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
   }
 
   constructor(
-    protected _cachedStore: TSwarmMessagesDatabaseMessagesCacheStore<P, DbType, IsTemp>,
+    protected _cachedStore: TSwarmMessagesDatabaseMessagesCacheStore<P, DbType, MD, IsTemp>,
     protected _isTemp: IsTemp,
     protected _dbType: DbType,
     protected _dbName: string
@@ -65,7 +69,7 @@ export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
         }
         this._addDefferedReadEntryAfterCurrentBatchOfCacheUpdate(entry.messageMeta);
         this._addDefferedReadEntryAfterOverallCaheUpdate(entry.messageMeta);
-      }) as ISwarmMessagesDatabaseMessagesCachedStoreCore<P, DbType, IsTemp>['add'];
+      }) as ISwarmMessagesDatabaseMessagesCachedStoreCore<P, DbType, MD, IsTemp>['add'];
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   remove = (this._isTemp === true
@@ -75,7 +79,7 @@ export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
         this._checkMeta(meta);
         this._addDefferedReadEntryAfterCurrentBatchOfCacheUpdate(meta);
         this._addDefferedReadEntryAfterOverallCaheUpdate(meta);
-      }) as ISwarmMessagesDatabaseMessagesCachedStoreCore<P, DbType, IsTemp>['remove'];
+      }) as ISwarmMessagesDatabaseMessagesCachedStoreCore<P, DbType, MD, IsTemp>['remove'];
 
   protected _beforeGet = (meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>): void => {
     this._checkIsInitialized();
@@ -93,7 +97,7 @@ export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
   };
 
   protected _checkIsInitialized(): this is {
-    _cachedStore: ISwarmMessagesDatabaseMessagesCacheStoreExtendedDefferedMethods<P, DbType>;
+    _cachedStore: ISwarmMessagesDatabaseMessagesCacheStoreExtendedDefferedMethods<P, DbType, MD>;
   } {
     assert(this._cachedStore, 'The isnstance is not initialized');
     assert(
@@ -180,8 +184,8 @@ export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
   }
 
   protected _checkWhetherUpdatValue(
-    source: ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector> | undefined,
-    target: ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector> | undefined
+    source: ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined,
+    target: ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined
   ): boolean {
     if (!target && !this._canUpdateWithEmptyValue()) {
       return false;
@@ -199,20 +203,20 @@ export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
   }
 
   protected _checkWhetherUpdateKey(
-    key: string,
-    value: ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector>,
-    entriesCached: TSwarmMessageDatabaseMessagesCached<P, DbType>
+    key: TSwarmStoreDatabaseEntityKey<P>,
+    value: ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD>,
+    entriesCached: TSwarmMessageDatabaseMessagesCached<P, DbType, MD>
   ) {
     return this._checkWhetherUpdatValue(entriesCached.get(key), value);
   }
 
-  protected _clearEntriesCached(entriesCached: TSwarmMessageDatabaseMessagesCached<P, DbType>) {
+  protected _clearEntriesCached(entriesCached: TSwarmMessageDatabaseMessagesCached<P, DbType, MD>) {
     entriesCached.clear();
   }
 
   protected _updateCacheWithEntries(
-    entries: TSwarmMessageDatabaseMessagesCached<P, DbType>,
-    entriesCached: TSwarmMessageDatabaseMessagesCached<P, DbType>
+    entries: TSwarmMessageDatabaseMessagesCached<P, DbType, MD>,
+    entriesCached: TSwarmMessageDatabaseMessagesCached<P, DbType, MD>
   ): boolean {
     let hasMessagesUpdated = false;
     // if there is no entries cached for now, it is not neccesary to check

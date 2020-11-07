@@ -12,26 +12,34 @@ import {
 } from '../../../../swarm-messages-database.types';
 import { ISwarmMessagesDatabaseMessagesCacheMessageDescription } from '../../../swarm-messages-database-cache/swarm-messages-database-cache.types';
 import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../../../swarm-message-store/swarm-message-store.types';
+import { ISwarmMessageInstanceDecrypted } from '../../../../../swarm-message/swarm-message-constructor.types';
+import { TSwarmStoreDatabaseEntityKey } from '../../../../../swarm-store-class/swarm-store-class.types';
 
-export class SwarmMessagesDatabaseMessagesCachedStoreKeyValue<P extends ESwarmStoreConnector, IsTemp extends boolean>
+export class SwarmMessagesDatabaseMessagesCachedStoreKeyValue<
+    P extends ESwarmStoreConnector,
+    MD extends ISwarmMessageInstanceDecrypted,
+    IsTemp extends boolean
+  >
   extends SwarmMessagesDatabaseMessagesCachedStoreCore<
     P,
     ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
+    MD,
     IsTemp,
     TSwarmMessagesDatabaseMessagesCachedStoreMessagesMetaHash
   >
-  implements ISwarmMessagesDatabaseMessagesCachedStoreCore<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE, IsTemp> {
-  get entriesCached(): TSwarmMessageDatabaseMessagesCached<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE> {
+  implements ISwarmMessagesDatabaseMessagesCachedStoreCore<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE, MD, IsTemp> {
+  get entriesCached(): TSwarmMessageDatabaseMessagesCached<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE, MD> {
     return this._entriesCached;
   }
   protected _entriesCached = new Map() as TSwarmMessageDatabaseMessagesCached<
     P,
-    ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+    ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
+    MD
   >;
 
   get = (
     meta: ISwarmMessagesDatabaseMesssageMeta<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>
-  ): ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector> | undefined => {
+  ): ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined => {
     this._beforeGet(meta);
     return this._getMessageCachedByMeta(meta);
   };
@@ -51,7 +59,9 @@ export class SwarmMessagesDatabaseMessagesCachedStoreKeyValue<P extends ESwarmSt
   };
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  updateWithEntries(entries: TSwarmMessageDatabaseMessagesCached<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>): boolean {
+  updateWithEntries(
+    entries: TSwarmMessageDatabaseMessagesCached<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE, MD>
+  ): boolean {
     const hasUpdatedMessages = this._updateCacheWithEntries(entries, this._entriesCached);
 
     this._incMessagesInCacheVersion();
@@ -75,7 +85,7 @@ export class SwarmMessagesDatabaseMessagesCachedStoreKeyValue<P extends ESwarmSt
 
   protected _getMessageCachedByMeta(
     meta: ISwarmMessagesDatabaseMesssageMeta<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>
-  ): ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector> | undefined {
+  ): ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined {
     this._checkMeta(meta);
 
     const messageKey = this._getMessageKeyFromMeta(meta);
@@ -89,7 +99,7 @@ export class SwarmMessagesDatabaseMessagesCachedStoreKeyValue<P extends ESwarmSt
 
   protected _getMessageInfo(
     entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>
-  ): Required<ISwarmMessageStoreMessagingRequestWithMetaResult<P>> {
+  ): Required<ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD>> {
     const { messageMeta: meta, messageEntry: message } = entry;
     const key = this._getMessageKeyFromMeta(meta);
     const address = this._getMessageAddressFromMeta(meta);
@@ -100,9 +110,10 @@ export class SwarmMessagesDatabaseMessagesCachedStoreKeyValue<P extends ESwarmSt
     if (!address) {
       throw new Error('A message add must be defined');
     }
+    const messageDecrypted = message as MD;
     return {
       dbName: this._dbName,
-      message,
+      message: messageDecrypted,
       key,
       messageAddress: address,
     };
@@ -130,7 +141,10 @@ export class SwarmMessagesDatabaseMessagesCachedStoreKeyValue<P extends ESwarmSt
     this.entriesCached.set(key, this._getMessageInfo(entry));
   }
 
-  protected _checkWhetherUpdateKey(key: string, value: ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector>) {
+  protected _checkWhetherUpdateKey(
+    key: TSwarmStoreDatabaseEntityKey<P>,
+    value: ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD>
+  ) {
     return this._checkWhetherUpdatValue(this._entriesCached.get(key), value);
   }
 }

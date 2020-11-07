@@ -14,7 +14,7 @@ import {
 import { TSwarmStoreDatabaseEntityUniqueIndex } from '../../../swarm-store-class/swarm-store-class.types';
 import { isValidSwarmMessageDecryptedFormat } from '../../../swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-swarm-message';
 import { whetherSwarmMessagesDecryptedAreEqual } from '../../../swarm-message/swarm-message-utils/swarm-message-utils-common/swarm-message-utils-common-decrypted';
-import { ISwarmMessageInstanceDecrypted } from '../../../swarm-message/swarm-message-constructor.types';
+import { ISwarmMessageInstanceDecrypted, ISwarmMessageDecrypted } from '../../../swarm-message/swarm-message-constructor.types';
 
 export const checkMessageAddress = <P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>>(
   messageUniqAddress: any,
@@ -177,8 +177,8 @@ export const getMessageDescriptionForMessageWithMeta = <
  * @returns {boolean}
  */
 export const _checkWhetherSameSwarmMessagesDecrypted = (
-  first: ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector> | undefined,
-  second: ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector> | undefined
+  first: ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector, ISwarmMessageDecrypted> | undefined,
+  second: ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector, ISwarmMessageDecrypted> | undefined
 ): boolean => {
   if (!first || !second || first instanceof Error || second instanceof Error) {
     return false;

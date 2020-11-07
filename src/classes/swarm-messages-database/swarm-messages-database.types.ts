@@ -70,36 +70,20 @@ export interface ISwarmMessagesDatabaseConnectOptions<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType>,
-  PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, ConnectorBasic>,
-  CO extends ISwarmStoreProviderOptions<P, T, DbType, ConnectorBasic, PO>,
   DBO extends TSwarmStoreDatabaseOptions<P, T>,
-  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, ConnectorBasic, PO, DBO>,
-  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain>,
-  MSI extends TSwarmMessageInstance | T,
-  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
-  MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
-  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined,
-  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
+  MI extends TSwarmMessageInstance,
+  SMS extends ISwarmMessageStoreMessagingMethods<P, T, DbType, MI>
+> {
+  user: ISwarmMessagesDatabaseConnectCurrentUserOptions;
+  swarmMessageStore: SMS;
+  dbOptions: DBO;
+  cacheOptions?: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<
     P,
     T,
     DbType,
-    ConnectorBasic,
-    PO,
-    CO,
     DBO,
-    ConnectorMain,
-    CFO,
-    MSI,
-    GAC,
-    MCF,
-    ACO
-  >
-> {
-  user: ISwarmMessagesDatabaseConnectCurrentUserOptions;
-  swarmMessageStore: ISwarmMessageStore<P, T, DbType, ConnectorBasic, PO, DBO, CO, CFO, ConnectorMain, MSI, GAC, MCF, ACO, O>;
-  dbOptions: DBO;
-  cacheOptions?: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, T, DbType, DBO, MSI>;
+    Exclude<MI, ISwarmMessageInstanceEncrypted>
+  >;
 }
 
 export interface ISwarmMessageDatabaseCacheEvents<
@@ -129,13 +113,13 @@ export interface ISwarmMessageDatabaseEvents<
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, T>,
-  MSI extends TSwarmMessageInstance | T
-> extends ISwarmMessageDatabaseCacheEvents<P, DbType, Exclude<MSI, T | ISwarmMessageInstanceEncrypted>> {
+  MD extends ISwarmMessageInstanceDecrypted
+> extends ISwarmMessageDatabaseCacheEvents<P, DbType, MD> {
   [ESwarmStoreEventNames.UPDATE]: (dbName: DBO['dbName']) => unknown;
   [ESwarmStoreEventNames.DB_LOADING]: (dbName: DBO['dbName'], percentage: number) => unknown;
   [ESwarmMessageStoreEventNames.NEW_MESSAGE]: (
     dbName: DBO['dbName'],
-    message: Exclude<MSI, ISwarmMessageInstanceDecrypted | T>,
+    message: MD,
     // the global unique address (hash) of the message in the swarm
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key
@@ -183,12 +167,13 @@ export interface ISwarmMessageDatabaseMessagingMethods<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  MI extends TSwarmMessageInstance
+  MI extends TSwarmMessageInstance,
+  SMS extends ISwarmMessageStoreMessagingMethods<P, ItemType, DbType, MI>
 > {
-  addMessage: OmitFirstArg<ISwarmMessageStoreMessagingMethods<P, ItemType, DbType, MI>['addMessage']>;
-  deleteMessage: OmitFirstArg<ISwarmMessageStoreMessagingMethods<P, ItemType, DbType, MI>['deleteMessage']>;
-  collect: OmitFirstArg<ISwarmMessageStoreMessagingMethods<P, ItemType, DbType, MI>['collect']>;
-  collectWithMeta: OmitFirstArg<ISwarmMessageStoreMessagingMethods<P, ItemType, DbType, MI>['collectWithMeta']>;
+  addMessage: OmitFirstArg<SMS['addMessage']>;
+  deleteMessage: OmitFirstArg<SMS['deleteMessage']>;
+  collect: OmitFirstArg<SMS['collect']>;
+  collectWithMeta: OmitFirstArg<SMS['collectWithMeta']>;
 }
 
 export interface ISwarmMessagesDatabaseProperties<
@@ -196,7 +181,7 @@ export interface ISwarmMessagesDatabaseProperties<
   ItemType extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType>,
-  MI extends TSwarmMessageInstance
+  MD extends ISwarmMessageInstanceDecrypted
 > {
   /**
    * Is the database ready to use.
@@ -230,7 +215,7 @@ export interface ISwarmMessagesDatabaseProperties<
    * @type {TTypedEmitter<ISwarmMessageDatabaseEvents<P>>}
    * @memberof ISwarmMessagesDatabaseProperties
    */
-  emitter: TTypedEmitter<ISwarmMessageDatabaseEvents<P, ItemType, DbType, DBO, MI>>;
+  emitter: TTypedEmitter<ISwarmMessageDatabaseEvents<P, ItemType, DbType, DBO, MD>>;
 
   /**
    * Whether the messages cache update is in progress.
@@ -257,7 +242,7 @@ export interface ISwarmMessagesDatabaseProperties<
    * @type {TSwarmMessageDatabaseMessagesCached<P, DbType>}
    * @memberof ISwarmMessagesDatabaseProperties
    */
-  cachedMessages: TSwarmMessageDatabaseMessagesCached<P, DbType, Exclude<MI, ISwarmMessageInstanceEncrypted>> | undefined;
+  cachedMessages: TSwarmMessageDatabaseMessagesCached<P, DbType, MD> | undefined;
 }
 
 /**
@@ -295,9 +280,10 @@ export interface ISwarmMessagesDatabase<
     GAC,
     MCF,
     ACO
-  >
+  >,
+  SMS extends ISwarmMessageStore<P, T, DbType, ConnectorBasic, PO, DBO, CO, CFO, ConnectorMain, MSI, GAC, MCF, ACO, O>
 > extends ISwarmMessageStoreMessagingMethods<P, T, DbType, Exclude<MSI, T>>,
-    ISwarmMessagesDatabaseProperties<P, T, DbType, DBO, Exclude<MSI, T>> {
+    ISwarmMessagesDatabaseProperties<P, T, DbType, DBO, Exclude<MSI, T | ISwarmMessageInstanceEncrypted>> {
   /**
    * Method used for connecting to the database.
    *
@@ -305,24 +291,7 @@ export interface ISwarmMessagesDatabase<
    * @returns {Promise<void>}
    * @memberof ISwarmMessagesDatabase
    */
-  open(
-    options: ISwarmMessagesDatabaseConnectOptions<
-      P,
-      T,
-      DbType,
-      ConnectorBasic,
-      PO,
-      CO,
-      DBO,
-      ConnectorMain,
-      CFO,
-      MSI,
-      GAC,
-      MCF,
-      ACO,
-      O
-    >
-  ): Promise<void>;
+  open(options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType, DBO, Exclude<MSI, T>, SMS>): Promise<void>;
 
   /**
    * Close the connection with the database.
@@ -441,7 +410,9 @@ export interface ISwarmMessagesDatabaseCache<
    * @type {TTypedEmitter<ISwarmMessageDatabaseEvents<P, DbType>>}
    * @memberof ISwarmMessagesDatabaseCache
    */
-  readonly emitter: TTypedEmitter<ISwarmMessageDatabaseEvents<P, T, DbType, DBO, MSI>>;
+  readonly emitter: TTypedEmitter<
+    ISwarmMessageDatabaseEvents<P, T, DbType, DBO, Exclude<MSI, T | ISwarmMessageInstanceEncrypted>>
+  >;
   /**
    * Whether the cache contained all messages from the database
    * or it's limit was reaached and update were stopped.
@@ -513,13 +484,9 @@ export interface ISwarmMessagesDatabaseCacheConstructor<
   DBO extends TSwarmStoreDatabaseOptions<P, T>,
   MSI extends TSwarmMessageInstance | T
 > {
-  new (options: ISwarmMessagesDatabaseCacheOptions<P, T, DbType, Exclude<MSI, T>>): ISwarmMessagesDatabaseCache<
-    P,
-    T,
-    DbType,
-    DBO,
-    Exclude<MSI, T>
-  >;
+  new (
+    options: ISwarmMessagesDatabaseCacheOptions<P, T, DbType, Exclude<MSI, T | ISwarmMessageInstanceEncrypted>>
+  ): ISwarmMessagesDatabaseCache<P, T, DbType, DBO, Exclude<MSI, T>>;
 }
 
 export interface ISwarmMessagesDatabaseMesssageMeta<P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>> {

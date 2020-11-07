@@ -78,7 +78,7 @@ export class SwarmMessagesDatabaseCache<
     return !!this._pendingMessagesUpdatePromise;
   }
 
-  get emitter(): TTypedEmitter<ISwarmMessageDatabaseEvents<P, T, DbType, DBO, MSI>> {
+  get emitter(): TTypedEmitter<ISwarmMessageDatabaseEvents<P, T, DbType, DBO, Exclude<MSI, T | ISwarmMessageInstanceEncrypted>>> {
     return this._emitter;
   }
 
@@ -99,7 +99,9 @@ export class SwarmMessagesDatabaseCache<
     Exclude<MSI, T | ISwarmMessageInstanceEncrypted>
   >;
 
-  protected _emitter = getEventEmitterInstance<ISwarmMessageDatabaseEvents<P, T, DbType, DBO, MSI>>();
+  protected _emitter = getEventEmitterInstance<
+    ISwarmMessageDatabaseEvents<P, T, DbType, DBO, Exclude<MSI, T | ISwarmMessageInstanceEncrypted>>
+  >();
 
   /**
    * Storage which handling operations of cahe update.
@@ -301,7 +303,12 @@ export class SwarmMessagesDatabaseCache<
     if (!this._dbName) {
       throw new Error('Database name should be defined');
     }
-    return constructCacheStoreFabric(this._dbType, this._dbName, isTemp);
+    return constructCacheStoreFabric(this._dbType, this._dbName, isTemp) as TSwarmMessagesDatabaseMessagesCacheStore<
+      P,
+      DbType,
+      Exclude<MSI, T | ISwarmMessageInstanceEncrypted>,
+      IsTemp
+    >;
   }
 
   protected _initializeCacheStore(): void {

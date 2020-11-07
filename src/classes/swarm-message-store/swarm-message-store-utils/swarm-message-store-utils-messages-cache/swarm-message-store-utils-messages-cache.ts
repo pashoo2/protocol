@@ -1,5 +1,5 @@
 import { StorageProvider } from '../../../storage-providers/storage-providers.types';
-import { TSwarmMessageInstance } from '../../../swarm-message/swarm-message-constructor.types';
+import { ISwarmMessageDecrypted } from '../../../swarm-message/swarm-message-constructor.types';
 import {
   SWARM_MESSAGE_STORE_UTILS_MESSAGES_CACHE_KEY_DB_KEY_VALUE_KEY_PREFIX,
   SWARM_MESSAGE_STORE_UTILS_MESSAGES_CACHE_KEY_PARTS_DELIMETER,
@@ -10,8 +10,14 @@ import {
   ISwarmMessageStoreUtilsMessageCacheReady,
 } from './swarm-message-store-utils-messages-cache.types';
 import assert from 'assert';
+import {
+  TSwarmStoreDatabaseEntityAddress,
+  TSwarmStoreDatabaseEntityKey,
+} from '../../../swarm-store-class/swarm-store-class.types';
+import { ESwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.const';
 
-export class SwarmMessageStoreUtilsMessagesCache implements ISwarmMessageStoreUtilsMessagesCache {
+export class SwarmMessageStoreUtilsMessagesCache<P extends ESwarmStoreConnector, MD extends ISwarmMessageDecrypted>
+  implements ISwarmMessageStoreUtilsMessagesCache<P, MD> {
   /**
    * Falag means the instance is opened and ready to use.
    *
@@ -20,7 +26,7 @@ export class SwarmMessageStoreUtilsMessagesCache implements ISwarmMessageStoreUt
    * @memberof SwarmMessageStoreUtilsMessagesCache
    */
   protected _isReady: boolean = false;
-  protected _cache?: StorageProvider<TSwarmMessageInstance | string>;
+  protected _cache?: StorageProvider<MD | TSwarmStoreDatabaseEntityKey<P> | TSwarmStoreDatabaseEntityAddress<P>>;
 
   protected _dbName?: string;
 
@@ -31,7 +37,7 @@ export class SwarmMessageStoreUtilsMessagesCache implements ISwarmMessageStoreUt
    * @returns {Promise<void>}
    * @memberof ISwarmMessageStoreUtilsMessagesCache
    */
-  async connect(options: ISwarmMessageStoreUtilsMessagesCacheOptions): Promise<void> {
+  async connect(options: ISwarmMessageStoreUtilsMessagesCacheOptions<P, MD>): Promise<void> {
     if (this._isReady) {
       return;
     }
@@ -46,7 +52,7 @@ export class SwarmMessageStoreUtilsMessagesCache implements ISwarmMessageStoreUt
    * @memberof ISwarmMessageStoreUtilsMessagesCache
    * @returns {(Promise<TSwarmMessageInstance | undefined>)} - undefined if not exist or swarm message instance
    */
-  getMessageByAddress = async (messageAddress: string): Promise<TSwarmMessageInstance | undefined> => {
+  getMessageByAddress = async (messageAddress: TSwarmStoreDatabaseEntityAddress<P>): Promise<MD | undefined> => {
     if (this._checkIsReady()) {
       const cacheKey = this.getCacheKeyForMessageAddressAndDbName(messageAddress);
       const value = await this._cache.get(cacheKey);
@@ -70,7 +76,7 @@ export class SwarmMessageStoreUtilsMessagesCache implements ISwarmMessageStoreUt
    * @memberof ISwarmMessageStoreUtilsMessagesCache
    * @throws
    */
-  setMessageByAddress = async (messageAddress: string, message: TSwarmMessageInstance): Promise<void> => {
+  setMessageByAddress = async (messageAddress: TSwarmStoreDatabaseEntityAddress<P>, message: MD): Promise<void> => {
     if (this._checkIsReady()) {
       const cacheKey = this.getCacheKeyForMessageAddressAndDbName(messageAddress);
       const value = await this._cache.set(cacheKey, message);
@@ -89,7 +95,7 @@ export class SwarmMessageStoreUtilsMessagesCache implements ISwarmMessageStoreUt
    * @memberof ISwarmMessageStoreUtilsMessagesCache
    * @throws
    */
-  unsetMessageByAddress = async (messageAddress: string): Promise<void> => {
+  unsetMessageByAddress = async (messageAddress: TSwarmStoreDatabaseEntityAddress<P>): Promise<void> => {
     if (this._checkIsReady()) {
       const cacheKey = this.getCacheKeyForMessageAddressAndDbName(messageAddress);
       const value = await this._cache.unset(cacheKey);
@@ -108,7 +114,9 @@ export class SwarmMessageStoreUtilsMessagesCache implements ISwarmMessageStoreUt
    * @returns {(Promise<string | undefined>)} - message address or undefined if not exists for the key
    * @memberof ISwarmMessageStoreUtilsMessagesCache
    */
-  getMessageAddressByKey = async (dbKey: string): Promise<string | undefined> => {
+  getMessageAddressByKey = async (
+    dbKey: TSwarmStoreDatabaseEntityKey<P>
+  ): Promise<TSwarmStoreDatabaseEntityAddress<P> | undefined> => {
     if (this._checkIsReady()) {
       const cacheKey = this.getCacheKeyForDbKeyAndDbName(dbKey);
       const value = await this._cache.get(cacheKey);
@@ -132,7 +140,10 @@ export class SwarmMessageStoreUtilsMessagesCache implements ISwarmMessageStoreUt
    * @memberof ISwarmMessageStoreUtilsMessagesCache
    * @throws
    */
-  setMessageAddressForKey = async (dbKey: string, messageAddress: string): Promise<void> => {
+  setMessageAddressForKey = async (
+    dbKey: TSwarmStoreDatabaseEntityKey<P>,
+    messageAddress: TSwarmStoreDatabaseEntityAddress<P>
+  ): Promise<void> => {
     if (this._checkIsReady()) {
       const cacheKey = this.getCacheKeyForDbKeyAndDbName(dbKey);
       const value = await this._cache.set(cacheKey, messageAddress);
@@ -151,7 +162,7 @@ export class SwarmMessageStoreUtilsMessagesCache implements ISwarmMessageStoreUt
    * @memberof ISwarmMessageStoreUtilsMessagesCache
    * @throws
    */
-  unsetMessageAddressForKey = async (dbKey: string): Promise<void> => {
+  unsetMessageAddressForKey = async (dbKey: TSwarmStoreDatabaseEntityKey<P>): Promise<void> => {
     if (this._checkIsReady()) {
       const cacheKey = this.getCacheKeyForDbKeyAndDbName(dbKey);
       const value = await this._cache.unset(cacheKey);
@@ -170,7 +181,7 @@ export class SwarmMessageStoreUtilsMessagesCache implements ISwarmMessageStoreUt
    * @memberof ISwarmMessageStoreUtilsMessagesCache
    * @throws
    */
-  getMessageByKey = async (dbKey: string): Promise<TSwarmMessageInstance | undefined> => {
+  getMessageByKey = async (dbKey: TSwarmStoreDatabaseEntityKey<P>): Promise<MD | undefined> => {
     const messageAddress = await this.getMessageAddressByKey(dbKey);
 
     if (!messageAddress) {
@@ -200,7 +211,7 @@ export class SwarmMessageStoreUtilsMessagesCache implements ISwarmMessageStoreUt
    * @memberof SwarmMessageStoreUtilsMessagesCache
    * @throws
    */
-  protected _validateOptions(options: ISwarmMessageStoreUtilsMessagesCacheOptions): void {
+  protected _validateOptions(options: ISwarmMessageStoreUtilsMessagesCacheOptions<P, MD>): void {
     assert(!!options, 'Options should not be empty');
     assert(typeof options === 'object', 'Options should be an object');
     assert(typeof options.dbName === 'string', 'A database name should be a string');
@@ -223,7 +234,7 @@ export class SwarmMessageStoreUtilsMessagesCache implements ISwarmMessageStoreUt
    * @param {ISwarmMessageStoreUtilsMessagesCacheOptions} options
    * @memberof SwarmMessageStoreUtilsMessagesCache
    */
-  protected _validateAndSetOptions(options: ISwarmMessageStoreUtilsMessagesCacheOptions): void {
+  protected _validateAndSetOptions(options: ISwarmMessageStoreUtilsMessagesCacheOptions<P, MD>): void {
     this._validateOptions(options);
     this._cache = options.cache;
     this._dbName = options.dbName;
@@ -237,7 +248,7 @@ export class SwarmMessageStoreUtilsMessagesCache implements ISwarmMessageStoreUt
    * @memberof SwarmMessageStoreUtilsMessagesCache
    * @throws
    */
-  protected _checkIsReady(): this is ISwarmMessageStoreUtilsMessageCacheReady {
+  protected _checkIsReady(): this is ISwarmMessageStoreUtilsMessageCacheReady<P, MD> {
     assert(this._isReady, 'The instance is not ready');
     assert(this._cache, 'Cache is not defined for the instance');
     assert(this._dbName, 'Database name should be defined');
@@ -253,11 +264,11 @@ export class SwarmMessageStoreUtilsMessagesCache implements ISwarmMessageStoreUt
    * @returns {string}
    * @memberof SwarmMessageStore
    */
-  protected getCacheKeyForMessageAddressAndDbName(messageAddress: string): string {
+  protected getCacheKeyForMessageAddressAndDbName(messageAddress: TSwarmStoreDatabaseEntityAddress<P>): string {
     return `${this._dbName}${SWARM_MESSAGE_STORE_UTILS_MESSAGES_CACHE_KEY_PARTS_DELIMETER}${messageAddress}`;
   }
 
-  protected getCacheKeyForDbKeyAndDbName(messageKey: string): string {
+  protected getCacheKeyForDbKeyAndDbName(messageKey: TSwarmStoreDatabaseEntityKey<P>): string {
     return `${SWARM_MESSAGE_STORE_UTILS_MESSAGES_CACHE_KEY_DB_KEY_VALUE_KEY_PREFIX}${this._dbName}${SWARM_MESSAGE_STORE_UTILS_MESSAGES_CACHE_KEY_PARTS_DELIMETER}${messageKey}`;
   }
 

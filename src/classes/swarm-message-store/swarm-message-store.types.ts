@@ -12,7 +12,6 @@ import { TSwarmStoreDatabaseIteratorMethodArgument, TSwarmStoreDatabaseType } fr
 import {
   TSwarmMessageSerialized,
   TSwarmMessageConstructorBodyMessage,
-  TSwarmMessageInstance,
   ISwarmMessageInstanceEncrypted,
 } from '../swarm-message/swarm-message-constructor.types';
 import { TCentralAuthorityUserIdentity } from '../central-authority-class/central-authority-class-types/central-authority-class-types-common';
@@ -27,7 +26,6 @@ import {
   ISwarmStoreProviderOptions,
   ISwarmStoreOptionsConnectorFabric,
 } from '../swarm-store-class/swarm-store-class.types';
-import { ISwarmMessageInstanceBase } from '../swarm-message/swarm-message-constructor.types';
 import { PromiseResolveType } from '../../types/helper.types';
 import {
   ISwarmStoreConnector,
@@ -36,6 +34,7 @@ import {
 } from '../swarm-store-class/swarm-store-class.types';
 import { TSwarmStoreConnectorConnectionOptions, ISwarmStoreConnectorBasic } from '../swarm-store-class/swarm-store-class.types';
 import { TSwarmStoreDatabaseEntityAddress, TSwarmStoreDatabaseEntityKey } from '../swarm-store-class/swarm-store-class.types';
+import { ISwarmMessageEncrypted } from '../swarm-message/swarm-message-constructor.types';
 
 export interface ISwarmMessageStoreSwarmMessageMetadata<P extends ESwarmStoreConnector> {
   /**
@@ -168,7 +167,7 @@ export interface ISwarmMessageStoreOptions<
    * @type {IStorageCommon}
    * @memberof ISwarmMessageStoreOptions
    */
-  cache?: StorageProvider<Exclude<MSI, T>>;
+  cache?: StorageProvider<Exclude<MSI, T | ISwarmMessageInstanceEncrypted>>;
 }
 
 export interface ISwarmMessageStoreOptionsWithConnectorFabric<

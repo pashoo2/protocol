@@ -17,11 +17,7 @@ import {
 } from '../swarm-message-store/swarm-message-store.types';
 import { getEventEmitterInstance } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { ESwarmMessageStoreEventNames } from '../swarm-message-store/swarm-message-store.const';
-import {
-  ISwarmMessageInstanceDecrypted,
-  TSwarmMessageSerialized,
-  TSwarmMessageInstance,
-} from '../swarm-message/swarm-message-constructor.types';
+import { TSwarmMessageSerialized, TSwarmMessageInstance } from '../swarm-message/swarm-message-constructor.types';
 import { TTypedEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 import {
   TSwarmStoreDatabaseEntityAddress,
@@ -55,6 +51,8 @@ import {
   ISwarmStoreOptionsConnectorFabric,
 } from '../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageInstanceEncrypted } from '../swarm-message/swarm-message-constructor.types';
+import { OmitFirstArg } from '../../types/helper.types';
 
 export class SwarmMessagesDatabase<
   P extends ESwarmStoreConnector,
@@ -84,8 +82,9 @@ export class SwarmMessagesDatabase<
     GAC,
     MCF,
     ACO
-  >
-> implements ISwarmMessageDatabaseMessagingMethods<P, DbType> {
+  >,
+  SMS extends ISwarmMessageStore<P, T, DbType, ConnectorBasic, PO, DBO, CO, CFO, ConnectorMain, MSI, GAC, MCF, ACO, O>
+> implements ISwarmMessageDatabaseMessagingMethods<P, T, DbType, Exclude<MSI, T>, SMS> {
   get dbName(): DBO['dbName'] | undefined {
     return this._dbName;
   }
@@ -98,7 +97,7 @@ export class SwarmMessagesDatabase<
     return this._isReady && !!this._swarmMessageStore;
   }
 
-  get emitter(): TTypedEmitter<ISwarmMessageDatabaseEvents<P, DbType>> {
+  get emitter(): TTypedEmitter<ISwarmMessageDatabaseEvents<P, T, DbType, DBO, Exclude<MSI, T | ISwarmMessageInstanceEncrypted>>> {
     return this._emitter;
   }
 
@@ -110,7 +109,9 @@ export class SwarmMessagesDatabase<
     return !!this._swarmMessagesCache?.isUpdating;
   }
 
-  get cachedMessages(): TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined {
+  get cachedMessages():
+    | TSwarmMessageDatabaseMessagesCached<P, DbType, Exclude<MSI, T | ISwarmMessageInstanceEncrypted>>
+    | undefined {
     return this._messagesCached;
   }
 
@@ -140,7 +141,9 @@ export class SwarmMessagesDatabase<
 
   protected _dbType?: DbType;
 
-  protected _emitter = getEventEmitterInstance<ISwarmMessageDatabaseEvents<P, DbType>>();
+  protected _emitter = getEventEmitterInstance<
+    ISwarmMessageDatabaseEvents<P, T, DbType, DBO, Exclude<MSI, T | ISwarmMessageInstanceEncrypted>>
+  >();
 
   /**
    * An instance implemented ISwarmMessageStore
@@ -150,7 +153,7 @@ export class SwarmMessagesDatabase<
    * @type {ISwarmMessageStore<P>}
    * @memberof SwarmMessagesDatabase
    */
-  protected _swarmMessageStore?: ISwarmMessageStore<P, T, DbType, ConnectorBasic, ConnectorMain, O>;
+  protected _swarmMessageStore?: SMS;
 
   /**
    * Implementation of a swarm messages cahce
@@ -159,7 +162,7 @@ export class SwarmMessagesDatabase<
    * @type {ISwarmMessagesDatabaseCache<P, DbType>}
    * @memberof SwarmMessagesDatabase
    */
-  protected _swarmMessagesCache?: ISwarmMessagesDatabaseCache<P, DbType>;
+  protected _swarmMessagesCache?: ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MSI>;
 
   /**
    * Options for the database which used for
@@ -173,7 +176,7 @@ export class SwarmMessagesDatabase<
 
   protected _currentUserOptons?: ISwarmMessagesDatabaseConnectCurrentUserOptions;
 
-  protected _cacheOptions?: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, DbType>;
+  protected _cacheOptions?: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, T, DbType, DBO, MSI>;
 
   protected _isReady: boolean = false;
 
@@ -186,9 +189,11 @@ export class SwarmMessagesDatabase<
    * @type {(TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined)}
    * @memberof SwarmMessagesDatabase
    */
-  protected _messagesCached: TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined;
+  protected _messagesCached:
+    | TSwarmMessageDatabaseMessagesCached<P, DbType, Exclude<MSI, T | ISwarmMessageInstanceEncrypted>>
+    | undefined;
 
-  async connect(options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType, ConnectorBasic, ConnectorMain, O>): Promise<void> {
+  async connect(options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType, DBO, Exclude<MSI, T>, SMS>): Promise<void> {
     this._handleOptions(options);
     await this._openDatabaseInstance();
     await this._startSwarmMessagesCache();
@@ -220,41 +225,42 @@ export class SwarmMessagesDatabase<
     this._handleDatabaseClosed();
   };
 
-  addMessage = (
-    ...args: Parameters<ISwarmMessageDatabaseMessagingMethods<P, DbType>['addMessage']>
-  ): ReturnType<ISwarmMessageDatabaseMessagingMethods<P, DbType>['addMessage']> => {
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  addMessage = ((...args: Parameters<OmitFirstArg<SMS['addMessage']>>): ReturnType<SMS['addMessage']> => {
     if (!this._checkIsReady()) {
       throw new Error('The instance is not ready to use');
     }
-    return this._swarmMessageStore.addMessage(this._dbName, ...args);
-  };
+    // TODO - remove cast to any https://github.com/microsoft/TypeScript/issues/28010
+    return (this._swarmMessageStore.addMessage as any)(this._dbName, ...args);
+  }) as OmitFirstArg<SMS['addMessage']>;
 
-  deleteMessage = (
-    messageAddressOrKey: ISwarmMessageStoreDeleteMessageArg<P>
-  ): ReturnType<ISwarmMessageDatabaseMessagingMethods<P, DbType>['deleteMessage']> => {
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  deleteMessage = ((messageAddressOrKey: ISwarmMessageStoreDeleteMessageArg<P>): ReturnType<SMS['deleteMessage']> => {
     if (!this._checkIsReady()) {
       throw new Error('The instance is not ready to use');
     }
-    return this._swarmMessageStore.deleteMessage(this._dbName, messageAddressOrKey);
-  };
+    return this._swarmMessageStore.deleteMessage(this._dbName, messageAddressOrKey) as ReturnType<SMS['deleteMessage']>;
+  }) as OmitFirstArg<SMS['deleteMessage']>;
 
-  collect = (
-    ...args: Parameters<ISwarmMessageDatabaseMessagingMethods<P, DbType>['collect']>
-  ): ReturnType<ISwarmMessageDatabaseMessagingMethods<P, DbType>['collect']> => {
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  collect = ((...args: Parameters<OmitFirstArg<SMS['collect']>>): ReturnType<SMS['collect']> => {
     if (!this._checkIsReady()) {
       throw new Error('The instance is not ready to use');
     }
-    return this._swarmMessageStore.collect(this._dbName, ...args);
-  };
+    // TODO - remove cast to any https://github.com/microsoft/TypeScript/issues/28010
+    return (this._swarmMessageStore.collect as any)(this._dbName, ...args);
+  }) as OmitFirstArg<SMS['collect']>;
 
-  collectWithMeta = (
-    ...args: Parameters<ISwarmMessageDatabaseMessagingMethods<P, DbType>['collectWithMeta']>
-  ): ReturnType<ISwarmMessageDatabaseMessagingMethods<P, DbType>['collectWithMeta']> => {
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  collectWithMeta = ((
+    ...args: Parameters<OmitFirstArg<SMS['collectWithMeta']>>
+  ): ReturnType<OmitFirstArg<SMS['collectWithMeta']>> => {
     if (!this._checkIsReady()) {
       throw new Error('The instance is not ready to use');
     }
-    return this._swarmMessageStore.collectWithMeta(this._dbName, ...args);
-  };
+    // TODO - remove cast to any https://github.com/microsoft/TypeScript/issues/28010
+    return (this._swarmMessageStore.collectWithMeta as any)(this._dbName, ...args);
+  }) as OmitFirstArg<SMS['collectWithMeta']>;
 
   /**
    * Checks if the instance is ready to use
@@ -262,7 +268,22 @@ export class SwarmMessagesDatabase<
    * @protected
    * @memberof SwarmMessagesDatabase
    */
-  protected _checkIsReady(): this is ISwarmMessagesDatabaseReady<P, T, DbType, ConnectorBasic, ConnectorMain, O> {
+  protected _checkIsReady(): this is ISwarmMessagesDatabaseReady<
+    P,
+    T,
+    DbType,
+    ConnectorBasic,
+    PO,
+    CO,
+    DBO,
+    ConnectorMain,
+    CFO,
+    MSI,
+    GAC,
+    MCF,
+    ACO,
+    O
+  > {
     if (!this._isReady) {
       throw new Error('The instance is not ready to use');
     }
@@ -281,9 +302,7 @@ export class SwarmMessagesDatabase<
     return true;
   }
 
-  protected _validateOptions(
-    options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType, ConnectorBasic, ConnectorMain, O>
-  ): void {
+  protected _validateOptions(options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType, DBO, Exclude<MSI, T>, SMS>): void {
     assert(!!options, 'An options object must be provided');
     assert(typeof options === 'object', 'Options must be an object');
     assert(!!options.dbOptions, 'An options for database must be provided');
@@ -305,13 +324,15 @@ export class SwarmMessagesDatabase<
     this._currentUserOptons = optionsUser;
   }
 
-  protected _setOptions(options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType, ConnectorBasic, ConnectorMain, O>): void {
+  protected _setOptions(options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType, DBO, Exclude<MSI, T>, SMS>): void {
     this._setDbOptions(options.dbOptions);
     this._swarmMessageStore = options.swarmMessageStore;
     this._setUserOptions(options.user);
   }
 
-  protected _validateCacheOptions(options?: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, DbType>): void {
+  protected _validateCacheOptions(
+    options?: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, T, DbType, DBO, MSI>
+  ): void {
     if (!options) {
       return;
     }
@@ -321,7 +342,9 @@ export class SwarmMessagesDatabase<
     }
   }
 
-  protected _setCacheOptions(options: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, DbType>): void {
+  protected _setCacheOptions(
+    options: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, T, DbType, DBO, MSI>
+  ): void {
     this._cacheOptions = options;
   }
 
@@ -333,7 +356,7 @@ export class SwarmMessagesDatabase<
    * @param {ISwarmMessage_handleDatabaseClosedsDatabaseConnectOptions<P>} options
    * @memberof SwarmMessagesDatabase
    */
-  protected _handleOptions(options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType, ConnectorBasic, ConnectorMain, O>): void {
+  protected _handleOptions(options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType, DBO, Exclude<MSI, T>, SMS>): void {
     this._validateOptions(options);
     this._setOptions(options);
     if (options.cacheOptions) {
@@ -343,7 +366,7 @@ export class SwarmMessagesDatabase<
   }
 
   protected _checkDatabaseProps(): this is Omit<
-    ISwarmMessagesDatabaseReady<P, T, DbType, ConnectorBasic, ConnectorMain, O>,
+    ISwarmMessagesDatabaseReady<P, T, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>,
     'isReady'
   > {
     const swarmMessageStore = this._swarmMessageStore;
@@ -380,7 +403,9 @@ export class SwarmMessagesDatabase<
     this._isReady = false;
   };
 
-  protected _setMessagesCached = (messagesCached: TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined) => {
+  protected _setMessagesCached = (
+    messagesCached: TSwarmMessageDatabaseMessagesCached<P, DbType, Exclude<MSI, T | ISwarmMessageInstanceEncrypted>>
+  ) => {
     this._messagesCached = messagesCached;
   };
 
@@ -400,8 +425,8 @@ export class SwarmMessagesDatabase<
     }
   }
 
-  protected _getSwarmMessageWithMeta<MD extends ISwarmMessageInstanceDecrypted>(
-    dbName: string,
+  protected _getSwarmMessageWithMeta<MD extends Exclude<MSI, T | ISwarmMessageInstanceEncrypted>>(
+    dbName: DBO['dbName'],
     message: MD,
     // the global unique address (hash) of the message in the swarm
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
@@ -421,15 +446,15 @@ export class SwarmMessagesDatabase<
    *
    * @protected
    * @param {string} dbName
-   * @param {ISwarmMessageInstanceDecrypted} message
+   * @param {Exclude<MSI, T | ISwarmMessageInstanceEncrypted>} message
    * @param {TSwarmStoreDatabaseEntityAddress<P>} messageAddress
    * @param {TSwarmStoreDatabaseEntityKey<P>} [key]
    * @returns {Promise<void>}
    * @memberof SwarmMessagesDatabase
    */
   protected _addMessageToCache(
-    dbName: string,
-    message: ISwarmMessageInstanceDecrypted,
+    dbName: DBO['dbName'],
+    message: Exclude<MSI, T | ISwarmMessageInstanceEncrypted>,
     // the global unique address (hash) of the message in the swarm
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key
@@ -456,12 +481,12 @@ export class SwarmMessagesDatabase<
     throw new Error('Swarm messages cache is not ready');
   }
 
-  protected _handleDatabaseLoadingEvent = (dbName: string, percentage: number): void => {
+  protected _handleDatabaseLoadingEvent = (dbName: DBO['dbName'], percentage: number): void => {
     if (this._dbName !== dbName) return;
     this._emitter.emit(ESwarmStoreEventNames.DB_LOADING, dbName, percentage);
   };
 
-  protected _handleDatabaseUpdatedEvent = (dbName: string): void => {
+  protected _handleDatabaseUpdatedEvent = (dbName: DBO['dbName']): void => {
     if (this._dbName !== dbName) return;
 
     this._emitter.emit(ESwarmStoreEventNames.UPDATE, dbName);
@@ -474,7 +499,7 @@ export class SwarmMessagesDatabase<
    *
    * @param {TSwarmStoreDatabaseEntityAddress<P>} messageAddress
    * @param {TSwarmStoreDatabaseEntityKey<P>} [key]
-   * @param {ISwarmMessageInstanceDecrypted} [message] - optional cause for DELETE messages
+   * @param {Exclude<MSI, T | ISwarmMessageInstanceEncrypted>} [message] - optional cause for DELETE messages
    * a message object by itself may be not exists.
    * @returns {string}
    */
@@ -483,7 +508,7 @@ export class SwarmMessagesDatabase<
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key
     key?: TSwarmStoreDatabaseEntityKey<P>,
-    message?: ISwarmMessageInstanceDecrypted
+    message?: Exclude<MSI, T | ISwarmMessageInstanceEncrypted>
   ): string => {
     return message ? message.sig : `${SWARM_MESSAGES_DATABASE_MESSAGES_EMITTED_UNIQ_ID_ADDRESS_PREFIX}::${messageAddress}`;
   };
@@ -494,7 +519,7 @@ export class SwarmMessagesDatabase<
    *
    * @param {TSwarmStoreDatabaseEntityAddress<P>} messageAddress
    * @param {TSwarmStoreDatabaseEntityKey<P>} [key]
-   * @param {ISwarmMessageInstanceDecrypted} [message] - optional cause for DELETE messages
+   * @param {Exclude<MSI, T | ISwarmMessageInstanceEncrypted>} [message] - optional cause for DELETE messages
    * a message object by itself may be not exists.
    */
   protected _addMessageToListOfEmitted = (
@@ -502,7 +527,7 @@ export class SwarmMessagesDatabase<
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key
     key?: TSwarmStoreDatabaseEntityKey<P>,
-    message?: ISwarmMessageInstanceDecrypted
+    message?: Exclude<MSI, T | ISwarmMessageInstanceEncrypted>
   ): void => {
     this._newMessagesEmitted.add(this._getMessageUniqueIdForEmittedAsNewList(messageAddress, key, message));
   };
@@ -512,7 +537,7 @@ export class SwarmMessagesDatabase<
    *
    * @param {TSwarmStoreDatabaseEntityAddress<P>} messageAddress
    * @param {TSwarmStoreDatabaseEntityKey<P>} [key]
-   * @param {ISwarmMessageInstanceDecrypted} [message] - optional cause for DELETE messages
+   * @param {Exclude<MSI, T | ISwarmMessageInstanceEncrypted>} [message] - optional cause for DELETE messages
    * a message object by itself may be not exists.
    * @returns {boolean}
    */
@@ -521,14 +546,14 @@ export class SwarmMessagesDatabase<
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key
     key?: TSwarmStoreDatabaseEntityKey<P>,
-    message?: ISwarmMessageInstanceDecrypted
+    message?: Exclude<MSI, T | ISwarmMessageInstanceEncrypted>
   ): boolean => {
     return this._newMessagesEmitted.has(this._getMessageUniqueIdForEmittedAsNewList(messageAddress, key, message));
   };
 
   protected _handleDatabaseNewMessage = (
-    dbName: string,
-    message: ISwarmMessageInstanceDecrypted,
+    dbName: DBO['dbName'],
+    message: Exclude<MSI, T | ISwarmMessageInstanceEncrypted>,
     // the global unique address (hash) of the message in the swarm
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key
@@ -546,7 +571,7 @@ export class SwarmMessagesDatabase<
   };
 
   protected _handleDatabaseDeleteMessage = (
-    dbName: string,
+    dbName: DBO['dbName'],
     userID: TSwarmMessageUserIdentifierSerialized,
     // the global unique address (hash) of the DELETE message in the swarm
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
@@ -579,9 +604,9 @@ export class SwarmMessagesDatabase<
   };
 
   protected _handleDatabaseMessageError = (
-    dbName: string,
+    dbName: DBO['dbName'],
     // swarm message string failed to deserialize
-    messageSerialized: string,
+    messageSerialized: T,
     // error occurred while deserializing the message
     error: Error,
     // the global unique address (hash) of the message in the swarm
@@ -593,7 +618,7 @@ export class SwarmMessagesDatabase<
     this._emitter.emit(ESwarmMessageStoreEventNames.NEW_MESSAGE_ERROR, dbName, messageSerialized, error, messageAddress, key);
   };
 
-  protected _handleDatabaseReadyEvent = (dbName: string): void => {
+  protected _handleDatabaseReadyEvent = (dbName: DBO['dbName']): void => {
     if (this._dbName !== dbName) return;
     this._emitter.emit(ESwarmStoreEventNames.READY, dbName);
     this._setIsReady();
@@ -606,7 +631,7 @@ export class SwarmMessagesDatabase<
     this._emitter.emit(ESwarmStoreEventNames.CLOSE_DATABASE, this._dbName);
   }
 
-  protected _handleDatabaseClosedEvent = (dbName: string): void => {
+  protected _handleDatabaseClosedEvent = (dbName: DBO['dbName']): void => {
     if (this._dbName !== dbName) return;
     this._emitInstanceClosed();
     this._handleDatabaseClosed();
@@ -619,7 +644,7 @@ export class SwarmMessagesDatabase<
     this._emitter.emit(ESwarmStoreEventNames.DROP_DATABASE, this._dbName);
   }
 
-  protected _handleDatabaseDroppedEvent = (dbName: string): void => {
+  protected _handleDatabaseDroppedEvent = (dbName: DBO['dbName']): void => {
     if (this._dbName !== dbName) return;
     this._emitDatabaseDropped();
     this._handleDatabaseClosed();
@@ -712,7 +737,13 @@ export class SwarmMessagesDatabase<
   protected async _startSwarmMessagesCache(): Promise<void> {
     const SwarmMessagesCacheConstructor = this._cacheOptions?.cacheConstructor || SwarmMessagesDatabaseCache;
     const swarmMessagesCacheOptions = this._getSwarmMessagesCacheOptions();
-    const swarmMessagesCache = new SwarmMessagesCacheConstructor(swarmMessagesCacheOptions);
+    const swarmMessagesCache = new SwarmMessagesCacheConstructor(swarmMessagesCacheOptions) as ISwarmMessagesDatabaseCache<
+      P,
+      T,
+      DbType,
+      DBO,
+      MSI
+    >;
 
     await swarmMessagesCache.start();
     this._swarmMessagesCache = swarmMessagesCache;
@@ -788,13 +819,13 @@ export class SwarmMessagesDatabase<
    * if a new message added to the storage.
    *
    * @protected
-   * @param {ISwarmMessageInstanceDecrypted} message
+   * @param {Exclude<MSI, T | ISwarmMessageInstanceEncrypted>} message
    * @param {TSwarmStoreDatabaseEntityUniqueAddress<P>} messageAddress
    * @param {string} [key]
    * @memberof SwarmMessagesDatabase
    */
   protected _handleCacheUpdateOnNewMessage(
-    message: ISwarmMessageInstanceDecrypted,
+    message: Exclude<MSI, T | ISwarmMessageInstanceEncrypted>,
     // the global unique address (hash) of the message in the swarm
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key
