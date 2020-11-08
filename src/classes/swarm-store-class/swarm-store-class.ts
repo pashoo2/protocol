@@ -372,7 +372,7 @@ export class SwarmStore<
     return this.databases?.options[dbName];
   }
 
-  protected getConnectorOrError(): ConnectorMain | Error {
+  getConnectorOrError(): ConnectorMain | Error {
     const { connector } = this;
 
     if (!connector) {
