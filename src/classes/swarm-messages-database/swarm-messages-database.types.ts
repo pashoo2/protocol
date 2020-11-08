@@ -53,9 +53,9 @@ export interface ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, T>,
-  MSI extends TSwarmMessageInstance | T
+  MD extends ISwarmMessageInstanceDecrypted
 > {
-  cacheConstructor?: ISwarmMessagesDatabaseCacheConstructor<P, T, DbType, DBO, MSI>;
+  cacheConstructor?: ISwarmMessagesDatabaseCacheConstructor<P, T, DbType, DBO, MD>;
 }
 
 /**
@@ -72,18 +72,13 @@ export interface ISwarmMessagesDatabaseConnectOptions<
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, T>,
   MI extends TSwarmMessageInstance,
-  SMS extends ISwarmMessageStoreMessagingMethods<P, T, DbType, MI>
+  SMS extends ISwarmMessageStoreMessagingMethods<P, T, DbType, MI>,
+  MD extends Exclude<MI, ISwarmMessageInstanceEncrypted>
 > {
   user: ISwarmMessagesDatabaseConnectCurrentUserOptions;
   swarmMessageStore: SMS;
   dbOptions: DBO;
-  cacheOptions?: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<
-    P,
-    T,
-    DbType,
-    DBO,
-    Exclude<MI, ISwarmMessageInstanceEncrypted>
-  >;
+  cacheOptions?: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, T, DbType, DBO, MD>;
 }
 
 export interface ISwarmMessageDatabaseCacheEvents<

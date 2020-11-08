@@ -17,7 +17,11 @@ import {
 } from '../swarm-message-store/swarm-message-store.types';
 import { getEventEmitterInstance } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { ESwarmMessageStoreEventNames } from '../swarm-message-store/swarm-message-store.const';
-import { TSwarmMessageSerialized, TSwarmMessageInstance } from '../swarm-message/swarm-message-constructor.types';
+import {
+  TSwarmMessageSerialized,
+  TSwarmMessageInstance,
+  ISwarmMessageInstanceDecrypted,
+} from '../swarm-message/swarm-message-constructor.types';
 import { TTypedEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 import {
   TSwarmStoreDatabaseEntityAddress,
@@ -83,7 +87,8 @@ export class SwarmMessagesDatabase<
     MCF,
     ACO
   >,
-  SMS extends ISwarmMessageStore<P, T, DbType, ConnectorBasic, PO, DBO, CO, CFO, ConnectorMain, MSI, GAC, MCF, ACO, O>
+  SMS extends ISwarmMessageStore<P, T, DbType, ConnectorBasic, PO, DBO, CO, CFO, ConnectorMain, MSI, GAC, MCF, ACO, O>,
+  MD extends Exclude<Exclude<MSI, T>, ISwarmMessageInstanceEncrypted>
 > implements ISwarmMessageDatabaseMessagingMethods<P, T, DbType, Exclude<MSI, T>, SMS> {
   get dbName(): DBO['dbName'] | undefined {
     return this._dbName;
@@ -97,7 +102,7 @@ export class SwarmMessagesDatabase<
     return this._isReady && !!this._swarmMessageStore;
   }
 
-  get emitter(): TTypedEmitter<ISwarmMessageDatabaseEvents<P, T, DbType, DBO, Exclude<MSI, T | ISwarmMessageInstanceEncrypted>>> {
+  get emitter(): TTypedEmitter<ISwarmMessageDatabaseEvents<P, T, DbType, DBO, MD>> {
     return this._emitter;
   }
 
@@ -176,7 +181,7 @@ export class SwarmMessagesDatabase<
 
   protected _currentUserOptons?: ISwarmMessagesDatabaseConnectCurrentUserOptions;
 
-  protected _cacheOptions?: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, T, DbType, DBO, MSI>;
+  protected _cacheOptions?: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, T, DbType, DBO, MD>;
 
   protected _isReady: boolean = false;
 
@@ -193,7 +198,17 @@ export class SwarmMessagesDatabase<
     | TSwarmMessageDatabaseMessagesCached<P, DbType, Exclude<MSI, T | ISwarmMessageInstanceEncrypted>>
     | undefined;
 
-  async connect(options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType, DBO, Exclude<MSI, T>, SMS>): Promise<void> {
+  async connect(
+    options: ISwarmMessagesDatabaseConnectOptions<
+      P,
+      T,
+      DbType,
+      DBO,
+      Exclude<MSI, T>,
+      SMS,
+      Exclude<Exclude<MSI, T>, ISwarmMessageInstanceEncrypted>
+    >
+  ): Promise<void> {
     this._handleOptions(options);
     await this._openDatabaseInstance();
     await this._startSwarmMessagesCache();
@@ -302,7 +317,7 @@ export class SwarmMessagesDatabase<
     return true;
   }
 
-  protected _validateOptions(options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType, DBO, Exclude<MSI, T>, SMS>): void {
+  protected _validateOptions(options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType, DBO, Exclude<MSI, T>, SMS, MD>): void {
     assert(!!options, 'An options object must be provided');
     assert(typeof options === 'object', 'Options must be an object');
     assert(!!options.dbOptions, 'An options for database must be provided');
@@ -331,7 +346,7 @@ export class SwarmMessagesDatabase<
   }
 
   protected _validateCacheOptions(
-    options?: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, T, DbType, DBO, MSI>
+    options?: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, T, DbType, DBO, MD>
   ): void {
     if (!options) {
       return;
@@ -343,7 +358,7 @@ export class SwarmMessagesDatabase<
   }
 
   protected _setCacheOptions(
-    options: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, T, DbType, DBO, MSI>
+    options: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, T, DbType, DBO, MD>
   ): void {
     this._cacheOptions = options;
   }
@@ -676,7 +691,13 @@ export class SwarmMessagesDatabase<
     this._emitter.emit(ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATING);
   };
 
-  protected _handleCacheUpdated = (messagesCached: TSwarmMessageDatabaseMessagesCached<P, DbType> | undefined): void => {
+  protected _handleCacheUpdated = (
+    messagesCached: TSwarmMessageDatabaseMessagesCached<P, DbType, Exclude<MSI, T | ISwarmMessageInstanceEncrypted>> | undefined
+  ): void => {
+    if (!messagesCached) {
+      console.warn('_handleCacheUpdated::not messages cached to update');
+      return;
+    }
     this._setMessagesCached(messagesCached);
     this.emitter.emit(ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATED, messagesCached);
   };
@@ -694,10 +715,14 @@ export class SwarmMessagesDatabase<
     }
 
     const { emitter } = this._swarmMessagesCache;
-    const method = isSetListeners ? 'addListener' : 'removeListener';
 
-    emitter[method](ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATING as any, this._handleCacheUpdating);
-    emitter[method](ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATED as any, this._handleCacheUpdated);
+    if (isSetListeners) {
+      emitter.addListener(ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATING, this._handleCacheUpdating);
+      emitter.addListener(ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATED, this._handleCacheUpdated);
+    } else {
+      emitter.removeListener(ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATING, this._handleCacheUpdating);
+      emitter.removeListener(ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATED, this._handleCacheUpdated);
+    }
   }
 
   protected _setListeners(isSetListeners: boolean = true): void {
@@ -720,7 +745,12 @@ export class SwarmMessagesDatabase<
     }
   }
 
-  protected _getSwarmMessagesCacheOptions(): ISwarmMessagesDatabaseCacheOptions<P, DbType> {
+  protected _getSwarmMessagesCacheOptions(): ISwarmMessagesDatabaseCacheOptions<
+    P,
+    T,
+    DbType,
+    Exclude<MSI, T | ISwarmMessageInstanceEncrypted>
+  > {
     if (!this._dbType) {
       throw new Error('Failed to defined database type');
     }
