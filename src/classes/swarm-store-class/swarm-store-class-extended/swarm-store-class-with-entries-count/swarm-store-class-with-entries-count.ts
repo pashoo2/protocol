@@ -6,7 +6,6 @@ import {
   ISwarmStoreConnectorBasicWithEntriesCount,
   ISwarmStoreWithEntriesCount,
   TSwarmStoreDatabaseOptions,
-  ISwarmStoreOptions,
   ISwarmStoreConnectorWithEntriesCount,
   ISwarmStoreOptionsWithConnectorFabric,
 } from '../../swarm-store-class.types';
