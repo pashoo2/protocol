@@ -54,7 +54,7 @@ export class SwarmStoreConnectorOrbitDB<
     ItemType extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>,
     DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>,
     ConnectorBasic extends ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, ItemType, DbType>,
-    PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, ConnectorBasic>,
+    PO extends TSwarmStoreConnectorConnectionOptions<ESwarmStoreConnector.OrbitDB, ItemType, DbType, ConnectorBasic>,
     DBO extends TSwarmStoreDatabaseOptions<ESwarmStoreConnector.OrbitDB, ItemType>
   >
   extends EventEmitter<ISwarmStoreConnectorOrbitDBEvents<ESwarmStoreConnector.OrbitDB, ItemType, DBO>>

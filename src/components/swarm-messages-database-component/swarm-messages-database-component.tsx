@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react';
 import { IConnectionBridge } from 'classes/connection-bridge/connection-bridge.types';
 import { ISwarmStoreDatabaseBaseOptions } from 'classes/swarm-store-class/swarm-store-class.types';

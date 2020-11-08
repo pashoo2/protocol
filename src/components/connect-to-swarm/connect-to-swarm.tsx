@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react';
 import { connectToSwarmUtil } from './connect-to-swarm.utils';
 import { IConnectionBridge } from 'classes/connection-bridge/connection-bridge.types';
