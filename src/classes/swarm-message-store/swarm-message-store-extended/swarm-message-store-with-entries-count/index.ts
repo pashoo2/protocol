@@ -1,1 +1,1 @@
-export { SwarmMessageStoreWithEntriesCount } from './swarm-message-store-with-entries-count';
+export { getClassSwarmMessageStoreWithEntriesCount } from './swarm-message-store-with-entries-count';

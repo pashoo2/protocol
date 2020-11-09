@@ -1,9 +1,4 @@
-import {
-  ISwarmStore,
-  ISwarmStoreEvents,
-  ISwarmStoreOptions,
-  ISwarmStoreConnectorWithEntriesCount,
-} from '../swarm-store-class/swarm-store-class.types';
+import { ISwarmStore, ISwarmStoreEvents, ISwarmStoreOptions } from '../swarm-store-class/swarm-store-class.types';
 import { ESwarmStoreConnector } from '../swarm-store-class/swarm-store-class.const';
 import {
   TSwarmMessageInstance,
@@ -13,11 +8,7 @@ import {
 import { EventEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { ESwarmMessageStoreEventNames } from './swarm-message-store.const';
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
-import {
-  TSwarmStoreDatabaseIteratorMethodArgument,
-  TSwarmStoreDatabaseType,
-  ISwarmStoreConnectorBasicWithEntriesCount,
-} from '../swarm-store-class/swarm-store-class.types';
+import { TSwarmStoreDatabaseIteratorMethodArgument, TSwarmStoreDatabaseType } from '../swarm-store-class/swarm-store-class.types';
 import {
   TSwarmMessageSerialized,
   TSwarmMessageConstructorBodyMessage,
@@ -36,14 +27,15 @@ import {
   ISwarmStoreOptionsConnectorFabric,
 } from '../swarm-store-class/swarm-store-class.types';
 import { PromiseResolveType } from '../../types/helper.types';
-import {
-  ISwarmStoreConnector,
-  ISwarmStoreOptionsWithConnectorFabric,
-  ISwarmStoreWithEntriesCount,
-} from '../swarm-store-class/swarm-store-class.types';
+import { ISwarmStoreConnector, ISwarmStoreOptionsWithConnectorFabric } from '../swarm-store-class/swarm-store-class.types';
 import { TSwarmStoreConnectorConnectionOptions, ISwarmStoreConnectorBasic } from '../swarm-store-class/swarm-store-class.types';
 import { TSwarmStoreDatabaseEntityAddress, TSwarmStoreDatabaseEntityKey } from '../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageEncrypted } from '../swarm-message/swarm-message-constructor.types';
+import {
+  ISwarmStoreConnectorBasicWithEntriesCount,
+  ISwarmStoreConnectorWithEntriesCount,
+  ISwarmStoreWithEntriesCount,
+} from '../swarm-store-class/swarm-store-class-extended/swarm-store-class-with-entries-count/swarm-store-class-with-entries-count.types';
 
 export interface ISwarmMessageStoreSwarmMessageMetadata<P extends ESwarmStoreConnector> {
   /**

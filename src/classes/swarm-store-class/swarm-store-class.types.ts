@@ -15,7 +15,10 @@ import {
   ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions,
   ISwarmStoreConnectorOrbitDbDatabaseOptions,
   ISwarmStoreConnectorOrbitDbDatabaseValue,
+  TSwarmStoreConnectorOrbitDbDatabaseAddMethodArgument,
+  TSwarmStoreConnectorOrbitDbDatabaseEntityIndex,
   TSwarmStoreConnectorOrbitDbDatabaseMethodArgument,
+  TSwarmStoreConnectorOrbitDbDatabaseMethodArgumentDbLoad,
   TSwarmStoreConnectorOrbitDbDatabaseMethodNames,
   TSwarmStoreConnectorOrbitDbDatabaseStoreHash,
   TSwarmStoreConnectorOrbitDbDatabaseStoreKey,
@@ -26,11 +29,6 @@ import {
   ESwarmStoreConnectorOrbitDbDatabaseType,
 } from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { TSwarmMessageSerialized } from '../swarm-message/swarm-message-constructor.types';
-import {
-  TSwarmStoreConnectorOrbitDbDatabaseAddMethodArgument,
-  TSwarmStoreConnectorOrbitDbDatabaseEntityIndex,
-  TSwarmStoreConnectorOrbitDbDatabaseMethodArgumentDbLoad,
-} from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 
 export type TSwarmStoreDatabaseType<P extends ESwarmStoreConnector> = ESwarmStoreConnectorOrbitDbDatabaseType;
 
@@ -464,58 +462,6 @@ export interface ISwarmStoreConnectorBasic<
   drop(): Promise<Error | void>;
 }
 
-export interface ISwarmStoreConnectorBasicWithEntriesCount<
-  TSwarmStoreConnectorType extends ESwarmStoreConnector,
-  TStoreValue extends TSwarmStoreValueTypes<TSwarmStoreConnectorType>,
-  DbType extends TSwarmStoreDatabaseType<TSwarmStoreConnectorType>
-> extends ISwarmStoreConnectorBasic<TSwarmStoreConnectorType, TStoreValue, DbType> {
-  /**
-   * Items loaded from a persistance store
-   * to the memory
-   *
-   * @type {number}
-   * @memberof ISwarmStoreConnectorBasicWithEntriesCount
-   */
-  countEntriesLoaded: number;
-
-  /**
-   * All enrties count exists in the persistent storage
-   *
-   * @type {number}
-   * @memberof ISwarmStoreConnectorBasicWithEntriesCount
-   */
-  countEntriesAllExists: number;
-}
-
-export interface ISwarmStoreConnectorBaseWithEntriesCount<
-  P extends ESwarmStoreConnector,
-  ItemType extends TSwarmStoreValueTypes<P>,
-  DbType extends TSwarmStoreDatabaseType<P>,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType>,
-  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, ConnectorBasic>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>
-> extends ISwarmStoreConnectorBase<P, ItemType, DbType, ConnectorBasic, PO, DBO> {
-  /**
-   * Returns items loaded from a persistance store
-   * to the memory for the database.
-   *
-   * @param {TSwarmStoreDatabaseOptions<P, ItemType>['dbName']} dbName
-   * @returns {(Promise<number | Error>)}
-   * @memberof ISwarmStoreConnectorBaseWithEntriesCount
-   */
-  getCountEntriesLoaded(dbName: DBO['dbName']): Promise<number | Error>;
-
-  /**
-   * Returns enrties count exists in the persistent storage
-   * for the datbase passed in the argument.
-   *
-   * @param {TSwarmStoreDatabaseOptions<P, ItemType>['dbName']} dbName
-   * @returns {(Promise<number | Error>)}
-   * @memberof ISwarmStoreConnectorBaseWithEntriesCount
-   */
-  getCountEntriesAllExists(dbName: DBO['dbName']): Promise<number | Error>;
-}
-
 export interface ISwarmStoreConnector<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
@@ -525,35 +471,6 @@ export interface ISwarmStoreConnector<
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType>
 > extends EventEmitter<ISwarmStoreEvents<P, ItemType, DBO>>,
     ISwarmStoreConnectorBase<P, ItemType, DbType, ConnectorBasic, PO, DBO> {}
-
-export interface ISwarmStoreConnectorWithEntriesCount<
-  P extends ESwarmStoreConnector,
-  ItemType extends TSwarmStoreValueTypes<P>,
-  DbType extends TSwarmStoreDatabaseType<P>,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType>,
-  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, ConnectorBasic>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>
-> extends ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic, PO, DBO> {
-  /**
-   * Returns items loaded from a persistance store
-   * to the memory for the database.
-   *
-   * @param {TSwarmStoreDatabaseOptions<P, ItemType>['dbName']} dbName
-   * @returns {(Promise<number | Error>)}
-   * @memberof ISwarmStoreConnectorBaseWithEntriesCount
-   */
-  getCountEntriesLoaded(dbName: DBO['dbName']): Promise<number | Error>;
-
-  /**
-   * Returns enrties count exists in the persistent storage
-   * for the datbase passed in the argument.
-   *
-   * @param {TSwarmStoreDatabaseOptions<P, ItemType>['dbName']} dbName
-   * @returns {(Promise<number | Error>)}
-   * @memberof ISwarmStoreConnectorBaseWithEntriesCount
-   */
-  getCountEntriesAllExists(dbName: DBO['dbName']): Promise<number | Error>;
-}
 
 export type TSwarmStoreOptionsOfDatabasesKnownList<
   P extends ESwarmStoreConnector,
@@ -568,6 +485,18 @@ export interface ISwarmStoreDatabasesCommonStatusList<
 > {
   readonly options: TSwarmStoreOptionsOfDatabasesKnownList<P, ItemType, DBO>;
   readonly opened: Record<string, boolean>;
+}
+
+export interface ISwarmStoreWithConnector<
+  P extends ESwarmStoreConnector,
+  ItemType extends TSwarmStoreValueTypes<P>,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType>,
+  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, ConnectorBasic>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>,
+  ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic, PO, DBO>
+> {
+  getConnectorOrError(): ConnectorMain | Error;
 }
 
 /**
@@ -609,37 +538,4 @@ export interface ISwarmStore<
   databases: ISwarmStoreDatabasesCommonStatusList<P, ItemType, DBO> | undefined;
   // open connection with all databases
   connect(options: O): Promise<Error | void>;
-}
-
-export interface ISwarmStoreWithEntriesCount<
-  P extends ESwarmStoreConnector,
-  ItemType extends TSwarmStoreValueTypes<P>,
-  DbType extends TSwarmStoreDatabaseType<P>,
-  ConnectorBasic extends ISwarmStoreConnectorBasicWithEntriesCount<P, ItemType, DbType>,
-  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, ConnectorBasic>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>,
-  CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, ConnectorBasic, PO>,
-  CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain>,
-  ConnectorMain extends ISwarmStoreConnectorWithEntriesCount<P, ItemType, DbType, ConnectorBasic, PO, DBO>,
-  O extends ISwarmStoreOptionsWithConnectorFabric<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain, CFO>
-> extends ISwarmStore<P, ItemType, DbType, ConnectorBasic, PO, DBO, CO, CFO, ConnectorMain, O> {
-  /**
-   * Returns items loaded from a persistance store
-   * to the memory for the database.
-   *
-   * @param {TSwarmStoreDatabaseOptions<P, ItemType>['dbName']} dbName
-   * @returns {(Promise<number | Error>)}
-   * @memberof ISwarmStoreConnectorBaseWithEntriesCount
-   */
-  getCountEntriesLoaded(dbName: DBO['dbName']): Promise<number | Error>;
-
-  /**
-   * Returns enrties count exists in the persistent storage
-   * for the datbase passed in the argument.
-   *
-   * @param {TSwarmStoreDatabaseOptions<P, ItemType>['dbName']} dbName
-   * @returns {(Promise<number | Error>)}
-   * @memberof ISwarmStoreConnectorBaseWithEntriesCount
-   */
-  getCountEntriesAllExists(dbName: DBO['dbName']): Promise<number | Error>;
 }

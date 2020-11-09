@@ -7,11 +7,12 @@ import { ISwarmMessageConstructor, TSwarmMessageSerialized } from '../swarm-mess
 import { ISensitiveDataSessionStorageOptions } from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { ISwarmMessageEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
-import { TSwarmStoreDatabaseType, ISwarmStoreConnectorBasicWithEntriesCount } from '../swarm-store-class/swarm-store-class.types';
+import { TSwarmStoreDatabaseType } from '../swarm-store-class/swarm-store-class.types';
 import { ISwarmStoreConnectorOrbitDbConnecectionBasicFabric } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.types';
 import { ISwarmStoreConnector, ISwarmStoreOptionsWithConnectorFabric } from '../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageStoreOptionsWithConnectorFabric } from '../swarm-message-store/swarm-message-store.types';
 import { TSwarmStoreValueTypes, ISwarmStoreConnectorBasic } from '../swarm-store-class/swarm-store-class.types';
+import { ISwarmStoreConnectorBasicWithEntriesCount } from '../swarm-store-class/swarm-store-class-extended/swarm-store-class-with-entries-count/swarm-store-class-with-entries-count.types';
 
 export type TConnectionBridgeSwarmStoreConnectorBasic<
   P extends ESwarmStoreConnector,

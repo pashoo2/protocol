@@ -1,13 +1,11 @@
 import { SwarmStoreConnectorOrbitDB } from '../../swarm-store-connector-orbit-db';
 import { ESwarmStoreConnector } from '../../../../swarm-store-class.const';
 import { TSwarmStoreConnectorConnectionOptions } from '../../../../swarm-store-class.types';
+import { TSwarmStoreValueTypes, TSwarmStoreDatabaseType, TSwarmStoreDatabaseOptions } from '../../../../swarm-store-class.types';
 import {
-  TSwarmStoreValueTypes,
-  TSwarmStoreDatabaseType,
   ISwarmStoreConnectorBasicWithEntriesCount,
   ISwarmStoreConnectorWithEntriesCount,
-  TSwarmStoreDatabaseOptions,
-} from '../../../../swarm-store-class.types';
+} from '../../../../swarm-store-class-extended/swarm-store-class-with-entries-count/swarm-store-class-with-entries-count.types';
 
 export class SwarmStoreConnectorOrbitDBWithEntriesCount<
     ItemType extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>,

@@ -22,7 +22,7 @@ import {
   ISwarmStoreProviderOptions,
   ISwarmStoreOptionsConnectorFabric,
 } from './swarm-store-class.types';
-import { TSwarmStoreDatabaseType, ISwarmStoreConnectorBasic } from './swarm-store-class.types';
+import { TSwarmStoreDatabaseType, ISwarmStoreConnectorBasic, ISwarmStoreWithConnector } from './swarm-store-class.types';
 import {
   ISwarmStoreConnector,
   ISwarmStoreDatabasesStatuses,
@@ -62,7 +62,9 @@ export class SwarmStore<
     DBL extends TSwarmStoreOptionsOfDatabasesKnownList<P, ItemType, DBO>
   >
   extends EventEmitter<E>
-  implements ISwarmStore<P, ItemType, DbType, ConnectorBasic, PO, DBO, CO, CFO, ConnectorMain, O> {
+  implements
+    ISwarmStore<P, ItemType, DbType, ConnectorBasic, PO, DBO, CO, CFO, ConnectorMain, O>,
+    ISwarmStoreWithConnector<P, ItemType, DbType, ConnectorBasic, PO, DBO, ConnectorMain> {
   public get isReady(): boolean {
     return !!this.connector && this.connector.isReady;
   }

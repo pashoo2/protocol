@@ -6,10 +6,7 @@ import {
   TSwarmStoreDatabaseOptions,
   ISwarmStoreProviderOptions,
   ISwarmStoreOptionsConnectorFabric,
-  ISwarmStoreConnector,
   TSwarmStoreOptionsOfDatabasesKnownList,
-  ISwarmStoreConnectorBasicWithEntriesCount,
-  ISwarmStoreConnectorWithEntriesCount,
 } from '../../../swarm-store-class/swarm-store-class.types';
 import {
   TSwarmMessagesStoreGrantAccessCallback,
@@ -19,8 +16,13 @@ import {
 } from '../../swarm-message-store.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { SwarmMessageStore } from '../../swarm-message-store';
+import { extendClassSwarmStoreWithEntriesCount } from '../../../swarm-store-class/swarm-store-class-extended/swarm-store-class-with-entries-count';
+import {
+  ISwarmStoreConnectorBasicWithEntriesCount,
+  ISwarmStoreConnectorWithEntriesCount,
+} from '../../../swarm-store-class/swarm-store-class-extended/swarm-store-class-with-entries-count/swarm-store-class-with-entries-count.types';
 
-export class SwarmMessageStoreWithEntriesCount<
+export function getClassSwarmMessageStoreWithEntriesCount<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
@@ -51,21 +53,25 @@ export class SwarmMessageStoreWithEntriesCount<
   >,
   E extends ISwarmMessageStoreEvents<P, ItemType, DBO>,
   DBL extends TSwarmStoreOptionsOfDatabasesKnownList<P, ItemType, DBO>
-> extends SwarmMessageStore<
-  P,
-  ItemType,
-  DbType,
-  ConnectorBasic,
-  PO,
-  DBO,
-  CO,
-  CFO,
-  ConnectorMain,
-  MSI,
-  GAC,
-  MCF,
-  ACO,
-  O,
-  E,
-  DBL
-> {}
+>() {
+  return extendClassSwarmStoreWithEntriesCount<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain, CFO, O>(
+    class B extends SwarmMessageStore<
+      P,
+      ItemType,
+      DbType,
+      ConnectorBasic,
+      PO,
+      DBO,
+      CO,
+      CFO,
+      ConnectorMain,
+      MSI,
+      GAC,
+      MCF,
+      ACO,
+      O,
+      E,
+      DBL
+    > {}
+  );
+}

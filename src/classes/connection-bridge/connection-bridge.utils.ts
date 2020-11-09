@@ -1,9 +1,5 @@
 // @ts-nocheck
-import {
-  TSwarmStoreConnectorConnectionOptions,
-  TSwarmStoreDatabaseType,
-  ISwarmStoreConnectorBasicWithEntriesCount,
-} from '../swarm-store-class/swarm-store-class.types';
+import { TSwarmStoreConnectorConnectionOptions, TSwarmStoreDatabaseType } from '../swarm-store-class/swarm-store-class.types';
 import { ESwarmStoreConnector } from '../swarm-store-class/swarm-store-class.const';
 import { TSwarmMessageSerialized } from '../swarm-message/swarm-message-constructor.types';
 import { IConnectionBridgeSwarmConnection } from './connection-bridge.types';
@@ -12,6 +8,7 @@ import { ISwarmStoreConnectorOrbitDbConnecectionBasicFabric } from '../swarm-sto
 import OrbitDB from 'orbit-db';
 import { ISwarmStoreConnectorOrbitDbDatabaseOptions } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import { SwarmStoreConnectorOrbitDbSubclassDatabaseQueuedItemsCounted } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database-classes-extended/swarm-store-connector-orbit-db-subclass-database-queued-items-counted/swarm-store-connector-orbit-db-subclass-database-queued-items-counted';
+import { ISwarmStoreConnectorBasicWithEntriesCount } from '../swarm-store-class/swarm-store-class-extended/swarm-store-class-with-entries-count/swarm-store-class-with-entries-count.types';
 
 const connectorBasicFabricDefault = <DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>>(
   dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<TSwarmMessageSerialized>,
