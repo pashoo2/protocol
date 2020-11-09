@@ -1,10 +1,20 @@
-// @ts-nocheck
 import assert from 'assert';
 import { IConnectionBridgeOptions, IConnectionBridge } from './connection-bridge.types';
 import { ESwarmStoreConnector } from '../swarm-store-class/swarm-store-class.const';
 import { ICentralAuthorityOptions, ICentralAuthority } from '../central-authority-class/central-authority-class.types';
-import { TSwarmMessageConstructorOptions, ISwarmMessageConstructor } from '../swarm-message/swarm-message-constructor.types';
-import { ISwarmMessageStoreOptions, ISwarmMessageStore } from '../swarm-message-store/swarm-message-store.types';
+import {
+  TSwarmMessageConstructorOptions,
+  ISwarmMessageConstructor,
+  TSwarmMessageInstance,
+} from '../swarm-message/swarm-message-constructor.types';
+import {
+  ISwarmMessageStoreOptions,
+  ISwarmMessageStore,
+  ISwarmMessageStoreEvents,
+  TSwarmMessagesStoreGrantAccessCallback,
+  ISwarmMessageStoreAccessControlOptions,
+  ISwarmMessageStoreOptionsWithConnectorFabric,
+} from '../swarm-message-store/swarm-message-store.types';
 import { extend } from '../../utils/common-utils/common-utils-objects';
 import {
   CONNECTION_BRIDGE_OPTIONS_DEFAULT_AUTH_PROVIDERS_POOL,
@@ -30,7 +40,11 @@ import { ISensitiveDataSessionStorageOptions } from '../sensitive-data-session-s
 import { ISecretStorage, TSecretStorageAuthorizeCredentials } from '../secret-storage-class/secret-storage-class.types';
 import { SecretStorage } from '../secret-storage-class/secret-storage-class';
 import { IStorageProviderOptions } from '../storage-providers/storage-providers.types';
-import { TSwarmStoreDatabaseType, TSwarmStoreConnectorConnectionOptions } from '../swarm-store-class/swarm-store-class.types';
+import {
+  TSwarmStoreDatabaseType,
+  TSwarmStoreConnectorConnectionOptions,
+  TSwarmStoreOptionsOfDatabasesKnownList,
+} from '../swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageSerialized } from '../swarm-message/swarm-message-constructor.types';
 import { IConnectionBridgeSwarmConnection } from './connection-bridge.types';
 import { getSwarmStoreConnectionProviderOptionsForOrbitDb } from './connection-bridge.utils';
@@ -62,13 +76,34 @@ export class ConnectionBridge<
   PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, ConnectorBasic>,
   DBO extends TSwarmStoreDatabaseOptions<P, T>,
   CO extends ISwarmStoreProviderOptions<P, T, DbType, ConnectorBasic, PO>,
-  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain>,
   ConnectorMain extends ISwarmStoreConnector<P, T, DbType, ConnectorBasic, PO, DBO>,
-  O extends ISwarmStoreOptionsWithConnectorFabric<P, T, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain, CFO>
-> implements IConnectionBridge<P, T, DbType, ConnectorBasic, PO, DBO, CO, CFO, ConnectorMain, O> {
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain>,
+  MSI extends TSwarmMessageInstance | T,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
+  MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined,
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
+    P,
+    T,
+    DbType,
+    ConnectorBasic,
+    PO,
+    CO,
+    DBO,
+    ConnectorMain,
+    CFO,
+    MSI,
+    GAC,
+    MCF,
+    ACO
+  >,
+  CD extends boolean = true,
+  E extends ISwarmMessageStoreEvents<P, T, DBO> = ISwarmMessageStoreEvents<P, T, DBO>,
+  DBL extends TSwarmStoreOptionsOfDatabasesKnownList<P, T, DBO> = TSwarmStoreOptionsOfDatabasesKnownList<P, T, DBO>
+> implements IConnectionBridge<P, T, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O, CD> {
   public caConnection?: ICentralAuthority;
 
-  public storage?: ISwarmMessageStore<P, T, DbType, ConnectorBasic, ConnectorMain, O>;
+  public storage?: ISwarmMessageStore<P, T, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>;
 
   public messageConstructor?: ISwarmMessageConstructor;
 
@@ -80,7 +115,7 @@ export class ConnectionBridge<
     return this._secretStorage;
   }
 
-  protected options?: IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, true>;
+  protected options?: IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, MSI, GAC, MCF, ACO, CD>;
 
   protected optionsCA?: ICentralAuthorityOptions;
 
@@ -88,7 +123,7 @@ export class ConnectionBridge<
 
   protected optionsSwarmConnection?: any;
 
-  protected optionsMessageStorage?: ISwarmMessageStoreOptions<P, T, DbType, ConnectorBasic>;
+  protected optionsMessageStorage?: ISwarmMessageStoreOptions<P, T, DbType, ConnectorBasic, PO, MSI, GAC, MCF, ACO>;
 
   protected session?: ISensitiveDataSessionStorage;
 
@@ -109,7 +144,9 @@ export class ConnectionBridge<
    * @memberof ConnectionBridge
    * @throws
    */
-  public async connect(options: IConnectionBridgeOptions<P, T, DbType>): Promise<void> {
+  public async connect(
+    options: IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, MSI, GAC, MCF, ACO, CD>
+  ): Promise<void> {
     await this.setOptions(options);
     try {
       await this.startSession();
@@ -134,9 +171,13 @@ export class ConnectionBridge<
    * @returns
    * @memberof ConnectionBridge
    */
-  public async checkSessionAvailable(options?: ISensitiveDataSessionStorageOptions | IConnectionBridgeOptions<P, T, DbType>) {
-    const sessionParams = (options as IConnectionBridgeOptions<P, T, DbType>)?.auth
-      ? (options as IConnectionBridgeOptions<P, T, DbType>)?.auth.session
+  public async checkSessionAvailable(
+    options?:
+      | ISensitiveDataSessionStorageOptions
+      | IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, MSI, GAC, MCF, ACO, CD>
+  ) {
+    const sessionParams = (options as IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, MSI, GAC, MCF, ACO, CD>)?.auth
+      ? (options as IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, MSI, GAC, MCF, ACO, CD>)?.auth.session
       : (options as ISensitiveDataSessionStorageOptions | undefined);
 
     if (!sessionParams) {
@@ -240,7 +281,7 @@ export class ConnectionBridge<
   protected getSwarmStoreConnectionProviderOptions<T>(
     swarmConnection: IConnectionBridgeSwarmConnection<T>
   ): TSwarmStoreConnectorConnectionOptions<P, TSwarmMessageSerialized, DbType, ConnectorBasic> {
-    return getSwarmStoreConnectionProviderOptionsForOrbitDb(
+    return getSwarmStoreConnectionProviderOptionsForOrbitDb<TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>>(
       (swarmConnection as unknown) as IConnectionBridgeSwarmConnection<IPFS>,
       this.options?.storage.connectorBasicFabric
     ) as TSwarmStoreConnectorConnectionOptions<P, TSwarmMessageSerialized, DbType, ConnectorBasic>;

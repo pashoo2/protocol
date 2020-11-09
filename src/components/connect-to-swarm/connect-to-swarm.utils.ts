@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { ConnectionBridge } from 'classes';
 import { CONNECT_TO_SWARM_CONNECTION_OPTIONS } from './connect-to-swarm.const';
 

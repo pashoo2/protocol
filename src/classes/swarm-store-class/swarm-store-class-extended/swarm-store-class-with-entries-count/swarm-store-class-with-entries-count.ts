@@ -32,6 +32,6 @@ export function getClassSwarmStoreWithEntriesCount<
   DBL extends TSwarmStoreOptionsOfDatabasesKnownList<P, ItemType, DBO>
 >() {
   return extendClassSwarmStoreWithEntriesCount<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain, CFO, O>(
-    class BC extends SwarmStore<P, ItemType, DbType, ConnectorBasic, PO, DBO, CO, CFO, ConnectorMain, O, E, DBL> {}
+    class BC extends SwarmStore<P, ItemType, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, CFO, O, E, DBL> {}
   );
 }

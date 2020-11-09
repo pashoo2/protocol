@@ -31,12 +31,12 @@ export function extendClassSwarmStoreWithEntriesCount<
   O extends ISwarmStoreOptionsWithConnectorFabric<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain, CFO>
 >(
   BaseClass: ConstructorType<
-    ISwarmStore<P, ItemType, DbType, ConnectorBasic, PO, DBO, CO, CFO, ConnectorMain, O> &
+    ISwarmStore<P, ItemType, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, CFO, O> &
       ISwarmStoreWithConnector<P, ItemType, DbType, ConnectorBasic, PO, DBO, ConnectorMain>
   >
 ): ConstructorType<
   InstanceType<typeof BaseClass> &
-    ISwarmStoreWithEntriesCount<P, ItemType, DbType, ConnectorBasic, PO, DBO, CO, CFO, ConnectorMain, O>
+    ISwarmStoreWithEntriesCount<P, ItemType, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, CFO, O>
 > {
   return (class SwarmStoreWithEntriesCount extends BaseClass {
     async getCountEntriesLoaded(dbName: TSwarmStoreDatabaseOptions<P, ItemType>['dbName']): Promise<number | Error> {
@@ -58,6 +58,6 @@ export function extendClassSwarmStoreWithEntriesCount<
     }
   } as unknown) as ConstructorType<
     InstanceType<typeof BaseClass> &
-      ISwarmStoreWithEntriesCount<P, ItemType, DbType, ConnectorBasic, PO, DBO, CO, CFO, ConnectorMain, O>
+      ISwarmStoreWithEntriesCount<P, ItemType, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, CFO, O>
   >;
 }

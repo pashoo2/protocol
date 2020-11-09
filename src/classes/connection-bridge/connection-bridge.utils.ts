@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { TSwarmStoreConnectorConnectionOptions, TSwarmStoreDatabaseType } from '../swarm-store-class/swarm-store-class.types';
 import { ESwarmStoreConnector } from '../swarm-store-class/swarm-store-class.const';
 import { TSwarmMessageSerialized } from '../swarm-message/swarm-message-constructor.types';
