@@ -26,6 +26,9 @@ import {
 import { ISwarmStoreConnectorOrbitDbConnecectionBasicFabric } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.types';
 import { ISwarmStoreConnectorBasic, ISwarmStoreConnector } from '../swarm-store-class/swarm-store-class.types';
 import { ISwarmStoreConnectorBasicWithEntriesCount } from '../swarm-store-class/swarm-store-class-extended/swarm-store-class-with-entries-count/swarm-store-class-with-entries-count.types';
+import { IPFS } from 'types/ipfs.types';
+
+export type TNativeConnectionType<P extends ESwarmStoreConnector> = P extends ESwarmStoreConnector.OrbitDB ? IPFS : never;
 
 export type TConnectionBridgeSwarmStoreConnectorBasic<
   P extends ESwarmStoreConnector,
@@ -65,8 +68,8 @@ export interface IConnectionBridgeOptionsAuth<CD extends boolean = false> {
   authProvidersPool?: ICentralAuthorityOptions['authProvidersPool'];
 }
 
-export interface IConnectionBridgeSwarmConnection<T> {
-  getNativeConnection(): T;
+export interface IConnectionBridgeSwarmConnection<P extends ESwarmStoreConnector, NC extends TNativeConnectionType<P>> {
+  getNativeConnection(): NC;
 }
 
 export interface IConnectionBridgeStorageOptions<
@@ -102,6 +105,7 @@ export interface IConnectionBridgeOptions<
   ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined,
   CD extends boolean
 > {
+  swarmStoreConnectorType: P;
   auth: IConnectionBridgeOptionsAuth<CD>;
   user: {
     /**

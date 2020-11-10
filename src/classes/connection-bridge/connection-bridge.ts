@@ -1,7 +1,16 @@
 import assert from 'assert';
-import { IConnectionBridgeOptions, IConnectionBridge } from './connection-bridge.types';
+import {
+  IConnectionBridgeOptions,
+  IConnectionBridge,
+  TNativeConnectionType,
+  IConnectionBridgeOptionsAuth,
+} from './connection-bridge.types';
 import { ESwarmStoreConnector } from '../swarm-store-class/swarm-store-class.const';
-import { ICentralAuthorityOptions, ICentralAuthority } from '../central-authority-class/central-authority-class.types';
+import {
+  ICentralAuthorityOptions,
+  ICentralAuthority,
+  ICentralAuthorityUserCredentials,
+} from '../central-authority-class/central-authority-class.types';
 import {
   TSwarmMessageConstructorOptions,
   ISwarmMessageConstructor,
@@ -37,7 +46,11 @@ import {
 } from '../swarm-messgae-encrypted-cache/swarm-message-encrypted-cache.utils';
 import { ISwarmMessgaeEncryptedCache } from '../swarm-messgae-encrypted-cache';
 import { ISensitiveDataSessionStorageOptions } from '../sensitive-data-session-storage/sensitive-data-session-storage.types';
-import { ISecretStorage, TSecretStorageAuthorizeCredentials } from '../secret-storage-class/secret-storage-class.types';
+import {
+  ISecretStorage,
+  TSecretStorageAuthorizeCredentials,
+  TSecretStorageAuthOptionsCredentials,
+} from '../secret-storage-class/secret-storage-class.types';
 import { SecretStorage } from '../secret-storage-class/secret-storage-class';
 import { IStorageProviderOptions } from '../storage-providers/storage-providers.types';
 import {
@@ -47,16 +60,15 @@ import {
 } from '../swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageSerialized } from '../swarm-message/swarm-message-constructor.types';
 import { IConnectionBridgeSwarmConnection } from './connection-bridge.types';
-import { getSwarmStoreConnectionProviderOptionsForOrbitDb } from './connection-bridge.utils';
+import { getSwarmStoreConnectionProviderOptionsForSwarmStoreConnector } from './connection-bridge.utils';
 import { IPFS } from 'types/ipfs.types';
+import { ICentralAuthorityUserProfile } from '../central-authority-class/central-authority-class-types/central-authority-class-types-common';
 import {
   ISwarmStoreConnector,
-  TSwarmStoreValueTypes,
   ISwarmStoreConnectorBasic,
   TSwarmStoreDatabaseOptions,
   ISwarmStoreProviderOptions,
   ISwarmStoreOptionsConnectorFabric,
-  ISwarmStoreOptionsWithConnectorFabric,
 } from '../swarm-store-class/swarm-store-class.types';
 
 /**
@@ -70,7 +82,7 @@ import {
  */
 export class ConnectionBridge<
   P extends ESwarmStoreConnector,
-  T extends TSwarmStoreValueTypes<P>,
+  T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType>,
   PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, ConnectorBasic>,
@@ -97,6 +109,7 @@ export class ConnectionBridge<
     MCF,
     ACO
   >,
+  NC extends TNativeConnectionType<P>,
   CD extends boolean = true,
   E extends ISwarmMessageStoreEvents<P, T, DBO> = ISwarmMessageStoreEvents<P, T, DBO>,
   DBL extends TSwarmStoreOptionsOfDatabasesKnownList<P, T, DBO> = TSwarmStoreOptionsOfDatabasesKnownList<P, T, DBO>
@@ -114,6 +127,8 @@ export class ConnectionBridge<
   public get secretStorage() {
     return this._secretStorage;
   }
+
+  protected swarmStoreConnectorType?: P;
 
   protected options?: IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, MSI, GAC, MCF, ACO, CD>;
 
@@ -133,7 +148,7 @@ export class ConnectionBridge<
 
   protected _secretStorage?: ISecretStorage;
 
-  protected swarmConnection: IConnectionBridgeSwarmConnection<unknown> | undefined;
+  protected swarmConnection: IConnectionBridgeSwarmConnection<P, NC> | undefined;
 
   /**
    * Connect to the central authority,
@@ -147,14 +162,15 @@ export class ConnectionBridge<
   public async connect(
     options: IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, MSI, GAC, MCF, ACO, CD>
   ): Promise<void> {
-    await this.setOptions(options);
+    await this.startUserDataStore();
     try {
+      await this.validateAndSetOptions(options);
       await this.startSession();
-      await this.startCentralAuthorityConnection();
-      await this.createSwarmMessageEncryptedCacheFabric();
-      await this.createSwarmMessageConstructorFabric();
-      await this.startSwarmMessageEncryptedCache();
-      await this.createMessageConstructor();
+      this.setCurrentCentralAuthorityConnection(await this.createAndStartConnectionWithCentralAuthority());
+      this.setCurrentSwarmMessageEncryptedCacheFabric(await this.createSwarmMessageEncryptedCacheFabric());
+      this.setCurrentSwarmMessageConstructorFabric(await this.createSwarmMessageConstructorFabric());
+      this.setSwarmMessageEncryptedCache(await this.createSwarmMessageEncryptedCache());
+      this.setSwarmMessageConstructor(await this.createSwarmMessageConstructor());
       await this.startSwarmConnection();
       await this.startSwarmMessageStorageConnection();
       await this.setSessionExists();
@@ -176,24 +192,23 @@ export class ConnectionBridge<
       | ISensitiveDataSessionStorageOptions
       | IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, MSI, GAC, MCF, ACO, CD>
   ) {
-    const sessionParams = (options as IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, MSI, GAC, MCF, ACO, CD>)?.auth
-      ? (options as IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, MSI, GAC, MCF, ACO, CD>)?.auth.session
-      : (options as ISensitiveDataSessionStorageOptions | undefined);
+    const sessionParams = this.getSessionParamsOrUndefinedFromConnectionBridgeOrSensitiveDataSessionStorageOptions(options);
 
     if (!sessionParams) {
       return false;
     }
     await this.startUserDataStore();
-    if (!(await this.userDataStore?.getItem(CONNECTION_BRIDGE_SESSION_STORAGE_KEYS.USER_LOGIN))) {
+    if (!(await this.readValueFromUserDataStoreForUserLoginKey())) {
       return false;
     }
 
-    const session = await this.createSessionFromStorage({
+    const sensitiveDataStorage = await this.createSensitiveDataStorageForSession({
       ...sessionParams,
+      // do not clear data from the storage becuse it can be used later
       clearStorageAfterConnect: false,
     });
 
-    return !!(await session.getItem(CONNECTION_BRIDGE_SESSION_STORAGE_KEYS.SESSION_DATA_AVAILABLE));
+    return await this.whetherSessionDataExistsInSensitiveDataSessionStorage(sensitiveDataStorage);
   }
 
   /**
@@ -212,27 +227,42 @@ export class ConnectionBridge<
     await this.closeCentralAuthorityConnection();
   }
 
-  /**
-   * set options for the CentralAuthority connection.
-   *
-   * @protected
-   * @memberof ConnectionBridge
-   * @throws
-   */
-  protected setOptionsCA(): ICentralAuthorityOptions {
-    const { options } = this;
-    const { auth: authOptions, user: userOptions } = options!;
+  protected checkOptionsIsDefined(): this is {
+    options: IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, MSI, GAC, MCF, ACO, CD>;
+  } {
+    if (!this.options) {
+      throw new Error('Options should be defined');
+    }
+    return true;
+  }
 
-    assert(authOptions, 'Authorization options must be defined');
-    assert(typeof authOptions === 'object', 'Authorization options must be an object');
-    assert(userOptions, 'User options must be defined');
-    assert(typeof userOptions === 'object', 'User options must be an object');
+  protected validateAuthOptions(): void {
+    if (this.checkOptionsIsDefined()) {
+      const { auth: authOptions } = this.options;
 
+      assert(authOptions, 'Authorization options must be defined');
+      assert(typeof authOptions === 'object', 'Authorization options must be an object');
+    }
+  }
+
+  protected validatetUserOptions() {
+    if (this.checkOptionsIsDefined()) {
+      const { user: userOptions } = this.options;
+
+      assert(userOptions, 'User options must be defined');
+      assert(typeof userOptions === 'object', 'User options must be an object');
+    }
+  }
+
+  protected createOptionsForCentralAuthority(
+    authOptions: IConnectionBridgeOptionsAuth<CD>,
+    userOptions: { profile?: Partial<ICentralAuthorityUserProfile> | undefined }
+  ): ICentralAuthorityOptions {
     const authProvidersPool: ICentralAuthorityOptions['authProvidersPool'] = extend(
       authOptions.authProvidersPool,
       CONNECTION_BRIDGE_OPTIONS_DEFAULT_AUTH_PROVIDERS_POOL
     );
-    const optionsCentralAuthority: ICentralAuthorityOptions = {
+    return {
       user: {
         profile: userOptions.profile,
         authProviderUrl: authOptions.providerUrl,
@@ -243,8 +273,35 @@ export class ConnectionBridge<
       },
       authProvidersPool,
     };
+  }
 
+  protected setOptionsCentralAuthority(optionsCentralAuthority: ICentralAuthorityOptions) {
     this.optionsCA = optionsCentralAuthority;
+  }
+
+  protected createOptionsForCentralAuthorityFromConnectionBridgeOptions(): ICentralAuthorityOptions {
+    if (!this.checkOptionsIsDefined()) {
+      throw new Error('Options must be defined');
+    }
+
+    const { auth: authOptions, user: userOptions } = this.options;
+    return this.createOptionsForCentralAuthority(authOptions, userOptions);
+  }
+
+  /**
+   * set options for the CentralAuthority connection.
+   *
+   * @protected
+   * @memberof ConnectionBridge
+   * @throws
+   */
+  protected createOptionsCentralAuthority(): ICentralAuthorityOptions {
+    if (!this.checkOptionsIsDefined()) {
+      throw new Error('Options must be defined');
+    }
+    this.validateAuthOptions();
+    this.validatetUserOptions();
+    const optionsCentralAuthority = this.createOptionsForCentralAuthorityFromConnectionBridgeOptions();
     return optionsCentralAuthority;
   }
 
@@ -256,7 +313,7 @@ export class ConnectionBridge<
    * @memberof ConnectionBridge
    * @throws
    */
-  protected setOptionsMessageConstructor(): TSwarmMessageConstructorOptions {
+  protected createOptionsMessageConstructor(): TSwarmMessageConstructorOptions {
     const { caConnection } = this;
 
     if (!caConnection) {
@@ -278,13 +335,29 @@ export class ConnectionBridge<
    */
   protected setOptionsSwarmConnection() {}
 
-  protected getSwarmStoreConnectionProviderOptions<T>(
-    swarmConnection: IConnectionBridgeSwarmConnection<T>
-  ): TSwarmStoreConnectorConnectionOptions<P, TSwarmMessageSerialized, DbType, ConnectorBasic> {
-    return getSwarmStoreConnectionProviderOptionsForOrbitDb<TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>>(
-      (swarmConnection as unknown) as IConnectionBridgeSwarmConnection<IPFS>,
-      this.options?.storage.connectorBasicFabric
-    ) as TSwarmStoreConnectorConnectionOptions<P, TSwarmMessageSerialized, DbType, ConnectorBasic>;
+  protected getSwarmStoreConnectionProviderOptions<SC extends IConnectionBridgeSwarmConnection<P, NC>>(
+    swarmConnection: SC
+  ): TSwarmStoreConnectorConnectionOptions<P, T, DbType, ConnectorBasic> {
+    const { options, swarmStoreConnectorType } = this;
+
+    if (!swarmStoreConnectorType) {
+      throw new Error('Uknown connector type');
+    }
+    if (!options) {
+      throw new Error('Options should be defined');
+    }
+
+    const { storage } = options;
+
+    const swarmStoreConnectionProviderOptions = getSwarmStoreConnectionProviderOptionsForSwarmStoreConnector<
+      P,
+      T,
+      DbType,
+      NC,
+      SC
+    >(swarmStoreConnectorType, swarmConnection, storage.connectorBasicFabric);
+
+    return swarmStoreConnectionProviderOptions;
   }
 
   /**
@@ -350,6 +423,104 @@ export class ConnectionBridge<
     }
   }
 
+  protected setSwarmStoreConnectorType(swarmStoreConnectorType: P): void {
+    this.swarmStoreConnectorType = swarmStoreConnectorType;
+  }
+
+  protected setOptions(options: IConnectionBridgeOptions<P, T, DbType, ConnectorBasic>): void {
+    this.options = options;
+  }
+
+  protected checkUserDataStoreIsReady(): this is {
+    userDataStore: ISensitiveDataSessionStorage;
+  } {
+    const { userDataStore } = this;
+    if (!userDataStore) {
+      throw new Error('User data store is not initialized');
+    }
+    return true;
+  }
+
+  protected async readValueFromUserDataStore(key: CONNECTION_BRIDGE_SESSION_STORAGE_KEYS): Promise<unknown | undefined> {
+    if (this.checkUserDataStoreIsReady()) {
+      return this.userDataStore.getItem(key);
+    }
+    return undefined;
+  }
+
+  protected async setValueInUserDataStore(key: CONNECTION_BRIDGE_SESSION_STORAGE_KEYS, value: unknown): Promise<void> {
+    if (this.checkUserDataStoreIsReady()) {
+      return this.userDataStore.setItem(key, value);
+    }
+  }
+
+  protected readValueFromUserDataStoreForUserLoginKey() {
+    return this.readValueFromUserDataStore(CONNECTION_BRIDGE_SESSION_STORAGE_KEYS.USER_LOGIN);
+  }
+
+  protected async readUserLoginFromUserDataStore(): Promise<string | undefined> {
+    const userLogin = this.readValueFromUserDataStoreForUserLoginKey();
+
+    if (!userLogin) {
+      return;
+    }
+    if (typeof userLogin !== 'string') {
+      throw new Error('User login from the user data store should be a string');
+    }
+    return userLogin;
+  }
+
+  protected async getUserLoginForCurrentSession(): Promise<string> {
+    const login = await this.readUserLoginFromUserDataStore();
+
+    if (!login) {
+      throw new Error('There is no login provided in options and no session data found to get it');
+    }
+    return login;
+  }
+
+  protected validateOptions(options: any): options is IConnectionBridgeOptions<P, T, DbType, ConnectorBasic> {
+    assert(options, 'Options must be provided');
+    assert(typeof options === 'object', 'Options must be an object');
+    assert(options.swarmStoreConnectorType, 'swarmStoreConnectorType should be defined');
+    return true;
+  }
+
+  protected isOptionsWithCredentials(
+    options: IConnectionBridgeOptions<P, T, DbType, ConnectorBasic>
+  ): options is IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, true> {
+    return !!options.auth.credentials?.login;
+  }
+
+  protected async setOptionsWithUserCredentialsProvided(
+    options: IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, true>
+  ): Promise<void> {
+    await this.setValueInUserDataStore(CONNECTION_BRIDGE_SESSION_STORAGE_KEYS.USER_LOGIN, options.auth.credentials.login);
+    this.setOptions(options);
+  }
+
+  protected async setOptionsWithoutUserCredentials(
+    options: IConnectionBridgeOptions<P, T, DbType, ConnectorBasic>
+  ): Promise<void> {
+    assert(options.auth.session, 'A session must be started if there is no credentials provided');
+
+    const login = await this.getUserLoginForCurrentSession();
+
+    if (!login) {
+      throw new Error('There is no login provided in options and no session data found to get it');
+    }
+    this.options = {
+      ...options,
+      auth: {
+        ...options.auth,
+        credentials: {
+          ...options.auth.credentials,
+          login,
+        },
+      },
+    };
+  }
+
   /**
    *
    *
@@ -358,44 +529,28 @@ export class ConnectionBridge<
    * @memberof ConnectionBridge
    * @throws
    */
-  protected async setOptions(options: IConnectionBridgeOptions<P, T, DbType, ConnectorBasic>) {
-    await this.startUserDataStore();
-    assert(options, 'Options must be provided');
-    assert(typeof options === 'object', 'Options must be an object');
-    if (options.auth.credentials?.login) {
-      await this.userDataStore?.setItem(CONNECTION_BRIDGE_SESSION_STORAGE_KEYS.USER_LOGIN, options.auth.credentials.login);
-      this.options = (options as unknown) as IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, true>;
+  protected async validateAndSetOptions(options: IConnectionBridgeOptions<P, T, DbType, ConnectorBasic>): Promise<void> {
+    this.validateOptions(options);
+    this.setSwarmStoreConnectorType(options.swarmStoreConnectorType);
+    if (this.isOptionsWithCredentials(options)) {
+      this.setOptionsWithUserCredentialsProvided(options);
     } else {
-      assert(options.auth.session, 'A session must be started if there is no credentials provided');
-
-      const login = await this.userDataStore?.getItem(CONNECTION_BRIDGE_SESSION_STORAGE_KEYS.USER_LOGIN);
-
-      if (!login) {
-        throw new Error('There is no login provided in options and no session data found to get it');
-      }
-      this.options = {
-        ...options,
-        auth: {
-          ...options.auth,
-          credentials: {
-            ...options.auth.credentials,
-            login,
-          },
-        },
-      };
+      this.setOptionsWithoutUserCredentials(options);
     }
   }
 
-  protected async createSessionFromStorage(
+  protected getSensitiveDataStoragePrefixForSession(sessionParams: ISensitiveDataSessionStorageOptions): string | undefined {
+    return sessionParams.storagePrefix ? `${sessionParams.storagePrefix}${this.options?.auth.credentials?.login}` : undefined;
+  }
+
+  protected async createSensitiveDataStorageForSession(
     sessionParams: ISensitiveDataSessionStorageOptions
   ): Promise<ISensitiveDataSessionStorage> {
     const session = new SensitiveDataSessionStorage();
 
     await session.connect({
       ...sessionParams,
-      storagePrefix: sessionParams.storagePrefix
-        ? `${sessionParams.storagePrefix}${this.options?.auth.credentials?.login}`
-        : undefined,
+      storagePrefix: this.getSensitiveDataStoragePrefixForSession(sessionParams),
     });
     return session;
   }
@@ -412,8 +567,22 @@ export class ConnectionBridge<
     const sessionParams = this.options?.auth.session;
 
     if (sessionParams) {
-      this.session = await this.createSessionFromStorage(sessionParams);
+      this.session = await this.createSensitiveDataStorageForSession(sessionParams);
     }
+  }
+
+  protected async createCentralAuthorityInstnace(optionsCentralAuthority: ICentralAuthorityOptions): Promise<ICentralAuthority> {
+    const centralAuthority = new CentralAuthority();
+    const connectionResult = await centralAuthority.connect(optionsCentralAuthority);
+
+    if (connectionResult instanceof Error) {
+      throw connectionResult;
+    }
+    return centralAuthority;
+  }
+
+  protected setCurrentCentralAuthorityConnection(centralAuthority: ICentralAuthority) {
+    this.caConnection = centralAuthority;
   }
 
   /**
@@ -423,15 +592,15 @@ export class ConnectionBridge<
    * @memberof ConnectionBridge
    * @throws
    */
-  protected async startCentralAuthorityConnection(): Promise<void> {
-    const optioinsCA = this.setOptionsCA();
-    const centralAuthority = new CentralAuthority();
-    const connectionResult = await centralAuthority.connect(optioinsCA);
+  protected async createAndStartConnectionWithCentralAuthority(): Promise<ICentralAuthority> {
+    const optioinsCA = this.createOptionsCentralAuthority();
 
-    if (connectionResult instanceof Error) {
-      throw connectionResult;
-    }
-    this.caConnection = centralAuthority;
+    this.setOptionsCentralAuthority(optioinsCA);
+    return this.createCentralAuthorityInstnace(optioinsCA);
+  }
+
+  protected setSwarmMessageConstructor(swarmMessageConstructor: ISwarmMessageConstructor): void {
+    this.messageConstructor = swarmMessageConstructor;
   }
 
   /**
@@ -441,13 +610,11 @@ export class ConnectionBridge<
    * @memberof ConnectionBridge
    * @throws
    */
-  protected async createMessageConstructor(): Promise<void> {
-    const options = this.setOptionsMessageConstructor();
-
+  protected async createSwarmMessageConstructor(): Promise<ISwarmMessageConstructor> {
     if (!this.swarmMessageConstructorFabric) {
       throw new Error('Swarm message constructor fabric must be created before');
     }
-    this.messageConstructor = await this.swarmMessageConstructorFabric(options);
+    return this.swarmMessageConstructorFabric(this.createOptionsMessageConstructor());
   }
 
   /**
@@ -470,55 +637,107 @@ export class ConnectionBridge<
     };
   }
 
-  protected getOptionsSwarmMessageEncryptedCache() {
-    const login = this.options!.auth.credentials.login;
+  protected getUserCredentialsFromOptions(): Pick<ICentralAuthorityUserCredentials, 'cryptoCredentials' | 'login' | 'password'> {
+    if (!this.checkOptionsIsDefined()) {
+      throw new Error('Options should be defined');
+    }
+    const { auth } = this.options;
+    const { credentials } = auth;
 
+    if (!credentials) {
+      throw new Error('Credentials should be defined');
+    }
+    return credentials as Pick<ICentralAuthorityUserCredentials, 'cryptoCredentials' | 'login' | 'password'>;
+  }
+
+  protected getUserLoginFromOptions(): string {
+    return this.getUserCredentialsFromOptions().login;
+  }
+
+  protected getUserPasswordFromOptions(): string | undefined {
+    return this.getUserCredentialsFromOptions().password;
+  }
+
+  protected getOptionsSwarmMessageEncryptedCache(): TSecretStorageAuthOptionsCredentials {
+    const userPassword = this.getUserPasswordFromOptions();
+
+    if (!userPassword && !this.session) {
+      throw new Error('Session with user secret key or password shoul exists');
+    }
     return {
-      login,
-      password: this.options!.auth.credentials.password!,
+      login: this.getUserLoginFromOptions(),
+      password: userPassword,
       session: this.session,
+    } as TSecretStorageAuthOptionsCredentials;
+  }
+
+  protected getDatabaseNamePrefixForEncryptedCahce(userLogin: string): string {
+    return `__${CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX.MESSAGE_CACHE_STORAGE}_//_${userLogin}`;
+  }
+
+  protected setCurrentSwarmMessageEncryptedCacheFabric(
+    swarmMessageEncryptedCacheFabric: ISwarmMessageEncryptedCacheFabric
+  ): void {
+    this.swarmMessageEncryptedCacheFabric = swarmMessageEncryptedCacheFabric;
+  }
+
+  protected async createSwarmMessageEncryptedCacheFabric(): Promise<ISwarmMessageEncryptedCacheFabric> {
+    return getSwarmMessageEncryptedCacheFabric(
+      this.getOptionsSwarmMessageEncryptedCache(),
+      this.getDatabaseNamePrefixForEncryptedCahce(this.getUserLoginFromOptions())
+    );
+  }
+
+  protected getSwarmMessageConstructorOptions() {
+    if (!this.caConnection) {
+      throw new Error('Connection to the Central authority should exists');
+    }
+    return {
+      caConnection: this.caConnection,
+      instances: {},
     };
   }
 
-  protected async createSwarmMessageEncryptedCacheFabric(): Promise<void> {
-    const login = this.options!.auth.credentials.login;
-    this.swarmMessageEncryptedCacheFabric = await getSwarmMessageEncryptedCacheFabric(
+  protected setCurrentSwarmMessageConstructorFabric(
+    swarmMessageConstructorFabric: ISwarmMessageConstructorWithEncryptedCacheFabric
+  ): void {
+    this.swarmMessageConstructorFabric = swarmMessageConstructorFabric;
+  }
+
+  protected async createSwarmMessageConstructorFabric(): Promise<ISwarmMessageConstructorWithEncryptedCacheFabric> {
+    return await getSwarmMessageConstructorWithCacheFabric(
       this.getOptionsSwarmMessageEncryptedCache(),
-      `__${CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX.MESSAGE_CACHE_STORAGE}_//_${login}`
+      this.getSwarmMessageConstructorOptions(),
+      this.getDatabaseNamePrefixForEncryptedCahce(this.getUserLoginFromOptions())
     );
   }
 
-  protected async createSwarmMessageConstructorFabric(): Promise<void> {
-    const login = this.options!.auth.credentials.login;
-
-    this.swarmMessageConstructorFabric = await getSwarmMessageConstructorWithCacheFabric(
-      this.getOptionsSwarmMessageEncryptedCache(),
-      {
-        caConnection: this.caConnection!,
-        instances: {},
-      },
-      `__${CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX.MESSAGE_CACHE_STORAGE}_//_${login}`
-    );
+  protected getDatabaseNameForEncryptedCacheInstance(dbNamePrefix: string): string {
+    const userLogin = this.getUserLoginFromOptions();
+    return `${dbNamePrefix}_//_${userLogin}`;
   }
 
   protected startEncryptedCache(dbNamePrefix: string): Promise<ISwarmMessgaeEncryptedCache> {
-    const login = this.options!.auth.credentials.login;
-
     if (!this.swarmMessageEncryptedCacheFabric) {
       throw new Error('Encrypted cache fabric must be started before');
     }
+
+    const databaseFullName = this.getDatabaseNameForEncryptedCacheInstance(dbNamePrefix);
+
     return this.swarmMessageEncryptedCacheFabric({
-      dbName: `${dbNamePrefix}_//_${login}`,
+      dbName: databaseFullName,
     });
   }
 
-  protected async startSwarmMessageEncryptedCache(): Promise<void> {
+  protected setSwarmMessageEncryptedCache(swarmMessageEncryptedCache: ISwarmMessgaeEncryptedCache): void {
+    this.swarmMessageEncryptedCache = swarmMessageEncryptedCache;
+  }
+
+  protected async createSwarmMessageEncryptedCache(): Promise<ISwarmMessgaeEncryptedCache> {
     if (!this.swarmMessageEncryptedCacheFabric) {
       throw new Error('Encrypted cache fabric must be started before');
     }
-    this.swarmMessageEncryptedCache = await this.startEncryptedCache(
-      CONNECTION_BRIDGE_STORAGE_DATABASE_NAME.MESSAGE_CACHE_STORAGE
-    );
+    return await this.startEncryptedCache(CONNECTION_BRIDGE_STORAGE_DATABASE_NAME.MESSAGE_CACHE_STORAGE);
   }
 
   /**
@@ -674,5 +893,24 @@ export class ConnectionBridge<
       throw authResult === false ? new Error('Conntection to the secret storage failed') : authResult;
     }
     this._secretStorage = secretStorage;
+  }
+
+  protected getSessionParamsOrUndefinedFromConnectionBridgeOrSensitiveDataSessionStorageOptions(
+    options?:
+      | ISensitiveDataSessionStorageOptions
+      | IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, MSI, GAC, MCF, ACO, CD>
+  ): ISensitiveDataSessionStorageOptions | undefined {
+    if (!options) {
+      return undefined;
+    }
+    return (options as IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, MSI, GAC, MCF, ACO, CD>).auth
+      ? (options as IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, MSI, GAC, MCF, ACO, CD>).auth.session
+      : (options as ISensitiveDataSessionStorageOptions);
+  }
+
+  protected async whetherSessionDataExistsInSensitiveDataSessionStorage(
+    sensitiveDataStorage: ISensitiveDataSessionStorage
+  ): Promise<boolean> {
+    return !!(await sensitiveDataStorage.getItem(CONNECTION_BRIDGE_SESSION_STORAGE_KEYS.SESSION_DATA_AVAILABLE));
   }
 }
