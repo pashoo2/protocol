@@ -112,7 +112,7 @@ export interface ISecretStorage extends IStorageCommon {
    * @returns {(Promise<CryptoKey | Error>)}
    * @memberof ISecretStorage
    */
-  generateCryptoKey(credentialsOrSession: ISecretStoreCredentials | ISecretStoreCredentialsSession): Promise<CryptoKey | Error>;
+  generateCryptoKey(credentialsOrSession: TSecretStorageAuthorizazionOptions): Promise<CryptoKey | Error>;
   /**
    * remove all content withting the database
    * connected to.

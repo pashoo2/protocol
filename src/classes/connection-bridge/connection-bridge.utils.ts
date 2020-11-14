@@ -29,7 +29,7 @@ export const connectorBasicFabricOrbitDBDefault = <
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>
 >(
-  dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<T>,
+  dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<T, DbType>,
   orbitDb: OrbitDB
 ): ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, T, DbType> => {
   return new SwarmStoreConnectorOrbitDbSubclassDatabaseQueuedItemsCounted(dbOptions, orbitDb);
@@ -68,7 +68,7 @@ export const getSwarmStoreConnectionProviderOptionsForSwarmStoreConnector = <
       swarmConnection,
       connectorBasicFabric
     );
-    return orbitDbOptions as TSwarmStoreConnectorConnectionOptions<P, T, DbType, ConnectorBasic>;
+    return orbitDbOptions;
   }
   throw new Error('This swarm store connector type is not supported');
 };
@@ -97,7 +97,7 @@ const getMainConnectorFabricForOrbitDB = <
   DbType extends TSwarmStoreDatabaseType<P>,
   ConnectorBasic extends ISwarmStoreConnectorBasicWithEntriesCount<P, ItemType, DbType>,
   PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, ConnectorBasic>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
   CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, ConnectorBasic, PO>,
   ConnectorMain extends ISwarmStoreConnectorWithEntriesCount<P, ItemType, DbType, ConnectorBasic, PO, DBO>
 >(
@@ -136,7 +136,7 @@ export const getMainConnectorFabricDefault = <
   DbType extends TSwarmStoreDatabaseType<P>,
   ConnectorBasic extends ISwarmStoreConnectorBasicWithEntriesCount<P, ItemType, DbType>,
   PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, ConnectorBasic>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
   CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, ConnectorBasic, PO>,
   ConnectorMain extends ISwarmStoreConnectorWithEntriesCount<P, ItemType, DbType, ConnectorBasic, PO, DBO>
 >(

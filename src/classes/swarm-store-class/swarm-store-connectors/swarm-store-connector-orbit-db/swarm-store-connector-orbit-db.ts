@@ -42,7 +42,11 @@ import { ESwarmStoreConnectorOrbitDbDatabaseType } from './swarm-store-connector
 import { TSwarmStoreDatabaseType, ISwarmStoreConnectorBasic } from '../../swarm-store-class.types';
 import { ISwarmStoreConnectorOrbitDbUtilsAddressCreateRootPathOptions } from './swarm-store-connector-orbit-db-utils/swarm-store-connector-orbit-db-utils-address/swarm-store-connector-orbit-db-utils-address.types';
 import { swarmStoreConnectorOrbitDbUtilsAddressCreateRootPath } from './swarm-store-connector-orbit-db-utils/swarm-store-connector-orbit-db-utils-address/swarm-store-connector-orbit-db-utils-address';
-import { ISecretStoreCredentials } from '../../../secret-storage-class/secret-storage-class.types';
+import {
+  ISecretStoreCredentials,
+  TSecretStorageAuthorizazionOptions,
+  ISecretStoreCredentialsSession,
+} from '../../../secret-storage-class/secret-storage-class.types';
 import assert from 'assert';
 import { ISwarmStoreConnectorOrbitDbConnecectionBasicFabric } from './swarm-store-connector-orbit-db.types';
 import { TSwarmStoreDatabaseOptions, TSwarmStoreConnectorConnectionOptions } from '../../swarm-store-class.types';
@@ -193,7 +197,7 @@ export class SwarmStoreConnectorOrbitDB<
   }
 
   public async openDatabase(
-    dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType>,
+    dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType, DbType>,
     openAttempt: number = 0,
     checkOptionsIsExists: boolean = true
   ): Promise<void | Error> {
@@ -512,7 +516,7 @@ export class SwarmStoreConnectorOrbitDB<
     }
   }
 
-  protected checkDbOptions(options: unknown): options is ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType> {
+  protected checkDbOptions(options: unknown): options is ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType, DbType> {
     if (options != null && typeof options === 'object') {
       const { dbName } = options as { dbName: string };
 
@@ -548,7 +552,7 @@ export class SwarmStoreConnectorOrbitDB<
     }
   }
 
-  private createStorages(credentials?: ISecretStoreCredentials): void {
+  private createStorages(credentials?: TSecretStorageAuthorizazionOptions): void {
     if (credentials) {
       // if credentials provided, then
       // create the secret keystorage
@@ -570,7 +574,7 @@ export class SwarmStoreConnectorOrbitDB<
     this.rootPath = await swarmStoreConnectorOrbitDbUtilsAddressCreateRootPath(rootPathParams);
   }
 
-  protected async initialize(credentials?: ISecretStoreCredentials): Promise<void> {
+  protected async initialize(credentials?: TSecretStorageAuthorizazionOptions): Promise<void> {
     await this.createStoreRootPath();
     this.createStorages(credentials);
   }
@@ -593,7 +597,7 @@ export class SwarmStoreConnectorOrbitDB<
    * @memberof SwarmStoreConnectorOrbitDB
    * @throws Error
    */
-  private createIdentityKeystores(credentials: ISwarmStoreConnectorOrbitDBOptions<ItemType>['credentials']): void {
+  private createIdentityKeystores(credentials: ISecretStoreCredentials): void {
     const { directory, userId } = this;
     const identityKeystorePrefix = `${directory}/${userId}`;
     const identityKeystore = this.createKeystore(credentials, identityKeystorePrefix);
@@ -606,7 +610,7 @@ export class SwarmStoreConnectorOrbitDB<
   }
 
   private getOptionsForSwarmStoreConnectorOrbitDBSubclassStorageFabric(
-    credentials?: ISwarmStoreConnectorOrbitDBOptions<ItemType>['credentials']
+    credentials?: TSecretStorageAuthorizazionOptions
   ): ISwarmStoreConnectorOrbitDbSubclassStorageFabricConstructorOptions {
     const { rootPath } = this;
 
@@ -632,15 +636,12 @@ export class SwarmStoreConnectorOrbitDB<
    * @memberof SwarmStoreConnectorOrbitDB
    * @throws
    */
-  private createStorageFabric(credentials?: ISwarmStoreConnectorOrbitDBOptions<ItemType>['credentials']): void {
+  private createStorageFabric(credentials?: TSecretStorageAuthorizazionOptions): void {
     const options = this.getOptionsForSwarmStoreConnectorOrbitDBSubclassStorageFabric(credentials);
     this.storage = new SwarmStoreConnectorOrbitDBSubclassStorageFabric(options);
   }
 
-  protected createKeystore(
-    credentials: ISwarmStoreConnectorOrbitDBOptions<ItemType>['credentials'],
-    keystoreNamePrefix?: string
-  ): Keystore | Error {
+  protected createKeystore(credentials: ISecretStoreCredentials, keystoreNamePrefix?: string): Keystore | Error {
     const keystoreName = `${keystoreNamePrefix || ''}${SWARM_STORE_CONNECTOR_ORBITDB_KEYSTORE_DEFAULT_DBNAME}`;
 
     if (!credentials) {
@@ -732,7 +733,7 @@ export class SwarmStoreConnectorOrbitDB<
    * @memberof SwarmStoreConnectorOrbitDB
    */
   protected setDbOptions(
-    dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType>,
+    dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType, DbType>,
     checkIfExists: boolean = false
   ): void | Error {
     if (!this.checkDbOptions(dbOptions)) {
@@ -758,7 +759,7 @@ export class SwarmStoreConnectorOrbitDB<
         ...this.options,
         userId: '',
         databases: [dbOptions],
-      } as ISwarmStoreConnectorOrbitDBOptions<ItemType>);
+      } as ISwarmStoreConnectorOrbitDBOptions<DbType>);
       return;
     }
 
@@ -774,7 +775,7 @@ export class SwarmStoreConnectorOrbitDB<
     }
   }
 
-  protected setDbOptionsIfNotExists(dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType>): void | Error {
+  protected setDbOptionsIfNotExists(dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType, DbType>): void | Error {
     return this.setDbOptions(dbOptions, true);
   }
 
@@ -893,7 +894,7 @@ export class SwarmStoreConnectorOrbitDB<
     }
   }
 
-  protected getDbOptions(dbName: string): ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType> | void | Error {
+  protected getDbOptions(dbName: string): ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType, DbType> | void | Error {
     const { options } = this;
 
     if (!options) {
@@ -919,7 +920,7 @@ export class SwarmStoreConnectorOrbitDB<
    * @memberof SwarmStoreConnectorOrbitDB
    */
   private openDatabaseNotCheckOptionsExists(
-    optionsForDb: ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType>
+    optionsForDb: ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType, DbType>
   ): Promise<void | Error> {
     return this.openDatabase(optionsForDb, 0, false);
   }
@@ -1174,9 +1175,9 @@ export class SwarmStoreConnectorOrbitDB<
   }
 
   protected async extendDatabaseOptionsWithCache(
-    dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType>,
+    dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType, DbType>,
     dbName: string
-  ): Promise<ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType>> {
+  ): Promise<ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType, DbType>> {
     const { storage } = this;
 
     if (!storage) {
@@ -1189,7 +1190,7 @@ export class SwarmStoreConnectorOrbitDB<
   }
 
   protected async createDatabaseConnectorImplementation(
-    dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType>,
+    dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType, DbType>,
     dbName: string,
     orbitDb: OrbitDB
   ): Promise<ConnectorBasic> {

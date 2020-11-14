@@ -52,7 +52,7 @@ export interface ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  DBO extends TSwarmStoreDatabaseOptions<P, T>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   MD extends ISwarmMessageInstanceDecrypted
 > {
   cacheConstructor?: ISwarmMessagesDatabaseCacheConstructor<P, T, DbType, DBO, MD>;
@@ -70,7 +70,7 @@ export interface ISwarmMessagesDatabaseConnectOptions<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  DBO extends TSwarmStoreDatabaseOptions<P, T>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   MI extends TSwarmMessageInstance,
   SMS extends ISwarmMessageStoreMessagingMethods<P, T, DbType, MI>,
   MD extends Exclude<MI, ISwarmMessageInstanceEncrypted>
@@ -107,7 +107,7 @@ export interface ISwarmMessageDatabaseEvents<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  DBO extends TSwarmStoreDatabaseOptions<P, T>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   MD extends ISwarmMessageInstanceDecrypted
 > extends ISwarmMessageDatabaseCacheEvents<P, DbType, MD> {
   [ESwarmStoreEventNames.UPDATE]: (dbName: DBO['dbName']) => unknown;
@@ -175,7 +175,7 @@ export interface ISwarmMessagesDatabaseProperties<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
   MD extends ISwarmMessageInstanceDecrypted
 > {
   /**
@@ -254,7 +254,7 @@ export interface ISwarmMessagesDatabase<
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType>,
   PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, ConnectorBasic>,
   CO extends ISwarmStoreProviderOptions<P, T, DbType, ConnectorBasic, PO>,
-  DBO extends TSwarmStoreDatabaseOptions<P, T>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   ConnectorMain extends ISwarmStoreConnector<P, T, DbType, ConnectorBasic, PO, DBO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain>,
   MSI extends TSwarmMessageInstance | T,
@@ -330,7 +330,7 @@ export interface ISwarmMessagesDatabaseReady<
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType>,
   PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, ConnectorBasic>,
   CO extends ISwarmStoreProviderOptions<P, T, DbType, ConnectorBasic, PO>,
-  DBO extends TSwarmStoreDatabaseOptions<P, T>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   ConnectorMain extends ISwarmStoreConnector<P, T, DbType, ConnectorBasic, PO, DBO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain>,
   MSI extends TSwarmMessageInstance | T,
@@ -384,7 +384,7 @@ export interface ISwarmMessagesDatabaseCache<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  DBO extends TSwarmStoreDatabaseOptions<P, T>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   MD extends ISwarmMessageInstanceDecrypted
 > {
   /**
@@ -482,7 +482,7 @@ export interface ISwarmMessagesDatabaseCacheConstructor<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  DBO extends TSwarmStoreDatabaseOptions<P, T>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   MD extends ISwarmMessageInstanceDecrypted
 > {
   new (options: ISwarmMessagesDatabaseCacheOptions<P, T, DbType, MD>): ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD>;

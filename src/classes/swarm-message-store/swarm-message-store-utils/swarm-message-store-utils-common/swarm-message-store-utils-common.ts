@@ -93,7 +93,8 @@ async function swarmMessageGrantValidator<
 export const getMessageValidator = <
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  DBO extends TSwarmStoreDatabaseOptions<P, T>,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   MSI extends TSwarmMessageInstance | T,
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
   SMC extends ISwarmMessageConstructor

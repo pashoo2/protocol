@@ -15,6 +15,7 @@ import assert from 'assert';
 import { swarmStoreConnectorOrbitDbUtilsAddressCreateOrbitDbAddressByDatabaseName } from '../../swarm-store-connector-orbit-db-utils/swarm-store-connector-orbit-db-utils-address/swarm-store-connector-orbit-db-utils-address';
 import { ISwarmStoreConnectorOrbitDBSubclassStoreToOpenStorageAdapterConstructorOptions } from '../swarm-store-connector-orbit-db-subclasses-cache/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter.types';
 import { swarmStoreConnectorOrbitDbUtilsAddresGetHashPathFull } from '../../swarm-store-connector-orbit-db-utils';
+import { TSecretStorageAuthorizazionOptions } from '../../../../../secret-storage-class/secret-storage-class.types';
 
 export class SwarmStoreConnectorOrbitDBSubclassStorageFabric implements ISwarmStoreConnectorOrbitDBSubclassStorageFabric {
   private key?: CryptoKey;
@@ -116,7 +117,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStorageFabric implements ISwarmSt
     return this.secretDatabasesPaths.has(path);
   }
 
-  protected applyCredentials(credentials: ISecretStoreCredentials): void {
+  protected applyCredentials(credentials: TSecretStorageAuthorizazionOptions): void {
     this.ready = this.createKey(credentials);
   }
 
@@ -129,7 +130,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStorageFabric implements ISwarmSt
    * @memberof SwarmStoreConnectorOrbitDBSubclassStorageFabric
    * @throws
    */
-  protected async createKey(credentials: ISecretStoreCredentials): Promise<void> {
+  protected async createKey(credentials: TSecretStorageAuthorizazionOptions): Promise<void> {
     const secretStorage = new SecretStorage();
     const cryptoKey = await secretStorage.generateCryptoKey(credentials);
 

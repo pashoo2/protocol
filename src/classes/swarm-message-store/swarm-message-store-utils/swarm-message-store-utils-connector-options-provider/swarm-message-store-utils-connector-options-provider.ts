@@ -47,7 +47,7 @@ function swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControlOrbitDB<
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType>,
   PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, ConnectorBasic>,
   CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, ConnectorBasic, PO>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
   ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic, PO, DBO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain>,
   MSI extends TSwarmMessageInstance | ItemType,
@@ -74,9 +74,9 @@ function swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControlOrbitDB<
   dbOptions: DBO,
   allowAccessForUsers: string[] | undefined,
   grantAccessCallback: GAC
-): TSwarmStoreDatabaseOptions<ESwarmStoreConnector.OrbitDB, ItemType> &
+): TSwarmStoreDatabaseOptions<ESwarmStoreConnector.OrbitDB, ItemType, DbType> &
   ISwarmStoreDatabaseBaseOptions & { provider: ESwarmStoreConnector.OrbitDB } {
-  const grantAccess = getMessageValidator<P, ItemType, DBO, MSI, GAC, PromiseResolveType<ReturnType<NonNullable<MCF>>>>(
+  const grantAccess = getMessageValidator<P, ItemType, DbType, DBO, MSI, GAC, PromiseResolveType<ReturnType<NonNullable<MCF>>>>(
     dbOptions,
     options.messageConstructors,
     // TODO - TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<string, P>
@@ -106,7 +106,7 @@ export const swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl = <
   DbType extends TSwarmStoreDatabaseType<P>,
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType>,
   PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, ConnectorBasic>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
   CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, ConnectorBasic, PO>,
   ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic, PO, DBO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain>,
@@ -190,7 +190,7 @@ async function swarmMessageStoreUtilsConnectorOptionsProviderForOrbitDB<
   DbType extends TSwarmStoreDatabaseType<P>,
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType>,
   PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, ConnectorBasic>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
   CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, ConnectorBasic, PO>,
   ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic, PO, DBO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain>,
@@ -255,7 +255,7 @@ export async function swarmMessageStoreUtilsConnectorOptionsProvider<
   DbType extends TSwarmStoreDatabaseType<P>,
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType>,
   PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, ConnectorBasic>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
   CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, ConnectorBasic, PO>,
   ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic, PO, DBO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain>,

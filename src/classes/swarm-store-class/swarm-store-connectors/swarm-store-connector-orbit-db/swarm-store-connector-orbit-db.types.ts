@@ -17,8 +17,9 @@ import OrbitDB from 'orbit-db';
 export interface ISwarmStoreConnectorOrbitDBEvents<
   P extends ESwarmStoreConnector.OrbitDB,
   ItemType extends TSwarmStoreValueTypes<P>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>
-> extends ISwarmStoreEvents<P, ItemType, DBO> {}
+  DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>
+> extends ISwarmStoreEvents<P, ItemType, DbType, DBO> {}
 
 /**
  * directory - this string will be used as a
@@ -32,19 +33,22 @@ export interface ISwarmStoreConnectorOrbitDBEvents<
  * @interface ISwarmStoreConnectorOrbitDBOptions
  * @template TFeedStoreTypes
  */
-export interface ISwarmStoreConnectorOrbitDBOptions<DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>>
-  extends ISwarmStoreMainOptions<ESwarmStoreConnector.OrbitDB> {
+export interface ISwarmStoreConnectorOrbitDBOptions<
+  ItemType extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>,
+  DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>
+> extends ISwarmStoreMainOptions<ESwarmStoreConnector.OrbitDB, ItemType, DbType> {
   // databases which must be started when the orbit db
   // instance will be ready to use
-  databases: ISwarmStoreConnectorOrbitDbDatabaseOptions<DbType>[];
+  databases: ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType, DbType>[];
 }
 
 export interface ISwarmStoreConnectorOrbitDbConnecectionBasicFabric<
   T extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>,
   DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, T, DbType>
+  DBO extends TSwarmStoreDatabaseOptions<ESwarmStoreConnector.OrbitDB, T, DbType>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, T, DbType, DBO>
 > {
-  (dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<T>, orbitDb: OrbitDB): ConnectorBasic;
+  (dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<T, DbType>, orbitDb: OrbitDB): ConnectorBasic;
 }
 
 export interface ISwarmStoreConnectorOrbitDBSpecificConnectionOptions {
@@ -54,9 +58,10 @@ export interface ISwarmStoreConnectorOrbitDBSpecificConnectionOptions {
 export interface ISwarmStoreConnectorOrbitDBConnectionOptions<
   T extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>,
   DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, T, DbType>
+  DBO extends TSwarmStoreDatabaseOptions<ESwarmStoreConnector.OrbitDB, T, DbType>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, T, DbType, DBO>
 > extends ISwarmStoreConnectorOrbitDBSpecificConnectionOptions {
-  connectorFabric: ISwarmStoreConnectorOrbitDbConnecectionBasicFabric<T, DbType, ConnectorBasic>;
+  connectorFabric: ISwarmStoreConnectorOrbitDbConnecectionBasicFabric<T, DbType, DBO, ConnectorBasic>;
 }
 
 export interface ISwarmStoreConnectorOrbitDBLogEntity<T> {

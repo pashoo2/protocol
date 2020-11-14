@@ -48,12 +48,49 @@ export type TSwarmStoreConnectorBasicFabric<
   P extends ESwarmStoreConnector,
   T extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType>
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO>
 > = P extends ESwarmStoreConnector.OrbitDB
-  ? ISwarmStoreConnectorOrbitDbConnecectionBasicFabric<T, DbType, ConnectorBasic>
+  ? ISwarmStoreConnectorOrbitDbConnecectionBasicFabric<T, DbType, DBO, ConnectorBasic>
   : never;
 
 export type TSwarmStoreConnectorEventRetransmitter = (...args: any[]) => void;
+
+/**
+ * store a status of each database
+ *
+ * key - database name
+ * value - the last event from the database received from the provider
+ * @export
+ * @interface ISwarmStoreDatabasesStatus
+ */
+export interface ISwarmStoreDatabasesStatuses
+  extends Record<string, ESwarmStoreDatabaseStatus | typeof SWARM_STORE_DATABASE_STATUS_ABSENT> {}
+
+// methods available for a database providers
+export type TSwarmStoreDatabaseMethod<P extends ESwarmStoreConnector> = P extends ESwarmStoreConnector.OrbitDB
+  ? TSwarmStoreConnectorOrbitDbDatabaseMethodNames
+  : never;
+
+export type TSwarmStoreDatabaseRequestMethodEntitiesReturnType<
+  P extends ESwarmStoreConnector,
+  ItemType extends TSwarmStoreValueTypes<P>
+> = Error | TSwarmStoreDatabaseMethodAnswer<P, ItemType> | TSwarmStoreDatabaseIteratorMethodAnswer<P, ItemType>;
+
+export type TSwarmStoreDatabaseRequestMethodReturnType<
+  P extends ESwarmStoreConnector,
+  ItemType extends TSwarmStoreValueTypes<P>
+> =
+  | Error
+  | TSwarmStoreDatabaseLoadMethodAnswer<P>
+  | TSwarmStoreDatabaseCloseMethodAnswer<P>
+  | TSwarmStoreDatabaseRequestMethodEntitiesReturnType<P, ItemType>;
+
+export type TSwarmStoreConnectorConstructorOptions<
+  P extends ESwarmStoreConnector,
+  ItemType extends TSwarmStoreValueTypes<P>,
+  DbType extends TSwarmStoreDatabaseType<P>
+> = P extends ESwarmStoreConnector.OrbitDB ? ISwarmStoreConnectorOrbitDBOptions<ItemType, DbType> : never;
 
 export interface ISwarmStoreConnectorRequestLoadAnswer {
   /**
@@ -82,7 +119,8 @@ export interface ISwarmStoreConnectorRequestLoadAnswer {
 export interface ISwarmStoreEvents<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>
 > {
   [ESwarmStoreEventNames.STATE_CHANGE]: boolean;
   [ESwarmStoreEventNames.ERROR]: Error;
@@ -91,7 +129,7 @@ export interface ISwarmStoreEvents<
   [ESwarmStoreEventNames.LOADING]: number;
   [ESwarmStoreEventNames.DB_LOADING]: [string, number];
   [ESwarmStoreEventNames.READY]: string;
-  [ESwarmStoreEventNames.DATABASES_LIST_UPDATED]: ISwarmStoreDatabasesCommonStatusList<P, ItemType, DBO>;
+  [ESwarmStoreEventNames.DATABASES_LIST_UPDATED]: ISwarmStoreDatabasesCommonStatusList<P, ItemType, DbType, DBO>;
 }
 
 // arguments avalilable for a database method
@@ -172,8 +210,11 @@ export type TSwarmStoreDatabaseEntityAddress<P extends ESwarmStoreConnector> = P
  */
 export type TSwarmStoreDatabaseOptions<
   P extends ESwarmStoreConnector,
-  T extends TSwarmStoreValueTypes<P>
-> = P extends ESwarmStoreConnector.OrbitDB ? ISwarmStoreConnectorOrbitDbDatabaseOptions<T> : ISwarmStoreDatabaseBaseOptions;
+  T extends TSwarmStoreValueTypes<P>,
+  DbType extends TSwarmStoreDatabaseType<P>
+> = P extends ESwarmStoreConnector.OrbitDB
+  ? ISwarmStoreConnectorOrbitDbDatabaseOptions<T, DbType>
+  : ISwarmStoreDatabaseBaseOptions;
 
 /**
  * options of swarm databases want to connect
@@ -181,10 +222,14 @@ export type TSwarmStoreDatabaseOptions<
  * @export
  * @interface ISwarmStoreDatabasesOptions
  */
-export interface ISwarmStoreDatabasesOptions<P extends ESwarmStoreConnector, T extends TSwarmStoreValueTypes<P>> {
+export interface ISwarmStoreDatabasesOptions<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmStoreValueTypes<P>,
+  DbType extends TSwarmStoreDatabaseType<P>
+> {
   // databases which must be started when the orbit db
   // instance will be ready to use
-  databases: TSwarmStoreDatabaseOptions<P, T>[];
+  databases: TSwarmStoreDatabaseOptions<P, T, DbType>[];
   // a virtual directory name where to store all the data received
   directory: string;
 }
@@ -207,8 +252,9 @@ export type TSwarmStoreConnectorConnectionOptions<
   P extends ESwarmStoreConnector,
   T extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType>
-> = P extends ESwarmStoreConnector.OrbitDB ? ISwarmStoreConnectorOrbitDBConnectionOptions<T, DbType, ConnectorBasic> : never;
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO>
+> = P extends ESwarmStoreConnector.OrbitDB ? ISwarmStoreConnectorOrbitDBConnectionOptions<T, DbType, DBO, ConnectorBasic> : never;
 
 /**
  * options defines which provider to use
@@ -220,8 +266,9 @@ export interface ISwarmStoreProviderOptions<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType>,
-  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, ConnectorBasic>
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType, DBO>,
+  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, DBO, ConnectorBasic>
 > {
   provider: P;
   providerConnectionOptions: PO;
@@ -236,19 +283,22 @@ export interface ISwarmStoreProviderOptions<
  * @extends {ISwarmStoreUserOptions}
  * @extends {ISwarmStoreDatabasesOptions}
  */
-export interface ISwarmStoreMainOptions<P extends ESwarmStoreConnector = never, T extends TSwarmStoreValueTypes<P> = never>
-  extends ISwarmStoreUserOptions,
-    ISwarmStoreDatabasesOptions<P, T> {}
+export interface ISwarmStoreMainOptions<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmStoreValueTypes<P>,
+  DbType extends TSwarmStoreDatabaseType<P>
+> extends ISwarmStoreUserOptions,
+    ISwarmStoreDatabasesOptions<P, T, DbType> {}
 
 export interface ISwarmStoreOptionsConnectorFabric<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType>,
-  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, ConnectorBasic>,
-  CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, ConnectorBasic, PO>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>,
-  ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic, PO, DBO>
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType, DBO>,
+  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, DBO, ConnectorBasic>,
+  CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, DBO, ConnectorBasic, PO>,
+  ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, DBO, ConnectorBasic, PO>
 > {
   (options: CO): ConnectorMain;
 }
@@ -265,10 +315,11 @@ export interface ISwarmStoreOptions<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType>,
-  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, ConnectorBasic>
-> extends Required<ISwarmStoreMainOptions<P, ItemType>>,
-    Required<ISwarmStoreProviderOptions<P, ItemType, DbType, ConnectorBasic, PO>> {}
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType, DBO>,
+  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, DBO, ConnectorBasic>
+> extends Required<ISwarmStoreMainOptions<P, ItemType, DbType>>,
+    Required<ISwarmStoreProviderOptions<P, ItemType, DbType, DBO, ConnectorBasic, PO>> {}
 
 /**
  * options used for connection to a swarm databases
@@ -282,45 +333,15 @@ export interface ISwarmStoreOptionsWithConnectorFabric<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType>,
-  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, ConnectorBasic>,
-  CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, ConnectorBasic, PO>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>,
-  ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic, PO, DBO>,
-  CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain>
-> extends ISwarmStoreOptions<P, ItemType, DbType, ConnectorBasic, PO> {
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType, DBO>,
+  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, DBO, ConnectorBasic>,
+  CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, DBO, ConnectorBasic, PO>,
+  ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, DBO, ConnectorBasic, PO>,
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>
+> extends ISwarmStoreOptions<P, ItemType, DbType, DBO, ConnectorBasic, PO> {
   connectorFabric: CFO;
 }
-
-/**
- * store a status of each database
- *
- * key - database name
- * value - the last event from the database received from the provider
- * @export
- * @interface ISwarmStoreDatabasesStatus
- */
-export interface ISwarmStoreDatabasesStatuses
-  extends Record<string, ESwarmStoreDatabaseStatus | typeof SWARM_STORE_DATABASE_STATUS_ABSENT> {}
-
-// methods available for a database providers
-export type TSwarmStoreDatabaseMethod<P extends ESwarmStoreConnector> = P extends ESwarmStoreConnector.OrbitDB
-  ? TSwarmStoreConnectorOrbitDbDatabaseMethodNames
-  : never;
-
-export type TSwarmStoreDatabaseRequestMethodEntitiesReturnType<
-  P extends ESwarmStoreConnector,
-  ItemType extends TSwarmStoreValueTypes<P>
-> = Error | TSwarmStoreDatabaseMethodAnswer<P, ItemType> | TSwarmStoreDatabaseIteratorMethodAnswer<P, ItemType>;
-
-export type TSwarmStoreDatabaseRequestMethodReturnType<
-  P extends ESwarmStoreConnector,
-  ItemType extends TSwarmStoreValueTypes<P>
-> =
-  | Error
-  | TSwarmStoreDatabaseLoadMethodAnswer<P>
-  | TSwarmStoreDatabaseCloseMethodAnswer<P>
-  | TSwarmStoreDatabaseRequestMethodEntitiesReturnType<P, ItemType>;
 
 /**
  * this interface must be implemented by a swarm storage connectors
@@ -334,9 +355,9 @@ export interface ISwarmStoreConnectorBase<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType>,
-  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, ConnectorBasic>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType, DBO>,
+  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, DBO, ConnectorBasic>
 > {
   // ready to use
   isReady: boolean;
@@ -373,8 +394,8 @@ export interface ISwarmStoreConnectorBasic<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType> = TSwarmStoreDatabaseOptions<P, ItemType>
-> extends EventEmitter<ISwarmStoreConnectorOrbitDBEvents<P, ItemType, DBO>> {
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>
+> extends EventEmitter<ISwarmStoreConnectorOrbitDBEvents<P, ItemType, DbType, DBO>> {
   dbName: string;
   isClosed: boolean;
   isReady: boolean;
@@ -478,24 +499,26 @@ export interface ISwarmStoreConnector<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType>,
-  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, ConnectorBasic>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>
-> extends EventEmitter<ISwarmStoreEvents<P, ItemType, DBO>>,
-    ISwarmStoreConnectorBase<P, ItemType, DbType, ConnectorBasic, PO, DBO> {}
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType, DBO>,
+  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, DBO, ConnectorBasic>
+> extends EventEmitter<ISwarmStoreEvents<P, ItemType, DbType, DBO>>,
+    ISwarmStoreConnectorBase<P, ItemType, DbType, DBO, ConnectorBasic, PO> {}
 
 export type TSwarmStoreOptionsOfDatabasesKnownList<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>
 > = Record<DBO['dbName'], DBO>;
 
 export interface ISwarmStoreDatabasesCommonStatusList<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>
 > {
-  readonly options: TSwarmStoreOptionsOfDatabasesKnownList<P, ItemType, DBO>;
+  readonly options: TSwarmStoreOptionsOfDatabasesKnownList<P, ItemType, DbType, DBO>;
   readonly opened: Record<string, boolean>;
 }
 
@@ -503,10 +526,10 @@ export interface ISwarmStoreWithConnector<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType>,
-  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, ConnectorBasic>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>,
-  ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic, PO, DBO>
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType, DBO>,
+  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, DBO, ConnectorBasic>,
+  ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, DBO, ConnectorBasic, PO>
 > {
   getConnectorOrError(): ConnectorMain | Error;
 }
@@ -528,14 +551,14 @@ export interface ISwarmStore<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType>,
-  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, ConnectorBasic>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>,
-  CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, ConnectorBasic, PO>,
-  ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic, PO, DBO>,
-  CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain>,
-  O extends ISwarmStoreOptionsWithConnectorFabric<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain, CFO>
-> extends Omit<ISwarmStoreConnectorBase<P, ItemType, DbType, ConnectorBasic, PO, DBO>, 'connect'> {
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType, DBO>,
+  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, DBO, ConnectorBasic>,
+  CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, DBO, ConnectorBasic, PO>,
+  ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, DBO, ConnectorBasic, PO>,
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
+  O extends ISwarmStoreOptionsWithConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO>
+> extends Omit<ISwarmStoreConnectorBase<P, ItemType, DbType, DBO, ConnectorBasic, PO>, 'connect'> {
   // status of a database connected to
   dbStatuses: ISwarmStoreDatabasesStatuses;
   /**
@@ -547,12 +570,7 @@ export interface ISwarmStore<
    * @type {ISwarmStoreDatabasesCommonStatusList}
    * @memberof ISwarmStore
    */
-  databases: ISwarmStoreDatabasesCommonStatusList<P, ItemType, DBO> | undefined;
+  databases: ISwarmStoreDatabasesCommonStatusList<P, ItemType, DbType, DBO> | undefined;
   // open connection with all databases
   connect(options: O): Promise<Error | void>;
 }
-
-export type TSwarmStoreConnectorConstructorOptions<
-  P extends ESwarmStoreConnector,
-  DbType extends TSwarmStoreDatabaseType<P>
-> = P extends ESwarmStoreConnector.OrbitDB ? ISwarmStoreConnectorOrbitDBOptions<DbType> : never;

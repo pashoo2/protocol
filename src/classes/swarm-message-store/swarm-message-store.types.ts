@@ -64,7 +64,8 @@ export type TSwarmMessagesStoreGrantAccessCallback<
 export interface ISwarmMessageStoreEvents<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmMessageSerialized,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>
 > extends ISwarmStoreEvents<P, ItemType, DBO> {
   /**
    * new message stored in the local database
@@ -177,7 +178,7 @@ export interface ISwarmMessageStoreOptionsWithConnectorFabric<
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType>,
   PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, ConnectorBasic>,
   CO extends ISwarmStoreProviderOptions<P, T, DbType, ConnectorBasic, PO>,
-  DBO extends TSwarmStoreDatabaseOptions<P, T>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   ConnectorMain extends ISwarmStoreConnector<P, T, DbType, ConnectorBasic, PO, DBO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain>,
   MSI extends TSwarmMessageInstance | T,
@@ -193,7 +194,7 @@ export type TSwarmMessageStoreConnectReturnType<
   DbType extends TSwarmStoreDatabaseType<P>,
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType>,
   PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, ConnectorBasic>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
   CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, ConnectorBasic, PO>,
   ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic, PO, DBO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain>,
@@ -410,7 +411,7 @@ export interface ISwarmMessageStore<
   DbType extends TSwarmStoreDatabaseType<P>,
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType>,
   PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, ConnectorBasic>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
   CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, ConnectorBasic, PO>,
   ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic, PO, DBO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain>,
@@ -470,7 +471,7 @@ export interface ISwarmMessageStoreOptionsWithEntriesCount<
   DbType extends TSwarmStoreDatabaseType<P>,
   ConnectorBasic extends ISwarmStoreConnectorBasicWithEntriesCount<P, ItemType, DbType>,
   PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, ConnectorBasic>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
   CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, ConnectorBasic, PO>,
   ConnectorMain extends ISwarmStoreConnectorWithEntriesCount<P, ItemType, DbType, ConnectorBasic, PO, DBO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain>,

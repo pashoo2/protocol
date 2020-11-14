@@ -28,7 +28,7 @@ export function getClassSwarmMessageStoreWithEntriesCount<
   DbType extends TSwarmStoreDatabaseType<P>,
   ConnectorBasic extends ISwarmStoreConnectorBasicWithEntriesCount<P, ItemType, DbType>,
   PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, ConnectorBasic>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
   CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, ConnectorBasic, PO>,
   ConnectorMain extends ISwarmStoreConnectorWithEntriesCount<P, ItemType, DbType, ConnectorBasic, PO, DBO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain>,

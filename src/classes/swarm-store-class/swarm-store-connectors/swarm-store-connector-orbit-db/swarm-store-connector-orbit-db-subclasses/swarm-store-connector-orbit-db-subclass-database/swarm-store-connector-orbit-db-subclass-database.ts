@@ -75,7 +75,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
 
   private isFullyLoaded: boolean = false;
 
-  private options?: ISwarmStoreConnectorOrbitDbDatabaseOptions<TStoreValue>;
+  private options?: ISwarmStoreConnectorOrbitDbDatabaseOptions<TStoreValue, DbType>;
 
   protected orbitDb?: orbitDbModule.OrbitDB;
 
@@ -129,7 +129,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     return this.dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE;
   }
 
-  constructor(options: ISwarmStoreConnectorOrbitDbDatabaseOptions<TStoreValue>, orbitDb: orbitDbModule.OrbitDB) {
+  constructor(options: ISwarmStoreConnectorOrbitDbDatabaseOptions<TStoreValue, DbType>, orbitDb: orbitDbModule.OrbitDB) {
     super();
     this.setOptions(options);
     this.setOrbitDbInstance(orbitDb);
@@ -1155,7 +1155,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     return this.createDbInstance(true);
   };
 
-  private setOptions(options: ISwarmStoreConnectorOrbitDbDatabaseOptions<TStoreValue>): void | Error {
+  private setOptions(options: ISwarmStoreConnectorOrbitDbDatabaseOptions<TStoreValue, DbType>): void | Error {
     if (!options) {
       return this.onFatalError('Options must be specified', 'setOptions');
     }

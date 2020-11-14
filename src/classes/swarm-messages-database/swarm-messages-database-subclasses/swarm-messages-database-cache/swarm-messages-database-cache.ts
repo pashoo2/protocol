@@ -60,7 +60,7 @@ export class SwarmMessagesDatabaseCache<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  DBO extends TSwarmStoreDatabaseOptions<P, T>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   MD extends ISwarmMessageInstanceDecrypted
 > implements ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD> {
   get isReady(): boolean {

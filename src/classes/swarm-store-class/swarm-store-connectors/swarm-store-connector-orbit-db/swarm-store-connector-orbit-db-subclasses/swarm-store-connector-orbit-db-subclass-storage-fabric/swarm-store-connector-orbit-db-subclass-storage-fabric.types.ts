@@ -1,4 +1,4 @@
-import { ISecretStoreCredentials } from '../../../../../secret-storage-class/secret-storage-class.types';
+import { TSecretStorageAuthorizazionOptions } from '../../../../../secret-storage-class/secret-storage-class.types';
 import { ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore } from '../swarm-store-connector-orbit-db-subclasses-cache/swarm-store-connector-orbit-db-subclasses-cache.types';
 
 export interface ISwarmStoreConnectorOrbitDBSubclassStorageFabric {
@@ -29,6 +29,6 @@ export interface ISwarmStoreConnectorOrbitDBSubclassStorageFabric {
 }
 
 export interface ISwarmStoreConnectorOrbitDbSubclassStorageFabricConstructorOptions {
-  credentials?: ISecretStoreCredentials;
+  credentials?: TSecretStorageAuthorizazionOptions;
   rootPath: string;
 }

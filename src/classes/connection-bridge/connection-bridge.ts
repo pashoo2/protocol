@@ -97,7 +97,7 @@ export class ConnectionBridge<
   DbType extends TSwarmStoreDatabaseType<P>,
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType>,
   PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, ConnectorBasic>,
-  DBO extends TSwarmStoreDatabaseOptions<P, T>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   CO extends ISwarmStoreProviderOptions<P, T, DbType, ConnectorBasic, PO>,
   ConnectorMain extends ISwarmStoreConnector<P, T, DbType, ConnectorBasic, PO, DBO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain>,

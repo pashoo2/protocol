@@ -238,9 +238,10 @@ export class SecretStorage
    * @returns {(Promise<CryptoKey | Error>)}
    * @memberof SecretStorage
    */
-  public async generateCryptoKey(
-    credentialsOrSession: ISecretStoreCredentials | ISecretStoreCredentialsSession
-  ): Promise<CryptoKey | Error> {
+  public async generateCryptoKey(credentialsOrSession: TSecretStorageAuthorizazionOptions): Promise<CryptoKey | Error> {
+    if (isCryptoKeyDataEncryption(credentialsOrSession)) {
+      return credentialsOrSession;
+    }
     const session = (credentialsOrSession as ISecretStoreCredentialsSession).session;
     if (session) {
       const sessionInfo = await this.readLoginAndKeyFromSession(session);

@@ -26,7 +26,8 @@ export type TSwarmStoreConnectorOrbitDbDatabaseEntityIndex =
 export type TSwarmStoreConnectorOrbitDbDatabase<V> = OrbitDbFeedStore<V> | OrbitDbKeyValueStore<V>;
 
 export interface ISwarmStoreConnectorOrbitDbDatabaseOptions<
-  TStoreValueType extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>
+  TStoreValueType extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>,
+  DbType extends ESwarmStoreConnectorOrbitDbDatabaseType
 > extends ISwarmStoreConnectorOrbitDbDatabaseAccessControlleGrantCallback<TStoreValueType>,
     ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess,
     ISwarmStoreDatabaseBaseOptions {
@@ -37,7 +38,7 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseOptions<
    * @type {ESwarmStoreConnectorOrbitDbDatabaseType}
    * @memberof ISwarmStoreConnectorOrbitDbDatabaseOptions
    */
-  dbType?: ESwarmStoreConnectorOrbitDbDatabaseType;
+  dbType?: DbType;
   cache?: ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore;
 }
 

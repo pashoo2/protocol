@@ -66,7 +66,7 @@ export class SwarmMessagesDatabase<
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType>,
   PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, ConnectorBasic>,
   CO extends ISwarmStoreProviderOptions<P, T, DbType, ConnectorBasic, PO>,
-  DBO extends TSwarmStoreDatabaseOptions<P, T>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   ConnectorMain extends ISwarmStoreConnector<P, T, DbType, ConnectorBasic, PO, DBO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain>,
   MSI extends TSwarmMessageInstance | T,
