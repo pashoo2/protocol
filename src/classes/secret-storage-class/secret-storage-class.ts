@@ -50,7 +50,7 @@ import { SECRET_STORAGE_LOGIN_MIN_LENGTH, SECRET_STORAGE_UNSET_MAX_ATTEMPTS } fr
 import { IStorageProviderOptions } from 'classes/storage-providers/storage-providers.types';
 import { ISensitiveDataSessionStorage } from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
 import { isCryptoKeyDataEncryption } from '../../utils/encryption-keys-utils/encryption-keys-utils';
-import { TSecretStorageAuthorizeCredentials } from './secret-storage-class.types';
+import { TSecretStorageAuthorizazionOptions } from './secret-storage-class.types';
 
 /**
  * this classed used to store value in a
@@ -275,7 +275,7 @@ export class SecretStorage
   }
 
   public async authorize(
-    credentials: TSecretStorageAuthorizeCredentials,
+    credentials: TSecretStorageAuthorizazionOptions,
     options?: IStorageProviderOptions
   ): Promise<boolean | Error> {
     const credentialsWithKey = credentials as ISecretStoreCredentialsCryptoKey;

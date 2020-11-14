@@ -93,7 +93,7 @@ export class SwarmStoreConnectorOrbitDB<
 
   protected connectionOptions?: ISwarmStoreConnectorOrbitDBConnectionOptions<ItemType, DbType, ConnectorBasic>;
 
-  protected options?: ISwarmStoreConnectorOrbitDBOptions<ItemType>;
+  protected options?: ISwarmStoreConnectorOrbitDBOptions<DbType>;
 
   protected ipfs?: IPFS; // instance of the IPFS connected through
 
@@ -111,7 +111,7 @@ export class SwarmStoreConnectorOrbitDB<
 
   protected _connectorFabric: ISwarmStoreConnectorOrbitDbConnecectionBasicFabric<ItemType, DbType, ConnectorBasic> | undefined;
 
-  public constructor(options: ISwarmStoreConnectorOrbitDBOptions<ItemType>) {
+  public constructor(options: ISwarmStoreConnectorOrbitDBOptions<DbType>) {
     super();
     SwarmStoreConnectorOrbitDB.loadCustomIdentityProvider();
     SwarmStoreConnectorOrbitDB.loadCustomAccessController();
@@ -530,7 +530,7 @@ export class SwarmStoreConnectorOrbitDB<
    * @memberof SwarmStoreConnectorOrbitDB
    * @throws Error - throw an error if the options are not valid
    */
-  private applyOptions(options: ISwarmStoreConnectorOrbitDBOptions<ItemType>) {
+  private applyOptions(options: ISwarmStoreConnectorOrbitDBOptions<DbType>) {
     if (!options || typeof options !== 'object') {
       throw new Error('The options must be an object');
     }
@@ -579,7 +579,7 @@ export class SwarmStoreConnectorOrbitDB<
     this.initializationPromise = undefined;
   };
 
-  protected createInitializationPromise(options: ISwarmStoreConnectorOrbitDBOptions<ItemType>): void {
+  protected createInitializationPromise(options: ISwarmStoreConnectorOrbitDBOptions<DbType>): void {
     this.initializationPromise = this.initialize(options.credentials).finally(this.unsetInitializationPromise);
   }
 

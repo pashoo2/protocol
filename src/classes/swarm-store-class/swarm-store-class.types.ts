@@ -1,8 +1,10 @@
-import { ISecretStoreCredentials } from '../secret-storage-class/secret-storage-class.types';
+import { TSecretStorageAuthorizazionOptions } from '../secret-storage-class/secret-storage-class.types';
 import {
   ESwarmStoreConnectorOrbitDbDatabaseMethodNames,
+  ISwarmStoreConnectorOrbitDbConnecectionBasicFabric,
   ISwarmStoreConnectorOrbitDBConnectionOptions,
   ISwarmStoreConnectorOrbitDBEvents,
+  ISwarmStoreConnectorOrbitDBOptions,
 } from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.types';
 import { EventEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import {
@@ -29,6 +31,7 @@ import {
   ESwarmStoreConnectorOrbitDbDatabaseType,
 } from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { TSwarmMessageSerialized } from '../swarm-message/swarm-message-constructor.types';
+import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 
 export type TSwarmStoreDatabaseType<P extends ESwarmStoreConnector> = ESwarmStoreConnectorOrbitDbDatabaseType;
 
@@ -39,6 +42,15 @@ export type TSwarmStoreDatabaseEntityUniqueIndex<
   ? DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
     ? TSwarmStoreDatabaseEntityAddress<P>
     : TSwarmStoreDatabaseEntityKey<P>
+  : never;
+
+export type TSwarmStoreConnectorBasicFabric<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmStoreValueTypes<P>,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType>
+> = P extends ESwarmStoreConnector.OrbitDB
+  ? ISwarmStoreConnectorOrbitDbConnecectionBasicFabric<T, DbType, ConnectorBasic>
   : never;
 
 export type TSwarmStoreConnectorEventRetransmitter = (...args: any[]) => void;
@@ -186,9 +198,9 @@ export interface ISwarmStoreDatabasesOptions<P extends ESwarmStoreConnector, T e
  */
 export interface ISwarmStoreUserOptions {
   // the current user identity
-  userId?: string;
+  userId?: TSwarmMessageUserIdentifierSerialized;
   // credentials used for data encryption
-  credentials?: ISecretStoreCredentials;
+  credentials?: TSecretStorageAuthorizazionOptions;
 }
 
 export type TSwarmStoreConnectorConnectionOptions<
@@ -539,3 +551,8 @@ export interface ISwarmStore<
   // open connection with all databases
   connect(options: O): Promise<Error | void>;
 }
+
+export type TSwarmStoreConnectorConstructorOptions<
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>
+> = P extends ESwarmStoreConnector.OrbitDB ? ISwarmStoreConnectorOrbitDBOptions<DbType> : never;

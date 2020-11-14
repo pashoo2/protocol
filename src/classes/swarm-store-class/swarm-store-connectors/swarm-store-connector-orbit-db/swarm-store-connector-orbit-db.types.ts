@@ -7,12 +7,12 @@ import {
   ISwarmStoreConnectorBasic,
   ISwarmStoreEvents,
   ISwarmStoreMainOptions,
+  TSwarmStoreDatabaseOptions,
   TSwarmStoreDatabaseType,
   TSwarmStoreValueTypes,
 } from '../../swarm-store-class.types';
 import { ESwarmStoreConnector } from '../../swarm-store-class.const';
 import OrbitDB from 'orbit-db';
-import { TSwarmStoreDatabaseOptions } from '../../swarm-store-class.types';
 
 export interface ISwarmStoreConnectorOrbitDBEvents<
   P extends ESwarmStoreConnector.OrbitDB,
@@ -32,28 +32,31 @@ export interface ISwarmStoreConnectorOrbitDBEvents<
  * @interface ISwarmStoreConnectorOrbitDBOptions
  * @template TFeedStoreTypes
  */
-export interface ISwarmStoreConnectorOrbitDBOptions<TFeedStoreTypes extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>>
+export interface ISwarmStoreConnectorOrbitDBOptions<DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>>
   extends ISwarmStoreMainOptions<ESwarmStoreConnector.OrbitDB> {
   // databases which must be started when the orbit db
   // instance will be ready to use
-  databases: ISwarmStoreConnectorOrbitDbDatabaseOptions<TFeedStoreTypes>[];
+  databases: ISwarmStoreConnectorOrbitDbDatabaseOptions<DbType>[];
 }
 
 export interface ISwarmStoreConnectorOrbitDbConnecectionBasicFabric<
-  ISwarmDatabaseValueTypes extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>,
+  T extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>,
   DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, ISwarmDatabaseValueTypes, DbType>
+  ConnectorBasic extends ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, T, DbType>
 > {
-  (dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<ISwarmDatabaseValueTypes>, orbitDb: OrbitDB): ConnectorBasic;
+  (dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<T>, orbitDb: OrbitDB): ConnectorBasic;
+}
+
+export interface ISwarmStoreConnectorOrbitDBSpecificConnectionOptions {
+  ipfs: IPFS; // instance of IPFS connection
 }
 
 export interface ISwarmStoreConnectorOrbitDBConnectionOptions<
-  ISwarmDatabaseValueTypes extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>,
+  T extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>,
   DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, ISwarmDatabaseValueTypes, DbType>
-> {
-  ipfs: IPFS; // instance of IPFS connection
-  connectorFabric: ISwarmStoreConnectorOrbitDbConnecectionBasicFabric<ISwarmDatabaseValueTypes, DbType, ConnectorBasic>;
+  ConnectorBasic extends ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, T, DbType>
+> extends ISwarmStoreConnectorOrbitDBSpecificConnectionOptions {
+  connectorFabric: ISwarmStoreConnectorOrbitDbConnecectionBasicFabric<T, DbType, ConnectorBasic>;
 }
 
 export interface ISwarmStoreConnectorOrbitDBLogEntity<T> {

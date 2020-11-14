@@ -40,7 +40,7 @@ export type TSecretStorageAuthOptionsCredentials = ISecretStoreCredentials | ISe
 
 export type TSecretStorageAuthOptions = TSecretStorageAuthOptionsCredentials | ISecretStoreCredentialsCryptoKey;
 
-export type TSecretStorageAuthorizeCredentials =
+export type TSecretStorageAuthorizazionOptions =
   | ISecretStoreCredentials
   | ISecretStoreCredentialsSession
   | ISecretStoreCredentialsCryptoKey;
@@ -52,8 +52,9 @@ export interface ISecretStorage extends IStorageCommon {
   connect(options?: IISecretStorageOptions): Promise<boolean | Error>;
   // authorize and connect to the storage
   authorize(credentials: ISecretStoreCredentials, options?: IISecretStorageOptions): Promise<boolean | Error>;
-  authorize(credentials: ISecretStoreCredentialsSession, options?: IISecretStorageOptions): Promise<boolean | Error>;
-  authorize(credentials: ISecretStoreCredentialsCryptoKey, options?: IISecretStorageOptions): Promise<boolean | Error>;
+  authorize(sessionOptions: ISecretStoreCredentialsSession, options?: IISecretStorageOptions): Promise<boolean | Error>;
+  authorize(cryptoKey: ISecretStoreCredentialsCryptoKey, options?: IISecretStorageOptions): Promise<boolean | Error>;
+  authorize(credentials: TSecretStorageAuthorizazionOptions, options?: IISecretStorageOptions): Promise<boolean | Error>;
   // authorize by the crypto key provided
   authorizeByKey(credentials: ISecretStoreCredentialsCryptoKey, options?: IStorageProviderOptions): Promise<boolean | Error>;
   // disconnect from the storage

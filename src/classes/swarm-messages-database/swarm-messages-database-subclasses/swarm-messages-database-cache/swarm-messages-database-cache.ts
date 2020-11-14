@@ -52,7 +52,7 @@ import {
 import { ISwarmMessagesDatabaseMesssageMeta } from '../../swarm-messages-database.types';
 import { getMessagesUniqIndexesByMeta } from './swarm-messages-database-cache.utils';
 import { TSwarmMessagesDatabaseMessagesCacheStore } from './swarm-messages-database-cache.types';
-import { TSwarmMessageSerialized, ISwarmMessageInstanceEncrypted } from '../../../swarm-message/swarm-message-constructor.types';
+import { TSwarmMessageSerialized } from '../../../swarm-message/swarm-message-constructor.types';
 import { TSwarmStoreDatabaseOptions } from '../../../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageInstanceDecrypted } from '../../../swarm-message/swarm-message-constructor.types';
 

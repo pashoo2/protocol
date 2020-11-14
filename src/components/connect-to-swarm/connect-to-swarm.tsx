@@ -263,13 +263,13 @@ export class ConnectToSwarm extends React.PureComponent<IConnectToSwarmProps> {
 
       sessionStorage.setItem(CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY, 'true');
 
-      const userId = connectionBridge?.caConnection?.getUserIdentity();
-      const userProfileData = await connectionBridge?.caConnection?.getCAUserProfile();
+      const userId = connectionBridge?.centralAuthorityConnection?.getUserIdentity();
+      const userProfileData = await connectionBridge?.centralAuthorityConnection?.getCAUserProfile();
 
       this.setState({
         connectionBridge,
         userId,
-        databasesList: connectionBridge.storage?.databases,
+        databasesList: connectionBridge.swarmMessageStore?.databases,
         secretStorage: connectionBridge.secretStorage,
         userProfileData,
       });

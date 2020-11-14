@@ -5,7 +5,10 @@ import {
 } from 'classes/secret-storage-class/secret-storage-class.types';
 import { SecretStorage } from 'classes/secret-storage-class/secret-storage-class';
 import { SWARM_STORE_CONNECTOR_ORBITDB_SUBCASS_STORE_TO_STORAGE_ADAPTER_DEFAULT_OPTIONS_STORAGE } from '../swarm-store-connector-orbit-db-subclasses-cache.const';
-import { ISecretStorage } from '../../../../../../secret-storage-class/secret-storage-class.types';
+import {
+  ISecretStorage,
+  TSecretStorageAuthorizazionOptions,
+} from '../../../../../../secret-storage-class/secret-storage-class.types';
 import { ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterConstructorOptions } from './swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types';
 import {
   ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbKeystoreStore,
@@ -26,7 +29,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
 
   constructor(
     options: ISwarmStoreConnectorOrbitDbSubclassStoreToSecretStorageAdapterConstructorOptions,
-    credentials: ISecretStoreCredentials | ISecretStoreCredentialsCryptoKey
+    credentials: TSecretStorageAuthorizazionOptions
   ) {
     super(options);
     this.setCredentials(credentials);
@@ -41,7 +44,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
    * @memberof SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
    * @throws
    */
-  protected setCredentials(credentials: ISecretStoreCredentials | ISecretStoreCredentialsCryptoKey) {
+  protected setCredentials(credentials: TSecretStorageAuthorizazionOptions) {
     if (!credentials) {
       throw new Error('Credentials must be specified');
     }
