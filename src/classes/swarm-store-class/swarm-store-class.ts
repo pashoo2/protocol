@@ -51,20 +51,20 @@ export class SwarmStore<
     P extends ESwarmStoreConnector,
     ItemType extends TSwarmStoreValueTypes<P>,
     DbType extends TSwarmStoreDatabaseType<P>,
-    ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType>,
-    PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, ConnectorBasic>,
     DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
-    CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, ConnectorBasic, PO>,
-    ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic, PO, DBO>,
-    CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain>,
-    O extends ISwarmStoreOptionsWithConnectorFabric<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain, CFO>,
-    E extends ISwarmStoreEvents<P, ItemType, DBO>,
-    DBL extends TSwarmStoreOptionsOfDatabasesKnownList<P, ItemType, DBO>
+    ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType, DBO>,
+    PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, DBO, ConnectorBasic>,
+    CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, DBO, ConnectorBasic, PO>,
+    ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, DBO, ConnectorBasic, PO>,
+    CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
+    O extends ISwarmStoreOptionsWithConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO>,
+    E extends ISwarmStoreEvents<P, ItemType, DbType, DBO>,
+    DBL extends TSwarmStoreOptionsOfDatabasesKnownList<P, ItemType, DbType, DBO>
   >
   extends EventEmitter<E>
   implements
-    ISwarmStore<P, ItemType, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, CFO, O>,
-    ISwarmStoreWithConnector<P, ItemType, DbType, ConnectorBasic, PO, DBO, ConnectorMain> {
+    ISwarmStore<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O>,
+    ISwarmStoreWithConnector<P, ItemType, DbType, DBO, ConnectorBasic, PO, ConnectorMain> {
   public get isReady(): boolean {
     return !!this.connector && this.connector.isReady;
   }
@@ -80,7 +80,7 @@ export class SwarmStore<
     return SWARM_STORE_DATABASES_STATUSES_EMPTY;
   }
 
-  public get databases(): ISwarmStoreDatabasesCommonStatusList<P, ItemType, DBO> {
+  public get databases(): ISwarmStoreDatabasesCommonStatusList<P, ItemType, DbType, DBO> {
     const { databasesKnownOptionsList, databasesOpenedList } = this;
 
     return {
@@ -326,7 +326,6 @@ export class SwarmStore<
     assert(typeof options.userId === 'string', 'The user identity must be a string');
     assert(options.credentials, 'A credentials must be provided');
     assert(typeof options.credentials === 'object', 'Credentials must be an object');
-    assert(options.credentials.login, "User's login must be provided in the credentials to access on an encrypyted data");
   }
 
   /**

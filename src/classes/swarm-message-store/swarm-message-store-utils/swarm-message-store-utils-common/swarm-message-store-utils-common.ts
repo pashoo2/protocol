@@ -2,17 +2,17 @@ import {
   ISwarmMessageDatabaseConstructors,
   TSwarmMessageStoreAccessControlGrantAccessCallback,
 } from '../../swarm-message-store.types';
-import { ISwarmStoreConnectorOrbitDbDatabaseOptions } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
-import {
-  ISwarmStoreDatabaseBaseOptions,
-  TSwarmStoreDatabaseEntryOperation,
-} from '../../../swarm-store-class/swarm-store-class.types';
+import { TSwarmStoreDatabaseEntryOperation } from '../../../swarm-store-class/swarm-store-class.types';
 import { TCentralAuthorityUserIdentity } from '../../../central-authority-class/central-authority-class-types/central-authority-class-types-common';
 import { ESwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.const';
 import { EOrbitDbFeedStoreOperation } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types';
 import { TSwarmMessageInstance } from '../../../swarm-message/swarm-message-constructor.types';
-import { TSwarmStoreDatabaseEntityKey, TSwarmStoreDatabaseOptions } from '../../../swarm-store-class/swarm-store-class.types';
+import {
+  TSwarmStoreDatabaseEntityKey,
+  TSwarmStoreDatabaseOptions,
+  TSwarmStoreDatabaseType,
+} from '../../../swarm-store-class/swarm-store-class.types';
 import { TSwarmMessagesStoreGrantAccessCallback } from '../../swarm-message-store.types';
 import { TSwarmMessageSerialized, ISwarmMessageConstructor } from '../../../swarm-message/swarm-message-constructor.types';
 

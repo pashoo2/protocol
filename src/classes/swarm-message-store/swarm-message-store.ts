@@ -79,12 +79,12 @@ export class SwarmMessageStore<
     P extends ESwarmStoreConnector,
     ItemType extends TSwarmMessageSerialized,
     DbType extends TSwarmStoreDatabaseType<P>,
-    ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType>,
-    PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, ConnectorBasic>,
     DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
-    CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, ConnectorBasic, PO>,
-    ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, ConnectorBasic, PO, DBO>,
-    CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain>,
+    ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType, DBO>,
+    PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, DBO, ConnectorBasic>,
+    CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, DBO, ConnectorBasic, PO>,
+    ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, DBO, ConnectorBasic, PO>,
+    CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
     MSI extends TSwarmMessageInstance | ItemType,
     GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
     MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
@@ -93,10 +93,10 @@ export class SwarmMessageStore<
       P,
       ItemType,
       DbType,
+      DBO,
       ConnectorBasic,
       PO,
       CO,
-      DBO,
       ConnectorMain,
       CFO,
       MSI,
@@ -104,11 +104,11 @@ export class SwarmMessageStore<
       MCF,
       ACO
     >,
-    E extends ISwarmMessageStoreEvents<P, ItemType, DBO>,
-    DBL extends TSwarmStoreOptionsOfDatabasesKnownList<P, ItemType, DBO>
+    E extends ISwarmMessageStoreEvents<P, ItemType, DbType, DBO>,
+    DBL extends TSwarmStoreOptionsOfDatabasesKnownList<P, ItemType, DbType, DBO>
   >
-  extends SwarmStore<P, ItemType, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, CFO, O, E, DBL>
-  implements ISwarmMessageStore<P, ItemType, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O> {
+  extends SwarmStore<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O, E, DBL>
+  implements ISwarmMessageStore<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O> {
   protected connectorType: P | undefined;
 
   protected accessControl?: ACO;

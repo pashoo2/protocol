@@ -32,9 +32,16 @@ declare module 'orbit-db-keystore' {
     store?: string | IOrbitDBKeystoreStoreCustom;
     cache?: IOrbitDBKeystoreCache;
     path?: string;
-    credentials: {
-      password: string;
-    };
+    credentials:
+      | {
+          password: string;
+        }
+      | {
+          key: CryptoKey;
+        }
+      | {
+          session: {};
+        };
   }
 
   export type TOrbitDBKeystoreOptions = IOrbitDBKeystoreOptionsForSecretStorage | string;

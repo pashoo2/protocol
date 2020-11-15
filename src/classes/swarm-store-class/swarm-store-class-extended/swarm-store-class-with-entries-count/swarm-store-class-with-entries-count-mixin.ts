@@ -22,24 +22,24 @@ export function extendClassSwarmStoreWithEntriesCount<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  ConnectorBasic extends ISwarmStoreConnectorBasicWithEntriesCount<P, ItemType, DbType>,
-  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, ConnectorBasic>,
-  CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, ConnectorBasic, PO>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType>,
-  ConnectorMain extends ISwarmStoreConnectorWithEntriesCount<P, ItemType, DbType, ConnectorBasic, PO, DBO>,
-  CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain>,
-  O extends ISwarmStoreOptionsWithConnectorFabric<P, ItemType, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain, CFO>
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
+  ConnectorBasic extends ISwarmStoreConnectorBasicWithEntriesCount<P, ItemType, DbType, DBO>,
+  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, DBO, ConnectorBasic>,
+  CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, DBO, ConnectorBasic, PO>,
+  ConnectorMain extends ISwarmStoreConnectorWithEntriesCount<P, ItemType, DbType, DBO, ConnectorBasic, PO>,
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
+  O extends ISwarmStoreOptionsWithConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO>
 >(
   BaseClass: ConstructorType<
-    ISwarmStore<P, ItemType, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, CFO, O> &
-      ISwarmStoreWithConnector<P, ItemType, DbType, ConnectorBasic, PO, DBO, ConnectorMain>
+    ISwarmStore<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O> &
+      ISwarmStoreWithConnector<P, ItemType, DbType, DBO, ConnectorBasic, PO, ConnectorMain>
   >
 ): ConstructorType<
   InstanceType<typeof BaseClass> &
-    ISwarmStoreWithEntriesCount<P, ItemType, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, CFO, O>
+    ISwarmStoreWithEntriesCount<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O>
 > {
   return (class SwarmStoreWithEntriesCount extends BaseClass {
-    async getCountEntriesLoaded(dbName: TSwarmStoreDatabaseOptions<P, ItemType>['dbName']): Promise<number | Error> {
+    async getCountEntriesLoaded(dbName: TSwarmStoreDatabaseOptions<P, ItemType, DbType>['dbName']): Promise<number | Error> {
       const connector = this.getConnectorOrError();
 
       if (checkIsError(connector)) {
@@ -48,7 +48,7 @@ export function extendClassSwarmStoreWithEntriesCount<
       return connector.getCountEntriesLoaded(dbName);
     }
 
-    async getCountEntriesAllExists(dbName: TSwarmStoreDatabaseOptions<P, ItemType>['dbName']): Promise<number | Error> {
+    async getCountEntriesAllExists(dbName: TSwarmStoreDatabaseOptions<P, ItemType, DbType>['dbName']): Promise<number | Error> {
       const connector = this.getConnectorOrError();
 
       if (checkIsError(connector)) {
@@ -58,6 +58,6 @@ export function extendClassSwarmStoreWithEntriesCount<
     }
   } as unknown) as ConstructorType<
     InstanceType<typeof BaseClass> &
-      ISwarmStoreWithEntriesCount<P, ItemType, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, CFO, O>
+      ISwarmStoreWithEntriesCount<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O>
   >;
 }

@@ -2,7 +2,11 @@ import { SwarmStoreConnectorOrbitDBDatabase } from '../../swarm-store-connector-
 import { ConcurentAsyncQueue } from 'classes/basic-classes/async-queue-concurent/async-queue-concurent';
 import { createPromisePendingRejectable } from 'utils/common-utils/commom-utils.promies';
 
-import { TSwarmStoreValueTypes, TSwarmStoreDatabaseType } from '../../../../../../swarm-store-class.types';
+import {
+  TSwarmStoreValueTypes,
+  TSwarmStoreDatabaseType,
+  TSwarmStoreDatabaseOptions,
+} from '../../../../../../swarm-store-class.types';
 import { ESwarmStoreConnector } from '../../../../../../swarm-store-class.const';
 import {
   IJobResolver,
@@ -12,11 +16,12 @@ import { ArgumentTypes } from 'types/helper.types';
 import { ISwarmStoreConnectorBasic } from '../../../../../../swarm-store-class.types';
 
 export class SwarmStoreConnectorOrbitDBDatabaseQueued<
-    TStoreValue extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>,
-    DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>
+    ItemType extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>,
+    DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>,
+    DBO extends TSwarmStoreDatabaseOptions<ESwarmStoreConnector.OrbitDB, ItemType, DbType>
   >
-  extends SwarmStoreConnectorOrbitDBDatabase<TStoreValue, DbType>
-  implements ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, TStoreValue, DbType> {
+  extends SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>
+  implements ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, ItemType, DbType, DBO> {
   /**
    * All async operations with the database, excluding datbase
    * close and open, should use this queue.
@@ -27,53 +32,53 @@ export class SwarmStoreConnectorOrbitDBDatabaseQueued<
   private _asyncOperationsQueue: IAsyncQueueConcurent<void, Error> | undefined;
 
   public connect = async (
-    ...args: ArgumentTypes<SwarmStoreConnectorOrbitDBDatabase<TStoreValue, DbType>['connect']>
-  ): ReturnType<SwarmStoreConnectorOrbitDBDatabase<TStoreValue, DbType>['close']> => {
+    ...args: ArgumentTypes<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['connect']>
+  ): ReturnType<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['close']> => {
     await this._rejectAllPendingOperationsOnDbOpen();
     return super.connect(...args);
   };
 
   public close = async (
-    ...args: ArgumentTypes<SwarmStoreConnectorOrbitDBDatabase<TStoreValue, DbType>['close']>
-  ): ReturnType<SwarmStoreConnectorOrbitDBDatabase<TStoreValue, DbType>['close']> => {
+    ...args: ArgumentTypes<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['close']>
+  ): ReturnType<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['close']> => {
     await this._rejectAllPendingOperationsOnDbClose();
     return super.close(...args);
   };
 
   public drop = async (
-    ...args: ArgumentTypes<SwarmStoreConnectorOrbitDBDatabase<TStoreValue, DbType>['drop']>
-  ): ReturnType<SwarmStoreConnectorOrbitDBDatabase<TStoreValue, DbType>['drop']> => {
+    ...args: ArgumentTypes<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['drop']>
+  ): ReturnType<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['drop']> => {
     await this._rejectAllPendingOperationsOnDbDrop();
     return super.drop(...args);
   };
 
   public load = async (
-    ...args: ArgumentTypes<SwarmStoreConnectorOrbitDBDatabase<TStoreValue, DbType>['load']>
-  ): ReturnType<SwarmStoreConnectorOrbitDBDatabase<TStoreValue, DbType>['load']> => {
+    ...args: ArgumentTypes<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['load']>
+  ): ReturnType<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['load']> => {
     return this._runAsJob(() => super.load(...args));
   };
 
   public add = async (
-    ...args: ArgumentTypes<SwarmStoreConnectorOrbitDBDatabase<TStoreValue, DbType>['add']>
-  ): ReturnType<SwarmStoreConnectorOrbitDBDatabase<TStoreValue, DbType>['add']> => {
+    ...args: ArgumentTypes<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['add']>
+  ): ReturnType<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['add']> => {
     return this._runAsJob(() => super.add(...args));
   };
 
   public get = async (
-    ...args: ArgumentTypes<SwarmStoreConnectorOrbitDBDatabase<TStoreValue, DbType>['get']>
-  ): ReturnType<SwarmStoreConnectorOrbitDBDatabase<TStoreValue, DbType>['get']> => {
+    ...args: ArgumentTypes<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['get']>
+  ): ReturnType<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['get']> => {
     return this._runAsJob(() => super.get(...args));
   };
 
   public remove = async (
-    ...args: ArgumentTypes<SwarmStoreConnectorOrbitDBDatabase<TStoreValue, DbType>['remove']>
-  ): ReturnType<SwarmStoreConnectorOrbitDBDatabase<TStoreValue, DbType>['remove']> => {
+    ...args: ArgumentTypes<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['remove']>
+  ): ReturnType<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['remove']> => {
     return this._runAsJob(() => super.remove(...args));
   };
 
   public iterator = async (
-    ...args: ArgumentTypes<SwarmStoreConnectorOrbitDBDatabase<TStoreValue, DbType>['iterator']>
-  ): ReturnType<SwarmStoreConnectorOrbitDBDatabase<TStoreValue, DbType>['iterator']> => {
+    ...args: ArgumentTypes<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['iterator']>
+  ): ReturnType<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['iterator']> => {
     return this._runAsJob(() => super.iterator(...args));
   };
 

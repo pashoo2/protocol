@@ -10,14 +10,14 @@ import {
 export class SwarmStoreConnectorOrbitDBWithEntriesCount<
     ItemType extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>,
     DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>,
-    ConnectorBasic extends ISwarmStoreConnectorBasicWithEntriesCount<ESwarmStoreConnector.OrbitDB, ItemType, DbType>,
-    PO extends TSwarmStoreConnectorConnectionOptions<ESwarmStoreConnector.OrbitDB, ItemType, DbType, ConnectorBasic>,
-    DBO extends TSwarmStoreDatabaseOptions<ESwarmStoreConnector.OrbitDB, ItemType>
+    DBO extends TSwarmStoreDatabaseOptions<ESwarmStoreConnector.OrbitDB, ItemType, DbType>,
+    ConnectorBasic extends ISwarmStoreConnectorBasicWithEntriesCount<ESwarmStoreConnector.OrbitDB, ItemType, DbType, DBO>,
+    PO extends TSwarmStoreConnectorConnectionOptions<ESwarmStoreConnector.OrbitDB, ItemType, DbType, DBO, ConnectorBasic>
   >
-  extends SwarmStoreConnectorOrbitDB<ItemType, DbType, ConnectorBasic, PO, DBO>
-  implements ISwarmStoreConnectorWithEntriesCount<ESwarmStoreConnector.OrbitDB, ItemType, DbType, ConnectorBasic, PO, DBO> {
+  extends SwarmStoreConnectorOrbitDB<ItemType, DbType, DBO, ConnectorBasic, PO>
+  implements ISwarmStoreConnectorWithEntriesCount<ESwarmStoreConnector.OrbitDB, ItemType, DbType, DBO, ConnectorBasic, PO> {
   async getCountEntriesLoaded(
-    dbName: TSwarmStoreDatabaseOptions<ESwarmStoreConnector.OrbitDB, ItemType>['dbName']
+    dbName: TSwarmStoreDatabaseOptions<ESwarmStoreConnector.OrbitDB, ItemType, DbType>['dbName']
   ): Promise<number | Error> {
     const connector = this.getDbConnectionExists(dbName);
 
@@ -28,7 +28,7 @@ export class SwarmStoreConnectorOrbitDBWithEntriesCount<
   }
 
   async getCountEntriesAllExists(
-    dbName: TSwarmStoreDatabaseOptions<ESwarmStoreConnector.OrbitDB, ItemType>['dbName']
+    dbName: TSwarmStoreDatabaseOptions<ESwarmStoreConnector.OrbitDB, ItemType, DbType>['dbName']
   ): Promise<number | Error> {
     const connector = this.getDbConnectionExists(dbName);
 
