@@ -1,4 +1,3 @@
-// @ts-nocheck
 import assert from 'assert';
 import {
   IConnectionBridgeOptions,
@@ -96,12 +95,12 @@ export class ConnectionBridge<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType>,
-  PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, ConnectorBasic>,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
-  CO extends ISwarmStoreProviderOptions<P, T, DbType, ConnectorBasic, PO>,
-  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, ConnectorBasic, PO, DBO>,
-  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO>,
+  PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
+  CO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, PO>,
+  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, PO>,
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
   MSI extends TSwarmMessageInstance | T,
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
@@ -110,10 +109,10 @@ export class ConnectionBridge<
     P,
     T,
     DbType,
+    DBO,
     ConnectorBasic,
     PO,
     CO,
-    DBO,
     ConnectorMain,
     CFO,
     MSI,
@@ -123,18 +122,23 @@ export class ConnectionBridge<
   >,
   NC extends TNativeConnectionType<P>,
   CD extends boolean = true,
-  E extends ISwarmMessageStoreEvents<P, T, DBO> = ISwarmMessageStoreEvents<P, T, DBO>,
-  DBL extends TSwarmStoreOptionsOfDatabasesKnownList<P, T, DBO> = TSwarmStoreOptionsOfDatabasesKnownList<P, T, DBO>
-> implements IConnectionBridge<P, T, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O, CD> {
+  E extends ISwarmMessageStoreEvents<P, T, DbType, DBO> = ISwarmMessageStoreEvents<P, T, DbType, DBO>,
+  DBL extends TSwarmStoreOptionsOfDatabasesKnownList<P, T, DbType, DBO> = TSwarmStoreOptionsOfDatabasesKnownList<
+    P,
+    T,
+    DbType,
+    DBO
+  >
+> implements IConnectionBridge<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O, CD> {
   public centralAuthorityConnection?: ICentralAuthority;
 
   public swarmMessageStore?: ISwarmMessageStore<
     P,
     T,
     DbType,
+    DBO,
     ConnectorBasic,
     PO,
-    DBO,
     CO,
     ConnectorMain,
     CFO,
@@ -157,7 +161,7 @@ export class ConnectionBridge<
 
   protected swarmStoreConnectorType?: P;
 
-  protected options?: IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CD>;
+  protected options?: IConnectionBridgeOptions<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CD>;
 
   protected optionsCentralAuthority?: ICentralAuthorityOptions;
 
@@ -165,7 +169,7 @@ export class ConnectionBridge<
 
   protected optionsSwarmConnection?: TNativeConnectionOptions<P>;
 
-  protected optionsMessageStorage?: ISwarmMessageStoreOptions<P, T, DbType, ConnectorBasic, PO, MSI, GAC, MCF, ACO>;
+  protected optionsMessageStorage?: ISwarmMessageStoreOptions<P, T, DbType, DBO, ConnectorBasic, PO, MSI, GAC, MCF, ACO>;
 
   protected sessionSensitiveStorage?: ISensitiveDataSessionStorage;
 
@@ -191,7 +195,7 @@ export class ConnectionBridge<
    * @throws
    */
   public async connect(
-    options: IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CD>
+    options: IConnectionBridgeOptions<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CD>
   ): Promise<void> {
     this.createAndSetCurrentActiveUserSensitiveDataStoreIfNotExists();
     try {
@@ -222,7 +226,7 @@ export class ConnectionBridge<
   public async checkSessionAvailable(
     options?:
       | ISensitiveDataSessionStorageOptions
-      | IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CD>
+      | IConnectionBridgeOptions<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CD>
   ) {
     const sessionParams = this.getSessionParamsOrUndefinedFromConnectionBridgeOrSensitiveDataSessionStorageOptions(options);
 
@@ -261,7 +265,7 @@ export class ConnectionBridge<
   }
 
   protected checkCurrentOptionsIsDefined(): this is {
-    options: IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CD>;
+    options: IConnectionBridgeOptions<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CD>;
   } {
     if (!this.options) {
       throw new Error('Options should be defined');
@@ -273,9 +277,9 @@ export class ConnectionBridge<
     P,
     T,
     DbType,
+    DBO,
     ConnectorBasic,
     PO,
-    DBO,
     CO,
     ConnectorMain,
     MSI,
@@ -387,19 +391,21 @@ export class ConnectionBridge<
     P,
     T,
     DbType,
+    DBO,
     ConnectorBasic
   > {
     return (this.options?.storage.connectorBasicFabric ?? connectorBasicFabricOrbitDBDefault) as TSwarmStoreConnectorBasicFabric<
       P,
       T,
       DbType,
+      DBO,
       ConnectorBasic
     >;
   }
 
   protected getSwarmStoreConnectionProviderOptions<SC extends IConnectionBridgeSwarmConnection<P, NC>>(
     swarmConnection: SC
-  ): TSwarmStoreConnectorConnectionOptions<P, T, DbType, ConnectorBasic> {
+  ): TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic> {
     const { swarmStoreConnectorType } = this;
 
     if (!swarmStoreConnectorType) {
@@ -411,6 +417,7 @@ export class ConnectionBridge<
       P,
       T,
       DbType,
+      DBO,
       ConnectorBasic,
       NC,
       SC
@@ -440,6 +447,7 @@ export class ConnectionBridge<
     P,
     T,
     DbType,
+    DBO,
     ConnectorBasic
   > {
     const { swarmConnection } = this;
@@ -518,7 +526,7 @@ export class ConnectionBridge<
   }
 
   protected setOptions(
-    options: IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CD>
+    options: IConnectionBridgeOptions<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CD>
   ): void {
     this.options = options;
   }
@@ -574,11 +582,11 @@ export class ConnectionBridge<
 
   protected validateOptions(
     options: unknown
-  ): options is IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CD> {
+  ): options is IConnectionBridgeOptions<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CD> {
     assert(options, 'Options must be provided');
     assert(typeof options === 'object', 'Options must be an object');
     assert(
-      (options as IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CD>)
+      (options as IConnectionBridgeOptions<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CD>)
         .swarmStoreConnectorType,
       'swarmStoreConnectorType should be defined'
     );
@@ -586,25 +594,25 @@ export class ConnectionBridge<
   }
 
   protected isOptionsWithCredentials(
-    options: IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, MSI, GAC, MCF, ACO, any>
-  ): options is IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, MSI, GAC, MCF, ACO, true> {
+    options: IConnectionBridgeOptions<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, MSI, GAC, MCF, ACO, any>
+  ): options is IConnectionBridgeOptions<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, MSI, GAC, MCF, ACO, true> {
     return !!options.auth.credentials?.login;
   }
 
   protected async setOptionsWithUserCredentialsProvided(
-    options: IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, MSI, GAC, MCF, ACO, true>
+    options: IConnectionBridgeOptions<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, MSI, GAC, MCF, ACO, true>
   ): Promise<void> {
     await this.setValueInCurrentActiveUserSensitiveDataStore(
       CONNECTION_BRIDGE_SESSION_STORAGE_KEYS.USER_LOGIN,
       options.auth.credentials.login
     );
     this.setOptions(
-      options as IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CD>
+      options as IConnectionBridgeOptions<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CD>
     );
   }
 
   protected async setCurrentOptionsWithoutUserCredentials(
-    options: IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, MSI, GAC, MCF, ACO, false>
+    options: IConnectionBridgeOptions<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, MSI, GAC, MCF, ACO, false>
   ): Promise<void> {
     assert(options.auth.session, 'A session must be started if there is no credentials provided');
 
@@ -622,7 +630,7 @@ export class ConnectionBridge<
           login,
         },
       },
-    } as IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CD>;
+    } as IConnectionBridgeOptions<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CD>;
   }
 
   /**
@@ -634,7 +642,7 @@ export class ConnectionBridge<
    * @throws
    */
   protected async validateAndSetOptions(
-    options: IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CD>
+    options: IConnectionBridgeOptions<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CD>
   ): Promise<void> {
     this.validateOptions(options);
     this.setSwarmStoreConnectorType(options.swarmStoreConnectorType);
@@ -642,7 +650,7 @@ export class ConnectionBridge<
       this.setOptionsWithUserCredentialsProvided(options);
     } else {
       this.setCurrentOptionsWithoutUserCredentials(
-        options as IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, MSI, GAC, MCF, ACO, false>
+        options as IConnectionBridgeOptions<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, MSI, GAC, MCF, ACO, false>
       );
     }
   }
@@ -884,9 +892,9 @@ export class ConnectionBridge<
     P,
     T,
     DbType,
+    DBO,
     ConnectorBasic,
     PO,
-    DBO,
     CO,
     ConnectorMain,
     CFO,
@@ -896,11 +904,11 @@ export class ConnectionBridge<
     ACO,
     O
   > => {
-    return new SwarmMessageStore<P, T, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O, E, DBL>();
+    return new SwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O, E, DBL>();
   };
 
   protected connectToSwarmMessageStore = async (
-    swarmMessageStorage: ISwarmMessageStore<P, T, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>
+    swarmMessageStorage: ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>
   ): Promise<void> => {
     const swarmMessageStorageOptions = await this.getOptionsMessageStorage();
     const result = await swarmMessageStorage.connect(swarmMessageStorageOptions);
@@ -911,7 +919,7 @@ export class ConnectionBridge<
   };
 
   protected setCurrentSwarmMessageStorage = (
-    swarmMessageStorage: ISwarmMessageStore<P, T, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>
+    swarmMessageStorage: ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>
   ): void => {
     this.swarmMessageStore = swarmMessageStorage;
   };
@@ -924,7 +932,7 @@ export class ConnectionBridge<
    * @throws
    */
   protected async createAndStartSwarmMessageStorageConnection(): Promise<
-    ISwarmMessageStore<P, T, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>
+    ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>
   > {
     const swarmMessageStorage = this.createSwarmMessageStoreInstance();
 
@@ -1074,7 +1082,7 @@ export class ConnectionBridge<
   }
 
   protected getSecretStorageCredentials(
-    options: IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CD>
+    options: IConnectionBridgeOptions<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CD>
   ): ISecretStoreCredentials {
     const {
       auth: { credentials },
@@ -1133,14 +1141,14 @@ export class ConnectionBridge<
   protected getSessionParamsOrUndefinedFromConnectionBridgeOrSensitiveDataSessionStorageOptions(
     options?:
       | ISensitiveDataSessionStorageOptions
-      | IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CD>
+      | IConnectionBridgeOptions<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CD>
   ): ISensitiveDataSessionStorageOptions | undefined {
     if (!options) {
       return undefined;
     }
-    return (options as IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CD>)
+    return (options as IConnectionBridgeOptions<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CD>)
       .auth
-      ? (options as IConnectionBridgeOptions<P, T, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CD>)
+      ? (options as IConnectionBridgeOptions<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CD>)
           .auth.session
       : (options as ISensitiveDataSessionStorageOptions);
   }
