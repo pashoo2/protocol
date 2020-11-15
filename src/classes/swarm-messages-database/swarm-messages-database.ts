@@ -63,12 +63,12 @@ export class SwarmMessagesDatabase<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType>,
-  PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, ConnectorBasic>,
-  CO extends ISwarmStoreProviderOptions<P, T, DbType, ConnectorBasic, PO>,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
-  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, ConnectorBasic, PO, DBO>,
-  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO>,
+  PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
+  CO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, PO>,
+  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, PO>,
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
   MSI extends TSwarmMessageInstance | T,
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
@@ -77,10 +77,10 @@ export class SwarmMessagesDatabase<
     P,
     T,
     DbType,
+    DBO,
     ConnectorBasic,
     PO,
     CO,
-    DBO,
     ConnectorMain,
     CFO,
     MSI,
@@ -88,7 +88,7 @@ export class SwarmMessagesDatabase<
     MCF,
     ACO
   >,
-  SMS extends ISwarmMessageStore<P, T, DbType, ConnectorBasic, PO, DBO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>,
+  SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>,
   MD extends Exclude<MSI, T | ISwarmMessageInstanceEncrypted> & Exclude<Exclude<MSI, T>, ISwarmMessageInstanceEncrypted>
 > implements ISwarmMessageDatabaseMessagingMethods<P, T, DbType, Exclude<MSI, T>, SMS> {
   get dbName(): DBO['dbName'] | undefined {
@@ -272,10 +272,10 @@ export class SwarmMessagesDatabase<
     P,
     T,
     DbType,
+    DBO,
     ConnectorBasic,
     PO,
     CO,
-    DBO,
     ConnectorMain,
     CFO,
     MSI,
@@ -366,7 +366,7 @@ export class SwarmMessagesDatabase<
   }
 
   protected _checkDatabaseProps(): this is Omit<
-    ISwarmMessagesDatabaseReady<P, T, DbType, ConnectorBasic, PO, CO, DBO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>,
+    ISwarmMessagesDatabaseReady<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>,
     'isReady'
   > {
     const swarmMessageStore = this._swarmMessageStore;
