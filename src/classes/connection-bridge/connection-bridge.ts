@@ -62,7 +62,11 @@ import {
   TSwarmStoreOptionsOfDatabasesKnownList,
 } from '../swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageSerialized } from '../swarm-message/swarm-message-constructor.types';
-import { IConnectionBridgeSwarmConnection, TNativeConnectionOptions } from './connection-bridge.types';
+import {
+  IConnectionBridgeSwarmConnection,
+  TNativeConnectionOptions,
+  IConnectionBridgeStorageOptions,
+} from './connection-bridge.types';
 import {
   getSwarmStoreConnectionProviderOptionsForSwarmStoreConnector,
   createNativeConnection,
@@ -76,6 +80,9 @@ import {
   TSwarmStoreConnectorBasicFabric,
 } from '../swarm-store-class/swarm-store-class.types';
 import { ISecretStoreCredentialsSession, ISecretStoreCredentials } from '../secret-storage-class/secret-storage-class.types';
+import { getMainConnectorFabricWithEntriesCountDefault } from './connection-bridge.utils';
+import { TSwarmStoreConnectorConstructorOptions } from '../swarm-store-class/swarm-store-class.types';
+import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import {
   TSwarmStoreDatabaseOptions,
   ISwarmStoreProviderOptions,
@@ -426,7 +433,7 @@ export class ConnectionBridge<
     return swarmStoreConnectionProviderOptions;
   }
 
-  protected getCurrentUserIdentityFromCurrentConnectionToCentralAuthority(): string {
+  protected getCurrentUserIdentityFromCurrentConnectionToCentralAuthority(): TSwarmMessageUserIdentifierSerialized {
     const { centralAuthorityConnection: caConnection } = this;
     if (!caConnection) {
       throw new Error('There is no message central authority connection defined');
@@ -474,8 +481,51 @@ export class ConnectionBridge<
     return this.getSecretStorageAuthorizationOptions();
   }
 
-  protected getConnectorFabricForMessageStoreFromCurrentOptions(): CFO {
-    return;
+  protected getSwarmStoreOrbitDbConnectorConstructorOptionsByConnectionBridgeOptions(
+    userId: TSwarmMessageUserIdentifierSerialized,
+    credentials: TSecretStorageAuthorizazionOptions,
+    storageOptions: IConnectionBridgeStorageOptions<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, MSI, GAC, MCF, ACO>
+  ): TSwarmStoreConnectorConstructorOptions<ESwarmStoreConnector.OrbitDB, T, DbType> {
+    return {
+      userId,
+      credentials,
+      databases: storageOptions.databases,
+      directory: storageOptions.directory,
+    };
+  }
+
+  protected getSwarmStoreConnectorConstructorOptionsByConnectionBridgeOptions = (
+    userId: TSwarmMessageUserIdentifierSerialized,
+    credentials: TSecretStorageAuthorizazionOptions
+  ): TSwarmStoreConnectorConstructorOptions<P, T, DbType> => {
+    const options = this.getOptions();
+
+    switch (options.swarmStoreConnectorType) {
+      case ESwarmStoreConnector.OrbitDB:
+        return this.getSwarmStoreOrbitDbConnectorConstructorOptionsByConnectionBridgeOptions(
+          userId,
+          credentials,
+          options.storage
+        ) as TSwarmStoreConnectorConstructorOptions<P, T, DbType>;
+      default:
+        throw new Error('Unsupported connector type');
+    }
+  };
+
+  protected getMainConnectorFabricForMessageStoreFromCurrentOptions(
+    userId: TSwarmMessageUserIdentifierSerialized,
+    credentials: TSecretStorageAuthorizazionOptions
+  ): CFO {
+    if (!this.swarmStoreConnectorType) {
+      throw new Error('Swarm store connector type should be defined');
+    }
+    const swarmStoreConnectorOptions = this.getSwarmStoreConnectorConstructorOptionsByConnectionBridgeOptions(
+      userId,
+      credentials
+    );
+    return getMainConnectorFabricWithEntriesCountDefault<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>(
+      swarmStoreConnectorOptions
+    ) as CFO;
   }
 
   /**
@@ -487,16 +537,18 @@ export class ConnectionBridge<
    */
   protected async getOptionsMessageStorage(): Promise<O> {
     const { storage: storageOptions } = this.getOptions();
-    const messageStorageOptions: O = {
+    const credentials = this.getSecretStoreCredentialsOptionsForMessageStoreFromCurrentOptions();
+    const userId = this.getCurrentUserIdentityFromCurrentConnectionToCentralAuthority();
+    const messageStorageOptions = {
       ...storageOptions,
-      credentials: this.getSecretStoreCredentialsOptionsForMessageStoreFromCurrentOptions(),
-      userId: this.getCurrentUserIdentityFromCurrentConnectionToCentralAuthority(),
+      credentials,
+      userId,
       databasesListStorage: await this.startEncryptedCache(CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX.DATABASE_LIST_STORAGE),
-      swarmMessageConstructorFabric: this.swarmMessageConstructorFabric,
       messageConstructors: this.getMessageConstructorOptionsForMessageStoreFromCurrentOptions(),
       providerConnectionOptions: this.getSwarmStoreConnectionProviderOptionsFromCurrentOptions(),
-      connectorFabric: this.getConnectorFabricForMessageStoreFromCurrentOptions(),
-    };
+      swarmMessageConstructorFabric: this.swarmMessageConstructorFabric,
+      connectorFabric: this.getMainConnectorFabricForMessageStoreFromCurrentOptions(userId, credentials),
+    } as O;
 
     return messageStorageOptions;
   }

@@ -24,6 +24,8 @@ import {
   ISwarmStoreConnectorBasicWithEntriesCount,
 } from '../swarm-store-class/swarm-store-class-extended/swarm-store-class-with-entries-count/swarm-store-class-with-entries-count.types';
 import { SwarmStoreConnectorOrbitDBWithEntriesCount } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-extended/swarm-store-connector-orbit-db-with-entries-count/swarm-store-connector-orbit-db-with-entries-count';
+import { ISwarmStoreConnector } from '../swarm-store-class/swarm-store-class.types';
+import { SwarmStoreConnectorOrbitDB } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db';
 
 export const connectorBasicFabricOrbitDBDefault = <
   T extends TSwarmMessageSerialized,
@@ -33,6 +35,17 @@ export const connectorBasicFabricOrbitDBDefault = <
   dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<T, DbType>,
   orbitDb: OrbitDB
 ): ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, T, DbType, DBO> => {
+  return new SwarmStoreConnectorOrbitDbSubclassDatabaseQueuedItemsCounted(dbOptions, orbitDb);
+};
+
+export const connectorBasicFabricOrbitDBWithEntriesCount = <
+  T extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>,
+  DBO extends TSwarmStoreDatabaseOptions<ESwarmStoreConnector.OrbitDB, T, DbType>
+>(
+  dbOptions: ISwarmStoreConnectorOrbitDbDatabaseOptions<T, DbType>,
+  orbitDb: OrbitDB
+): ISwarmStoreConnectorBasicWithEntriesCount<ESwarmStoreConnector.OrbitDB, T, DbType, DBO> => {
   return new SwarmStoreConnectorOrbitDbSubclassDatabaseQueuedItemsCounted(dbOptions, orbitDb);
 };
 
@@ -49,7 +62,7 @@ export const getSwarmStoreConnectionProviderOptionsForOrbitDb = <
 ): TSwarmStoreConnectorConnectionOptions<ESwarmStoreConnector.OrbitDB, T, DbType, DBO, ConnectorBasic> => {
   return {
     ipfs: swarmConnection.getNativeConnection(),
-    connectorFabric: connectorBasicFabric,
+    connectorBasicFabric,
   };
 };
 
@@ -94,46 +107,67 @@ export const createNativeConnection = async <P extends ESwarmStoreConnector>(
   }
 };
 
-const getMainConnectorFabricForOrbitDB = <
+const getMainConnectorFabricForOrbitDBWithEntriesCount = <
   P extends ESwarmStoreConnector.OrbitDB,
   ItemType extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
   ConnectorBasic extends ISwarmStoreConnectorBasicWithEntriesCount<P, ItemType, DbType, DBO>,
   PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, DBO, ConnectorBasic>,
-  CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, DBO, ConnectorBasic, PO>,
-  ConnectorMain extends ISwarmStoreConnectorWithEntriesCount<P, ItemType, DbType, DBO, ConnectorBasic, PO>
+  CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, DBO, ConnectorBasic, PO>
 >(
-  swarmStoreConnectorOrbitDBConstructorOptions: TSwarmStoreConnectorConstructorOptions<P, ItemType, DbType>
-): ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain> => {
-  const swarmStoreConnectorFabric = (
-    options: CO
-  ): ISwarmStoreConnectorWithEntriesCount<P, ItemType, DbType, DBO, ConnectorBasic, PO> => {
-    const swarmMessageStoreWithEntriesCount = new SwarmStoreConnectorOrbitDBWithEntriesCount(
-      swarmStoreConnectorOrbitDBConstructorOptions
-    );
-    return swarmMessageStoreWithEntriesCount as ISwarmStoreConnectorWithEntriesCount<
-      P,
-      ItemType,
-      DbType,
-      DBO,
-      ConnectorBasic,
-      PO
-    >;
-  };
-  return swarmStoreConnectorFabric as ISwarmStoreOptionsConnectorFabric<
-    P,
-    ItemType,
-    DbType,
-    DBO,
-    ConnectorBasic,
-    PO,
-    CO,
-    ConnectorMain
-  >;
+  swarmStoreConnectorOrbitDBConstructorOptions: TSwarmStoreConnectorConstructorOptions<P, ItemType, DbType>,
+  options: CO
+): ISwarmStoreConnectorWithEntriesCount<P, ItemType, DbType, DBO, ConnectorBasic, PO> => {
+  const swarmMessageStoreWithEntriesCount = new SwarmStoreConnectorOrbitDBWithEntriesCount(
+    swarmStoreConnectorOrbitDBConstructorOptions
+  );
+  return swarmMessageStoreWithEntriesCount as ISwarmStoreConnectorWithEntriesCount<P, ItemType, DbType, DBO, ConnectorBasic, PO>;
+};
+
+const getMainConnectorFabricForOrbitDB = <
+  P extends ESwarmStoreConnector.OrbitDB,
+  ItemType extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType, DBO>,
+  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, DBO, ConnectorBasic>,
+  CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, DBO, ConnectorBasic, PO>
+>(
+  swarmStoreConnectorOrbitDBConstructorOptions: TSwarmStoreConnectorConstructorOptions<P, ItemType, DbType>,
+  options: CO
+): ISwarmStoreConnector<P, ItemType, DbType, DBO, ConnectorBasic, PO> => {
+  const swarmMessageStoreWithEntriesCount = new SwarmStoreConnectorOrbitDB(swarmStoreConnectorOrbitDBConstructorOptions);
+  return swarmMessageStoreWithEntriesCount as ISwarmStoreConnector<P, ItemType, DbType, DBO, ConnectorBasic, PO>;
 };
 
 export const getMainConnectorFabricDefault = <
+  P extends ESwarmStoreConnector,
+  ItemType extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType, DBO>,
+  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, DBO, ConnectorBasic>,
+  CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, DBO, ConnectorBasic, PO>,
+  ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, DBO, ConnectorBasic, PO>
+>(
+  swarmStoreConnectorConstructorOptions: TSwarmStoreConnectorConstructorOptions<P, ItemType, DbType>
+): ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain> => {
+  return (storeProviderOptions: CO): ConnectorMain => {
+    const { provider: swarmStoreConnectorType } = storeProviderOptions;
+    switch (swarmStoreConnectorType) {
+      case ESwarmStoreConnector.OrbitDB:
+        return getMainConnectorFabricForOrbitDB<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO>(
+          swarmStoreConnectorConstructorOptions,
+          storeProviderOptions
+        ) as ConnectorMain;
+      default:
+        throw new Error('Unsupported swarm connector type');
+    }
+  };
+};
+
+export const getMainConnectorFabricWithEntriesCountDefault = <
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
@@ -143,15 +177,18 @@ export const getMainConnectorFabricDefault = <
   CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, DBO, ConnectorBasic, PO>,
   ConnectorMain extends ISwarmStoreConnectorWithEntriesCount<P, ItemType, DbType, DBO, ConnectorBasic, PO>
 >(
-  swarmStoreConnectorType: P,
   swarmStoreConnectorConstructorOptions: TSwarmStoreConnectorConstructorOptions<P, ItemType, DbType>
 ): ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain> => {
-  switch (swarmStoreConnectorType) {
-    case ESwarmStoreConnector.OrbitDB:
-      return getMainConnectorFabricForOrbitDB<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>(
-        swarmStoreConnectorConstructorOptions
-      );
-    default:
-      throw new Error('Unsupported swarm connector type');
-  }
+  return (storeProviderOptions: CO): ConnectorMain => {
+    const { provider: swarmStoreConnectorType } = storeProviderOptions;
+    switch (swarmStoreConnectorType) {
+      case ESwarmStoreConnector.OrbitDB:
+        return getMainConnectorFabricForOrbitDBWithEntriesCount<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO>(
+          swarmStoreConnectorConstructorOptions,
+          storeProviderOptions
+        ) as ConnectorMain;
+      default:
+        throw new Error('Unsupported swarm connector type');
+    }
+  };
 };

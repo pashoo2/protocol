@@ -61,7 +61,7 @@ export interface ISwarmStoreConnectorOrbitDBConnectionOptions<
   DBO extends TSwarmStoreDatabaseOptions<ESwarmStoreConnector.OrbitDB, T, DbType>,
   ConnectorBasic extends ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, T, DbType, DBO>
 > extends ISwarmStoreConnectorOrbitDBSpecificConnectionOptions {
-  connectorFabric: ISwarmStoreConnectorOrbitDbConnecectionBasicFabric<T, DbType, DBO, ConnectorBasic>;
+  connectorBasicFabric: ISwarmStoreConnectorOrbitDbConnecectionBasicFabric<T, DbType, DBO, ConnectorBasic>;
 }
 
 export interface ISwarmStoreConnectorOrbitDBLogEntity<T> {

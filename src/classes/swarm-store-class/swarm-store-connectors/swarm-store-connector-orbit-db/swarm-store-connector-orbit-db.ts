@@ -109,7 +109,7 @@ export class SwarmStoreConnectorOrbitDB<
 
   private dbCloseListeners: ((...args: any[]) => any)[] = [];
 
-  protected _connectorFabric:
+  protected _connectorBasicFabric:
     | ISwarmStoreConnectorOrbitDbConnecectionBasicFabric<ItemType, DbType, DBO, ConnectorBasic>
     | undefined;
 
@@ -1193,7 +1193,7 @@ export class SwarmStoreConnectorOrbitDB<
     orbitDb: OrbitDB
   ): Promise<ConnectorBasic> {
     const optionsWithCachestore = await this.extendDatabaseOptionsWithCache(dbOptions, dbName);
-    const { _connectorFabric } = this;
+    const { _connectorBasicFabric: _connectorFabric } = this;
 
     if (!_connectorFabric) {
       throw new Error('Connector to the swarm storage is not defined');
@@ -1216,8 +1216,8 @@ export class SwarmStoreConnectorOrbitDB<
   protected _setConnectorBasicFabric(
     connectionOptions: ISwarmStoreConnectorOrbitDBConnectionOptions<ItemType, DbType, DBO, ConnectorBasic>
   ): void {
-    const { connectorFabric } = connectionOptions;
+    const { connectorBasicFabric: connectorFabric } = connectionOptions;
     assert(connectorFabric, 'Basic connector for OrbitDb must be defined in the options');
-    this._connectorFabric = connectorFabric;
+    this._connectorBasicFabric = connectorFabric;
   }
 }
