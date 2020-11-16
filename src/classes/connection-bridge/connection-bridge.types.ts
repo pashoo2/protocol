@@ -81,13 +81,15 @@ export interface IConnectionBridgeStorageOptions<
   MSI extends TSwarmMessageInstance | T,
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
-  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined,
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
+  CBFO extends TSwarmStoreConnectorBasicFabric<P, T, DbType, DBO, ConnectorBasic>
 > extends Omit<
     ISwarmMessageStoreOptions<P, T, DbType, DBO, ConnectorBasic, PO, MSI, GAC, MCF, ACO>,
     'userId' | 'credentials' | 'messageConstructors' | 'providerConnectionOptions' | 'databasesListStorage'
   > {
-  connectorBasicFabric?: TSwarmStoreConnectorBasicFabric<P, T, DbType, DBO, ConnectorBasic>;
-  connectorFabric?: ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>;
+  connectorBasicFabric?: CBFO;
+  connectorMainFabric?: CFO;
 }
 
 export interface IConnectionBridgeOptions<
@@ -103,6 +105,8 @@ export interface IConnectionBridgeOptions<
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
   ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined,
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
+  CBFO extends TSwarmStoreConnectorBasicFabric<P, T, DbType, DBO, ConnectorBasic>,
   CD extends boolean
 > {
   swarmStoreConnectorType: P;
@@ -122,7 +126,22 @@ export interface IConnectionBridgeOptions<
    * @type {ISwarmMessageStoreOptions<P>}
    * @memberof IConnectionBridgeOptions
    */
-  storage: IConnectionBridgeStorageOptions<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, MSI, GAC, MCF, ACO>;
+  storage: IConnectionBridgeStorageOptions<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO,
+    CO,
+    ConnectorMain,
+    MSI,
+    GAC,
+    MCF,
+    ACO,
+    CFO,
+    CBFO
+  >;
   /**
    * specify options for the swarm connection native provider
    *
@@ -141,6 +160,7 @@ export interface IConnectionBridge<
   CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, DBO, ConnectorBasic, PO>,
   ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, DBO, ConnectorBasic, PO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
+  CBFO extends TSwarmStoreConnectorBasicFabric<P, ItemType, DbType, DBO, ConnectorBasic>,
   MSI extends TSwarmMessageInstance | ItemType,
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
@@ -160,7 +180,24 @@ export interface IConnectionBridge<
     MCF,
     ACO
   >,
-  CD extends boolean
+  CD extends boolean,
+  CBO extends IConnectionBridgeOptions<
+    P,
+    ItemType,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO,
+    CO,
+    ConnectorMain,
+    MSI,
+    GAC,
+    MCF,
+    ACO,
+    CFO,
+    CBFO,
+    CD
+  >
 > {
   /**
    * used to authorize the user or get
@@ -232,9 +269,7 @@ export interface IConnectionBridge<
    * @returns {(Promise<Error | void>)}
    * @memberof IConnectionBridge
    */
-  connect(
-    options: IConnectionBridgeOptions<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CD>
-  ): Promise<Error | void>;
+  connect(options: CBO): Promise<Error | void>;
 
   /**
    * checks was a session started before and
@@ -246,11 +281,7 @@ export interface IConnectionBridge<
    * @returns {Promise<boolean>}
    * @memberof IConnectionBridge
    */
-  checkSessionAvailable(
-    options?:
-      | ISensitiveDataSessionStorageOptions
-      | IConnectionBridgeOptions<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CD>
-  ): Promise<boolean>;
+  checkSessionAvailable(options?: ISensitiveDataSessionStorageOptions | CBO): Promise<boolean>;
   /**
    * Close all connections and release the options.
    * The connection can't be used anymore.

@@ -132,6 +132,17 @@ export interface ISwarmMessageStoreAccessControlOptions<
 }
 
 /**
+ * Messages contructors per databases
+ *
+ * @export
+ * @interface ISwarmMessageDatabaseConstructorsForDatabases
+ * @template SMC
+ */
+export interface ISwarmMessageDatabaseConstructorsForDatabases<SMC extends ISwarmMessageConstructor> {
+  [dbName: string]: SMC;
+}
+
+/**
  * Swarm message constructors,specified for a databases
  * and the default constructor for a messages.
  * Each private database must have it's own
@@ -141,8 +152,8 @@ export interface ISwarmMessageStoreAccessControlOptions<
  * @export
  * @interface ISwarmMessageDatabaseConstructors
  */
-export interface ISwarmMessageDatabaseConstructors<SMC extends ISwarmMessageConstructor> {
-  [dbName: string]: SMC;
+export interface ISwarmMessageDatabaseConstructors<SMC extends ISwarmMessageConstructor>
+  extends Partial<ISwarmMessageDatabaseConstructorsForDatabases<SMC>> {
   default: SMC;
 }
 
