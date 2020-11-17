@@ -28,6 +28,7 @@ import {
   TSwarmStoreDatabaseType,
 } from '../swarm-store-class/swarm-store-class.types';
 import { IPFS } from 'types/ipfs.types';
+import { TSwarmStoreConnectorConstructorOptions } from '../swarm-store-class/swarm-store-class.types';
 
 export type TNativeConnectionType<P extends ESwarmStoreConnector> = P extends ESwarmStoreConnector.OrbitDB ? IPFS : never;
 
@@ -69,6 +70,36 @@ export interface IConnectionBridgeSwarmConnection<P extends ESwarmStoreConnector
   getNativeConnection(): NC;
 }
 
+export interface IGetBasicConnectorFabric<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO>,
+  PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
+  CO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, PO>,
+  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, PO>
+> {
+  (
+    swarmStoreConnectorConstructorOptions: TSwarmStoreConnectorConstructorOptions<P, T, DbType>
+  ): ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>;
+}
+
+export interface IConnectionBridgeOptionsGetMainConnectorFabric<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO>,
+  PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
+  CO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, PO>,
+  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, PO>
+> {
+  (
+    swarmStoreConnectorConstructorOptions: TSwarmStoreConnectorConstructorOptions<P, T, DbType>
+  ): ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>;
+}
+
 export interface IConnectionBridgeStorageOptions<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
@@ -90,6 +121,25 @@ export interface IConnectionBridgeStorageOptions<
   > {
   connectorBasicFabric?: CBFO;
   connectorMainFabric?: CFO;
+  getMainConnectorFabric?: IConnectionBridgeOptionsGetMainConnectorFabric<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO,
+    CO,
+    ConnectorMain
+  >;
+}
+
+export interface IConnectionBridgeOptionsUser {
+  /**
+   * profile of the user for the central auth provider
+   *
+   * @type {ICentralAuthorityOptions['user']['profile']}
+   */
+  profile?: ICentralAuthorityOptions['user']['profile'];
 }
 
 export interface IConnectionBridgeOptions<
@@ -111,14 +161,7 @@ export interface IConnectionBridgeOptions<
 > {
   swarmStoreConnectorType: P;
   auth: IConnectionBridgeOptionsAuth<CD>;
-  user: {
-    /**
-     * profile of the user for the central auth provider
-     *
-     * @type {ICentralAuthorityOptions['user']['profile']}
-     */
-    profile?: ICentralAuthorityOptions['user']['profile'];
-  };
+  user: IConnectionBridgeOptionsUser;
   /**
    * this is options for a swarm databases user will be
    * used to store a data.

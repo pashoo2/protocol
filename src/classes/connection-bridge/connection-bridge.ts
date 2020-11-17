@@ -64,7 +64,7 @@ import { TSwarmMessageSerialized } from '../swarm-message/swarm-message-construc
 import {
   IConnectionBridgeSwarmConnection,
   TNativeConnectionOptions,
-  IConnectionBridgeStorageOptions,
+  IConnectionBridgeOptionsGetMainConnectorFabric,
 } from './connection-bridge.types';
 import {
   getSwarmStoreConnectionProviderOptionsForSwarmStoreConnector,
@@ -132,7 +132,6 @@ export class ConnectionBridge<
     MCF,
     ACO
   >,
-  NC extends TNativeConnectionType<P>,
   CD extends boolean,
   CBO extends IConnectionBridgeOptions<
     P,
@@ -157,7 +156,8 @@ export class ConnectionBridge<
     T,
     DbType,
     DBO
-  >
+  >,
+  NC extends TNativeConnectionType<P> = TNativeConnectionType<P>
 > implements
     IConnectionBridge<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, CBFO, MSI, GAC, MCF, ACO, O, CD, CBO> {
   public centralAuthorityConnection?: ICentralAuthority;
@@ -505,6 +505,25 @@ export class ConnectionBridge<
     return this.getOptions().storage.connectorMainFabric;
   }
 
+  protected getMainConnectorFabricUtilFromCurrentOptionsIfExists():
+    | IConnectionBridgeOptionsGetMainConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>
+    | undefined {
+    return this.getOptions().storage.getMainConnectorFabric;
+  }
+
+  protected getUtilGetMainConnectorFabricForMessageStore(): IConnectionBridgeOptionsGetMainConnectorFabric<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO,
+    CO,
+    ConnectorMain
+  > {
+    return this.getMainConnectorFabricUtilFromCurrentOptionsIfExists() || getMainConnectorFabricDefault;
+  }
+
   protected createMainConnectorFabricForMessageStoreByCurrentOptions(
     userId: TSwarmMessageUserIdentifierSerialized,
     credentials: TSecretStorageAuthorizazionOptions
@@ -516,9 +535,8 @@ export class ConnectionBridge<
       userId,
       credentials
     );
-    return getMainConnectorFabricDefault<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>(
-      swarmStoreConnectorOptions
-    ) as CFO;
+
+    return this.getUtilGetMainConnectorFabricForMessageStore()(swarmStoreConnectorOptions) as CFO;
   }
 
   protected getMainConnectorFabricForSwarmMessageStore(
