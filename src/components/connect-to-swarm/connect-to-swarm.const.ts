@@ -8,20 +8,8 @@ import {
   IConnectionBridgeOptionsUser,
   IConnectionBridgeOptionsAuth,
 } from '../../classes/connection-bridge/connection-bridge.types';
-import {
-  IConnectionBridgeStorageOptions,
-  IConnectionBridgeStorageOptionsDefault,
-} from '../../classes/connection-bridge/connection-bridge.types';
-import {
-  ISwarmStoreConnector,
-  ISwarmStoreConnectorBasic,
-  ISwarmStoreOptionsConnectorFabric,
-  ISwarmStoreProviderOptions,
-  TSwarmStoreConnectorBasicFabric,
-  TSwarmStoreConnectorConnectionOptions,
-  TSwarmStoreDatabaseOptions,
-  TSwarmStoreDatabaseType,
-} from 'classes/swarm-store-class';
+import { IConnectionBridgeStorageOptionsDefault } from '../../classes/connection-bridge/connection-bridge.types';
+import { TSwarmStoreDatabaseOptions } from 'classes/swarm-store-class';
 import undefined from 'firebase/empty-import';
 import { IConnectionBridgeOptionsDefault } from '../../classes/connection-bridge/connection-bridge.types';
 

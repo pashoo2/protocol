@@ -52,9 +52,7 @@ export interface IConnectionBridgeOptionsAuth<CD extends boolean = false> {
    *
    * @type {ICentralAuthorityOptions['user']['credentials']}
    */
-  credentials: CD extends true
-    ? TConnectionBridgeOptionsAuthCredentials
-    : TConnectionBridgeOptionsAuthCredentials | undefined | never;
+  credentials: CD extends true ? TConnectionBridgeOptionsAuthCredentials : TConnectionBridgeOptionsAuthCredentials | undefined;
   session?: ISensitiveDataSessionStorageOptions;
   /**
    * this is list of auth providers will be used to authorize

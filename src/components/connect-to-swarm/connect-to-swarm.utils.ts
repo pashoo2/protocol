@@ -1,23 +1,27 @@
-// @ts-nocheck
-import { ConnectionBridge } from 'classes';
-import { CONNECT_TO_SWARM_CONNECTION_STORAGE_OPTIONS } from './connect-to-swarm.const';
+import { createConnectrionBridgeConnection } from '../../classes/connection-bridge/connection-bridge-fabric/connection-bridge-fabric';
+import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
+import { TSwarmStoreDatabaseType } from '../../classes/swarm-store-class/swarm-store-class.types';
+import {
+  TConnectionBridgeOptionsAuthCredentials,
+  IConnectionBridgeOptionsDefault,
+} from '../../classes/connection-bridge/connection-bridge.types';
+import { TSwarmMessageSerialized } from '../../classes/swarm-message/swarm-message-constructor.types';
 
-export const connectToSwarmUtil = async (credentials: any) => {
-  const connectionBridge = new ConnectionBridge();
-  const useSessionAuth = await connectionBridge.checkSessionAvailable({
-    ...CONNECT_TO_SWARM_CONNECTION_STORAGE_OPTIONS,
+export const connectToSwarmUtil = async <
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  T extends TSwarmMessageSerialized,
+  CD extends boolean = false
+>(
+  options: IConnectionBridgeOptionsDefault<P, T, DbType, CD>,
+  credentials: TConnectionBridgeOptionsAuthCredentials
+) => {
+  const optionsWithCredentials = {
+    ...options,
     auth: {
-      ...CONNECT_TO_SWARM_CONNECTION_STORAGE_OPTIONS.auth,
-      credentials: undefined,
+      ...options.auth,
+      credentials,
     },
-  });
-
-  await connectionBridge.connect({
-    ...CONNECT_TO_SWARM_CONNECTION_STORAGE_OPTIONS,
-    auth: {
-      ...CONNECT_TO_SWARM_CONNECTION_STORAGE_OPTIONS.auth,
-      credentials: useSessionAuth ? undefined : credentials,
-    },
-  });
-  return connectionBridge;
+  } as IConnectionBridgeOptionsDefault<P, T, DbType, true>;
+  return createConnectrionBridgeConnection<P, T, DbType, true>(optionsWithCredentials, true);
 };
