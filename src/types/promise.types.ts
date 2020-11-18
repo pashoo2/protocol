@@ -17,3 +17,5 @@ export interface ICustomPromiseCreator<T, E extends MaybeError> {
 export interface IPromisePendingRejectableCreator<T, E extends MaybeError> {
   (): IPromisePendingRejectable<T, E>;
 }
+
+export type IPromiseResolveType<P extends Promise<unknown>> = P extends Promise<infer T> ? T : never;

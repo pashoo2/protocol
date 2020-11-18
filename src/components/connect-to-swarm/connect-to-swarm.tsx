@@ -1,7 +1,11 @@
 import React from 'react';
 import { connectToSwarmUtil } from './connect-to-swarm.utils';
 import { IConnectionBridge } from 'classes/connection-bridge/connection-bridge.types';
-import { CONNECT_TO_SWARM_DATABASE_MAIN, CONNECT_TO_SWARM_DATABASE_MAIN_2 } from './connect-to-swarm.const';
+import {
+  CONNECT_TO_SWARM_DATABASE_MAIN,
+  CONNECT_TO_SWARM_DATABASE_MAIN_2,
+  CONNECT_TO_SWARM_CONNECTION_OPTIONS,
+} from './connect-to-swarm.const';
 import { CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_1, CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_2 } from './connect-to-swarm.const';
 import { CONNECT_TO_SWARM_DATABASE_MAIN_NAME, CONNECT_TO_SWARM_STORAGE_DEFAULT_MESSAGE_BODY } from './connect-to-swarm.const';
 import {
@@ -16,15 +20,22 @@ import {
 } from 'classes';
 import { SwarmStoreDbComponent } from '../swarm-store-db-component/swarm-store-db-component';
 import { ESwarmMessageStoreEventNames } from '../../classes/swarm-message-store/swarm-message-store.const';
-import { ConnectionBridge } from '../../classes/connection-bridge/connection-bridge';
 import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
-import { TSwarmMessageInstance } from '../../classes/swarm-message/swarm-message-constructor.types';
+import { TSwarmMessageInstance, TSwarmMessageSerialized } from '../../classes/swarm-message/swarm-message-constructor.types';
 import { ISwarmMessageInstanceDecrypted } from '../../classes/swarm-message/swarm-message-constructor.types';
 import { ISecretStorage } from '../../classes/secret-storage-class/secret-storage-class.types';
 import { ICentralAuthorityUserProfile } from '../../classes/central-authority-class/central-authority-class-types/central-authority-class-types-common';
 import { UserProfile } from '../userProfile/userProfile';
-import { ISwarmStoreDatabaseBaseOptions } from '../../classes/swarm-store-class/swarm-store-class.types';
+import {
+  ISwarmStoreDatabaseBaseOptions,
+  TSwarmStoreDatabaseType,
+  TSwarmStoreDatabaseOptions,
+} from '../../classes/swarm-store-class/swarm-store-class.types';
 import { SwarmMessagesDatabaseComponent } from '../swarm-messages-database-component/swarm-messages-database-component';
+import { IPromiseResolveType } from '../../types/promise.types';
+import { IConnectionBridgeOptionsDefault } from '../../classes/connection-bridge/connection-bridge.types';
+import { ISwarmStoreConnectorOrbitDbDatabaseOptions } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
+import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 
 export interface IMessageDescription {
   id: string;
@@ -32,26 +43,41 @@ export interface IMessageDescription {
   message: ISwarmMessageInstanceDecrypted;
 }
 
-export interface IConnectToSwarmProps {
+export interface IConnectToSwarmProps<
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  T extends TSwarmMessageSerialized,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>
+> {
+  connectionBridgeOptions: IConnectionBridgeOptionsDefault<P, T, DbType, false>;
   connectImmediateWithCredentials?: 1 | 2;
   dbOptionsToConnectImmediate?: Partial<ISwarmStoreDatabaseBaseOptions> & {
     dbName: ISwarmStoreDatabaseBaseOptions['dbName'];
   };
+  dbo1: DBO;
+  dbo2: DBO;
 }
 
-export class ConnectToSwarm extends React.PureComponent<IConnectToSwarmProps> {
+export class ConnectToSwarm<
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  T extends TSwarmMessageSerialized,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>
+> extends React.PureComponent<IConnectToSwarmProps<P, DbType, T, DBO>> {
   public state = {
     isConnecting: false,
     messagingSending: undefined as NodeJS.Timeout | undefined,
     error: undefined as Error | undefined,
-    connectionBridge: undefined as ReturnType<typeof connectToSwarmUtil> | undefined,
+    connectionBridge: undefined as IPromiseResolveType<ReturnType<typeof connectToSwarmUtil>> | undefined,
     userId: undefined as string | undefined,
     // was the database main removed by the user
     dbRemoved: false,
     dbRemoving: false,
     messages: [] as any[],
     messagesReceived: new Map() as Map<string, Map<string, IMessageDescription>>,
-    databasesList: undefined as ISwarmStoreDatabasesCommonStatusList | undefined,
+    databasesList: undefined as
+      | ISwarmStoreDatabasesCommonStatusList<P, T, DbType, TSwarmStoreDatabaseOptions<P, T, DbType>>
+      | undefined,
     swarmStoreMessagesDbOptionsList: [] as ISwarmStoreDatabaseBaseOptions[],
     databaseOpeningStatus: false as boolean,
     credentialsVariant: undefined as undefined | number,
@@ -59,15 +85,21 @@ export class ConnectToSwarm extends React.PureComponent<IConnectToSwarmProps> {
     userProfileData: undefined as undefined | Partial<ICentralAuthorityUserProfile>,
   };
 
-  protected get defaultDbOptions() {
-    return this.state.credentialsVariant === 1 ? CONNECT_TO_SWARM_DATABASE_MAIN : CONNECT_TO_SWARM_DATABASE_MAIN_2;
+  protected get defaultDbOptions(): DBO {
+    const { dbo1, dbo2 } = this.props;
+    return this.state.credentialsVariant === 1 ? dbo1 : dbo2;
+  }
+
+  protected get swarmMessageStoreOrUndefined() {
+    const { connectionBridge } = this.state;
+    return connectionBridge?.swarmMessageStore;
   }
 
   protected sendSwarmMessage = async () => {
     try {
       const key = 'test_message';
 
-      await this.state.connectionBridge?.storage?.addMessage(
+      await this.swarmMessageStoreOrUndefined?.addMessage(
         CONNECT_TO_SWARM_DATABASE_MAIN_NAME,
         {
           ...CONNECT_TO_SWARM_STORAGE_DEFAULT_MESSAGE_BODY,
@@ -81,7 +113,7 @@ export class ConnectToSwarm extends React.PureComponent<IConnectToSwarmProps> {
 
   protected sendPrivateSwarmMessage = async () => {
     try {
-      await this.state.connectionBridge?.storage?.addMessage(CONNECT_TO_SWARM_DATABASE_MAIN_NAME, {
+      await this.swarmMessageStoreOrUndefined?.addMessage(CONNECT_TO_SWARM_DATABASE_MAIN_NAME, {
         ...CONNECT_TO_SWARM_STORAGE_DEFAULT_MESSAGE_BODY,
         receiverId:
           this.state.userId === CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_1
@@ -112,13 +144,13 @@ export class ConnectToSwarm extends React.PureComponent<IConnectToSwarmProps> {
   };
 
   public handleDatabaseRemove = async () => {
-    const { connectionBridge } = this.state;
+    const { swarmMessageStoreOrUndefined } = this;
 
-    if (connectionBridge) {
+    if (swarmMessageStoreOrUndefined) {
       this.setState({
         dbRemoving: true,
       });
-      await connectionBridge.storage?.dropDatabase(CONNECT_TO_SWARM_DATABASE_MAIN_NAME);
+      await swarmMessageStoreOrUndefined.dropDatabase(CONNECT_TO_SWARM_DATABASE_MAIN_NAME);
       this.setState({
         dbRemoved: true,
         dbRemoving: false,
@@ -136,10 +168,10 @@ export class ConnectToSwarm extends React.PureComponent<IConnectToSwarmProps> {
   }
 
   public connectToDb = async () => {
-    const { connectionBridge } = this.state;
+    const { swarmMessageStoreOrUndefined } = this;
 
-    if (connectionBridge && connectionBridge.storage) {
-      await connectionBridge.storage?.openDatabase(CONNECT_TO_SWARM_DATABASE_MAIN);
+    if (swarmMessageStoreOrUndefined) {
+      await swarmMessageStoreOrUndefined.openDatabase(CONNECT_TO_SWARM_DATABASE_MAIN);
       this.setState({
         dbRemoved: false,
       });
@@ -147,10 +179,10 @@ export class ConnectToSwarm extends React.PureComponent<IConnectToSwarmProps> {
   };
 
   public loadNextMessages = async () => {
-    const { connectionBridge } = this.state;
+    const { swarmMessageStoreOrUndefined } = this;
 
-    if (connectionBridge) {
-      const result = await connectionBridge.storage?.request(
+    if (swarmMessageStoreOrUndefined) {
+      const result = await swarmMessageStoreOrUndefined?.request(
         CONNECT_TO_SWARM_DATABASE_MAIN_NAME,
         ESwarmStoreConnectorOrbitDbDatabaseMethodNames.load,
         10
@@ -219,7 +251,9 @@ export class ConnectToSwarm extends React.PureComponent<IConnectToSwarmProps> {
     return <span>Connecting...</span>;
   }
 
-  protected handleDatabasesListUpdate = (databasesList: ISwarmStoreDatabasesCommonStatusList) => {
+  protected handleDatabasesListUpdate = (
+    databasesList: ISwarmStoreDatabasesCommonStatusList<P, T, DbType, TSwarmStoreDatabaseOptions<P, T, DbType>>
+  ) => {
     this.setState({
       databasesList: { ...databasesList },
     });
@@ -245,9 +279,14 @@ export class ConnectToSwarm extends React.PureComponent<IConnectToSwarmProps> {
     }
   };
 
-  protected setListenersConnectionBridge(connectionBridge: ConnectionBridge<ESwarmStoreConnector>) {
-    connectionBridge.storage?.addListener(ESwarmStoreEventNames.DATABASES_LIST_UPDATED, this.handleDatabasesListUpdate);
-    connectionBridge.storage?.addListener(ESwarmMessageStoreEventNames.NEW_MESSAGE, this.handleMessage);
+  protected setListenersConnectionBridge(connectionBridge: IPromiseResolveType<ReturnType<typeof connectToSwarmUtil>>) {
+    const { swarmMessageStore } = connectionBridge;
+
+    if (!swarmMessageStore) {
+      throw new Error('Swarm message store insatnce is not exists in the connection bridge instance');
+    }
+    swarmMessageStore.addListener(ESwarmStoreEventNames.DATABASES_LIST_UPDATED, this.handleDatabasesListUpdate);
+    swarmMessageStore.addListener(ESwarmMessageStoreEventNames.NEW_MESSAGE, this.handleMessage);
   }
 
   protected connectToSwarm = async (credentialsVariant: 1 | 2 = 1) => {
@@ -256,7 +295,8 @@ export class ConnectToSwarm extends React.PureComponent<IConnectToSwarmProps> {
       credentialsVariant,
     });
     try {
-      const connectionBridge = await connectToSwarmUtil(
+      const connectionBridge = await connectToSwarmUtil<P, DbType, T>(
+        this.props.connectionBridgeOptions,
         credentialsVariant === 1 ? CONNECT_TO_SWARM_AUTH_CREDENTIALS_1 : CONNECT_TO_SWARM_AUTH_CREDENTIALS_2
       );
 
@@ -272,7 +312,9 @@ export class ConnectToSwarm extends React.PureComponent<IConnectToSwarmProps> {
         secretStorage: connectionBridge.secretStorage,
         userProfileData,
       });
-      this.setListenersConnectionBridge(connectionBridge);
+      this.setListenersConnectionBridge(
+        (connectionBridge as unknown) as IPromiseResolveType<ReturnType<typeof connectToSwarmUtil>>
+      );
 
       const { dbOptionsToConnectImmediate } = this.props;
 
@@ -291,7 +333,7 @@ export class ConnectToSwarm extends React.PureComponent<IConnectToSwarmProps> {
       this.setState({
         databaseOpeningStatus: true,
       });
-      await this.state.connectionBridge?.storage?.openDatabase({
+      await this.swarmMessageStoreOrUndefined?.openDatabase({
         ...this.defaultDbOptions,
         dbName: dbName || this.defaultDbOptions.dbName,
       });
@@ -342,7 +384,8 @@ export class ConnectToSwarm extends React.PureComponent<IConnectToSwarmProps> {
   protected renderDatabasesList() {
     const { databasesList, connectionBridge, databaseOpeningStatus } = this.state;
     const dbsOptions = databasesList?.options;
-    const isDefaultDatabaseWasOpenedBeforeOrOpening = !databaseOpeningStatus && !dbsOptions?.[this.defaultDbOptions.dbName];
+    const isDefaultDatabaseWasOpenedBeforeOrOpening =
+      !databaseOpeningStatus && !dbsOptions?.[this.defaultDbOptions.dbName as TSwarmStoreDatabaseOptions<P, T, DbType>['dbName']];
 
     return (
       <div>
@@ -351,7 +394,7 @@ export class ConnectToSwarm extends React.PureComponent<IConnectToSwarmProps> {
           {!!databasesList &&
             !!dbsOptions &&
             Object.keys(dbsOptions).map((databaseName) => {
-              const databaseOptions = dbsOptions[databaseName];
+              const databaseOptions = dbsOptions[databaseName as TSwarmStoreDatabaseOptions<P, T, DbType>['dbName']];
               const isOpened = databasesList.opened[databaseName];
               const dbMessages = this.state.messagesReceived.get(databaseName);
 
