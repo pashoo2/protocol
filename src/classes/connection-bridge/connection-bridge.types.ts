@@ -36,6 +36,18 @@ export type TNativeConnectionOptions<P extends ESwarmStoreConnector> = P extends
 
 export type TConnectionBridgeOptionsAuthCredentials = Omit<ICentralAuthorityOptions['user']['credentials'], 'session'>;
 
+export type TConnectionBridgeCFODefault<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO>,
+  PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
+  CO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, PO>,
+  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, PO>,
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain> | undefined
+> = CFO extends undefined ? ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain> : CFO;
+
 export interface IConnectionBridgeOptionsAuth<CD extends boolean = false> {
   /**
    * url of an  auth provider from the auth providers pool
@@ -193,8 +205,8 @@ export interface IConnectionBridge<
   PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
   CO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, PO>,
   ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, PO>,
-  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
-  CBFO extends TSwarmStoreConnectorBasicFabric<P, T, DbType, DBO, ConnectorBasic>,
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain> | undefined,
+  CBFO extends TSwarmStoreConnectorBasicFabric<P, T, DbType, DBO, ConnectorBasic> | undefined,
   MSI extends TSwarmMessageInstance | T,
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
@@ -208,7 +220,7 @@ export interface IConnectionBridge<
     PO,
     CO,
     ConnectorMain,
-    CFO,
+    TConnectionBridgeCFODefault<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO>,
     MSI,
     GAC,
     MCF,
@@ -249,7 +261,22 @@ export interface IConnectionBridge<
    * @type {ISwarmMessageStore<P>}
    * @memberof IConnectionBridge
    */
-  swarmMessageStore?: ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>;
+  swarmMessageStore?: ISwarmMessageStore<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO,
+    CO,
+    ConnectorMain,
+    TConnectionBridgeCFODefault<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO>,
+    MSI,
+    GAC,
+    MCF,
+    ACO,
+    O
+  >;
   /**
    * allows to create messages, which can be stored in the swarm
    *

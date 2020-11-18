@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from 'react';
 import { connectToSwarmUtil } from './connect-to-swarm.utils';
 import { IConnectionBridge } from 'classes/connection-bridge/connection-bridge.types';
@@ -45,7 +44,7 @@ export class ConnectToSwarm extends React.PureComponent<IConnectToSwarmProps> {
     isConnecting: false,
     messagingSending: undefined as NodeJS.Timeout | undefined,
     error: undefined as Error | undefined,
-    connectionBridge: undefined as IConnectionBridge | undefined,
+    connectionBridge: undefined as ReturnType<typeof connectToSwarmUtil> | undefined,
     userId: undefined as string | undefined,
     // was the database main removed by the user
     dbRemoved: false,

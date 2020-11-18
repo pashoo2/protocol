@@ -83,6 +83,7 @@ import { getMainConnectorFabricDefault } from './connection-bridge.utils';
 import { TSwarmStoreConnectorConstructorOptions } from '../swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import { PromiseResolveType } from '../../types/helper.types';
+import { TConnectionBridgeCFODefault } from './connection-bridge.types';
 import {
   ISwarmMessageDatabaseConstructors,
   ISwarmMessageStoreOptionsWithConnectorFabric,
@@ -111,8 +112,8 @@ export class ConnectionBridge<
   PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
   CO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, PO>,
   ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, PO>,
-  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
-  CBFO extends TSwarmStoreConnectorBasicFabric<P, T, DbType, DBO, ConnectorBasic>,
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain> | undefined,
+  CBFO extends TSwarmStoreConnectorBasicFabric<P, T, DbType, DBO, ConnectorBasic> | undefined,
   MSI extends TSwarmMessageInstance | T,
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
@@ -126,7 +127,7 @@ export class ConnectionBridge<
     PO,
     CO,
     ConnectorMain,
-    CFO,
+    TConnectionBridgeCFODefault<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO>,
     MSI,
     GAC,
     MCF,
@@ -171,7 +172,7 @@ export class ConnectionBridge<
     PO,
     CO,
     ConnectorMain,
-    CFO,
+    TConnectionBridgeCFODefault<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO>,
     MSI,
     GAC,
     MCF,
@@ -536,7 +537,17 @@ export class ConnectionBridge<
       credentials
     );
 
-    return this.getUtilGetMainConnectorFabricForMessageStore()(swarmStoreConnectorOptions) as CFO;
+    return this.getUtilGetMainConnectorFabricForMessageStore()(swarmStoreConnectorOptions) as TConnectionBridgeCFODefault<
+      P,
+      T,
+      DbType,
+      DBO,
+      ConnectorBasic,
+      PO,
+      CO,
+      ConnectorMain,
+      CFO
+    >;
   }
 
   protected getMainConnectorFabricForSwarmMessageStore(
@@ -559,7 +570,7 @@ export class ConnectionBridge<
       PO,
       CO,
       ConnectorMain,
-      CFO | ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
+      TConnectionBridgeCFODefault<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO>,
       MSI,
       GAC,
       MCF,
@@ -588,7 +599,17 @@ export class ConnectionBridge<
       databasesListStorage: await this.startEncryptedCache(CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX.DATABASE_LIST_STORAGE),
       swarmMessageConstructorFabric: this.swarmMessageConstructorFabric,
       providerConnectionOptions: this.getSwarmStoreConnectionProviderOptionsFromCurrentOptions(),
-      connectorFabric: this.getMainConnectorFabricForSwarmMessageStore(userId, credentials),
+      connectorFabric: this.getMainConnectorFabricForSwarmMessageStore(userId, credentials) as TConnectionBridgeCFODefault<
+        P,
+        T,
+        DbType,
+        DBO,
+        ConnectorBasic,
+        PO,
+        CO,
+        ConnectorMain,
+        CFO
+      >,
     };
   }
 
@@ -1062,18 +1083,50 @@ export class ConnectionBridge<
     PO,
     CO,
     ConnectorMain,
-    CFO,
+    TConnectionBridgeCFODefault<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO>,
     MSI,
     GAC,
     MCF,
     ACO,
     O
   > => {
-    return new SwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O, E, DBL>();
+    return new SwarmMessageStore<
+      P,
+      T,
+      DbType,
+      DBO,
+      ConnectorBasic,
+      PO,
+      CO,
+      ConnectorMain,
+      TConnectionBridgeCFODefault<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO>,
+      MSI,
+      GAC,
+      MCF,
+      ACO,
+      O,
+      E,
+      DBL
+    >();
   };
 
   protected connectToSwarmMessageStore = async (
-    swarmMessageStorage: ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>
+    swarmMessageStorage: ISwarmMessageStore<
+      P,
+      T,
+      DbType,
+      DBO,
+      ConnectorBasic,
+      PO,
+      CO,
+      ConnectorMain,
+      TConnectionBridgeCFODefault<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO>,
+      MSI,
+      GAC,
+      MCF,
+      ACO,
+      O
+    >
   ): Promise<void> => {
     const swarmMessageStorageOptions = await this.getOptionsMessageStorage();
     const result = await swarmMessageStorage.connect(swarmMessageStorageOptions);
@@ -1084,7 +1137,22 @@ export class ConnectionBridge<
   };
 
   protected setCurrentSwarmMessageStorage = (
-    swarmMessageStorage: ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>
+    swarmMessageStorage: ISwarmMessageStore<
+      P,
+      T,
+      DbType,
+      DBO,
+      ConnectorBasic,
+      PO,
+      CO,
+      ConnectorMain,
+      TConnectionBridgeCFODefault<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO>,
+      MSI,
+      GAC,
+      MCF,
+      ACO,
+      O
+    >
   ): void => {
     this.swarmMessageStore = swarmMessageStorage;
   };
@@ -1097,7 +1165,22 @@ export class ConnectionBridge<
    * @throws
    */
   protected async createAndStartSwarmMessageStorageConnection(): Promise<
-    ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>
+    ISwarmMessageStore<
+      P,
+      T,
+      DbType,
+      DBO,
+      ConnectorBasic,
+      PO,
+      CO,
+      ConnectorMain,
+      TConnectionBridgeCFODefault<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO>,
+      MSI,
+      GAC,
+      MCF,
+      ACO,
+      O
+    >
   > {
     const swarmMessageStorage = this.createSwarmMessageStoreInstance();
 

@@ -1,4 +1,4 @@
-import { IConnectionBridgeOptions } from '../connection-bridge.types';
+import { IConnectionBridgeOptions, TConnectionBridgeCFODefault } from '../connection-bridge.types';
 import { ESwarmStoreConnector } from '../../swarm-store-class/swarm-store-class.const';
 import { TSwarmMessageInstance } from '../../swarm-message/swarm-message-constructor.types';
 import {
@@ -56,9 +56,7 @@ export const createConnectrionBridgeConnection = async <
     ConnectorBasic,
     PO
   >,
-  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain> | undefined =
-    | ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>
-    | undefined,
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain> | undefined = undefined,
   O extends ISwarmMessageStoreOptionsWithConnectorFabric<
     P,
     T,
@@ -68,7 +66,7 @@ export const createConnectrionBridgeConnection = async <
     PO,
     CO,
     ConnectorMain,
-    CFO & ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
+    TConnectionBridgeCFODefault<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO>,
     MSI,
     GAC,
     MCF,
@@ -82,7 +80,7 @@ export const createConnectrionBridgeConnection = async <
     PO,
     CO,
     ConnectorMain,
-    CFO,
+    TConnectionBridgeCFODefault<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO>,
     MSI,
     GAC,
     MCF,
