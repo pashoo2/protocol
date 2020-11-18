@@ -113,24 +113,17 @@ export interface IConnectionBridgeStorageOptions<
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
   ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined,
-  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
-  CBFO extends TSwarmStoreConnectorBasicFabric<P, T, DbType, DBO, ConnectorBasic>
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain> | undefined,
+  CBFO extends TSwarmStoreConnectorBasicFabric<P, T, DbType, DBO, ConnectorBasic> | undefined
 > extends Omit<
     ISwarmMessageStoreOptions<P, T, DbType, DBO, ConnectorBasic, PO, MSI, GAC, MCF, ACO>,
     'userId' | 'credentials' | 'messageConstructors' | 'providerConnectionOptions' | 'databasesListStorage'
   > {
-  connectorBasicFabric?: CBFO;
+  connectorBasicFabric: CBFO;
   connectorMainFabric?: CFO;
-  getMainConnectorFabric?: IConnectionBridgeOptionsGetMainConnectorFabric<
-    P,
-    T,
-    DbType,
-    DBO,
-    ConnectorBasic,
-    PO,
-    CO,
-    ConnectorMain
-  >;
+  getMainConnectorFabric:
+    | IConnectionBridgeOptionsGetMainConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>
+    | undefined;
 }
 
 export interface IConnectionBridgeOptionsUser {
@@ -155,13 +148,13 @@ export interface IConnectionBridgeOptions<
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
   ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined,
-  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
-  CBFO extends TSwarmStoreConnectorBasicFabric<P, T, DbType, DBO, ConnectorBasic>,
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain> | undefined,
+  CBFO extends TSwarmStoreConnectorBasicFabric<P, T, DbType, DBO, ConnectorBasic> | undefined,
   CD extends boolean
 > {
   swarmStoreConnectorType: P;
-  auth: IConnectionBridgeOptionsAuth<CD>;
   user: IConnectionBridgeOptionsUser;
+  auth: IConnectionBridgeOptionsAuth<CD>;
   /**
    * this is options for a swarm databases user will be
    * used to store a data.
@@ -190,27 +183,27 @@ export interface IConnectionBridgeOptions<
    *
    * @memberof IConnectionBridgeOptions
    */
-  swarm?: TNativeConnectionOptions<P>;
+  swarm: TNativeConnectionOptions<P> | undefined;
 }
 
 export interface IConnectionBridge<
   P extends ESwarmStoreConnector,
-  ItemType extends TSwarmMessageSerialized,
+  T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType, DBO>,
-  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, DBO, ConnectorBasic>,
-  CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, DBO, ConnectorBasic, PO>,
-  ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, DBO, ConnectorBasic, PO>,
-  CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
-  CBFO extends TSwarmStoreConnectorBasicFabric<P, ItemType, DbType, DBO, ConnectorBasic>,
-  MSI extends TSwarmMessageInstance | ItemType,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO>,
+  PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
+  CO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, PO>,
+  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, PO>,
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
+  CBFO extends TSwarmStoreConnectorBasicFabric<P, T, DbType, DBO, ConnectorBasic>,
+  MSI extends TSwarmMessageInstance | T,
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
-  ACO extends ISwarmMessageStoreAccessControlOptions<P, ItemType, MSI, GAC> | undefined,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined,
   O extends ISwarmMessageStoreOptionsWithConnectorFabric<
     P,
-    ItemType,
+    T,
     DbType,
     DBO,
     ConnectorBasic,
@@ -226,7 +219,7 @@ export interface IConnectionBridge<
   CD extends boolean,
   CBO extends IConnectionBridgeOptions<
     P,
-    ItemType,
+    T,
     DbType,
     DBO,
     ConnectorBasic,
@@ -258,22 +251,7 @@ export interface IConnectionBridge<
    * @type {ISwarmMessageStore<P>}
    * @memberof IConnectionBridge
    */
-  swarmMessageStore?: ISwarmMessageStore<
-    P,
-    ItemType,
-    DbType,
-    DBO,
-    ConnectorBasic,
-    PO,
-    CO,
-    ConnectorMain,
-    CFO,
-    MSI,
-    GAC,
-    MCF,
-    ACO,
-    O
-  >;
+  swarmMessageStore?: ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>;
   /**
    * allows to create messages, which can be stored in the swarm
    *
@@ -334,3 +312,59 @@ export interface IConnectionBridge<
    */
   close(): Promise<Error | void>;
 }
+
+export interface IConnectionBridgeOptionsDefault<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  CD extends boolean = true,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType> = TSwarmStoreDatabaseOptions<P, T, DbType>,
+  MSI extends TSwarmMessageInstance | T = TSwarmMessageInstance | T,
+  MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined = undefined,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI> = TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined = undefined,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO> = ISwarmStoreConnectorBasic<P, T, DbType, DBO>,
+  CBFO extends TSwarmStoreConnectorBasicFabric<P, T, DbType, DBO, ConnectorBasic> | undefined = undefined,
+  PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic> = TSwarmStoreConnectorConnectionOptions<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic
+  >,
+  CO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, PO> = ISwarmStoreProviderOptions<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO
+  >,
+  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, PO> = ISwarmStoreConnector<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO
+  >,
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain> | undefined = undefined
+> extends IConnectionBridgeOptions<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CFO, CBFO, CD> {}
+
+export type TConnectionBridgeOptionsDefault<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  CD extends boolean = true,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType> = TSwarmStoreDatabaseOptions<P, T, DbType>,
+  MSI extends TSwarmMessageInstance | T = TSwarmMessageInstance | T
+> = IConnectionBridgeOptionsDefault<P, T, DbType, CD, DBO, MSI>['storage'];
+
+export interface IConnectionBridgeStorageOptionsDefault<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  CD extends boolean = true,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType> = TSwarmStoreDatabaseOptions<P, T, DbType>,
+  MSI extends TSwarmMessageInstance | T = TSwarmMessageInstance | T
+> extends TConnectionBridgeOptionsDefault<P, T, DbType, CD, DBO, MSI> {}

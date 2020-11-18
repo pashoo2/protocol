@@ -124,7 +124,7 @@ export const createConnectrionBridgeConnection = async <
   > = IConnectionBridgeOptions<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CFO, CBFO, CD>
 >(
   options: CBO,
-  useSessionCredentials: boolean = false
+  useSessionIfExists: boolean = false
 ) => {
   const connectionBridge = new ConnectionBridge<
     P,
@@ -154,7 +154,7 @@ export const createConnectrionBridgeConnection = async <
     },
   };
 
-  if (useSessionCredentials) {
+  if (useSessionIfExists) {
     useSessionAuth = await connectionBridge.checkSessionAvailable(optionsWithoutCredentials);
   }
 
