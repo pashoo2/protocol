@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { SwarmMessagesDatabase } from '../../classes/swarm-messages-database/swarm-messages-database';
 import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
 import {

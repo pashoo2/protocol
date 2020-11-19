@@ -240,6 +240,15 @@ export interface ISwarmMessagesDatabaseProperties<
   cachedMessages: TSwarmMessageDatabaseMessagesCached<P, DbType, MD> | undefined;
 }
 
+export interface ISwarmMessagesDatabaseBaseImplementation<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
+  MSI extends TSwarmMessageInstance | T
+> extends ISwarmMessageStoreMessagingMethods<P, T, DbType, Exclude<MSI, T>>,
+    ISwarmMessagesDatabaseProperties<P, T, DbType, DBO, Exclude<MSI, T | ISwarmMessageInstanceEncrypted>> {}
+
 /**
  * Single database which can be used for information
  * sharing within the swarm via swarm messages.
@@ -277,8 +286,7 @@ export interface ISwarmMessagesDatabase<
     ACO
   >,
   SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>
-> extends ISwarmMessageStoreMessagingMethods<P, T, DbType, Exclude<MSI, T>>,
-    ISwarmMessagesDatabaseProperties<P, T, DbType, DBO, Exclude<MSI, T | ISwarmMessageInstanceEncrypted>> {
+> extends ISwarmMessagesDatabaseBaseImplementation<P, T, DbType, DBO, MSI> {
   /**
    * Method used for connecting to the database.
    *
@@ -493,4 +501,18 @@ export interface ISwarmMessagesDatabaseMesssageMeta<P extends ESwarmStoreConnect
     ? TSwarmStoreDatabaseEntityAddress<P> | undefined
     : TSwarmStoreDatabaseEntityAddress<P>;
   key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined;
+}
+
+export interface ISwarmMessagesDatabaseConnector<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
+  MSI extends TSwarmMessageInstance | T,
+  SMS extends ISwarmMessageStoreMessagingMethods<P, T, DbType, Exclude<MSI, T>>,
+  MD extends Exclude<MSI, T | ISwarmMessageInstanceEncrypted> & Exclude<Exclude<MSI, T>, ISwarmMessageInstanceEncrypted>
+> extends ISwarmMessageDatabaseMessagingMethods<P, T, DbType, Exclude<MSI, T>, SMS>,
+    ISwarmMessagesDatabaseProperties<P, T, DbType, DBO, MD> {
+  connect(options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType, DBO, Exclude<MSI, T>, SMS, MD>): Promise<void>;
+  close(): Promise<void>;
 }

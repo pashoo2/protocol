@@ -18,11 +18,7 @@ import {
 } from '../swarm-message-store/swarm-message-store.types';
 import { getEventEmitterInstance } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { ESwarmMessageStoreEventNames } from '../swarm-message-store/swarm-message-store.const';
-import {
-  TSwarmMessageSerialized,
-  TSwarmMessageInstance,
-  ISwarmMessageInstanceDecrypted,
-} from '../swarm-message/swarm-message-constructor.types';
+import { TSwarmMessageSerialized, TSwarmMessageInstance } from '../swarm-message/swarm-message-constructor.types';
 import { TTypedEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 import {
   TSwarmStoreDatabaseEntityAddress,
@@ -58,6 +54,7 @@ import {
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { ISwarmMessageInstanceEncrypted } from '../swarm-message/swarm-message-constructor.types';
 import { OmitFirstArg } from '../../types/helper.types';
+import { ISwarmMessagesDatabaseConnector } from './swarm-messages-database.types';
 
 export class SwarmMessagesDatabase<
   P extends ESwarmStoreConnector,
@@ -90,7 +87,7 @@ export class SwarmMessagesDatabase<
   >,
   SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>,
   MD extends Exclude<MSI, T | ISwarmMessageInstanceEncrypted> & Exclude<Exclude<MSI, T>, ISwarmMessageInstanceEncrypted>
-> implements ISwarmMessageDatabaseMessagingMethods<P, T, DbType, Exclude<MSI, T>, SMS> {
+> implements ISwarmMessagesDatabaseConnector<P, T, DbType, DBO, MSI, SMS, MD> {
   get dbName(): DBO['dbName'] | undefined {
     return this._dbName;
   }
