@@ -393,3 +393,14 @@ export interface IConnectionBridgeStorageOptionsDefault<
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType> = TSwarmStoreDatabaseOptions<P, T, DbType>,
   MSI extends TSwarmMessageInstance | T = TSwarmMessageInstance | T
 > extends TConnectionBridgeOptionsDefault<P, T, DbType, CD, DBO, MSI> {}
+
+export interface IConnectionBridgeUnknown<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  CD extends boolean = true,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType> = TSwarmStoreDatabaseOptions<P, T, DbType>,
+  MSI extends TSwarmMessageInstance | T = TSwarmMessageInstance | T,
+  MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined = undefined,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI> = TSwarmMessagesStoreGrantAccessCallback<P, MSI>
+> extends IConnectionBridge<P, T, DbType, DBO, any, any, any, any, any, any, MSI, GAC, MCF, any, any, CD, any> {}

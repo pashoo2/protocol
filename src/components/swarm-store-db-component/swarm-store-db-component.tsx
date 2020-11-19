@@ -1,34 +1,63 @@
-//@ts-nocheck
 import React from 'react';
-import { IConnectionBridge } from 'classes/connection-bridge/connection-bridge.types';
-import { ISwarmStoreDatabaseBaseOptions } from 'classes/swarm-store-class/swarm-store-class.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { CONNECT_TO_SWARM_STORAGE_DEFAULT_MESSAGE_BODY } from '../connect-to-swarm/connect-to-swarm.const';
-import { ISwarmStoreConnectorOrbitDbDatabaseOptions } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import { MessageComponent } from '../message-component/message-component';
 import { IMessageDescription } from '../connect-to-swarm/connect-to-swarm';
+import { IConnectionBridgeUnknown } from '../../classes/connection-bridge/connection-bridge.types';
+import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
+import {
+  TSwarmStoreDatabaseType,
+  TSwarmStoreDatabaseOptions,
+  TSwarmStoreDatabaseEntityKey,
+} from '../../classes/swarm-store-class/swarm-store-class.types';
+import {
+  TSwarmMessageSerialized,
+  TSwarmMessageInstance,
+  ISwarmMessageBodyDeserialized,
+} from '../../classes/swarm-message/swarm-message-constructor.types';
 
-interface IProps {
-  databaseOptions: ISwarmStoreDatabaseBaseOptions;
+interface IProps<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  CD extends boolean = true,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType> = TSwarmStoreDatabaseOptions<P, T, DbType>,
+  MSI extends TSwarmMessageInstance | T = TSwarmMessageInstance | T
+> {
+  databaseOptions: DBO;
   isOpened: boolean;
-  connectionBridge?: IConnectionBridge;
-  messages: IMessageDescription[];
+  connectionBridge?: IConnectionBridgeUnknown<P, T, DbType, CD, DBO, MSI>;
+  messages: IMessageDescription<P>[];
 }
 
-export class SwarmStoreDbComponent extends React.PureComponent<IProps> {
+export class SwarmStoreDbComponent<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType> = TSwarmStoreDatabaseOptions<P, T, DbType>,
+  CD extends boolean = boolean,
+  MSI extends TSwarmMessageInstance | T = TSwarmMessageInstance | T
+> extends React.PureComponent<IProps<P, T, DbType, CD, DBO, MSI>> {
   state = {
     isOpening: false as boolean,
     isClosing: false as boolean,
   };
 
+  protected get connectionBridgeStorageOrUndefined(): Required<
+    IProps<P, T, DbType, CD, DBO, MSI>
+  >['connectionBridge']['swarmMessageStore'] {
+    return this.props.connectionBridge?.swarmMessageStore;
+  }
+
   handleDbClose = async () => {
-    const { connectionBridge, databaseOptions, isOpened } = this.props;
+    const { connectionBridgeStorageOrUndefined } = this;
+    const { databaseOptions, isOpened } = this.props;
     const { isClosing } = this.state;
 
-    if (connectionBridge && isOpened && !isClosing) {
+    if (connectionBridgeStorageOrUndefined && isOpened && !isClosing) {
       try {
         this.setState({ isClosing: true });
-        await connectionBridge.storage?.closeDatabase(databaseOptions.dbName);
+        await connectionBridgeStorageOrUndefined.closeDatabase(databaseOptions.dbName);
       } catch (err) {
         console.error(err);
       } finally {
@@ -38,13 +67,14 @@ export class SwarmStoreDbComponent extends React.PureComponent<IProps> {
   };
 
   handleDbOpen = async () => {
-    const { connectionBridge, databaseOptions, isOpened } = this.props;
+    const { connectionBridgeStorageOrUndefined } = this;
+    const { databaseOptions, isOpened } = this.props;
     const { isOpening } = this.state;
 
-    if (connectionBridge && !isOpened && !isOpening) {
+    if (connectionBridgeStorageOrUndefined && !isOpened && !isOpening) {
       try {
         this.setState({ isOpening: true });
-        await connectionBridge.storage?.openDatabase({
+        await connectionBridgeStorageOrUndefined?.openDatabase({
           ...databaseOptions,
           grantAccess: async (...args: any[]) => {
             console.log(...args);
@@ -59,37 +89,40 @@ export class SwarmStoreDbComponent extends React.PureComponent<IProps> {
     }
   };
 
+  protected isKeyValueDatabase(
+    connectionBridge: any
+  ): connectionBridge is IConnectionBridgeUnknown<P, T, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE, CD, any, MSI> {
+    const { databaseOptions } = this.props;
+    return !!connectionBridge && databaseOptions.dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE;
+  }
+
+  protected createSwarmMessageBody(): ISwarmMessageBodyDeserialized {
+    const messagePayload = prompt('Message', '');
+    return {
+      ...CONNECT_TO_SWARM_STORAGE_DEFAULT_MESSAGE_BODY,
+      pld: messagePayload || '',
+    };
+  }
+
   protected sendSwarmMessage = async () => {
+    const { connectionBridgeStorageOrUndefined } = this;
     const { connectionBridge, databaseOptions, isOpened } = this.props;
     try {
-      if (isOpened && connectionBridge) {
+      if (isOpened && connectionBridge && connectionBridgeStorageOrUndefined) {
         if (!databaseOptions.isPublic) {
           alert('It is not a public database');
           return;
         }
+        let key: TSwarmStoreDatabaseEntityKey<P> | undefined;
+        const { connectionBridge } = this.props;
 
-        let key: string | undefined;
-
-        if (
-          (databaseOptions as ISwarmStoreConnectorOrbitDbDatabaseOptions<string>).dbType ===
-          ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
-        ) {
-          key = prompt('Key for the message', '') || undefined;
+        if (this.isKeyValueDatabase(connectionBridge)) {
+          key = (prompt('Key for the message', '') || undefined) as TSwarmStoreDatabaseEntityKey<P>;
           if (!key) {
-            return;
+            throw new Error('Key should be defined for key value store');
           }
         }
-
-        const message = prompt('Message', '');
-
-        await connectionBridge?.storage?.addMessage(
-          databaseOptions.dbName,
-          {
-            ...CONNECT_TO_SWARM_STORAGE_DEFAULT_MESSAGE_BODY,
-            pld: message || '',
-          },
-          key
-        );
+        await connectionBridgeStorageOrUndefined.addMessage(databaseOptions.dbName, this.createSwarmMessageBody(), key);
       }
     } catch (err) {
       console.error(err);
