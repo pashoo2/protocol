@@ -36,12 +36,13 @@ type P = ESwarmStoreConnector.OrbitDB;
 interface IProps<
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
+  CB extends IConnectionBridgeUnknown<P, T, DbType, any, DBO, MSI>,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType> = TSwarmStoreDatabaseOptions<P, T, DbType>,
   MSI extends TSwarmMessageInstance | T = TSwarmMessageInstance | T
 > {
   userId: TSwarmMessageUserIdentifierSerialized;
   databaseOptions: DBO;
-  connectionBridge?: IConnectionBridgeUnknown<P, T, DbType, any, DBO, MSI>;
+  connectionBridge?: CB;
   isOpenImmediate?: boolean;
   swarmMessagesDatabaseConnectedFabric: ISwarmMessagesDatabaseConnectedFabric<P, T, DbType, DBO, MSI>;
 }
@@ -61,9 +62,10 @@ interface IState<
 export class SwarmMessagesDatabaseComponent<
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
+  CB extends IConnectionBridgeUnknown<P, T, DbType, any, DBO, MSI>,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType> = TSwarmStoreDatabaseOptions<P, T, DbType>,
   MSI extends TSwarmMessageInstance | T = TSwarmMessageInstance | T
-> extends React.PureComponent<IProps<T, DbType, DBO, MSI>, IState<T, DbType, DBO, MSI>> {
+> extends React.PureComponent<IProps<T, DbType, CB, DBO, MSI>, IState<T, DbType, DBO, MSI>> {
   state: IState<T, DbType, DBO, MSI> = {
     messages: undefined,
     isOpening: false,
