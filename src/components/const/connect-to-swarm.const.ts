@@ -8,7 +8,10 @@ import {
   IConnectionBridgeOptionsUser,
   IConnectionBridgeOptionsAuth,
 } from '../../classes/connection-bridge/connection-bridge.types';
-import { IConnectionBridgeStorageOptionsDefault } from '../../classes/connection-bridge/connection-bridge.types';
+import {
+  IConnectionBridgeStorageOptionsDefault,
+  TNativeConnectionOptions,
+} from '../../classes/connection-bridge/connection-bridge.types';
 import { TSwarmStoreDatabaseOptions } from 'classes/swarm-store-class/index';
 import { IConnectionBridgeOptionsDefault } from '../../classes/connection-bridge/connection-bridge.types';
 
@@ -102,6 +105,8 @@ export const CONNECT_TO_SWARM_CONNECTION_AUTH_OPTOINS: IConnectionBridgeOptionsA
   credentials: undefined,
 };
 
+export const CONNECT_TO_SWARM_CONNECTION_NATIVE_CONNECTION_OPTIONS: TNativeConnectionOptions<ESwarmStoreConnector.OrbitDB> = {};
+
 export const CONNECT_TO_SWARM_CONNECTION_OPTIONS: IConnectionBridgeOptionsDefault<
   ESwarmStoreConnector.OrbitDB,
   TSwarmMessageSerialized,
@@ -112,5 +117,5 @@ export const CONNECT_TO_SWARM_CONNECTION_OPTIONS: IConnectionBridgeOptionsDefaul
   user: CONNECT_TO_SWARM_CONNECTION_USER_OPTIONS,
   auth: CONNECT_TO_SWARM_CONNECTION_AUTH_OPTOINS,
   storage: CONNECT_TO_SWARM_CONNECTION_STORAGE_OPTIONS,
-  swarm: undefined, // use the default value
+  nativeConnection: CONNECT_TO_SWARM_CONNECTION_NATIVE_CONNECTION_OPTIONS, // use the default value
 };

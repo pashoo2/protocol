@@ -193,7 +193,7 @@ export interface IConnectionBridgeOptions<
    *
    * @memberof IConnectionBridgeOptions
    */
-  swarm: TNativeConnectionOptions<P> | undefined;
+  nativeConnection: TNativeConnectionOptions<P>;
 }
 
 export interface IConnectionBridge<
