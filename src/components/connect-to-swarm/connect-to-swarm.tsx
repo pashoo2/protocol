@@ -20,21 +20,14 @@ import { ISwarmMessageInstanceDecrypted } from '../../classes/swarm-message/swar
 import { ISecretStorage } from '../../classes/secret-storage-class/secret-storage-class.types';
 import { ICentralAuthorityUserProfile } from '../../classes/central-authority-class/central-authority-class-types/central-authority-class-types-common';
 import { UserProfile } from '../userProfile/userProfile';
-import {
-  TSwarmStoreDatabaseType,
-  TSwarmStoreDatabaseOptions,
-  TSwarmStoreDatabaseMethod,
-} from '../../classes/swarm-store-class/swarm-store-class.types';
+import { TSwarmStoreDatabaseType, TSwarmStoreDatabaseOptions } from '../../classes/swarm-store-class/swarm-store-class.types';
 import { SwarmMessagesDatabaseComponent } from '../swarm-messages-database-component/swarm-messages-database-component';
 import { IPromiseResolveType } from '../../types/promise.types';
 import {
   IConnectionBridgeOptionsDefault,
   IConnectionBridgeUnknown,
 } from '../../classes/connection-bridge/connection-bridge.types';
-import {
-  TSwarmStoreDatabaseEntityKey,
-  TSwarmStoreDatabaseMethodArgument,
-} from '../../classes/swarm-store-class/swarm-store-class.types';
+import { TSwarmStoreDatabaseEntityKey } from '../../classes/swarm-store-class/swarm-store-class.types';
 
 export interface IMessageDescription<P extends ESwarmStoreConnector> {
   id: string;

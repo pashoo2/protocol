@@ -1,10 +1,9 @@
 import React from 'react';
-import { ISwarmStoreDatabaseBaseOptions } from 'classes/swarm-store-class/swarm-store-class.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { CONNECT_TO_SWARM_STORAGE_DEFAULT_MESSAGE_BODY } from '../connect-to-swarm/connect-to-swarm.const';
 import { ESwarmStoreConnectorOrbitDbDatabaseIteratorOption } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import { MessageComponent } from '../message-component/message-component';
-import { connectToDatabase, setMessageListener } from './swarm-messages-database-component.utils';
+import { setMessageListener } from './swarm-messages-database-component.utils';
 import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
 import { TSwarmStoreDatabaseEntityKey, TSwarmStoreDatabaseType } from '../../classes/swarm-store-class/swarm-store-class.types';
 import {
@@ -20,15 +19,13 @@ import {
   ISwarmMessageStoreMessagingMethods,
 } from '../../classes/swarm-message-store/swarm-message-store.types';
 import { setMessageDeleteListener, setCacheUpdateListener } from './swarm-messages-database-component.utils';
-import {
-  TSwarmMessageDatabaseMessagesCached,
-  ISwarmMessageDatabaseMessagingMethods,
-} from '../../classes/swarm-messages-database/swarm-messages-database.types';
+import { TSwarmMessageDatabaseMessagesCached } from '../../classes/swarm-messages-database/swarm-messages-database.types';
 import { isValidSwarmMessageDecryptedFormat } from '../../classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-swarm-message';
 import { TSwarmMessageUserIdentifierSerialized } from '../../classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import { TSwarmStoreDatabaseOptions } from '../../classes/swarm-store-class/swarm-store-class.types';
 import { IConnectionBridgeUnknown } from '../../classes/connection-bridge/connection-bridge.types';
-import { ISwarmMessagesDatabaseProperties } from '../../classes/swarm-messages-database/swarm-messages-database.types';
+import { ISwarmMessagesDatabaseConnectedFabric } from '../../classes/swarm-messages-database/swarm-messages-database-fabric/swarm-messages-database-fabric.types';
+import { PromiseResolveType } from '../../types/helper.types';
 import {
   TSwarmMessageInstance,
   ISwarmMessageInstanceEncrypted,
@@ -43,9 +40,10 @@ interface IProps<
   MSI extends TSwarmMessageInstance | T = TSwarmMessageInstance | T
 > {
   userId: TSwarmMessageUserIdentifierSerialized;
-  databaseOptions: ISwarmStoreDatabaseBaseOptions;
+  databaseOptions: DBO;
   connectionBridge?: IConnectionBridgeUnknown<P, T, DbType, any, DBO, MSI>;
   isOpenImmediate?: boolean;
+  swarmMessagesDatabaseConnectedFabric: ISwarmMessagesDatabaseConnectedFabric<P, T, DbType, DBO, MSI>;
 }
 
 interface IState<
@@ -57,16 +55,7 @@ interface IState<
   messages: TSwarmMessageDatabaseMessagesCached<P, DbType, Exclude<MSI, T | ISwarmMessageInstanceEncrypted>> | undefined;
   isOpening: boolean;
   isClosing: boolean;
-  db?: ISwarmMessageDatabaseMessagingMethods<
-    P,
-    T,
-    DbType,
-    Exclude<MSI, T>,
-    ISwarmMessageStoreMessagingMethods<P, T, DbType, Exclude<MSI, T>>
-  > &
-    ISwarmMessagesDatabaseProperties<P, T, DbType, DBO, Exclude<MSI, T | ISwarmMessageInstanceEncrypted>> & {
-      close(): Promise<void>;
-    };
+  db?: PromiseResolveType<ReturnType<ISwarmMessagesDatabaseConnectedFabric<P, T, DbType, DBO, MSI>>>;
 }
 
 export class SwarmMessagesDatabaseComponent<
@@ -96,6 +85,14 @@ export class SwarmMessagesDatabaseComponent<
     | TSwarmMessageDatabaseMessagesCached<P, DbType, Exclude<MSI, T | ISwarmMessageInstanceEncrypted>>
     | undefined {
     return this.state.db?.cachedMessages;
+  }
+
+  protected get swarmMessagesDatabaseConnectedFabric(): ISwarmMessagesDatabaseConnectedFabric<P, T, DbType, DBO, MSI> {
+    const { swarmMessagesDatabaseConnectedFabric } = this.props;
+    if (!swarmMessagesDatabaseConnectedFabric) {
+      throw new Error('A swarmMessagesDatabaseConnectedFabric not exists in the props');
+    }
+    return swarmMessagesDatabaseConnectedFabric;
   }
 
   queryDatabase = async () => {
@@ -162,14 +159,14 @@ export class SwarmMessagesDatabaseComponent<
       try {
         this.setState({ isOpening: true });
 
-        const dbOptions = {
+        const dbOptions: DBO = {
           ...databaseOptions,
           grantAccess: async (...args: any[]) => {
             console.log(...args);
             return true;
           },
         };
-        const db = await connectToDatabase({
+        const db = await this.swarmMessagesDatabaseConnectedFabric({
           dbOptions,
           swarmMessageStore: connectionBridge.swarmMessageStore,
           user: {
@@ -177,9 +174,36 @@ export class SwarmMessagesDatabaseComponent<
           },
         });
 
-        setMessageListener(db, this.onNewMessage);
-        setMessageDeleteListener(db, this.onMessageDelete);
-        setCacheUpdateListener(db, this.onMessagesCacheUpdated);
+        setMessageListener<
+          P,
+          T,
+          DbType,
+          DBO,
+          MSI,
+          ISwarmMessageStoreMessagingMethods<P, T, DbType, Exclude<MSI, T>>,
+          Exclude<MSI, T | ISwarmMessageInstanceEncrypted> & Exclude<Exclude<MSI, T>, ISwarmMessageInstanceEncrypted>,
+          Required<IState<T, DbType, DBO, MSI>>['db']
+        >(db, this.onNewMessage);
+        setMessageDeleteListener<
+          P,
+          T,
+          DbType,
+          DBO,
+          MSI,
+          ISwarmMessageStoreMessagingMethods<P, T, DbType, Exclude<MSI, T>>,
+          Exclude<MSI, T | ISwarmMessageInstanceEncrypted> & Exclude<Exclude<MSI, T>, ISwarmMessageInstanceEncrypted>,
+          Required<IState<T, DbType, DBO, MSI>>['db']
+        >(db, this.onMessageDelete);
+        setCacheUpdateListener<
+          P,
+          T,
+          DbType,
+          DBO,
+          MSI,
+          ISwarmMessageStoreMessagingMethods<P, T, DbType, Exclude<MSI, T>>,
+          Exclude<MSI, T | ISwarmMessageInstanceEncrypted> & Exclude<Exclude<MSI, T>, ISwarmMessageInstanceEncrypted>,
+          Required<IState<T, DbType, DBO, MSI>>['db']
+        >(db, this.onMessagesCacheUpdated);
         this.setState({ db });
       } catch (err) {
         console.error(err);
@@ -192,7 +216,7 @@ export class SwarmMessagesDatabaseComponent<
   handleDeleteMessage = async (
     id: TSwarmStoreDatabaseEntityKey<P>,
     message: ISwarmMessageInstanceDecrypted,
-    key: string | undefined
+    key: TSwarmStoreDatabaseEntityKey<P> | undefined
   ): Promise<void> => {
     const { db } = this.state;
     let removeArg: TSwarmStoreDatabaseEntityKey<P> | string | ISwarmMessageInstanceDecrypted | undefined;
@@ -225,9 +249,9 @@ export class SwarmMessagesDatabaseComponent<
           return;
         }
 
-        let key: string | undefined;
+        let key: TSwarmStoreDatabaseEntityKey<P> | undefined;
 
-        if ((databaseOptions as DBO).dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE) {
+        if (databaseOptions.dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE) {
           key = prompt('Key for the message', '') || undefined;
           if (!key) {
             return;

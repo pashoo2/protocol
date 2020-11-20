@@ -5,7 +5,7 @@ import { TSwarmMessageUserIdentifierSerialized } from '../../classes/swarm-messa
 
 export interface ISwarmMessagesDatabaseMessageDescription<P extends ESwarmStoreConnector.OrbitDB> {
   id: TSwarmStoreDatabaseEntityKey<P>;
-  key?: string;
+  key?: TSwarmStoreDatabaseEntityKey<P>;
   message: ISwarmMessageInstanceDecrypted;
 }
 
@@ -30,7 +30,7 @@ export interface ISwarmMessagesDatabaseDeleteMessageDescription<P extends ESwarm
    * @type {string}
    * @memberof ISwarmMessagesDatabaseMessageDescription
    */
-  key: string | undefined;
+  key: TSwarmStoreDatabaseEntityKey<P> | undefined;
   /**
    * User's id who removed the message.
    *
