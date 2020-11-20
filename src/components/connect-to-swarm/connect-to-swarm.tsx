@@ -1,7 +1,7 @@
 import React from 'react';
 import { connectToSwarmUtil } from './connect-to-swarm.utils';
-import { CONNECT_TO_SWARM_STORAGE_DEFAULT_MESSAGE_BODY } from './connect-to-swarm.const';
-import { CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY } from './connect-to-swarm.const';
+import { CONNECT_TO_SWARM_STORAGE_DEFAULT_MESSAGE_BODY } from '../const/connect-to-swarm.const';
+import { CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY } from '../const/connect-to-swarm.const';
 import {
   ESwarmStoreConnectorOrbitDbDatabaseMethodNames,
   ISwarmStoreDatabasesCommonStatusList,

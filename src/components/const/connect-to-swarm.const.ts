@@ -9,7 +9,7 @@ import {
   IConnectionBridgeOptionsAuth,
 } from '../../classes/connection-bridge/connection-bridge.types';
 import { IConnectionBridgeStorageOptionsDefault } from '../../classes/connection-bridge/connection-bridge.types';
-import { TSwarmStoreDatabaseOptions } from 'classes/swarm-store-class';
+import { TSwarmStoreDatabaseOptions } from 'classes/swarm-store-class/index';
 import { IConnectionBridgeOptionsDefault } from '../../classes/connection-bridge/connection-bridge.types';
 
 export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY = 'key';
