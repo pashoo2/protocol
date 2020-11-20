@@ -25,6 +25,8 @@ import {
 import { TSwarmStoreDatabaseEntityKey } from '../../classes/swarm-store-class/swarm-store-class.types';
 import { swarmMessagesDatabaseConnectedFabric } from '../../classes/swarm-messages-database/swarm-messages-database-fabric/swarm-messages-database-fabric';
 import { ISwarmMessagesDatabaseConnectedFabric } from '../../classes/swarm-messages-database/swarm-messages-database-fabric/swarm-messages-database-fabric.types';
+import { IUserCredentialsCommon } from '../../types/credentials.types';
+import { TSwarmMessageUserIdentifierSerialized } from '../../classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 
 type P = ESwarmStoreConnector.OrbitDB;
 
@@ -34,11 +36,6 @@ export interface IMessageDescription<P extends ESwarmStoreConnector> {
   message: ISwarmMessageInstanceDecrypted;
 }
 
-interface IUserCredentials {
-  login: string;
-  password: string;
-}
-
 export interface IConnectToSwarmProps<
   DbType extends TSwarmStoreDatabaseType<P>,
   T extends TSwarmMessageSerialized,
@@ -46,14 +43,10 @@ export interface IConnectToSwarmProps<
   CBO extends IConnectionBridgeOptionsDefault<P, T, DbType, any>
 > {
   connectionBridgeOptions: CBO;
-  userCredentials: Array<IUserCredentials>;
-  userCredentialsIdxToConnectImmediate?: number;
-  dbOptionsToConnectImmediate?: Partial<DBO> & {
-    dbName: DBO['dbName'];
-  };
-  dbo: DBO | undefined;
-  dboMain: DBO | undefined;
-  messagesReceiverId: string;
+  userCredentialsList: Array<IUserCredentialsCommon>;
+  userCredentialsToConnectImmediate?: IUserCredentialsCommon;
+  dbo: DBO;
+  userIdReceiverSwarmMessages: TSwarmMessageUserIdentifierSerialized;
 }
 
 export class ConnectToSwarm<
@@ -61,7 +54,7 @@ export class ConnectToSwarm<
   T extends TSwarmMessageSerialized,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   CBO extends IConnectionBridgeOptionsDefault<P, T, DbType, any>,
-  MI extends TSwarmMessageInstance
+  MI extends TSwarmMessageInstance = TSwarmMessageInstance
 > extends React.PureComponent<IConnectToSwarmProps<DbType, T, DBO, CBO>> {
   public state = {
     isConnecting: false,
@@ -79,7 +72,7 @@ export class ConnectToSwarm<
     databaseOpeningStatus: false as boolean,
     secretStorage: undefined as undefined | ISecretStorage,
     userProfileData: undefined as undefined | Partial<ICentralAuthorityUserProfile>,
-    userCredentialsActive: undefined as IUserCredentials | undefined,
+    userCredentialsActive: undefined as IUserCredentialsCommon | undefined,
   };
 
   protected get defaultDbOptions(): DBO {
@@ -107,10 +100,10 @@ export class ConnectToSwarm<
   }
 
   protected get mainDatabaseOptions(): DBO {
-    if (!this.props.dboMain) {
+    if (!this.props.dbo) {
       throw new Error('The main database options are not defined in the props');
     }
-    return this.props.dboMain;
+    return this.props.dbo;
   }
 
   protected get mainDatabaseName(): string {
@@ -137,7 +130,7 @@ export class ConnectToSwarm<
     try {
       await this.swarmMessageStore?.addMessage(this.mainDatabaseName, {
         ...CONNECT_TO_SWARM_STORAGE_DEFAULT_MESSAGE_BODY,
-        receiverId: this.props.messagesReceiverId,
+        receiverId: this.props.userIdReceiverSwarmMessages,
       });
     } catch (err) {
       console.error(err);
@@ -243,9 +236,9 @@ export class ConnectToSwarm<
   }
 
   public componentDidMount() {
-    const { userCredentials, userCredentialsIdxToConnectImmediate } = this.props;
-    if (userCredentialsIdxToConnectImmediate) {
-      this.connectToSwarm(userCredentials[userCredentialsIdxToConnectImmediate]);
+    const { userCredentialsToConnectImmediate } = this.props;
+    if (userCredentialsToConnectImmediate) {
+      this.connectToSwarm(userCredentialsToConnectImmediate);
     }
   }
 
@@ -261,7 +254,7 @@ export class ConnectToSwarm<
     if (!connectionBridge && !isConnecting) {
       return (
         <div>
-          {this.props.userCredentials.map((credentials) => (
+          {this.props.userCredentialsList.map((credentials) => (
             <button key={credentials.login} onClick={() => this.connectToSwarm(credentials)}>
               Connect cred {credentials.login}
             </button>
@@ -310,7 +303,7 @@ export class ConnectToSwarm<
     swarmMessageStore.addListener(ESwarmMessageStoreEventNames.NEW_MESSAGE, this.handleMessage);
   }
 
-  protected connectToSwarm = async (credentials: IUserCredentials) => {
+  protected connectToSwarm = async (credentials: IUserCredentialsCommon) => {
     if (!credentials) {
       throw new Error('Options should be defined to connect to swarm');
     }
@@ -338,11 +331,12 @@ export class ConnectToSwarm<
         (connectionBridge as unknown) as IPromiseResolveType<ReturnType<typeof connectToSwarmUtil>>
       );
 
-      const { dbOptionsToConnectImmediate } = this.props;
+      const { dbo } = this.props;
 
-      if (dbOptionsToConnectImmediate) {
-        await this.handleOpenNewSwarmStoreMessagesDatabase(dbOptionsToConnectImmediate);
+      if (!dbo) {
+        throw new Error('Database options shoul be defined to connect with it');
       }
+      await this.handleOpenNewSwarmStoreMessagesDatabase(dbo);
     } catch (error) {
       this.setState({
         error,
@@ -444,7 +438,7 @@ export class ConnectToSwarm<
 
   protected renderSwarmMessagesDatabasesList() {
     const { swarmStoreMessagesDbOptionsList, connectionBridge } = this.state;
-    const { dbOptionsToConnectImmediate } = this.props;
+    const { dbo } = this.props;
 
     if (!connectionBridge) {
       throw new Error('Connection bridge should be defined');
@@ -464,7 +458,7 @@ export class ConnectToSwarm<
                 userId={userId}
                 databaseOptions={dbsOptions}
                 connectionBridge={connectionBridge}
-                isOpenImmediate={dbsOptions.dbName === dbOptionsToConnectImmediate?.dbName}
+                isOpenImmediate={dbsOptions.dbName === dbo?.dbName}
                 swarmMessagesDatabaseConnectedFabric={this.getSwarmMessagesDatabaseConnectedFabric()}
               />
             );
