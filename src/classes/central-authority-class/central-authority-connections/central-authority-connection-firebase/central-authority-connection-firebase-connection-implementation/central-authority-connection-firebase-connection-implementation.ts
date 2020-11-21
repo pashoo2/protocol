@@ -202,7 +202,7 @@ export class CAConnectionWithFirebaseImplementation extends CAConnectionWithFire
     const { isAuthorized } = this;
 
     if (isAuthorized) {
-      authHandleResult = this.valueofCredentialsSignUpOnAuthorizedSuccess!!;
+      authHandleResult = this.valueofCredentialsSignUpOnAuthorizedSuccess!;
     } else {
       // try to sign in with the credentials, then try to sign up
       // const userLoggedPromise = this.waitingUserInit();

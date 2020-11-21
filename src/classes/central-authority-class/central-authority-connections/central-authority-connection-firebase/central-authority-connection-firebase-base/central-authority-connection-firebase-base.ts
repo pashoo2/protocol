@@ -726,7 +726,7 @@ export class CAConnectionWithFirebaseBase {
     }
 
     const { connectionWithCredentialsStorage } = this;
-    const credentialsForTheCurrentUser = await connectionWithCredentialsStorage!!.getCredentialsForTheCurrentUser(
+    const credentialsForTheCurrentUser = await connectionWithCredentialsStorage!.getCredentialsForTheCurrentUser(
       signUpCredentials
     );
 
@@ -750,10 +750,7 @@ export class CAConnectionWithFirebaseBase {
     // set the new generated credentials forcely
     // and rewrite the existing
     // cause it is not valid
-    const setCredentialsResult = await connectionWithCredentialsStorage!!.setUserCredentials(
-      cryptoCredentials,
-      signUpCredentials
-    );
+    const setCredentialsResult = await connectionWithCredentialsStorage!.setUserCredentials(cryptoCredentials, signUpCredentials);
 
     if (setCredentialsResult instanceof Error) {
       return setCredentialsResult;

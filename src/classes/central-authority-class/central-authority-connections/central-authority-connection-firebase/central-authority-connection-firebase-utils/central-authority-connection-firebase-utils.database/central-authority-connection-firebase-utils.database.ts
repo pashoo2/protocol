@@ -100,7 +100,7 @@ export class CAConnectionWithFirebaseUtilDatabase {
     const { database } = this;
 
     try {
-      await database!!.goOffline();
+      await database!.goOffline();
     } catch (err) {
       console.error(err);
       return new Error('Failed to go offline before destroy the application');
@@ -131,7 +131,7 @@ export class CAConnectionWithFirebaseUtilDatabase {
     const { database } = this;
 
     try {
-      await database!!.ref(key).set(value);
+      await database!.ref(key).set(value);
     } catch (err) {
       console.error(err);
       return new Error('Failed to store the value in the database');
@@ -149,7 +149,7 @@ export class CAConnectionWithFirebaseUtilDatabase {
     const { database } = this;
 
     try {
-      const snapshot = await database!!.ref(key).once('value');
+      const snapshot = await database!.ref(key).once('value');
       const isExists = snapshot.exists();
 
       if (!isExists) {

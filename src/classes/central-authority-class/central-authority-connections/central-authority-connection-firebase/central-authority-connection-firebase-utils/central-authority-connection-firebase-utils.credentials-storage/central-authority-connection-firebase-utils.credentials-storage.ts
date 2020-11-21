@@ -43,7 +43,7 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
     const { app } = this;
 
     try {
-      return app!!.auth().currentUser;
+      return app!.auth().currentUser;
     } catch (err) {
       console.error(err);
       return new Error('Failed to get the user id for firebase');

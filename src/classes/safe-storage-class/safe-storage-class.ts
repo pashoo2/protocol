@@ -169,12 +169,11 @@ export class SafeStorage<TYPE extends ESAFE_STORAGE_STORAGE_TYPE> extends getSta
 
   checkOptionsAreValid(options: ISafeStorageOptions): Error | true {
     const { name, credentials } = options;
-    const { checkIfNameIsExists } = SafeStorage;
 
     if (typeof credentials !== 'object' || !credentials || !credentials.password) {
       return this.setErrorStatus('SafeStorage: a storage with the name is already exists');
     }
-    if (checkIfNameIsExists(name)) {
+    if (SafeStorage.checkIfNameIsExists(name)) {
       return this.setErrorStatus('SafeStorage: a storage with the name is already exists');
     }
     return true;
@@ -183,7 +182,6 @@ export class SafeStorage<TYPE extends ESAFE_STORAGE_STORAGE_TYPE> extends getSta
   setOptions(options: ISafeStorageOptions): Error | true {
     const { name, dumpIntervalMs, storageType } = options;
     const checkOptionsResult = this.checkOptionsAreValid(options);
-    const { addStorageName } = SafeStorage;
     const dumpInterval = typeof dumpIntervalMs === 'number' ? dumpIntervalMs : DEFAULT_INTERVAL_MS;
     const storageTypeResolved =
       storageType && Object.values(ESAFE_STORAGE_STORAGE_TYPE).includes(storageType)
@@ -193,7 +191,7 @@ export class SafeStorage<TYPE extends ESAFE_STORAGE_STORAGE_TYPE> extends getSta
     if (checkOptionsResult instanceof Error) {
       return checkOptionsResult;
     }
-    addStorageName(name);
+    SafeStorage.addStorageName(name);
     this.options = {
       ...options,
       dumpIntervalMs: dumpInterval,

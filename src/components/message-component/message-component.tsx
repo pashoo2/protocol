@@ -27,7 +27,7 @@ export class MessageComponent<P extends ESwarmStoreConnector> extends React.Pure
   delete = () => {
     const { deleteMessage, id, message, k } = this.props;
 
-    deleteMessage?.(id, message, k);
+    void deleteMessage?.(id, message, k);
   };
 
   render() {
