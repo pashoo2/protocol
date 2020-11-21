@@ -166,7 +166,7 @@ export const importPasswordKeyFromString = async (passwordKey: string): Promise<
   try {
     const keyExportedFormat: TPASSWORD_ENCRYPTION_KEY_IMPORT_NATIVE_SUPPORTED_TYPES = JSON.parse(passwordKey);
 
-    return importPasswordKey(keyExportedFormat);
+    return await importPasswordKey(keyExportedFormat);
   } catch (err) {
     console.error(err);
 

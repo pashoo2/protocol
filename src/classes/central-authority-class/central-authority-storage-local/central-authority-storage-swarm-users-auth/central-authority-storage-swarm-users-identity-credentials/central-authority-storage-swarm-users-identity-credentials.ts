@@ -310,7 +310,7 @@ export class CentralAuthorityIdentityCredentialsStorage
       // if the given values are valid
       // then can put it to the storage
       // connected to
-      return storageConnection.set(caIdentityStorageKey, cryptoCredentialsExported);
+      return await storageConnection.set(caIdentityStorageKey, cryptoCredentialsExported);
     } catch (err) {
       console.error(err);
       return new Error('Failed to store the credentials');

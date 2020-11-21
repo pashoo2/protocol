@@ -225,7 +225,7 @@ export const importKeyPairFromString = async (
           return new Error('Failed to parse dataencryption Private key from the string decrypted');
         }
       }
-      return importKeyPair(keyPairObject, !!password);
+      return await importKeyPair(keyPairObject, !!password);
     }
     return new Error('A key pair must be a string');
   } catch (err) {

@@ -49,7 +49,7 @@ export const dataSignGenerateKeyPair = (): PromiseLike<CryptoKeyPair> =>
 
 export const dataSignExportKey = async (key: CryptoKey): Promise<TDATA_SIGN_UTIL_KEY_EXPORT_FORMAT_TYPE | Error> => {
   try {
-    return cryptoModuleDataSign.exportKey(DATA_SIGN_CRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT, key);
+    return await cryptoModuleDataSign.exportKey(DATA_SIGN_CRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT, key);
   } catch (err) {
     return err;
   }
@@ -263,7 +263,7 @@ export const dataSignImportKeyPairFromString = async (
         }
       }
       if (dataSignIsCryptoKeyPairImported(keyPairObject, !!password)) {
-        return dataSignImportKeyPair(keyPairObject as TDATA_SIGN_UTIL_KEYPAIR_IMPORT_TYPE, !!password);
+        return await dataSignImportKeyPair(keyPairObject as TDATA_SIGN_UTIL_KEYPAIR_IMPORT_TYPE, !!password);
       }
       return new Error('There is a wrong format for the imported key pair');
     }

@@ -78,7 +78,7 @@ export class SecretStorageProviderLevelJS implements StorageProvider {
         return new Error('There is no storage connected');
       }
       if (!value) {
-        return this.unset(key);
+        return await this.unset(key);
       } else {
         await levelStorage.put(key, value);
       }
@@ -155,7 +155,7 @@ export class SecretStorageProviderLevelJS implements StorageProvider {
         return new Error('There is no storage connected');
       }
       if (!value) {
-        return this.unset(key);
+        return await this.unset(key);
       }
       await levelStorage.put(key, value);
       return true;

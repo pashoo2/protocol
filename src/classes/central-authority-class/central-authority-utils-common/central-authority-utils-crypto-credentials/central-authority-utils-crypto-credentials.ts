@@ -277,7 +277,7 @@ export const getExportedAsStringCryptoCredentials = async (
       console.error(caUserCryptoCredentials);
       return new Error('Failed to get User crypto credentials');
     }
-    return exportCryptoCredentialsToString(caUserCryptoCredentials);
+    return await exportCryptoCredentialsToString(caUserCryptoCredentials);
   } catch (err) {
     console.error(err);
     return new Error('Failed to process the credentials or identity');

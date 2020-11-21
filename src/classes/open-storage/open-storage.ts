@@ -48,7 +48,7 @@ export class OpenStorage implements OpenStorageClass {
     try {
       const connectToStorePromise = this.connectToStore(configuration);
       this.setConnectingPromise(connectToStorePromise);
-      return connectToStorePromise;
+      return await connectToStorePromise;
     } catch (err) {
       this.unsetConnectingPromise();
       return err;

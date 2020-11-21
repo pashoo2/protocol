@@ -75,7 +75,7 @@ async function swarmMessageGrantValidator<
       return false;
     }
     if (grantAccessCb) {
-      return (grantAccessCb as TSwarmMessageStoreAccessControlGrantAccessCallback<P, I>)(
+      return await (grantAccessCb as TSwarmMessageStoreAccessControlGrantAccessCallback<P, I>)(
         (swarmMessage as unknown) as I,
         userId,
         dbName,

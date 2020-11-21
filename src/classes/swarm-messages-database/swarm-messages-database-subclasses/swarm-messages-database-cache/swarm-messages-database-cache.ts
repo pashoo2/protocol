@@ -889,7 +889,7 @@ export class SwarmMessagesDatabaseCache<
    */
   protected async _waitForCurrentMessagesUpdate() {
     if (this._pendingMessagesUpdatePromise) {
-      return await this._pendingMessagesUpdatePromise;
+      return this._pendingMessagesUpdatePromise;
     }
   }
 

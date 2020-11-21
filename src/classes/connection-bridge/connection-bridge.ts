@@ -279,7 +279,7 @@ export class ConnectionBridge<
       userLogin
     );
 
-    return await this.whetherAnySessionDataExistsInSensitiveDataSessionStorage(mainSessionDataStore);
+    return this.whetherAnySessionDataExistsInSensitiveDataSessionStorage(mainSessionDataStore);
   }
 
   /**
@@ -1052,7 +1052,7 @@ export class ConnectionBridge<
 
   protected async createSwarmMessageConstructorFabric(): Promise<ISwarmMessageConstructorWithEncryptedCacheFabric> {
     const userLogin = this.getUserLoginFromOptions();
-    return await getSwarmMessageConstructorWithCacheFabric(
+    return getSwarmMessageConstructorWithCacheFabric(
       this.getOptionsSwarmMessageEncryptedCache(userLogin),
       this.getSwarmMessageConstructorOptions(),
       this.getDatabaseNamePrefixForEncryptedCahce(userLogin)
@@ -1088,7 +1088,7 @@ export class ConnectionBridge<
     if (!this.swarmMessageEncryptedCacheFabric) {
       throw new Error('Encrypted cache fabric must be started before');
     }
-    return await this.startEncryptedCache(CONNECTION_BRIDGE_STORAGE_DATABASE_NAME.MESSAGE_CACHE_STORAGE);
+    return this.startEncryptedCache(CONNECTION_BRIDGE_STORAGE_DATABASE_NAME.MESSAGE_CACHE_STORAGE);
   }
 
   protected createSwarmMessageStoreInstance = (): ISwarmMessageStore<

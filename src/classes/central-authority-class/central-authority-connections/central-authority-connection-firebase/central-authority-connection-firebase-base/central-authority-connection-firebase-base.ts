@@ -580,7 +580,7 @@ export class CAConnectionWithFirebaseBase {
   // TODO - test it and change to private method
   protected async setProfileData(profile: Partial<ICentralAuthorityUserProfile>): Promise<Error | ICentralAuthorityUserProfile> {
     if (isEmptyObject(profile)) {
-      return await this.getUserProfileData();
+      return this.getUserProfileData();
     }
     if (!validateUserProfileData(profile)) {
       return new Error('The profile is not valid');

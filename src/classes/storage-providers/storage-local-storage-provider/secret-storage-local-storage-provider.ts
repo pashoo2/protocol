@@ -57,7 +57,7 @@ export class SecretStorageProviderLocalStorage implements StorageProvider {
         return new Error('There is no storage connected');
       }
       if (!value) {
-        return this.unset(key);
+        return await this.unset(key);
       }
       localStorage.setItem(this.resolveKey(key), value);
       return true;

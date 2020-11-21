@@ -56,7 +56,7 @@ export class SecretStorageProvideSessionStorage implements StorageProvider {
         return new Error('There is no storage connected');
       }
       if (!value) {
-        return this.unset(key);
+        return await this.unset(key);
       }
       sessionStorage.setItem(this.resolveKey(key), value);
       return true;

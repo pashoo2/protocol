@@ -152,7 +152,7 @@ export class StatusedClassHelper<StatusChangedEventName extends string, Status e
    * @throws - on timeout if the timeout value specified
    */
   protected __resolveOnCondition = async (resolver: (status: Status) => boolean, timeoutMs?: number): Promise<Status> => {
-    return await new Promise((res, rej) => {
+    return new Promise((res, rej) => {
       let timer: NodeJS.Timeout | undefined;
       const listenerStatusChanged = (newStatus: Status) => {
         if (this.__isReadyStatusedClassHelper) {

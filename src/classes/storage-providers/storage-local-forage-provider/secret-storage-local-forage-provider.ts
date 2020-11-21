@@ -92,7 +92,7 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
         return new Error('There is no storage connected');
       }
       if (!value) {
-        return this.unset(key);
+        return await this.unset(key);
       } else {
         await levelStorage.setItem(key, value);
       }
@@ -125,7 +125,7 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
         return new Error('There is no storage connected');
       }
       if (!value) {
-        return this.unset(key);
+        return await this.unset(key);
       }
       await levelStorage.setItem(key, value);
       return true;

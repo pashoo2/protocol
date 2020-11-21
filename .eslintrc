@@ -25,6 +25,10 @@
   "plugins": ["@typescript-eslint/eslint-plugin"],
   "ignorePatterns": ["temp.js", "node_modules/", "node_modules-local/", "*config.js", "app.test/"],
   "rules": {
+    "no-return-await": "off",
+    "@typescript-eslint/return-await": "error",
+    "require-await": "off",
+    "@typescript-eslint/require-await": "warn",
     "@typescript-eslint/restrict-template-expressions": "off",
     "@typescript-eslint/no-floating-promises": ["warn", { "ignoreIIFE": true }],
     "@typescript-eslint/no-misused-new": "warn",
@@ -52,8 +56,6 @@
         ]
       }
     ],
-    "require-await": "off",
-    "@typescript-eslint/require-await": "off",
     "@typescript-eslint/no-inferrable-types": "off",
     "@typescript-eslint/no-unnecessary-type-as": "off",
     "@typescript-eslint/interface-name-prefix": "off",

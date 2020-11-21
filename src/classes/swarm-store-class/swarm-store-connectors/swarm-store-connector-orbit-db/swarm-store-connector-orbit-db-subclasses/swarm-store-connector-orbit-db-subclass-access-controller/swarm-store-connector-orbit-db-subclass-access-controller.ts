@@ -192,7 +192,7 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
       if (validateIdentityResult !== true) {
         return false;
       }
-      return this.verifyEntity(entry);
+      return await this.verifyEntity(entry);
     } catch (err) {
       console.error(err);
       return false;

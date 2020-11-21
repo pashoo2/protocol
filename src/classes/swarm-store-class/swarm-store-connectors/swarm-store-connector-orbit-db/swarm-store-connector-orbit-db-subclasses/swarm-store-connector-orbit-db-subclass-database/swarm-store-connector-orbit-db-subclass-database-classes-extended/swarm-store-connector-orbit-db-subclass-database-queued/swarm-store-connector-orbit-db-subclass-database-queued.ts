@@ -119,7 +119,7 @@ export class SwarmStoreConnectorOrbitDBDatabaseQueued<
   protected _runAsJob = async <F extends () => any>(func: F): Promise<ReturnType<F>> => {
     const currentJob = await this._waitOperationsQueue();
     try {
-      return await func();
+      return func();
     } finally {
       currentJob.done();
     }

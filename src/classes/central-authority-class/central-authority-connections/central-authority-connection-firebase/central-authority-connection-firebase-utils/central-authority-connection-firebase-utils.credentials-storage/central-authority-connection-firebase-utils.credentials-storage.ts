@@ -281,7 +281,7 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
         .once('value');
       if (snapshot.exists()) {
         const valueStored = snapshot.val();
-        return this.filterCredentialsValues(valueStored, signUpCredentials);
+        return await this.filterCredentialsValues(valueStored, signUpCredentials);
       }
     } catch (err) {
       console.error(err);
