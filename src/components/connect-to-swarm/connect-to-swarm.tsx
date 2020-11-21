@@ -313,7 +313,7 @@ export class ConnectToSwarm<
 
   protected connectToSwarm = async (credentials: IUserCredentialsCommon) => {
     if (!credentials) {
-      throw new Error('Options should be defined to connect to swarm');
+      throw new Error('Credentials should be defined to connect to swarm');
     }
 
     this.setState({

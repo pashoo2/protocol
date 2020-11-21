@@ -235,7 +235,7 @@ export class ConnectionBridge<
       const { sensitiveDataStorageOptions } = this;
 
       if (sensitiveDataStorageOptions) {
-        await this.createAndSetSensitiveDataStorageForMainSession(sensitiveDataStorageOptions);
+        await this.createAndSetSensitiveDataStorageForMainSession(sensitiveDataStorageOptions, this.getUserLoginFromOptions());
       }
       await this.createAndSetSequentlyDependenciesInstances();
       if (sensitiveDataStorageOptions) {
@@ -262,16 +262,22 @@ export class ConnectionBridge<
     }
 
     const connectionBridgeSessionDataStore = await this.createSessionSensitiveDataStoreForConnectionBridgeSession();
+    const userLogin = await this.readUserLoginKeyValueFromConnectionBridgeSessionDataStore(connectionBridgeSessionDataStore);
+
     // check whether the user login value set for a previous session by this Connection bridge instance
-    if (!(await this.readUserLoginKeyValueFromConnectionBridgeSessionDataStore(connectionBridgeSessionDataStore))) {
+    if (!this.isUserLogin(userLogin)) {
       return false;
     }
+
     // check any data exists in the main session data store
-    const mainSessionDataStore = await this.createMainSensitiveDataStorageForSession({
-      ...sessionParams,
-      // do not clear data from the storage becuse it can be used later
-      clearStorageAfterConnect: false,
-    });
+    const mainSessionDataStore = await this.createMainSensitiveDataStorageForSession(
+      {
+        ...sessionParams,
+        // do not clear data from the storage becuse it can be used later
+        clearStorageAfterConnect: false,
+      },
+      userLogin
+    );
 
     return await this.whetherAnySessionDataExistsInSensitiveDataSessionStorage(mainSessionDataStore);
   }
@@ -290,6 +296,10 @@ export class ConnectionBridge<
     await this.closeSwarmMessageEncryptedCacheFabric();
     await this.closeSwarmMessageConstructorFabric();
     await this.closeCurrentCentralAuthorityConnection();
+  }
+
+  protected isUserLogin(userLogin: unknown): userLogin is string {
+    return userLogin && typeof userLogin === 'string';
   }
 
   protected checkCurrentOptionsIsDefined(): this is {
@@ -682,13 +692,12 @@ export class ConnectionBridge<
   }
 
   protected async readUserLoginFromConnectionBridgeSessionStore(): Promise<string | undefined> {
-    const userLogin = this.readUserLoginKeyValueFromConnectionBridgeSessionDataStore(this.getAcitveUserSensitiveDataStore());
+    const userLogin = await this.readUserLoginKeyValueFromConnectionBridgeSessionDataStore(
+      this.getAcitveUserSensitiveDataStore()
+    );
 
-    if (!userLogin) {
+    if (!this.isUserLogin(userLogin)) {
       return;
-    }
-    if (typeof userLogin !== 'string') {
-      throw new Error('User login from the user data store should be a string');
     }
     return userLogin;
   }
@@ -846,24 +855,23 @@ export class ConnectionBridge<
     }
   }
 
-  protected getSensitiveDataStoragePrefixForSession(sessionParams: ISensitiveDataSessionStorageOptions): string | undefined {
-    const userLogin = this.getUserLoginFromOptions();
-
-    if (!userLogin) {
-      throw new Error('User login should be defined');
-    }
+  protected getSensitiveDataStoragePrefixForSession(
+    sessionParams: ISensitiveDataSessionStorageOptions,
+    userLogin: string
+  ): string | undefined {
     return sessionParams.storagePrefix
       ? `${sessionParams.storagePrefix}${CONNECTION_BRIDGE_DATA_STORAGE_DATABASE_NAME_PREFIX_DELIMETER}${userLogin}`
       : undefined;
   }
 
   protected async connectToSensitiveDataStorage(
-    sensitiveDataStorageParams: ISensitiveDataSessionStorageOptions
+    sensitiveDataStorageParams: ISensitiveDataSessionStorageOptions,
+    userLogin: string
   ): Promise<ISensitiveDataSessionStorage> {
     const sessionDataStorage = this.createSensitiveDataStorageInstance();
     await sessionDataStorage.connect({
       ...sensitiveDataStorageParams,
-      storagePrefix: this.getSensitiveDataStoragePrefixForSession(sensitiveDataStorageParams),
+      storagePrefix: this.getSensitiveDataStoragePrefixForSession(sensitiveDataStorageParams, userLogin),
     });
     return sessionDataStorage;
   }
@@ -873,12 +881,13 @@ export class ConnectionBridge<
   }
 
   protected async createMainSensitiveDataStorageForSession(
-    sensitiveDataStorageOptions: ISensitiveDataSessionStorageOptions
+    sensitiveDataStorageOptions: ISensitiveDataSessionStorageOptions,
+    userLogin: string
   ): Promise<ISensitiveDataSessionStorage> {
     if (!sensitiveDataStorageOptions) {
       throw new Error('Params for the sensitive data storage should be defined to start the session');
     }
-    return this.connectToSensitiveDataStorage(sensitiveDataStorageOptions);
+    return this.connectToSensitiveDataStorage(sensitiveDataStorageOptions, userLogin);
   }
 
   /**
@@ -890,9 +899,12 @@ export class ConnectionBridge<
    * @throws
    */
   protected async createAndSetSensitiveDataStorageForMainSession(
-    sensitiveDataStorageOptions: ISensitiveDataSessionStorageOptions
+    sensitiveDataStorageOptions: ISensitiveDataSessionStorageOptions,
+    userLogin: string
   ): Promise<void> {
-    this.setCurrentSessionSensitiveDataStorage(await this.createMainSensitiveDataStorageForSession(sensitiveDataStorageOptions));
+    this.setCurrentSessionSensitiveDataStorage(
+      await this.createMainSensitiveDataStorageForSession(sensitiveDataStorageOptions, userLogin)
+    );
   }
 
   protected async createCentralAuthorityInstnace(optionsCentralAuthority: ICentralAuthorityOptions): Promise<ICentralAuthority> {
