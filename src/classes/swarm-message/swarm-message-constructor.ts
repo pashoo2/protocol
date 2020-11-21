@@ -303,7 +303,7 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
     // it used by another instances
     this.runSwarmMessageValidator();
     this.runSwarmMessageSerizlizer();
-    this.runSwarmMessageParser();
+    void this.runSwarmMessageParser();
   }
 
   /**

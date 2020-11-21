@@ -761,11 +761,11 @@ export class SafeStorage<TYPE extends ESAFE_STORAGE_STORAGE_TYPE> extends getSta
    * If it is, write a data from it
    * to the secret storage
    */
-  checkIfMemoryAppendLogOverflow() {
+  async checkIfMemoryAppendLogOverflow() {
     const { appendData } = this;
 
     if (appendData instanceof Array && appendData.length > SAFE_STORAGE_MAX_ITEMS_APPEND_LOG) {
-      this.dumpData();
+      await this.dumpData();
     }
   }
 
@@ -915,7 +915,7 @@ export class SafeStorage<TYPE extends ESAFE_STORAGE_STORAGE_TYPE> extends getSta
     if (dataSafeResult instanceof Error) {
       return dataSafeResult;
     }
-    this.checkIfMemoryAppendLogOverflow();
+    await this.checkIfMemoryAppendLogOverflow();
     if (storageType === ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG) {
       return this.setDataInAppendLogStorage(data, key);
     }

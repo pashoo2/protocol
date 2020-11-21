@@ -272,7 +272,7 @@ export class SwarmMessageStoreUtilsMessagesCache<P extends ESwarmStoreConnector,
     return `${SWARM_MESSAGE_STORE_UTILS_MESSAGES_CACHE_KEY_DB_KEY_VALUE_KEY_PREFIX}${this._dbName}${SWARM_MESSAGE_STORE_UTILS_MESSAGES_CACHE_KEY_PARTS_DELIMETER}${messageKey}`;
   }
 
-  protected clearCache() {
-    this._cache?.clearDb();
+  protected async clearCache() {
+    await this._cache?.clearDb();
   }
 }

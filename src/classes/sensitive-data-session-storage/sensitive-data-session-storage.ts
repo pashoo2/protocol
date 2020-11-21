@@ -57,7 +57,7 @@ export class SensitiveDataSessionStorage implements ISensitiveDataSessionStorage
     } else {
       this._temp[key] = v;
     }
-    this.stringifyTemp();
+    await this.stringifyTemp();
   };
 
   private async connectToStorage(options?: ISensitiveDataSessionStorageOptions) {
@@ -82,7 +82,7 @@ export class SensitiveDataSessionStorage implements ISensitiveDataSessionStorage
         k = pinCodeNewCryptoKey;
       }
       this.k = k;
-      this.stringifyTemp();
+      await this.stringifyTemp();
     } catch (err) {
       this.reset();
       console.error(err);

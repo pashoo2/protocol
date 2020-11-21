@@ -30,7 +30,7 @@
     "require-await": "off",
     "@typescript-eslint/require-await": "warn",
     "@typescript-eslint/restrict-template-expressions": "off",
-    "@typescript-eslint/no-floating-promises": ["warn", { "ignoreIIFE": true }],
+    "@typescript-eslint/no-floating-promises": ["error", { "ignoreIIFE": true, "ignoreVoid": true }],
     "@typescript-eslint/no-misused-new": "warn",
     "@typescript-eslint/no-unsafe-return": "warn",
     "@typescript-eslint/no-unsafe-member-access": "warn",

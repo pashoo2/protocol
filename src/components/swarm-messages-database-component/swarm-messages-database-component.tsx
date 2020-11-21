@@ -283,7 +283,7 @@ export class SwarmMessagesDatabaseComponent<
     const { isOpenImmediate } = this.props;
 
     if (isOpenImmediate) {
-      this.handleDbOpen();
+      void this.handleDbOpen();
     }
   }
 

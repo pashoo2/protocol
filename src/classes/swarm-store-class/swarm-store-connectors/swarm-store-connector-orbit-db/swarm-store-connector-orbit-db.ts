@@ -236,7 +236,7 @@ export class SwarmStoreConnectorOrbitDB<
 
     const database = await this.createDatabaseConnectorImplementation(dbOptions, dbName, orbitDb);
 
-    this.setListenersDatabaseEvents(database);
+    await this.setListenersDatabaseEvents(database);
 
     const databaseOpenResult = await this.waitDatabaseOpened(database);
 
@@ -265,7 +265,7 @@ export class SwarmStoreConnectorOrbitDB<
       return new Error(`The database named ${dbName} was not found`);
     }
     try {
-      this.unsetListenersDatabaseEvents(db);
+      await this.unsetListenersDatabaseEvents(db);
       await db.drop();
       await this.closeDb(db);
     } catch (err) {
@@ -372,24 +372,26 @@ export class SwarmStoreConnectorOrbitDB<
     return this.getDbConnection(dbName, false);
   }
 
-  protected handleDbClose(database: ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, ItemType, DbType, DBO>): void {
+  protected async handleDbClose(
+    database: ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, ItemType, DbType, DBO>
+  ): Promise<void> {
     if (database) {
       const { dbName } = database;
 
-      this.unsetListenersDatabaseEvents(database);
+      await this.unsetListenersDatabaseEvents(database);
       this.unsetOptionsForDatabase(dbName);
       this.deleteDatabaseFromList(database);
     }
   }
 
-  protected handleErrorOnDbOpen(
+  protected async handleErrorOnDbOpen(
     database: ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, ItemType, DbType, DBO>,
     error: Error | string
-  ): Error {
+  ): Promise<Error> {
     if (database) {
       const { dbName } = database;
 
-      this.handleDbClose(database);
+      await this.handleDbClose(database);
       console.error(`An error has occurred while database named ${dbName} opening`);
       console.error(error);
     }
@@ -790,7 +792,7 @@ export class SwarmStoreConnectorOrbitDB<
     database: ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, ItemType, DbType, DBO>,
     flEmit: boolean = true
   ): Promise<Error | void> {
-    this.unsetListenersDatabaseEvents(database);
+    await this.unsetListenersDatabaseEvents(database);
 
     const { dbName } = database;
 
@@ -930,7 +932,7 @@ export class SwarmStoreConnectorOrbitDB<
     //try to restart the database
     const optionsForDb = this.getDbOptions(dbName);
 
-    this.unsetListenersDatabaseEvents(database);
+    await this.unsetListenersDatabaseEvents(database);
     if (optionsForDb instanceof Error || !optionsForDb) {
       this.emitError('Failed to get options to open a new db store', `restartDbConnection::${dbName}`);
       return this.stop();
@@ -950,7 +952,7 @@ export class SwarmStoreConnectorOrbitDB<
     }
   }
 
-  private handleDatabaseStoreClosed = (
+  private handleDatabaseStoreClosed = async (
     database: ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, ItemType, DbType, DBO>,
     error: Error
   ) => {
@@ -958,8 +960,8 @@ export class SwarmStoreConnectorOrbitDB<
       const { dbName } = database;
 
       this.emitError(`Database closed unexpected: ${error.message}`, `handleDatabaseStoreClosed::${dbName}`);
-      this.handleDbClose(database);
-      this.restartDbConnection(dbName, database);
+      await this.handleDbClose(database);
+      await this.restartDbConnection(dbName, database);
     }
   };
 
@@ -1032,7 +1034,7 @@ export class SwarmStoreConnectorOrbitDB<
 
     if (isSet) {
       const dbCloseHandler = (err: Error) => {
-        this.handleDatabaseStoreClosed(database, err);
+        void this.handleDatabaseStoreClosed(database, err);
       };
 
       database[methodName](ESwarmStoreEventNames.CLOSE, dbCloseHandler);
@@ -1052,7 +1054,7 @@ export class SwarmStoreConnectorOrbitDB<
   private async unsetListenersDatabaseEvents(
     database: ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, ItemType, DbType, DBO>
   ): Promise<Error | void> {
-    this.setListenersDatabaseEvents(database, false);
+    await this.setListenersDatabaseEvents(database, false);
   }
 
   private async closeDatabases(): Promise<Error | void> {

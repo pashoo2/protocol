@@ -219,7 +219,7 @@ export class SwarmMessagesDatabase<
     await this._closeSwarmDatabaseInstance();
     await this._closeSwarmMessagesCahceInstance();
     this._emitInstanceClosed();
-    this._handleDatabaseClosed();
+    await this._handleDatabaseClosed();
   };
 
   drop = async (): Promise<void> => {
@@ -230,7 +230,7 @@ export class SwarmMessagesDatabase<
     this._unsetIsReady();
     await this._dropSwarmDatabaseInstance();
     this._emitDatabaseDropped();
-    this._handleDatabaseClosed();
+    await this._handleDatabaseClosed();
   };
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
@@ -557,7 +557,7 @@ export class SwarmMessagesDatabase<
     return this._newMessagesEmitted.has(this._getMessageUniqueIdForEmittedAsNewList(messageAddress, key, message));
   };
 
-  protected _handleDatabaseNewMessage = (
+  protected _handleDatabaseNewMessage = async (
     dbName: DBO['dbName'],
     message: MD,
     // the global unique address (hash) of the message in the swarm
@@ -573,10 +573,10 @@ export class SwarmMessagesDatabase<
 
     this._emitter.emit(ESwarmMessageStoreEventNames.NEW_MESSAGE, dbName, message, messageAddress, key);
     this._addMessageToListOfEmitted(messageAddress, key, message);
-    this._handleCacheUpdateOnNewMessage(message, messageAddress, key);
+    await this._handleCacheUpdateOnNewMessage(message, messageAddress, key);
   };
 
-  protected _handleDatabaseDeleteMessage = (
+  protected _handleDatabaseDeleteMessage = async (
     dbName: DBO['dbName'],
     userID: TSwarmMessageUserIdentifierSerialized,
     // the global unique address (hash) of the DELETE message in the swarm
@@ -606,7 +606,7 @@ export class SwarmMessagesDatabase<
       keyOrHash
     );
     this._addMessageToListOfEmitted(messageAddress, keyToCheckAlreadyEmitted);
-    this._handleCacheUpdateOnDeleteMessage(userID, messageAddress, messageDeletedAddress, keyOrHash);
+    await this._handleCacheUpdateOnDeleteMessage(userID, messageAddress, messageDeletedAddress, keyOrHash);
   };
 
   protected _handleDatabaseMessageError = (
@@ -637,10 +637,10 @@ export class SwarmMessagesDatabase<
     this._emitter.emit(ESwarmStoreEventNames.CLOSE_DATABASE, this._dbName);
   }
 
-  protected _handleDatabaseClosedEvent = (dbName: DBO['dbName']): void => {
+  protected _handleDatabaseClosedEvent = async (dbName: DBO['dbName']): Promise<void> => {
     if (this._dbName !== dbName) return;
     this._emitInstanceClosed();
-    this._handleDatabaseClosed();
+    await this._handleDatabaseClosed();
   };
 
   protected _emitDatabaseDropped(): void {
@@ -650,10 +650,10 @@ export class SwarmMessagesDatabase<
     this._emitter.emit(ESwarmStoreEventNames.DROP_DATABASE, this._dbName);
   }
 
-  protected _handleDatabaseDroppedEvent = (dbName: DBO['dbName']): void => {
+  protected _handleDatabaseDroppedEvent = async (dbName: DBO['dbName']): Promise<void> => {
     if (this._dbName !== dbName) return;
     this._emitDatabaseDropped();
-    this._handleDatabaseClosed();
+    await this._handleDatabaseClosed();
   };
 
   /**
@@ -832,7 +832,7 @@ export class SwarmMessagesDatabase<
    * @param {string} [key]
    * @memberof SwarmMessagesDatabase
    */
-  protected _handleCacheUpdateOnNewMessage(
+  protected async _handleCacheUpdateOnNewMessage(
     message: MD,
     // the global unique address (hash) of the message in the swarm
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
@@ -840,7 +840,7 @@ export class SwarmMessagesDatabase<
     key?: TSwarmStoreDatabaseEntityKey<P>
   ) {
     if (this._checkIsReady()) {
-      this._addMessageToCache(this._dbName, message, messageAddress, key);
+      await this._addMessageToCache(this._dbName, message, messageAddress, key);
     }
   }
 
@@ -854,7 +854,7 @@ export class SwarmMessagesDatabase<
    * @param {string} [keyOrHash]
    * @memberof SwarmMessagesDatabase
    */
-  protected _handleCacheUpdateOnDeleteMessage(
+  protected async _handleCacheUpdateOnDeleteMessage(
     userID: TSwarmMessageUserIdentifierSerialized,
     // the global unique address (hash) of the DELETE message in the swarm
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
@@ -867,7 +867,7 @@ export class SwarmMessagesDatabase<
     keyOrHash: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined
   ) {
     if (this._checkIsReady()) {
-      this._removeMessageFromCache(messageDeletedAddress, keyOrHash);
+      await this._removeMessageFromCache(messageDeletedAddress, keyOrHash);
     }
   }
 }

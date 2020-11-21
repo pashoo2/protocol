@@ -11,7 +11,7 @@ export class HttpResponseError extends Error {
   constructor(response: Response) {
     super();
     this.response = response;
-    this.processResponse();
+    void this.processResponse();
   }
 
   setResponseCode() {
@@ -61,11 +61,11 @@ export class HttpResponseError extends Error {
     return false;
   }
 
-  processResponse() {
+  async processResponse() {
     this.setResponseCode();
     this.setIsClientSideError();
     if (!this.mergeWithNetworkError()) {
-      this.errorMessage();
+      await this.errorMessage();
     }
   }
 }

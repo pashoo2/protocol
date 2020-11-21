@@ -25,7 +25,7 @@ export class AsyncQueueClassBase extends TAsyncQueueBaseClass {
       this.queue.push(() => {
         return this.createPromise<T>(promiseProvider).then(res).catch(res);
       });
-      this.start();
+      void this.start();
     });
   };
 
@@ -64,7 +64,7 @@ export class AsyncQueueClassBase extends TAsyncQueueBaseClass {
 
     await delay(delayMs);
     this.batch = undefined;
-    this.start();
+    void this.start();
   };
 
   protected isBatch<T>(promiseProvider: any): promiseProvider is TAsyncQueueBaseClassPromiseProviderBatch<T> {
@@ -85,7 +85,7 @@ export class AsyncQueueClassBase extends TAsyncQueueBaseClass {
     } else {
       result = this.runPromiseProvider(promiseProvider);
     }
-    this.start();
+    void this.start();
     return result;
   }
 }

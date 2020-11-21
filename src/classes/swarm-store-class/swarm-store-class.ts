@@ -211,9 +211,9 @@ export class SwarmStore<
     const result = await connector.openDatabase(dbOptions);
 
     if (!(result instanceof Error)) {
-      this.handleDatabaseOpened(dbOptions);
+      await this.handleDatabaseOpened(dbOptions);
     } else {
-      this.handleDatabaseClosed(dbOptions);
+      await this.handleDatabaseClosed(dbOptions);
     }
     return result;
   }
@@ -241,7 +241,7 @@ export class SwarmStore<
       const dbOptions = this.getDatabaseOptions(dbName);
 
       if (dbOptions) {
-        this.handleDatabaseClosed(dbOptions);
+        await this.handleDatabaseClosed(dbOptions);
       }
     }
     return result;
@@ -264,7 +264,7 @@ export class SwarmStore<
     const dbOptions = this.getDatabaseOptions(dbName);
 
     if (dbOptions) {
-      this.handleDatabaseDropped(dbOptions);
+      await this.handleDatabaseDropped(dbOptions);
     }
   }
 

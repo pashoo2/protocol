@@ -928,12 +928,12 @@ export class SwarmMessagesDatabaseCache<
    * @protected
    * @memberof SwarmMessagesDatabase
    */
-  protected _runNextCacheUpdateIterationIfNecessary() {
+  protected async _runNextCacheUpdateIterationIfNecessary() {
     if (this._isSwarmMessagesCacheUpdateRequested) {
       // uset that a cache update required
       this._unsetNewCacheUpdatePlanned();
       // and run the next cache update
-      this._runNewCacheUpdate();
+      await this._runNewCacheUpdate();
     }
   }
 
@@ -1001,7 +1001,7 @@ export class SwarmMessagesDatabaseCache<
       throw err;
     } finally {
       this._unsetCacheUpdateInProgress();
-      this._runNextCacheUpdateIterationIfNecessary();
+      void this._runNextCacheUpdateIterationIfNecessary();
     }
   }
 

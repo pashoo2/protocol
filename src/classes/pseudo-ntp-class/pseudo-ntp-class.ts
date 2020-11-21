@@ -294,7 +294,7 @@ export class PseudoNTPClass extends EventEmitter<IPseudoNTPClassEvents> {
     } else {
       this.intervalRunning = setInterval(this.sync, syncIntervalMs);
       this.isRunning = true;
-      this.sync();
+      void this.sync();
     }
   }
 

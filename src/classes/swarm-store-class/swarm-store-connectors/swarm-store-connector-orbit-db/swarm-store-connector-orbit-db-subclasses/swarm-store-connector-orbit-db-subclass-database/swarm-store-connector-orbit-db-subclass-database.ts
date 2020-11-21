@@ -372,7 +372,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       return err;
     } finally {
       if (cacheStore && methodResult instanceof Error) {
-        this.closeDatabaseCache(cacheStore);
+        await this.closeDatabaseCache(cacheStore);
       }
     }
   }
@@ -692,14 +692,14 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     return err;
   }
 
-  protected onFatalError(error: Error | string, methodName: string) {
+  protected async onFatalError(error: Error | string, methodName: string) {
     this.unsetReadyState();
     this.emitError(error, methodName, true);
 
     const { isClosed } = this;
 
     if (!isClosed) {
-      this._close();
+      await this._close();
     }
     return this.emitError('The database closed cause a fatal error', methodName, true);
   }
@@ -894,13 +894,13 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     this.emitEmtriesPending();
   };
 
-  private handleFeedStoreClosed = () => {
+  private handleFeedStoreClosed = async () => {
     const { isClosed } = this;
 
     if (!isClosed) {
       this.unsetReadyState();
       this.emitError('The instance was closed unexpected', 'handleFeedStoreClosed');
-      this.restartStore();
+      await this.restartStore();
     }
   };
 
@@ -941,8 +941,8 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     cache.setPreventClose(false);
   }
 
-  private closeDatabaseCache(cache: ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore): void {
-    cache.close();
+  private async closeDatabaseCache(cache: ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore): Promise<void> {
+    await cache.close();
   }
 
   private getDatabaseCache(

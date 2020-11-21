@@ -1321,7 +1321,7 @@ export class ConnectionBridge<
    * @memberof ConnectionBridge
    */
   protected async markSessionAsStartedInStorageForSession() {
-    this.setFlagInSessionStorageSessionDataIsExists();
+    await this.setFlagInSessionStorageSessionDataIsExists();
   }
 
   protected getSecretStorageDBName(): string {

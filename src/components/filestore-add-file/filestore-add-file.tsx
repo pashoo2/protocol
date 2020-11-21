@@ -18,7 +18,7 @@ export class FileStoreAddFile extends React.Component {
   };
 
   public componentDidMount() {
-    this.createFilestoreInstance();
+    void this.createFilestoreInstance();
   }
 
   public render() {

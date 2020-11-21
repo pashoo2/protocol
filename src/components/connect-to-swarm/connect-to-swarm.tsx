@@ -156,7 +156,7 @@ export class ConnectToSwarm<
 
       const method = isPrivate ? this.sendPrivateSwarmMessage : this.sendSwarmMessage;
 
-      method();
+      void method();
       return {
         messagingSending: setInterval(method, 1000),
       };
@@ -246,7 +246,7 @@ export class ConnectToSwarm<
   public componentDidMount() {
     const { userCredentialsToConnectImmediate } = this.props;
     if (userCredentialsToConnectImmediate) {
-      this.connectToSwarm(userCredentialsToConnectImmediate);
+      void this.connectToSwarm(userCredentialsToConnectImmediate);
     }
   }
 
@@ -370,8 +370,8 @@ export class ConnectToSwarm<
     }
   };
 
-  public handleClickOpenNewSwarmStoreMessagesDatabase = () => {
-    this.handleOpenNewSwarmStoreMessagesDatabase();
+  public handleClickOpenNewSwarmStoreMessagesDatabase = async () => {
+    await this.handleOpenNewSwarmStoreMessagesDatabase();
   };
 
   public handleOpenNewDatabase = async () => {
