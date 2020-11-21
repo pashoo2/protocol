@@ -23,16 +23,10 @@ export const checkMessageAddress = <P extends ESwarmStoreConnector, DbType exten
   ? undefined
   : TSwarmStoreDatabaseEntityAddress<P> => {
   const isFeedStore = dbType === ESwarmStoreConnectorOrbitDbDatabaseType.FEED;
-  const isKeyValueStore = dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE;
 
   if (isFeedStore) {
     if (!messageUniqAddress) {
       throw new Error('The message should have an address for a feed store');
-    }
-  }
-  if (isKeyValueStore) {
-    if (messageUniqAddress) {
-      throw new Error('The message should not have an address for a key-value store');
     }
   }
   return true;
@@ -60,7 +54,7 @@ export const checkMessageKey = <P extends ESwarmStoreConnector, DbType extends T
 
 export const getMessagesMetaByAddressAndKey = <P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>>(
   messageUniqAddress: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
-    ? undefined
+    ? TSwarmStoreDatabaseEntityAddress<P> | undefined
     : TSwarmStoreDatabaseEntityAddress<P>,
   key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined,
   dbType: DbType
@@ -82,18 +76,11 @@ export const createMessagesMetaByAddressAndKey = <P extends ESwarmStoreConnector
   dbType: DbType
 ): ISwarmMessagesDatabaseMesssageMeta<P, DbType> => {
   const isFeedStore = dbType === ESwarmStoreConnectorOrbitDbDatabaseType.FEED;
-  const isKeyValueStore = dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE;
 
-  if (isFeedStore) {
-    checkMessageAddress(messageUniqAddress, dbType);
-  }
-  if (isKeyValueStore) {
-    checkMessageKey(key, dbType);
-  }
+  checkMessageAddress(messageUniqAddress, dbType);
+  checkMessageKey(key, dbType);
   return getMessagesMetaByAddressAndKey<P, DbType>(
-    (isKeyValueStore ? undefined : messageUniqAddress) as DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
-      ? undefined
-      : TSwarmStoreDatabaseEntityAddress<P>,
+    messageUniqAddress,
     (isFeedStore ? undefined : key) as DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
       ? TSwarmStoreDatabaseEntityKey<P>
       : undefined,
