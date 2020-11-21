@@ -5,7 +5,11 @@ import {
   ISwarmMessageStoreAccessControlOptions,
   ISwarmMessageStoreOptionsWithConnectorFabric,
 } from '../../swarm-message-store/swarm-message-store.types';
-import { TSwarmMessageSerialized, TSwarmMessageInstance } from '../../swarm-message/swarm-message-constructor.types';
+import {
+  TSwarmMessageSerialized,
+  TSwarmMessageInstance,
+  ISwarmMessageInstanceDecrypted,
+} from '../../swarm-message/swarm-message-constructor.types';
 import { TSwarmStoreDatabaseOptions, TSwarmStoreDatabaseType } from '../../swarm-store-class/swarm-store-class.types';
 import {
   ISwarmStoreConnectorBasic,
@@ -25,8 +29,7 @@ export type TConnectToSwarmMessagesDatabaseReturnType<
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType> = TSwarmStoreDatabaseOptions<P, T, DbType>,
   MSI extends TSwarmMessageInstance | T = TSwarmMessageInstance | T,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined = undefined,
-  MD extends Exclude<MSI, T | ISwarmMessageInstanceEncrypted> &
-    Exclude<Exclude<MSI, T>, ISwarmMessageInstanceEncrypted> = Exclude<MSI, T | ISwarmMessageInstanceEncrypted> &
+  MD extends ISwarmMessageInstanceDecrypted = Exclude<MSI, T | ISwarmMessageInstanceEncrypted> &
     Exclude<Exclude<MSI, T>, ISwarmMessageInstanceEncrypted>,
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI> = TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
   ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined = undefined,
@@ -118,8 +121,7 @@ export interface ISwarmMessagesDatabaseConnectedFabric<
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType> = TSwarmStoreDatabaseOptions<P, T, DbType>,
   MSI extends TSwarmMessageInstance | T = TSwarmMessageInstance | T,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined = undefined,
-  MD extends Exclude<MSI, T | ISwarmMessageInstanceEncrypted> &
-    Exclude<Exclude<MSI, T>, ISwarmMessageInstanceEncrypted> = Exclude<MSI, T | ISwarmMessageInstanceEncrypted> &
+  MD extends ISwarmMessageInstanceDecrypted = Exclude<MSI, T | ISwarmMessageInstanceEncrypted> &
     Exclude<Exclude<MSI, T>, ISwarmMessageInstanceEncrypted>,
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI> = TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
   ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined = undefined,

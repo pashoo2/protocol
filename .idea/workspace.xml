@@ -4,12 +4,7 @@
     <list default="true" id="e70e70e3-e48a-4dfd-91a6-03818e8691f6" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/node_modules-local/hypervision-browser" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules-local/hypervision-browser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/connect-to-swarm-immediate/connect-to-swarm-immediate.const.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/const/connect-to-swarm-immediate.const.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/connect-to-swarm/connect-to-swarm.const.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/const/connect-to-swarm.const.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/connect-to-swarm/connect-to-swarm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/connect-to-swarm/connect-to-swarm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/connect-to-swarm/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/connect-to-swarm/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/swarm-messages-database-component/swarm-messages-database-component.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/swarm-messages-database-component/swarm-messages-database-component.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/swarm-store-db-component/swarm-store-db-component.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/swarm-store-db-component/swarm-store-db-component.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/const/connect-to-swarm-immediate.const.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/const/connect-to-swarm-immediate.const.ts" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -47,8 +42,8 @@
       <file leaf-file-name="connection-bridge.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="317">
-              <caret line="963" column="18" selection-start-line="963" selection-start-column="18" selection-end-line="963" selection-end-column="18" />
+            <state relative-caret-position="1142">
+              <caret line="966" column="18" selection-start-line="966" selection-start-column="18" selection-end-line="966" selection-end-column="18" />
             </state>
           </provider>
         </entry>
@@ -56,11 +51,8 @@
       <file leaf-file-name="app.tsx" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/components/app.tsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
-              <folding>
-                <element signature="e#0#26#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="285">
+              <caret line="29" selection-start-line="29" selection-end-line="29" />
             </state>
           </provider>
         </entry>
@@ -126,8 +118,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>userIdentityProviderURLV1</find>
-      <find>login:</find>
       <find>ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions</find>
       <find>ISwarmStoreConnectorOrbitDbDatabaseOptions</find>
       <find>TFeedStoreType</find>
@@ -156,6 +146,8 @@
       <find>getOptionsMessageStorage</find>
       <find>createSwarmConnection(): Promise&lt;IConnectionBridgeS</find>
       <find>setOptionsSwarmConnection</find>
+      <find>credentials</find>
+      <find>userCredentialsToConnectImmediate</find>
     </findStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$</dir>
@@ -489,7 +481,7 @@
       <workItem from="1604944681095" duration="761000" />
       <workItem from="1605365339677" duration="1450000" />
       <workItem from="1605639177798" duration="657000" />
-      <workItem from="1605896786958" duration="724000" />
+      <workItem from="1605896786958" duration="1429000" />
     </task>
     <servers />
   </component>
@@ -526,7 +518,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="59539000" />
+    <option name="totallyTimeSpent" value="60244000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="72" y="27" width="1848" height="1053" extended-state="6" />
@@ -863,18 +855,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="317">
-          <caret line="963" column="18" selection-start-line="963" selection-start-column="18" selection-end-line="963" selection-end-column="18" />
+        <state relative-caret-position="1142">
+          <caret line="966" column="18" selection-start-line="966" selection-start-column="18" selection-end-line="966" selection-end-column="18" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/components/app.tsx">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="285">
+          <caret line="29" selection-start-line="29" selection-end-line="29" />
         </state>
       </provider>
     </entry>

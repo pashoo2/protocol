@@ -29,7 +29,7 @@ export const setMessageListener = <
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   MSI extends TSwarmMessageInstance | T,
   SMS extends ISwarmMessageStoreMessagingMethods<P, T, DbType, Exclude<MSI, T>>,
-  MD extends Exclude<MSI, T | ISwarmMessageInstanceEncrypted> & Exclude<Exclude<MSI, T>, ISwarmMessageInstanceEncrypted>,
+  MD extends ISwarmMessageInstanceDecrypted,
   DB extends ISwarmMessagesDatabaseConnector<P, T, DbType, DBO, MSI, SMS, MD>
 >(
   db: DB,
@@ -62,7 +62,7 @@ export const setMessageDeleteListener = <
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   MSI extends TSwarmMessageInstance | T,
   SMS extends ISwarmMessageStoreMessagingMethods<P, T, DbType, Exclude<MSI, T>>,
-  MD extends Exclude<MSI, T | ISwarmMessageInstanceEncrypted> & Exclude<Exclude<MSI, T>, ISwarmMessageInstanceEncrypted>,
+  MD extends ISwarmMessageInstanceDecrypted,
   DB extends ISwarmMessagesDatabaseConnector<P, T, DbType, DBO, MSI, SMS, MD>
 >(
   db: DB,
@@ -99,7 +99,7 @@ export const setCacheUpdateListener = <
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   MSI extends TSwarmMessageInstance | T,
   SMS extends ISwarmMessageStoreMessagingMethods<P, T, DbType, Exclude<MSI, T>>,
-  MD extends Exclude<MSI, T | ISwarmMessageInstanceEncrypted> & Exclude<Exclude<MSI, T>, ISwarmMessageInstanceEncrypted>,
+  MD extends ISwarmMessageInstanceDecrypted,
   DB extends ISwarmMessagesDatabaseConnector<P, T, DbType, DBO, MSI, SMS, MD>
 >(
   db: DB,

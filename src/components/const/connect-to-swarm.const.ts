@@ -2,6 +2,7 @@ import { ESwarmStoreConnector } from 'classes/swarm-store-class/swarm-store-clas
 import {
   ISwarmMessageBodyDeserialized,
   TSwarmMessageSerialized,
+  ISwarmMessageInstanceDecrypted,
 } from '../../classes/swarm-message/swarm-message-constructor.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import {
@@ -14,6 +15,8 @@ import {
 } from '../../classes/connection-bridge/connection-bridge.types';
 import { TSwarmStoreDatabaseOptions } from 'classes/swarm-store-class/index';
 import { IConnectionBridgeOptionsDefault } from '../../classes/connection-bridge/connection-bridge.types';
+import { ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions } from '../../classes/swarm-messages-database/swarm-messages-database.types';
+import { SwarmMessagesDatabaseCache } from '../../classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache/swarm-messages-database-cache';
 
 export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY = 'key';
 
@@ -118,4 +121,18 @@ export const CONNECT_TO_SWARM_CONNECTION_OPTIONS: IConnectionBridgeOptionsDefaul
   auth: CONNECT_TO_SWARM_CONNECTION_AUTH_OPTOINS,
   storage: CONNECT_TO_SWARM_CONNECTION_STORAGE_OPTIONS,
   nativeConnection: CONNECT_TO_SWARM_CONNECTION_NATIVE_CONNECTION_OPTIONS, // use the default value
+};
+
+export const CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_OPTIONS: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<
+  ESwarmStoreConnector.OrbitDB,
+  TSwarmMessageSerialized,
+  ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
+  TSwarmStoreDatabaseOptions<
+    ESwarmStoreConnector.OrbitDB,
+    TSwarmMessageSerialized,
+    ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED
+  >,
+  ISwarmMessageInstanceDecrypted
+> = {
+  cacheConstructor: SwarmMessagesDatabaseCache,
 };

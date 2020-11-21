@@ -1,6 +1,5 @@
 import {
   ISwarmMessageDatabaseEvents,
-  ISwarmMessageDatabaseMessagingMethods,
   ISwarmMessagesDatabaseConnectCurrentUserOptions,
   ISwarmMessagesDatabaseConnectOptions,
   ISwarmMessagesDatabaseReady,
@@ -18,7 +17,11 @@ import {
 } from '../swarm-message-store/swarm-message-store.types';
 import { getEventEmitterInstance } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { ESwarmMessageStoreEventNames } from '../swarm-message-store/swarm-message-store.const';
-import { TSwarmMessageSerialized, TSwarmMessageInstance } from '../swarm-message/swarm-message-constructor.types';
+import {
+  TSwarmMessageSerialized,
+  TSwarmMessageInstance,
+  ISwarmMessageInstanceDecrypted,
+} from '../swarm-message/swarm-message-constructor.types';
 import { TTypedEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 import {
   TSwarmStoreDatabaseEntityAddress,
@@ -29,7 +32,6 @@ import {
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import validateUserIdentifier from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier';
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
-import { SwarmMessagesDatabaseCache } from './swarm-messages-database-subclasses/swarm-messages-database-cache';
 import {
   ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions,
   ISwarmMessagesDatabaseCacheOptions,
@@ -54,7 +56,7 @@ import {
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { ISwarmMessageInstanceEncrypted } from '../swarm-message/swarm-message-constructor.types';
 import { OmitFirstArg } from '../../types/helper.types';
-import { ISwarmMessagesDatabaseConnector } from './swarm-messages-database.types';
+import { ISwarmMessagesDatabaseConnector, ISwarmMessagesDatabaseCacheConstructor } from './swarm-messages-database.types';
 
 export class SwarmMessagesDatabase<
   P extends ESwarmStoreConnector,
@@ -86,7 +88,7 @@ export class SwarmMessagesDatabase<
     ACO
   >,
   SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>,
-  MD extends Exclude<MSI, T | ISwarmMessageInstanceEncrypted> & Exclude<Exclude<MSI, T>, ISwarmMessageInstanceEncrypted>
+  MD extends ISwarmMessageInstanceDecrypted
 > implements ISwarmMessagesDatabaseConnector<P, T, DbType, DBO, MSI, SMS, MD> {
   get dbName(): DBO['dbName'] | undefined {
     return this._dbName;
@@ -129,6 +131,15 @@ export class SwarmMessagesDatabase<
    */
   protected get _isKeyValueDatabase() {
     return this._dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE;
+  }
+
+  protected get _swarmMessagesCacheClassFromOptions(): ISwarmMessagesDatabaseCacheConstructor<P, T, DbType, DBO, MD> {
+    const SwarmMessagesCacheConstructor = this._cacheOptions?.cacheConstructor;
+
+    if (!SwarmMessagesCacheConstructor) {
+      throw new Error('SwarmMessagesCacheConstructor should be defined in options');
+    }
+    return SwarmMessagesCacheConstructor;
   }
 
   /**
@@ -738,7 +749,7 @@ export class SwarmMessagesDatabase<
   }
 
   protected async _startSwarmMessagesCache(): Promise<void> {
-    const SwarmMessagesCacheConstructor = this._cacheOptions?.cacheConstructor || SwarmMessagesDatabaseCache;
+    const SwarmMessagesCacheConstructor = this._swarmMessagesCacheClassFromOptions;
     const swarmMessagesCacheOptions = this._getSwarmMessagesCacheOptions();
     const swarmMessagesCache = new SwarmMessagesCacheConstructor(swarmMessagesCacheOptions);
 
