@@ -966,7 +966,10 @@ export class SwarmStoreConnectorOrbitDBDatabase<
 
       if (currentStoreStopResult instanceof Error) {
         console.error(currentStoreStopResult);
-        result = this.onFatalError('Failed to restart the Database cause failed to close the store instance', 'restartStore');
+        result = await this.onFatalError(
+          'Failed to restart the Database cause failed to close the store instance',
+          'restartStore'
+        );
         return result;
       }
       const connectResult = await this.connect();
@@ -1100,26 +1103,26 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       const { orbitDb, options } = this;
 
       if (!orbitDb) {
-        methodResult = this.onFatalError('There is no intance of the OrbitDb is specified', 'createDbInstance');
+        methodResult = await this.onFatalError('There is no intance of the OrbitDb is specified', 'createDbInstance');
         return methodResult;
       }
 
       if (!options) {
-        methodResult = this.onFatalError('Options are not defined', 'createDbInstance');
+        methodResult = await this.onFatalError('Options are not defined', 'createDbInstance');
         throw methodResult;
       }
 
       const { dbName, cache } = options;
 
       if (!dbName) {
-        methodResult = this.onFatalError('A name of the database must be specified', 'createDbInstance');
+        methodResult = await this.onFatalError('A name of the database must be specified', 'createDbInstance');
         return methodResult;
       }
 
       const dbStoreOptions = this.getStoreOptions();
 
       if (dbStoreOptions instanceof Error) {
-        methodResult = this.onFatalError(dbStoreOptions, 'createDbInstance::getStoreOptions');
+        methodResult = await this.onFatalError(dbStoreOptions, 'createDbInstance::getStoreOptions');
         return methodResult;
       }
 
@@ -1134,14 +1137,14 @@ export class SwarmStoreConnectorOrbitDBDatabase<
         : await orbitDb.feed(dbName, storeOptions);
 
       if (db instanceof Error) {
-        methodResult = this.onFatalError(db, 'createDbInstance::feed store creation');
+        methodResult = await this.onFatalError(db, 'createDbInstance::feed store creation');
         return methodResult;
       }
 
       const setStoreListenersResult = isSilent ? this.setFeedStoreEventListenersSilent(db) : this.setFeedStoreEventListeners(db);
 
       if (setStoreListenersResult instanceof Error) {
-        methodResult = this.onFatalError(setStoreListenersResult, 'createDbInstance::set feed store listeners');
+        methodResult = await this.onFatalError(setStoreListenersResult, 'createDbInstance::set feed store listeners');
         return methodResult;
       }
       this.database = db;
@@ -1149,7 +1152,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
 
       return db;
     } catch (err) {
-      methodResult = this.onFatalError(err, 'createDbInstance');
+      methodResult = await this.onFatalError(err, 'createDbInstance');
       return methodResult;
     } finally {
       this.resolvePendingPromiseCreatingNewDBInstance(methodResult);
@@ -1160,37 +1163,37 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     return this.createDbInstance(true);
   };
 
-  private setOptions(options: ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType, DbType>): void | Error {
+  private setOptions(options: ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType, DbType>): void {
     if (!options) {
-      return this.onFatalError('Options must be specified', 'setOptions');
+      throw new Error('Options must be specified');
     }
 
     const { dbName, preloadCount, dbType } = options;
 
     if (typeof dbName !== 'string') {
-      return this.onFatalError('A name of the database must be specified', 'setOptions');
+      throw new Error('A name of the database must be specified');
     }
     if (preloadCount && typeof preloadCount !== 'number') {
-      return this.onFatalError('Preload count must be number', 'setOptions');
+      throw new Error('Preload count must be number');
+    }
+    if (dbType) {
+      if (!Object.values(ESwarmStoreConnectorOrbitDbDatabaseType).includes(dbType)) {
+        throw new Error('An unknown db store type');
+      }
+      this.dbType = dbType;
     }
     // preloadCount must not be 0.
     // If it's equals to 0, the database not firing events which
     // are necessary for the application to continue the work with
     // the database.
     this.preloadCount = (preloadCount ? preloadCount : undefined) || SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_PRELOAD_COUNT_MIN;
-    if (dbType) {
-      if (!Object.values(ESwarmStoreConnectorOrbitDbDatabaseType).includes(dbType)) {
-        return this.onFatalError('An unknown db store type', 'setOptions');
-      }
-      this.dbType = dbType;
-    }
     this.options = options;
     this.dbName = dbName;
   }
 
-  private setOrbitDbInstance(orbitDb: orbitDbModule.OrbitDB): void | Error {
+  private setOrbitDbInstance(orbitDb: orbitDbModule.OrbitDB): void {
     if (!orbitDb) {
-      return this.onFatalError('An instance of orbit db must be specified', 'setOrbitDbInstance');
+      throw new Error('An instance of orbit db must be specified');
     }
     this.orbitDb = orbitDb;
   }
