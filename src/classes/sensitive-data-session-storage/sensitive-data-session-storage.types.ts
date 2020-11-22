@@ -34,6 +34,14 @@ export interface ISensitiveDataSessionStorage {
    */
   connect(options: ISensitiveDataSessionStorageOptions): Promise<void>;
   /**
+   * Close the instance, reset the state and do not
+   * save the value into the session storage.
+   *
+   * @returns {Promise<void>}
+   * @memberof ISensitiveDataSessionStorage
+   */
+  close(): Promise<void>;
+  /**
    * add item to the storage
    *
    * @param {string} key

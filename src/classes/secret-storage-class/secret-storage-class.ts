@@ -80,7 +80,7 @@ export class SecretStorage
 
   private static PREFIX_FOR_SALT_VALUE = '__SecretStorage__s_uk';
 
-  public static validatePassword(password: any) {
+  public static validatePassword(password: unknown): Error | void {
     if (typeof password !== 'string') {
       return new Error('validateCredentials::A password string must be provided to authorize');
     }

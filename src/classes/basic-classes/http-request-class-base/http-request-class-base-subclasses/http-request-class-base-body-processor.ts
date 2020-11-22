@@ -8,7 +8,7 @@ import {
 } from '../http-request-class-base.utils';
 
 export class HttpRequestBodyProcessor {
-  protected static logError(methodName: string, err: string | Error) {
+  protected static logError(methodName: string, err: string | Error): void {
     console.error(`HttpRequestBodyProcessor::${methodName}`, err);
   }
 

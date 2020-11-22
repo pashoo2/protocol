@@ -12,7 +12,8 @@ export const isEmptyObject = (o: any): boolean => {
 export const getObjectKeys = (o: object): Array<TObjectKeys> =>
   (Object.keys(o) as Array<TObjectKeys>).concat(Object.getOwnPropertySymbols(o));
 
-export const isSimpleObject = (o: any): o is object => typeof o === 'object' && Object.getPrototypeOf(o) === Object.prototype;
+export const isSimpleObject = (o: unknown): o is Record<string, unknown> =>
+  o !== null && typeof o === 'object' && Object.getPrototypeOf(o) === Object.prototype;
 
 /**
  * extends object with another object if the object
