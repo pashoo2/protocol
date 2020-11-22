@@ -887,7 +887,7 @@ export class SwarmMessagesDatabaseCache<
    * @returns
    * @memberof SwarmMessagesDatabase
    */
-  protected async _waitForCurrentMessagesUpdate() {
+  protected async _waitForCurrentMessagesUpdate(): Promise<void> {
     if (this._pendingMessagesUpdatePromise) {
       return this._pendingMessagesUpdatePromise;
     }

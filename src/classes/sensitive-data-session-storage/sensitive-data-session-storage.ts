@@ -144,9 +144,7 @@ export class SensitiveDataSessionStorage implements ISensitiveDataSessionStorage
 
   private beforeunloadHandler = () => {
     const v = this._tempStringified;
-    debugger;
     if (v && typeof v === 'string') {
-      debugger;
       sessionStorage.setItem(this.storageKeyValue, v);
     } else {
       sessionStorage.removeItem(this.storageKeyValue);
@@ -158,7 +156,6 @@ export class SensitiveDataSessionStorage implements ISensitiveDataSessionStorage
   }
 
   private unsubscribeOnWindowUnload(): void {
-    debugger;
     window.removeEventListener('beforeunload', this.beforeunloadHandler);
   }
 

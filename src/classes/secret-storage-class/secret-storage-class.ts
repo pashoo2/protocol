@@ -280,7 +280,6 @@ export class SecretStorage
     options?: IStorageProviderOptions
   ): Promise<boolean | Error> {
     const credentialsWithKey = credentials as ISecretStoreCredentialsCryptoKey;
-
     if (
       credentialsWithKey.key &&
       isCryptoKeyDataEncryption(credentialsWithKey.key) &&
@@ -901,7 +900,7 @@ export class SecretStorage
       }
     } catch (err) {
       console.error(err);
-      return err;
+      return err as Error;
     }
   }
 
@@ -925,7 +924,7 @@ export class SecretStorage
       await session.setItem(SECRET_STORAGE_SESSION_KEY, sessionInfo);
     } catch (err) {
       console.error(err);
-      return err;
+      return err as Error;
     }
   }
 

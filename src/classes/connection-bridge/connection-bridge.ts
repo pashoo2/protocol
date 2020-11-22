@@ -1398,7 +1398,7 @@ export class ConnectionBridge<
     if (!credentials.password) {
       throw new Error('Password must be provided to authorize in SecretStorage');
     }
-    return credentials as ISecretStoreCredentials;
+    return { ...credentials, session: this.sessionSensitiveStorage } as ISecretStoreCredentials;
   }
 
   protected getSecretStorageAuthorizationOptions(): TSecretStorageAuthorizazionOptions {
