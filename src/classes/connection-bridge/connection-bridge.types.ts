@@ -34,7 +34,10 @@ export type TNativeConnectionType<P extends ESwarmStoreConnector> = P extends ES
 
 export type TNativeConnectionOptions<P extends ESwarmStoreConnector> = P extends ESwarmStoreConnector.OrbitDB ? {} : never;
 
-export type TConnectionBridgeOptionsAuthCredentials = Omit<ICentralAuthorityOptions['user']['credentials'], 'session'>;
+export type TConnectionBridgeOptionsAuthCredentials = {
+  login: string;
+  password: string | undefined;
+};
 
 export type TConnectionBridgeCFODefault<
   P extends ESwarmStoreConnector,
@@ -65,6 +68,7 @@ export interface IConnectionBridgeOptionsAuth<CD extends boolean = false> {
    * @type {ICentralAuthorityOptions['user']['credentials']}
    */
   credentials: CD extends true ? TConnectionBridgeOptionsAuthCredentials : TConnectionBridgeOptionsAuthCredentials | undefined;
+  // TODO create class for storing user credentials with session
   session?: ISensitiveDataSessionStorageOptions;
   /**
    * this is list of auth providers will be used to authorize
