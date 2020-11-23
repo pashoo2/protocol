@@ -1031,14 +1031,14 @@ export class ConnectionBridge<
     if (!login) {
       throw new Error('Login should be specified');
     }
-    if (sessionDataStorage) {
+    if (password) {
       return {
         login,
-        password: undefined,
+        password,
         session: sessionDataStorage,
       };
     }
-    if (!password) {
+    if (!sessionDataStorage) {
       throw new Error('Password or session should be defined');
     }
     return {
