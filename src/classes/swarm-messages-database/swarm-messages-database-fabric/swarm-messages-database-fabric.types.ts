@@ -1,4 +1,8 @@
-import { ISwarmMessagesDatabaseConnector, ISwarmMessagesDatabaseConnectOptions } from '../swarm-messages-database.types';
+import {
+  ISwarmMessagesDatabaseConnector,
+  ISwarmMessagesDatabaseConnectOptions,
+  ISwarmMessagesDatabaseMessagesCollector,
+} from '../swarm-messages-database.types';
 import {
   ISwarmMessageStore,
   TSwarmMessagesStoreGrantAccessCallback,
@@ -111,9 +115,51 @@ export type TConnectToSwarmMessagesDatabaseReturnType<
     MCF,
     ACO,
     O
-  > = ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>
-> = ISwarmMessagesDatabaseConnector<P, T, DbType, DBO, MSI, SMS, MD>;
-
+  > = ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>,
+  SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD> = ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>
+> = ISwarmMessagesDatabaseConnector<
+  P,
+  T,
+  DbType,
+  DBO,
+  ConnectorBasic,
+  PO,
+  CO,
+  ConnectorMain,
+  CFO,
+  MSI,
+  GAC,
+  MCF,
+  ACO,
+  O,
+  SMS,
+  MD,
+  SMSM
+>;
+/**
+ * Fabric which constructs an instance of the SwarmMessagesDatabase, connect to the database
+ * and returns the instance connected to the swarm.
+ *
+ * @export
+ * @interface ISwarmMessagesDatabaseConnectedFabric
+ * @template P
+ * @template T
+ * @template DbType
+ * @template DBO
+ * @template MSI
+ * @template MCF
+ * @template MD
+ * @template GAC
+ * @template ACO
+ * @template ConnectorBasic
+ * @template PO
+ * @template CO
+ * @template ConnectorMain
+ * @template CFO
+ * @template O
+ * @template SMS
+ * @template SMSM
+ */
 export interface ISwarmMessagesDatabaseConnectedFabric<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
@@ -123,6 +169,7 @@ export interface ISwarmMessagesDatabaseConnectedFabric<
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined = undefined,
   MD extends ISwarmMessageInstanceDecrypted = Exclude<MSI, T | ISwarmMessageInstanceEncrypted> &
     Exclude<Exclude<MSI, T>, ISwarmMessageInstanceEncrypted>,
+  SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD> = ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI> = TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
   ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined = undefined,
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO> = ISwarmStoreConnectorBasic<P, T, DbType, DBO>,
@@ -205,7 +252,27 @@ export interface ISwarmMessagesDatabaseConnectedFabric<
     O
   > = ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>
 > {
-  (options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType, DBO, Exclude<MSI, T>, SMS, MD>): Promise<
+  (
+    options: ISwarmMessagesDatabaseConnectOptions<
+      P,
+      T,
+      DbType,
+      DBO,
+      ConnectorBasic,
+      PO,
+      CO,
+      ConnectorMain,
+      CFO,
+      MSI,
+      GAC,
+      MCF,
+      ACO,
+      O,
+      SMS,
+      MD,
+      SMSM
+    >
+  ): Promise<
     TConnectToSwarmMessagesDatabaseReturnType<
       P,
       T,

@@ -1,4 +1,4 @@
-import { ISwarmMessagesDatabaseConnectOptions, ISwarmMessagesDatabaseConnector } from '../swarm-messages-database.types';
+import { ISwarmMessagesDatabaseConnectOptions, ISwarmMessagesDatabaseMessagesCollector } from '../swarm-messages-database.types';
 import {
   ISwarmMessageStore,
   TSwarmMessagesStoreGrantAccessCallback,
@@ -20,6 +20,66 @@ import { SwarmMessagesDatabase } from '../swarm-messages-database';
 import { ESwarmStoreConnector } from 'classes/swarm-store-class/swarm-store-class.const';
 import { TConnectToSwarmMessagesDatabaseReturnType } from './swarm-messages-database-fabric.types';
 
+/**
+ * Constructor of SwarmMessagesDatabase instances
+ *
+ * @template P
+ * @template T
+ * @template DbType
+ * @template DBO
+ * @template MSI
+ * @template MCF
+ * @template MD
+ * @template GAC
+ * @template ACO
+ * @template ConnectorBasic
+ * @template PO
+ * @template CO
+ * @template ConnectorMain
+ * @template CFO
+ * @template O
+ * @template SMS
+ * @template SMSM
+ * @param {ISwarmMessagesDatabaseConnectOptions<
+ *     P,
+ *     T,
+ *     DbType,
+ *     DBO,
+ *     ConnectorBasic,
+ *     PO,
+ *     CO,
+ *     ConnectorMain,
+ *     CFO,
+ *     MSI,
+ *     GAC,
+ *     MCF,
+ *     ACO,
+ *     O,
+ *     SMS,
+ *     MD,
+ *     SMSM
+ *   >} options - options for the SwarmMessagesDatabase connection
+ * @returns {Promise<
+ *   TConnectToSwarmMessagesDatabaseReturnType<
+ *     P,
+ *     T,
+ *     DbType,
+ *     DBO,
+ *     MSI,
+ *     MCF,
+ *     MD,
+ *     GAC,
+ *     ACO,
+ *     ConnectorBasic,
+ *     PO,
+ *     CO,
+ *     ConnectorMain,
+ *     CFO,
+ *     O,
+ *     SMS
+ *   >
+ * >}
+ */
 export const swarmMessagesDatabaseConnectedFabric = async <
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
@@ -110,9 +170,28 @@ export const swarmMessagesDatabaseConnectedFabric = async <
     MCF,
     ACO,
     O
-  > = ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>
+  > = ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>,
+  SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD> = ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>
 >(
-  options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType, DBO, Exclude<MSI, T>, SMS, MD>
+  options: ISwarmMessagesDatabaseConnectOptions<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO,
+    CO,
+    ConnectorMain,
+    CFO,
+    MSI,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS,
+    MD,
+    SMSM
+  >
 ): Promise<
   TConnectToSwarmMessagesDatabaseReturnType<
     P,
@@ -130,7 +209,8 @@ export const swarmMessagesDatabaseConnectedFabric = async <
     ConnectorMain,
     CFO,
     O,
-    SMS
+    SMS,
+    SMSM
   >
 > => {
   const db = new SwarmMessagesDatabase<
@@ -149,7 +229,8 @@ export const swarmMessagesDatabaseConnectedFabric = async <
     ACO,
     O,
     SMS,
-    MD
+    MD,
+    SMSM
   >();
 
   await db.connect(options);

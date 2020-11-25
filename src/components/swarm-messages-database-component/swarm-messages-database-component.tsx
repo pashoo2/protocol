@@ -14,10 +14,7 @@ import {
   ISwarmMessageInstanceDecrypted,
   TSwarmMessageSerialized,
 } from '../../classes/swarm-message/swarm-message-constructor.types';
-import {
-  ISwarmMessageStoreDeleteMessageArg,
-  ISwarmMessageStoreMessagingMethods,
-} from '../../classes/swarm-message-store/swarm-message-store.types';
+import { ISwarmMessageStoreDeleteMessageArg } from '../../classes/swarm-message-store/swarm-message-store.types';
 import { setMessageDeleteListener, setCacheUpdateListener } from './swarm-messages-database-component.utils';
 import {
   TSwarmMessageDatabaseMessagesCached,
@@ -30,6 +27,8 @@ import { IConnectionBridgeUnknown } from '../../classes/connection-bridge/connec
 import { ISwarmMessagesDatabaseConnectedFabric } from '../../classes/swarm-messages-database/swarm-messages-database-fabric/swarm-messages-database-fabric.types';
 import { PromiseResolveType } from '../../types/helper.types';
 import { TSwarmMessageInstance } from '../../classes/swarm-message/swarm-message-constructor.types';
+import { ISwarmMessagesDatabaseMessagesCollector } from '../../classes/swarm-messages-database/swarm-messages-database.types';
+import { createSwarmMessagesDatabaseMessagesCollectorInstance } from '../../classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector';
 
 type P = ESwarmStoreConnector.OrbitDB;
 
@@ -39,14 +38,15 @@ interface IProps<
   CB extends IConnectionBridgeUnknown<P, T, DbType, any, DBO, MSI>,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   MSI extends TSwarmMessageInstance | T,
-  MD extends ISwarmMessageInstanceDecrypted
+  MD extends ISwarmMessageInstanceDecrypted,
+  SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>
 > {
   userId: TSwarmMessageUserIdentifierSerialized;
   databaseOptions: DBO;
-  swarmMessagesDatabaseCacheOptions: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, T, DbType, DBO, MD>;
+  swarmMessagesDatabaseCacheOptions: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, T, DbType, DBO, MD, SMSM>;
   connectionBridge?: CB;
   isOpenImmediate?: boolean;
-  swarmMessagesDatabaseConnectedFabric: ISwarmMessagesDatabaseConnectedFabric<P, T, DbType, DBO, MSI, any, MD>;
+  swarmMessagesDatabaseConnectedFabric: ISwarmMessagesDatabaseConnectedFabric<P, T, DbType, DBO, MSI, any, MD, SMSM>;
 }
 
 interface IState<
@@ -68,8 +68,9 @@ export class SwarmMessagesDatabaseComponent<
   CB extends IConnectionBridgeUnknown<P, T, DbType, any, DBO, MSI>,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType> = TSwarmStoreDatabaseOptions<P, T, DbType>,
   MSI extends TSwarmMessageInstance | T = TSwarmMessageInstance | T,
-  MD extends ISwarmMessageInstanceDecrypted = ISwarmMessageInstanceDecrypted
-> extends React.PureComponent<IProps<T, DbType, CB, DBO, MSI, MD>, IState<T, DbType, DBO, MSI, MD>> {
+  MD extends ISwarmMessageInstanceDecrypted = ISwarmMessageInstanceDecrypted,
+  SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD> = ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>
+> extends React.PureComponent<IProps<T, DbType, CB, DBO, MSI, MD, SMSM>, IState<T, DbType, DBO, MSI, MD>> {
   state: IState<T, DbType, DBO, MSI, MD> = {
     messages: undefined,
     isOpening: false,
@@ -91,7 +92,16 @@ export class SwarmMessagesDatabaseComponent<
     return this.state.db?.cachedMessages;
   }
 
-  protected get swarmMessagesDatabaseConnectedFabric(): ISwarmMessagesDatabaseConnectedFabric<P, T, DbType, DBO, MSI, any, MD> {
+  protected get swarmMessagesDatabaseConnectedFabric(): ISwarmMessagesDatabaseConnectedFabric<
+    P,
+    T,
+    DbType,
+    DBO,
+    MSI,
+    any,
+    MD,
+    SMSM
+  > {
     const { swarmMessagesDatabaseConnectedFabric } = this.props;
     if (!swarmMessagesDatabaseConnectedFabric) {
       throw new Error('A swarmMessagesDatabaseConnectedFabric not exists in the props');
@@ -153,60 +163,51 @@ export class SwarmMessagesDatabaseComponent<
     }
   };
 
-  handleDbOpen = async () => {
+  getOptionsForSwarmMessagesDatabaseConnectedFabric() {
     const { connectionBridge, databaseOptions, swarmMessagesDatabaseCacheOptions: cacheOptions } = this.props;
+
+    if (!connectionBridge || !connectionBridge.swarmMessageStore) {
+      throw new Error('A connection bridge instance is not provided in the options');
+    }
+
+    const dbOptions: DBO = {
+      ...databaseOptions,
+      grantAccess: async (...args: any[]) => {
+        console.log(...args);
+        return true;
+      },
+    };
+    return {
+      dbOptions,
+      cacheOptions,
+      swarmMessageStore: connectionBridge.swarmMessageStore,
+      swarmMessagesCollectorFabric: createSwarmMessagesDatabaseMessagesCollectorInstance,
+      user: {
+        userId: this.props.userId,
+      },
+    };
+  }
+
+  handleDbOpen = async () => {
     const { isOpening } = this.state;
 
-    if (connectionBridge && connectionBridge.swarmMessageStore && !this.isOpened && !isOpening) {
+    if (!this.isOpened && !isOpening) {
       try {
         this.setState({ isOpening: true });
 
-        const dbOptions: DBO = {
-          ...databaseOptions,
-          grantAccess: async (...args: any[]) => {
-            console.log(...args);
-            return true;
-          },
-        };
-        const db = await this.swarmMessagesDatabaseConnectedFabric({
-          dbOptions,
-          cacheOptions,
-          swarmMessageStore: connectionBridge.swarmMessageStore,
-          user: {
-            userId: this.props.userId,
-          },
-        });
+        const db = await this.swarmMessagesDatabaseConnectedFabric(
+          this.getOptionsForSwarmMessagesDatabaseConnectedFabric() as any
+        );
 
-        setMessageListener<
-          P,
-          T,
-          DbType,
-          DBO,
-          MSI,
-          ISwarmMessageStoreMessagingMethods<P, T, DbType, Exclude<MSI, T>>,
-          MD,
-          Required<IState<T, DbType, DBO, MSI, MD>>['db']
-        >(db, this.onNewMessage);
-        setMessageDeleteListener<
-          P,
-          T,
-          DbType,
-          DBO,
-          MSI,
-          ISwarmMessageStoreMessagingMethods<P, T, DbType, Exclude<MSI, T>>,
-          MD,
-          Required<IState<T, DbType, DBO, MSI, MD>>['db']
-        >(db, this.onMessageDelete);
-        setCacheUpdateListener<
-          P,
-          T,
-          DbType,
-          DBO,
-          MSI,
-          ISwarmMessageStoreMessagingMethods<P, T, DbType, Exclude<MSI, T>>,
-          MD,
-          Required<IState<T, DbType, DBO, MSI, MD>>['db']
-        >(db, this.onMessagesCacheUpdated);
+        setMessageListener<P, T, DbType, DBO, MSI, MD, Required<IState<T, DbType, DBO, MSI, MD>>['db']>(db, this.onNewMessage);
+        setMessageDeleteListener<P, T, DbType, DBO, MSI, MD, Required<IState<T, DbType, DBO, MSI, MD>>['db']>(
+          db,
+          this.onMessageDelete
+        );
+        setCacheUpdateListener<P, T, DbType, DBO, MSI, MD, Required<IState<T, DbType, DBO, MSI, MD>>['db']>(
+          db,
+          this.onMessagesCacheUpdated
+        );
         this.setState({ db });
       } catch (err) {
         console.error(err);

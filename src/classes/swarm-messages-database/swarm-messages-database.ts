@@ -4,7 +4,7 @@ import {
   ISwarmMessagesDatabaseConnectOptions,
   ISwarmMessagesDatabaseReady,
   TSwarmMessageDatabaseMessagesCached,
-  ISwarmMessagesDatabaseCacheOptionsDbInstance,
+  ISwarmMessagesDatabaseMessagesCollector,
 } from './swarm-messages-database.types';
 import { ESwarmStoreConnector, ESwarmStoreEventNames } from '../swarm-store-class/swarm-store-class.const';
 import assert from 'assert';
@@ -54,9 +54,13 @@ import {
   ISwarmStoreOptionsConnectorFabric,
 } from '../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
-import { ISwarmMessageInstanceEncrypted } from '../swarm-message/swarm-message-constructor.types';
 import { OmitFirstArg } from '../../types/helper.types';
-import { ISwarmMessagesDatabaseConnector, ISwarmMessagesDatabaseCacheConstructor } from './swarm-messages-database.types';
+import { ISwarmMessagesDatabaseMessagesCollectorOptions } from './swarm-messages-database.types';
+import {
+  ISwarmMessagesDatabaseConnector,
+  ISwarmMessagesDatabaseCacheConstructor,
+  ISwarmMessagesDatabaseMessagesCollectorFabric,
+} from './swarm-messages-database.types';
 
 export class SwarmMessagesDatabase<
   P extends ESwarmStoreConnector,
@@ -88,8 +92,28 @@ export class SwarmMessagesDatabase<
     ACO
   >,
   SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>,
-  MD extends ISwarmMessageInstanceDecrypted
-> implements ISwarmMessagesDatabaseConnector<P, T, DbType, DBO, MSI, SMS, MD> {
+  MD extends ISwarmMessageInstanceDecrypted,
+  SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>
+> implements
+    ISwarmMessagesDatabaseConnector<
+      P,
+      T,
+      DbType,
+      DBO,
+      ConnectorBasic,
+      PO,
+      CO,
+      ConnectorMain,
+      CFO,
+      MSI,
+      GAC,
+      MCF,
+      ACO,
+      O,
+      SMS,
+      MD,
+      SMSM
+    > {
   get dbName(): DBO['dbName'] | undefined {
     return this._dbName;
   }
@@ -107,11 +131,11 @@ export class SwarmMessagesDatabase<
   }
 
   get isMessagesListContainsAllMessages(): boolean {
-    return !!this._swarmMessagesCache?.whetherMessagesListContainsAllMessages;
+    return Boolean(this._swarmMessagesCache?.whetherMessagesListContainsAllMessages);
   }
 
   get whetherMessagesListUpdateInProgress(): boolean {
-    return !!this._swarmMessagesCache?.isUpdating;
+    return Boolean(this._swarmMessagesCache?.isUpdating);
   }
 
   get cachedMessages(): TSwarmMessageDatabaseMessagesCached<P, DbType, MD> | undefined {
@@ -129,11 +153,11 @@ export class SwarmMessagesDatabase<
    * @protected
    * @memberof SwarmMessagesDatabase
    */
-  protected get _isKeyValueDatabase() {
+  protected get _isKeyValueDatabase(): boolean {
     return this._dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE;
   }
 
-  protected get _swarmMessagesCacheClassFromOptions(): ISwarmMessagesDatabaseCacheConstructor<P, T, DbType, DBO, MD> {
+  protected get _swarmMessagesCacheClassFromOptions(): ISwarmMessagesDatabaseCacheConstructor<P, T, DbType, DBO, MD, SMSM> {
     const SwarmMessagesCacheConstructor = this._cacheOptions?.cacheConstructor;
 
     if (!SwarmMessagesCacheConstructor) {
@@ -172,7 +196,7 @@ export class SwarmMessagesDatabase<
    * @type {ISwarmMessagesDatabaseCache<P, DbType>}
    * @memberof SwarmMessagesDatabase
    */
-  protected _swarmMessagesCache?: ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD>;
+  protected _swarmMessagesCache: ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM> | undefined;
 
   /**
    * Options for the database which used for
@@ -186,7 +210,53 @@ export class SwarmMessagesDatabase<
 
   protected _currentUserOptons?: ISwarmMessagesDatabaseConnectCurrentUserOptions;
 
-  protected _cacheOptions?: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, T, DbType, DBO, MD>;
+  /**
+   * Fabric for constructing an instance used to query the database
+   * for messages fetching.
+   *
+   * @protected
+   * @type {ISwarmMessagesDatabaseMessagesCollectorFabric<
+   *     P,
+   *     T,
+   *     DbType,
+   *     DBO,
+   *     ConnectorBasic,
+   *     PO,
+   *     CO,
+   *     ConnectorMain,
+   *     CFO,
+   *     MSI,
+   *     GAC,
+   *     MCF,
+   *     ACO,
+   *     O,
+   *     SMS,
+   *     MD,
+   *     SMSM
+   *   >}
+   * @memberof SwarmMessagesDatabase
+   */
+  protected _swarmMessagesCollectorFabric?: ISwarmMessagesDatabaseMessagesCollectorFabric<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO,
+    CO,
+    ConnectorMain,
+    CFO,
+    MSI,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS,
+    MD,
+    SMSM
+  >;
+
+  protected _cacheOptions?: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, T, DbType, DBO, MD, SMSM>;
 
   protected _isReady: boolean = false;
 
@@ -201,7 +271,27 @@ export class SwarmMessagesDatabase<
    */
   protected _messagesCached: TSwarmMessageDatabaseMessagesCached<P, DbType, MD> | undefined;
 
-  async connect(options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType, DBO, Exclude<MSI, T>, SMS, MD>): Promise<void> {
+  async connect(
+    options: ISwarmMessagesDatabaseConnectOptions<
+      P,
+      T,
+      DbType,
+      DBO,
+      ConnectorBasic,
+      PO,
+      CO,
+      ConnectorMain,
+      CFO,
+      MSI,
+      GAC,
+      MCF,
+      ACO,
+      O,
+      SMS,
+      MD,
+      SMSM
+    >
+  ): Promise<void> {
     this._handleOptions(options);
     await this._openDatabaseInstance();
     await this._startSwarmMessagesCache();
@@ -290,7 +380,9 @@ export class SwarmMessagesDatabase<
     GAC,
     MCF,
     ACO,
-    O
+    O,
+    MD,
+    SMSM
   > {
     if (!this._isReady) {
       throw new Error('The instance is not ready to use');
@@ -310,7 +402,27 @@ export class SwarmMessagesDatabase<
     return true;
   }
 
-  protected _validateOptions(options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType, DBO, Exclude<MSI, T>, SMS, MD>): void {
+  protected _validateOptions(
+    options: ISwarmMessagesDatabaseConnectOptions<
+      P,
+      T,
+      DbType,
+      DBO,
+      ConnectorBasic,
+      PO,
+      CO,
+      ConnectorMain,
+      CFO,
+      MSI,
+      GAC,
+      MCF,
+      ACO,
+      O,
+      SMS,
+      MD,
+      SMSM
+    >
+  ): void {
     assert(!!options, 'An options object must be provided');
     assert(typeof options === 'object', 'Options must be an object');
     assert(!!options.dbOptions, 'An options for database must be provided');
@@ -319,6 +431,7 @@ export class SwarmMessagesDatabase<
     assert(options.swarmMessageStore.isReady, 'An implementation of the ISwarmMessageStore interface must be ready to use');
     assert(!!options.user, 'The current user options must be defined');
     assert(typeof options.user === 'object', 'The current user options should be an object');
+    assert(options.swarmMessagesCollectorFabric, 'Swarm messages collector fabric should be passed in options');
     validateUserIdentifier(options.user.userId);
   }
 
@@ -332,14 +445,35 @@ export class SwarmMessagesDatabase<
     this._currentUserOptons = optionsUser;
   }
 
-  protected _setOptions(options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType, DBO, Exclude<MSI, T>, SMS, MD>): void {
+  protected _setOptions(
+    options: ISwarmMessagesDatabaseConnectOptions<
+      P,
+      T,
+      DbType,
+      DBO,
+      ConnectorBasic,
+      PO,
+      CO,
+      ConnectorMain,
+      CFO,
+      MSI,
+      GAC,
+      MCF,
+      ACO,
+      O,
+      SMS,
+      MD,
+      SMSM
+    >
+  ): void {
     this._setDbOptions(options.dbOptions);
     this._swarmMessageStore = options.swarmMessageStore;
+    this._swarmMessagesCollectorFabric = options.swarmMessagesCollectorFabric;
     this._setUserOptions(options.user);
   }
 
   protected _validateCacheOptions(
-    options?: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, T, DbType, DBO, MD>
+    options?: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, T, DbType, DBO, MD, SMSM>
   ): void {
     if (!options) {
       return;
@@ -351,7 +485,7 @@ export class SwarmMessagesDatabase<
   }
 
   protected _setCacheOptions(
-    options: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, T, DbType, DBO, MD>
+    options: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, T, DbType, DBO, MD, SMSM>
   ): void {
     this._cacheOptions = options;
   }
@@ -364,7 +498,27 @@ export class SwarmMessagesDatabase<
    * @param {ISwarmMessage_handleDatabaseClosedsDatabaseConnectOptions<P>} options
    * @memberof SwarmMessagesDatabase
    */
-  protected _handleOptions(options: ISwarmMessagesDatabaseConnectOptions<P, T, DbType, DBO, Exclude<MSI, T>, SMS, MD>): void {
+  protected _handleOptions(
+    options: ISwarmMessagesDatabaseConnectOptions<
+      P,
+      T,
+      DbType,
+      DBO,
+      ConnectorBasic,
+      PO,
+      CO,
+      ConnectorMain,
+      CFO,
+      MSI,
+      GAC,
+      MCF,
+      ACO,
+      O,
+      SMS,
+      MD,
+      SMSM
+    >
+  ): void {
     this._validateOptions(options);
     this._setOptions(options);
     if (options.cacheOptions) {
@@ -374,7 +528,7 @@ export class SwarmMessagesDatabase<
   }
 
   protected _checkDatabaseProps(): this is Omit<
-    ISwarmMessagesDatabaseReady<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>,
+    ISwarmMessagesDatabaseReady<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O, MD, SMSM>,
     'isReady'
   > {
     const swarmMessageStore = this._swarmMessageStore;
@@ -411,7 +565,7 @@ export class SwarmMessagesDatabase<
     this._isReady = false;
   };
 
-  protected _setMessagesCached = (messagesCached: TSwarmMessageDatabaseMessagesCached<P, DbType, MD>) => {
+  protected _setMessagesCached = (messagesCached: TSwarmMessageDatabaseMessagesCached<P, DbType, MD>): void => {
     this._messagesCached = messagesCached;
   };
 
@@ -564,7 +718,7 @@ export class SwarmMessagesDatabase<
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key
     key?: TSwarmStoreDatabaseEntityKey<P>
-  ) => {
+  ): Promise<void> => {
     if (this._dbName !== dbName) return;
 
     if (this._isMessageAlreadyEmitted(messageAddress, key, message)) {
@@ -588,7 +742,7 @@ export class SwarmMessagesDatabase<
     // for key-value store it will be the key for the value,
     // for feed store it will be hash of the message which deleted by this one.
     keyOrHash: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined
-  ) => {
+  ): Promise<void> => {
     if (this._dbName !== dbName) return;
 
     const keyToCheckAlreadyEmitted = this._isKeyValueDatabase ? keyOrHash : undefined;
@@ -619,9 +773,10 @@ export class SwarmMessagesDatabase<
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key
     key?: TSwarmStoreDatabaseEntityKey<P>
-  ) => {
-    if (this._dbName !== dbName) return;
-    this._emitter.emit(ESwarmMessageStoreEventNames.NEW_MESSAGE_ERROR, dbName, messageSerialized, error, messageAddress, key);
+  ): void => {
+    if (this._dbName === dbName) {
+      this._emitter.emit(ESwarmMessageStoreEventNames.NEW_MESSAGE_ERROR, dbName, messageSerialized, error, messageAddress, key);
+    }
   };
 
   protected _handleDatabaseReadyEvent = (dbName: DBO['dbName']): void => {
@@ -630,7 +785,7 @@ export class SwarmMessagesDatabase<
     this._setIsReady();
   };
 
-  protected _emitInstanceClosed() {
+  protected _emitInstanceClosed(): void {
     if (!this._dbName) {
       throw new Error('SwarmMessagesDatabase::_emitInstanceClosed: failed cause there is no database name defined');
     }
@@ -734,7 +889,39 @@ export class SwarmMessagesDatabase<
     }
   }
 
-  protected _getSwarmMessagesCacheOptions(): ISwarmMessagesDatabaseCacheOptions<P, T, DbType, MD> {
+  protected _getOptionsForSwarmMessagesCollectorFabric(): ISwarmMessagesDatabaseMessagesCollectorOptions<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO,
+    CO,
+    ConnectorMain,
+    CFO,
+    MSI,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS
+  > {
+    if (!this._swarmMessageStore) {
+      throw new Error('Swarm messags cache should be defined');
+    }
+    return {
+      swarmMessageStore: this._swarmMessageStore,
+    };
+  }
+
+  protected _getSwarmMessageStoreCollectMessages(): SMSM {
+    if (!this._swarmMessagesCollectorFabric) {
+      throw new Error('Swarm messages collector fabric should be defined');
+    }
+    return this._swarmMessagesCollectorFabric(this._getOptionsForSwarmMessagesCollectorFabric());
+  }
+
+  protected _getSwarmMessagesCacheOptions(): ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM> {
     if (!this._dbType) {
       throw new Error('Failed to defined database type');
     }
@@ -742,7 +929,7 @@ export class SwarmMessagesDatabase<
       throw new Error('Database name should not be empty');
     }
     return {
-      dbInstance: this as ISwarmMessagesDatabaseCacheOptionsDbInstance<P, T, DbType, MD>,
+      dbInstance: this._getSwarmMessageStoreCollectMessages(),
       dbType: this._dbType,
       dbName: this._dbName,
     };
@@ -768,7 +955,7 @@ export class SwarmMessagesDatabase<
     this._emitter.removeAllListeners();
   }
 
-  protected _unsetSwarmStoreListeners() {
+  protected _unsetSwarmStoreListeners(): void {
     this._setListeners(false);
   }
 
@@ -783,7 +970,7 @@ export class SwarmMessagesDatabase<
    * @protected
    * @memberof SwarmMessagesDatabase
    */
-  protected async _handleDatabaseClosed() {
+  protected async _handleDatabaseClosed(): Promise<void> {
     this._unsetIsReady();
     this._unsetOptions();
     this._unsetThisInstanceListeners();
@@ -809,7 +996,7 @@ export class SwarmMessagesDatabase<
     return this._swarmMessagesCache.close();
   }
 
-  protected async _dropSwarmDatabaseInstance() {
+  protected async _dropSwarmDatabaseInstance(): Promise<void> {
     if (!this._checkDatabaseProps()) {
       throw new Error('Database props are not valid');
     }
@@ -838,7 +1025,7 @@ export class SwarmMessagesDatabase<
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key
     key?: TSwarmStoreDatabaseEntityKey<P>
-  ) {
+  ): Promise<void> {
     if (this._checkIsReady()) {
       await this._addMessageToCache(this._dbName, message, messageAddress, key);
     }
@@ -865,7 +1052,7 @@ export class SwarmMessagesDatabase<
     // for key-value store it will be the key for the value,
     // for feed store it will be hash of the message which deleted by this one.
     keyOrHash: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined
-  ) {
+  ): Promise<void> {
     if (this._checkIsReady()) {
       await this._removeMessageFromCache(messageDeletedAddress, keyOrHash);
     }

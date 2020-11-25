@@ -6,6 +6,8 @@ import { ConnectToSwarmImmediate } from './connect-to-swarm-immediate/connect-to
 import { CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_KEY_VALUE } from './const/connect-to-swarm-immediate.const';
 import { CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_OPTIONS } from './const/connect-to-swarm.const';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
+import { ESwarmStoreConnector } from '../classes/swarm-store-class/swarm-store-class.const';
+import { ISwarmMessagesDatabaseMessagesCollector } from '../classes/swarm-messages-database/swarm-messages-database.types';
 import {
   TSwarmMessageSerialized,
   TSwarmMessageInstance,
@@ -29,7 +31,12 @@ export class App extends React.Component {
         typeof CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_KEY_VALUE,
         typeof CONNECT_TO_SWARM_CONNECTION_OPTIONS,
         TSwarmMessageInstance,
-        ISwarmMessageInstanceDecrypted
+        ISwarmMessageInstanceDecrypted,
+        ISwarmMessagesDatabaseMessagesCollector<
+          ESwarmStoreConnector.OrbitDB,
+          ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
+          ISwarmMessageInstanceDecrypted
+        >
       >
         dbOptions={CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_KEY_VALUE}
         connectionBridgeOptions={CONNECT_TO_SWARM_CONNECTION_OPTIONS}

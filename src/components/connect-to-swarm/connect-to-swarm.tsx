@@ -31,7 +31,10 @@ import { swarmMessagesDatabaseConnectedFabric } from '../../classes/swarm-messag
 import { ISwarmMessagesDatabaseConnectedFabric } from '../../classes/swarm-messages-database/swarm-messages-database-fabric/swarm-messages-database-fabric.types';
 import { IUserCredentialsCommon } from '../../types/credentials.types';
 import { TSwarmMessageUserIdentifierSerialized } from '../../classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
-import { ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions } from '../../classes/swarm-messages-database/swarm-messages-database.types';
+import {
+  ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions,
+  ISwarmMessagesDatabaseMessagesCollector,
+} from '../../classes/swarm-messages-database/swarm-messages-database.types';
 
 type P = ESwarmStoreConnector.OrbitDB;
 
@@ -46,13 +49,14 @@ export interface IConnectToSwarmProps<
   T extends TSwarmMessageSerialized,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   CBO extends IConnectionBridgeOptionsDefault<P, T, DbType, any>,
-  MD extends ISwarmMessageInstanceDecrypted
+  MD extends ISwarmMessageInstanceDecrypted,
+  SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>
 > {
   connectionBridgeOptions: CBO;
   userCredentialsList: Array<IUserCredentialsCommon>;
   dbo: DBO;
   userIdReceiverSwarmMessages: TSwarmMessageUserIdentifierSerialized;
-  swarmMessagesDatabaseCacheOptions: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, T, DbType, DBO, MD>;
+  swarmMessagesDatabaseCacheOptions: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, T, DbType, DBO, MD, SMSM>;
   userCredentialsToConnectImmediate?: IUserCredentialsCommon;
 }
 
@@ -62,8 +66,9 @@ export class ConnectToSwarm<
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   CBO extends IConnectionBridgeOptionsDefault<P, T, DbType, any>,
   MI extends TSwarmMessageInstance = TSwarmMessageInstance,
-  MD extends ISwarmMessageInstanceDecrypted = Exclude<MI, ISwarmMessageInstanceEncrypted>
-> extends React.PureComponent<IConnectToSwarmProps<DbType, T, DBO, CBO, MD>> {
+  MD extends ISwarmMessageInstanceDecrypted = Exclude<MI, ISwarmMessageInstanceEncrypted>,
+  SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD> = ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>
+> extends React.PureComponent<IConnectToSwarmProps<DbType, T, DBO, CBO, MD, SMSM>> {
   public state = {
     isConnecting: false,
     messagingSending: undefined as NodeJS.Timeout | undefined,
@@ -440,8 +445,26 @@ export class ConnectToSwarm<
     );
   }
 
-  protected getSwarmMessagesDatabaseConnectedFabric(): ISwarmMessagesDatabaseConnectedFabric<P, T, DbType, DBO, MI | T, any, MD> {
-    return swarmMessagesDatabaseConnectedFabric as ISwarmMessagesDatabaseConnectedFabric<P, T, DbType, DBO, MI | T, any, MD>;
+  protected getSwarmMessagesDatabaseConnectedFabric(): ISwarmMessagesDatabaseConnectedFabric<
+    P,
+    T,
+    DbType,
+    DBO,
+    MI | T,
+    any,
+    MD,
+    SMSM
+  > {
+    return swarmMessagesDatabaseConnectedFabric as ISwarmMessagesDatabaseConnectedFabric<
+      P,
+      T,
+      DbType,
+      DBO,
+      MI | T,
+      any,
+      MD,
+      SMSM
+    >;
   }
 
   protected renderSwarmMessagesDatabasesList() {
@@ -467,7 +490,8 @@ export class ConnectToSwarm<
                 IConnectionBridgeUnknown<P, T, DbType, any, DBO, MI | T>,
                 DBO,
                 MI | T,
-                MD
+                MD,
+                SMSM
               >
                 key={dbsOptions.dbName}
                 userId={userId}

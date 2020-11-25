@@ -11,7 +11,10 @@ import {
 import { IConnectionBridgeOptionsDefault } from '../../classes/connection-bridge/connection-bridge.types';
 import { IUserCredentialsCommon } from '../../types/credentials.types';
 import { TSwarmMessageUserIdentifierSerialized } from '../../classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
-import { ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions } from '../../classes/swarm-messages-database/swarm-messages-database.types';
+import {
+  ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions,
+  ISwarmMessagesDatabaseMessagesCollector,
+} from '../../classes/swarm-messages-database/swarm-messages-database.types';
 
 type P = ESwarmStoreConnector.OrbitDB;
 
@@ -20,13 +23,14 @@ type TConnectToSwarmImmediateProps<
   T extends TSwarmMessageSerialized,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   CBO extends IConnectionBridgeOptionsDefault<P, T, DbType, any>,
-  MD extends ISwarmMessageInstanceDecrypted
+  MD extends ISwarmMessageInstanceDecrypted,
+  SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>
 > = {
   dbOptions: DBO;
   connectionBridgeOptions: CBO;
   userCredentials: IUserCredentialsCommon;
   userIdReceiverSwarmMessages: TSwarmMessageUserIdentifierSerialized;
-  swarmMessagesDatabaseCacheOptions: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, T, DbType, DBO, MD>;
+  swarmMessagesDatabaseCacheOptions: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, T, DbType, DBO, MD, SMSM>;
 };
 
 const CREDENTIALS: IUserCredentialsCommon[] = [];
@@ -37,8 +41,9 @@ export class ConnectToSwarmImmediate<
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   CBO extends IConnectionBridgeOptionsDefault<P, T, DbType, any>,
   MI extends TSwarmMessageInstance,
-  MD extends ISwarmMessageInstanceDecrypted
-> extends React.Component<TConnectToSwarmImmediateProps<DbType, T, DBO, CBO, MD>> {
+  MD extends ISwarmMessageInstanceDecrypted,
+  SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>
+> extends React.Component<TConnectToSwarmImmediateProps<DbType, T, DBO, CBO, MD, SMSM>> {
   render() {
     const {
       dbOptions,
@@ -48,7 +53,7 @@ export class ConnectToSwarmImmediate<
       swarmMessagesDatabaseCacheOptions,
     } = this.props;
     return (
-      <ConnectToSwarm<DbType, T, DBO, CBO, MI, MD>
+      <ConnectToSwarm<DbType, T, DBO, CBO, MI, MD, SMSM>
         connectionBridgeOptions={connectionBridgeOptions}
         userCredentialsList={CREDENTIALS}
         userCredentialsToConnectImmediate={userCredentials}
