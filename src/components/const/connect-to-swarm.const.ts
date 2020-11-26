@@ -15,7 +15,10 @@ import {
 } from '../../classes/connection-bridge/connection-bridge.types';
 import { TSwarmStoreDatabaseOptions } from 'classes/swarm-store-class/index';
 import { IConnectionBridgeOptionsDefault } from '../../classes/connection-bridge/connection-bridge.types';
-import { ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions } from '../../classes/swarm-messages-database/swarm-messages-database.types';
+import {
+  ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions,
+  ISwarmMessagesDatabaseMessagesCollector,
+} from '../../classes/swarm-messages-database/swarm-messages-database.types';
 import { SwarmMessagesDatabaseCache } from '../../classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache/swarm-messages-database-cache';
 
 export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY = 'key';
@@ -123,6 +126,8 @@ export const CONNECT_TO_SWARM_CONNECTION_OPTIONS: IConnectionBridgeOptionsDefaul
   nativeConnection: CONNECT_TO_SWARM_CONNECTION_NATIVE_CONNECTION_OPTIONS, // use the default value
 };
 
+const SWARM_MESSAGES_DATABASE_CACHE_CONSTRUCTOR_INSTANCE = SwarmMessagesDatabaseCache;
+
 export const CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_OPTIONS: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<
   ESwarmStoreConnector.OrbitDB,
   TSwarmMessageSerialized,
@@ -132,7 +137,12 @@ export const CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_OPTIONS: IS
     TSwarmMessageSerialized,
     ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED
   >,
-  ISwarmMessageInstanceDecrypted
+  ISwarmMessageInstanceDecrypted,
+  ISwarmMessagesDatabaseMessagesCollector<
+    ESwarmStoreConnector.OrbitDB,
+    ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
+    ISwarmMessageInstanceDecrypted
+  >
 > = {
-  cacheConstructor: SwarmMessagesDatabaseCache,
+  cacheConstructor: SWARM_MESSAGES_DATABASE_CACHE_CONSTRUCTOR_INSTANCE,
 };

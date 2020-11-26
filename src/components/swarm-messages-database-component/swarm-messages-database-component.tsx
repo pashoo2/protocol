@@ -24,11 +24,13 @@ import { isValidSwarmMessageDecryptedFormat } from '../../classes/swarm-message-
 import { TSwarmMessageUserIdentifierSerialized } from '../../classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import { TSwarmStoreDatabaseOptions } from '../../classes/swarm-store-class/swarm-store-class.types';
 import { IConnectionBridgeUnknown } from '../../classes/connection-bridge/connection-bridge.types';
-import { ISwarmMessagesDatabaseConnectedFabric } from '../../classes/swarm-messages-database/swarm-messages-database-fabric/swarm-messages-database-fabric.types';
+import {
+  ISwarmMessagesDatabaseConnectedFabric,
+  TSwarmMessagesDatabaseConnectedFabricOptions,
+} from '../../classes/swarm-messages-database/swarm-messages-database-fabric/swarm-messages-database-fabric.types';
 import { PromiseResolveType } from '../../types/helper.types';
 import { TSwarmMessageInstance } from '../../classes/swarm-message/swarm-message-constructor.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../classes/swarm-messages-database/swarm-messages-database.types';
-import { createSwarmMessagesDatabaseMessagesCollectorInstance } from '../../classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector';
 
 type P = ESwarmStoreConnector.OrbitDB;
 
@@ -39,14 +41,16 @@ interface IProps<
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   MSI extends TSwarmMessageInstance | T,
   MD extends ISwarmMessageInstanceDecrypted,
-  SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>
+  SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
+  SMCF extends ISwarmMessagesDatabaseConnectedFabric<P, T, DbType, DBO, MSI, any, MD, SMSM>,
+  SMCFO extends TSwarmMessagesDatabaseConnectedFabricOptions<SMCF>
 > {
   userId: TSwarmMessageUserIdentifierSerialized;
   databaseOptions: DBO;
-  swarmMessagesDatabaseCacheOptions: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, T, DbType, DBO, MD, SMSM>;
   connectionBridge?: CB;
   isOpenImmediate?: boolean;
-  swarmMessagesDatabaseConnectedFabric: ISwarmMessagesDatabaseConnectedFabric<P, T, DbType, DBO, MSI, any, MD, SMSM>;
+  swarmMessagesDatabaseConnectedFabric: SMCF;
+  getOptionsForSwarmMessagesDatabaseConnectedFabric: () => SMCFO;
 }
 
 interface IState<
@@ -69,8 +73,19 @@ export class SwarmMessagesDatabaseComponent<
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType> = TSwarmStoreDatabaseOptions<P, T, DbType>,
   MSI extends TSwarmMessageInstance | T = TSwarmMessageInstance | T,
   MD extends ISwarmMessageInstanceDecrypted = ISwarmMessageInstanceDecrypted,
-  SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD> = ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>
-> extends React.PureComponent<IProps<T, DbType, CB, DBO, MSI, MD, SMSM>, IState<T, DbType, DBO, MSI, MD>> {
+  SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD> = ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
+  SMCF extends ISwarmMessagesDatabaseConnectedFabric<
+    P,
+    T,
+    DbType,
+    DBO,
+    MSI,
+    any,
+    MD,
+    SMSM
+  > = ISwarmMessagesDatabaseConnectedFabric<P, T, DbType, DBO, MSI, any, MD, SMSM>,
+  SMCFO extends TSwarmMessagesDatabaseConnectedFabricOptions<SMCF> = TSwarmMessagesDatabaseConnectedFabricOptions<SMCF>
+> extends React.PureComponent<IProps<T, DbType, CB, DBO, MSI, MD, SMSM, SMCF, SMCFO>, IState<T, DbType, DBO, MSI, MD>> {
   state: IState<T, DbType, DBO, MSI, MD> = {
     messages: undefined,
     isOpening: false,
@@ -92,16 +107,7 @@ export class SwarmMessagesDatabaseComponent<
     return this.state.db?.cachedMessages;
   }
 
-  protected get swarmMessagesDatabaseConnectedFabric(): ISwarmMessagesDatabaseConnectedFabric<
-    P,
-    T,
-    DbType,
-    DBO,
-    MSI,
-    any,
-    MD,
-    SMSM
-  > {
+  protected get swarmMessagesDatabaseConnectedFabric(): SMCF {
     const { swarmMessagesDatabaseConnectedFabric } = this.props;
     if (!swarmMessagesDatabaseConnectedFabric) {
       throw new Error('A swarmMessagesDatabaseConnectedFabric not exists in the props');
@@ -163,31 +169,6 @@ export class SwarmMessagesDatabaseComponent<
     }
   };
 
-  getOptionsForSwarmMessagesDatabaseConnectedFabric() {
-    const { connectionBridge, databaseOptions, swarmMessagesDatabaseCacheOptions: cacheOptions } = this.props;
-
-    if (!connectionBridge || !connectionBridge.swarmMessageStore) {
-      throw new Error('A connection bridge instance is not provided in the options');
-    }
-
-    const dbOptions: DBO = {
-      ...databaseOptions,
-      grantAccess: async (...args: any[]) => {
-        console.log(...args);
-        return true;
-      },
-    };
-    return {
-      dbOptions,
-      cacheOptions,
-      swarmMessageStore: connectionBridge.swarmMessageStore,
-      swarmMessagesCollectorFabric: createSwarmMessagesDatabaseMessagesCollectorInstance,
-      user: {
-        userId: this.props.userId,
-      },
-    };
-  }
-
   handleDbOpen = async () => {
     const { isOpening } = this.state;
 
@@ -196,7 +177,7 @@ export class SwarmMessagesDatabaseComponent<
         this.setState({ isOpening: true });
 
         const db = await this.swarmMessagesDatabaseConnectedFabric(
-          this.getOptionsForSwarmMessagesDatabaseConnectedFabric() as any
+          this.props.getOptionsForSwarmMessagesDatabaseConnectedFabric()
         );
 
         setMessageListener<P, T, DbType, DBO, MSI, MD, Required<IState<T, DbType, DBO, MSI, MD>>['db']>(db, this.onNewMessage);

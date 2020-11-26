@@ -28,13 +28,17 @@ import {
 } from '../../classes/connection-bridge/connection-bridge.types';
 import { TSwarmStoreDatabaseEntityKey } from '../../classes/swarm-store-class/swarm-store-class.types';
 import { swarmMessagesDatabaseConnectedFabric } from '../../classes/swarm-messages-database/swarm-messages-database-fabric/swarm-messages-database-fabric';
-import { ISwarmMessagesDatabaseConnectedFabric } from '../../classes/swarm-messages-database/swarm-messages-database-fabric/swarm-messages-database-fabric.types';
+import {
+  ISwarmMessagesDatabaseConnectedFabric,
+  TSwarmMessagesDatabaseConnectedFabricOptions,
+} from '../../classes/swarm-messages-database/swarm-messages-database-fabric/swarm-messages-database-fabric.types';
 import { IUserCredentialsCommon } from '../../types/credentials.types';
 import { TSwarmMessageUserIdentifierSerialized } from '../../classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import {
   ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions,
   ISwarmMessagesDatabaseMessagesCollector,
 } from '../../classes/swarm-messages-database/swarm-messages-database.types';
+import { createSwarmMessagesDatabaseMessagesCollectorInstance } from '../../classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector';
 
 type P = ESwarmStoreConnector.OrbitDB;
 
@@ -480,9 +484,35 @@ export class ConnectToSwarm<
           <h4>List of swarm messages databases:</h4>
           {swarmStoreMessagesDbOptionsList.map((dbsOptions) => {
             const { userId } = this.state;
+
             if (!userId) {
               throw new Error('User identity should not be empty');
             }
+            const swarmMessagesDatabaseConnectedFabric = this.getSwarmMessagesDatabaseConnectedFabric();
+            const getOptionsForSwarmMessagesDatabaseConnectedFabric = (): TSwarmMessagesDatabaseConnectedFabricOptions<
+              typeof swarmMessagesDatabaseConnectedFabric
+            > => {
+              if (!connectionBridge || !connectionBridge.swarmMessageStore) {
+                throw new Error('A connection bridge instance is not provided in the options');
+              }
+
+              const dbOptions: DBO = {
+                ...dbsOptions,
+                grantAccess: async (...args: any[]) => {
+                  console.log(...args);
+                  return true;
+                },
+              };
+              return {
+                dbOptions,
+                cacheOptions: swarmMessagesDatabaseCacheOptions,
+                swarmMessageStore: connectionBridge.swarmMessageStore,
+                swarmMessagesCollectorFabric: createSwarmMessagesDatabaseMessagesCollectorInstance as (options: unknown) => SMSM,
+                user: {
+                  userId,
+                },
+              };
+            };
             return (
               <SwarmMessagesDatabaseComponent<
                 T,
@@ -491,15 +521,16 @@ export class ConnectToSwarm<
                 DBO,
                 MI | T,
                 MD,
-                SMSM
+                SMSM,
+                typeof swarmMessagesDatabaseConnectedFabric
               >
                 key={dbsOptions.dbName}
                 userId={userId}
                 databaseOptions={dbsOptions}
                 connectionBridge={connectionBridge}
                 isOpenImmediate={dbsOptions.dbName === dbo?.dbName}
-                swarmMessagesDatabaseConnectedFabric={this.getSwarmMessagesDatabaseConnectedFabric()}
-                swarmMessagesDatabaseCacheOptions={swarmMessagesDatabaseCacheOptions}
+                swarmMessagesDatabaseConnectedFabric={swarmMessagesDatabaseConnectedFabric}
+                getOptionsForSwarmMessagesDatabaseConnectedFabric={getOptionsForSwarmMessagesDatabaseConnectedFabric}
               />
             );
           })}

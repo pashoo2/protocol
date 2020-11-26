@@ -250,46 +250,125 @@ export interface ISwarmMessagesDatabaseConnectedFabric<
     MCF,
     ACO,
     O
-  > = ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>
+  > = ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>,
+  ODC extends ISwarmMessagesDatabaseConnectOptions<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO,
+    CO,
+    ConnectorMain,
+    CFO,
+    MSI,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS,
+    MD,
+    SMSM
+  > = ISwarmMessagesDatabaseConnectOptions<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO,
+    CO,
+    ConnectorMain,
+    CFO,
+    MSI,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS,
+    MD,
+    SMSM
+  >,
+  RT extends TConnectToSwarmMessagesDatabaseReturnType<
+    P,
+    T,
+    DbType,
+    DBO,
+    MSI,
+    MCF,
+    MD,
+    GAC,
+    ACO,
+    ConnectorBasic,
+    PO,
+    CO,
+    ConnectorMain,
+    CFO,
+    O,
+    SMS
+  > = TConnectToSwarmMessagesDatabaseReturnType<
+    P,
+    T,
+    DbType,
+    DBO,
+    MSI,
+    MCF,
+    MD,
+    GAC,
+    ACO,
+    ConnectorBasic,
+    PO,
+    CO,
+    ConnectorMain,
+    CFO,
+    O,
+    SMS
+  >
 > {
-  (
-    options: ISwarmMessagesDatabaseConnectOptions<
-      P,
-      T,
-      DbType,
-      DBO,
-      ConnectorBasic,
-      PO,
-      CO,
-      ConnectorMain,
-      CFO,
-      MSI,
-      GAC,
-      MCF,
-      ACO,
-      O,
-      SMS,
-      MD,
-      SMSM
-    >
-  ): Promise<
-    TConnectToSwarmMessagesDatabaseReturnType<
-      P,
-      T,
-      DbType,
-      DBO,
-      MSI,
-      MCF,
-      MD,
-      GAC,
-      ACO,
-      ConnectorBasic,
-      PO,
-      CO,
-      ConnectorMain,
-      CFO,
-      O,
-      SMS
-    >
-  >;
+  (options: ODC): Promise<RT>;
 }
+
+export type TSwarmMessagesDatabaseConnectedFabricOptions<
+  IF extends ISwarmMessagesDatabaseConnectedFabric<
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any
+  >
+> = IF extends ISwarmMessagesDatabaseConnectedFabric<
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  infer ODC,
+  any
+>
+  ? ODC
+  : never;
