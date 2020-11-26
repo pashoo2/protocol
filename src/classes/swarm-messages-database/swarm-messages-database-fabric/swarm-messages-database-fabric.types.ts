@@ -268,6 +268,15 @@ export interface ISwarmMessagesDatabaseConnectedFabric<
   MD extends ISwarmMessageInstanceDecrypted = Exclude<MSI, T | ISwarmMessageInstanceEncrypted> &
     Exclude<Exclude<MSI, T>, ISwarmMessageInstanceEncrypted>,
   SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD> = ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
+  DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM> = ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>,
+  DCCRT extends ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM> = ISwarmMessagesDatabaseCache<
+    P,
+    T,
+    DbType,
+    DBO,
+    MD,
+    SMSM
+  >,
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI> = TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
   ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined = undefined,
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO> = ISwarmStoreConnectorBasic<P, T, DbType, DBO>,
@@ -349,15 +358,6 @@ export interface ISwarmMessagesDatabaseConnectedFabric<
     ACO,
     O
   > = ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>,
-  DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM> = ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>,
-  DCCRT extends ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM> = ISwarmMessagesDatabaseCache<
-    P,
-    T,
-    DbType,
-    DBO,
-    MD,
-    SMSM
-  >,
   SMDMCF extends ISwarmMessagesDatabaseMessagesCollectorFabric<
     P,
     T,
@@ -497,9 +497,15 @@ export type TSwarmMessagesDatabaseConnectedFabricOptions<
     any,
     any,
     any,
+    any,
+    any,
+    any,
     any
   >
 > = IF extends ISwarmMessagesDatabaseConnectedFabric<
+  any,
+  any,
+  any,
   any,
   any,
   any,

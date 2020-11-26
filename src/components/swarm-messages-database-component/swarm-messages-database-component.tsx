@@ -18,7 +18,8 @@ import { ISwarmMessageStoreDeleteMessageArg } from '../../classes/swarm-message-
 import { setMessageDeleteListener, setCacheUpdateListener } from './swarm-messages-database-component.utils';
 import {
   TSwarmMessageDatabaseMessagesCached,
-  ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions,
+  ISwarmMessagesDatabaseCacheOptions,
+  ISwarmMessagesDatabaseCache,
 } from '../../classes/swarm-messages-database/swarm-messages-database.types';
 import { isValidSwarmMessageDecryptedFormat } from '../../classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-swarm-message';
 import { TSwarmMessageUserIdentifierSerialized } from '../../classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
@@ -74,6 +75,15 @@ export class SwarmMessagesDatabaseComponent<
   MSI extends TSwarmMessageInstance | T = TSwarmMessageInstance | T,
   MD extends ISwarmMessageInstanceDecrypted = ISwarmMessageInstanceDecrypted,
   SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD> = ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
+  DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM> = ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>,
+  DCCRT extends ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM> = ISwarmMessagesDatabaseCache<
+    P,
+    T,
+    DbType,
+    DBO,
+    MD,
+    SMSM
+  >,
   SMCF extends ISwarmMessagesDatabaseConnectedFabric<
     P,
     T,
@@ -82,7 +92,9 @@ export class SwarmMessagesDatabaseComponent<
     MSI,
     any,
     MD,
-    SMSM
+    SMSM,
+    DCO,
+    DCCRT
   > = ISwarmMessagesDatabaseConnectedFabric<P, T, DbType, DBO, MSI, any, MD, SMSM>,
   SMCFO extends TSwarmMessagesDatabaseConnectedFabricOptions<SMCF> = TSwarmMessagesDatabaseConnectedFabricOptions<SMCF>
 > extends React.PureComponent<IProps<T, DbType, CB, DBO, MSI, MD, SMSM, SMCF, SMCFO>, IState<T, DbType, DBO, MSI, MD>> {
