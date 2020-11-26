@@ -32,11 +32,7 @@ import {
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import validateUserIdentifier from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier';
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
-import {
-  ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions,
-  ISwarmMessagesDatabaseCacheOptions,
-  ISwarmMessagesDatabaseCache,
-} from './swarm-messages-database.types';
+import { ISwarmMessagesDatabaseCacheOptions, ISwarmMessagesDatabaseCache } from './swarm-messages-database.types';
 import { isConstructor } from '../../utils/common-utils/common-utils-classes';
 import {
   ESwarmMessagesDatabaseCacheEventsNames,
@@ -56,11 +52,7 @@ import {
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { OmitFirstArg } from '../../types/helper.types';
 import { ISwarmMessagesDatabaseMessagesCollectorOptions } from './swarm-messages-database.types';
-import {
-  ISwarmMessagesDatabaseConnector,
-  ISwarmMessagesDatabaseCacheConstructor,
-  ISwarmMessagesDatabaseMessagesCollectorFabric,
-} from './swarm-messages-database.types';
+import { ISwarmMessagesDatabaseConnector, ISwarmMessagesDatabaseMessagesCollectorFabric } from './swarm-messages-database.types';
 
 export class SwarmMessagesDatabase<
   P extends ESwarmStoreConnector,
@@ -93,7 +85,50 @@ export class SwarmMessagesDatabase<
   >,
   SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>,
   MD extends ISwarmMessageInstanceDecrypted,
-  SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>
+  SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
+  DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>,
+  DCCRT extends ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM>,
+  SMDMCF extends ISwarmMessagesDatabaseMessagesCollectorFabric<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO,
+    CO,
+    ConnectorMain,
+    CFO,
+    MSI,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS,
+    MD,
+    SMSM
+  >,
+  OPT extends ISwarmMessagesDatabaseConnectOptions<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO,
+    CO,
+    ConnectorMain,
+    CFO,
+    MSI,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS,
+    MD,
+    SMSM,
+    DCO,
+    DCCRT,
+    SMDMCF
+  >
 > implements
     ISwarmMessagesDatabaseConnector<
       P,
@@ -112,7 +147,11 @@ export class SwarmMessagesDatabase<
       O,
       SMS,
       MD,
-      SMSM
+      SMSM,
+      DCO,
+      DCCRT,
+      SMDMCF,
+      OPT
     > {
   get dbName(): DBO['dbName'] | undefined {
     return this._dbName;
@@ -157,7 +196,7 @@ export class SwarmMessagesDatabase<
     return this._dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE;
   }
 
-  protected get _swarmMessagesCacheClassFromOptions(): ISwarmMessagesDatabaseCacheConstructor<P, T, DbType, DBO, MD, SMSM> {
+  protected get _swarmMessagesCacheClassFromOptions(): OPT['cacheOptions']['cacheConstructor'] {
     const SwarmMessagesCacheConstructor = this._cacheOptions?.cacheConstructor;
 
     if (!SwarmMessagesCacheConstructor) {
@@ -196,7 +235,7 @@ export class SwarmMessagesDatabase<
    * @type {ISwarmMessagesDatabaseCache<P, DbType>}
    * @memberof SwarmMessagesDatabase
    */
-  protected _swarmMessagesCache: ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM> | undefined;
+  protected _swarmMessagesCache: DCCRT | undefined;
 
   /**
    * Options for the database which used for
@@ -236,27 +275,9 @@ export class SwarmMessagesDatabase<
    *   >}
    * @memberof SwarmMessagesDatabase
    */
-  protected _swarmMessagesCollectorFabric?: ISwarmMessagesDatabaseMessagesCollectorFabric<
-    P,
-    T,
-    DbType,
-    DBO,
-    ConnectorBasic,
-    PO,
-    CO,
-    ConnectorMain,
-    CFO,
-    MSI,
-    GAC,
-    MCF,
-    ACO,
-    O,
-    SMS,
-    MD,
-    SMSM
-  >;
+  protected _swarmMessagesCollectorFabric?: SMDMCF;
 
-  protected _cacheOptions?: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, T, DbType, DBO, MD, SMSM>;
+  protected _cacheOptions?: OPT['cacheOptions'];
 
   protected _isReady: boolean = false;
 
@@ -271,27 +292,7 @@ export class SwarmMessagesDatabase<
    */
   protected _messagesCached: TSwarmMessageDatabaseMessagesCached<P, DbType, MD> | undefined;
 
-  async connect(
-    options: ISwarmMessagesDatabaseConnectOptions<
-      P,
-      T,
-      DbType,
-      DBO,
-      ConnectorBasic,
-      PO,
-      CO,
-      ConnectorMain,
-      CFO,
-      MSI,
-      GAC,
-      MCF,
-      ACO,
-      O,
-      SMS,
-      MD,
-      SMSM
-    >
-  ): Promise<void> {
+  async connect(options: OPT): Promise<void> {
     this._handleOptions(options);
     await this._openDatabaseInstance();
     await this._startSwarmMessagesCache();
@@ -402,27 +403,7 @@ export class SwarmMessagesDatabase<
     return true;
   }
 
-  protected _validateOptions(
-    options: ISwarmMessagesDatabaseConnectOptions<
-      P,
-      T,
-      DbType,
-      DBO,
-      ConnectorBasic,
-      PO,
-      CO,
-      ConnectorMain,
-      CFO,
-      MSI,
-      GAC,
-      MCF,
-      ACO,
-      O,
-      SMS,
-      MD,
-      SMSM
-    >
-  ): void {
+  protected _validateOptions(options: OPT): void {
     assert(!!options, 'An options object must be provided');
     assert(typeof options === 'object', 'Options must be an object');
     assert(!!options.dbOptions, 'An options for database must be provided');
@@ -445,36 +426,14 @@ export class SwarmMessagesDatabase<
     this._currentUserOptons = optionsUser;
   }
 
-  protected _setOptions(
-    options: ISwarmMessagesDatabaseConnectOptions<
-      P,
-      T,
-      DbType,
-      DBO,
-      ConnectorBasic,
-      PO,
-      CO,
-      ConnectorMain,
-      CFO,
-      MSI,
-      GAC,
-      MCF,
-      ACO,
-      O,
-      SMS,
-      MD,
-      SMSM
-    >
-  ): void {
+  protected _setOptions(options: OPT): void {
     this._setDbOptions(options.dbOptions);
     this._swarmMessageStore = options.swarmMessageStore;
     this._swarmMessagesCollectorFabric = options.swarmMessagesCollectorFabric;
     this._setUserOptions(options.user);
   }
 
-  protected _validateCacheOptions(
-    options?: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, T, DbType, DBO, MD, SMSM>
-  ): void {
+  protected _validateCacheOptions(options?: OPT['cacheOptions']): void {
     if (!options) {
       return;
     }
@@ -484,9 +443,7 @@ export class SwarmMessagesDatabase<
     }
   }
 
-  protected _setCacheOptions(
-    options: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, T, DbType, DBO, MD, SMSM>
-  ): void {
+  protected _setCacheOptions(options: OPT['cacheOptions']): void {
     this._cacheOptions = options;
   }
 
@@ -498,27 +455,7 @@ export class SwarmMessagesDatabase<
    * @param {ISwarmMessage_handleDatabaseClosedsDatabaseConnectOptions<P>} options
    * @memberof SwarmMessagesDatabase
    */
-  protected _handleOptions(
-    options: ISwarmMessagesDatabaseConnectOptions<
-      P,
-      T,
-      DbType,
-      DBO,
-      ConnectorBasic,
-      PO,
-      CO,
-      ConnectorMain,
-      CFO,
-      MSI,
-      GAC,
-      MCF,
-      ACO,
-      O,
-      SMS,
-      MD,
-      SMSM
-    >
-  ): void {
+  protected _handleOptions(options: OPT): void {
     this._validateOptions(options);
     this._setOptions(options);
     if (options.cacheOptions) {
@@ -921,7 +858,7 @@ export class SwarmMessagesDatabase<
     return this._swarmMessagesCollectorFabric(this._getOptionsForSwarmMessagesCollectorFabric());
   }
 
-  protected _getSwarmMessagesCacheOptions(): ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM> {
+  protected _getSwarmMessagesCacheOptions(): DCO {
     if (!this._dbType) {
       throw new Error('Failed to defined database type');
     }
@@ -932,7 +869,7 @@ export class SwarmMessagesDatabase<
       dbInstance: this._getSwarmMessageStoreCollectMessages(),
       dbType: this._dbType,
       dbName: this._dbName,
-    };
+    } as DCO;
   }
 
   protected async _startSwarmMessagesCache(): Promise<void> {

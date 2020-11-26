@@ -62,7 +62,8 @@ export class SwarmMessagesDatabaseCache<
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   MD extends ISwarmMessageInstanceDecrypted,
-  SMSM extends ISwarmMessageStoreMessagingMethods<P, T, DbType, MD>
+  SMSM extends ISwarmMessageStoreMessagingMethods<P, T, DbType, MD>,
+  DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>
 > implements ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM> {
   get isReady(): boolean {
     return this._isReady;
@@ -90,7 +91,7 @@ export class SwarmMessagesDatabaseCache<
 
   protected _dbName?: string;
 
-  protected _options: ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM> | undefined;
+  protected _options: DCO | undefined;
 
   protected get _dbInstance(): SMSM | undefined {
     return this._options?.dbInstance;
@@ -148,7 +149,7 @@ export class SwarmMessagesDatabaseCache<
    * @memberof SwarmMessagesDatabaseCache
    */
   protected _defferedPartialCacheUpdatePromise:
-    | ReturnType<SwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM>['_runDefferedMessagesUpdateInCache']>
+    | ReturnType<SwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM, DCO>['_runDefferedMessagesUpdateInCache']>
     | undefined;
 
   /**
@@ -193,7 +194,7 @@ export class SwarmMessagesDatabaseCache<
     return !!this._defferedPartialCacheUpdatePromise;
   }
 
-  constructor(options: ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>) {
+  constructor(options: DCO) {
     this._setOptions(options);
   }
 
@@ -273,7 +274,7 @@ export class SwarmMessagesDatabaseCache<
     return true;
   }
 
-  protected _setOptions(options: ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>): void {
+  protected _setOptions(options: DCO): void {
     this._dbType = options.dbType;
     this._dbName = options.dbName;
     this._options = options;
