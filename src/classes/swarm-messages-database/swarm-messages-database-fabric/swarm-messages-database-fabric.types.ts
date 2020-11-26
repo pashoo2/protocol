@@ -25,6 +25,11 @@ import {
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { ISwarmMessageInstanceEncrypted } from '../../swarm-message/swarm-message-constructor.types';
 import { ESwarmStoreConnector } from 'classes/swarm-store-class/swarm-store-class.const';
+import {
+  ISwarmMessagesDatabaseCacheOptions,
+  ISwarmMessagesDatabaseCache,
+  ISwarmMessagesDatabaseMessagesCollectorFabric,
+} from '../swarm-messages-database.types';
 
 export type TConnectToSwarmMessagesDatabaseReturnType<
   P extends ESwarmStoreConnector,
@@ -116,7 +121,96 @@ export type TConnectToSwarmMessagesDatabaseReturnType<
     ACO,
     O
   > = ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>,
-  SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD> = ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>
+  SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD> = ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
+  DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM> = ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>,
+  DCCRT extends ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM> = ISwarmMessagesDatabaseCache<
+    P,
+    T,
+    DbType,
+    DBO,
+    MD,
+    SMSM
+  >,
+  SMDMCF extends ISwarmMessagesDatabaseMessagesCollectorFabric<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO,
+    CO,
+    ConnectorMain,
+    CFO,
+    MSI,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS,
+    MD,
+    SMSM
+  > = ISwarmMessagesDatabaseMessagesCollectorFabric<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO,
+    CO,
+    ConnectorMain,
+    CFO,
+    MSI,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS,
+    MD,
+    SMSM
+  >,
+  OPT extends ISwarmMessagesDatabaseConnectOptions<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO,
+    CO,
+    ConnectorMain,
+    CFO,
+    MSI,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS,
+    MD,
+    SMSM,
+    DCO,
+    DCCRT,
+    SMDMCF
+  > = ISwarmMessagesDatabaseConnectOptions<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO,
+    CO,
+    ConnectorMain,
+    CFO,
+    MSI,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS,
+    MD,
+    SMSM,
+    DCO,
+    DCCRT,
+    SMDMCF
+  >
 > = ISwarmMessagesDatabaseConnector<
   P,
   T,
@@ -134,7 +228,11 @@ export type TConnectToSwarmMessagesDatabaseReturnType<
   O,
   SMS,
   MD,
-  SMSM
+  SMSM,
+  DCO,
+  DCCRT,
+  SMDMCF,
+  OPT
 >;
 /**
  * Fabric which constructs an instance of the SwarmMessagesDatabase, connect to the database
@@ -251,6 +349,52 @@ export interface ISwarmMessagesDatabaseConnectedFabric<
     ACO,
     O
   > = ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>,
+  DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM> = ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>,
+  DCCRT extends ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM> = ISwarmMessagesDatabaseCache<
+    P,
+    T,
+    DbType,
+    DBO,
+    MD,
+    SMSM
+  >,
+  SMDMCF extends ISwarmMessagesDatabaseMessagesCollectorFabric<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO,
+    CO,
+    ConnectorMain,
+    CFO,
+    MSI,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS,
+    MD,
+    SMSM
+  > = ISwarmMessagesDatabaseMessagesCollectorFabric<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO,
+    CO,
+    ConnectorMain,
+    CFO,
+    MSI,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS,
+    MD,
+    SMSM
+  >,
   ODC extends ISwarmMessagesDatabaseConnectOptions<
     P,
     T,
@@ -268,7 +412,10 @@ export interface ISwarmMessagesDatabaseConnectedFabric<
     O,
     SMS,
     MD,
-    SMSM
+    SMSM,
+    DCO,
+    DCCRT,
+    SMDMCF
   > = ISwarmMessagesDatabaseConnectOptions<
     P,
     T,
@@ -286,7 +433,10 @@ export interface ISwarmMessagesDatabaseConnectedFabric<
     O,
     SMS,
     MD,
-    SMSM
+    SMSM,
+    DCO,
+    DCCRT,
+    SMDMCF
   >,
   RT extends TConnectToSwarmMessagesDatabaseReturnType<
     P,
