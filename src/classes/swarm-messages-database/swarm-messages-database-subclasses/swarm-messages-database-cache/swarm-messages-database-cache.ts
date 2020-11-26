@@ -1178,7 +1178,9 @@ export class SwarmMessagesDatabaseCache<
   }
 
   protected _setActiveDefferedPartialCacheUpdate<ItemType extends T>(
-    activeUpdate: ReturnType<SwarmMessagesDatabaseCache<P, ItemType, DbType, DBO, MD, SMSM>['_runDefferedMessagesUpdateInCache']>
+    activeUpdate: ReturnType<
+      SwarmMessagesDatabaseCache<P, ItemType, DbType, DBO, MD, SMSM, DCO>['_runDefferedMessagesUpdateInCache']
+    >
   ): void {
     this._defferedPartialCacheUpdatePromise = activeUpdate;
   }
