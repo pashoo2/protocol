@@ -204,32 +204,13 @@ export interface ISwarmMessagesDatabaseConnectOptions<
   MD extends ISwarmMessageInstanceDecrypted,
   SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
   DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>,
-  DCCRT extends ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM>,
-  SMDMCF extends ISwarmMessagesDatabaseMessagesCollectorFabric<
-    P,
-    T,
-    DbType,
-    DBO,
-    ConnectorBasic,
-    PO,
-    CO,
-    ConnectorMain,
-    CFO,
-    MSI,
-    GAC,
-    MCF,
-    ACO,
-    O,
-    SMS,
-    MD,
-    SMSM
-  >
+  DCCRT extends ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM>
 > {
   user: ISwarmMessagesDatabaseConnectCurrentUserOptions;
   swarmMessageStore: SMS;
   dbOptions: DBO;
   cacheOptions: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<P, T, DbType, DBO, MD, SMSM, DCO, DCCRT>;
-  swarmMessagesCollectorFabric: SMDMCF;
+  swarmMessagesCollector: SMSM;
 }
 
 export interface ISwarmMessageDatabaseCacheEvents<
@@ -441,25 +422,6 @@ export interface ISwarmMessagesDatabase<
   SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
   DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>,
   DCCRT extends ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM>,
-  SMDMCF extends ISwarmMessagesDatabaseMessagesCollectorFabric<
-    P,
-    T,
-    DbType,
-    DBO,
-    ConnectorBasic,
-    PO,
-    CO,
-    ConnectorMain,
-    CFO,
-    MSI,
-    GAC,
-    MCF,
-    ACO,
-    O,
-    SMS,
-    MD,
-    SMSM
-  >,
   OPT extends ISwarmMessagesDatabaseConnectOptions<
     P,
     T,
@@ -479,8 +441,7 @@ export interface ISwarmMessagesDatabase<
     MD,
     SMSM,
     DCO,
-    DCCRT,
-    SMDMCF
+    DCCRT
   >
 > extends ISwarmMessagesDatabaseBaseImplementation<P, T, DbType, DBO, MSI> {
   /**
@@ -799,25 +760,6 @@ export interface ISwarmMessagesDatabaseConnector<
   SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
   DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>,
   DCCRT extends ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM>,
-  SMDMCF extends ISwarmMessagesDatabaseMessagesCollectorFabric<
-    P,
-    T,
-    DbType,
-    DBO,
-    ConnectorBasic,
-    PO,
-    CO,
-    ConnectorMain,
-    CFO,
-    MSI,
-    GAC,
-    MCF,
-    ACO,
-    O,
-    SMS,
-    MD,
-    SMSM
-  >,
   OPT extends ISwarmMessagesDatabaseConnectOptions<
     P,
     T,
@@ -837,8 +779,7 @@ export interface ISwarmMessagesDatabaseConnector<
     MD,
     SMSM,
     DCO,
-    DCCRT,
-    SMDMCF
+    DCCRT
   >
 > extends ISwarmMessageDatabaseMessagingMethods<P, T, DbType, Exclude<MSI, T>, SMS>,
     ISwarmMessagesDatabaseProperties<P, T, DbType, DBO, MD> {

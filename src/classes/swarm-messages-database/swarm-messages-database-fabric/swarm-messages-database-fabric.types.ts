@@ -25,11 +25,7 @@ import {
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { ISwarmMessageInstanceEncrypted } from '../../swarm-message/swarm-message-constructor.types';
 import { ESwarmStoreConnector } from 'classes/swarm-store-class/swarm-store-class.const';
-import {
-  ISwarmMessagesDatabaseCacheOptions,
-  ISwarmMessagesDatabaseCache,
-  ISwarmMessagesDatabaseMessagesCollectorFabric,
-} from '../swarm-messages-database.types';
+import { ISwarmMessagesDatabaseCacheOptions, ISwarmMessagesDatabaseCache } from '../swarm-messages-database.types';
 
 export type TConnectToSwarmMessagesDatabaseReturnType<
   P extends ESwarmStoreConnector,
@@ -131,43 +127,6 @@ export type TConnectToSwarmMessagesDatabaseReturnType<
     MD,
     SMSM
   >,
-  SMDMCF extends ISwarmMessagesDatabaseMessagesCollectorFabric<
-    P,
-    T,
-    DbType,
-    DBO,
-    ConnectorBasic,
-    PO,
-    CO,
-    ConnectorMain,
-    CFO,
-    MSI,
-    GAC,
-    MCF,
-    ACO,
-    O,
-    SMS,
-    MD,
-    SMSM
-  > = ISwarmMessagesDatabaseMessagesCollectorFabric<
-    P,
-    T,
-    DbType,
-    DBO,
-    ConnectorBasic,
-    PO,
-    CO,
-    ConnectorMain,
-    CFO,
-    MSI,
-    GAC,
-    MCF,
-    ACO,
-    O,
-    SMS,
-    MD,
-    SMSM
-  >,
   OPT extends ISwarmMessagesDatabaseConnectOptions<
     P,
     T,
@@ -187,8 +146,7 @@ export type TConnectToSwarmMessagesDatabaseReturnType<
     MD,
     SMSM,
     DCO,
-    DCCRT,
-    SMDMCF
+    DCCRT
   > = ISwarmMessagesDatabaseConnectOptions<
     P,
     T,
@@ -208,8 +166,7 @@ export type TConnectToSwarmMessagesDatabaseReturnType<
     MD,
     SMSM,
     DCO,
-    DCCRT,
-    SMDMCF
+    DCCRT
   >
 > = ISwarmMessagesDatabaseConnector<
   P,
@@ -231,7 +188,6 @@ export type TConnectToSwarmMessagesDatabaseReturnType<
   SMSM,
   DCO,
   DCCRT,
-  SMDMCF,
   OPT
 >;
 /**
@@ -250,8 +206,8 @@ export type TConnectToSwarmMessagesDatabaseReturnType<
  * @template GAC
  * @template ACO
  * @template ConnectorBasic
- * @template PO
  * @template CO
+ * @template PO
  * @template ConnectorMain
  * @template CFO
  * @template O
@@ -358,43 +314,6 @@ export interface ISwarmMessagesDatabaseConnectedFabric<
     ACO,
     O
   > = ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>,
-  SMDMCF extends ISwarmMessagesDatabaseMessagesCollectorFabric<
-    P,
-    T,
-    DbType,
-    DBO,
-    ConnectorBasic,
-    PO,
-    CO,
-    ConnectorMain,
-    CFO,
-    MSI,
-    GAC,
-    MCF,
-    ACO,
-    O,
-    SMS,
-    MD,
-    SMSM
-  > = ISwarmMessagesDatabaseMessagesCollectorFabric<
-    P,
-    T,
-    DbType,
-    DBO,
-    ConnectorBasic,
-    PO,
-    CO,
-    ConnectorMain,
-    CFO,
-    MSI,
-    GAC,
-    MCF,
-    ACO,
-    O,
-    SMS,
-    MD,
-    SMSM
-  >,
   ODC extends ISwarmMessagesDatabaseConnectOptions<
     P,
     T,
@@ -414,8 +333,7 @@ export interface ISwarmMessagesDatabaseConnectedFabric<
     MD,
     SMSM,
     DCO,
-    DCCRT,
-    SMDMCF
+    DCCRT
   > = ISwarmMessagesDatabaseConnectOptions<
     P,
     T,
@@ -435,8 +353,7 @@ export interface ISwarmMessagesDatabaseConnectedFabric<
     MD,
     SMSM,
     DCO,
-    DCCRT,
-    SMDMCF
+    DCCRT
   >,
   RT extends TConnectToSwarmMessagesDatabaseReturnType<
     P,
@@ -499,11 +416,9 @@ export type TSwarmMessagesDatabaseConnectedFabricOptions<
     any,
     any,
     any,
-    any,
     any
   >
 > = IF extends ISwarmMessagesDatabaseConnectedFabric<
-  any,
   any,
   any,
   any,

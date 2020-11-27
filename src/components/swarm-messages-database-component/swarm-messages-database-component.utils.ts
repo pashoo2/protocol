@@ -1,5 +1,10 @@
 import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
-import { TSwarmMessageDatabaseMessagesCached } from '../../classes/swarm-messages-database/swarm-messages-database.types';
+import {
+  TSwarmMessageDatabaseMessagesCached,
+  ISwarmMessagesDatabaseMessagesCollector,
+  ISwarmMessagesDatabaseCacheOptions,
+  ISwarmMessagesDatabaseCache,
+} from '../../classes/swarm-messages-database/swarm-messages-database.types';
 import {
   ISwarmMessageInstanceDecrypted,
   TSwarmMessageSerialized,
@@ -27,7 +32,31 @@ export const setMessageListener = <
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   MSI extends TSwarmMessageInstance | T,
   MD extends ISwarmMessageInstanceDecrypted,
-  DB extends ISwarmMessagesDatabaseConnector<P, T, DbType, DBO, any, any, any, any, any, MSI, any, any, any, any, any, MD, any>
+  SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
+  DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>,
+  DCCRT extends ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM>,
+  DB extends ISwarmMessagesDatabaseConnector<
+    P,
+    T,
+    DbType,
+    DBO,
+    never,
+    never,
+    never,
+    never,
+    never,
+    MSI,
+    never,
+    never,
+    never,
+    never,
+    never,
+    MD,
+    SMSM,
+    DCO,
+    DCCRT,
+    never
+  >
 >(
   db: DB,
   messagesListener: (message: ISwarmMessagesDatabaseMessageDescription<P>) => void
@@ -59,7 +88,31 @@ export const setMessageDeleteListener = <
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   MSI extends TSwarmMessageInstance | T,
   MD extends ISwarmMessageInstanceDecrypted,
-  DB extends ISwarmMessagesDatabaseConnector<P, T, DbType, DBO, any, any, any, any, any, MSI, any, any, any, any, any, MD, any>
+  SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
+  DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>,
+  DCCRT extends ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM>,
+  DB extends ISwarmMessagesDatabaseConnector<
+    P,
+    T,
+    DbType,
+    DBO,
+    never,
+    never,
+    never,
+    never,
+    never,
+    MSI,
+    never,
+    never,
+    never,
+    never,
+    never,
+    MD,
+    SMSM,
+    DCO,
+    DCCRT,
+    never
+  >
 >(
   db: DB,
   messagesDeleteListener: (message: ISwarmMessagesDatabaseDeleteMessageDescription<P>) => void
@@ -95,7 +148,31 @@ export const setCacheUpdateListener = <
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   MSI extends TSwarmMessageInstance | T,
   MD extends ISwarmMessageInstanceDecrypted,
-  DB extends ISwarmMessagesDatabaseConnector<P, T, DbType, DBO, any, any, any, any, any, MSI, any, any, any, any, any, MD, any>
+  SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
+  DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>,
+  DCCRT extends ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM>,
+  DB extends ISwarmMessagesDatabaseConnector<
+    P,
+    T,
+    DbType,
+    DBO,
+    never,
+    never,
+    never,
+    never,
+    never,
+    MSI,
+    never,
+    never,
+    never,
+    never,
+    never,
+    MD,
+    SMSM,
+    DCO,
+    DCCRT,
+    never
+  >
 >(
   db: DB,
   cacheUpdateListener: (messages: TSwarmMessageDatabaseMessagesCached<P, DbType, MD> | undefined) => unknown

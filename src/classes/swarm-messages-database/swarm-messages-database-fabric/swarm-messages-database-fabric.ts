@@ -39,8 +39,8 @@ import { ISwarmMessagesDatabaseMessagesCollectorFabric } from '../swarm-messages
  * @template GAC
  * @template ACO
  * @template ConnectorBasic
- * @template PO
  * @template CO
+ * @template PO
  * @template ConnectorMain
  * @template CFO
  * @template O
@@ -187,43 +187,6 @@ export const swarmMessagesDatabaseConnectedFabric = async <
     MD,
     SMSM
   >,
-  SMDMCF extends ISwarmMessagesDatabaseMessagesCollectorFabric<
-    P,
-    T,
-    DbType,
-    DBO,
-    ConnectorBasic,
-    PO,
-    CO,
-    ConnectorMain,
-    CFO,
-    MSI,
-    GAC,
-    MCF,
-    ACO,
-    O,
-    SMS,
-    MD,
-    SMSM
-  > = ISwarmMessagesDatabaseMessagesCollectorFabric<
-    P,
-    T,
-    DbType,
-    DBO,
-    ConnectorBasic,
-    PO,
-    CO,
-    ConnectorMain,
-    CFO,
-    MSI,
-    GAC,
-    MCF,
-    ACO,
-    O,
-    SMS,
-    MD,
-    SMSM
-  >,
   OPT extends ISwarmMessagesDatabaseConnectOptions<
     P,
     T,
@@ -243,8 +206,7 @@ export const swarmMessagesDatabaseConnectedFabric = async <
     MD,
     SMSM,
     DCO,
-    DCCRT,
-    SMDMCF
+    DCCRT
   > = ISwarmMessagesDatabaseConnectOptions<
     P,
     T,
@@ -264,8 +226,7 @@ export const swarmMessagesDatabaseConnectedFabric = async <
     MD,
     SMSM,
     DCO,
-    DCCRT,
-    SMDMCF
+    DCCRT
   >
 >(
   options: OPT
@@ -289,8 +250,7 @@ export const swarmMessagesDatabaseConnectedFabric = async <
     SMS,
     SMSM,
     DCO,
-    DCCRT,
-    SMDMCF
+    DCCRT
   >
 > => {
   const db = new SwarmMessagesDatabase<
@@ -313,7 +273,6 @@ export const swarmMessagesDatabaseConnectedFabric = async <
     SMSM,
     DCO,
     DCCRT,
-    SMDMCF,
     OPT
   >();
 

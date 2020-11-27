@@ -26,10 +26,10 @@ import {
   ISwarmStoreProviderOptions,
   ISwarmStoreOptionsConnectorFabric,
 } from '../swarm-store-class/swarm-store-class.types';
-import { PromiseResolveType } from '../../types/helper.types';
 import { ISwarmStoreConnector, ISwarmStoreOptionsWithConnectorFabric } from '../swarm-store-class/swarm-store-class.types';
 import { TSwarmStoreConnectorConnectionOptions, ISwarmStoreConnectorBasic } from '../swarm-store-class/swarm-store-class.types';
 import { TSwarmStoreDatabaseEntityAddress, TSwarmStoreDatabaseEntityKey } from '../swarm-store-class/swarm-store-class.types';
+import { PromiseResolveType } from '../../types/promise.types';
 import {
   ISwarmStoreConnectorBasicWithEntriesCount,
   ISwarmStoreConnectorWithEntriesCount,
@@ -192,7 +192,7 @@ export interface ISwarmMessageStoreOptionsWithConnectorFabric<
   PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
   CO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, PO>,
   ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, PO>,
-  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain> | undefined,
   MSI extends TSwarmMessageInstance | T,
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,

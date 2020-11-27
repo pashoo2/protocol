@@ -63,7 +63,16 @@ export class ConnectToSwarmImmediate<
   SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
   DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>,
   DCCRT extends ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM>,
-  SMDCC extends ISwarmMessagesDatabaseCacheConstructor<P, T, DbType, DBO, MD, SMSM, DCO, DCCRT>
+  SMDCC extends ISwarmMessagesDatabaseCacheConstructor<
+    P,
+    T,
+    DbType,
+    DBO,
+    MD,
+    SMSM,
+    DCO,
+    DCCRT
+  > = ISwarmMessagesDatabaseCacheConstructor<P, T, DbType, DBO, MD, SMSM, DCO, DCCRT>
 > extends React.Component<TConnectToSwarmImmediateProps<DbType, T, DBO, CBO, MD, SMSM, DCO, DCCRT, SMDCC>> {
   render() {
     const {
@@ -74,7 +83,7 @@ export class ConnectToSwarmImmediate<
       swarmMessagesDatabaseCacheOptions,
     } = this.props;
     return (
-      <ConnectToSwarm<DbType, T, DBO, CBO, MI, MD, SMSM>
+      <ConnectToSwarm<DbType, T, DBO, true, CBO, MI, MD, SMSM, DCO, DCCRT, SMDCC>
         connectionBridgeOptions={connectionBridgeOptions}
         userCredentialsList={CREDENTIALS}
         userCredentialsToConnectImmediate={userCredentials}

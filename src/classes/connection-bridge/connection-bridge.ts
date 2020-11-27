@@ -73,9 +73,9 @@ import {
 import { getMainConnectorFabricDefault } from './connection-bridge.utils';
 import { TSwarmStoreConnectorConstructorOptions } from '../swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
-import { PromiseResolveType } from '../../types/helper.types';
 import { TConnectionBridgeCFODefault, TConnectionBridgeOptionsAuthCredentials } from './connection-bridge.types';
 import { calculateHash } from '../../utils/hash-calculation-utils/hash-calculation-utils';
+import { PromiseResolveType } from '../../types/promise.types';
 import {
   ISwarmMessageDatabaseConstructors,
   ISwarmMessageStoreOptionsWithConnectorFabric,

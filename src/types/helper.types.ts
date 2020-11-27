@@ -33,4 +33,8 @@ export type OmitFirstArg<F extends Function> = F extends (x: any, ...args: infer
 
 export type ArrayElement<ArrayType extends readonly unknown[]> = ArrayType[number];
 
-export type PromiseResolveType<T> = T extends PromiseLike<infer U> ? U : T;
+export type ConstructorOptionsType<T extends new (...args: any[]) => unknown> = T extends new (...args: infer I) => unknown
+  ? I
+  : never;
+
+export type ConstructorArgumentType<T extends new (arg: any) => unknown> = T extends new (arg: infer I) => unknown ? I : never;

@@ -51,8 +51,7 @@ import {
 } from '../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { OmitFirstArg } from '../../types/helper.types';
-import { ISwarmMessagesDatabaseMessagesCollectorOptions } from './swarm-messages-database.types';
-import { ISwarmMessagesDatabaseConnector, ISwarmMessagesDatabaseMessagesCollectorFabric } from './swarm-messages-database.types';
+import { ISwarmMessagesDatabaseConnector } from './swarm-messages-database.types';
 
 export class SwarmMessagesDatabase<
   P extends ESwarmStoreConnector,
@@ -88,25 +87,6 @@ export class SwarmMessagesDatabase<
   SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
   DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>,
   DCCRT extends ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM>,
-  SMDMCF extends ISwarmMessagesDatabaseMessagesCollectorFabric<
-    P,
-    T,
-    DbType,
-    DBO,
-    ConnectorBasic,
-    PO,
-    CO,
-    ConnectorMain,
-    CFO,
-    MSI,
-    GAC,
-    MCF,
-    ACO,
-    O,
-    SMS,
-    MD,
-    SMSM
-  >,
   OPT extends ISwarmMessagesDatabaseConnectOptions<
     P,
     T,
@@ -126,8 +106,7 @@ export class SwarmMessagesDatabase<
     MD,
     SMSM,
     DCO,
-    DCCRT,
-    SMDMCF
+    DCCRT
   >
 > implements
     ISwarmMessagesDatabaseConnector<
@@ -150,7 +129,6 @@ export class SwarmMessagesDatabase<
       SMSM,
       DCO,
       DCCRT,
-      SMDMCF,
       OPT
     > {
   get dbName(): DBO['dbName'] | undefined {
@@ -249,33 +227,7 @@ export class SwarmMessagesDatabase<
 
   protected _currentUserOptons?: ISwarmMessagesDatabaseConnectCurrentUserOptions;
 
-  /**
-   * Fabric for constructing an instance used to query the database
-   * for messages fetching.
-   *
-   * @protected
-   * @type {ISwarmMessagesDatabaseMessagesCollectorFabric<
-   *     P,
-   *     T,
-   *     DbType,
-   *     DBO,
-   *     ConnectorBasic,
-   *     PO,
-   *     CO,
-   *     ConnectorMain,
-   *     CFO,
-   *     MSI,
-   *     GAC,
-   *     MCF,
-   *     ACO,
-   *     O,
-   *     SMS,
-   *     MD,
-   *     SMSM
-   *   >}
-   * @memberof SwarmMessagesDatabase
-   */
-  protected _swarmMessagesCollectorFabric?: SMDMCF;
+  protected _swarmMessagesCollector?: SMSM;
 
   protected _cacheOptions?: OPT['cacheOptions'];
 
@@ -412,7 +364,7 @@ export class SwarmMessagesDatabase<
     assert(options.swarmMessageStore.isReady, 'An implementation of the ISwarmMessageStore interface must be ready to use');
     assert(!!options.user, 'The current user options must be defined');
     assert(typeof options.user === 'object', 'The current user options should be an object');
-    assert(options.swarmMessagesCollectorFabric, 'Swarm messages collector fabric should be passed in options');
+    assert(options.swarmMessagesCollector, 'Swarm messages collector should be passed in options');
     validateUserIdentifier(options.user.userId);
   }
 
@@ -429,7 +381,7 @@ export class SwarmMessagesDatabase<
   protected _setOptions(options: OPT): void {
     this._setDbOptions(options.dbOptions);
     this._swarmMessageStore = options.swarmMessageStore;
-    this._swarmMessagesCollectorFabric = options.swarmMessagesCollectorFabric;
+    this._swarmMessagesCollector = options.swarmMessagesCollector;
     this._setUserOptions(options.user);
   }
 
@@ -826,36 +778,11 @@ export class SwarmMessagesDatabase<
     }
   }
 
-  protected _getOptionsForSwarmMessagesCollectorFabric(): ISwarmMessagesDatabaseMessagesCollectorOptions<
-    P,
-    T,
-    DbType,
-    DBO,
-    ConnectorBasic,
-    PO,
-    CO,
-    ConnectorMain,
-    CFO,
-    MSI,
-    GAC,
-    MCF,
-    ACO,
-    O,
-    SMS
-  > {
-    if (!this._swarmMessageStore) {
-      throw new Error('Swarm messags cache should be defined');
-    }
-    return {
-      swarmMessageStore: this._swarmMessageStore,
-    };
-  }
-
   protected _getSwarmMessageStoreCollectMessages(): SMSM {
-    if (!this._swarmMessagesCollectorFabric) {
-      throw new Error('Swarm messages collector fabric should be defined');
+    if (!this._swarmMessagesCollector) {
+      throw new Error('Swarm messages collector should be defined');
     }
-    return this._swarmMessagesCollectorFabric(this._getOptionsForSwarmMessagesCollectorFabric());
+    return this._swarmMessagesCollector;
   }
 
   protected _getSwarmMessagesCacheOptions(): DCO {

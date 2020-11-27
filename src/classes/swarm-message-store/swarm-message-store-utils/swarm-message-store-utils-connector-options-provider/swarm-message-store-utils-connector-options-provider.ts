@@ -7,15 +7,12 @@ import { ISwarmStoreConnectorOrbitDBConnectionOptions } from '../../../swarm-sto
 import { ipfsUtilsConnectBasic } from '../../../../utils/ipfs-utils/ipfs-utils';
 import { getMessageValidator } from '../swarm-message-store-utils-common/swarm-message-store-utils-common';
 import { ISwarmStoreConnectorOrbitDBOptions } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.types';
-import { ISwarmStoreConnectorOrbitDbDatabaseOptions } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import {
   TSwarmStoreDatabaseType,
   TSwarmStoreConnectorConnectionOptions,
   ISwarmStoreProviderOptions,
   ISwarmStoreOptionsConnectorFabric,
   ISwarmStoreConnector,
-  ISwarmStoreDatabasesOptions,
-  ISwarmStoreDatabasesCommonStatusList,
 } from '../../../swarm-store-class/swarm-store-class.types';
 import { ISwarmStoreConnectorBasic } from '../../../swarm-store-class/swarm-store-class.types';
 import {
@@ -24,8 +21,8 @@ import {
   TSwarmMessagesStoreGrantAccessCallback,
 } from '../../swarm-message-store.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
-import { PromiseResolveType } from '../../../../types/helper.types';
 import { ISwarmStoreDatabaseBaseOptions, TSwarmStoreDatabaseOptions } from '../../../swarm-store-class/swarm-store-class.types';
+import { PromiseResolveType } from '../../../../types/promise.types';
 
 /**
  * Add access control options for OrbitDB provided

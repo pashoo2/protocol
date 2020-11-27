@@ -20,6 +20,7 @@ import {
   ISwarmMessagesDatabaseMessagesCollector,
 } from '../../classes/swarm-messages-database/swarm-messages-database.types';
 import { SwarmMessagesDatabaseCache } from '../../classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache/swarm-messages-database-cache';
+import { ConstructorArgumentType } from '../../types/helper.types';
 import {
   ISwarmMessagesDatabaseCacheOptions,
   ISwarmMessagesDatabaseCacheConstructor,
@@ -145,16 +146,7 @@ const SWARM_MESSAGES_DATABASE_CACHE_CONSTRUCTOR_INSTANCE = SwarmMessagesDatabase
     ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
     ISwarmMessageInstanceDecrypted
   >,
-  ISwarmMessagesDatabaseCacheOptions<
-    ESwarmStoreConnector.OrbitDB,
-    ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
-    ISwarmMessageInstanceDecrypted,
-    ISwarmMessagesDatabaseMessagesCollector<
-      ESwarmStoreConnector.OrbitDB,
-      ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
-      ISwarmMessageInstanceDecrypted
-    >
-  >,
+  ConstructorArgumentType<typeof SwarmMessagesDatabaseCache>,
   InstanceType<typeof SwarmMessagesDatabaseCache>
 >;
 
@@ -173,16 +165,7 @@ export const CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_OPTIONS: IS
     ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
     ISwarmMessageInstanceDecrypted
   >,
-  ISwarmMessagesDatabaseCacheOptions<
-    ESwarmStoreConnector.OrbitDB,
-    ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
-    ISwarmMessageInstanceDecrypted,
-    ISwarmMessagesDatabaseMessagesCollector<
-      ESwarmStoreConnector.OrbitDB,
-      ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
-      ISwarmMessageInstanceDecrypted
-    >
-  >,
+  ConstructorArgumentType<typeof SWARM_MESSAGES_DATABASE_CACHE_CONSTRUCTOR_INSTANCE>,
   InstanceType<typeof SWARM_MESSAGES_DATABASE_CACHE_CONSTRUCTOR_INSTANCE>
 > = {
   cacheConstructor: SWARM_MESSAGES_DATABASE_CACHE_CONSTRUCTOR_INSTANCE,
