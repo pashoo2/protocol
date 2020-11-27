@@ -541,7 +541,7 @@ export class ConnectToSwarm<
       TConnectionBridgeOptionsConnectorConnectionOptions<CBO>,
       TConnectionBridgeOptionsProviderOptions<CBO>,
       TConnectionBridgeOptionsConnectorMain<CBO>,
-      any,
+      TConnectionBridgeOptionsConnectorFabricOptions<CBO>,
       MI | T,
       TConnectionBridgeOptionsGrandAccessCallback<CBO>,
       TConnectionBridgeOptionsConstructorWithEncryptedCacheFabric<CBO>,
@@ -585,19 +585,34 @@ export class ConnectToSwarm<
     };
   };
 
-  protected createDatabaseConnector = () => {
-    const { userId } = this.state;
-    const { dbo, swarmMessagesDatabaseCacheOptions } = this.props;
-    if (!userId) {
-      throw new Error('User identity should not be empty');
-    }
-
-    const db = await swarmMessagesDatabaseConnectedFabric();
+  protected createDatabaseConnector = async (dbOptions: DBO) => {
+    return swarmMessagesDatabaseConnectedFabric<
+      P,
+      T,
+      DbType,
+      DBO,
+      MI | T,
+      any,
+      MD,
+      TConnectionBridgeOptionsGrandAccessCallback<CBO>,
+      TConnectionBridgeOptionsAccessControlOptions<CBO>,
+      TConnectionBridgeOptionsConnectorBasic<CBO>,
+      TConnectionBridgeOptionsConnectorConnectionOptions<CBO>,
+      TConnectionBridgeOptionsProviderOptions<CBO>,
+      TConnectionBridgeOptionsConnectorMain<CBO>,
+      TConnectionBridgeOptionsConnectorFabricOptions<CBO>,
+      any,
+      any,
+      SMSM,
+      DCO,
+      DCCRT,
+      any
+    >(this.getOptionsForSwarmMessagesDatabaseConnectedFabric(dbOptions));
   };
 
   protected renderSwarmMessagesDatabasesList() {
     const { swarmStoreMessagesDbOptionsList, connectionBridge } = this.state;
-    const { dbo, swarmMessagesDatabaseCacheOptions } = this.props;
+    const { dbo } = this.props;
 
     if (!connectionBridge) {
       throw new Error('Connection bridge should be defined');
@@ -608,7 +623,9 @@ export class ConnectToSwarm<
           <h4>List of swarm messages databases:</h4>
           {swarmStoreMessagesDbOptionsList.map((dbsOptions) => {
             const { userId } = this.state;
+            const createDatabaseConnector = this.createDatabaseConnector;
 
+            type TCreateDatabaseConnector = PromiseResolveType<ReturnType<typeof createDatabaseConnector>>;
             if (!userId) {
               throw new Error('User identity should not be empty');
             }
@@ -622,13 +639,15 @@ export class ConnectToSwarm<
                 MD,
                 SMSM,
                 DCO,
-                DCCRT
+                DCCRT,
+                TCreateDatabaseConnector
               >
                 key={dbsOptions.dbName}
                 userId={userId}
                 databaseOptions={dbsOptions}
                 connectionBridge={connectionBridge}
                 isOpenImmediate={dbsOptions.dbName === dbo?.dbName}
+                createDb={() => this.createDatabaseConnector(dbsOptions)}
               />
             );
           })}

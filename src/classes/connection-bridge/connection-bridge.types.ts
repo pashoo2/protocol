@@ -604,7 +604,7 @@ export type TConnectionBridgeOptionsConnectorFabricOptions<
     any
   >
 > = T extends IConnectionBridgeOptions<any, any, any, any, any, any, any, any, any, any, any, any, infer CFO, any, any>
-  ? CFO
+  ? NonNullable<CFO>
   : never;
 
 export type TConnectionBridgeOptionsConnectorBasicFabric<

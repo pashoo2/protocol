@@ -10,7 +10,11 @@ import {
   ISwarmMessageStoreAccessControlOptions,
   ISwarmMessageStoreOptionsWithConnectorFabric,
 } from '../../swarm-message-store/swarm-message-store.types';
-import { TSwarmMessageSerialized, TSwarmMessageInstance } from '../../swarm-message/swarm-message-constructor.types';
+import {
+  TSwarmMessageSerialized,
+  TSwarmMessageInstance,
+  ISwarmMessageInstanceDecrypted,
+} from '../../swarm-message/swarm-message-constructor.types';
 import { TSwarmStoreDatabaseOptions, TSwarmStoreDatabaseType } from '../../swarm-store-class/swarm-store-class.types';
 import {
   ISwarmStoreConnectorBasic,
@@ -93,34 +97,33 @@ export const swarmMessagesDatabaseConnectedFabric = async <
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType> = TSwarmStoreDatabaseOptions<P, T, DbType>,
   MSI extends TSwarmMessageInstance | T = TSwarmMessageInstance | T,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined = undefined,
-  MD extends Exclude<MSI, T | ISwarmMessageInstanceEncrypted> &
-    Exclude<Exclude<MSI, T>, ISwarmMessageInstanceEncrypted> = Exclude<MSI, T | ISwarmMessageInstanceEncrypted> &
+  MD extends ISwarmMessageInstanceDecrypted = Exclude<MSI, T | ISwarmMessageInstanceEncrypted> &
     Exclude<Exclude<MSI, T>, ISwarmMessageInstanceEncrypted>,
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI> = TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
   ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined = undefined,
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO> = ISwarmStoreConnectorBasic<P, T, DbType, DBO>,
-  PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic> = TSwarmStoreConnectorConnectionOptions<
+  CO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic> = TSwarmStoreConnectorConnectionOptions<
     P,
     T,
     DbType,
     DBO,
     ConnectorBasic
   >,
-  CO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, PO> = ISwarmStoreProviderOptions<
+  PO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, CO> = ISwarmStoreProviderOptions<
     P,
     T,
     DbType,
     DBO,
     ConnectorBasic,
-    PO
+    CO
   >,
-  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, PO> = ISwarmStoreConnector<
+  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, CO> = ISwarmStoreConnector<
     P,
     T,
     DbType,
     DBO,
     ConnectorBasic,
-    PO
+    CO
   >,
   CFO extends ISwarmStoreOptionsConnectorFabric<
     P,
@@ -128,18 +131,18 @@ export const swarmMessagesDatabaseConnectedFabric = async <
     DbType,
     DBO,
     ConnectorBasic,
-    PO,
     CO,
+    PO,
     ConnectorMain
-  > = ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
+  > = ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain>,
   O extends ISwarmMessageStoreOptionsWithConnectorFabric<
     P,
     T,
     DbType,
     DBO,
     ConnectorBasic,
-    PO,
     CO,
+    PO,
     ConnectorMain,
     CFO,
     MSI,
@@ -152,8 +155,8 @@ export const swarmMessagesDatabaseConnectedFabric = async <
     DbType,
     DBO,
     ConnectorBasic,
-    PO,
     CO,
+    PO,
     ConnectorMain,
     CFO,
     MSI,
@@ -167,8 +170,8 @@ export const swarmMessagesDatabaseConnectedFabric = async <
     DbType,
     DBO,
     ConnectorBasic,
-    PO,
     CO,
+    PO,
     ConnectorMain,
     CFO,
     MSI,
@@ -176,7 +179,7 @@ export const swarmMessagesDatabaseConnectedFabric = async <
     MCF,
     ACO,
     O
-  > = ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>,
+  > = ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>,
   SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD> = ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
   DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM> = ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>,
   DCCRT extends ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM> = ISwarmMessagesDatabaseCache<
@@ -193,8 +196,8 @@ export const swarmMessagesDatabaseConnectedFabric = async <
     DbType,
     DBO,
     ConnectorBasic,
-    PO,
     CO,
+    PO,
     ConnectorMain,
     CFO,
     MSI,
@@ -213,8 +216,8 @@ export const swarmMessagesDatabaseConnectedFabric = async <
     DbType,
     DBO,
     ConnectorBasic,
-    PO,
     CO,
+    PO,
     ConnectorMain,
     CFO,
     MSI,
@@ -242,8 +245,8 @@ export const swarmMessagesDatabaseConnectedFabric = async <
     GAC,
     ACO,
     ConnectorBasic,
-    PO,
     CO,
+    PO,
     ConnectorMain,
     CFO,
     O,
@@ -259,8 +262,8 @@ export const swarmMessagesDatabaseConnectedFabric = async <
     DbType,
     DBO,
     ConnectorBasic,
-    PO,
     CO,
+    PO,
     ConnectorMain,
     CFO,
     MSI,
