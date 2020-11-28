@@ -1,1 +1,4 @@
-export { createSwarmMessagesDatabaseMessagesCollectorInstance } from './swarm-messages-database-messages-collector';
+export {
+  createSwarmMessagesDatabaseMessagesCollectorInstance,
+  SwarmMessagesDatabaseMessagesCollector,
+} from './swarm-messages-database-messages-collector';

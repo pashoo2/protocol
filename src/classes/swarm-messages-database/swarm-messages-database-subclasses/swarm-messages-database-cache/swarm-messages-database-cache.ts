@@ -30,7 +30,7 @@ import {
   ISwarmMessageStoreMessageWithMeta,
   ISwarmMessageStoreMessagingMethods,
 } from '../../../swarm-message-store/swarm-message-store.types';
-import { ISwarmMessagesDatabaseCacheOptions, ISwarmMessagesDatabaseMessagesCollector } from '../../swarm-messages-database.types';
+import { ISwarmMessagesDatabaseCacheOptions } from '../../swarm-messages-database.types';
 import {
   SWARM_MESSAGES_DATABASE_CACHE_PLANNED_CACHE_UPDATE_FAILED_RETRY_DELAY_MS,
   SWARM_MESSAGES_DATABASE_CACHE_PLANNED_CACHE_UPDATE_BATCH_TIMEOUT_MS,
@@ -55,6 +55,7 @@ import { TSwarmMessagesDatabaseMessagesCacheStore } from './swarm-messages-datab
 import { TSwarmMessageSerialized } from '../../../swarm-message/swarm-message-constructor.types';
 import { TSwarmStoreDatabaseOptions } from '../../../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageInstanceDecrypted } from '../../../swarm-message/swarm-message-constructor.types';
+import { ISwarmMessagesDatabaseMessagesCollector } from '../../swarm-messages-database.messages-collector.types';
 
 export class SwarmMessagesDatabaseCache<
   P extends ESwarmStoreConnector,

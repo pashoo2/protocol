@@ -4,7 +4,6 @@ import {
   ISwarmMessagesDatabaseConnectOptions,
   ISwarmMessagesDatabaseReady,
   TSwarmMessageDatabaseMessagesCached,
-  ISwarmMessagesDatabaseMessagesCollector,
 } from './swarm-messages-database.types';
 import { ESwarmStoreConnector, ESwarmStoreEventNames } from '../swarm-store-class/swarm-store-class.const';
 import assert from 'assert';
@@ -52,6 +51,7 @@ import {
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { OmitFirstArg } from '../../types/helper.types';
 import { ISwarmMessagesDatabaseConnector } from './swarm-messages-database.types';
+import { ISwarmMessagesDatabaseMessagesCollector } from './swarm-messages-database.messages-collector.types';
 
 export class SwarmMessagesDatabase<
   P extends ESwarmStoreConnector,

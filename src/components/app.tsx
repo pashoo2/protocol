@@ -7,7 +7,7 @@ import { CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_KEY_VALUE } from './const/c
 import { CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_OPTIONS } from './const/connect-to-swarm.const';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { ESwarmStoreConnector } from '../classes/swarm-store-class/swarm-store-class.const';
-import { ISwarmMessagesDatabaseMessagesCollector } from '../classes/swarm-messages-database/swarm-messages-database.types';
+import { ISwarmMessagesDatabaseMessagesCollector } from '../classes/swarm-messages-database/swarm-messages-database.messages-collector.types';
 import { ConstructorArgumentType } from '../types/helper.types';
 import {
   TSwarmMessageSerialized,

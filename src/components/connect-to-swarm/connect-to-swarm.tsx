@@ -31,10 +31,7 @@ import { swarmMessagesDatabaseConnectedFabric } from '../../classes/swarm-messag
 import { TSwarmMessagesDatabaseConnectedFabricOptions } from '../../classes/swarm-messages-database/swarm-messages-database-fabric/swarm-messages-database-fabric.types';
 import { IUserCredentialsCommon } from '../../types/credentials.types';
 import { TSwarmMessageUserIdentifierSerialized } from '../../classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
-import {
-  ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions,
-  ISwarmMessagesDatabaseMessagesCollector,
-} from '../../classes/swarm-messages-database/swarm-messages-database.types';
+import { ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions } from '../../classes/swarm-messages-database/swarm-messages-database.types';
 import { createSwarmMessagesDatabaseMessagesCollectorInstance } from '../../classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector';
 import { IConnectionBridge } from '../../classes/connection-bridge/connection-bridge.types';
 import { TConnectionBridgeOptionsAccessControlOptions } from '../../classes/connection-bridge/connection-bridge.types-helpers';
@@ -54,6 +51,7 @@ import {
   TConnectionBridgeOptionsConnectorBasic,
   TConnectionBridgeOptionsConnectorConnectionOptions,
 } from '../../classes/connection-bridge/connection-bridge.types-helpers';
+import { ISwarmMessagesDatabaseMessagesCollector } from '../../classes/swarm-messages-database/swarm-messages-database.messages-collector.types';
 
 type P = ESwarmStoreConnector.OrbitDB;
 

@@ -1,7 +1,6 @@
 import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
 import {
   TSwarmMessageDatabaseMessagesCached,
-  ISwarmMessagesDatabaseMessagesCollector,
   ISwarmMessagesDatabaseCacheOptions,
   ISwarmMessagesDatabaseCache,
 } from '../../classes/swarm-messages-database/swarm-messages-database.types';
@@ -24,6 +23,7 @@ import {
   TSwarmStoreDatabaseEntityKey,
   TSwarmStoreDatabaseEntityAddress,
 } from '../../classes/swarm-store-class/swarm-store-class.types';
+import { ISwarmMessagesDatabaseMessagesCollector } from '../../classes/swarm-messages-database/swarm-messages-database.messages-collector.types';
 
 export const setMessageListener = <
   P extends ESwarmStoreConnector,

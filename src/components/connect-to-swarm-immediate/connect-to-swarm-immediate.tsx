@@ -16,10 +16,8 @@ import {
   ISwarmMessagesDatabaseCache,
   ISwarmMessagesDatabaseCacheConstructor,
 } from '../../classes/swarm-messages-database/swarm-messages-database.types';
-import {
-  ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions,
-  ISwarmMessagesDatabaseMessagesCollector,
-} from '../../classes/swarm-messages-database/swarm-messages-database.types';
+import { ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions } from '../../classes/swarm-messages-database/swarm-messages-database.types';
+import { ISwarmMessagesDatabaseMessagesCollector } from '../../classes/swarm-messages-database/swarm-messages-database.messages-collector.types';
 
 type P = ESwarmStoreConnector.OrbitDB;
 

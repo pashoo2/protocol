@@ -1,6 +1,5 @@
 import {
   ISwarmMessagesDatabaseConnectOptions,
-  ISwarmMessagesDatabaseMessagesCollector,
   ISwarmMessagesDatabaseCacheOptions,
   ISwarmMessagesDatabaseCache,
 } from '../swarm-messages-database.types';
@@ -28,7 +27,8 @@ import { ISwarmMessageInstanceEncrypted } from '../../swarm-message/swarm-messag
 import { SwarmMessagesDatabase } from '../swarm-messages-database';
 import { ESwarmStoreConnector } from 'classes/swarm-store-class/swarm-store-class.const';
 import { TConnectToSwarmMessagesDatabaseReturnType } from './swarm-messages-database-fabric.types';
-import { ISwarmMessagesDatabaseMessagesCollectorFabric } from '../swarm-messages-database.types';
+import { ISwarmMessagesDatabaseMessagesCollectorFabric } from '../swarm-messages-database.messages-collector.types';
+import { ISwarmMessagesDatabaseMessagesCollector } from '../swarm-messages-database.messages-collector.types';
 
 /**
  * Constructor of SwarmMessagesDatabase instances

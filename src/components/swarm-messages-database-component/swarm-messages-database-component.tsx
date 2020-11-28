@@ -30,10 +30,8 @@ import { TSwarmStoreDatabaseOptions } from '../../classes/swarm-store-class/swar
 import { IConnectionBridgeUnknown } from '../../classes/connection-bridge/connection-bridge.types';
 import { ISwarmMessagesDatabaseConnectedFabric } from '../../classes/swarm-messages-database/swarm-messages-database-fabric/swarm-messages-database-fabric.types';
 import { TSwarmMessageInstance } from '../../classes/swarm-message/swarm-message-constructor.types';
-import {
-  ISwarmMessagesDatabaseMessagesCollector,
-  ISwarmMessagesDatabaseConnector,
-} from '../../classes/swarm-messages-database/swarm-messages-database.types';
+import { ISwarmMessagesDatabaseConnector } from '../../classes/swarm-messages-database/swarm-messages-database.types';
+import { ISwarmMessagesDatabaseMessagesCollector } from '../../classes/swarm-messages-database/swarm-messages-database.messages-collector.types';
 
 type P = ESwarmStoreConnector.OrbitDB;
 

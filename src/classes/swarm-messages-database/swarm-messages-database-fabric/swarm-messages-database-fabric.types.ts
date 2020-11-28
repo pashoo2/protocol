@@ -1,8 +1,4 @@
-import {
-  ISwarmMessagesDatabaseConnector,
-  ISwarmMessagesDatabaseConnectOptions,
-  ISwarmMessagesDatabaseMessagesCollector,
-} from '../swarm-messages-database.types';
+import { ISwarmMessagesDatabaseConnector, ISwarmMessagesDatabaseConnectOptions } from '../swarm-messages-database.types';
 import {
   ISwarmMessageStore,
   TSwarmMessagesStoreGrantAccessCallback,
@@ -26,6 +22,7 @@ import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../swarm-me
 import { ISwarmMessageInstanceEncrypted } from '../../swarm-message/swarm-message-constructor.types';
 import { ESwarmStoreConnector } from 'classes/swarm-store-class/swarm-store-class.const';
 import { ISwarmMessagesDatabaseCacheOptions, ISwarmMessagesDatabaseCache } from '../swarm-messages-database.types';
+import { ISwarmMessagesDatabaseMessagesCollector } from '../swarm-messages-database.messages-collector.types';
 
 export type TConnectToSwarmMessagesDatabaseReturnType<
   P extends ESwarmStoreConnector,

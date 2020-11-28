@@ -15,16 +15,14 @@ import {
 } from '../../classes/connection-bridge/connection-bridge.types';
 import { TSwarmStoreDatabaseOptions } from 'classes/swarm-store-class/index';
 import { IConnectionBridgeOptionsDefault } from '../../classes/connection-bridge/connection-bridge.types';
-import {
-  ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions,
-  ISwarmMessagesDatabaseMessagesCollector,
-} from '../../classes/swarm-messages-database/swarm-messages-database.types';
+import { ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions } from '../../classes/swarm-messages-database/swarm-messages-database.types';
 import { SwarmMessagesDatabaseCache } from '../../classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache/swarm-messages-database-cache';
 import { ConstructorArgumentType } from '../../types/helper.types';
 import {
   ISwarmMessagesDatabaseCacheOptions,
   ISwarmMessagesDatabaseCacheConstructor,
 } from '../../classes/swarm-messages-database/swarm-messages-database.types';
+import { ISwarmMessagesDatabaseMessagesCollector } from '../../classes/swarm-messages-database/swarm-messages-database.messages-collector.types';
 
 export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY = 'key';
 

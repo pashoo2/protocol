@@ -1,44 +1,38 @@
 import {
   ISwarmMessageStore,
+  ISwarmMessageStoreAccessControlOptions,
+  ISwarmMessageStoreMessageWithMeta,
   ISwarmMessageStoreMessagingMethods,
   ISwarmMessageStoreMessagingRequestWithMetaResult,
+  ISwarmMessageStoreOptionsWithConnectorFabric,
+  TSwarmMessagesStoreGrantAccessCallback,
 } from '../swarm-message-store/swarm-message-store.types';
 import { ESwarmStoreConnector, ESwarmStoreEventNames } from '../swarm-store-class/swarm-store-class.const';
 import {
-  TSwarmStoreDatabaseType,
+  ISwarmStoreConnector,
+  ISwarmStoreConnectorBasic,
+  ISwarmStoreOptionsConnectorFabric,
+  ISwarmStoreProviderOptions,
+  TSwarmStoreConnectorConnectionOptions,
   TSwarmStoreDatabaseEntityAddress,
   TSwarmStoreDatabaseEntityKey,
   TSwarmStoreDatabaseOptions,
+  TSwarmStoreDatabaseType,
 } from '../swarm-store-class/swarm-store-class.types';
 import { OmitFirstArg } from '../../types/helper.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import {
   ISwarmMessageInstanceDecrypted,
-  TSwarmMessageSerialized,
   ISwarmMessageInstanceEncrypted,
+  TSwarmMessageInstance,
+  TSwarmMessageSerialized,
 } from '../swarm-message/swarm-message-constructor.types';
 import { ESwarmMessageStoreEventNames } from '../swarm-message-store/swarm-message-store.const';
 import { TTypedEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 import { ESwarmMessagesDatabaseCacheEventsNames } from './swarm-messages-database.const';
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
-import {
-  TSwarmStoreConnectorConnectionOptions,
-  ISwarmStoreProviderOptions,
-  ISwarmStoreOptionsConnectorFabric,
-} from '../swarm-store-class/swarm-store-class.types';
-import { TSwarmMessageInstance } from '../swarm-message/swarm-message-constructor.types';
-import {
-  TSwarmMessagesStoreGrantAccessCallback,
-  ISwarmMessageStoreAccessControlOptions,
-  ISwarmMessageStoreOptionsWithConnectorFabric,
-  ISwarmMessageStoreMessageWithMeta,
-} from '../swarm-message-store/swarm-message-store.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
-import {
-  ISwarmStoreConnectorBasic,
-  ISwarmStoreConnector,
-  TSwarmStoreDatabaseIteratorMethodArgument,
-} from '../swarm-store-class/swarm-store-class.types';
+import { ISwarmMessagesDatabaseMessagesCollector } from './swarm-messages-database.messages-collector.types';
 
 export type TSwarmMessageDatabaseMessagesCached<
   P extends ESwarmStoreConnector,
@@ -73,94 +67,6 @@ export interface ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<
   > = ISwarmMessagesDatabaseCacheConstructor<P, T, DbType, DBO, MD, SMSM, DCO, DCCRT>
 > {
   cacheConstructor: SMDCC;
-}
-
-export interface ISwarmMessagesDatabaseMessagesCollectorOptions<
-  P extends ESwarmStoreConnector,
-  T extends TSwarmMessageSerialized,
-  DbType extends TSwarmStoreDatabaseType<P>,
-  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO>,
-  PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
-  CO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, PO>,
-  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, PO>,
-  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
-  MSI extends TSwarmMessageInstance | T,
-  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
-  MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
-  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined,
-  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
-    P,
-    T,
-    DbType,
-    DBO,
-    ConnectorBasic,
-    PO,
-    CO,
-    ConnectorMain,
-    CFO,
-    MSI,
-    GAC,
-    MCF,
-    ACO
-  >,
-  SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>
-> {
-  swarmMessageStore: SMS;
-}
-
-export interface ISwarmMessagesDatabaseMessagesCollectorFabric<
-  P extends ESwarmStoreConnector,
-  T extends TSwarmMessageSerialized,
-  DbType extends TSwarmStoreDatabaseType<P>,
-  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO>,
-  PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
-  CO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, PO>,
-  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, PO>,
-  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
-  MSI extends TSwarmMessageInstance | T,
-  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
-  MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
-  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined,
-  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
-    P,
-    T,
-    DbType,
-    DBO,
-    ConnectorBasic,
-    PO,
-    CO,
-    ConnectorMain,
-    CFO,
-    MSI,
-    GAC,
-    MCF,
-    ACO
-  >,
-  SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>,
-  MD extends ISwarmMessageInstanceDecrypted,
-  SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>
-> {
-  (
-    options: ISwarmMessagesDatabaseMessagesCollectorOptions<
-      P,
-      T,
-      DbType,
-      DBO,
-      ConnectorBasic,
-      PO,
-      CO,
-      ConnectorMain,
-      CFO,
-      MSI,
-      GAC,
-      MCF,
-      ACO,
-      O,
-      SMS
-    >
-  ): SMSM;
 }
 
 /**
@@ -515,34 +421,6 @@ export interface ISwarmMessagesDatabaseReady<
   _swarmMessageStore: ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>;
   _currentUserId: TSwarmMessageUserIdentifierSerialized;
   _swarmMessagesCache: ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM>;
-}
-
-/**
- * It's used only for messages collecting from a swarm database.
- *
- * @export
- * @interface ISwarmMessagesDatabaseCacheOptionsDbInstance
- * @template P
- * @template DbType
- * @template MD
- */
-export interface ISwarmMessagesDatabaseMessagesCollector<
-  P extends ESwarmStoreConnector,
-  DbType extends TSwarmStoreDatabaseType<P>,
-  MD extends ISwarmMessageInstanceDecrypted
-> {
-  /**
-   * Requests messages stored from the database it's connected to.
-   *
-   * @param {string} dbName - name of the database
-   * @param {TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>} query - query options
-   * @returns {(Promise<Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined>>)}
-   * @memberof ISwarmMessagesDatabaseCacheOptionsDbInstance
-   */
-  collectWithMeta(
-    dbName: string,
-    query: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>
-  ): Promise<Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined>>;
 }
 
 export interface ISwarmMessagesDatabaseCacheOptions<
