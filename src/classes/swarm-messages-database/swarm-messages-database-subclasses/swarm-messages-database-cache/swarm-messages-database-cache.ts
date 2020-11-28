@@ -63,9 +63,9 @@ export class SwarmMessagesDatabaseCache<
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   MD extends ISwarmMessageInstanceDecrypted,
-  SMSM extends ISwarmMessageStoreMessagingMethods<P, T, DbType, MD>,
-  DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>
-> implements ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM> {
+  SMC extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
+  DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMC>
+> implements ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMC> {
   get isReady(): boolean {
     return this._isReady;
   }
@@ -94,7 +94,7 @@ export class SwarmMessagesDatabaseCache<
 
   protected _options: DCO | undefined;
 
-  protected get _dbInstance(): SMSM | undefined {
+  protected get _swarmMesssagesCollector(): SMC | undefined {
     return this._options?.dbInstance;
   }
 
@@ -150,7 +150,7 @@ export class SwarmMessagesDatabaseCache<
    * @memberof SwarmMessagesDatabaseCache
    */
   protected _defferedPartialCacheUpdatePromise:
-    | ReturnType<SwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM, DCO>['_runDefferedMessagesUpdateInCache']>
+    | ReturnType<SwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMC, DCO>['_runDefferedMessagesUpdateInCache']>
     | undefined;
 
   /**
@@ -254,7 +254,7 @@ export class SwarmMessagesDatabaseCache<
     _isReady: true;
     _dbName: DBO['dbName'];
     _dbType: DbType;
-    _dbInstance: ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>;
+    _swarmMesssagesCollector: NonNullable<SMC>;
     _messagesCachedStore: ISwarmMessagesDatabaseMessagesCacheStoreNonTemp<P, DbType, MD>;
   } {
     if (!this._isReady) {
@@ -263,7 +263,7 @@ export class SwarmMessagesDatabaseCache<
     if (!this._dbName) {
       throw new Error('Database name should be defined');
     }
-    if (!this._dbInstance) {
+    if (!this._swarmMesssagesCollector) {
       throw new Error('A database instance is not set');
     }
     if (!this._messagesCachedStore) {
@@ -622,6 +622,18 @@ export class SwarmMessagesDatabaseCache<
     this._whetherMessagesListContainsAllMessages = false;
   }
 
+  protected _getSwarmMessagesCollector(): SMC {
+    if (this._checkIsReady()) {
+      const swarmMesssagesCollector = this._swarmMesssagesCollector;
+
+      if (!swarmMesssagesCollector) {
+        throw new Error('Swarm messages collector is not defined');
+      }
+      return swarmMesssagesCollector;
+    }
+    throw new Error('The store is not ready');
+  }
+
   /**
    * Perform query to collect messages from the database.
    *
@@ -641,9 +653,7 @@ export class SwarmMessagesDatabaseCache<
     let messages: Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined> | undefined;
     while (!messages && !this._whetherMaxDatabaseQueriesAttemptsFailed(queryAttempt)) {
       try {
-        messages = (await this._dbInstance.collectWithMeta(this._dbName, queryOptions)) as Array<
-          ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined
-        >;
+        messages = await this._getSwarmMessagesCollector().collectWithMeta(this._dbName, queryOptions);
       } catch (err) {
         console.error(new Error(`_performMessagesCachePageRequest::failed::attempt::${queryAttempt}`), err);
         await this._requestTimeBrowserIdle();
@@ -784,11 +794,11 @@ export class SwarmMessagesDatabaseCache<
    * @param {number} resultedNewMessagesCountReadAtTheBatchCount -
    * @returns {boolean}
    */
-  protected _whetherMessagesReadLessThanRequested = (
+  protected _whetherMessagesReadLessThanRequested = async (
     expectedMessagesOverallToReadAtTheBatchCount: number,
     expectedNewMessagesToReadAtTheBatchCount: number,
     resultedNewMessagesReadAtTheBatchCount: number
-  ): boolean => {
+  ): Promise<boolean> => {
     return (
       expectedMessagesOverallToReadAtTheBatchCount > 50 &&
       expectedNewMessagesToReadAtTheBatchCount > 6 &&
@@ -861,7 +871,7 @@ export class SwarmMessagesDatabaseCache<
       // all messages were read
 
       // TODO - provide a custom function to define it
-      whetherFullMessagesRead = this._whetherMessagesReadLessThanRequested(
+      whetherFullMessagesRead = await this._whetherMessagesReadLessThanRequested(
         messagesCountToReadAtTheBatch,
         currentPageItemsToReadCount,
         getItemsCount(messagesReadAtBatchMapped)
@@ -1180,7 +1190,7 @@ export class SwarmMessagesDatabaseCache<
 
   protected _setActiveDefferedPartialCacheUpdate<ItemType extends T>(
     activeUpdate: ReturnType<
-      SwarmMessagesDatabaseCache<P, ItemType, DbType, DBO, MD, SMSM, DCO>['_runDefferedMessagesUpdateInCache']
+      SwarmMessagesDatabaseCache<P, ItemType, DbType, DBO, MD, SMC, DCO>['_runDefferedMessagesUpdateInCache']
     >
   ): void {
     this._defferedPartialCacheUpdatePromise = activeUpdate;

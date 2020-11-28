@@ -2,22 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e70e70e3-e48a-4dfd-91a6-03818e8691f6" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database.messages-collector.types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/node_modules-local/hypervision-browser" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules-local/hypervision-browser" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-database/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-database/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-fabric/swarm-messages-database-fabric.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-fabric/swarm-messages-database-fabric.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-fabric/swarm-messages-database-fabric.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-fabric/swarm-messages-database-fabric.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache-with-entities-count/swarm-messages-database-cache-with-entities-count.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache-with-entities-count/swarm-messages-database-cache-with-entities-count.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache/swarm-messages-database-cache.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache/swarm-messages-database-cache.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database.types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/app.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/app.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/connect-to-swarm-immediate/connect-to-swarm-immediate.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/connect-to-swarm-immediate/connect-to-swarm-immediate.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/connect-to-swarm/connect-to-swarm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/connect-to-swarm/connect-to-swarm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/const/connect-to-swarm.const.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/const/connect-to-swarm.const.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/swarm-messages-database-component/swarm-messages-database-component.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/swarm-messages-database-component/swarm-messages-database-component.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/swarm-messages-database-component/swarm-messages-database-component.utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/swarm-messages-database-component/swarm-messages-database-component.utils.ts" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -47,7 +35,7 @@
         <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector.ts">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="746">
-              <caret line="149" column="6" selection-start-line="149" selection-start-column="6" selection-end-line="149" selection-end-column="6" />
+              <caret line="147" column="6" selection-start-line="147" selection-start-column="6" selection-end-line="147" selection-end-column="6" />
               <folding>
                 <element signature="e#0#147#0" expanded="true" />
               </folding>
@@ -67,8 +55,8 @@
       <file leaf-file-name="swarm-messages-database.messages-collector.types.ts" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database.messages-collector.types.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="293">
-              <caret line="21" column="17" selection-start-line="21" selection-start-column="17" selection-end-line="21" selection-end-column="17" />
+            <state relative-caret-position="278">
+              <caret line="20" selection-start-line="20" selection-end-line="20" />
               <folding>
                 <element signature="e#0#343#0" expanded="true" />
               </folding>
@@ -97,8 +85,8 @@
       <file leaf-file-name="connect-to-swarm.tsx" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/components/connect-to-swarm/connect-to-swarm.tsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="705">
-              <caret line="47" column="2" selection-start-line="47" selection-start-column="2" selection-end-line="47" selection-end-column="2" />
+            <state relative-caret-position="675">
+              <caret line="45" column="2" selection-start-line="45" selection-start-column="2" selection-end-line="45" selection-end-column="2" />
               <folding>
                 <element signature="e#0#26#0" expanded="true" />
               </folding>
@@ -126,15 +114,6 @@
               <folding>
                 <element signature="e#0#246#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="index.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector-with-entities-count/index.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret column="9" selection-start-column="9" selection-end-column="9" />
             </state>
           </provider>
         </entry>
@@ -267,7 +246,7 @@
       <path value="$PROJECT_DIR$/package.json" />
     </packageJsonPaths>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="y" value="27" />
     <option name="width" value="960" />
     <option name="height" value="1007" />
@@ -546,7 +525,7 @@
       <workItem from="1605896786958" duration="1429000" />
       <workItem from="1606074973318" duration="1539000" />
       <workItem from="1606495849365" duration="5244000" />
-      <workItem from="1606558791322" duration="1815000" />
+      <workItem from="1606558791322" duration="2416000" />
     </task>
     <servers />
   </component>
@@ -583,10 +562,10 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="68842000" />
+    <option name="totallyTimeSpent" value="69443000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="72" y="27" width="1848" height="1053" extended-state="6" />
+    <frame x="72" y="27" width="1848" height="1053" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -913,8 +892,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/components/connect-to-swarm/connect-to-swarm.tsx">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="705">
-          <caret line="47" column="2" selection-start-line="47" selection-start-column="2" selection-end-line="47" selection-end-column="2" />
+        <state relative-caret-position="675">
+          <caret line="45" column="2" selection-start-line="45" selection-start-column="2" selection-end-line="45" selection-end-column="2" />
           <folding>
             <element signature="e#0#26#0" expanded="true" />
           </folding>
@@ -951,7 +930,7 @@
     <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="746">
-          <caret line="149" column="6" selection-start-line="149" selection-start-column="6" selection-end-line="149" selection-end-column="6" />
+          <caret line="147" column="6" selection-start-line="147" selection-start-column="6" selection-end-line="147" selection-end-column="6" />
           <folding>
             <element signature="e#0#147#0" expanded="true" />
           </folding>
@@ -967,8 +946,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database.messages-collector.types.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="293">
-          <caret line="21" column="17" selection-start-line="21" selection-start-column="17" selection-end-line="21" selection-end-column="17" />
+        <state relative-caret-position="278">
+          <caret line="20" selection-start-line="20" selection-end-line="20" />
           <folding>
             <element signature="e#0#343#0" expanded="true" />
           </folding>
