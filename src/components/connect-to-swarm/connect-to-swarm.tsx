@@ -37,25 +37,23 @@ import {
 } from '../../classes/swarm-messages-database/swarm-messages-database.types';
 import { createSwarmMessagesDatabaseMessagesCollectorInstance } from '../../classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector';
 import { IConnectionBridge } from '../../classes/connection-bridge/connection-bridge.types';
+import { TConnectionBridgeOptionsAccessControlOptions } from '../../classes/connection-bridge/connection-bridge.types-helpers';
+import { TConnectionBridgeOptionsConnectorFabricOptions } from '../../classes/connection-bridge/connection-bridge.types-helpers';
 import {
+  TConnectionBridgeOptionsConnectorMain,
   TConnectionBridgeOptionsConstructorWithEncryptedCacheFabric,
-  TConnectionBridgeOptionsAccessControlOptions,
-} from '../../classes/connection-bridge/connection-bridge.types';
-import {
   TConnectionBridgeOptionsGrandAccessCallback,
-  TConnectionBridgeOptionsConnectorFabricOptions,
-} from '../../classes/connection-bridge/connection-bridge.types';
-import { TConnectionBridgeOptionsConnectorMain } from '../../classes/connection-bridge/connection-bridge.types';
-import {
-  TConnectionBridgeOptionsConnectorBasic,
-  TConnectionBridgeOptionsConnectorConnectionOptions,
-  TConnectionBridgeOptionsProviderOptions,
-} from '../../classes/connection-bridge/connection-bridge.types';
+} from '../../classes/connection-bridge/connection-bridge.types-helpers';
+import { TConnectionBridgeOptionsProviderOptions } from '../../classes/connection-bridge/connection-bridge.types-helpers';
 import {
   ISwarmMessagesDatabaseCacheOptions,
   ISwarmMessagesDatabaseCache,
   ISwarmMessagesDatabaseCacheConstructor,
 } from '../../classes/swarm-messages-database/swarm-messages-database.types';
+import {
+  TConnectionBridgeOptionsConnectorBasic,
+  TConnectionBridgeOptionsConnectorConnectionOptions,
+} from '../../classes/connection-bridge/connection-bridge.types-helpers';
 
 type P = ESwarmStoreConnector.OrbitDB;
 
@@ -647,7 +645,7 @@ export class ConnectToSwarm<
                 databaseOptions={dbsOptions}
                 connectionBridge={connectionBridge}
                 isOpenImmediate={dbsOptions.dbName === dbo?.dbName}
-                createDb={() => this.createDatabaseConnector(dbsOptions)}
+                createDb={this.createDatabaseConnector}
               />
             );
           })}

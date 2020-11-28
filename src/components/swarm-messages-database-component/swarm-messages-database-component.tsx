@@ -72,7 +72,7 @@ interface IProps<
   databaseOptions: DBO;
   connectionBridge?: CB;
   isOpenImmediate?: boolean;
-  createDb: () => Promise<SMDC>;
+  createDb: (databaseOptions: DBO) => Promise<SMDC>;
 }
 
 interface IState<
@@ -254,7 +254,7 @@ export class SwarmMessagesDatabaseComponent<
       try {
         this.setState({ isOpening: true });
 
-        const db = await this.props.createDb();
+        const db = await this.props.createDb(this.props.databaseOptions);
 
         setMessageListener<P, T, DbType, DBO, MSI, MD, SMSM, DCO, DCCRT, typeof db>(db, this.onNewMessage);
         setMessageDeleteListener<P, T, DbType, DBO, MSI, MD, SMSM, DCO, DCCRT, typeof db>(db, this.onMessageDelete);
