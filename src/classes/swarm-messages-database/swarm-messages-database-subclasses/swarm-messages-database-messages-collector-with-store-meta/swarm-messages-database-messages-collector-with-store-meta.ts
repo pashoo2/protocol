@@ -123,7 +123,7 @@ class SwarmMessagesDatabaseMessagesCollectorWithStoreMeta<
   }
 }
 
-export function createSwarmMessagesDatabaseMessagesCollectorInstance<
+export function createSwarmMessagesDatabaseMessagesCollectorWithStoreMetaInstance<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,

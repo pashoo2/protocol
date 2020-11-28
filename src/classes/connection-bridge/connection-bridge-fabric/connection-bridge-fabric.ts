@@ -13,7 +13,10 @@ import {
   ISwarmStoreConnector,
   TSwarmStoreConnectorBasicFabric,
 } from '../../swarm-store-class/swarm-store-class.types';
-import { ISwarmMessageStoreOptionsWithConnectorFabric } from '../../swarm-message-store/swarm-message-store.types';
+import {
+  ISwarmMessageStoreOptionsWithConnectorFabric,
+  ISwarmMessageStore,
+} from '../../swarm-message-store/swarm-message-store.types';
 import { ConnectionBridge } from '../connection-bridge';
 import {
   TSwarmStoreDatabaseOptions,
@@ -33,40 +36,40 @@ export const createConnectrionBridgeConnection = async <
   ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined = undefined,
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO> = ISwarmStoreConnectorBasic<P, T, DbType, DBO>,
   CBFO extends TSwarmStoreConnectorBasicFabric<P, T, DbType, DBO, ConnectorBasic> | undefined = undefined,
-  PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic> = TSwarmStoreConnectorConnectionOptions<
+  CO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic> = TSwarmStoreConnectorConnectionOptions<
     P,
     T,
     DbType,
     DBO,
     ConnectorBasic
   >,
-  CO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, PO> = ISwarmStoreProviderOptions<
+  PO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, CO> = ISwarmStoreProviderOptions<
     P,
     T,
     DbType,
     DBO,
     ConnectorBasic,
-    PO
+    CO
   >,
-  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, PO> = ISwarmStoreConnector<
+  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, CO> = ISwarmStoreConnector<
     P,
     T,
     DbType,
     DBO,
     ConnectorBasic,
-    PO
+    CO
   >,
-  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain> | undefined = undefined,
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain> | undefined = undefined,
   O extends ISwarmMessageStoreOptionsWithConnectorFabric<
     P,
     T,
     DbType,
     DBO,
     ConnectorBasic,
-    PO,
     CO,
+    PO,
     ConnectorMain,
-    TConnectionBridgeCFODefault<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO>,
+    TConnectionBridgeCFODefault<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO>,
     MSI,
     GAC,
     MCF,
@@ -77,14 +80,45 @@ export const createConnectrionBridgeConnection = async <
     DbType,
     DBO,
     ConnectorBasic,
-    PO,
     CO,
+    PO,
     ConnectorMain,
-    TConnectionBridgeCFODefault<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO>,
+    TConnectionBridgeCFODefault<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO>,
     MSI,
     GAC,
     MCF,
     ACO
+  >,
+  SMS extends ISwarmMessageStore<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    CO,
+    PO,
+    ConnectorMain,
+    TConnectionBridgeCFODefault<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO>,
+    MSI,
+    GAC,
+    MCF,
+    ACO,
+    O
+  > = ISwarmMessageStore<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    CO,
+    PO,
+    ConnectorMain,
+    TConnectionBridgeCFODefault<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO>,
+    MSI,
+    GAC,
+    MCF,
+    ACO,
+    O
   >,
   CBO extends IConnectionBridgeOptions<
     P,
@@ -92,8 +126,8 @@ export const createConnectrionBridgeConnection = async <
     DbType,
     DBO,
     ConnectorBasic,
-    PO,
     CO,
+    PO,
     ConnectorMain,
     MSI,
     GAC,
@@ -101,8 +135,28 @@ export const createConnectrionBridgeConnection = async <
     ACO,
     CFO,
     CBFO,
-    CD
-  > = IConnectionBridgeOptions<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, MSI, GAC, MCF, ACO, CFO, CBFO, CD>
+    CD,
+    O,
+    SMS
+  > = IConnectionBridgeOptions<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    CO,
+    PO,
+    ConnectorMain,
+    MSI,
+    GAC,
+    MCF,
+    ACO,
+    CFO,
+    CBFO,
+    CD,
+    O,
+    SMS
+  >
 >(
   options: CBO,
   useSessionIfExists: boolean = false
@@ -113,8 +167,8 @@ export const createConnectrionBridgeConnection = async <
     DbType,
     DBO,
     ConnectorBasic,
-    PO,
     CO,
+    PO,
     ConnectorMain,
     CFO,
     CBFO,
@@ -124,13 +178,14 @@ export const createConnectrionBridgeConnection = async <
     ACO,
     O,
     CD,
-    CBO
+    CBO,
+    SMS
   >();
   let useSessionAuth: boolean = false;
   const optionsWithoutCredentials = {
     ...options,
     auth: {
-      ...options.auth,
+      ...(options.auth ?? {}),
       credentials: undefined,
     },
   };
