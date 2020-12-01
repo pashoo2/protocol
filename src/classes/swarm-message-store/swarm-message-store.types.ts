@@ -56,10 +56,7 @@ export interface ISwarmMessageStoreSwarmMessageMetadata<P extends ESwarmStoreCon
 export type TSwarmMessagesStoreGrantAccessCallback<
   P extends ESwarmStoreConnector,
   MSI extends TSwarmMessageSerialized | TSwarmMessageInstance
-> =
-  | TSwarmMessageStoreAccessControlGrantAccessCallback<P, MSI>
-  | TSwarmMessageStoreAccessControlGrantAccessCallback<P, MSI>
-  | undefined;
+> = TSwarmMessageStoreAccessControlGrantAccessCallback<P, MSI>;
 
 export interface ISwarmMessageStoreEvents<
   P extends ESwarmStoreConnector,
@@ -123,7 +120,7 @@ export interface ISwarmMessageStoreAccessControlOptions<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   MSI extends TSwarmMessageInstance | T,
-  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI> | undefined
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>
 > {
   // async callback which is called each time before a new message will be wrote to the database
   grantAccess: GAC;

@@ -101,7 +101,7 @@ export const getMessageValidator = <
 >(
   dboptions: DBO,
   messageConstructors: ISwarmMessageDatabaseConstructors<SMC>,
-  grantAccessCb: GAC,
+  grantAccessCb: GAC | undefined,
   currentUserId: TCentralAuthorityUserIdentity
 ): TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<P, T, MSI> => {
   const { dbName, isPublic, write } = dboptions;

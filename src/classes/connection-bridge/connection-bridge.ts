@@ -584,14 +584,10 @@ export class ConnectionBridge<
     );
   }
 
-  protected getDefaultAccessControlOptions(): ACO {
-    return {} as ACO;
-  }
-
   protected getAccessControlOptionsToUse(): ACO {
     const { storage: storageOptions } = this.getOptions();
     const { accessControl } = storageOptions;
-    return accessControl || this.getDefaultAccessControlOptions();
+    return accessControl;
   }
 
   protected async getSwarmMessageStoreOptions(): Promise<

@@ -163,19 +163,13 @@ export interface IConnectionBridgeStorageOptions<
 > extends Omit<
     ISwarmMessageStoreOptions<P, T, DbType, DBO, ConnectorBasic, CO, MSI, GAC, MCF, ACO>,
     | 'userId'
-    | 'accessControl'
     | 'credentials'
     | 'messageConstructors'
     | 'providerConnectionOptions'
     | 'databasesListStorage'
     | 'swarmMessageConstructorFabric'
   > {
-  swarmMessageConstructorFabric:
-    | ISwarmMessageStoreOptions<P, T, DbType, DBO, ConnectorBasic, CO, MSI, GAC, MCF, ACO>['swarmMessageConstructorFabric']
-    | undefined;
-  accessControl:
-    | ISwarmMessageStoreOptions<P, T, DbType, DBO, ConnectorBasic, CO, MSI, GAC, MCF, ACO>['accessControl']
-    | undefined;
+  swarmMessageConstructorFabric: O['swarmMessageConstructorFabric'] | undefined;
   connectorBasicFabric: CBFO;
   connectorMainFabric?: CFO;
   getMainConnectorFabric:

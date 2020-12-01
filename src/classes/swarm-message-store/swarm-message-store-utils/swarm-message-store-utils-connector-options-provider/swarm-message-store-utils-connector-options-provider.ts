@@ -70,14 +70,14 @@ function swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControlOrbitDB<
   options: O,
   dbOptions: DBO,
   allowAccessForUsers: string[] | undefined,
-  grantAccessCallback: GAC
+  grantAccessCallback: GAC | undefined
 ): TSwarmStoreDatabaseOptions<ESwarmStoreConnector.OrbitDB, ItemType, DbType> &
   ISwarmStoreDatabaseBaseOptions & { provider: ESwarmStoreConnector.OrbitDB } {
   const grantAccess = getMessageValidator<P, ItemType, DbType, DBO, MSI, GAC, PromiseResolveType<ReturnType<NonNullable<MCF>>>>(
     dbOptions,
     options.messageConstructors,
     // TODO - TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<string, P>
-    (grantAccessCallback || dbOptions.grantAccess) as GAC,
+    grantAccessCallback || (dbOptions.grantAccess as GAC | undefined),
     options.userId
   );
 
@@ -130,7 +130,7 @@ export const swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl = <
   options: O
 ) => (dbOptions: DBO): DBO & ISwarmStoreDatabaseBaseOptions & { provider: P } => {
   const { accessControl } = options;
-  let grantAccessCallback: GAC = undefined as GAC;
+  let grantAccessCallback: GAC | undefined;
   let allowAccessForUsers: TSwarmMessageUserIdentifierSerialized[] | undefined;
 
   // validate options first
@@ -141,7 +141,7 @@ export const swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl = <
       throw new Error('"Grant access" callback function must be provided');
     }
     assert(
-      typeof grantAccess === 'function' && grantAccess.length === 3,
+      typeof grantAccess === 'function' && grantAccess.length >= 3 && grantAccess.length <= 5,
       '"Grant access" callback must be a function which accepts a 3 arguments'
     );
     if (allowAccessFor) {

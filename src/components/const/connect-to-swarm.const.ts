@@ -22,6 +22,11 @@ import { ISwarmMessagesDatabaseCacheConstructor } from '../../classes/swarm-mess
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../classes/swarm-messages-database/swarm-messages-database.messages-collector.types';
 import { connectorBasicFabricOrbitDBWithEntriesCount } from '../../classes/connection-bridge/connection-bridge.utils';
 import { SwarmMessageStore } from '../../classes/swarm-message-store/swarm-message-store';
+import { TCentralAuthorityUserIdentity } from '../../classes/central-authority-class/central-authority-class-types/central-authority-class-types-common';
+import {
+  TSwarmStoreDatabaseEntityKey,
+  TSwarmStoreDatabaseEntryOperation,
+} from '../../classes/swarm-store-class/swarm-store-class.types';
 
 export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY = 'key';
 
@@ -96,7 +101,16 @@ export const CONNECT_TO_SWARM_CONNECTION_STORAGE_OPTIONS: TConnectionBridgeStora
   TSwarmMessageSerialized,
   ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED
 > = {
-  accessControl: undefined, // use the default access control
+  accessControl: {
+    grantAccess: (
+      message: unknown,
+      userId: TCentralAuthorityUserIdentity,
+      dbName: string,
+      key?: TSwarmStoreDatabaseEntityKey<ESwarmStoreConnector.OrbitDB>,
+      // operation on the database
+      op?: TSwarmStoreDatabaseEntryOperation<ESwarmStoreConnector.OrbitDB>
+    ) => Promise.resolve(true),
+  }, // use the default access control
   swarmMessageConstructorFabric: undefined, // use the default swarm message constructor fabric
   connectorBasicFabric: connectorBasicFabricOrbitDBWithEntriesCount,
   connectorMainFabric: undefined,
