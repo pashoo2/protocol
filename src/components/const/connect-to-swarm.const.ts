@@ -9,20 +9,19 @@ import {
   IConnectionBridgeOptionsUser,
   IConnectionBridgeOptionsAuth,
 } from '../../classes/connection-bridge/connection-bridge.types';
-import {
-  IConnectionBridgeStorageOptionsDefault,
-  TNativeConnectionOptions,
-} from '../../classes/connection-bridge/connection-bridge.types';
+import { TNativeConnectionOptions } from 'classes/connection-bridge/connection-bridge.types';
 import { TSwarmStoreDatabaseOptions } from 'classes/swarm-store-class/index';
-import { IConnectionBridgeOptionsDefault } from '../../classes/connection-bridge/connection-bridge.types';
+import {
+  IConnectionBridgeOptionsDefault,
+  TConnectionBridgeStorageOptionsDefault,
+} from '../../classes/connection-bridge/connection-bridge.types';
 import { ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions } from '../../classes/swarm-messages-database/swarm-messages-database.types';
 import { SwarmMessagesDatabaseCache } from '../../classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache/swarm-messages-database-cache';
 import { ConstructorArgumentType } from '../../types/helper.types';
-import {
-  ISwarmMessagesDatabaseCacheOptions,
-  ISwarmMessagesDatabaseCacheConstructor,
-} from '../../classes/swarm-messages-database/swarm-messages-database.types';
+import { ISwarmMessagesDatabaseCacheConstructor } from '../../classes/swarm-messages-database/swarm-messages-database.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../classes/swarm-messages-database/swarm-messages-database.messages-collector.types';
+import { connectorBasicFabricOrbitDBWithEntriesCount } from '../../classes/connection-bridge/connection-bridge.utils';
+import { SwarmMessageStore } from '../../classes/swarm-message-store/swarm-message-store';
 
 export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY = 'key';
 
@@ -92,19 +91,20 @@ export const CONNECT_TO_SWARM_CONNECTION_USER_OPTIONS: IConnectionBridgeOptionsU
   profile: {},
 };
 
-export const CONNECT_TO_SWARM_CONNECTION_STORAGE_OPTIONS: IConnectionBridgeStorageOptionsDefault<
+export const CONNECT_TO_SWARM_CONNECTION_STORAGE_OPTIONS: TConnectionBridgeStorageOptionsDefault<
   ESwarmStoreConnector.OrbitDB,
   TSwarmMessageSerialized,
   ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED
 > = {
   accessControl: undefined, // use the default access control
   swarmMessageConstructorFabric: undefined, // use the default swarm message constructor fabric
-  connectorBasicFabric: undefined,
+  connectorBasicFabric: connectorBasicFabricOrbitDBWithEntriesCount,
   connectorMainFabric: undefined,
   getMainConnectorFabric: undefined,
   provider: CONNECT_TO_SWARM_STORAGE_PROVIDER_DEFAULT,
   directory: CONNECT_TO_SWARM_DATABASE_PREFIX,
   databases: [],
+  swarmMessageStoreInstanceFabric: () => new SwarmMessageStore(),
 };
 
 export const CONNECT_TO_SWARM_CONNECTION_AUTH_OPTOINS: IConnectionBridgeOptionsAuth<false> = {

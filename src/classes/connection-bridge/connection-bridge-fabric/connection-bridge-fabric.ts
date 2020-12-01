@@ -31,11 +31,17 @@ export const createConnectrionBridgeConnection = async <
   CD extends boolean = true,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType> = TSwarmStoreDatabaseOptions<P, T, DbType>,
   MSI extends TSwarmMessageInstance | T = TSwarmMessageInstance | T,
-  MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined = undefined,
+  MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | never = ISwarmMessageConstructorWithEncryptedCacheFabric,
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI> = TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
-  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined = undefined,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> = ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC>,
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO> = ISwarmStoreConnectorBasic<P, T, DbType, DBO>,
-  CBFO extends TSwarmStoreConnectorBasicFabric<P, T, DbType, DBO, ConnectorBasic> | undefined = undefined,
+  CBFO extends TSwarmStoreConnectorBasicFabric<P, T, DbType, DBO, ConnectorBasic> = TSwarmStoreConnectorBasicFabric<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic
+  >,
   CO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic> = TSwarmStoreConnectorConnectionOptions<
     P,
     T,
@@ -59,7 +65,16 @@ export const createConnectrionBridgeConnection = async <
     ConnectorBasic,
     CO
   >,
-  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain> | undefined = undefined,
+  CFO extends ISwarmStoreOptionsConnectorFabric<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    CO,
+    PO,
+    ConnectorMain
+  > = ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain>,
   O extends ISwarmMessageStoreOptionsWithConnectorFabric<
     P,
     T,

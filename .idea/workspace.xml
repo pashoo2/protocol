@@ -2,8 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e70e70e3-e48a-4dfd-91a6-03818e8691f6" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/node_modules-local/hypervision-browser" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules-local/hypervision-browser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector-with-store-meta/swarm-messages-database-messages-collector-with-store-meta.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector-with-store-meta/swarm-messages-database-messages-collector-with-store-meta.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-fabric/connection-bridge-fabric.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-fabric/connection-bridge-fabric.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-fabric/connection-bridge-fabric.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-fabric/connection-bridge-fabric.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge.types-helpers.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge.types-helpers.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/connect-to-swarm/connect-to-swarm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/connect-to-swarm/connect-to-swarm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/connect-to-swarm/connect-to-swarm.utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/connect-to-swarm/connect-to-swarm.utils.ts" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -77,11 +84,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="connect-to-swarm.tsx" pinned="false" current-in-tab="true">
+      <file leaf-file-name="connect-to-swarm.tsx" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/components/connect-to-swarm/connect-to-swarm.tsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15">
-              <caret line="34" column="143" selection-start-line="34" selection-start-column="143" selection-end-line="34" selection-end-column="143" />
+            <state relative-caret-position="107">
+              <caret line="526" column="65" selection-start-line="526" selection-start-column="48" selection-end-line="526" selection-end-column="65" />
+              <folding>
+                <element signature="e#0#26#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -90,7 +100,7 @@
         <entry file="file://$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge.types.ts">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="791">
-              <caret line="410" selection-start-line="410" selection-end-line="410" />
+              <caret line="540" selection-start-line="540" selection-end-line="540" />
               <folding>
                 <element signature="e#0#260#0" expanded="true" />
               </folding>
@@ -98,13 +108,22 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="connection-bridge.types-helpers.ts" pinned="false" current-in-tab="false">
+      <file leaf-file-name="connection-bridge.types-helpers.ts" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge.types-helpers.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="18" column="28" selection-start-line="18" selection-start-column="28" selection-end-line="18" selection-end-column="28" />
+            <state relative-caret-position="82">
+              <caret line="314" column="61" selection-start-line="314" selection-start-column="61" selection-end-line="314" selection-end-column="61" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="swarm-message-store.d.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/decentralized-protocol/classes/swarm-message-store/swarm-message-store.d.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="15">
+              <caret line="15" column="21" selection-start-line="15" selection-start-column="21" selection-end-line="15" selection-end-column="21" />
               <folding>
-                <element signature="e#0#246#0" expanded="true" />
+                <element signature="n#SwarmMessageStore#0" />
               </folding>
             </state>
           </provider>
@@ -114,9 +133,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>export class DatabaseComponent extends React.PureComponent&lt;IProps&gt; {</find>
-      <find>ISwarmStoreConnectorOrbitDbDatabaseIteratorOptionsRequired</find>
-      <find>TSwarmMessagesDatabaseType</find>
       <find>SwarmMessagesStoreUtilsMessagesCache</find>
       <find>SecretStorageProviderInMemory</find>
       <find>options</find>
@@ -144,6 +160,9 @@
       <find>TConnectionBridgeOptionsProviderOptions</find>
       <find>ISwarmMessageStoreOptionsWithConnectorFabric</find>
       <find>createSwarmMessagesDatabaseMessagesCollectorInstance</find>
+      <find>TConnectionBridgeOptionsGrandAccessCallback</find>
+      <find>ConnectorBasic</find>
+      <find>CO</find>
     </findStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$</dir>
@@ -157,7 +176,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-tests/swarm-message-subclass-validator-fields-validator-validator-user-identifier.test.ts" />
         <option value="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validator/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.test.ts" />
         <option value="$PROJECT_DIR$/jest.config.js" />
         <option value="$PROJECT_DIR$/src/classes/swarm-message/__test__/swarm-message-subclass-validator-fields-validator-validator-user-identifier.test.ts" />
@@ -208,6 +226,7 @@
         <option value="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge.types.ts" />
         <option value="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge.helpers.types.ts" />
         <option value="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database.messages-collector.types.ts" />
+        <option value="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge.types-helpers.ts" />
       </list>
     </option>
   </component>
@@ -274,21 +293,6 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="classes" type="462c0819:PsiDirectoryNode" />
               <item name="connection-bridge" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
-              <item name="protocol" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="classes" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-messages-database" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
-              <item name="protocol" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="classes" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-messages-database" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-messages-database-subclasses" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
@@ -508,7 +512,7 @@
       <workItem from="1605896786958" duration="1429000" />
       <workItem from="1606074973318" duration="1539000" />
       <workItem from="1606495849365" duration="5244000" />
-      <workItem from="1606558791322" duration="2428000" />
+      <workItem from="1606558791322" duration="4456000" />
     </task>
     <servers />
   </component>
@@ -545,10 +549,10 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="69455000" />
+    <option name="totallyTimeSpent" value="71483000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="72" y="27" width="1848" height="1053" extended-state="6" />
+    <frame x="72" y="27" width="1848" height="1053" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -558,9 +562,9 @@
       <window_info id="npm" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Terminal" order="7" weight="0.35607675" />
       <window_info anchor="bottom" id="TypeScript" order="7" weight="0.32875144" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.3349567" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.3349567" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
-      <window_info active="true" anchor="bottom" id="Find" order="1" visible="true" weight="0.3258547" />
+      <window_info anchor="bottom" id="Find" order="1" visible="true" weight="0.3258547" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.35738832" />
@@ -626,7 +630,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/utils/swarm-channel-options-factory/swarm-channel-options-factory.ts" />
     <entry file="file://$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/swarm-channel-base.ts" />
     <entry file="file://$PROJECT_DIR$/src/classes/swarm-channel/swarm-channel.types.ts" />
     <entry file="file://$PROJECT_DIR$/src/components/message-component/message-component.tsx">
@@ -876,19 +879,9 @@
     <entry file="file://$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge.types.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="791">
-          <caret line="410" selection-start-line="410" selection-end-line="410" />
+          <caret line="540" selection-start-line="540" selection-end-line="540" />
           <folding>
             <element signature="e#0#260#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge.types-helpers.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="18" column="28" selection-start-line="18" selection-start-column="28" selection-end-line="18" selection-end-column="28" />
-          <folding>
-            <element signature="e#0#246#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -926,8 +919,28 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/components/connect-to-swarm/connect-to-swarm.tsx">
       <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="107">
+          <caret line="526" column="65" selection-start-line="526" selection-start-column="48" selection-end-line="526" selection-end-column="65" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/decentralized-protocol/classes/swarm-message-store/swarm-message-store.d.ts">
+      <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15">
-          <caret line="34" column="143" selection-start-line="34" selection-start-column="143" selection-end-line="34" selection-end-column="143" />
+          <caret line="15" column="21" selection-start-line="15" selection-start-column="21" selection-end-line="15" selection-end-column="21" />
+          <folding>
+            <element signature="n#SwarmMessageStore#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge.types-helpers.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="82">
+          <caret line="314" column="61" selection-start-line="314" selection-start-column="61" selection-end-line="314" selection-end-column="61" />
         </state>
       </provider>
     </entry>

@@ -142,6 +142,7 @@ export class ConnectToSwarm<
           TConnectionBridgeOptionsAccessControlOptions<CBO>,
           any,
           CD,
+          any,
           any
         >
       | undefined,
@@ -378,7 +379,7 @@ export class ConnectToSwarm<
   };
 
   protected setListenersConnectionBridge(connectionBridge: PromiseResolveType<ReturnType<typeof connectToSwarmUtil>>) {
-    const { swarmMessageStore } = connectionBridge;
+    const swarmMessageStore = connectionBridge.swarmMessageStore;
 
     if (!swarmMessageStore) {
       throw new Error('Swarm message store insatnce is not exists in the connection bridge instance');

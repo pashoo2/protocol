@@ -104,12 +104,12 @@ export class ConnectionBridge<
   CO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
   PO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, CO>,
   ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, CO>,
-  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain> | undefined,
-  CBFO extends TSwarmStoreConnectorBasicFabric<P, T, DbType, DBO, ConnectorBasic> | undefined,
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain>,
+  CBFO extends TSwarmStoreConnectorBasicFabric<P, T, DbType, DBO, ConnectorBasic>,
   MSI extends TSwarmMessageInstance | T,
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
-  MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
-  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined,
+  MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC>,
   O extends ISwarmMessageStoreOptionsWithConnectorFabric<
     P,
     T,
@@ -196,7 +196,7 @@ export class ConnectionBridge<
 
   public swarmMessageEncryptedCacheFabric?: ISwarmMessageEncryptedCacheFabric;
 
-  public swarmMessageConstructorFabric: MCF = undefined as MCF;
+  public swarmMessageConstructorFabric?: MCF;
 
   public get secretStorage(): ISecretStorage | undefined {
     return this._secretStorage;
@@ -584,6 +584,16 @@ export class ConnectionBridge<
     );
   }
 
+  protected getDefaultAccessControlOptions(): ACO {
+    return {} as ACO;
+  }
+
+  protected getAccessControlOptionsToUse(): ACO {
+    const { storage: storageOptions } = this.getOptions();
+    const { accessControl } = storageOptions;
+    return accessControl || this.getDefaultAccessControlOptions();
+  }
+
   protected async getSwarmMessageStoreOptions(): Promise<
     ISwarmMessageStoreOptionsWithConnectorFabric<
       P,
@@ -607,8 +617,14 @@ export class ConnectionBridge<
       throw new Error('Connector type is not defined');
     }
 
+    const swarmMessageConstructorFabric = this.swarmMessageConstructorFabric;
+
+    if (!swarmMessageConstructorFabric) {
+      throw new Error('Swarm messages constructor fabric should be defined');
+    }
+
     const { storage: storageOptions } = this.getOptions();
-    const { accessControl, directory, databases } = storageOptions;
+    const { directory, databases } = storageOptions;
     const credentials = this.getSecretStoreCredentialsOptionsForMessageStoreFromCurrentOptions();
     const userId = this.getCurrentUserIdentityFromCurrentConnectionToCentralAuthority();
 
@@ -618,10 +634,10 @@ export class ConnectionBridge<
       databases,
       credentials,
       userId,
-      accessControl,
+      swarmMessageConstructorFabric,
+      accessControl: this.getAccessControlOptionsToUse(),
       messageConstructors: this.getMessageConstructorOptionsForMessageStoreFromCurrentOptions(),
       databasesListStorage: await this.startEncryptedCache(CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX.DATABASE_LIST_STORAGE),
-      swarmMessageConstructorFabric: this.swarmMessageConstructorFabric,
       providerConnectionOptions: this.getSwarmStoreConnectionProviderOptionsFromCurrentOptions(),
       connectorFabric: this.getMainConnectorFabricForSwarmMessageStore(userId, credentials) as TConnectionBridgeCFODefault<
         P,
@@ -1101,6 +1117,10 @@ export class ConnectionBridge<
     this.swarmMessageConstructorFabric = swarmMessageConstructorFabric as MCF;
   }
 
+  protected getSwarmMessageConstructorFabricFromOptions(): MCF | undefined {
+    return this.getOptions().storage.swarmMessageConstructorFabric;
+  }
+
   protected async createSwarmMessageConstructorFabric(): Promise<ISwarmMessageConstructorWithEncryptedCacheFabric> {
     const authOptions = this.getCredentialsWithSession();
     return getSwarmMessageConstructorWithCacheFabric(
@@ -1108,6 +1128,14 @@ export class ConnectionBridge<
       this.getSwarmMessageConstructorOptions(),
       this.getDatabaseNamePrefixForEncryptedCahce(authOptions.login)
     );
+  }
+
+  protected async getSwarmMessageConstructorFabric(): Promise<ISwarmMessageConstructorWithEncryptedCacheFabric> {
+    const swarmMessageConstructorFabricFromOptions = this.getSwarmMessageConstructorFabricFromOptions();
+    if (swarmMessageConstructorFabricFromOptions) {
+      return swarmMessageConstructorFabricFromOptions;
+    }
+    return this.createSwarmMessageConstructorFabric();
   }
 
   protected getDatabaseNameForEncryptedCacheInstance(dbNamePrefix: string): string {
@@ -1142,32 +1170,13 @@ export class ConnectionBridge<
     return this.startEncryptedCache(CONNECTION_BRIDGE_STORAGE_DATABASE_NAME.MESSAGE_CACHE_STORAGE);
   }
 
-  protected createSwarmMessageStoreInstance = (): SMS => {
+  protected createSwarmMessageStoreInstanceByOptionsFabric(): SMS {
     const { storage } = this.getOptions();
-    if (storage.swarmMessageStoreInstance) {
-      return storage.swarmMessageStoreInstance;
-    }
-    const swarmMessageStore = new SwarmMessageStore<
-      P,
-      T,
-      DbType,
-      DBO,
-      ConnectorBasic,
-      CO,
-      PO,
-      ConnectorMain,
-      TConnectionBridgeCFODefault<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO>,
-      MSI,
-      GAC,
-      MCF,
-      ACO,
-      O,
-      E,
-      DBL
-    >();
+    return storage.swarmMessageStoreInstanceFabric();
+  }
 
-    // TODO - avoid unknown cast
-    return (swarmMessageStore as unknown) as SMS;
+  protected createSwarmMessageStoreInstance = (): SMS => {
+    return this.createSwarmMessageStoreInstanceByOptionsFabric();
   };
 
   protected connectToSwarmMessageStore = async (
@@ -1290,7 +1299,7 @@ export class ConnectionBridge<
    * @memberof ConnectionBridge
    */
   protected closeSwarmMessageConstructorFabric(): void {
-    this.swarmMessageConstructorFabric = undefined as MCF;
+    this.swarmMessageConstructorFabric = undefined;
   }
 
   /**
@@ -1387,7 +1396,7 @@ export class ConnectionBridge<
   protected async createAndSetSequentlyDependenciesInstances(): Promise<void> {
     this.setCurrentCentralAuthorityConnection(await this.createAndStartConnectionWithCentralAuthority());
     this.setCurrentSwarmMessageEncryptedCacheFabric(await this.createSwarmMessageEncryptedCacheFabric());
-    this.setCurrentSwarmMessageConstructorFabric(await this.createSwarmMessageConstructorFabric());
+    this.setCurrentSwarmMessageConstructorFabric(await this.getSwarmMessageConstructorFabric());
     this.setCurrentSwarmMessageEncryptedCache(await this.createSwarmMessageEncryptedCache());
     this.setCurrentSwarmMessageConstructor(await this.createSwarmMessageConstructor());
     this.setCurrentSwarmConnection(await this.createSwarmConnection());
