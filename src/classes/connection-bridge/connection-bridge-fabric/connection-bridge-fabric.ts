@@ -5,7 +5,7 @@ import {
   TSwarmMessagesStoreGrantAccessCallback,
   ISwarmMessageStoreAccessControlOptions,
 } from '../../swarm-message-store/swarm-message-store.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { TSwarmStoreDatabaseType, TSwarmStoreConnectorConnectionOptions } from '../../swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageSerialized } from '../../swarm-message/swarm-message-constructor.types';
 import {

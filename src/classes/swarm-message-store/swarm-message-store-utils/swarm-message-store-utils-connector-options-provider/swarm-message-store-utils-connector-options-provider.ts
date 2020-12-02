@@ -20,7 +20,7 @@ import {
   ISwarmMessageStoreAccessControlOptions,
   TSwarmMessagesStoreGrantAccessCallback,
 } from '../../swarm-message-store.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { ISwarmStoreDatabaseBaseOptions, TSwarmStoreDatabaseOptions } from '../../../swarm-store-class/swarm-store-class.types';
 import { PromiseResolveType } from '../../../../types/promise.types';
 

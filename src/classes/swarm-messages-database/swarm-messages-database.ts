@@ -48,7 +48,7 @@ import {
   ISwarmStoreProviderOptions,
   ISwarmStoreOptionsConnectorFabric,
 } from '../swarm-store-class/swarm-store-class.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { OmitFirstArg } from '../../types/helper.types';
 import { ISwarmMessagesDatabaseConnector } from './swarm-messages-database.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from './swarm-messages-database.messages-collector.types';

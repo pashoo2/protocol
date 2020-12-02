@@ -33,7 +33,7 @@ import { SensitiveDataSessionStorage } from 'classes/sensitive-data-session-stor
 import {
   ISwarmMessageEncryptedCacheFabric,
   ISwarmMessageConstructorWithEncryptedCacheFabric,
-} from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
+} from '../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import {
   CONNECTION_BRIDGE_STORAGE_DATABASE_NAME,
   CONNECTION_BRIDGE_OPTIONS_DEFAULT_USER_SENSITIVE_DATA_STORE as CONNECTION_BRIDGE_OPTIONS_DEFAULT_USER_SENSITIVE_DATA_STORE_OPTIONS,
@@ -41,8 +41,8 @@ import {
 import {
   getSwarmMessageEncryptedCacheFabric,
   getSwarmMessageConstructorWithCacheFabric,
-} from '../swarm-messgae-encrypted-cache/swarm-message-encrypted-cache.utils';
-import { ISwarmMessgaeEncryptedCache } from '../swarm-messgae-encrypted-cache';
+} from '../swarm-message-encrypted-cache/swarm-message-encrypted-cache.utils';
+import { ISwarmMessgaeEncryptedCache } from '../swarm-message-encrypted-cache';
 import { ISensitiveDataSessionStorageOptions } from '../sensitive-data-session-storage/sensitive-data-session-storage.types';
 import { ISecretStorage, TSecretStorageAuthorizazionOptions } from '../secret-storage-class/secret-storage-class.types';
 import { SecretStorage } from '../secret-storage-class/secret-storage-class';

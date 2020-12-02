@@ -20,7 +20,7 @@ import {
   ISwarmMessageStoreAccessControlOptions,
   ISwarmMessageStoreOptionsWithConnectorFabric,
 } from '../../../swarm-message-store/swarm-message-store.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { ISwarmStoreConnectorBasic, ISwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../swarm-messages-database.messages-collector.types';
 import { ISwarmMessagesDatabaseMessagesCollectorOptions } from '../../swarm-messages-database.messages-collector.types';

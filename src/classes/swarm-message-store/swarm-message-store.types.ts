@@ -15,7 +15,7 @@ import {
   ISwarmMessageInstanceEncrypted,
 } from '../swarm-message/swarm-message-constructor.types';
 import { TCentralAuthorityUserIdentity } from '../central-authority-class/central-authority-class-types/central-authority-class-types-common';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { IStorageCommon } from 'types/storage.types';
 import { TSwarmStoreDatabaseEntryOperation, TSwarmStoreValueTypes } from '../swarm-store-class/swarm-store-class.types';
 import { StorageProvider } from '../storage-providers/storage-providers.types';

@@ -13,7 +13,7 @@ import {
   TSwarmMessagesStoreGrantAccessCallback,
   ISwarmMessageStore,
 } from '../swarm-message-store';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-message-encrypted-cache';
 import { IConnectionBridgeOptions } from './connection-bridge.types';
 
 export type TConnectionBridgeOptionsDatabaseOptions<

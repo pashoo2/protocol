@@ -16,7 +16,7 @@ import { ISensitiveDataSessionStorageOptions } from 'classes/sensitive-data-sess
 import {
   ISwarmMessageConstructorWithEncryptedCacheFabric,
   ISwarmMessageEncryptedCacheFabric,
-} from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
+} from '../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import {
   ISwarmStoreConnector,
   ISwarmStoreConnectorBasic,

@@ -19,7 +19,7 @@ import {
   ISwarmStoreProviderOptions,
   ISwarmStoreConnector,
 } from '../../../../../../src/classes/swarm-store-class/swarm-store-class.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../../src/classes/swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../../src/classes/swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { ISwarmChannelBaseUsedInstances, ISwarmChannelBaseConstructorOptions } from '../../swarm-channel-base.types';
 
 export interface ISwarmChannelBaseInitializerOptions<P extends ESwarmStoreConnector = ESwarmStoreConnector.OrbitDB> {

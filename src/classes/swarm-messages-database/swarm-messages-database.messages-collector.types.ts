@@ -17,7 +17,7 @@ import {
   ISwarmMessageStoreOptionsWithConnectorFabric,
   TSwarmMessagesStoreGrantAccessCallback,
 } from '../swarm-message-store';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-message-encrypted-cache';
 
 /**
  * Meta information about swarm messages store.

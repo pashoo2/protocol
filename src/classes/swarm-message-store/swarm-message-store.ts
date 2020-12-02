@@ -31,7 +31,7 @@ import { swarmMessageStoreUtilsConnectorOptionsProvider } from './swarm-message-
 import { getMessageConstructorForDatabase } from './swarm-message-store-utils/swarm-message-store-utils-common/swarm-message-store-utils-common';
 import { ISwarmMessageStoreDeleteMessageArg } from './swarm-message-store.types';
 import { TSwarmMessageSerialized, TSwarmMessageConstructorBodyMessage } from '../swarm-message/swarm-message-constructor.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messgae-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { TSwarmStoreDatabaseOptions, TSwarmStoreDatabaseType } from '../swarm-store-class/swarm-store-class.types';
 import { swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl } from './swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider';
 
