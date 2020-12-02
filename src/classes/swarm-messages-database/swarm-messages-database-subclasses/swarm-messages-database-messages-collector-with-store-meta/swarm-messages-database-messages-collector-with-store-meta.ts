@@ -80,7 +80,7 @@ class SwarmMessagesDatabaseMessagesCollectorWithStoreMeta<
     SMS,
     MD
   >
-  implements ISwarmMessagesDatabaseMessagesCollectorWithStoreMeta<P, DbType, MD, SMSMeta> {
+  implements ISwarmMessagesDatabaseMessagesCollectorWithStoreMeta<P, T, DBO, DbType, MD, SMSMeta> {
   protected get _swarmMesssagesStore(): SMS {
     return this._options.swarmMessageStore;
   }
@@ -118,8 +118,8 @@ class SwarmMessagesDatabaseMessagesCollectorWithStoreMeta<
     return result as Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined>;
   }
 
-  public async getStoreMeta(): Promise<SMSMeta> {
-    return this._options.getSwarmMessageStoreMeta(this._swarmMesssagesStore);
+  public async getStoreMeta(dbName: DBO['dbName']): Promise<SMSMeta> {
+    return this._options.getSwarmMessageStoreMeta(this._swarmMesssagesStore, dbName);
   }
 }
 
@@ -174,6 +174,6 @@ export function createSwarmMessagesDatabaseMessagesCollectorWithStoreMetaInstanc
     SMS,
     SMSMeta
   >
-): ISwarmMessagesDatabaseMessagesCollectorWithStoreMeta<P, DbType, MD, SMSMeta> {
+): ISwarmMessagesDatabaseMessagesCollectorWithStoreMeta<P, T, DBO, DbType, MD, SMSMeta> {
   return new SwarmMessagesDatabaseMessagesCollectorWithStoreMeta(options);
 }

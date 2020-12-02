@@ -113,7 +113,7 @@ export interface ISwarmMessagesDatabaseMessagesCollectorWithStorageMetaOptions<
     O,
     SMS
   > {
-  getSwarmMessageStoreMeta(swarmMessageStore: SMS): Promise<SMSMeta>;
+  getSwarmMessageStoreMeta(swarmMessageStore: SMS, dbName: DBO['dbName']): Promise<SMSMeta>;
 }
 
 /**
@@ -160,6 +160,8 @@ export interface ISwarmMessagesDatabaseMessagesCollector<
  */
 export interface ISwarmMessagesDatabaseMessagesCollectorWithStoreMeta<
   P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   DbType extends TSwarmStoreDatabaseType<P>,
   MD extends ISwarmMessageInstanceDecrypted,
   SMSMeta extends ISwarmMessagesStoreMeta
@@ -167,7 +169,7 @@ export interface ISwarmMessagesDatabaseMessagesCollectorWithStoreMeta<
   /**
    * Meta information about the store handled
    */
-  getStoreMeta(): Promise<SMSMeta>;
+  getStoreMeta(dbName: DBO['dbName']): Promise<SMSMeta>;
 }
 
 export interface ISwarmMessagesDatabaseMessagesCollectorFabric<
@@ -273,7 +275,7 @@ export interface ISwarmMessagesDatabaseMessagesCollectorWithStoreMetaFabric<
     SMS,
     SMSMeta
   >,
-  RT extends ISwarmMessagesDatabaseMessagesCollectorWithStoreMeta<P, DbType, MD, SMSMeta>
+  RT extends ISwarmMessagesDatabaseMessagesCollectorWithStoreMeta<P, T, DBO, DbType, MD, SMSMeta>
 > {
   (options: OPTS): RT;
 }

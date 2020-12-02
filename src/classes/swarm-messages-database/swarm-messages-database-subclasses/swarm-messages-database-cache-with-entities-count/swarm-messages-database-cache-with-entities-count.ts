@@ -15,13 +15,18 @@ export class SwarmMessagesDatabaseCacheWithEntitiesCount<
     DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
     MD extends ISwarmMessageInstanceDecrypted,
     SMSMeta extends ISwarmMessagesStoreMeta,
-    SMC extends ISwarmMessagesDatabaseMessagesCollectorWithStoreMeta<P, DbType, MD, SMSMeta>,
+    SMC extends ISwarmMessagesDatabaseMessagesCollectorWithStoreMeta<P, T, DBO, DbType, MD, SMSMeta>,
     DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMC>
   >
   extends SwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMC, DCO>
   implements ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMC> {
   protected _getMessagesStoreMeta(): Promise<SMSMeta> {
-    return this._getSwarmMessagesCollector().getStoreMeta();
+    const dbName = this._options?.dbName;
+
+    if (!dbName) {
+      throw new Error('Database name should be defined in the options');
+    }
+    return this._getSwarmMessagesCollector().getStoreMeta(dbName);
   }
 
   protected async _getOverallMessagesInStoreCount(): Promise<number> {

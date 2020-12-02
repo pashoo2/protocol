@@ -27,7 +27,6 @@ import {
   CONNECTION_BRIDGE_DATA_STORAGE_DATABASE_NAME_PREFIX_DELIMETER,
 } from './connection-bridge.const';
 import { CentralAuthority } from '../central-authority-class/central-authority-class';
-import { SwarmMessageStore } from '../swarm-message-store/swarm-message-store';
 import { ISensitiveDataSessionStorage } from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
 import { SensitiveDataSessionStorage } from 'classes/sensitive-data-session-storage';
 import {

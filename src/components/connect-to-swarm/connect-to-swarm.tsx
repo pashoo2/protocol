@@ -34,8 +34,14 @@ import { TSwarmMessageUserIdentifierSerialized } from '../../classes/swarm-messa
 import { ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions } from '../../classes/swarm-messages-database/swarm-messages-database.types';
 import { createSwarmMessagesDatabaseMessagesCollectorInstance } from '../../classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector';
 import { IConnectionBridge } from '../../classes/connection-bridge/connection-bridge.types';
-import { TConnectionBridgeOptionsAccessControlOptions } from '../../classes/connection-bridge/connection-bridge.types-helpers';
-import { TConnectionBridgeOptionsConnectorFabricOptions } from '../../classes/connection-bridge/connection-bridge.types-helpers';
+import {
+  TConnectionBridgeOptionsAccessControlOptions,
+  TConnectionBridgeOptionsSwarmMessageStoreOptionsWithConnectorFabric,
+} from '../../classes/connection-bridge/connection-bridge.types-helpers';
+import {
+  TConnectionBridgeOptionsConnectorFabricOptions,
+  TConnectionBridgeOptionsSwarmMessageStoreInstance,
+} from '../../classes/connection-bridge/connection-bridge.types-helpers';
 import {
   TConnectionBridgeOptionsConnectorMain,
   TConnectionBridgeOptionsConstructorWithEncryptedCacheFabric,
@@ -53,7 +59,7 @@ import {
 } from '../../classes/connection-bridge/connection-bridge.types-helpers';
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../classes/swarm-messages-database/swarm-messages-database.messages-collector.types';
 
-type P = ESwarmStoreConnector.OrbitDB;
+export type P = ESwarmStoreConnector.OrbitDB;
 
 export interface IMessageDescription<P extends ESwarmStoreConnector> {
   id: string;
@@ -133,7 +139,7 @@ export class ConnectToSwarm<
           TConnectionBridgeOptionsConnectorBasic<CBO>,
           TConnectionBridgeOptionsConnectorConnectionOptions<CBO>,
           TConnectionBridgeOptionsProviderOptions<CBO>,
-          any,
+          TConnectionBridgeOptionsSwarmMessageStoreInstance<CBO>,
           TConnectionBridgeOptionsConnectorFabricOptions<CBO>,
           any,
           MI | T,
@@ -524,7 +530,7 @@ export class ConnectToSwarm<
       throw new Error('There is no connection with connction bridge');
     }
 
-    const swarmMessageStore = connectionBridge?.swarmMessageStore;
+    const swarmMessageStore = connectionBridge?.swarmMessageStore as TConnectionBridgeOptionsSwarmMessageStoreInstance<CBO>;
 
     if (!swarmMessageStore) {
       throw new Error('Swarm message store is not ready');
@@ -543,8 +549,8 @@ export class ConnectToSwarm<
       TConnectionBridgeOptionsGrandAccessCallback<CBO>,
       TConnectionBridgeOptionsConstructorWithEncryptedCacheFabric<CBO>,
       TConnectionBridgeOptionsAccessControlOptions<CBO>,
-      any,
-      NonNullable<typeof connectionBridge['swarmMessageStore']>,
+      TConnectionBridgeOptionsSwarmMessageStoreOptionsWithConnectorFabric<CBO>,
+      TConnectionBridgeOptionsSwarmMessageStoreInstance<CBO>,
       MD
     >({
       swarmMessageStore,
