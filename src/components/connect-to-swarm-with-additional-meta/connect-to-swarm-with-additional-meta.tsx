@@ -11,7 +11,6 @@ import {
   TSwarmStoreConnectorBasicFabric,
   TSwarmStoreConnectorConnectionOptions,
   ISwarmStoreProviderOptions,
-  ISwarmStoreConnector,
 } from '../../classes/swarm-store-class/swarm-store-class.types';
 import { IConnectionBridgeOptionsDefault } from '../../classes/connection-bridge/connection-bridge.types';
 import {
@@ -42,7 +41,6 @@ import { ConnectToSwarm, P } from '../connect-to-swarm/connect-to-swarm';
 import { createSwarmMessagesDatabaseMessagesCollectorWithStoreMetaInstance } from '../../classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector-with-store-meta/swarm-messages-database-messages-collector-with-store-meta';
 import { ISwarmMessageStore } from '../../classes/swarm-message-store/swarm-message-store.types';
 import {
-  ISwarmStoreWithEntriesCount,
   ISwarmStoreConnectorBasicWithEntriesCount,
   ISwarmStoreConnectorWithEntriesCount,
 } from '../../classes/swarm-store-class/swarm-store-class-extended/swarm-store-class-with-entries-count/swarm-store-class-with-entries-count.types';
@@ -53,31 +51,13 @@ export class ConnectToSwarmWithAdditionalMeta<
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   CD extends boolean,
   ConnectorBasic extends ISwarmStoreConnectorBasicWithEntriesCount<P, T, DbType, DBO>,
-  ConnectorMain extends ISwarmStoreWithEntriesCount<
+  ConnectorMain extends ISwarmStoreConnectorWithEntriesCount<
     P,
     T,
     DbType,
     DBO,
     ConnectorBasic,
-    TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
-    ISwarmStoreProviderOptions<
-      P,
-      T,
-      DbType,
-      DBO,
-      ConnectorBasic,
-      TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>
-    >,
-    ISwarmStoreConnectorWithEntriesCount<
-      P,
-      T,
-      DbType,
-      DBO,
-      ConnectorBasic,
-      TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>
-    >,
-    any,
-    any
+    TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>
   >,
   SMS extends ISwarmMessageStore<
     P,
@@ -101,7 +81,8 @@ export class ConnectToSwarmWithAdditionalMeta<
       DBO,
       ConnectorBasic,
       TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>
-    >,
+    > &
+      ConnectorMain,
     any,
     MI | T,
     any,
@@ -131,6 +112,9 @@ export class ConnectToSwarmWithAdditionalMeta<
       ConnectorBasic,
       TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>
     >,
+    ConnectorMain,
+    any,
+    any,
     SMS
   >,
   MI extends TSwarmMessageInstance = TSwarmMessageInstance,
