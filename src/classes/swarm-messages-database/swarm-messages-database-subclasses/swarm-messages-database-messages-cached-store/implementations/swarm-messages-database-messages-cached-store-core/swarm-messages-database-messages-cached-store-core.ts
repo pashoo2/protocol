@@ -59,17 +59,18 @@ export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  add = (this._isTemp === true
+  addToDeffered = (this._isTemp === true
     ? undefined
-    : (entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>): void => {
+    : (entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>): boolean => {
         this._checkIsInitialized();
         this._checkEntryWithMeta(entry);
         if (this._whetherEntryIsExists(entry)) {
-          return;
+          return false;
         }
         this._addDefferedReadEntryAfterCurrentBatchOfCacheUpdate(entry.messageMeta);
         this._addDefferedReadEntryAfterOverallCaheUpdate(entry.messageMeta);
-      }) as ISwarmMessagesDatabaseMessagesCachedStoreCore<P, DbType, MD, IsTemp>['add'];
+        return true;
+      }) as ISwarmMessagesDatabaseMessagesCachedStoreCore<P, DbType, MD, IsTemp>['addToDeffered'];
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   remove = (this._isTemp === true

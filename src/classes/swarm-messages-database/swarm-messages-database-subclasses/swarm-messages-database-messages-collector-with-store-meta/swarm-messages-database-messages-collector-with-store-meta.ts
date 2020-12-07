@@ -112,10 +112,10 @@ class SwarmMessagesDatabaseMessagesCollectorWithStoreMeta<
     dbName: string,
     options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>
   ): Promise<Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined>> {
-    const result = await this._swarmMesssagesStore.collectWithMeta(dbName, options);
+    const messagesCollected = await this._swarmMesssagesStore.collectWithMeta(dbName, options);
 
     // TODO - need to check all the results
-    return result as Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined>;
+    return messagesCollected as Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined>;
   }
 
   public async getStoreMeta(dbName: DBO['dbName']): Promise<SMSMeta> {

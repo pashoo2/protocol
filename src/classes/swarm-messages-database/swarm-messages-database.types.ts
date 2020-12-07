@@ -129,7 +129,10 @@ export interface ISwarmMessageDatabaseCacheEvents<
    *
    * @memberof ISwarmMessageDatabaseEvents
    */
-  [ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATING]: () => unknown;
+  [ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATING_STARTED]: () => unknown;
+  [ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATING_OVER]: (
+    allMessagesInCahce: TSwarmMessageDatabaseMessagesCached<P, DbType, MD> | undefined
+  ) => unknown;
   /**
    * Swarm messages were requested from the database and the cache was updated
    * with the messages.
@@ -137,7 +140,11 @@ export interface ISwarmMessageDatabaseCacheEvents<
    * @memberof ISwarmMessageDatabaseEvents
    */
   [ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATED]: (
-    messages: TSwarmMessageDatabaseMessagesCached<P, DbType, MD> | undefined // new messages list
+    /*
+     we can't emit only updated messages because if a message has been removed from the store
+     we don't know with guarantee which one it has.
+    */
+    messages: TSwarmMessageDatabaseMessagesCached<P, DbType, MD> | undefined
   ) => unknown;
 }
 

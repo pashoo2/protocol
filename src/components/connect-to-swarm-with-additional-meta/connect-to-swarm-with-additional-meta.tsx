@@ -181,13 +181,13 @@ export class ConnectToSwarmWithAdditionalMeta<
     >({
       swarmMessageStore,
       getSwarmMessageStoreMeta: async (swarmMessageStore: SMS, dbName: DBO['dbName']): Promise<ISwarmMessagesStoreMeta> => {
-        const messagesStoredCount = await swarmMessageStore.getCountEntriesAllExists(dbName);
+        const messagesAllStoredCount = await swarmMessageStore.getCountEntriesAllExists(dbName);
 
-        if (messagesStoredCount instanceof Error) {
-          throw messagesStoredCount;
+        if (messagesAllStoredCount instanceof Error) {
+          throw messagesAllStoredCount;
         }
         return {
-          messagesStoredCount,
+          messagesStoredCount: messagesAllStoredCount,
         };
       },
     }) as SMSM;

@@ -1,6 +1,10 @@
 export enum ESwarmMessagesDatabaseCacheEventsNames {
-  CACHE_UPDATING = 'CACHE_UPDATING',
+  // cache has updated with a message
   CACHE_UPDATED = 'CACHE_UPDATED',
+  // full cache update has just started
+  CACHE_UPDATING_STARTED = 'CACHE_UPDATING_STARTED',
+  // full cache update has just ended
+  CACHE_UPDATING_OVER = 'CACHE_UPDATING_OVER',
 }
 
 /**

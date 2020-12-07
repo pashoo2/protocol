@@ -225,6 +225,10 @@ export class SwarmMessagesDatabaseComponent<
     this.setState({
       messages,
     });
+    if (this.state.messages === messages) {
+      // because the messages is not imutabe structure we need to force update
+      this.forceUpdate();
+    }
   };
 
   handleDbClose = async () => {
@@ -356,7 +360,7 @@ export class SwarmMessagesDatabaseComponent<
         <div>
           Messages:
           {messages &&
-            Array.from(messages.entries()).map(([key, messageWithMeta]) => {
+            Array.from(messages.entries()).map(([keyInStore, messageWithMeta]) => {
               const { messageAddress, dbName: messageDbName, message } = messageWithMeta;
               let messageId = '';
 
@@ -377,10 +381,10 @@ export class SwarmMessagesDatabaseComponent<
               }
               return (
                 <MessageComponent
-                  key={key}
+                  key={keyInStore}
                   dbName={messageDbName || dbName}
                   id={messageId}
-                  k={key}
+                  k={keyInStore}
                   message={message}
                   deleteMessage={this.handleDeleteMessage}
                 />

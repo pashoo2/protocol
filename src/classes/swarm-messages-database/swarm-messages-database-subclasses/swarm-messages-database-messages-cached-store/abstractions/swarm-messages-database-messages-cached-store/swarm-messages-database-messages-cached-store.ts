@@ -36,12 +36,11 @@ export class SwarmMessagesDatabaseMessagesCachedStore<
     super(_dbType, _dbName, false);
   }
 
-  public add(description: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>): boolean {
+  public addToDeffered(description: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>): boolean {
     if (this._checkIfMessageInTempStore(description)) {
       return true;
     }
-    this._cachedStoreImplementation.add(description);
-    return true;
+    return this._cachedStoreImplementation.addToDeffered(description);
   }
 
   public remove = (messageCharacteristic: ISwarmMessagesDatabaseMesssageMeta<P, DbType>): void => {

@@ -64,7 +64,9 @@ export interface ISwarmMessagesDatabaseMessagesCachedStoreCore<
    * @param {ISwarmMessagesDatabaseMessagesCacheMessageDescription<P,DbType>} entry
    * @memberof ISwarmMessagesDatabaseMessagesCachedStoreCore
    */
-  add: IsTemp extends false ? (entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>) => void : undefined;
+  addToDeffered: IsTemp extends false
+    ? (entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>) => boolean
+    : undefined;
 
   /**
    * Remove a message with the characteristics from the cache right in this moment.

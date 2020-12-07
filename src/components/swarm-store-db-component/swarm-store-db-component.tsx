@@ -145,9 +145,12 @@ export class SwarmStoreDbComponent<
         {isOpened && <button onClick={this.sendSwarmMessage}>Send message</button>}
         <div>
           Messages:
-          {messages.map((message) => {
+          {messages.map((message, idx) => {
             return (
-              <MessageComponent key={message.id} dbName={dbName} id={message.id} k={message.key} message={message.message} />
+              <>
+                {idx + 1}
+                <MessageComponent key={message.id} dbName={dbName} id={message.id} k={message.key} message={message.message} />
+              </>
             );
           })}
         </div>

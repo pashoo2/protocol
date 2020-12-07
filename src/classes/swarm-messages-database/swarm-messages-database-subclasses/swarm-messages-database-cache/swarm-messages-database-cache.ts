@@ -72,7 +72,7 @@ export class SwarmMessagesDatabaseCache<
   }
 
   get isUpdating(): boolean {
-    return !!this._pendingMessagesUpdatePromise;
+    return !!this._pendingMessagesCacheUpdatePromise;
   }
 
   get emitter(): TTypedEmitter<ISwarmMessageDatabaseEvents<P, T, DbType, DBO, MD>> {
@@ -135,7 +135,7 @@ export class SwarmMessagesDatabaseCache<
    * @type {(Promise<TSwarmMessageDatabaseMessagesCached<P, DbType>> | undefined)}
    * @memberof SwarmMessagesDatabase
    */
-  protected _pendingMessagesUpdatePromise: Promise<void> | undefined;
+  protected _pendingMessagesCacheUpdatePromise: Promise<void> | undefined;
 
   /**
    * Promise with partial cache update of a messages meta
@@ -177,7 +177,7 @@ export class SwarmMessagesDatabaseCache<
    * @memberof SwarmMessagesDatabaseCache
    */
   protected get _isCacheUpdateActive(): boolean {
-    return !!this._pendingMessagesUpdatePromise;
+    return !!this._pendingMessagesCacheUpdatePromise;
   }
 
   /**
@@ -223,10 +223,10 @@ export class SwarmMessagesDatabaseCache<
     if (!this._checkIsReady()) {
       return false;
     }
-    // wait till the cache updating is in progress
-    // because the message may be already in the cache
-    await this._waitTillMessagesCacheUpateBatchOver();
-    return this._addMessageToCachedStore(swarmMessageWithMeta);
+    // add the new message to the cache store and temp cache storage if exists
+    // because the user can add the new message which have not been reading
+    // during the current cache update process.
+    return this._addMessageToCachedStoreRunDefferedUpdate(swarmMessageWithMeta);
   }
 
   public async deleteMessage(
@@ -300,7 +300,7 @@ export class SwarmMessagesDatabaseCache<
   }
 
   protected _resetTheInstance(): void {
-    this._pendingMessagesUpdatePromise = undefined;
+    this._pendingMessagesCacheUpdatePromise = undefined;
     this._isSwarmMessagesCacheUpdateRequested = false;
     this._whetherMessagesListContainsAllMessages = false;
   }
@@ -354,88 +354,26 @@ export class SwarmMessagesDatabaseCache<
     }
   }
 
-  protected _addMessageInKeyValueStoreCache = (
-    messageWithMeta: ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD>,
-    // for key-value store it will be the key
-    key: TSwarmStoreDatabaseEntityKey<P>,
-    messagesCachedStore: TSwarmMessageDatabaseMessagesCached<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE, MD>
-  ): void => {
-    messagesCachedStore?.set(key, messageWithMeta);
-  };
-
-  protected _checkMessageInKeyValueStoreCache = (
-    messageWithMeta: ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD>,
-    messagesCachedStore: TSwarmMessageDatabaseMessagesCached<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE, MD>
-  ): boolean => {
-    const messageKey = messageWithMeta.key;
-
-    if (!messageKey) {
-      return false;
-    }
-    if (messageKey instanceof Error) {
-      return false;
-    }
-
-    const messageWithMetaCached = messagesCachedStore?.get(messageKey);
-
-    return this._checkWhetherMessgeWithMetaInstancesEqual(messageWithMeta.message, messageWithMetaCached?.message);
-  };
-
-  protected _addMessageInFeedStoreCache = (
-    messageWithMeta: ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD>,
-    // for key-value store it will be the key
-    messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
-    messagesCachedStore: TSwarmMessageDatabaseMessagesCached<P, ESwarmStoreConnectorOrbitDbDatabaseType.FEED, MD>
-  ): void => {
-    messagesCachedStore?.set(messageAddress, messageWithMeta);
-  };
-
-  protected _checkMessageInFeedStoreCache = (
-    messageWithMeta: ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD>,
-    messagesCachedStore: TSwarmMessageDatabaseMessagesCached<P, ESwarmStoreConnectorOrbitDbDatabaseType.FEED, MD>
-  ): boolean => {
-    const { messageAddress } = messageWithMeta;
-
-    if (!messageAddress) {
-      return false;
-    }
-    if (messageAddress instanceof Error) {
-      return false;
-    }
-
-    const messageWithMetaCached = messagesCachedStore.get(messageAddress);
-
-    return this._checkWhetherMessgeWithMetaInstancesEqual(messageWithMeta.message, messageWithMetaCached?.message);
-  };
-
-  protected _removeKeyValueFromKVStoreCache = (
-    messagesCache: TSwarmMessageDatabaseMessagesCached<P, DbType, MD>,
-    key: TSwarmStoreDatabaseEntityKey<P>
-  ): void => {
-    messagesCache?.delete(key);
-  };
-
   protected _emitCacheUpdatingIsInProgress(): void {
-    this._emitter.emit(ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATING);
+    this._emitter.emit(ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATING_STARTED);
   }
 
-  protected _emitCacheUpdated(messages: TSwarmMessageDatabaseMessagesCached<P, DbType, MD>): void {
-    this._emitter.emit(ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATED, messages);
+  protected _emitCacheUpdatingIsEnded(): void {
+    this._emitter.emit(ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATING_OVER, this._messagesCached);
   }
 
-  protected _emitDbMessagesWithAddedMessagesCaheUpdated(): void {
-    if (this._messagesCached) {
-      this._emitCacheUpdated(this._messagesCached);
-    }
+  protected _emitCacheUpdated(): void {
+    this._emitter.emit(ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATED, this._messagesCached);
   }
 
   protected _setMessagesCacheUpdateInProgress = (promisePending: Promise<void>): void => {
-    this._pendingMessagesUpdatePromise = promisePending;
-    this._emitCacheUpdatingIsInProgress();
+    this._pendingMessagesCacheUpdatePromise = promisePending;
   };
 
-  protected _unsetCacheUpdateInProgress = (): void => {
-    this._pendingMessagesUpdatePromise = undefined;
+  protected _unsetCacheUpdateInProgress = (promisePending: Promise<void>): void => {
+    if (promisePending === this._pendingMessagesCacheUpdatePromise) {
+      this._pendingMessagesCacheUpdatePromise = undefined;
+    }
   };
 
   protected _setNewCacheUpdatePlanned = (): void => {
@@ -555,6 +493,8 @@ export class SwarmMessagesDatabaseCache<
   /**
    * Map messages with meta to a structure related to the current
    * store type.
+   * TODO - refactor it and move methods to a separate classes
+   * which are especially for KV store and Feed store
    *
    * @param {ISwarmMessageStoreMessagingRequestWithMetaResult<P>[]} messagesWithMeta
    * @returns {TSwarmMessageDatabaseMessagesCached<P, DbType>}
@@ -594,22 +534,6 @@ export class SwarmMessagesDatabaseCache<
       key,
     };
   }
-
-  protected _unsetKeyInCacheKVStore(key: TSwarmStoreDatabaseEntityKey<P>): void {
-    if (!this._messagesCached) {
-      throw new Error('There is no messages in cache to unset the key');
-    }
-    this._messagesCached.delete(key);
-  }
-
-  protected _getOptionsToReadKeyFromKVDatabase = (
-    key: TSwarmStoreDatabaseEntityKey<P>
-  ): TSwarmStoreDatabaseIteratorMethodArgument<P, DbType> => {
-    return {
-      [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.limit]: 1,
-      [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq]: String(key),
-    } as TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>;
-  };
 
   protected _setFullMessagesReadFromDatabaseToCache(): void {
     this._whetherMessagesListContainsAllMessages = true;
@@ -866,13 +790,6 @@ export class SwarmMessagesDatabaseCache<
       const messagesReadAtBatchMapped = this._mapMessagesWithMetaToStorageRelatedStructure(messagesReadAtBatch);
       // if read less than requested it means that
       // all messages were read
-
-      // TODO - provide a custom function to define it
-      whetherFullMessagesRead = await this._whetherMessagesReadLessThanRequested(
-        messagesCountToReadAtTheBatch,
-        currentPageItemsToReadCount,
-        getItemsCount(messagesReadAtBatchMapped)
-      );
       // TODO - ORBIT DB counts also removed items, so we can request more than
       // it will return
       // getItemsCount(messagesReadAtBatch) < currentPageItemsToRead;
@@ -881,6 +798,13 @@ export class SwarmMessagesDatabaseCache<
       messagesReadAtBatchMapped.forEach((value, key) => {
         allMessagesRead.set(key, value);
       });
+
+      whetherFullMessagesRead = await this._whetherMessagesReadLessThanRequested(
+        messagesCountToReadAtTheBatch,
+        currentPageItemsToReadCount,
+        allMessagesRead.size
+      );
+
       if (allMessagesRead.size > Number(messagesCachedStoreTemp?.entries?.size)) {
         throw new Error('Read count is not equal');
       }
@@ -908,8 +832,8 @@ export class SwarmMessagesDatabaseCache<
    * @memberof SwarmMessagesDatabase
    */
   protected async _waitForCurrentMessagesUpdate(): Promise<void> {
-    if (this._pendingMessagesUpdatePromise) {
-      return this._pendingMessagesUpdatePromise;
+    if (this._pendingMessagesCacheUpdatePromise) {
+      return this._pendingMessagesCacheUpdatePromise;
     }
   }
 
@@ -926,7 +850,7 @@ export class SwarmMessagesDatabaseCache<
     // await when the current iteration will be over
     await this._waitForCurrentMessagesUpdate();
     this._checkIsReady();
-    if (!this._pendingMessagesUpdatePromise) {
+    if (!this._pendingMessagesCacheUpdatePromise) {
       // start a new interaction if there is no one active
       this._unsetNewCacheUpdatePlanned();
       try {
@@ -990,6 +914,16 @@ export class SwarmMessagesDatabaseCache<
     return false;
   }
 
+  protected _setCurrentFullMessagesCacheUpdateInProgressAndEmitEvent(promiseMessagesCacheUpdating: Promise<void>) {
+    this._setMessagesCacheUpdateInProgress(promiseMessagesCacheUpdating);
+    this._emitCacheUpdatingIsInProgress();
+  }
+
+  protected _unsetCurrentFullMessagesCacheUpdateInProgressAndEmitEvent(promiseMessagesCacheUpdating: Promise<void>) {
+    this._unsetCacheUpdateInProgress(promiseMessagesCacheUpdating);
+    this._emitCacheUpdatingIsEnded();
+  }
+
   /**
    * Runs swarm messages cache update and the next iteration
    * if it's planned.
@@ -999,28 +933,31 @@ export class SwarmMessagesDatabaseCache<
    * @memberof SwarmMessagesDatabase
    */
   protected async _runNewCacheUpdate(): Promise<void> {
+    let promiseMessagesCacheUpdating: Promise<void> | undefined;
     try {
       const messagesCachedTempStore = this._createMessagesCachedStorage(true);
 
       this._linkTempStoreToMessagesCachedStore(messagesCachedTempStore);
 
-      const promiseMessagesUpdating = this._performMessagesReadingToUpdateCache(messagesCachedTempStore);
+      promiseMessagesCacheUpdating = this._performMessagesReadingToUpdateCache(messagesCachedTempStore);
+      this._setCurrentFullMessagesCacheUpdateInProgressAndEmitEvent(promiseMessagesCacheUpdating);
+      await promiseMessagesCacheUpdating;
 
-      this._setMessagesCacheUpdateInProgress(promiseMessagesUpdating);
-      await promiseMessagesUpdating;
+      let hasMessagesBeenUpdated = this._updateMessagesCachedStoreByLinkedTempStoreMessages();
+      const hasNewMessagesDuringDefferedCacheUpdate = await this._runDefferedPartialCacheUpdateAfterFullCacheUpdateAndResetDefferedUpdateQueue();
 
-      let hasMessagesUpdated = this._updateMessagesCachedStoreByLinkedTempStoreMessages();
-
-      hasMessagesUpdated = hasMessagesUpdated || (await this._runDefferedPartialCacheUpdateAfterCacheUpdate());
-      if (hasMessagesUpdated) {
-        // emit only if any message was updated in the cache store
-        this._emitDbMessagesWithAddedMessagesCaheUpdated();
+      hasMessagesBeenUpdated = hasMessagesBeenUpdated || hasNewMessagesDuringDefferedCacheUpdate;
+      debugger;
+      if (hasMessagesBeenUpdated) {
+        this._emitCacheUpdated();
       }
     } catch (err) {
       console.error(`Failed to update messages cache: ${err.message}`, err);
       throw err;
     } finally {
-      this._unsetCacheUpdateInProgress();
+      if (promiseMessagesCacheUpdating) {
+        this._unsetCurrentFullMessagesCacheUpdateInProgressAndEmitEvent(promiseMessagesCacheUpdating);
+      }
       void this._runNextCacheUpdateIterationIfNecessary();
     }
   }
@@ -1034,7 +971,7 @@ export class SwarmMessagesDatabaseCache<
    */
   protected async _updateMessagesCache(): Promise<void> {
     this._checkIsReady();
-    if (this._pendingMessagesUpdatePromise) {
+    if (this._pendingMessagesCacheUpdatePromise) {
       return this._planNewCacheUpdate();
     }
     this._unsetNewCacheUpdatePlanned();
@@ -1045,16 +982,29 @@ export class SwarmMessagesDatabaseCache<
     if (!this._checkIsReady()) {
       return false;
     }
-    return this._messagesCachedStore.add(
+    return this._messagesCachedStore.addToDeffered(
       getMessageDescriptionForMessageWithMeta<P, DbType, MD>(swarmMessageWithMeta, this._dbType)
     );
   }
 
-  protected _addMessageToCachedStore(swarmMessageWithMeta: ISwarmMessageStoreMessageWithMeta<P, MD>): boolean {
-    const result = this._addSwarmMessageWithMetaToCachedStore(swarmMessageWithMeta);
+  protected _clearMessagesDefferedUpdateFullQueueIfNoFullCacheUpdateAcive() {
+    if (this._isCacheUpdateActive) {
+      this._resetMessagesDefferedFullQueue();
+    }
+  }
 
+  protected _runDefferedMessagesPartialUpdateAndResetDefferedMessagesFullQueueIfNoActiveFullCahceUpdate() {
     this._runDefferedPartialCacheUpdateDebounced();
-    return result;
+    this._clearMessagesDefferedUpdateFullQueueIfNoFullCacheUpdateAcive();
+  }
+
+  protected _addMessageToCachedStoreRunDefferedUpdate(swarmMessageWithMeta: ISwarmMessageStoreMessageWithMeta<P, MD>): boolean {
+    const whetherMessageHasAddedToTheCacheDefferedRead = this._addSwarmMessageWithMetaToCachedStore(swarmMessageWithMeta);
+
+    if (!whetherMessageHasAddedToTheCacheDefferedRead) {
+      this._runDefferedMessagesPartialUpdateAndResetDefferedMessagesFullQueueIfNoActiveFullCahceUpdate();
+    }
+    return whetherMessageHasAddedToTheCacheDefferedRead;
   }
 
   protected _removeMessageFromCachedStore = async (
@@ -1066,13 +1016,8 @@ export class SwarmMessagesDatabaseCache<
     if (!this._checkIsReady()) {
       return;
     }
-
-    const result = this._messagesCachedStore.remove(
-      createMessagesMetaByAddressAndKey<P, DbType>(messageUniqAddress, key, this._dbType)
-    );
-
-    this._runDefferedPartialCacheUpdateDebounced();
-    return result;
+    this._messagesCachedStore.remove(createMessagesMetaByAddressAndKey<P, DbType>(messageUniqAddress, key, this._dbType));
+    this._runDefferedMessagesPartialUpdateAndResetDefferedMessagesFullQueueIfNoActiveFullCahceUpdate();
   };
 
   protected _getMessagesDefferedUpdateWithinCacheUpdateBatch(): Set<ISwarmMessagesDatabaseMesssageMeta<P, DbType>> | undefined {
@@ -1083,20 +1028,18 @@ export class SwarmMessagesDatabaseCache<
     return this._messagesCachedStore?.getDefferedRead();
   }
 
-  protected _resetMessagesDeffered(): void {
+  protected _resetMessagesDefferedFullQueue(): void {
     this._messagesCachedStore?.resetDeffered();
   }
 
-  protected _resetMessagesDefferedWithinBatch(): void {
+  protected _resetMessagesDefferedQueuePartial(): void {
     this._messagesCachedStore?.resetDefferedAfterCurrentCacheUpdateBatch();
   }
 
-  protected _getAndResetMessagesDefferedUpdateWithinCaheUpdateBatch():
-    | Set<ISwarmMessagesDatabaseMesssageMeta<P, DbType>>
-    | undefined {
+  protected _getAndResetMessagesForPartialDefferedUpdateBatch(): Set<ISwarmMessagesDatabaseMesssageMeta<P, DbType>> | undefined {
     const messagesMetaToUpdate = this._getMessagesDefferedUpdateWithinCacheUpdateBatch();
 
-    this._resetMessagesDefferedWithinBatch();
+    this._resetMessagesDefferedQueuePartial();
     return messagesMetaToUpdate;
   }
 
@@ -1105,8 +1048,8 @@ export class SwarmMessagesDatabaseCache<
       | Set<ISwarmMessagesDatabaseMesssageMeta<P, DbType>>
       | undefined = this._getDefferedUpdateAfterCacheUpdateProcess();
 
-    this._resetMessagesDeffered();
-    this._resetMessagesDefferedWithinBatch();
+    this._resetMessagesDefferedFullQueue();
+    this._resetMessagesDefferedQueuePartial();
     return messagesMetaToUpdate;
   }
 
@@ -1207,6 +1150,7 @@ export class SwarmMessagesDatabaseCache<
     this._setActiveDefferedPartialCacheUpdate(activeCachePartialUpdate);
 
     const hasMessagesUpdated = await activeCachePartialUpdate;
+
     this._unsetActiveDefferedPartialCacheUpdate();
     return hasMessagesUpdated;
   }
@@ -1234,7 +1178,7 @@ export class SwarmMessagesDatabaseCache<
     );
   };
 
-  protected async _runDefferedPartialCacheUpdateAfterCacheUpdate(): Promise<boolean> {
+  protected async _runDefferedPartialCacheUpdateAfterFullCacheUpdateAndResetDefferedUpdateQueue(): Promise<boolean> {
     if (this._isDefferedMessagesUpdateActive) {
       // if it's already in progress
       await this._defferedPartialCacheUpdatePromise;
@@ -1247,19 +1191,35 @@ export class SwarmMessagesDatabaseCache<
     return false;
   }
 
+  /**
+   * we should update information about messages stored
+   * if any messages was removed or added
+   * because them can be not presented in the database
+   * for any reasons or added (e.g value for a key removed
+   * but after a sync with some peer it updated with another value
+   * or a messasge has added but can be removed later).
+   *
+   * @protected
+   * @memberof SwarmMessagesDatabaseCache
+   */
   // eslint-disable-next-line @typescript-eslint/member-ordering
   protected _runDefferedPartialCacheUpdateDebounced = debounce(async (): Promise<void> => {
     if (this._isDefferedMessagesUpdateActive) {
       // if it's already in progress
       return;
     }
-    const messagesToUpdate = this._getAndResetMessagesDefferedUpdateWithinCaheUpdateBatch();
+    // another queue with messages added for the deffered update during all the time
+    // between two cache updates will be executed after the next full cache update
+    // or if there is no active cache update it must be just cleared
+    const messagesToUpdate = this._getAndResetMessagesForPartialDefferedUpdateBatch();
 
     if (messagesToUpdate?.size) {
       if (await this._runDefferedPartialCacheUpdate(messagesToUpdate)) {
-        // if has any updated messages emit the event that the cache have updated
-        this._emitDbMessagesWithAddedMessagesCaheUpdated();
+        // if has any updated messages emit the event that the cache has updated
+        this._emitCacheUpdated();
       }
+      // run cache update again because a new messasges can be appeared for
+      // deffered cahce update
       this._runDefferedPartialCacheUpdateDebounced();
     }
   }, SWARM_MESSAGES_DATABASE_CACHE_ADD_TO_CACHE_MESSAGES_PENDING_DEBOUNCE_MS);

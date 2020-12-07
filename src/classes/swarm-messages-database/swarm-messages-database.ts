@@ -723,12 +723,23 @@ export class SwarmMessagesDatabase<
   }
 
   protected _handleCacheUpdating = (): void => {
-    this._emitter.emit(ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATING);
+    this._emitter.emit(ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATING_STARTED);
+  };
+
+  protected _handleCacheUpdatingEnded = (
+    messagesCached: TSwarmMessageDatabaseMessagesCached<P, DbType, MD> | undefined
+  ): void => {
+    if (!messagesCached) {
+      console.warn('_handleCacheUpdated::have no messages cached been updated during the process of a full cache update');
+      return;
+    }
+    this._setMessagesCached(messagesCached);
+    this.emitter.emit(ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATED, messagesCached);
   };
 
   protected _handleCacheUpdated = (messagesCached: TSwarmMessageDatabaseMessagesCached<P, DbType, MD> | undefined): void => {
     if (!messagesCached) {
-      console.warn('_handleCacheUpdated::not messages cached to update');
+      console.warn('_handleCacheUpdated::have no messages cached been updated');
       return;
     }
     this._setMessagesCached(messagesCached);
@@ -747,13 +758,15 @@ export class SwarmMessagesDatabase<
       throw new Error('Swarm messages cache is not defined');
     }
 
-    const { emitter } = this._swarmMessagesCache;
+    const emitter = this._swarmMessagesCache.emitter;
 
     if (isSetListeners) {
-      emitter.addListener(ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATING, this._handleCacheUpdating);
+      emitter.addListener(ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATING_STARTED, this._handleCacheUpdating);
+      emitter.addListener(ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATING_OVER, this._handleCacheUpdatingEnded);
       emitter.addListener(ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATED, this._handleCacheUpdated);
     } else {
-      emitter.removeListener(ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATING, this._handleCacheUpdating);
+      emitter.removeListener(ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATING_STARTED, this._handleCacheUpdating);
+      emitter.removeListener(ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATING_OVER, this._handleCacheUpdatingEnded);
       emitter.removeListener(ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATED, this._handleCacheUpdated);
     }
   }

@@ -34,10 +34,12 @@ export class SwarmMessagesDatabaseCacheWithEntitiesCount<
   }
 
   protected _whetherMessagesReadLessThanRequested = async (
-    expectedMessagesOverallToReadAtTheBatchCount: number
+    expectedMessagesOverallToReadAtTheBatchCount: number,
+    expectedNewMessagesToReadAtTheBatchCount: number,
+    resultedNewMessagesReadAtTheBatchCount: number
   ): Promise<boolean> => {
     const messagesInStoreCount = await this._getOverallMessagesInStoreCount();
 
-    return messagesInStoreCount < expectedMessagesOverallToReadAtTheBatchCount;
+    return messagesInStoreCount <= resultedNewMessagesReadAtTheBatchCount;
   };
 }

@@ -120,7 +120,7 @@ export interface ISwarmMessagesDatabaseMessagesCacheStoreNonTemp<
    * @returns {boolean} - whether message added or already exists in the cache
    * @memberof ISwarmMessagesDatabaseMessagesCacheStoreNonTemp
    */
-  add(description: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>): boolean;
+  addToDeffered(description: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>): boolean;
   /**
    * Remove message with a description provided from the cache.
    * It may cause a deffered cache update and the message may

@@ -69,6 +69,7 @@ export class App extends React.Component {
         dbo={CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_KEY_VALUE}
         connectionBridgeOptions={CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS}
         userCredentialsList={[CONNECT_TO_SWARM_AUTH_CREDENTIALS_1]}
+        userCredentialsToConnectImmediate={CONNECT_TO_SWARM_AUTH_CREDENTIALS_1}
         userIdReceiverSwarmMessages={CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_2}
         swarmMessagesDatabaseCacheOptions={CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_WITH_STORE_META_OPTIONS}
       />
