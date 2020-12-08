@@ -535,11 +535,11 @@ export class SwarmMessagesDatabaseCache<
     };
   }
 
-  protected _setFullMessagesReadFromDatabaseToCache(): void {
+  protected _setAllStoredMessagesReadFromDatabaseToCache(): void {
     this._whetherMessagesListContainsAllMessages = true;
   }
 
-  protected _unsetFullMessagesReadFromDatabaseToCache(): void {
+  protected _unsetAllStoredMessagesReadFromDatabaseToCache(): void {
     this._whetherMessagesListContainsAllMessages = false;
   }
 
@@ -812,14 +812,13 @@ export class SwarmMessagesDatabaseCache<
         debugger;
       }
       // --DEBUG
-      console.log(messagesCachedStoreTemp);
       resolveMessagesUpatingBatchPromise();
       messagesReadCount = messagesCountToReadAtTheBatch;
     }
     if (whetherFullMessagesRead) {
-      this._setFullMessagesReadFromDatabaseToCache();
+      this._setAllStoredMessagesReadFromDatabaseToCache();
     } else {
-      this._unsetFullMessagesReadFromDatabaseToCache();
+      this._unsetAllStoredMessagesReadFromDatabaseToCache();
     }
   }
 
@@ -904,7 +903,7 @@ export class SwarmMessagesDatabaseCache<
    * @protected
    * @memberof SwarmMessagesDatabaseCache
    */
-  protected _updateMessagesCachedStoreByLinkedTempStoreMessages(): boolean {
+  protected _updateMessagesCachedStoreByLinkedTempStoreMessagesAndUnlinkTempStore(): boolean {
     if (this._checkIsReady()) {
       const hasMessagesUpdated = this._messagesCachedStore.updateByTempStore();
 
@@ -943,7 +942,7 @@ export class SwarmMessagesDatabaseCache<
       this._setCurrentFullMessagesCacheUpdateInProgressAndEmitEvent(promiseMessagesCacheUpdating);
       await promiseMessagesCacheUpdating;
 
-      let hasMessagesBeenUpdated = this._updateMessagesCachedStoreByLinkedTempStoreMessages();
+      let hasMessagesBeenUpdated = this._updateMessagesCachedStoreByLinkedTempStoreMessagesAndUnlinkTempStore();
       const hasNewMessagesDuringDefferedCacheUpdate = await this._runDefferedPartialCacheUpdateAfterFullCacheUpdateAndResetDefferedUpdateQueue();
 
       hasMessagesBeenUpdated = hasMessagesBeenUpdated || hasNewMessagesDuringDefferedCacheUpdate;

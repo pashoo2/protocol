@@ -347,6 +347,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   protected async restartDbInstanceSilent(): Promise<Error | TSwarmStoreConnectorOrbitDbDatabase<ItemType>> {
     const { database } = this;
 
+    // TODO - it's a hack for the custom database's cache provider
     const cacheStore = database && this.getDatabaseCache(database);
     let methodResult: Error | TSwarmStoreConnectorOrbitDbDatabase<ItemType> = new Error('Failed to restart db instance');
 
@@ -511,6 +512,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       return logEntriesList;
     }
     return logEntriesList.filter((logEntry) => {
+      // TODO - create class for filters
       const logEntryHash = this.getLodEntryHash(logEntry);
 
       if (neq) {

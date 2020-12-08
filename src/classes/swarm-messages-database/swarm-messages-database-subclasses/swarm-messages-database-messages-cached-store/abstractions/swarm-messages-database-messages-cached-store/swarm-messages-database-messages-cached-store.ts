@@ -30,7 +30,7 @@ export class SwarmMessagesDatabaseMessagesCachedStore<
 
   protected _listDefferedRead = new Set<ISwarmMessagesDatabaseMesssageMeta<P, DbType>>();
 
-  protected _tempMessagesCachedStoreLinked?: ISwarmMessagesDatabaseMessagesCacheStoreTemp<P, DbType, MD, false>;
+  protected _tempMessagesCachedStoreLinked?: ISwarmMessagesDatabaseMessagesCacheStoreTemp<P, DbType, MD, true>;
 
   constructor(protected _dbType: DbType, protected _dbName: string) {
     super(_dbType, _dbName, false);
@@ -47,9 +47,10 @@ export class SwarmMessagesDatabaseMessagesCachedStore<
     return this._cachedStoreImplementation.remove(messageCharacteristic);
   };
 
-  public linkWithTempStore<isTemp extends boolean>(
-    tempCacheStore: ISwarmMessagesDatabaseMessagesCacheStoreTemp<P, DbType, MD, isTemp>
-  ) {}
+  public linkWithTempStore(tempCacheStore: ISwarmMessagesDatabaseMessagesCacheStoreTemp<P, DbType, MD, true>) {
+    this._validateTempCacheStore(tempCacheStore);
+    this._linkWithTempCacheStore(tempCacheStore);
+  }
 
   public updateByTempStore = (): boolean => {
     const { _tempMessagesCachedStoreLinked } = this;
@@ -176,5 +177,17 @@ export class SwarmMessagesDatabaseMessagesCachedStore<
       return false;
     }
     return commonUtilsIsTwoArraysHaveSameItems(Array.from(mainStorageKeys), Array.from(linkedStorageKeys));
+  }
+
+  protected _validateTempCacheStore(tempCacheStore: ISwarmMessagesDatabaseMessagesCacheStoreTemp<P, DbType, MD, true>): void {
+    assert(tempCacheStore.isTemp, 'The storage should be temporary');
+  }
+
+  protected _linkWithTempCacheStore(tempCacheStore: ISwarmMessagesDatabaseMessagesCacheStoreTemp<P, DbType, MD, true>): void {
+    if (this._tempMessagesCachedStoreLinked) {
+      throw new Error('A temp cache store has already linked to this storage');
+    }
+    debugger;
+    this._tempMessagesCachedStoreLinked = tempCacheStore;
   }
 }

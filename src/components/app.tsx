@@ -3,7 +3,10 @@ import { FileStoreAddFile } from 'components/filestore-add-file/filestore-add-fi
 import { ConnectToSwarm } from 'components/connect-to-swarm';
 import { SensitiveDataStorage } from 'components/sensitive-data-storage';
 import { ConnectToSwarmImmediate } from './connect-to-swarm-immediate/connect-to-swarm-immediate';
-import { CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_KEY_VALUE } from './const/connect-to-swarm-immediate.const';
+import {
+  CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_KEY_VALUE,
+  CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_FEED,
+} from './const/connect-to-swarm-immediate.const';
 import { CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_WITH_STORE_META_OPTIONS } from './const/connect-to-swarm.const';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { ESwarmStoreConnector } from '../classes/swarm-store-class/swarm-store-class.const';
@@ -53,9 +56,9 @@ export class App extends React.Component {
     // );
     return (
       <ConnectToSwarmWithAdditionalMeta<
-        typeof CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_KEY_VALUE['dbType'],
+        typeof CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_FEED['dbType'],
         TSwarmMessageSerialized,
-        typeof CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_KEY_VALUE,
+        typeof CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_FEED,
         false,
         ReturnType<typeof CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS['storage']['connectorBasicFabric']>,
         ReturnType<
@@ -66,7 +69,7 @@ export class App extends React.Component {
         TSwarmMessageInstance,
         ISwarmMessageInstanceDecrypted
       >
-        dbo={CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_KEY_VALUE}
+        dbo={CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_FEED}
         connectionBridgeOptions={CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS}
         userCredentialsList={[CONNECT_TO_SWARM_AUTH_CREDENTIALS_1]}
         userCredentialsToConnectImmediate={CONNECT_TO_SWARM_AUTH_CREDENTIALS_1}
