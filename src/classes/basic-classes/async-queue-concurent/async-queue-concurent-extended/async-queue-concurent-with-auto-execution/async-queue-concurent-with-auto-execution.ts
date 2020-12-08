@@ -8,17 +8,19 @@ export class ConcurentAsyncQueueWithAutoExecution<T = void, E extends MaybeError
   public async executeQueued<TE extends T = T>(jobCreator: () => Promise<TE>): Promise<TE> {
     const currentJob = await this.wait();
     let jobResult: TE | undefined = undefined;
+    let isExecuted: boolean = false;
 
     try {
       jobResult = await jobCreator();
+      isExecuted = true;
     } catch (err) {
       console.error(err);
       throw err;
     } finally {
-      if (!jobResult) {
+      if (!isExecuted) {
         throw new Error('The job hasnt been executed');
       }
-      currentJob.done(jobResult);
+      currentJob.done(jobResult as TE);
     }
     return jobResult;
   }

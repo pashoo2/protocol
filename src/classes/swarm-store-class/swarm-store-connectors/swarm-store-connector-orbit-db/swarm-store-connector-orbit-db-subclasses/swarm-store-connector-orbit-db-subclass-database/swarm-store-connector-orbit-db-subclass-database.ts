@@ -91,7 +91,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   protected newEntriesPending: [string, LogEntry<ItemType>, any][] = [];
 
   /**
-   * set items overall count
+   * Set entities existing (including DELETE operations entities) in the store count.
    *
    * @protected
    * @type {number}
@@ -378,6 +378,13 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     }
   }
 
+  /**
+   * Set count of all(including DELETE operations) the entities existing in the store
+   *
+   * @protected
+   * @param {number} total - all entities, including DELETE entities, count
+   * @memberof SwarmStoreConnectorOrbitDBDatabase
+   */
   protected setItemsOverallCount(total: number) {
     const newTotal = Math.max(this.itemsOverallCountInStorage, total);
     if (this.itemsOverallCountInStorage !== newTotal) {
@@ -869,6 +876,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     hash: string,
     entry: LogEntry<ItemType>,
     progress: number,
+    // all entities, including DELETE entities
     total: number
   ) => {
     this.setItemsOverallCount(total);

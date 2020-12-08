@@ -758,10 +758,10 @@ export class SwarmMessagesDatabaseCache<
     // limit of messages count in the cached was reached
     let whetherMessagesLimitToReadReached = false;
     // whether all messages were read from the databse
-    let whetherFullMessagesRead = false;
+    let whetherAllStoredMessagesRead = false;
     const allMessagesRead = new Map();
 
-    while (!whetherMessagesLimitToReadReached && !whetherFullMessagesRead) {
+    while (!whetherMessagesLimitToReadReached && !whetherAllStoredMessagesRead) {
       this._checkIsReady();
 
       const resolveMessagesUpatingBatchPromise = this._createMessagesCacheUpdatingBatchPromise();
@@ -799,7 +799,7 @@ export class SwarmMessagesDatabaseCache<
         allMessagesRead.set(key, value);
       });
 
-      whetherFullMessagesRead = await this._whetherMessagesReadLessThanRequested(
+      whetherAllStoredMessagesRead = await this._whetherMessagesReadLessThanRequested(
         messagesCountToReadAtTheBatch,
         currentPageItemsToReadCount,
         allMessagesRead.size
@@ -808,14 +808,14 @@ export class SwarmMessagesDatabaseCache<
       if (allMessagesRead.size > Number(messagesCachedStoreTemp?.entries?.size)) {
         throw new Error('Read count is not equal');
       }
-      if (whetherFullMessagesRead) {
+      if (whetherAllStoredMessagesRead) {
         debugger;
       }
       // --DEBUG
       resolveMessagesUpatingBatchPromise();
       messagesReadCount = messagesCountToReadAtTheBatch;
     }
-    if (whetherFullMessagesRead) {
+    if (whetherAllStoredMessagesRead) {
       this._setAllStoredMessagesReadFromDatabaseToCache();
     } else {
       this._unsetAllStoredMessagesReadFromDatabaseToCache();

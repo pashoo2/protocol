@@ -28,6 +28,12 @@ import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messa
  * @interface ISwarmMessagesStoreMeta
  */
 export interface ISwarmMessagesStoreMeta {
+  /**
+   * Includes and DELETE operation messages
+   *
+   * @type {number}
+   * @memberof ISwarmMessagesStoreMeta
+   */
   messagesStoredCount: number;
 }
 

@@ -4,8 +4,11 @@
     <list default="true" id="e70e70e3-e48a-4dfd-91a6-03818e8691f6" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/node_modules-local/hypervision-browser" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules-local/hypervision-browser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache-with-entities-count/swarm-messages-database-cache-with-entities-count.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache-with-entities-count/swarm-messages-database-cache-with-entities-count.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache/swarm-messages-database-cache.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache/swarm-messages-database-cache.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-cached-store/abstractions/swarm-messages-database-messages-cached-store/swarm-messages-database-messages-cached-store.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-cached-store/abstractions/swarm-messages-database-messages-cached-store/swarm-messages-database-messages-cached-store.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database.messages-collector.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database.messages-collector.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-class-extended/swarm-store-class-with-entries-count/swarm-store-class-with-entries-count.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-class-extended/swarm-store-class-with-entries-count/swarm-store-class-with-entries-count.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.ts" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -46,8 +49,8 @@
       <file leaf-file-name="connect-to-swarm.tsx" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/components/connect-to-swarm/connect-to-swarm.tsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="484">
-              <caret line="519" column="62" selection-start-line="519" selection-start-column="62" selection-end-line="519" selection-end-column="62" />
+            <state relative-caret-position="619">
+              <caret line="528" column="62" selection-start-line="528" selection-start-column="62" selection-end-line="528" selection-end-column="62" />
               <folding>
                 <element signature="e#0#26#0" expanded="true" />
               </folding>
@@ -59,7 +62,7 @@
         <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache/swarm-messages-database-cache.ts">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="165">
-              <caret line="1224" lean-forward="true" selection-start-line="1224" selection-end-line="1224" />
+              <caret line="1224" selection-start-line="1224" selection-end-line="1224" />
               <folding>
                 <element signature="n#SwarmMessagesDatabaseCache#0" />
                 <element signature="e#4247#4278#0" />
@@ -192,14 +195,6 @@
                 <element signature="e#27644#27834#0" />
                 <element signature="e#27838#28177#0" />
                 <element signature="e#28348#31344#0" />
-                <element signature="e#28877#31166#0" />
-                <element signature="e#29147#29219#0" />
-                <element signature="e#29508#29677#0" />
-                <element signature="e#29518#29559#0" />
-                <element signature="e#30197#30241#0" />
-                <element signature="e#30586#30636#0" />
-                <element signature="e#30918#30979#0" />
-                <element signature="e#31015#31042#0" />
                 <element signature="e#31200#31266#0" />
                 <element signature="e#31272#31340#0" />
                 <element signature="e#31348#31500#0" />
@@ -279,7 +274,7 @@
         <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-cached-store/abstractions/swarm-messages-database-messages-cached-store/swarm-messages-database-messages-cached-store.ts">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="379">
-              <caret line="60" lean-forward="true" selection-start-line="60" selection-end-line="60" />
+              <caret line="60" selection-start-line="60" selection-end-line="60" />
             </state>
           </provider>
         </entry>
@@ -680,7 +675,7 @@
       <workItem from="1606558791322" duration="4456000" />
       <workItem from="1606928303226" duration="1341000" />
       <workItem from="1607026614091" duration="1625000" />
-      <workItem from="1607432257648" duration="2676000" />
+      <workItem from="1607432257648" duration="3274000" />
     </task>
     <servers />
   </component>
@@ -717,7 +712,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="77125000" />
+    <option name="totallyTimeSpent" value="77723000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="72" y="27" width="1848" height="1053" extended-state="6" />
@@ -1087,8 +1082,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/components/connect-to-swarm/connect-to-swarm.tsx">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="484">
-          <caret line="519" column="62" selection-start-line="519" selection-start-column="62" selection-end-line="519" selection-end-column="62" />
+        <state relative-caret-position="619">
+          <caret line="528" column="62" selection-start-line="528" selection-start-column="62" selection-end-line="528" selection-end-column="62" />
           <folding>
             <element signature="e#0#26#0" expanded="true" />
           </folding>
@@ -1098,14 +1093,14 @@
     <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-cached-store/abstractions/swarm-messages-database-messages-cached-store/swarm-messages-database-messages-cached-store.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="379">
-          <caret line="60" lean-forward="true" selection-start-line="60" selection-end-line="60" />
+          <caret line="60" selection-start-line="60" selection-end-line="60" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache/swarm-messages-database-cache.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
-          <caret line="1224" lean-forward="true" selection-start-line="1224" selection-end-line="1224" />
+          <caret line="1224" selection-start-line="1224" selection-end-line="1224" />
           <folding>
             <element signature="n#SwarmMessagesDatabaseCache#0" />
             <element signature="e#4247#4278#0" />
@@ -1238,14 +1233,6 @@
             <element signature="e#27644#27834#0" />
             <element signature="e#27838#28177#0" />
             <element signature="e#28348#31344#0" />
-            <element signature="e#28877#31166#0" />
-            <element signature="e#29147#29219#0" />
-            <element signature="e#29508#29677#0" />
-            <element signature="e#29518#29559#0" />
-            <element signature="e#30197#30241#0" />
-            <element signature="e#30586#30636#0" />
-            <element signature="e#30918#30979#0" />
-            <element signature="e#31015#31042#0" />
             <element signature="e#31200#31266#0" />
             <element signature="e#31272#31340#0" />
             <element signature="e#31348#31500#0" />

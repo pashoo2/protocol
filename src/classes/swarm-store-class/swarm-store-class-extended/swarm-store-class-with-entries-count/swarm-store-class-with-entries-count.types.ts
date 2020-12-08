@@ -29,7 +29,8 @@ export interface ISwarmStoreConnectorBasicWithEntriesCount<
   countEntriesLoaded: number;
 
   /**
-   * All enrties count exists in the persistent storage
+   * All enrties count exists (including DELETE operations entities)
+   * in the persistent storage
    *
    * @type {number}
    * @memberof ISwarmStoreConnectorBasicWithEntriesCount
@@ -85,8 +86,9 @@ export interface ISwarmStoreConnectorWithEntriesCount<
   getCountEntriesLoaded(dbName: DBO['dbName']): Promise<number | Error>;
 
   /**
-   * Returns enrties count exists in the persistent storage
-   * for the datbase passed in the argument.
+   * Returns enrties count (including the DELETE operation entries)
+   * are existing in the persistent storage for the datbase with the name
+   * passed in the argument.
    *
    * @param {TSwarmStoreDatabaseOptions<P, ItemType>['dbName']} dbName
    * @returns {(Promise<number | Error>)}
