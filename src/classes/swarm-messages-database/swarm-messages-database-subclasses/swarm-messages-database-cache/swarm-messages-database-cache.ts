@@ -946,7 +946,6 @@ export class SwarmMessagesDatabaseCache<
       const hasNewMessagesDuringDefferedCacheUpdate = await this._runDefferedPartialCacheUpdateAfterFullCacheUpdateAndResetDefferedUpdateQueue();
 
       hasMessagesBeenUpdated = hasMessagesBeenUpdated || hasNewMessagesDuringDefferedCacheUpdate;
-      debugger;
       if (hasMessagesBeenUpdated) {
         this._emitCacheUpdated();
       }

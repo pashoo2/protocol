@@ -360,7 +360,7 @@ export class SwarmMessagesDatabaseComponent<
         <div>
           Messages:
           {messages &&
-            Array.from(messages.entries()).map(([keyInStore, messageWithMeta]) => {
+            Array.from(messages.entries()).map(([keyInStore, messageWithMeta], idx) => {
               const { messageAddress, dbName: messageDbName, message } = messageWithMeta;
               let messageId = '';
 
@@ -380,14 +380,17 @@ export class SwarmMessagesDatabaseComponent<
                 messageId = messageAddress;
               }
               return (
-                <MessageComponent
-                  key={keyInStore}
-                  dbName={messageDbName || dbName}
-                  id={messageId}
-                  k={keyInStore}
-                  message={message}
-                  deleteMessage={this.handleDeleteMessage}
-                />
+                <>
+                  {idx}
+                  <MessageComponent
+                    key={keyInStore}
+                    dbName={messageDbName || dbName}
+                    id={messageId}
+                    k={keyInStore}
+                    message={message}
+                    deleteMessage={this.handleDeleteMessage}
+                  />
+                </>
               );
             })}
         </div>

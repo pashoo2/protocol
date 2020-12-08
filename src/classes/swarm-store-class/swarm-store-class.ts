@@ -289,7 +289,6 @@ export class SwarmStore<
     if (checkIsError(connector)) {
       return new Error('Connector is not exists');
     }
-    this.setClosedStatusForDb(dbName);
     return connector.request<A, DT>(dbName, dbMethod, arg);
   }
 

@@ -1,5 +1,4 @@
 import { SwarmStoreConnectorOrbitDBDatabase } from '../../swarm-store-connector-orbit-db-subclass-database';
-import { ConcurentAsyncQueue } from 'classes/basic-classes/async-queue-concurent/async-queue-concurent';
 import { createPromisePendingRejectable } from 'utils/common-utils/commom-utils.promies';
 
 import {
@@ -8,12 +7,10 @@ import {
   TSwarmStoreDatabaseOptions,
 } from '../../../../../../swarm-store-class.types';
 import { ESwarmStoreConnector } from '../../../../../../swarm-store-class.const';
-import {
-  IJobResolver,
-  IAsyncQueueConcurent,
-} from '../../../../../../../basic-classes/async-queue-concurent/async-queue-concurent.types';
 import { ArgumentTypes } from 'types/helper.types';
 import { ISwarmStoreConnectorBasic } from '../../../../../../swarm-store-class.types';
+import { ConcurentAsyncQueueWithAutoExecution } from '../../../../../../../basic-classes/async-queue-concurent/async-queue-concurent-extended/async-queue-concurent-with-auto-execution/async-queue-concurent-with-auto-execution';
+import { IAsyncQueueConcurentWithAutoExecution } from '../../../../../../../basic-classes/async-queue-concurent/async-queue-concurent-extended/async-queue-concurent-with-auto-execution/async-queue-concurent-with-auto-execution.types';
 
 export class SwarmStoreConnectorOrbitDBDatabaseQueued<
     ItemType extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>,
@@ -29,7 +26,7 @@ export class SwarmStoreConnectorOrbitDBDatabaseQueued<
    * @protected
    * @memberof SwarmStoreConnectorOrbitDBDatabase
    */
-  private _asyncOperationsQueue: IAsyncQueueConcurent<void, Error> | undefined;
+  private _asyncOperationsQueue: IAsyncQueueConcurentWithAutoExecution<void, Error> | undefined;
 
   public connect = async (
     ...args: ArgumentTypes<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['connect']>
@@ -83,10 +80,10 @@ export class SwarmStoreConnectorOrbitDBDatabaseQueued<
   };
 
   protected _initializeAsyncQueue() {
-    this._asyncOperationsQueue = new ConcurentAsyncQueue<void, Error>(createPromisePendingRejectable);
+    this._asyncOperationsQueue = new ConcurentAsyncQueueWithAutoExecution<void, Error>(createPromisePendingRejectable);
   }
 
-  protected _getAsyncOperationsQueue(): IAsyncQueueConcurent<void, Error> {
+  protected _getAsyncOperationsQueue(): IAsyncQueueConcurentWithAutoExecution<void, Error> {
     if (!this._asyncOperationsQueue) {
       this._initializeAsyncQueue();
     }
@@ -94,10 +91,6 @@ export class SwarmStoreConnectorOrbitDBDatabaseQueued<
       throw new Error('Failed to initialize the async queue instance');
     }
     return this._asyncOperationsQueue;
-  }
-
-  protected _waitOperationsQueue(): Promise<IJobResolver<void>> {
-    return this._getAsyncOperationsQueue().wait();
   }
 
   protected _rejectAllPendingOperations(err: Error): Promise<void> {
@@ -117,11 +110,7 @@ export class SwarmStoreConnectorOrbitDBDatabaseQueued<
   }
 
   protected _runAsJob = async <F extends () => any>(func: F): Promise<ReturnType<F>> => {
-    const currentJob = await this._waitOperationsQueue();
-    try {
-      return func();
-    } finally {
-      currentJob.done();
-    }
+    // eslint-disable-next-line @typescript-eslint/return-await
+    return await this._getAsyncOperationsQueue().executeQueued(func);
   };
 }

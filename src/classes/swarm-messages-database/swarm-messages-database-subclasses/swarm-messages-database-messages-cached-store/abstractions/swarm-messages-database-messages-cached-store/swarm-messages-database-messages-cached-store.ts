@@ -26,9 +26,9 @@ export class SwarmMessagesDatabaseMessagesCachedStore<
   >
   extends SwarmMessagesDatabaseMessagesCachedStoreTemp<P, DbType, MD, false>
   implements ISwarmMessagesDatabaseMessagesCacheStoreExtendedDefferedMethods<P, DbType, MD> {
-  protected _listDefferedReadAfterCurrentCacheUpdateBatch = new Set<ISwarmMessagesDatabaseMesssageMeta<P, DbType>>();
+  protected _listMessagesMetaForDefferedReadAfterCurrentCacheUpdateBatch = this._createNewListMessagesMetaForDefferedReadPartial();
 
-  protected _listDefferedRead = new Set<ISwarmMessagesDatabaseMesssageMeta<P, DbType>>();
+  protected _listMessagesMetaForDefferedRead = this._createNewListMessagesMetaForDefferedReadFull();
 
   protected _tempMessagesCachedStoreLinked?: ISwarmMessagesDatabaseMessagesCacheStoreTemp<P, DbType, MD, true>;
 
@@ -72,7 +72,7 @@ export class SwarmMessagesDatabaseMessagesCachedStore<
   }
 
   public getDefferedReadAfterCurrentCacheUpdateBatch(): Set<ISwarmMessagesDatabaseMesssageMeta<P, DbType>> {
-    return this._listDefferedReadAfterCurrentCacheUpdateBatch;
+    return this._listMessagesMetaForDefferedReadAfterCurrentCacheUpdateBatch;
   }
   /**
    * Reset messages to read after the current batch of update will be performed.
@@ -80,7 +80,7 @@ export class SwarmMessagesDatabaseMessagesCachedStore<
    * @memberof ISwarmMessagesDatabaseMessagesCachedStore
    */
   public resetDefferedAfterCurrentCacheUpdateBatch(): void {
-    this._listDefferedReadAfterCurrentCacheUpdateBatch.clear();
+    this._listMessagesMetaForDefferedReadAfterCurrentCacheUpdateBatch = this._createNewListMessagesMetaForDefferedReadPartial();
   }
 
   /**
@@ -90,7 +90,7 @@ export class SwarmMessagesDatabaseMessagesCachedStore<
    * @memberof ISwarmMessagesDatabaseMessagesCachedStore
    */
   public getDefferedRead(): Set<ISwarmMessagesDatabaseMesssageMeta<P, DbType>> {
-    return this._listDefferedRead;
+    return this._listMessagesMetaForDefferedRead;
   }
   /**
    * Reset messages to read after the current cache update proces will be ended.
@@ -98,16 +98,24 @@ export class SwarmMessagesDatabaseMessagesCachedStore<
    * @memberof ISwarmMessagesDatabaseMessagesCachedStore
    */
   public resetDeffered(): void {
-    this._listDefferedRead.clear();
+    this._listMessagesMetaForDefferedRead = this._createNewListMessagesMetaForDefferedReadFull();
   }
 
   public _addToDefferedUpdate = (meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>): void => {
-    this._listDefferedRead.add(meta);
+    this._listMessagesMetaForDefferedRead.add(meta);
   };
 
   public _addToDefferedReadAfterCurrentCacheUpdateBatch = (meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>): void => {
-    this._listDefferedReadAfterCurrentCacheUpdateBatch.add(meta);
+    this._listMessagesMetaForDefferedReadAfterCurrentCacheUpdateBatch.add(meta);
   };
+
+  protected _createNewListMessagesMetaForDefferedReadFull(): Set<ISwarmMessagesDatabaseMesssageMeta<P, DbType>> {
+    return new Set<ISwarmMessagesDatabaseMesssageMeta<P, DbType>>();
+  }
+
+  protected _createNewListMessagesMetaForDefferedReadPartial(): Set<ISwarmMessagesDatabaseMesssageMeta<P, DbType>> {
+    return this._createNewListMessagesMetaForDefferedReadFull();
+  }
 
   protected _checkIsReady(): this is {
     _cachedStoreImplementation: ISwarmMessagesDatabaseMessagesCachedStoreCore<P, DbType, MD, false>;
@@ -187,7 +195,6 @@ export class SwarmMessagesDatabaseMessagesCachedStore<
     if (this._tempMessagesCachedStoreLinked) {
       throw new Error('A temp cache store has already linked to this storage');
     }
-    debugger;
     this._tempMessagesCachedStoreLinked = tempCacheStore;
   }
 }

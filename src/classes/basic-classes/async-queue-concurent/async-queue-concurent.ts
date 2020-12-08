@@ -14,15 +14,15 @@ export class ConcurentAsyncQueue<T = void, E extends MaybeError = void> implemen
   public wait = (): Promise<IJobResolver<T>> => {
     this.failIfDestroying();
 
-    const { queue } = this;
-    const lastWorkPromise = !!queue.length && queue[queue.length - 1];
+    const lastWorkPromise = this._getLastJobFromQueue();
     const jobPromise = createJobPromise<T, E>(this._promisePendingRejectableCreator);
     const promiseToWaitBeforeRunJob = (lastWorkPromise || Promise.resolve()) as IJobPromise<T, E>;
 
     this._addInQueue(jobPromise);
-    return promiseToWaitBeforeRunJob.then(
-      this._createResolverStep(this._createWorkPromiseResolver(jobPromise.resolve, jobPromise))
-    );
+
+    const jobResolver = this._createResolverStep(this._createWorkPromiseResolver(jobPromise.resolve, jobPromise));
+
+    return promiseToWaitBeforeRunJob.then(jobResolver, jobResolver);
   };
 
   public destroy = async (err: E): Promise<void> => {
@@ -36,15 +36,30 @@ export class ConcurentAsyncQueue<T = void, E extends MaybeError = void> implemen
     }
   };
 
+  protected _getLastJobFromQueue(): IJobPromise<T, E> | undefined {
+    const queue = this.queue;
+    return queue.length ? queue[queue.length - 1] : undefined;
+  }
+
   protected _addInQueue = (jobPromise: IJobPromise<T, E>) => {
     this.queue = [...this.queue, jobPromise];
   };
 
   protected _createResolverStep = (resolver: IJobResolveCallback<T>): (() => IJobResolver<T>) => {
-    return () => ({
-      done: resolver,
-    });
+    return (resultPrevPromise?: any) => {
+      this._logIfErrorResult(resultPrevPromise);
+      return {
+        done: resolver,
+      };
+    };
   };
+
+  protected _logIfErrorResult(error: any) {
+    if (error instanceof Error) {
+      console.error('Job failed');
+      console.error(error);
+    }
+  }
 
   protected _createWorkPromiseResolver = (
     workPromiseResolve: IJobResolveCallback<T>,

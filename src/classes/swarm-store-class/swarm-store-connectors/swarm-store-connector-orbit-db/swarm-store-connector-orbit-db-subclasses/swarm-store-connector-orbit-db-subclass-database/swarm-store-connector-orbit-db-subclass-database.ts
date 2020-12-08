@@ -689,7 +689,8 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     const err = typeof error === 'string' ? new Error() : error;
     const eventName = isFatal ? ESwarmStoreEventNames.FATAL : ESwarmStoreEventNames.ERROR;
 
-    console.error(`${SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_LOG_PREFIX}::error${mehodName ? `::${mehodName}` : ''}`, err);
+    console.error(`${SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_LOG_PREFIX}::error${mehodName ? `::${mehodName}` : ''}`);
+    console.error(error);
     this.emit(eventName, err);
     return err;
   }

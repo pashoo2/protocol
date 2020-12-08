@@ -164,6 +164,7 @@ export class ConnectToSwarm<
     secretStorage: undefined as undefined | ISecretStorage,
     userProfileData: undefined as undefined | Partial<ICentralAuthorityUserProfile>,
     userCredentialsActive: undefined as IUserCredentialsCommon | undefined,
+    isDatabaseListVisible: false,
   };
 
   protected get defaultDbOptions(): DBO {
@@ -486,8 +487,14 @@ export class ConnectToSwarm<
     return <UserProfile id={userId} profile={userProfileData} />;
   }
 
+  protected toggleDatabasesListVisible = () => {
+    this.setState((state: any) => ({
+      isDatabaseListVisible: !state.isDatabaseListVisible,
+    }));
+  };
+
   protected renderDatabasesList() {
-    const { databasesList, connectionBridge, databaseOpeningStatus } = this.state;
+    const { databasesList, connectionBridge, databaseOpeningStatus, isDatabaseListVisible } = this.state;
     const dbsOptions = databasesList?.options;
     const isDefaultDatabaseWasOpenedBeforeOrOpening =
       !databaseOpeningStatus && !dbsOptions?.[this.defaultDbOptions.dbName as DBO['dbName']];
@@ -495,24 +502,26 @@ export class ConnectToSwarm<
     return (
       <div>
         <div>
-          <h4>List of databases:</h4>
-          {!!databasesList &&
-            !!dbsOptions &&
-            Object.keys(dbsOptions).map((databaseName) => {
-              const databaseOptions = dbsOptions[databaseName as DBO['dbName']];
-              const isOpened = databasesList.opened[databaseName];
-              const dbMessages = this.state.messagesReceived.get(databaseName);
+          <h4 onClick={this.toggleDatabasesListVisible}>List of databases:</h4>
+          <div style={{ display: isDatabaseListVisible ? 'initial' : 'none' }}>
+            {!!databasesList &&
+              !!dbsOptions &&
+              Object.keys(dbsOptions).map((databaseName) => {
+                const databaseOptions = dbsOptions[databaseName as DBO['dbName']];
+                const isOpened = databasesList.opened[databaseName];
+                const dbMessages = this.state.messagesReceived.get(databaseName);
 
-              return (
-                <SwarmStoreDbComponent<P, T, DbType, DBO>
-                  key={databaseName}
-                  databaseOptions={databaseOptions}
-                  isOpened={isOpened}
-                  connectionBridge={connectionBridge}
-                  messages={Array.from(dbMessages?.values() || [])}
-                />
-              );
-            })}
+                return (
+                  <SwarmStoreDbComponent<P, T, DbType, DBO>
+                    key={databaseName}
+                    databaseOptions={databaseOptions}
+                    isOpened={isOpened}
+                    connectionBridge={connectionBridge}
+                    messages={Array.from(dbMessages?.values() || [])}
+                  />
+                );
+              })}
+          </div>
         </div>
         {!!isDefaultDatabaseWasOpenedBeforeOrOpening ? (
           <button onClick={() => this.handleOpenDatabase()}>Open default database</button>
@@ -623,7 +632,7 @@ export class ConnectToSwarm<
     return (
       <div>
         <div>
-          <h4>List of swarm messages databases:</h4>
+          <h4 onClick={this.toggleDatabasesListVisible}>List of swarm messages databases:</h4>
           {swarmStoreMessagesDbOptionsList.map((dbsOptions) => {
             const { userId } = this.state;
             const createDatabaseConnector = this.createDatabaseConnector;
