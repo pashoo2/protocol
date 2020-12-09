@@ -1006,7 +1006,7 @@ export class SwarmMessagesDatabaseCache<
   protected _addMessageToCachedStoreRunDefferedUpdate(swarmMessageWithMeta: ISwarmMessageStoreMessageWithMeta<P, MD>): boolean {
     const whetherMessageHasAddedToTheCacheDefferedRead = this._addSwarmMessageWithMetaToCachedStore(swarmMessageWithMeta);
 
-    if (!whetherMessageHasAddedToTheCacheDefferedRead) {
+    if (whetherMessageHasAddedToTheCacheDefferedRead) {
       this._runDefferedMessagesPartialUpdateAndResetDefferedMessagesFullQueueIfNoActiveFullCahceUpdate();
     }
     return whetherMessageHasAddedToTheCacheDefferedRead;
