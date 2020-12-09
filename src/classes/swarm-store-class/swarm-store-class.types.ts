@@ -35,14 +35,16 @@ import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-me
 
 export type TSwarmStoreDatabaseType<P extends ESwarmStoreConnector> = ESwarmStoreConnectorOrbitDbDatabaseType;
 
+export type TSwarmStoreOrbitDBDatabaseEntityUniqueIndex<
+  DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>
+> = DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+  ? TSwarmStoreDatabaseEntityKey<ESwarmStoreConnector.OrbitDB>
+  : TSwarmStoreDatabaseEntityAddress<ESwarmStoreConnector.OrbitDB>;
+
 export type TSwarmStoreDatabaseEntityUniqueIndex<
   P extends ESwarmStoreConnector,
   DbType extends TSwarmStoreDatabaseType<P>
-> = P extends ESwarmStoreConnector.OrbitDB
-  ? DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
-    ? TSwarmStoreDatabaseEntityAddress<P>
-    : TSwarmStoreDatabaseEntityKey<P>
-  : never;
+> = P extends ESwarmStoreConnector.OrbitDB ? TSwarmStoreOrbitDBDatabaseEntityUniqueIndex<DbType> : never;
 
 export type TSwarmStoreConnectorBasicFabric<
   P extends ESwarmStoreConnector,

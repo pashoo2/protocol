@@ -33,14 +33,13 @@ import { ESwarmMessagesDatabaseCacheEventsNames } from './swarm-messages-databas
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from './swarm-messages-database.messages-collector.types';
+import { TSwarmStoreDatabaseEntityUniqueIndex } from '../swarm-store-class/swarm-store-class.types';
 
 export type TSwarmMessageDatabaseMessagesCached<
   P extends ESwarmStoreConnector,
-  DbType extends TSwarmStoreDatabaseType<P> | undefined,
+  DbType extends TSwarmStoreDatabaseType<P>,
   MD extends ISwarmMessageInstanceDecrypted
-> = DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE // key is key in the database, value - message with meta
-  ? Map<TSwarmStoreDatabaseEntityKey<P>, ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD>> // key is message address, value - message with meta
-  : Map<TSwarmStoreDatabaseEntityAddress<P>, ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD>>;
+> = Map<TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>, ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD>>;
 
 export interface ISwarmMessagesDatabaseConnectCurrentUserOptions {
   userId: TSwarmMessageUserIdentifierSerialized;

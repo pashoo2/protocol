@@ -47,7 +47,7 @@ import {
   createMessagesMetaByAddressAndKey,
 } from './swarm-messages-database-cache.utils';
 import { ISwarmMessagesDatabaseMesssageMeta } from '../../swarm-messages-database.types';
-import { getMessagesUniqIndexesByMeta } from './swarm-messages-database-cache.utils';
+import { getMessagesUniqIndexesByMeta, getMessageMetaByUniqIndex } from './swarm-messages-database-cache.utils';
 import { TSwarmMessagesDatabaseMessagesCacheStore } from './swarm-messages-database-cache.types';
 import { TSwarmMessageSerialized } from '../../../swarm-message/swarm-message-constructor.types';
 import { TSwarmStoreDatabaseOptions } from '../../../swarm-store-class/swarm-store-class.types';
@@ -244,7 +244,7 @@ export class SwarmMessagesDatabaseCache<
       return;
     }
     await this._waitTillMessagesCacheUpateBatchOver();
-    return this._removeMessageFromCachedStore(messageUniqAddress, key);
+    return this._removeMessageFromCachedStoreAndEmitEvent(messageUniqAddress, key);
   }
 
   protected _checkIsReady(): this is {
@@ -659,9 +659,13 @@ export class SwarmMessagesDatabaseCache<
     messagesCache: TSwarmMessageDatabaseMessagesCached<P, DbType, MD>
   ): Array<TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>> {
     if (this._dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE) {
-      return this._getMessagesReadKeys(messagesCache) as Array<TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>>;
+      return this._getMessagesReadKeys(
+        messagesCache as TSwarmMessageDatabaseMessagesCached<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE, MD>
+      ) as Array<TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>>;
     } else if (this._dbType === ESwarmStoreConnectorOrbitDbDatabaseType.FEED) {
-      return this._getMessagesReadAddresses(messagesCache) as Array<TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>>;
+      return this._getMessagesReadAddresses(
+        messagesCache as TSwarmMessageDatabaseMessagesCached<P, ESwarmStoreConnectorOrbitDbDatabaseType.FEED, MD>
+      ) as Array<TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>>;
     }
     return [];
   }
@@ -1005,7 +1009,7 @@ export class SwarmMessagesDatabaseCache<
     return whetherMessageHasAddedToTheCacheDefferedRead;
   }
 
-  protected _removeMessageFromCachedStore = async (
+  protected _removeMessageFromCachedStoreAndEmitEvent = async (
     messageUniqAddress: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
       ? TSwarmStoreDatabaseEntityAddress<P> | undefined
       : TSwarmStoreDatabaseEntityAddress<P>,
@@ -1016,6 +1020,7 @@ export class SwarmMessagesDatabaseCache<
     }
     this._messagesCachedStore.remove(createMessagesMetaByAddressAndKey<P, DbType>(messageUniqAddress, key, this._dbType));
     this._runDefferedMessagesPartialUpdateAndResetDefferedMessagesFullQueueIfNoActiveFullCahceUpdate();
+    this._emitCacheUpdated();
   };
 
   protected _getMessagesDefferedUpdateWithinCacheUpdateBatch(): Set<ISwarmMessagesDatabaseMesssageMeta<P, DbType>> | undefined {
@@ -1087,6 +1092,39 @@ export class SwarmMessagesDatabaseCache<
   }
 
   /**
+   * Unset in cache messages which have not been read
+   *
+   * @protected
+   * @param {TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>[]} messagesUniqIndexesForReading
+   * @param null messagesReadByMetaInfo
+   * @memberof SwarmMessagesDatabaseCache
+   */
+  protected _unsetMessagesNotExistsInTheStore<DT extends DbType>(
+    messagesUniqIndexesForReading: TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>[],
+    messagesReadByUniqIndexes: TSwarmMessageDatabaseMessagesCached<P, DbType, MD>,
+    cacheStore: ISwarmMessagesDatabaseMessagesCacheStoreNonTemp<P, DT, MD>,
+    dbType: DT
+  ): boolean {
+    let error: Error | undefined;
+    let hasMessagesRemoved = false;
+    messagesUniqIndexesForReading.map((messageUniqIndex: TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>): void => {
+      try {
+        if (!messagesReadByUniqIndexes.has(messageUniqIndex)) {
+          cacheStore.unset(getMessageMetaByUniqIndex<P, DT>(messageUniqIndex, dbType));
+          hasMessagesRemoved = true;
+        }
+      } catch (err) {
+        error = err as Error;
+        console.error(err);
+      }
+    });
+    if (error instanceof Error) {
+      throw new Error('Failed to unset all messsages not exists');
+    }
+    return hasMessagesRemoved;
+  }
+
+  /**
    * Read messages deffered by a metadata of them.
    *
    * @protected
@@ -1103,7 +1141,7 @@ export class SwarmMessagesDatabaseCache<
   ): Promise<boolean> {
     let messagesCountAlreadyRead = 0;
     let hasMessagesUpdated = false;
-    const messagesMetaToRead = getMessagesUniqIndexesByMeta(messagesForUpdateMeta, dbType);
+    const messagesMetaToRead = getMessagesUniqIndexesByMeta<P, DT>(messagesForUpdateMeta, dbType);
 
     while (messagesCountAlreadyRead < messagesMetaToRead.length) {
       const messagesCountToReadAtBatch = await this._getItemsCountCanBeReadForCurrentIdlePeriod();
@@ -1112,16 +1150,26 @@ export class SwarmMessagesDatabaseCache<
         continue;
       }
 
-      const messagesMetaToReadAtBatch = this._getMessagesMetaToReadAtBatch(
+      const messagesIndexesToReadAtBatch = this._getMessagesMetaToReadAtBatch(
         messagesMetaToRead,
         messagesCountAlreadyRead,
         messagesCountToReadAtBatch
       );
-      const messagesReadAtBatch = await this._runDefferedMessageReadBatch(messagesMetaToReadAtBatch);
+      const messagesReadAtBatch = await this._runDefferedMessageReadBatch(messagesIndexesToReadAtBatch);
       const hasMessagesUpdatedAtBatch = cacheStore.update(messagesReadAtBatch);
-      hasMessagesUpdated = hasMessagesUpdated || hasMessagesUpdatedAtBatch;
+      const hasMessagesRemovedFromStorage = this._unsetMessagesNotExistsInTheStore<DT>(
+        messagesIndexesToReadAtBatch,
+        messagesReadAtBatch,
+        cacheStore,
+        dbType
+      );
+
+      hasMessagesUpdated = hasMessagesUpdated || hasMessagesUpdatedAtBatch || hasMessagesRemovedFromStorage;
       messagesCountAlreadyRead += messagesCountToReadAtBatch;
-      console.log('swarmMessagesDatabaseCache::messagesCountAlreadyRead', messagesCountAlreadyRead);
+      console.log(
+        'swarmMessagesDatabaseCache::_runDefferedMessagesUpdateInCache::messagesCountAlreadyRead',
+        messagesCountAlreadyRead
+      );
     }
     return hasMessagesUpdated;
   }

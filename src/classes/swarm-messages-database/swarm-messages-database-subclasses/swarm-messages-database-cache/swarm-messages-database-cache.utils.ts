@@ -16,6 +16,8 @@ import { isValidSwarmMessageDecryptedFormat } from '../../../swarm-message-store
 import { whetherSwarmMessagesDecryptedAreEqual } from '../../../swarm-message/swarm-message-utils/swarm-message-utils-common/swarm-message-utils-common-decrypted';
 import { ISwarmMessageInstanceDecrypted, ISwarmMessageDecrypted } from '../../../swarm-message/swarm-message-constructor.types';
 
+// TODO - refactor to use a class instead of all the helpers
+
 export const checkMessageAddress = <P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>>(
   messageUniqAddress: any,
   dbType: DbType
@@ -106,6 +108,35 @@ export const getMessageMetaForMessageWithMeta = <
       : undefined,
     dbType
   );
+};
+
+const getMessageFeedStoreMetaByMessageEntityAddress = <P extends ESwarmStoreConnector>(
+  messageAddress: TSwarmStoreDatabaseEntityAddress<P>
+): ISwarmMessagesDatabaseMesssageMeta<P, ESwarmStoreConnectorOrbitDbDatabaseType.FEED> => {
+  return {
+    key: undefined,
+    messageUniqAddress: messageAddress,
+  };
+};
+
+const getMessageKeyValueStoreMetaByMessageEntityKey = <P extends ESwarmStoreConnector>(
+  messageKey: TSwarmStoreDatabaseEntityKey<P>
+): ISwarmMessagesDatabaseMesssageMeta<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE> => {
+  return {
+    key: messageKey,
+    messageUniqAddress: undefined,
+  };
+};
+
+export const getMessageMetaByUniqIndex = <P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>>(
+  messageUniqIndex: TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>,
+  dbType: DbType
+): ISwarmMessagesDatabaseMesssageMeta<P, DbType> => {
+  if (dbType === ESwarmStoreConnectorOrbitDbDatabaseType.FEED) {
+    return getMessageFeedStoreMetaByMessageEntityAddress<P>(messageUniqIndex) as ISwarmMessagesDatabaseMesssageMeta<P, DbType>;
+  } else {
+    return getMessageKeyValueStoreMetaByMessageEntityKey<P>(messageUniqIndex) as ISwarmMessagesDatabaseMesssageMeta<P, DbType>;
+  }
 };
 
 export const getMessageUniqIndexByMeta = <P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>>(

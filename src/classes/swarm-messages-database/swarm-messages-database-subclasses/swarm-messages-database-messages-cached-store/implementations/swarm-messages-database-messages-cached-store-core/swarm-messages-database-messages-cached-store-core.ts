@@ -25,6 +25,7 @@ import { TSwarmMessagesDatabaseMessagesCacheStore } from '../../../swarm-message
 import { ISwarmMessagesDatabaseMessagesCacheStoreExtendedDefferedMethods } from '../../swarm-messages-database-messages-cached-store.types';
 import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../../../swarm-message-store/swarm-message-store.types';
 import { _checkWhetherSameSwarmMessagesDecrypted } from '../../../swarm-messages-database-cache/swarm-messages-database-cache.utils';
+import { TSwarmStoreDatabaseEntityUniqueIndex } from '../../../../../swarm-store-class/swarm-store-class.types';
 
 export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
   P extends ESwarmStoreConnector,
@@ -204,7 +205,7 @@ export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
   }
 
   protected _checkWhetherUpdateKey(
-    key: TSwarmStoreDatabaseEntityKey<P>,
+    key: TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>,
     value: ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD>,
     entriesCached: TSwarmMessageDatabaseMessagesCached<P, DbType, MD>
   ) {

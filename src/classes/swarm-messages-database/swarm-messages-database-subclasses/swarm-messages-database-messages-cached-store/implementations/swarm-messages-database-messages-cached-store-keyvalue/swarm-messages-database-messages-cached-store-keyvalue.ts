@@ -37,6 +37,10 @@ export class SwarmMessagesDatabaseMessagesCachedStoreKeyValue<
     MD
   >;
 
+  protected get _entrieCachedCount(): number {
+    return this._entriesCached.size;
+  }
+
   get = (
     meta: ISwarmMessagesDatabaseMesssageMeta<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>
   ): ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined => {
@@ -62,10 +66,11 @@ export class SwarmMessagesDatabaseMessagesCachedStoreKeyValue<
   updateWithEntries(
     entries: TSwarmMessageDatabaseMessagesCached<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE, MD>
   ): boolean {
+    const entriesSizeDiffers = entries.size !== this._entrieCachedCount;
     const hasUpdatedMessages = this._updateCacheWithEntries(entries, this._entriesCached);
 
     this._incMessagesInCacheVersion();
-    return hasUpdatedMessages;
+    return entriesSizeDiffers || hasUpdatedMessages;
   }
 
   clear() {
