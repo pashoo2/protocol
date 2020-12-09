@@ -65,7 +65,7 @@ export class SwarmMessagesDatabaseMessagesCachedStoreFeed<
     this._entriesCached.clear();
   }
 
-  protected _whetherEntryIsExists(
+  protected _whetherEntryIsExistsInCache(
     entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, ESwarmStoreConnectorOrbitDbDatabaseType.FEED>
   ): boolean {
     return !!this._getMessageCachedByMeta(entry.messageMeta);

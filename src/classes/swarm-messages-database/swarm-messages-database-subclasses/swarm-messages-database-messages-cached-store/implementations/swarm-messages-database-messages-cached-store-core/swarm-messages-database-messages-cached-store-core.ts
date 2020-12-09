@@ -20,7 +20,7 @@ import {
   ISwarmMessageDecrypted,
 } from '../../../../../swarm-message/swarm-message-constructor.types';
 import { SWARM_MESSGES_DATABASE_SWARM_MESSAGES_CACHED_SWARM_MESSAGES_META_HASH_DELIMETER } from 'classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-cached-store/swarm-messages-database-messages-cached-store.const';
-import { whetherSwarmMessagesDecryptedAreEqual } from '../../../../../swarm-message/swarm-message-utils/swarm-message-utils-common/swarm-message-utils-common-decrypted';
+import { whetherAllSwarmMessagesDecryptedAreEqual } from '../../../../../swarm-message/swarm-message-utils/swarm-message-utils-common/swarm-message-utils-common-decrypted';
 import { TSwarmMessagesDatabaseMessagesCacheStore } from '../../../swarm-messages-database-cache/swarm-messages-database-cache.types';
 import { ISwarmMessagesDatabaseMessagesCacheStoreExtendedDefferedMethods } from '../../swarm-messages-database-messages-cached-store.types';
 import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../../../swarm-message-store/swarm-message-store.types';
@@ -65,7 +65,7 @@ export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
     : (entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>): boolean => {
         this._checkIsInitialized();
         this._checkEntryWithMeta(entry);
-        if (this._whetherEntryIsExists(entry)) {
+        if (this._whetherEntryIsExistsInCache(entry)) {
           return false;
         }
         this._addDefferedReadEntryAfterCurrentBatchOfCacheUpdate(entry.messageMeta);
@@ -164,7 +164,7 @@ export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
     ) {
       this._incMessagesInCacheVersion();
     }
-    if (whetherSwarmMessagesDecryptedAreEqual(entryFirst?.messageEntry, entrySecond?.messageEntry)) {
+    if (whetherAllSwarmMessagesDecryptedAreEqual(entryFirst?.messageEntry, entrySecond?.messageEntry)) {
       this._incMessagesInCacheVersion();
     }
   }
@@ -236,5 +236,7 @@ export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
     return hasMessagesUpdated;
   }
 
-  protected abstract _whetherEntryIsExists(entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>): boolean;
+  protected abstract _whetherEntryIsExistsInCache(
+    entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, DbType>
+  ): boolean;
 }

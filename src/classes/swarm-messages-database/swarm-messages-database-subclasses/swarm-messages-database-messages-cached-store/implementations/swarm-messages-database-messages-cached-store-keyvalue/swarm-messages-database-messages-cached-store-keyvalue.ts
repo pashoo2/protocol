@@ -14,6 +14,8 @@ import { ISwarmMessagesDatabaseMessagesCacheMessageDescription } from '../../../
 import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../../../swarm-message-store/swarm-message-store.types';
 import { ISwarmMessageInstanceDecrypted } from '../../../../../swarm-message/swarm-message-constructor.types';
 import { TSwarmStoreDatabaseEntityKey } from '../../../../../swarm-store-class/swarm-store-class.types';
+import { whetherAllSwarmMessagesDecryptedAreEqual } from '../../../../../swarm-message/swarm-message-utils/swarm-message-utils-common/swarm-message-utils-common-decrypted';
+import { isValidSwarmMessageDecryptedFormat } from '../../../../../swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-swarm-message';
 
 export class SwarmMessagesDatabaseMessagesCachedStoreKeyValue<
     P extends ESwarmStoreConnector,
@@ -77,10 +79,15 @@ export class SwarmMessagesDatabaseMessagesCachedStoreKeyValue<
     this._entriesCached.clear();
   }
 
-  protected _whetherEntryIsExists(
+  protected _whetherEntryIsExistsInCache(
     entry: ISwarmMessagesDatabaseMessagesCacheMessageDescription<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>
   ): boolean {
-    return !!this._getMessageCachedByMeta(entry.messageMeta);
+    const messageByMeta = this._getMessageCachedByMeta(entry.messageMeta);
+
+    if (!messageByMeta || !isValidSwarmMessageDecryptedFormat(messageByMeta.message)) {
+      return false;
+    }
+    return whetherAllSwarmMessagesDecryptedAreEqual(entry.messageEntry, messageByMeta.message);
   }
 
   protected _checkMeta(meta: ISwarmMessagesDatabaseMesssageMeta<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>): void {

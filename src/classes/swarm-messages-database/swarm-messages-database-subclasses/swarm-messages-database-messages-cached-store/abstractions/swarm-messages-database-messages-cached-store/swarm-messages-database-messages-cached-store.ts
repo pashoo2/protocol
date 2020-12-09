@@ -13,7 +13,7 @@ import {
   ISwarmMessagesDatabaseMessagesCacheMessageDescription,
   ISwarmMessagesDatabaseMessagesCacheStoreTemp,
 } from '../../../swarm-messages-database-cache/swarm-messages-database-cache.types';
-import { whetherSwarmMessagesDecryptedAreEqual } from '../../../../../swarm-message/swarm-message-utils/swarm-message-utils-common/swarm-message-utils-common-decrypted';
+import { whetherAllSwarmMessagesDecryptedAreEqual } from '../../../../../swarm-message/swarm-message-utils/swarm-message-utils-common/swarm-message-utils-common-decrypted';
 import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../../../swarm-message-store/swarm-message-store.types';
 import { isValidSwarmMessageDecryptedFormat } from '../../../../../swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-swarm-message';
 import { ISwarmMessageInstanceDecrypted } from '../../../../../swarm-message/swarm-message-constructor.types';
@@ -171,7 +171,7 @@ export class SwarmMessagesDatabaseMessagesCachedStore<
     if (!messageInTempStore) {
       return false;
     }
-    return !!messageInTempStore && whetherSwarmMessagesDecryptedAreEqual(messageInTempStore, description.messageEntry);
+    return !!messageInTempStore && whetherAllSwarmMessagesDecryptedAreEqual(messageInTempStore, description.messageEntry);
   }
 
   protected _whetherSameKeysBetweenTempStorageLinkedEntriesAndMain(): boolean {
