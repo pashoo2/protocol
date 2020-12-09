@@ -946,11 +946,13 @@ export class SwarmMessagesDatabaseCache<
       this._setCurrentFullMessagesCacheUpdateInProgressAndEmitEvent(promiseMessagesCacheUpdating);
       await promiseMessagesCacheUpdating;
 
-      let hasMessagesBeenUpdated = this._updateMessagesCachedStoreByLinkedTempStoreMessagesAndUnlinkTempStore();
-      const hasNewMessagesDuringDefferedCacheUpdate = await this._runDefferedPartialCacheUpdateAfterFullCacheUpdateAndResetDefferedUpdateQueue();
-
-      hasMessagesBeenUpdated = hasMessagesBeenUpdated || hasNewMessagesDuringDefferedCacheUpdate;
+      const hasMessagesBeenUpdated = this._updateMessagesCachedStoreByLinkedTempStoreMessagesAndUnlinkTempStore();
       if (hasMessagesBeenUpdated) {
+        this._emitCacheUpdated();
+      }
+
+      const hasMessagesBeenDefferedUpdated = await this._runDefferedPartialCacheUpdateAfterFullCacheUpdateAndResetDefferedUpdateQueue();
+      if (hasMessagesBeenDefferedUpdated) {
         this._emitCacheUpdated();
       }
     } catch (err) {
