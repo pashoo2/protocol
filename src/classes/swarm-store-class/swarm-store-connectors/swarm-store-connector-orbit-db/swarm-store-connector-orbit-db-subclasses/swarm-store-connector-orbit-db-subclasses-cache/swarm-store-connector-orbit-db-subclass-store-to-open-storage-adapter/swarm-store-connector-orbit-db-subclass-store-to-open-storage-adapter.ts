@@ -195,7 +195,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStoreToOpenStorageAdapter
   // TODO - not implemented in ocrbit-db-cache
   public async load() {}
 
-  // TODO - not implemented in ocrbit-db-cache
+  // TODO - not implemented in orbit-db-cache
   public async destroy() {
     await this.dropDb();
     await this.close();

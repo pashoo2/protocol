@@ -583,7 +583,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   protected async iteratorKeyValueStore(
     options?: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions<DbType>
   ): Promise<Error | Array<ISwarmStoreConnectorOrbitDbDatabaseValue<ItemType> | Error | undefined>> {
-    // TODO - check it works
     const iteratorOptionsRes = options || SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ITERATOR_OPTIONS_DEFAULT;
     let limit = iteratorOptionsRes.limit;
 

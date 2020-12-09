@@ -68,7 +68,6 @@ export interface IConnectionBridgeOptionsAuth<CD extends boolean = false> {
    * @type {ICentralAuthorityOptions['user']['credentials']}
    */
   credentials: CD extends true ? TConnectionBridgeOptionsAuthCredentials : TConnectionBridgeOptionsAuthCredentials | undefined;
-  // TODO create class for storing user credentials with session
   session?: ISensitiveDataSessionStorageOptions;
   /**
    * this is list of auth providers will be used to authorize

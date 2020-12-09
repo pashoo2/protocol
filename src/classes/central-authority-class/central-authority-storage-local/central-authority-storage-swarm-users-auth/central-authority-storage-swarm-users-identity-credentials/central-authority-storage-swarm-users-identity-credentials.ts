@@ -36,7 +36,6 @@ import {
  * This is storage to cache swarm users credentials locally.
  * To do not request it each time from the auth provider.
  */
-// TODO -use open storage instead of the SecretStorage
 export class CentralAuthorityIdentityCredentialsStorage
   extends getStatusClass<typeof CA_IDENTITY_CREDENTIALS_STORAGE_STATUS>({
     errorStatus: CA_IDENTITY_CREDENTIALS_STORAGE_STATUS.ERROR,

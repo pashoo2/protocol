@@ -237,11 +237,6 @@ export class SwarmMessagesDatabaseCache<
       : TSwarmStoreDatabaseEntityAddress<P>,
     key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined
   ): Promise<void> {
-    // TODO - doesnt work in the key-value store
-    // if remove value from a key and then add
-    // add a new value by the same key. The new value is still absent
-    // it's necessary to remove a message only by it's address (not by key)
-    // or request cache updated (moreconsistent)
     if (!this._checkIsReady()) {
       return;
     }
@@ -794,13 +789,8 @@ export class SwarmMessagesDatabaseCache<
       );
       const messagesReadAtBatch = await this._performMessagesCacheCollectPageRequest(queryOptions);
       const messagesReadAtBatchMapped = this._mapMessagesWithMetaToStorageRelatedStructure(messagesReadAtBatch);
-      // if read less than requested it means that
-      // all messages were read
-      // TODO - ORBIT DB counts also removed items, so we can request more than
-      // it will return
-      // getItemsCount(messagesReadAtBatch) < currentPageItemsToRead;
+
       messagesCachedStoreTemp.update(messagesReadAtBatchMapped);
-      // DEBUG--
       messagesReadAtBatchMapped.forEach((value, key) => {
         allMessagesRead.set(key, value);
       });
@@ -811,13 +801,10 @@ export class SwarmMessagesDatabaseCache<
         allMessagesRead.size
       );
 
+      // TODO - this check is temporary to prevent invalid behaviours
       if (allMessagesRead.size > Number(messagesCachedStoreTemp?.entries?.size)) {
         throw new Error('Read count is not equal');
       }
-      if (whetherAllStoredMessagesRead) {
-        debugger;
-      }
-      // --DEBUG
       resolveMessagesUpatingBatchPromise();
       messagesReadCount = messagesCountToReadAtTheBatch;
     }

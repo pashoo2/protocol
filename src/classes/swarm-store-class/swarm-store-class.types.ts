@@ -167,8 +167,6 @@ export type TSwarmStoreDatabaseIteratorMethodAnswer<
   ? Error | Array<ISwarmStoreConnectorOrbitDbDatabaseValue<T> | Error | undefined>
   : never;
 
-// TODO - typescript issue
-// string cannot be assigned to P extends ESwarmStoreConnector.OrbitDB ? TSwarmMessageSerialized : any;
 /**
  * Type of a raw value can be stored in the database
  */

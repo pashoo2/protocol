@@ -74,7 +74,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStorageFabric implements ISwarmSt
       return this.createSecretStorageForPath(path);
     }
     // TODO - the default cache storage created by OrbitDB
-    // with the LevelUP library works incorrectly with a lot
+    // with the LevelUP library works incorrectly if a lot
     // of I/O operations.
     return this.createOpenStorageForPath(path);
   }
@@ -95,7 +95,7 @@ export class SwarmStoreConnectorOrbitDBSubclassStorageFabric implements ISwarmSt
       return this.createSecretStorageForPath(dbPath);
     }
     // TODO - the default cache storage created by OrbitDB
-    // with the LevelUP library works incorrectly with a lot
+    // with the LevelUP library works incorrectly if a lot
     // of I/O operations.
     return this.createOpenStorageForPath(dbPath);
   }

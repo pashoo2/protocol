@@ -209,8 +209,6 @@ export class SecretStorageProviderLocalForage implements StorageProvider {
         return new Error('There is no connection to the local forage');
       }
 
-      // TODO - the custom patch used to return
-      // Uint8Array instead of Buffer
       const item = await localForage.getItem(key);
 
       if (!item) {

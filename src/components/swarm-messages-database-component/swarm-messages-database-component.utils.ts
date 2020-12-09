@@ -180,8 +180,6 @@ export const setCacheUpdateListener = <
   const listener = (messages: TSwarmMessageDatabaseMessagesCached<P, DbType, MD> | undefined) => {
     cacheUpdateListener(messages);
   };
-  // TODO -ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATED this event is not fired because
-  // during a cache updata all new messages appears in the main store instead of temp store only
   db.emitter.addListener(ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATED, listener);
   return () => {
     db.emitter.removeListener(ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATED, listener);

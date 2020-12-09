@@ -452,7 +452,7 @@ export interface ISwarmMessagesDatabaseCache<
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   MD extends ISwarmMessageInstanceDecrypted,
-  // TODO - this types should be provided in the constructor's options
+  // TODO - this type should be provided in the constructor's options
   SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>
 > {
   /**
@@ -592,13 +592,13 @@ export interface ISwarmMessagesDatabaseMesssageMeta<P extends ESwarmStoreConnect
    * Message's uniq address
    *
    * @type {(DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
-   *     ? // TODO - why undefinde
+   *     ? // TODO - why undefined is necessary
    *       TSwarmStoreDatabaseEntityAddress<P> | undefined
    *     : TSwarmStoreDatabaseEntityAddress<P>)}
    * @memberof ISwarmMessagesDatabaseMesssageMeta
    */
   messageUniqAddress: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
-    ? // TODO - why undefinde
+    ? // TODO - why undefined is necessary
       TSwarmStoreDatabaseEntityAddress<P> | undefined
     : TSwarmStoreDatabaseEntityAddress<P>;
   /**
