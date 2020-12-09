@@ -53,6 +53,7 @@ import { TSwarmMessageSerialized } from '../../../swarm-message/swarm-message-co
 import { TSwarmStoreDatabaseOptions } from '../../../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageInstanceDecrypted } from '../../../swarm-message/swarm-message-constructor.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../swarm-messages-database.messages-collector.types';
+import { commonUtilsArrayUniq } from '../../../../utils/common-utils/common-utils-array';
 
 export class SwarmMessagesDatabaseCache<
   P extends ESwarmStoreConnector,
@@ -1085,12 +1086,12 @@ export class SwarmMessagesDatabaseCache<
    * @returns {TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>[]}
    * @memberof SwarmMessagesDatabaseCache
    */
-  protected _getMessagesMetaToReadAtBatch(
+  protected _getMessagesUniqIndexesToReadAtBatch(
     messagesMetaToRead: TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>[],
     messagesCountReadAtPreviousBatches: number,
     messagesCountToReadAtBatch: number
   ): TSwarmStoreDatabaseEntityUniqueIndex<P, DbType>[] {
-    return messagesMetaToRead.slice(messagesCountReadAtPreviousBatches, messagesCountToReadAtBatch);
+    return commonUtilsArrayUniq(messagesMetaToRead.slice(messagesCountReadAtPreviousBatches, messagesCountToReadAtBatch));
   }
 
   /**
@@ -1152,15 +1153,15 @@ export class SwarmMessagesDatabaseCache<
         continue;
       }
 
-      const messagesIndexesToReadAtBatch = this._getMessagesMetaToReadAtBatch(
+      const messagesUniqIndexesToReadAtBatch = this._getMessagesUniqIndexesToReadAtBatch(
         messagesMetaToRead,
         messagesCountAlreadyRead,
         messagesCountToReadAtBatch
       );
-      const messagesReadAtBatch = await this._runDefferedMessageReadBatch(messagesIndexesToReadAtBatch);
+      const messagesReadAtBatch = await this._runDefferedMessageReadBatch(messagesUniqIndexesToReadAtBatch);
       const hasMessagesUpdatedAtBatch = cacheStore.update(messagesReadAtBatch);
       const hasMessagesRemovedFromStorage = this._unsetMessagesNotExistsInTheStore<DT>(
-        messagesIndexesToReadAtBatch,
+        messagesUniqIndexesToReadAtBatch,
         messagesReadAtBatch,
         cacheStore,
         dbType

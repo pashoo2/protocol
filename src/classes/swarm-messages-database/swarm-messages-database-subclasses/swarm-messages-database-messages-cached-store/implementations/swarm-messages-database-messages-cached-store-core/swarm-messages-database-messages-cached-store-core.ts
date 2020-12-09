@@ -126,9 +126,9 @@ export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
   }
 
   protected _checkMeta(meta: ISwarmMessagesDatabaseMesssageMeta<P, DbType>): void {
+    // TODO - make a class for the meta information
     assert(meta, 'The meta information must be defined');
     assert(typeof meta === 'object', 'The meta must be an object');
-    assert(meta.messageUniqAddress, 'The meta information must includes message address');
   }
 
   protected _checkMessageEntry(message: ISwarmMessageInstanceDecrypted): void {
@@ -223,10 +223,10 @@ export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
     let hasMessagesUpdated = false;
     // if there is no entries cached for now, it is not neccesary to check
     // whether to need update it, because it is always neccessary.
-    const wetherToCheckUpdateNeccessary = !!entriesCached.size;
+    const wetherToCheckUpdateIsNeccessary = !!entriesCached.size;
 
     entries.forEach((value, key) => {
-      if (wetherToCheckUpdateNeccessary || this._checkWhetherUpdateKey(key, value, entriesCached)) {
+      if (wetherToCheckUpdateIsNeccessary || this._checkWhetherUpdateKey(key, value, entriesCached)) {
         entriesCached.set(key, value);
         hasMessagesUpdated = true;
       } else {

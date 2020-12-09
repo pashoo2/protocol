@@ -12,6 +12,7 @@ import {
 } from '../../../../swarm-messages-database.types';
 import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../../../swarm-message-store/swarm-message-store.types';
 import { ISwarmMessageInstanceDecrypted } from '../../../../../swarm-message/swarm-message-constructor.types';
+import assert from 'assert';
 
 export class SwarmMessagesDatabaseMessagesCachedStoreFeed<
     P extends ESwarmStoreConnector,
@@ -120,5 +121,10 @@ export class SwarmMessagesDatabaseMessagesCachedStoreFeed<
       throw new Error('An address must not be empty');
     }
     this._entriesCached.set(address, this._getMessageInfo(entry));
+  }
+
+  protected _checkMeta(meta: ISwarmMessagesDatabaseMesssageMeta<P, ESwarmStoreConnectorOrbitDbDatabaseType.FEED>): void {
+    super._checkMeta(meta);
+    assert(meta.messageUniqAddress, 'The meta information must includes message address');
   }
 }

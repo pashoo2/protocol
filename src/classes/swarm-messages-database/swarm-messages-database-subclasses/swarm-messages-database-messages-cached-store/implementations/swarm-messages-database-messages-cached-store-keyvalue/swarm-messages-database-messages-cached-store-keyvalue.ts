@@ -127,7 +127,7 @@ export class SwarmMessagesDatabaseMessagesCachedStoreKeyValue<
   protected _unsetMessageInEntriesCached(
     meta: ISwarmMessagesDatabaseMesssageMeta<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>
   ): void {
-    const key = this._getMessageAddressFromMeta(meta);
+    const key = this._getMessageKeyFromMeta(meta);
     if (!key) {
       throw new Error('A key is not defined');
     }
