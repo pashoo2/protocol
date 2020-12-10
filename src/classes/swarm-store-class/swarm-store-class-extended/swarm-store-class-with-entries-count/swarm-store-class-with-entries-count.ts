@@ -16,6 +16,8 @@ import {
 } from './swarm-store-class-with-entries-count.types';
 import { SwarmStore } from '../../swarm-store-class';
 import { extendClassSwarmStoreWithEntriesCount } from './swarm-store-class-with-entries-count-mixin';
+import { ISwarmStore, ISwarmStoreWithConnector } from '../../swarm-store-class.types';
+import { ConstructorType } from '../../../../types/helper.types';
 
 export function getClassSwarmStoreWithEntriesCount<
   P extends ESwarmStoreConnector,
@@ -30,8 +32,17 @@ export function getClassSwarmStoreWithEntriesCount<
   O extends ISwarmStoreOptionsWithConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO>,
   E extends ISwarmStoreEvents<P, ItemType, DbType, DBO>,
   DBL extends TSwarmStoreOptionsOfDatabasesKnownList<P, ItemType, DbType, DBO>
->() {
+>(
+  SwarmStoreConstructorImplementation?: ConstructorType<
+    ISwarmStore<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O> &
+      ISwarmStoreWithConnector<P, ItemType, DbType, DBO, ConnectorBasic, PO, ConnectorMain>
+  >
+) {
+  // TODO - implement SwarmStore with custom serializer
+  const BaseClass =
+    SwarmStoreConstructorImplementation ||
+    class BC extends SwarmStore<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O, E, DBL> {};
   return extendClassSwarmStoreWithEntriesCount<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O>(
-    class BC extends SwarmStore<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O, E, DBL> {}
+    BaseClass
   );
 }

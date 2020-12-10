@@ -41,7 +41,7 @@ import {
   getSwarmMessageEncryptedCacheFabric,
   getSwarmMessageConstructorWithCacheFabric,
 } from '../swarm-message-encrypted-cache/swarm-message-encrypted-cache.utils';
-import { ISwarmMessgaeEncryptedCache } from '../swarm-message-encrypted-cache';
+import { ISwarmMessageEncryptedCache } from '../swarm-message-encrypted-cache';
 import { ISensitiveDataSessionStorageOptions } from '../sensitive-data-session-storage/sensitive-data-session-storage.types';
 import { ISecretStorage, TSecretStorageAuthorizazionOptions } from '../secret-storage-class/secret-storage-class.types';
 import { SecretStorage } from '../secret-storage-class/secret-storage-class';
@@ -219,7 +219,7 @@ export class ConnectionBridge<
 
   protected connectionBridgeSessionDataStore?: ISensitiveDataSessionStorage;
 
-  protected swarmMessageEncryptedCache?: ISwarmMessgaeEncryptedCache;
+  protected swarmMessageEncryptedCache?: ISwarmMessageEncryptedCache;
 
   protected _secretStorage?: ISecretStorage;
 
@@ -465,7 +465,7 @@ export class ConnectionBridge<
     return userId;
   }
 
-  protected getMessageStorageDatabasesListStorage = (): Promise<ISwarmMessgaeEncryptedCache> => {
+  protected getMessageStorageDatabasesListStorage = (): Promise<ISwarmMessageEncryptedCache> => {
     return this.startEncryptedCache(CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX.DATABASE_LIST_STORAGE);
   };
 
@@ -1144,7 +1144,7 @@ export class ConnectionBridge<
     };
   }
 
-  protected startEncryptedCache(dbNamePrefix: string): Promise<ISwarmMessgaeEncryptedCache> {
+  protected startEncryptedCache(dbNamePrefix: string): Promise<ISwarmMessageEncryptedCache> {
     if (!this.swarmMessageEncryptedCacheFabric) {
       throw new Error('Encrypted cache fabric must be started before');
     }
@@ -1154,11 +1154,11 @@ export class ConnectionBridge<
     return this.swarmMessageEncryptedCacheFabric(optionsForSwarmMessageEncryptedCacheFabric);
   }
 
-  protected setCurrentSwarmMessageEncryptedCache(swarmMessageEncryptedCache: ISwarmMessgaeEncryptedCache): void {
+  protected setCurrentSwarmMessageEncryptedCache(swarmMessageEncryptedCache: ISwarmMessageEncryptedCache): void {
     this.swarmMessageEncryptedCache = swarmMessageEncryptedCache;
   }
 
-  protected async createSwarmMessageEncryptedCache(): Promise<ISwarmMessgaeEncryptedCache> {
+  protected async createSwarmMessageEncryptedCache(): Promise<ISwarmMessageEncryptedCache> {
     if (!this.swarmMessageEncryptedCacheFabric) {
       throw new Error('Encrypted cache fabric must be started before');
     }

@@ -27,7 +27,7 @@ import { SwarmMessageSubclassValidator } from './swarm-message-subclasses/swarm-
 import { SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_VALIDATION } from './swarm-message-constructor.const';
 import { ICentralAuthority } from '../central-authority-class/central-authority-class.types';
 import { TSwarmMessageConstructorArgumentBodyPrivate } from './swarm-message-constructor.types';
-import { ISwarmMessgaeEncryptedCache } from '../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageEncryptedCache } from '../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import {
   IMessageValidatorOptions,
   ISwarmMessageSubclassValidator,
@@ -36,7 +36,7 @@ import {
 export class SwarmMessageConstructor implements ISwarmMessageConstructor {
   public caConnection?: ICentralAuthority;
 
-  public encryptedCache?: ISwarmMessgaeEncryptedCache;
+  public encryptedCache?: ISwarmMessageEncryptedCache;
 
   protected constructorOptions?: ISwarmMessageConstructorOptionsRequired;
 

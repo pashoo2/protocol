@@ -19,7 +19,7 @@ import {
   checkIsValidCryptoCredentialsExportedFormat,
   checkIsValidExportedCryptoCredentialsToString,
 } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
-import { stringify } from 'utils/main-utils';
+import { stringify } from 'utils/serialization-utils';
 import { TUserIdentityVersion } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types';
 import { calcCryptoKeyPairHash } from 'utils/encryption-keys-utils/encryption-keys-utils';
 import { TCAAuthProviderIdentity } from '../../central-authority-connections/central-authority-connections.types';

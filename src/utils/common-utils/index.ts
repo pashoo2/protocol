@@ -17,5 +17,5 @@ export * from './common-utils-objects';
 export * from './common-utils-timer';
 
 export * from './common-utils-url';
-export { memoize } from '../data-cache-utils/data-cache-utils-memoization';
-export { memoizeLastReturnedValue } from '../data-cache-utils/data-cache-utils-memoization';
+
+export * from '../data-cache-utils';

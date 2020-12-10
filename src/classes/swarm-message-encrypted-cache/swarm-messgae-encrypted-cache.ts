@@ -1,4 +1,4 @@
-import { TSwarmMessgaeEncryptedCacheOptions, ISwarmMessgaeEncryptedCache } from './swarm-messgae-encrypted-cache.types';
+import { TSwarmMessgaeEncryptedCacheOptions, ISwarmMessageEncryptedCache } from './swarm-messgae-encrypted-cache.types';
 import assert from 'assert';
 import { ISecretStorage } from '../secret-storage-class/secret-storage-class.types';
 import { SecretStorage } from '../secret-storage-class/secret-storage-class';
@@ -13,7 +13,7 @@ import {
 } from './swarm-messgae-encrypted-cache.const';
 import { calculateHash } from '../../utils/hash-calculation-utils/hash-calculation-utils';
 
-export class SwarmMessageEncryptedCache implements ISwarmMessgaeEncryptedCache {
+export class SwarmMessageEncryptedCache implements ISwarmMessageEncryptedCache {
   public isRunning: boolean = false;
 
   protected options?: TSwarmMessgaeEncryptedCacheOptions = undefined;
@@ -129,15 +129,8 @@ export class SwarmMessageEncryptedCache implements ISwarmMessgaeEncryptedCache {
     this.storageProvider = provider;
   }
 
-  protected async runStorageConnection() {
+  protected async runDefaultStorageConnection() {
     const { options } = this;
-    const optsWithStorageProvider = options as ISwarmMessgaeEncryptedCacheOptionsStorageProvider;
-
-    if (optsWithStorageProvider.storageProvider) {
-      this.setStorageProvider(optsWithStorageProvider.storageProvider);
-      return;
-    }
-
     const optsWithConfForStorageProviderConnection = options as ISwarmMessgaeEncryptedCacheOptionsForStorageProvider;
 
     if (!optsWithConfForStorageProviderConnection.storageProviderAuthOptions) {
@@ -158,6 +151,17 @@ export class SwarmMessageEncryptedCache implements ISwarmMessgaeEncryptedCache {
       dbName,
     });
     this.setStorageProvider(storageProvider);
+  }
+
+  protected async runStorageConnection() {
+    const { options } = this;
+    const optsWithStorageProvider = options as ISwarmMessgaeEncryptedCacheOptionsStorageProvider;
+
+    if (optsWithStorageProvider.storageProvider) {
+      this.setStorageProvider(optsWithStorageProvider.storageProvider);
+      return;
+    }
+    await this.runDefaultStorageConnection();
   }
 
   protected setIsRunning() {

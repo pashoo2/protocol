@@ -21,7 +21,7 @@ import {
 import { isCryptoKeyPair, getJWKOrBool } from 'utils/encryption-keys-utils/encryption-keys-utils';
 import { TEncryptionKeyStoreFormatType } from 'types/encryption-keys.types';
 import { isTypedArray } from 'utils/typed-array-utils';
-import { stringify } from 'utils/main-utils';
+import { stringify } from 'utils/serialization-utils';
 import { decryptDataByPassword } from '../password-utils/decrypt.password-utils';
 import { DATA_SIGN_CRYPTO_UTIL_KEYPAIR_SALT_KEY_NAME } from './data-sign-utils.const';
 import { generateSalt } from '../encryption-utils/salt-utils';

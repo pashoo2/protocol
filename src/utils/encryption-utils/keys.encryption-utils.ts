@@ -17,7 +17,7 @@ import {
   TCRYPTO_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE,
   TCRYPTO_UTIL_ENCRYPT_KEY_TYPES,
 } from './crypto-utils.types';
-import { stringify } from 'utils/main-utils';
+import { stringify } from 'utils/serialization-utils';
 import { decryptDataByPassword } from 'utils';
 import { generateSalt } from './salt-utils';
 import { CRYPTO_UTIL_KEYPAIR_SALT_KEY_NAME } from './crypto-utils.const';

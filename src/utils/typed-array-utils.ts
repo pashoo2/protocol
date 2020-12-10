@@ -1,6 +1,6 @@
 import { TTypedArraysNative } from 'types/main.types';
 import { TTypedArrays, TMainDataTypes } from 'types/main.types';
-import { stringify, TStringifyData } from './main-utils';
+import { stringify, TStringifyData } from './serialization-utils';
 import { encodeArrayBufferToDOMString, decodeDOMStringToArrayBuffer } from 'utils/string-encoding-utils';
 
 export const arrayBufferFromTypedArray = (typedArray: TTypedArrays | ArrayBuffer): ArrayBuffer | Error => {

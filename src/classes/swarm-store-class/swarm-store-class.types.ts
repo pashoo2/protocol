@@ -32,6 +32,8 @@ import {
 } from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { TSwarmMessageSerialized } from '../swarm-message/swarm-message-constructor.types';
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
+import { ISerializer } from '../../types/serialization.types';
+import { IOptionsSerializerValidatorValidators } from '../basic-classes/options-serializer-validator-class/options-serializer-validator-class.types';
 
 export type TSwarmStoreDatabaseType<P extends ESwarmStoreConnector> = ESwarmStoreConnectorOrbitDbDatabaseType;
 
@@ -303,6 +305,8 @@ export interface ISwarmStoreOptionsConnectorFabric<
   (options: CO): ConnectorMain;
 }
 
+export type TSwarmStoreOptionsSerialized = string;
+
 /**
  * options used for connection to a swarm databases
  *
@@ -573,4 +577,50 @@ export interface ISwarmStore<
   databases: ISwarmStoreDatabasesCommonStatusList<P, ItemType, DbType, DBO> | undefined;
   // open connection with all databases
   connect(options: O): Promise<Error | void>;
+}
+
+export interface ISwarmStoreOptionsClassConstructorParams<
+  P extends ESwarmStoreConnector,
+  ItemType extends TSwarmStoreValueTypes<P>,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType, DBO>,
+  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, DBO, ConnectorBasic>
+> {
+  optionsSerializer?: ISerializer;
+  optionsValidators?: IOptionsSerializerValidatorValidators<
+    ISwarmStoreOptions<P, ItemType, DbType, DBO, ConnectorBasic, PO>,
+    TSwarmStoreOptionsSerialized
+  >;
+  swarmStoreOptions: ISwarmStoreOptions<P, ItemType, DbType, DBO, ConnectorBasic, PO> | TSwarmStoreOptionsSerialized;
+}
+
+export interface ISwarmStoreOptionsClass<
+  P extends ESwarmStoreConnector,
+  ItemType extends TSwarmStoreValueTypes<P>,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType, DBO>,
+  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, DBO, ConnectorBasic>
+> {
+  options: Readonly<ISwarmStoreOptions<P, ItemType, DbType, DBO, ConnectorBasic, PO>>;
+  toString(): TSwarmStoreOptionsSerialized;
+}
+
+export interface ISwarmStoreOptionsClassConstructor<
+  P extends ESwarmStoreConnector,
+  ItemType extends TSwarmStoreValueTypes<P>,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType, DBO>,
+  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, DBO, ConnectorBasic>
+> {
+  new (params: ISwarmStoreOptionsClassConstructorParams<P, ItemType, DbType, DBO, ConnectorBasic, PO>): ISwarmStoreOptionsClass<
+    P,
+    ItemType,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO
+  >;
 }

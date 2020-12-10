@@ -6,7 +6,6 @@ import {
   ISwarmMessageConstructor,
   TSwarmMessageInstance,
   ISwarmMessageInstanceEncrypted,
-  ISwarmMessageInstanceDecrypted,
   ISwarmMessageEncrypted,
 } from '../swarm-message/swarm-message-constructor.types';
 import {

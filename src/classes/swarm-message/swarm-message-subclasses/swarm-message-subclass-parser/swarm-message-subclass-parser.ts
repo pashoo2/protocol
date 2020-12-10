@@ -6,7 +6,7 @@ import {
 } from '../../swarm-message-constructor.types';
 import { isCryptoKeyDataDecryption } from '../../../../utils/encryption-keys-utils/encryption-keys-utils';
 import { QueuedEncryptionClassBase } from '../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base';
-import { ISwarmMessgaeEncryptedCache } from '../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageEncryptedCache } from '../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import {
   IQueuedEncrypyionClassBaseOptions,
   IQueuedEncrypyionClassBase,
@@ -19,7 +19,7 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
 
   protected msgDecryptQueue?: IQueuedEncrypyionClassBase;
 
-  protected encryptedCache?: ISwarmMessgaeEncryptedCache;
+  protected encryptedCache?: ISwarmMessageEncryptedCache;
 
   protected get options(): ISwarmMessageSubclassParserOptions {
     if (!this.constructorOptions) {

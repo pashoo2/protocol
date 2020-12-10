@@ -15,7 +15,7 @@ import {
 } from './central-authority-util-crypto-keys.const';
 import { checkIsCryptoKeyPairs, getPublicKeysFromCryptoKeyPairs } from './central-authority-util-crypto-keys-common';
 import { compressString } from 'utils/data-compression-utils/data-compression-utils-strings';
-import { stringify } from 'utils/main-utils';
+import { stringify } from 'utils/serialization-utils';
 
 /**
  * export two key pairs

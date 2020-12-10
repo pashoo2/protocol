@@ -1,4 +1,4 @@
-import { TStringifyData, stringify } from 'utils/main-utils';
+import { TStringifyData, stringify } from 'utils/serialization-utils';
 import { decodeDOMStringToArrayBuffer, encodeArrayBufferToDOMString } from 'utils/string-encoding-utils';
 import { TTypedArrays } from 'types/main.types';
 import {

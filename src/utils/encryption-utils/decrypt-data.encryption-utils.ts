@@ -8,7 +8,7 @@ import {
   TCRYPTO_UTILS_DECRYPT_DATA_KEY_CONFIG,
 } from './crypto-utils.types';
 import { getKeyOfType } from './keys.encryption-utils';
-import { stringify } from 'utils/main-utils';
+import { stringify } from 'utils/serialization-utils';
 
 export const decryptNative = async (
   key: CryptoKey,

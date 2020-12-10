@@ -36,7 +36,7 @@ export type TSwarmMessgaeEncryptedCacheOptions =
  * @export
  * @interface ISwarmMessgaeEncryptedCache
  */
-export interface ISwarmMessgaeEncryptedCache extends IStorageCommon {
+export interface ISwarmMessageEncryptedCache extends IStorageCommon {
   /**
    * is the instance running
    *
@@ -110,7 +110,7 @@ export interface ISwarmMessgaeEncryptedCache extends IStorageCommon {
  * @throws
  */
 export interface ISwarmMessageEncryptedCacheFabric {
-  (storageProviderOptions?: IISecretStorageOptions): Promise<ISwarmMessgaeEncryptedCache>;
+  (storageProviderOptions?: IISecretStorageOptions): Promise<ISwarmMessageEncryptedCache>;
 }
 
 /**

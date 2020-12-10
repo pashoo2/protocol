@@ -1,5 +1,5 @@
 import { isTypedArray, stringToTypedArray, typedArrayToString } from 'utils/typed-array-utils';
-import { stringify } from 'utils/main-utils';
+import { stringify } from 'utils/serialization-utils';
 import { cryptoModuleDataSign } from './main.data-sign-utils.const';
 import {
   DATA_SIGN_CRYPTO_UTIL_VERIFY_KEY_TYPE,

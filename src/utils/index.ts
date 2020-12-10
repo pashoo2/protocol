@@ -22,7 +22,7 @@ export * from './ipfs-utils';
 
 export * from './lazy-loading-utils';
 
-export * from './main-utils';
+export * from './serialization-utils';
 
 export * from './password-utils';
 
@@ -33,3 +33,5 @@ export * from './typed-array-utils';
 export * from './string-utilities';
 
 export * from './validation-utils';
+
+export * from './serialization-utils';

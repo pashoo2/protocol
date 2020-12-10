@@ -15,14 +15,15 @@ import {
   ISwarmMessageStoreEvents,
 } from '../../swarm-message-store.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
-import { SwarmMessageStore } from '../../swarm-message-store';
-import { getClassSwarmStoreWithEntriesCount } from '../../../swarm-store-class/swarm-store-class-extended/swarm-store-class-with-entries-count';
 import {
   ISwarmStoreConnectorBasicWithEntriesCount,
   ISwarmStoreConnectorWithEntriesCount,
 } from '../../../swarm-store-class/swarm-store-class-extended/swarm-store-class-with-entries-count/swarm-store-class-with-entries-count.types';
+import { getClassSwarmMessageStoreWithEntriesCount } from 'classes/swarm-message-store/swarm-message-store-extended/swarm-message-store-with-entries-count/swarm-message-store-with-entries-count';
+import { extendClassSwarmStoreWithOptionsConstructor } from '../../../swarm-store-class/swarm-store-class-extended/swarm-store-class-with-options-constructor/swarm-store-class-with-options-constructor-mixin';
+import { ISwarmStoreOptionsClassConstructor } from '../../../swarm-store-class/swarm-store-class.types';
 
-export function getClassSwarmMessageStoreWithEntriesCount<
+export function getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
@@ -53,9 +54,9 @@ export function getClassSwarmMessageStoreWithEntriesCount<
   >,
   E extends ISwarmMessageStoreEvents<P, ItemType, DbType, DBO>,
   DBL extends TSwarmStoreOptionsOfDatabasesKnownList<P, ItemType, DbType, DBO>
->() {
-  return getClassSwarmStoreWithEntriesCount<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O, E, DBL>(
-    class B extends SwarmMessageStore<
+>(SwarmStoreOptionsClass?: ISwarmStoreOptionsClassConstructor<P, ItemType, DbType, DBO, ConnectorBasic, PO>) {
+  return extendClassSwarmStoreWithOptionsConstructor<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O>(
+    getClassSwarmMessageStoreWithEntriesCount<
       P,
       ItemType,
       DbType,
@@ -72,6 +73,7 @@ export function getClassSwarmMessageStoreWithEntriesCount<
       O,
       E,
       DBL
-    > {}
+    >(),
+    SwarmStoreOptionsClass
   );
 }

@@ -10,7 +10,7 @@ import {
 } from './swarm-message-subclasses/swarm-message-subclass-serializer/swarm-message-subclass-serializer.types';
 import { IMessageSignatureValidatorOptionsUtils } from './swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-signature-validator/swarm-message-subclass-validator-signature-validator.types';
 import { ICentralAuthority } from '../central-authority-class/central-authority-class.types';
-import { ISwarmMessgaeEncryptedCache } from '../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageEncryptedCache } from '../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import {
   IMessageValidatorOptions,
   ISwarmMessageSubclassValidator,
@@ -211,10 +211,10 @@ export interface ISwarmMessageConstructorOptionsInstances {
    * no way to decrypt private message
    * which was sent to another user.
    *
-   * @type {ISwarmMessgaeEncryptedCache}
+   * @type {ISwarmMessageEncryptedCache}
    * @memberof ISwarmMessageConstructorOptionsInstances
    */
-  encryptedCache: ISwarmMessgaeEncryptedCache;
+  encryptedCache: ISwarmMessageEncryptedCache;
 }
 
 export interface ISwarmMessageConstructorOptionsRequired {
@@ -240,7 +240,7 @@ export type TSwarmMessageConstructorOptions = Omit<ISwarmMessageConstructorOptio
 // construct message from a serialized
 export interface ISwarmMessageConstructor {
   readonly caConnection?: ICentralAuthority;
-  readonly encryptedCache?: ISwarmMessgaeEncryptedCache;
+  readonly encryptedCache?: ISwarmMessageEncryptedCache;
   construct(message: TSwarmMessageSerialized): Promise<TSwarmMessageInstance>;
 }
 
