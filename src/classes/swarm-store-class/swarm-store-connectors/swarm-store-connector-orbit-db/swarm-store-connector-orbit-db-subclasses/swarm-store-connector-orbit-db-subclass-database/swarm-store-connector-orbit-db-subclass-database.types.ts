@@ -14,6 +14,7 @@ import OrbitDbFeedStore from 'orbit-db-feedstore';
 import OrbitDbKeyValueStore from 'orbit-db-kvstore';
 import { ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore } from '../swarm-store-connector-orbit-db-subclasses-cache/swarm-store-connector-orbit-db-subclasses-cache.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseMethodNames } from '../../swarm-store-connector-orbit-db.types';
+import { ISwarmStoreConnectorDatabaseAccessControlleGrantCallback } from '../../../../swarm-store-class.types';
 
 export type TSwarmStoreConnectorOrbitDbDatabaseStoreHash = string;
 

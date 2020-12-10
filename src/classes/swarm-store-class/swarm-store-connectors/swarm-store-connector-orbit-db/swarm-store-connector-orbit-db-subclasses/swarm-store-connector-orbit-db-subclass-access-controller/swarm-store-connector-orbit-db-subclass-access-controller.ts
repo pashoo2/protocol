@@ -6,13 +6,15 @@ import {
 } from './swarm-store-connector-orbit-db-subclass-access-controller.const';
 import {
   ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions,
-  TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback,
   ISwarmStoreConnectorOrbitDbDatabaseAccessControllerManifest,
 } from './swarm-store-connector-orbit-db-subclass-access-controller.types';
 import { IdentityProvider } from 'orbit-db-identity-provider';
 import { ESwarmStoreConnector } from '../../../../swarm-store-class.const';
 import { EOrbitDbFeedStoreOperation } from '../swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
-import { TSwarmStoreValueTypes } from '../../../../swarm-store-class.types';
+import {
+  TSwarmStoreConnectorAccessConrotllerGrantAccessCallback,
+  TSwarmStoreValueTypes,
+} from '../../../../swarm-store-class.types';
 
 export class SwarmStoreConnectorOrbitDBSubclassAccessController<
   T extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>
@@ -43,10 +45,7 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
   // to the database
   protected _isPublic: boolean = false;
 
-  protected _grantAccessCallback?: TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<
-    ESwarmStoreConnector.OrbitDB,
-    T
-  >;
+  protected _grantAccessCallback?: TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<ESwarmStoreConnector.OrbitDB, T>;
 
   protected _orbitdb?: OrbitDB;
 

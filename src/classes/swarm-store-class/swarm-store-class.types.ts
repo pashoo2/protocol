@@ -216,7 +216,9 @@ export type TSwarmStoreDatabaseOptions<
   DbType extends TSwarmStoreDatabaseType<P>
 > = P extends ESwarmStoreConnector.OrbitDB
   ? ISwarmStoreConnectorOrbitDbDatabaseOptions<T, DbType>
-  : ISwarmStoreDatabaseBaseOptions;
+  : ISwarmStoreDatabaseBaseOptions & ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<P, T>;
+
+export type TSwarmStoreDatabaseOptionsSerialized = string;
 
 /**
  * options of swarm databases want to connect
@@ -623,4 +625,32 @@ export interface ISwarmStoreOptionsClassConstructor<
     ConnectorBasic,
     PO
   >;
+}
+
+export type TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmStoreValueTypes<P>,
+  I extends unknown = never
+> = (
+  // value
+  payload: T | I,
+  userId: TSwarmMessageUserIdentifierSerialized,
+  // key of the value
+  key?: string,
+  // operation which is processed (like delete, add or something else)
+  operation?: TSwarmStoreDatabaseEntryOperation<P>
+) => Promise<boolean>;
+
+export interface ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmStoreValueTypes<P>
+> {
+  /**
+   * check whether to grant access for the user with
+   * the id to the entity wich is have the payload
+   *
+   * @memberof ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions
+   * @returns boolean
+   */
+  grantAccess?: TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T>;
 }

@@ -6,7 +6,7 @@ import { TSwarmStoreDatabaseEntryOperation } from '../../../swarm-store-class/sw
 import { TCentralAuthorityUserIdentity } from '../../../central-authority-class/central-authority-class-types/central-authority-class-types-common';
 import { ESwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.const';
 import { EOrbitDbFeedStoreOperation } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
-import { TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types';
+import { TSwarmStoreConnectorAccessConrotllerGrantAccessCallback } from '../../../swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageInstance } from '../../../swarm-message/swarm-message-constructor.types';
 import {
   TSwarmStoreDatabaseEntityKey,
@@ -103,14 +103,14 @@ export const getMessageValidator = <
   messageConstructors: ISwarmMessageDatabaseConstructors<SMC>,
   grantAccessCb: GAC | undefined,
   currentUserId: TCentralAuthorityUserIdentity
-): TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<P, T, MSI> => {
+): TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, MSI> => {
   const { dbName, isPublic, write } = dboptions;
   const messageConstructor = getMessageConstructorForDatabase(dbName, messageConstructors);
 
   if (!messageConstructor) {
     throw new Error(`There is no message contructor found for the ${dbName}`);
   }
-  return (swarmMessageGrantValidator as TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<P, T, MSI>).bind({
+  return (swarmMessageGrantValidator as TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, MSI>).bind({
     messageConstructor,
     dbName,
     grantAccessCb,
