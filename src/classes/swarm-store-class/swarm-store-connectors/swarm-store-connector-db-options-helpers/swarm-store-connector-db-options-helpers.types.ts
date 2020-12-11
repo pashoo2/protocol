@@ -171,91 +171,6 @@ export interface ISwarmStoreConnectorDatabaseOptionsWithAccessControlleGrantCall
   (): ISwarmStoreConnectorDatabaseOptionsWithAccessControlleGrantCallbackBound<P, ItemType, DbType, MSI, CTX, DBO>;
 }
 
-export interface ISwarmStoreConnectorUtilsOptionsSerializer<
-  P extends ESwarmStoreConnector,
-  ItemType extends TSwarmStoreValueTypes<P>,
-  DbType extends TSwarmStoreDatabaseType<P>,
-  MSI extends TSwarmMessageInstance | ItemType,
-  CTX extends ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext
-> extends ISerializer {
-  /**
-   * Parse options serialized and bind the grand access callback function if exists in options
-   *
-   * @param {TSwarmStoreDatabaseOptionsSerialized} dboSerialized
-   * @returns {(TSwarmStoreDatabaseOptions<P, ItemType, DbType> &
-   *     ISwarmStoreConnectorDatabaseAccessControlleGrantCallbackBound<P, ItemType, MSI, CTX>)}
-   * @memberof ISwarmStoreConnectorUtilsOptionsSerializer
-   */
-  parse(
-    dboSerialized: TSwarmStoreDatabaseOptionsSerialized
-  ): TSwarmStoreDatabaseOptions<P, ItemType, DbType> &
-    ISwarmStoreConnectorDatabaseAccessControlleGrantCallbackBound<P, ItemType, MSI, CTX>;
-  /**
-   * Stringify the database options with grand access callback function
-   *
-   * @template DBO
-   * @param {DBO} dbo
-   * @returns {TSwarmStoreDatabaseOptionsSerialized}
-   * @memberof ISwarmStoreConnectorUtilsOptionsSerializer
-   */
-  stringify<DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>>(dbo: DBO): TSwarmStoreDatabaseOptionsSerialized;
-}
-
-export interface ISwarmStoreConnectorUtilsOptionsSerializerConstructorParams<
-  P extends ESwarmStoreConnector,
-  ItemType extends TSwarmStoreValueTypes<P>,
-  DbType extends TSwarmStoreDatabaseType<P>,
-  MSI extends TSwarmMessageInstance | ItemType,
-  CTX extends ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext
-> {
-  /**
-   * Serializer for options
-   *
-   * @type {ISerializer}
-   * @memberof ISwarmStoreConnectorUtilsOptionsSerializerConstructorParams
-   */
-  mainSerializer: ISerializer;
-  /**
-   * Function than returns a grand access callback bound to a context
-   *
-   * @type {ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder<P, ItemType, MSI, CTX>}
-   * @memberof ISwarmStoreConnectorUtilsOptionsSerializerConstructorParams
-   */
-  grandAccessCallbackBinder: ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder<P, ItemType, MSI, CTX>;
-  grandAccessCallbackOptionsBinder: ISwarmStoreConnectorDatabaseOptionsWithAccessControlleGrantCallbackBound<
-    P,
-    ItemType,
-    DbType,
-    MSI,
-    CTX,
-    TSwarmStoreDatabaseOptions<P, ItemType, DbType>
-  >;
-}
-
-export interface ISwarmStoreConnectorUtilsOptionsSerializerConstructor<
-  P extends ESwarmStoreConnector,
-  ItemType extends TSwarmStoreValueTypes<P>,
-  DbType extends TSwarmStoreDatabaseType<P>,
-  MSI extends TSwarmMessageInstance | ItemType,
-  CTX extends ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext
-> {
-  new (
-    params: ISwarmStoreConnectorUtilsOptionsSerializerConstructorParams<P, ItemType, DbType, MSI, CTX>
-  ): ISwarmStoreConnectorUtilsOptionsSerializer<P, ItemType, DbType, MSI, CTX>;
-}
-
-export interface ISwarmStoreConnectorUtilsOptionsSerializerInstanceFabric<
-  P extends ESwarmStoreConnector,
-  ItemType extends TSwarmStoreValueTypes<P>,
-  DbType extends TSwarmStoreDatabaseType<P>,
-  MSI extends TSwarmMessageInstance | ItemType,
-  CTX extends ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext
-> {
-  (
-    params: ISwarmStoreConnectorUtilsOptionsSerializerConstructorParams<P, ItemType, DbType, MSI, CTX>
-  ): ISwarmStoreConnectorUtilsOptionsSerializer<P, ItemType, DbType, MSI, CTX>;
-}
-
 export interface ISwarmStoreConnectorUtilsDatabaseOptionsValidators<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
@@ -315,6 +230,14 @@ export interface ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidatorCons
   DBOS extends TSwarmStoreDatabaseOptionsSerialized
 > extends IOptionsSerializerValidatorConstructorParams<DBO, DBOS> {
   grandAccessBinder: ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder<P, ItemType, MSI, CTX>;
+  grandAccessBinderForDBOptions: ISwarmStoreConnectorDatabaseOptionsWithAccessControlleGrantCallbackBound<
+    P,
+    ItemType,
+    DbType,
+    MSI,
+    CTX,
+    DBO
+  >;
 }
 
 /**
@@ -365,7 +288,7 @@ export interface ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidatorCons
    * @type {ISerializer}
    * @memberof ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorFabricParams
    */
-  mainSerializer?: ISerializer;
+  optionsSerializer?: ISerializer;
   /**
    * Database options validators
    *
@@ -373,13 +296,6 @@ export interface ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidatorCons
    * @memberof ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorFabricParams
    */
   validatorsFabric?: ISwarmStoreConnectorUtilsDatabaseOptionsValidatorsInstanceFabric<P, ItemType, DbType, DBO, DBOS>;
-  /**
-   * Serialization which implements database options serialization
-   *
-   * @type {ISwarmStoreConnectorUtilsOptionsSerializer<P, ItemType, DbType, MSI, CTX>}
-   * @memberof ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorFabricParams
-   */
-  optionsSerializerFabric?: ISwarmStoreConnectorUtilsOptionsSerializerInstanceFabric<P, ItemType, DbType, MSI, CTX>;
   grandAccessBinderFabric?: ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinderFabric<P, ItemType, MSI, CTX>;
   grandAccessBinderForDBOptionsFabric?: ISwarmStoreConnectorDatabaseOptionsWithAccessControlleGrantCallbackBoundFabric<
     P,
