@@ -21,19 +21,33 @@ import { TSwarmStoreDatabaseOptionsSerialized } from '../../swarm-store-class.ty
  * @interface ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext
  */
 export interface ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext {
+  /**
+   * Identity of the current user
+   *
+   * @type {TSwarmMessageUserIdentifierSerialized}
+   * @memberof ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext
+   */
+  currentUserId: TSwarmMessageUserIdentifierSerialized;
+  /**
+   * Whether the user with the identity exists
+   *
+   * @param {TSwarmMessageUserIdentifierSerialized} userId
+   * @returns {Promise<boolean>}
+   * @memberof ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext
+   */
   isUserExists(userId: TSwarmMessageUserIdentifierSerialized): Promise<boolean>;
 }
 
 /**
- * Grand access callback function extended with a context
+ * Grand access callback function which has already been bound to a context.
  *
  * @export
- * @interface ISwarmStoreConnectorOrbitDbUtilsDbOptionsGrandAccessCallbackWithContext
+ * @interface ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound
  * @extends {TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, ItemType, MSI>}
  * @template P
  * @template ItemType
  * @template MSI
- * @template CTX - context in which the function will be executed
+ * @template CTX context in which the function will be executed
  */
 export interface ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<
   P extends ESwarmStoreConnector,
@@ -53,6 +67,17 @@ export interface ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<
   ): Promise<boolean>;
 }
 
+/**
+ * Funtion for context binding to a grand access callback.
+ * Context provided automatically if this binder was created by fabric.
+ *
+ * @export
+ * @interface ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder
+ * @template P
+ * @template ItemType
+ * @template MSI
+ * @template CTX
+ */
 export interface ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
@@ -65,6 +90,16 @@ export interface ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBin
   ): ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<P, ItemType, MSI, CTX>;
 }
 
+/**
+ * Fabric creates context binder for grand access callback in options
+ *
+ * @export
+ * @interface ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinderFabric
+ * @template P
+ * @template ItemType
+ * @template MSI
+ * @template CTX
+ */
 export interface ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinderFabric<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
@@ -90,9 +125,71 @@ export interface ISwarmStoreConnectorUtilsOptionsSerializer<
   MSI extends TSwarmMessageInstance | ItemType,
   CTX extends ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext
 > extends ISerializer {
+  /**
+   * Parse options serialized and bind the grand access callback function if exists in options
+   *
+   * @param {TSwarmStoreDatabaseOptionsSerialized} dboSerialized
+   * @returns {(TSwarmStoreDatabaseOptions<P, ItemType, DbType> &
+   *     ISwarmStoreConnectorDatabaseAccessControlleGrantCallbackBound<P, ItemType, MSI, CTX>)}
+   * @memberof ISwarmStoreConnectorUtilsOptionsSerializer
+   */
   parse(
-    dbo: TSwarmStoreDatabaseOptionsSerialized
+    dboSerialized: TSwarmStoreDatabaseOptionsSerialized
   ): TSwarmStoreDatabaseOptions<P, ItemType, DbType> &
     ISwarmStoreConnectorDatabaseAccessControlleGrantCallbackBound<P, ItemType, MSI, CTX>;
+  /**
+   * Stringify the database options with grand access callback function
+   *
+   * @template DBO
+   * @param {DBO} dbo
+   * @returns {TSwarmStoreDatabaseOptionsSerialized}
+   * @memberof ISwarmStoreConnectorUtilsOptionsSerializer
+   */
   stringify<DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>>(dbo: DBO): TSwarmStoreDatabaseOptionsSerialized;
+}
+
+export interface ISwarmStoreConnectorUtilsOptionsSerializerConstructorParams<
+  P extends ESwarmStoreConnector,
+  ItemType extends TSwarmStoreValueTypes<P>,
+  MSI extends TSwarmMessageInstance | ItemType,
+  CTX extends ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext
+> {
+  /**
+   * Serializer for options
+   *
+   * @type {ISerializer}
+   * @memberof ISwarmStoreConnectorUtilsOptionsSerializerConstructorParams
+   */
+  optionsSerializer: ISerializer;
+  /**
+   * Function than returns a grand access callback bound to a context
+   *
+   * @type {ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder<P, ItemType, MSI, CTX>}
+   * @memberof ISwarmStoreConnectorUtilsOptionsSerializerConstructorParams
+   */
+  grandAccessCallbackBinder: ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder<P, ItemType, MSI, CTX>;
+}
+
+export interface ISwarmStoreConnectorUtilsOptionsSerializerConstructor<
+  P extends ESwarmStoreConnector,
+  ItemType extends TSwarmStoreValueTypes<P>,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  MSI extends TSwarmMessageInstance | ItemType,
+  CTX extends ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext
+> {
+  new (
+    params: ISwarmStoreConnectorUtilsOptionsSerializerConstructorParams<P, ItemType, MSI, CTX>
+  ): ISwarmStoreConnectorUtilsOptionsSerializer<P, ItemType, DbType, MSI, CTX>;
+}
+
+export interface ISwarmStoreConnectorUtilsOptionsSerializerInstanceFabric<
+  P extends ESwarmStoreConnector,
+  ItemType extends TSwarmStoreValueTypes<P>,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  MSI extends TSwarmMessageInstance | ItemType,
+  CTX extends ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext
+> {
+  (
+    params: ISwarmStoreConnectorUtilsOptionsSerializerConstructorParams<P, ItemType, MSI, CTX>
+  ): ISwarmStoreConnectorUtilsOptionsSerializer<P, ItemType, DbType, MSI, CTX>;
 }

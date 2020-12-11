@@ -643,7 +643,8 @@ export type TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<
 
 export interface ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<
   P extends ESwarmStoreConnector,
-  T extends TSwarmStoreValueTypes<P>
+  T extends TSwarmStoreValueTypes<P>,
+  I extends unknown = never
 > {
   /**
    * check whether to grant access for the user with
@@ -652,5 +653,5 @@ export interface ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<
    * @memberof ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions
    * @returns boolean
    */
-  grantAccess?: TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T>;
+  grantAccess?: TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, I>;
 }
