@@ -42,6 +42,7 @@ export class SwarmStoreConnectorDBOptionsClass<
     this._validateParams(params);
     this._setGrandAccessCallbackContextBinder(params.grandAccessBinder);
     this._setGrandAccessCallbackContextForDbOptionsBinder(params.grandAccessBinderForDBOptions);
+    // an options should has already been stringified
     this._bindGrandAccessContextToOptions();
   }
 

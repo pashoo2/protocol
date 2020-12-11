@@ -13,6 +13,7 @@ import {
 import { TSwarmMessageInstance } from '../../../swarm-message/swarm-message-constructor.types';
 import { ISerializer } from 'types/serialization.types';
 import { TSwarmStoreDatabaseOptionsSerialized } from '../../swarm-store-class.types';
+import { IOptionsSerializerValidatorSerializer } from '../../../basic-classes/options-serializer-validator-class/options-serializer-validator-class.types';
 import {
   IOptionsSerializerValidatorConstructor,
   IOptionsSerializerValidatorConstructorParams,
@@ -288,7 +289,7 @@ export interface ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidatorCons
    * @type {ISerializer}
    * @memberof ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorFabricParams
    */
-  optionsSerializer?: ISerializer;
+  optionsSerializer?: IOptionsSerializerValidatorSerializer<DBO, DBOS>;
   /**
    * Database options validators
    *
