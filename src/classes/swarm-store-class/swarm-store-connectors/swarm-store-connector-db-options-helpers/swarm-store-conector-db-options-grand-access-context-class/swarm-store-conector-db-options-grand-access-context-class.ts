@@ -2,7 +2,8 @@ import { ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext } from '../
 
 export class SwarmStoreConectorDbOptionsGrandAccessContext
   implements ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext {
-  public async isUserExists(): Promise<boolean> {
+  currentUserId: string = '';
+  public async isUserExists(user: string): Promise<boolean> {
     return true;
   }
 }
