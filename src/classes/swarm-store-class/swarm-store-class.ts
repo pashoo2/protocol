@@ -203,7 +203,10 @@ export class SwarmStore<
    * @returns {(Promise<void | Error>)}
    * @memberof SwarmStore
    */
-  public async openDatabase(dbOptions: DBO): Promise<void | Error> {
+  public async openDatabase(
+    // TODO - add class which will handle only dbOptions: ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidator<P, ItemType, DbType, DBO, DBOS>
+    dbOptions: DBO
+  ): Promise<void | Error> {
     const connector = this.getConnectorOrError();
 
     if (checkIsError(connector)) {

@@ -33,7 +33,10 @@ import {
 import { TSwarmMessageSerialized } from '../swarm-message/swarm-message-constructor.types';
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import { ISerializer } from '../../types/serialization.types';
-import { IOptionsSerializerValidatorValidators } from '../basic-classes/options-serializer-validator-class/options-serializer-validator-class.types';
+import {
+  IOptionsSerializerValidatorValidators,
+  IOptionsSerializerValidatorConstructorParams,
+} from '../basic-classes/options-serializer-validator-class/options-serializer-validator-class.types';
 import { ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidator } from './swarm-store-connectors/swarm-store-connector-db-options-helpers/swarm-store-connector-db-options-helpers.types';
 
 export type TSwarmStoreDatabaseType<P extends ESwarmStoreConnector> = ESwarmStoreConnectorOrbitDbDatabaseType;
@@ -348,7 +351,13 @@ export interface ISwarmStoreOptionsWithConnectorFabric<
   CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain> | undefined
 > extends ISwarmStoreOptions<P, ItemType, DbType, DBO, ConnectorBasic, PO> {
   connectorFabric: CFO;
-  persistentDatbasesList?: ISwarmStoreConnectorDatabasesPersistentList<P, ItemType, DbType, DBO, Record<DBO['dbName'], DBO>>;
+  persistentDatbasesList?: ISwarmStoreConnectorDatabasesPersistentList<
+    P,
+    ItemType,
+    DbType,
+    DBO,
+    Record<DBO['dbName'], Readonly<DBO>>
+  >;
 }
 
 /**
@@ -658,6 +667,18 @@ export interface ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<
   grantAccess?: TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, I>;
 }
 
+export interface IDatabaseOptionsSerializerValidatorConstructor<
+  P extends ESwarmStoreConnector,
+  ItemType extends TSwarmStoreValueTypes<P>,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
+  DBOS extends TSwarmStoreDatabaseOptionsSerialized
+> {
+  new (
+    params: Pick<IOptionsSerializerValidatorConstructorParams<DBO, DBOS>, 'options'>
+  ): ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidator<P, ItemType, DbType, DBO, DBOS>;
+}
+
 /**
  * List of databases options opened during this session
  * or during previous sessions
@@ -689,7 +710,7 @@ export interface ISwarmStoreConnectorDatabasesPersistentList<
    * @type {TSwarmStoreOptionsOfDatabasesKnownList}
    * @memberof SwarmStore
    */
-  databasesKnownOptionsList: DBL;
+  readonly databasesKnownOptionsList: DBL | undefined;
   /**
    * Load the list with known databases options
    *
@@ -749,7 +770,7 @@ export interface ISwarmStoreConnectorDatabasesPersistentListConstructorParams<
    * @type {string} []
    * @memberof SwarmStore
    */
-  databasesLisPersistantKey: string;
+  keyPrefixForDatabasesLisInPersistentStorage: string;
   /**
    * Serializer and validator applied to a database options during
    * it's loading and adding to the list.
@@ -757,5 +778,7 @@ export interface ISwarmStoreConnectorDatabasesPersistentListConstructorParams<
    * @type {ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidator<P, ItemType, DbType, DBO, DBOS>}
    * @memberof ISwarmStoreConnectorDatabasesPersistentListConstructorParams
    */
-  databaseOptionsValidatorSerializer: ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidator<P, ItemType, DbType, DBO, DBOS>;
+  databaseOptionsValidatorSerializerConstructor: IDatabaseOptionsSerializerValidatorConstructor<P, ItemType, DbType, DBO, DBOS>;
+
+  databasesListSerializer: ISerializer;
 }

@@ -12,7 +12,10 @@ import {
 } from '../../swarm-store-class.types';
 import { TSwarmMessageInstance } from '../../../swarm-message/swarm-message-constructor.types';
 import { ISerializer } from 'types/serialization.types';
-import { TSwarmStoreDatabaseOptionsSerialized } from '../../swarm-store-class.types';
+import {
+  TSwarmStoreDatabaseOptionsSerialized,
+  IDatabaseOptionsSerializerValidatorConstructor,
+} from '../../swarm-store-class.types';
 import { IOptionsSerializerValidatorSerializer } from '../../../basic-classes/options-serializer-validator-class/options-serializer-validator-class.types';
 import {
   IOptionsSerializerValidatorConstructor,
@@ -327,7 +330,5 @@ export interface ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidatorCons
       DBO,
       DBOS
     >
-  ): new (
-    params: Pick<IOptionsSerializerValidatorConstructorParams<DBO, DBOS>, 'options'>
-  ) => ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidator<P, ItemType, DbType, DBO, DBOS>;
+  ): IDatabaseOptionsSerializerValidatorConstructor<P, ItemType, DbType, DBO, DBOS>;
 }
