@@ -1,13 +1,19 @@
 import { EventEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import assert from 'assert';
-import { TSwarmStoreDatabaseRequestMethodReturnType, ISwarmStoreDatabasesCommonStatusList } from './swarm-store-class.types';
+import {
+  TSwarmStoreDatabaseRequestMethodReturnType,
+  TSwarmStoreOptionsOfDatabasesKnownList,
+  ISwarmStoreDatabasesCommonStatusList,
+} from './swarm-store-class.types';
 import {
   ESwarmStoreConnector,
   ESwarmStoreEventNames,
   ESwarmStoreDbStatus,
   SWARM_STORE_CONNECTORS,
   SWARM_STORE_DATABASES_STATUSES_EMPTY,
+  SWARM_STORE_DATABASES_PERSISTENT_LIST_DIRECTORY_DEFAULT,
 } from './swarm-store-class.const';
+import { IStorageCommon } from 'types/storage.types';
 import { calculateHash } from 'utils/hash-calculation-utils';
 import { checkIsError } from '../../utils/common-utils/common-utils-check-value';
 import {
@@ -16,12 +22,7 @@ import {
   ISwarmStoreProviderOptions,
   ISwarmStoreOptionsConnectorFabric,
 } from './swarm-store-class.types';
-import {
-  TSwarmStoreDatabaseType,
-  ISwarmStoreConnectorBasic,
-  ISwarmStoreWithConnector,
-  ISwarmStoreConnectorDatabasesPersistentList,
-} from './swarm-store-class.types';
+import { TSwarmStoreDatabaseType, ISwarmStoreConnectorBasic, ISwarmStoreWithConnector } from './swarm-store-class.types';
 import {
   ISwarmStoreConnector,
   ISwarmStoreDatabasesStatuses,
@@ -57,7 +58,8 @@ export class SwarmStore<
     ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, DBO, ConnectorBasic, PO>,
     CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
     O extends ISwarmStoreOptionsWithConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO>,
-    E extends ISwarmStoreEvents<P, ItemType, DbType, DBO>
+    E extends ISwarmStoreEvents<P, ItemType, DbType, DBO>,
+    DBL extends TSwarmStoreOptionsOfDatabasesKnownList<P, ItemType, DbType, DBO>
   >
   extends EventEmitter<E>
   implements
@@ -109,40 +111,35 @@ export class SwarmStore<
    * @type {TSwarmStoreOptionsOfDatabasesKnownList}
    * @memberof SwarmStore
    */
-  protected get databasesKnownOptionsList(): Record<DBO['dbName'], DBO> | undefined {
-    return this.persistentDatbasesList?.databasesKnownOptionsList;
-  }
+  protected databasesKnownOptionsList: DBL = {} as DBL;
 
   /**
    * Databases opened during this session.
    *
    * @protected
-   * @type {Record<string, boolean>} - whether opened or closed
+   * @type {Record<string, boolean>}
    * @memberof SwarmStore
    */
-  protected databasesOpenedList: Record<DBO['dbName'], boolean> = {} as Record<DBO['dbName'], boolean>;
+  protected databasesOpenedList: Record<string, boolean> = {};
 
   /**
-   * Storage with list of all databases opened and not dropped.
-   * It's exists only if passed in the arguments.
+   * storage with list of all databases opened and not dropped.
    *
    * @protected
-   * @type {ISwarmStoreConnectorDatabasesPersistentList<
-   *     P,
-   *     ItemType,
-   *     DbType,
-   *     DBO,
-   *     Record<DBO['dbName'], DBO>
-   *   >}
+   * @type {IStorageCommon}
    * @memberof SwarmStore
    */
-  protected persistentDatbasesList?: ISwarmStoreConnectorDatabasesPersistentList<
-    P,
-    ItemType,
-    DbType,
-    DBO,
-    Record<DBO['dbName'], DBO>
-  >;
+  protected databasePersistantListStorage?: IStorageCommon;
+
+  /**
+   * A directory name under which all the databases
+   * will be listed.
+   *
+   * @protected
+   * @type {string} []
+   * @memberof SwarmStore
+   */
+  protected databasesLisPersistantKey?: string;
 
   /**
    * Open connection with all databases listed in the options.
@@ -154,12 +151,12 @@ export class SwarmStore<
    * @returns {(Promise<Error | void>)}
    * @memberof SwarmStore
    */
-  public async connect(options: O): Promise<Error | void> {
+  public async connect(options: O, databasePersistantListStorage?: IStorageCommon): Promise<Error | void> {
     let connectionWithConnector: ConnectorMain | undefined;
     try {
       this.validateOptions(options);
-      if (options.persistentDatbasesList) {
-        await this.setDatabasePersistentListAndPreloadDatabasesList(options.persistentDatbasesList);
+      if (databasePersistantListStorage) {
+        await this.setDatabasePersistentList(databasePersistantListStorage, this.getDatabasePersistentListDirectory(options));
       }
       connectionWithConnector = this.createConnectionWithStorageConnector(options);
       this.createStatusTable(options);
@@ -371,8 +368,8 @@ export class SwarmStore<
    * @returns {ISwarmStoreDatabaseBaseOptions | undefined}
    * @memberof SwarmStore
    */
-  protected getDatabaseOptions(dbName: DBO['dbName']): DBO | undefined {
-    return this.databases?.options?.[dbName];
+  protected getDatabaseOptions(dbName: DBO['dbName']): undefined | DBO {
+    return this.databases?.options[dbName];
   }
 
   getConnectorOrError(): ConnectorMain | Error {
@@ -385,8 +382,20 @@ export class SwarmStore<
   }
 
   /**
-   * Preload the databases list from the persistentDatabase list
-   * and set the persistentDatabase list as the current.
+   * Directry for the database persistent list.
+   * Better if it will be uniq per users
+   *
+   * @protected
+   * @param {ISwarmStoreOptions<P, ItemType>} options
+   * @returns {string}
+   * @memberof SwarmStore
+   */
+  protected getDatabasePersistentListDirectory(options: O): string {
+    return `${options.userId}/${options.directory || SWARM_STORE_DATABASES_PERSISTENT_LIST_DIRECTORY_DEFAULT}`;
+  }
+
+  /**
+   * Preload the databases list.
    *
    * @protected
    * @param {IStorageCommon} databasePersistantListStorage
@@ -395,11 +404,59 @@ export class SwarmStore<
    * @returns Promise<void>
    * @throws
    */
-  protected async setDatabasePersistentListAndPreloadDatabasesList(
-    persistentDatbasesList: ISwarmStoreConnectorDatabasesPersistentList<P, ItemType, DbType, DBO, Record<DBO['dbName'], DBO>>
-  ): Promise<void> {
-    await persistentDatbasesList.loadDatabasesListFromPersistentStorage();
-    this.persistentDatbasesList = persistentDatbasesList;
+  protected async setDatabasePersistentList(databasePersistantListStorage: IStorageCommon, directory?: string): Promise<void> {
+    this.databasePersistantListStorage = databasePersistantListStorage;
+
+    const key = await this.getDatabasesListKey(directory);
+    this.databasesLisPersistantKey = key;
+    await this.preloadOpenedDatabasesList();
+  }
+
+  /**
+   * Stringify list of databases options
+   * known
+   *
+   * @protected
+   * @param {TSwarmStoreOptionsOfDatabasesKnownList} databasesKnownOptionsList
+   * @returns {string}
+   * @memberof SwarmStore
+   * @throws
+   */
+  protected stringifyDatabaseOptionsList(databasesKnownOptionsList: DBL): string {
+    return JSON.stringify(databasesKnownOptionsList);
+  }
+
+  /**
+   * Parse databases list loaded from storage
+   *
+   * @protected
+   * @param {string} databasesKnownOptionsList
+   * @returns {TSwarmStoreOptionsOfDatabasesKnownList}
+   * @memberof SwarmStore
+   * @throws
+   */
+  protected parseDatabaseOptionsList(databasesKnownOptionsList: string): DBL {
+    return JSON.parse(databasesKnownOptionsList);
+  }
+
+  /**
+   * preload a list of databases opened
+   * during previous sessions.
+   *
+   * @protected
+   * @memberof SwarmStore
+   * @returns Promise<void>
+   * @throws
+   */
+  protected async preloadOpenedDatabasesList(): Promise<void> {
+    const databasesOptionsList =
+      this.databasesLisPersistantKey && (await this.databasePersistantListStorage?.get(this.databasesLisPersistantKey));
+    if (databasesOptionsList) {
+      if (databasesOptionsList instanceof Error) {
+        throw databasesOptionsList;
+      }
+      this.databasesKnownOptionsList = this.parseDatabaseOptionsList(databasesOptionsList);
+    }
   }
 
   /**
@@ -412,14 +469,6 @@ export class SwarmStore<
     this.emit(ESwarmStoreEventNames.DATABASES_LIST_UPDATED, this.databases);
   }
 
-  protected setDatabaseHasBeenOpened(dbName: DBO['dbName']) {
-    this.databasesOpenedList[dbName] = true;
-  }
-
-  protected deleteDatabaseFromOpenedList(dbName: DBO['dbName']) {
-    delete this.databasesOpenedList[dbName];
-  }
-
   /**
    * Add a database opened to lists.
    *
@@ -430,7 +479,7 @@ export class SwarmStore<
    * @throws
    */
   protected async handleDatabaseOpened(dbOpenedOptions: DBO): Promise<void> {
-    this.setDatabaseHasBeenOpened(dbOpenedOptions.dbName);
+    this.databasesOpenedList[dbOpenedOptions.dbName] = true;
     await this.addDatabaseOpenedOptions(dbOpenedOptions);
     this.emitDatabasesListUpdated();
   }
@@ -446,7 +495,7 @@ export class SwarmStore<
    * @throws
    */
   protected async handleDatabaseClosed(dbOpenedOptions: DBO): Promise<void> {
-    this.deleteDatabaseFromOpenedList(dbOpenedOptions.dbName);
+    delete this.databasesOpenedList[dbOpenedOptions.dbName];
     this.emitDatabasesListUpdated();
   }
 
@@ -466,7 +515,7 @@ export class SwarmStore<
   protected async handleDatabaseDropped(dbOpenedOptions: DBO): Promise<void> {
     const { dbName } = dbOpenedOptions;
 
-    this.deleteDatabaseFromOpenedList(dbOpenedOptions.dbName);
+    delete this.databasesOpenedList[dbName];
     await this.removeDatabaseOpenedOptions(dbOpenedOptions);
     this.emitDatbaseDropped(dbName);
     this.emitDatabasesListUpdated();
@@ -482,7 +531,8 @@ export class SwarmStore<
    * @memberof SwarmStore
    */
   protected async addDatabaseOpenedOptions(dbOpenedOptions: DBO) {
-    await this.persistentDatbasesList?.addDatabase(dbOpenedOptions.dbName, dbOpenedOptions);
+    this.databasesKnownOptionsList[dbOpenedOptions.dbName as DBO['dbName']] = dbOpenedOptions as DBL[DBO['dbName']];
+    await this.storeDatabasesKnownOptionsList();
   }
 
   /**
@@ -495,7 +545,24 @@ export class SwarmStore<
    * @memberof SwarmStore
    */
   protected async removeDatabaseOpenedOptions(dbOpenedOptions: DBO) {
-    await this.persistentDatbasesList?.removeDatabase(dbOpenedOptions.dbName);
+    delete this.databasesKnownOptionsList[dbOpenedOptions.dbName as DBO['dbName']];
+    await this.storeDatabasesKnownOptionsList();
+  }
+
+  /**
+   * Store options of databases known to the storage
+   * if it was provided for the connect.
+   *
+   * @protected
+   * @memberof SwarmStore
+   */
+  protected async storeDatabasesKnownOptionsList() {
+    const { databasesKnownOptionsList, databasesLisPersistantKey, databasePersistantListStorage } = this;
+
+    if (databasePersistantListStorage && databasesLisPersistantKey) {
+      const list = this.stringifyDatabaseOptionsList(databasesKnownOptionsList);
+      await databasePersistantListStorage.set(databasesLisPersistantKey, list);
+    }
   }
 
   protected getOptionsForConnectorFabric(options: O): CO {

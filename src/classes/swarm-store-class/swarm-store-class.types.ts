@@ -34,6 +34,7 @@ import { TSwarmMessageSerialized } from '../swarm-message/swarm-message-construc
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import { ISerializer } from '../../types/serialization.types';
 import { IOptionsSerializerValidatorValidators } from '../basic-classes/options-serializer-validator-class/options-serializer-validator-class.types';
+import { ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidator } from './swarm-store-connectors/swarm-store-connector-db-options-helpers/swarm-store-connector-db-options-helpers.types';
 
 export type TSwarmStoreDatabaseType<P extends ESwarmStoreConnector> = ESwarmStoreConnectorOrbitDbDatabaseType;
 
@@ -347,6 +348,7 @@ export interface ISwarmStoreOptionsWithConnectorFabric<
   CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain> | undefined
 > extends ISwarmStoreOptions<P, ItemType, DbType, DBO, ConnectorBasic, PO> {
   connectorFabric: CFO;
+  persistentDatbasesList?: ISwarmStoreConnectorDatabasesPersistentList<P, ItemType, DbType, DBO, Record<DBO['dbName'], DBO>>;
 }
 
 /**
@@ -524,7 +526,7 @@ export interface ISwarmStoreDatabasesCommonStatusList<
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>
 > {
-  readonly options: TSwarmStoreOptionsOfDatabasesKnownList<P, ItemType, DbType, DBO>;
+  readonly options: TSwarmStoreOptionsOfDatabasesKnownList<P, ItemType, DbType, DBO> | undefined;
   readonly opened: Record<string, boolean>;
 }
 
@@ -654,4 +656,106 @@ export interface ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<
    * @returns boolean
    */
   grantAccess?: TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, I>;
+}
+
+/**
+ * List of databases options opened during this session
+ * or during previous sessions
+ * (if an instanceof databasePersistantListStorage provided)
+ * and which were not dropped.
+ * If a database not opened because it's failed,
+ * then it's options won't be added to the list.
+ *
+ * @export
+ * @interface ISwarmStoreConnectorDatabasesPersistentList
+ * @template P
+ * @template ItemType
+ * @template DbType
+ * @template DBO
+ * @template DBL
+ */
+export interface ISwarmStoreConnectorDatabasesPersistentList<
+  P extends ESwarmStoreConnector,
+  ItemType extends TSwarmStoreValueTypes<P>,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
+  DBL extends TSwarmStoreOptionsOfDatabasesKnownList<P, ItemType, DbType, DBO>
+> {
+  /**
+   * List of databases known loaded from the persistent storage
+   * or added during the currrent session
+   *
+   * @protected
+   * @type {TSwarmStoreOptionsOfDatabasesKnownList}
+   * @memberof SwarmStore
+   */
+  databasesKnownOptionsList: DBL;
+  /**
+   * Load the list with known databases options
+   *
+   * @returns {Promise<DBL>}
+   * @memberof ISwarmStoreConnectorDatabasesPersistentList
+   */
+  loadDatabasesListFromPersistentStorage(): Promise<DBL>;
+  /**
+   * Get database options if exists in the persistend storage
+   *
+   * @param {DBO['dbName']} dbName
+   * @returns {(Promise<DBO | undefined>)}
+   * @memberof ISwarmStoreConnectorDatabasesPersistentList
+   */
+  getDatabaseOptions(dbName: DBO['dbName']): Promise<DBO | undefined>;
+  /**
+   * Add database to the list and save it into the persistent storage
+   *
+   * @param {DBO['dbName']} dbName
+   * @param {DBO} dbOptions
+   * @returns {Promise<void>}
+   * @memberof ISwarmStoreConnectorDatabasesPersistentList
+   */
+  addDatabase(dbName: DBO['dbName'], dbOptions: DBO): Promise<void>;
+
+  /**
+   * Remove the database from the list
+   *
+   * @param {DBO['dbName']} dbName
+   * @returns {Promise<void>}
+   * @memberof ISwarmStoreConnectorDatabasesPersistentList
+   */
+  removeDatabase(dbName: DBO['dbName']): Promise<void>;
+}
+
+export interface ISwarmStoreConnectorDatabasesPersistentListConstructorParams<
+  P extends ESwarmStoreConnector,
+  ItemType extends TSwarmStoreValueTypes<P>,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
+  DBOS extends TSwarmStoreDatabaseOptionsSerialized
+> {
+  /**
+   * storage with list of all databases opened and not dropped.
+   *
+   * @protected
+   * @type {IStorageCommon}
+   * @memberof SwarmStore
+   */
+  databasePersistantListStorage: IStorageCommon;
+
+  /**
+   * A directory name under which all the databases
+   * will be listed.
+   *
+   * @protected
+   * @type {string} []
+   * @memberof SwarmStore
+   */
+  databasesLisPersistantKey: string;
+  /**
+   * Serializer and validator applied to a database options during
+   * it's loading and adding to the list.
+   *
+   * @type {ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidator<P, ItemType, DbType, DBO, DBOS>}
+   * @memberof ISwarmStoreConnectorDatabasesPersistentListConstructorParams
+   */
+  databaseOptionsValidatorSerializer: ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidator<P, ItemType, DbType, DBO, DBOS>;
 }
