@@ -23,7 +23,7 @@ import {
   ISwarmStoreConnectorWithEntriesCount,
   ISwarmStoreConnectorBasicWithEntriesCount,
 } from '../swarm-store-class/swarm-store-class-extended/swarm-store-class-with-entries-count/swarm-store-class-with-entries-count.types';
-import { SwarmStoreConnectorOrbitDBWithEntriesCount } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-extended/swarm-store-connector-orbit-db-with-entries-count/swarm-store-connector-orbit-db-with-entries-count';
+import { swarmStoreConnectorOrbitDBWithEntriesCountInstanceFabric } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-extended/swarm-store-connector-orbit-db-with-entries-count/swarm-store-connector-orbit-db-with-entries-count-fabric';
 import { ISwarmStoreConnector } from '../swarm-store-class/swarm-store-class.types';
 import { SwarmStoreConnectorOrbitDB } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db';
 
@@ -119,10 +119,14 @@ const getMainConnectorFabricForOrbitDBWithEntriesCount = <
   swarmStoreConnectorOrbitDBConstructorOptions: TSwarmStoreConnectorConstructorOptions<P, ItemType, DbType>,
   options: CO
 ): ISwarmStoreConnectorWithEntriesCount<P, ItemType, DbType, DBO, ConnectorBasic, PO> => {
-  const swarmMessageStoreWithEntriesCount = new SwarmStoreConnectorOrbitDBWithEntriesCount(
-    swarmStoreConnectorOrbitDBConstructorOptions
-  );
-  return swarmMessageStoreWithEntriesCount as ISwarmStoreConnectorWithEntriesCount<P, ItemType, DbType, DBO, ConnectorBasic, PO>;
+  return swarmStoreConnectorOrbitDBWithEntriesCountInstanceFabric<
+    ItemType,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO,
+    TSwarmStoreConnectorConstructorOptions<P, ItemType, DbType>
+  >(swarmStoreConnectorOrbitDBConstructorOptions);
 };
 
 const getMainConnectorFabricForOrbitDB = <

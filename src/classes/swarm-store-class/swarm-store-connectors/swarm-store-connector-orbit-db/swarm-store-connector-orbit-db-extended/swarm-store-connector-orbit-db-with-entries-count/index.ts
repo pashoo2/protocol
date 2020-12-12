@@ -1,1 +1,4 @@
-export { SwarmStoreConnectorOrbitDBWithEntriesCount } from './swarm-store-connector-orbit-db-with-entries-count';
+export {
+  swarmStoreConnectorOrbitDBWithEntriesCountConstructorFabric,
+  swarmStoreConnectorOrbitDBWithEntriesCountInstanceFabric,
+} from './swarm-store-connector-orbit-db-with-entries-count-fabric';
