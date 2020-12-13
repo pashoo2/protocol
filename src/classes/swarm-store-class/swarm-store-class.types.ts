@@ -746,13 +746,7 @@ export interface ISwarmStoreConnectorDatabasesPersistentList<
   removeDatabase(dbName: DBO['dbName']): Promise<void>;
 }
 
-export interface ISwarmStoreConnectorDatabasesPersistentListConstructorParams<
-  P extends ESwarmStoreConnector,
-  ItemType extends TSwarmStoreValueTypes<P>,
-  DbType extends TSwarmStoreDatabaseType<P>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
-  DBOS extends TSwarmStoreDatabaseOptionsSerialized
-> {
+export interface ISwarmStoreConnectorDatabasesPersistentListConstructorParams {
   /**
    * storage with list of all databases opened and not dropped.
    *
@@ -772,13 +766,10 @@ export interface ISwarmStoreConnectorDatabasesPersistentListConstructorParams<
    */
   keyPrefixForDatabasesLisInPersistentStorage: string;
   /**
-   * Serializer and validator applied to a database options during
-   * it's loading and adding to the list.
+   * Serializer of the database list and options
    *
-   * @type {ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidator<P, ItemType, DbType, DBO, DBOS>}
+   * @type {ISerializer}
    * @memberof ISwarmStoreConnectorDatabasesPersistentListConstructorParams
    */
-  databaseOptionsValidatorSerializerConstructor: IDatabaseOptionsSerializerValidatorConstructor<P, ItemType, DbType, DBO, DBOS>;
-
-  databasesListSerializer: ISerializer;
+  serializer: ISerializer;
 }

@@ -205,6 +205,7 @@ export class SwarmStore<
    */
   public async openDatabase(
     // TODO - add class which will handle only dbOptions: ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidator<P, ItemType, DbType, DBO, DBOS>
+    // to support grandAccessCallback context binding
     dbOptions: DBO
   ): Promise<void | Error> {
     const connector = this.getConnectorOrError();

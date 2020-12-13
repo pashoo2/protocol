@@ -365,7 +365,7 @@ export class SwarmMessageStore<
     if (iterator instanceof Error) {
       throw iterator;
     }
-    return this.collectMessages(dbName, iterator as TSwarmStoreDatabaseIteratorMethodAnswer<P, ValueType>, dbType);
+    return await this.collectMessages(dbName, iterator as TSwarmStoreDatabaseIteratorMethodAnswer<P, ValueType>, dbType);
   }
 
   public async collectWithMeta<MD extends Exclude<Exclude<MSI, ItemType>, ISwarmMessageInstanceEncrypted>>(
@@ -480,7 +480,7 @@ export class SwarmMessageStore<
     const messageConstructor = this.messageConstructors && getMessageConstructorForDatabase(dbName, this.messageConstructors);
 
     if (!messageConstructor) {
-      return this.createMessageConstructorForDb(dbName);
+      return await this.createMessageConstructorForDb(dbName);
     }
     return messageConstructor;
   }
@@ -742,7 +742,7 @@ export class SwarmMessageStore<
           : undefined
       );
     }
-    return this.handleNewDataMessage<T>(dbName, dbType, message);
+    return await this.handleNewDataMessage<T>(dbName, dbType, message);
   };
 
   protected setListeners() {
@@ -885,7 +885,7 @@ export class SwarmMessageStore<
         return err;
       }
     });
-    return Promise.all(promises);
+    return await Promise.all(promises);
   }
 
   protected isSwarmStoreDatabaseLoadMethodAnswer<T extends ItemType>(
@@ -995,7 +995,7 @@ export class SwarmMessageStore<
     if (!this.swarmMessageConstructorFabric) {
       return;
     }
-    return this.swarmMessageConstructorFabric({}, { dbName });
+    return await this.swarmMessageConstructorFabric({}, { dbName });
   }
 
   /**
@@ -1177,10 +1177,10 @@ export class SwarmMessageStore<
     const databaseType = this._getDatabaseType(dbName);
 
     if (deleteMessageArg && databaseType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE) {
-      return this.removeSwarmMessageFromCacheByKey(dbName, deleteMessageArg);
+      return await this.removeSwarmMessageFromCacheByKey(dbName, deleteMessageArg);
     }
     if (deleteMessageArg) {
-      return this.removeSwarmMessageFromCacheByAddress(dbName, deleteMessageArg);
+      return await this.removeSwarmMessageFromCacheByAddress(dbName, deleteMessageArg);
     }
     console.warn('The message address or key is not provided', dbName, deleteMessageArg);
   }
@@ -1192,7 +1192,7 @@ export class SwarmMessageStore<
     const cache = this.getMessagesCacheForDb(dbName);
 
     if (cache) {
-      return cache.getMessageByAddress(messageAddress);
+      return await cache.getMessageByAddress(messageAddress);
     }
   }
 
@@ -1205,7 +1205,7 @@ export class SwarmMessageStore<
     if (!messageMetadata) {
       return;
     }
-    return this.getSwarmMessageInstanceFromCacheByAddress(dbName, messageMetadata.messageAddress);
+    return await this.getSwarmMessageInstanceFromCacheByAddress(dbName, messageMetadata.messageAddress);
   }
 
   /**

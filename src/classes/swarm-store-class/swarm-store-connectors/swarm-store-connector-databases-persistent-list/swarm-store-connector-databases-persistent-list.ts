@@ -1,10 +1,8 @@
 import { ESwarmStoreConnector } from '../../swarm-store-class.const';
 import assert from 'assert';
-import { ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidator } from '../swarm-store-connector-db-options-helpers/swarm-store-connector-db-options-helpers.types';
 import { IStorageCommon } from '../../../../types/storage.types';
 import { ISerializer } from '../../../../types/serialization.types';
-import { SWARM_STORE_CONNECTOR_DATABASES_PERSISTENT_LIST_DEFAULT_DATABASES_NAMES_LIST } from './swarm-store-connector-databases-persistent-list.const';
-import { IDatabaseOptionsSerializerValidatorConstructor } from '../../swarm-store-class.types';
+import { SWARM_STORE_CONNECTOR_DATABASES_PERSISTENT_LIST_ATTEMPTS_TO_SAVE_ON_FAIL } from './swarm-store-connector-databases-persistent-list.const';
 import { commonUtilsArrayUniq } from '../../../../utils/common-utils/common-utils-array';
 import {
   SWARM_STORE_CONNECTOR_DATABASES_PERSISTENT_LIST_DEFAULT_DATABASE_LIST,
@@ -12,10 +10,10 @@ import {
   SWARM_STORE_CONNECTOR_DATABASES_PERSISTENT_LIST_STORAGE_KEY_DATABASES_NAMES,
   SWARM_STORE_CONNECTOR_DATABASES_PERSISTENT_LIST_STORAGE_KEY_PERFIX_DATABASES_NAMES_DELIMETER,
 } from './swarm-store-connector-databases-persistent-list.const';
-import {
-  ISwarmStoreConnectorDatabasesPersistentListConstructorParams,
-  TSwarmStoreDatabaseOptionsSerialized,
-} from '../../swarm-store-class.types';
+import { ISwarmStoreConnectorDatabasesPersistentListConstructorParams } from '../../swarm-store-class.types';
+import { IAsyncQueueConcurentWithAutoExecution } from '../../../basic-classes/async-queue-concurent/async-queue-concurent-extended/async-queue-concurent-with-auto-execution/async-queue-concurent-with-auto-execution.types';
+import { ConcurentAsyncQueueWithAutoExecution } from '../../../basic-classes/async-queue-concurent/async-queue-concurent-extended/async-queue-concurent-with-auto-execution/async-queue-concurent-with-auto-execution';
+import { createPromisePendingRejectable } from '../../../../utils/common-utils/commom-utils.promies';
 import {
   TSwarmStoreValueTypes,
   TSwarmStoreDatabaseType,
@@ -28,25 +26,24 @@ export class SwarmStoreConnectorPersistentList<
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
-  DBOS extends TSwarmStoreDatabaseOptionsSerialized,
-  CP extends ISwarmStoreConnectorDatabasesPersistentListConstructorParams<P, ItemType, DbType, DBO, DBOS>,
-  DBL extends Record<DBO['dbName'], InstanceType<CP['databaseOptionsValidatorSerializerConstructor']>['options']>
+  DBL extends Record<DBO['dbName'], DBO>
 > implements ISwarmStoreConnectorDatabasesPersistentList<P, ItemType, DbType, DBO, DBL> {
   public get databasesKnownOptionsList(): DBL | undefined {
     return this._databasesList;
   }
 
   protected _databaseListPersistentStorage: IStorageCommon | undefined;
-  protected _databaseOptionsValidatorSerializer:
-    | IDatabaseOptionsSerializerValidatorConstructor<P, ItemType, DbType, DBO, DBOS>
-    | undefined;
   protected _keyPrefixInStorageForSerializedDbList: string | undefined;
 
-  protected _databasesListSerializer: ISerializer | undefined;
+  protected _serializer: ISerializer | undefined;
 
   protected _databasesList: DBL | undefined;
 
-  protected get _databasesNamesList(): Array<DBO['dbName']> | undefined {
+  private _asyncOperationsQueue: IAsyncQueueConcurentWithAutoExecution<void, Error> | undefined;
+
+  protected readonly _maxFailsOfersistentStorageOperation = SWARM_STORE_CONNECTOR_DATABASES_PERSISTENT_LIST_ATTEMPTS_TO_SAVE_ON_FAIL;
+
+  protected get _databasesUniqNamesList(): Array<DBO['dbName']> | undefined {
     const databasesList = this._databasesList;
     if (!databasesList) {
       return undefined;
@@ -54,9 +51,10 @@ export class SwarmStoreConnectorPersistentList<
     return Object.keys(databasesList);
   }
 
-  constructor(params: CP) {
+  constructor(params: ISwarmStoreConnectorDatabasesPersistentListConstructorParams) {
     this._validateParams(params);
     this._setParams(params);
+    this._initializeAsyncQueue();
   }
 
   public async loadDatabasesListFromPersistentStorage(): Promise<DBL> {
@@ -67,49 +65,58 @@ export class SwarmStoreConnectorPersistentList<
     } else {
       this._setDatabasesList(dbsList);
     }
-    return this._getDatabasesList();
+    return this._getDatabasesListClone();
   }
 
   public async getDatabaseOptions(dbName: DBO['dbName']): Promise<DBO | undefined> {
     await this._loadDatabasesListIfNotLoaded();
-    return this._getDatabasesList()[dbName];
+    return this._getDatabasesListClone()[dbName];
   }
 
-  public addDatabase(dbName: DBO['dbName'], dbOptions: DBO): Promise<void> {
+  public async addDatabase(dbName: DBO['dbName'], dbOptions: DBO): Promise<void> {
     await this._loadDatabasesListIfNotLoaded();
+    await this._waitQueueAndRunOperationInTransaction(this._createAddDatabaseToTheListInStorageOperation(dbName, dbOptions));
   }
 
-  protected _validateParams(
-    params: ISwarmStoreConnectorDatabasesPersistentListConstructorParams<P, ItemType, DbType, DBO, DBOS>
-  ): void {
+  public async removeDatabase(dbName: DBO['dbName']): Promise<void> {
+    await this._loadDatabasesListIfNotLoaded();
+    await this._waitQueueAndRunOperationInTransaction(this._createRemoveDatabaseFromTheListAndStorageOperation(dbName));
+  }
+
+  protected _validateParams(params: any): params is ISwarmStoreConnectorDatabasesPersistentListConstructorParams {
     assert(params, 'Parameters should be defined');
     assert(
       params.keyPrefixForDatabasesLisInPersistentStorage,
       'Key prefix in storage which should be used for storing the serialized list of databases ("databasesLisPersistantKey") should be defined in the params'
     );
-    assert(
-      params.databaseOptionsValidatorSerializerConstructor,
-      'Serializer/validator of a database options (databaseOptionsValidatorSerializer) should be passed in the params'
-    );
     assert(params.databasePersistantListStorage, 'Persistent storage for storing the list of a databases should be defined');
     assert(params.databasesListSerializer, 'A serializer should be passed in params');
+    return true;
   }
 
-  protected _setParams(
-    params: ISwarmStoreConnectorDatabasesPersistentListConstructorParams<P, ItemType, DbType, DBO, DBOS>
-  ): void {
+  protected _setParams(params: ISwarmStoreConnectorDatabasesPersistentListConstructorParams): void {
     this._databaseListPersistentStorage = params.databasePersistantListStorage;
-    this._databaseOptionsValidatorSerializer = params.databaseOptionsValidatorSerializerConstructor;
     this._keyPrefixInStorageForSerializedDbList = params.keyPrefixForDatabasesLisInPersistentStorage;
-    this._databasesListSerializer = params.databasesListSerializer;
+    this._serializer = params.serializer;
   }
 
-  protected _getDatabasesList(): DBL {
+  protected _initializeAsyncQueue() {
+    this._asyncOperationsQueue = new ConcurentAsyncQueueWithAutoExecution<void, Error>(createPromisePendingRejectable);
+  }
+
+  protected _getAsyncOperationsQueue(): IAsyncQueueConcurentWithAutoExecution<void, Error> {
+    if (!this._asyncOperationsQueue) {
+      throw new Error('Failed to initialize the async queue instance');
+    }
+    return this._asyncOperationsQueue;
+  }
+
+  protected _getDatabasesListClone(): DBL {
     const databasesList = this._databasesList;
     if (!databasesList) {
       throw new Error('Databases list is not defined');
     }
-    return databasesList;
+    return { ...databasesList };
   }
 
   protected _getDatabaseListPersistentStorage(): IStorageCommon {
@@ -120,19 +127,6 @@ export class SwarmStoreConnectorPersistentList<
     return databaseListPersistentStorage;
   }
 
-  protected _getDatabaseOptionsValidatorSerializerConstructor(): IDatabaseOptionsSerializerValidatorConstructor<
-    P,
-    ItemType,
-    DbType,
-    DBO,
-    DBOS
-  > {
-    const databaseOptionsValidatorSerializer = this._databaseOptionsValidatorSerializer;
-    if (!databaseOptionsValidatorSerializer) {
-      throw new Error('There is no validator serializer instance');
-    }
-    return databaseOptionsValidatorSerializer;
-  }
   protected _getKeyPrefixForSerializedDbListInStorage(): string {
     const keyInStorageForSerializedDbList = this._keyPrefixInStorageForSerializedDbList;
     if (!keyInStorageForSerializedDbList) {
@@ -141,8 +135,8 @@ export class SwarmStoreConnectorPersistentList<
     return keyInStorageForSerializedDbList;
   }
 
-  protected _getDatabasesListSerializer(): ISerializer {
-    const databasesListSerializer = this._databasesListSerializer;
+  protected _getSerializer(): ISerializer {
+    const databasesListSerializer = this._serializer;
     if (!databasesListSerializer) {
       throw new Error('Databases list serializer is not defined');
     }
@@ -157,6 +151,10 @@ export class SwarmStoreConnectorPersistentList<
     return `${this._getKeyPrefixForSerializedDbListInStorage()}${SWARM_STORE_CONNECTOR_DATABASES_PERSISTENT_LIST_STORAGE_KEY_PERFIX_DATABASE_NAME_DELIMETER}${dbName}`;
   }
 
+  protected _isTheLastFailedOperationAllowed(attempt: number): boolean {
+    return attempt > this._maxFailsOfersistentStorageOperation;
+  }
+
   protected async _readValueForKeyFromStore(keyInStore: string): Promise<string | undefined> {
     const valueReadResult = await this._getDatabaseListPersistentStorage().get(keyInStore);
 
@@ -166,12 +164,20 @@ export class SwarmStoreConnectorPersistentList<
     return valueReadResult ?? undefined;
   }
 
-  protected async _addValueForKeyInStorage(keyInStore: string, value: string): Promise<void> {
+  private async _setValueForKeyInStorage(keyInStore: string, value: string | undefined): Promise<void> {
     const valueReadResult = await this._getDatabaseListPersistentStorage().set(keyInStore, value);
 
     if (valueReadResult instanceof Error) {
       throw valueReadResult;
     }
+  }
+
+  protected async _addValueForKeyInStorage(keyInStore: string, value: string): Promise<void> {
+    await this._setValueForKeyInStorage(keyInStore, value);
+  }
+
+  protected async _removeValueForKeyFromStorage(keyInStore: string): Promise<void> {
+    await this._setValueForKeyInStorage(keyInStore, undefined);
   }
 
   protected async _loadDatabasesListNamesSerializedFromStorage(): Promise<string | undefined> {
@@ -182,18 +188,20 @@ export class SwarmStoreConnectorPersistentList<
     const databasesNamesListSerialized = await this._loadDatabasesListNamesSerializedFromStorage();
 
     if (databasesNamesListSerialized) {
-      return this._getDatabasesListSerializer().parse(databasesNamesListSerialized);
+      return this._getSerializer().parse(databasesNamesListSerialized);
     }
   }
 
   protected async _loadDatabaseOptionsSerializedOrUndefinedFromStorage(dbName: DBO['dbName']): Promise<string | undefined> {
-    return this._readValueForKeyFromStore(this._getStorageKeyForDatabase(dbName));
+    return await this._readValueForKeyFromStore(this._getStorageKeyForDatabase(dbName));
   }
 
-  protected _parseDatabaseOptions(dbOptionsSerialized: DBOS): DBO {
-    const DbOptionsConstructor = this._getDatabaseOptionsValidatorSerializerConstructor();
-    const dbOptionsConstructed = new DbOptionsConstructor({ options: dbOptionsSerialized });
-    return dbOptionsConstructed.options;
+  protected _parseDatabaseOptions(dbOptionsSerialized: string): DBO {
+    return this._getSerializer().parse(dbOptionsSerialized);
+  }
+
+  protected _serializeDatabaseOptions(dbOptionsSerialized: DBO): string {
+    return this._getSerializer().stringify(dbOptionsSerialized);
   }
 
   protected async _loadDatabaseOptionsParsedOrUndefinedFromStorage(dbName: DBO['dbName']): Promise<DBO | undefined> {
@@ -202,7 +210,7 @@ export class SwarmStoreConnectorPersistentList<
     if (!dbOptionsSerialized) {
       return;
     }
-    return this._parseDatabaseOptions((dbOptionsSerialized as unknown) as DBOS);
+    return this._parseDatabaseOptions(dbOptionsSerialized);
   }
 
   protected async _loadDatabaseOptionsParsedFromStorage(dbName: DBO['dbName']): Promise<DBO> {
@@ -214,9 +222,11 @@ export class SwarmStoreConnectorPersistentList<
   }
 
   protected async _loadDatabasesOptionsFromStorage(dbsNames: Array<DBO['dbName']>): Promise<Array<[DBO['dbName'], DBO]>> {
-    return Promise.all(
+    const databasesOptionsParsed = await Promise.all(
       dbsNames.map(async (dbName: DBO['dbName']) => [dbName, await this._loadDatabaseOptionsParsedFromStorage(dbName)])
-    ) as Promise<Array<[DBO['dbName'], DBO]>>;
+    );
+
+    return databasesOptionsParsed as Array<[DBO['dbName'], DBO]>;
   }
 
   protected async _loadDatabasesListFromStorage(dbsNames: Array<string>): Promise<DBL> {
@@ -249,12 +259,113 @@ export class SwarmStoreConnectorPersistentList<
     this._databasesList ?? (await this.loadDatabasesListFromPersistentStorage());
   }
 
-  protected async _removeDatabaseNameFromStorage(dbName: DBO['dbName']): Promise<void> {}
-  protected async _addDatabaseNameToStorage(dbName: DBO['dbName']): Promise<void> {}
+  protected _getDatabasesNamesListStringified(): string {
+    const databasesNamesList = this._databasesUniqNamesList;
+    if (!databasesNamesList) {
+      throw new Error('There is no databases names list');
+    }
+    return this._getSerializer().stringify(databasesNamesList);
+  }
 
-  protected async _removeDatabaseOptionsFromStorage(dbName: DBO['dbName']): Promise<void> {}
+  protected async _saveDatabasesNamesListInPersistentStorage(): Promise<void> {
+    await this._getDatabaseListPersistentStorage().set(
+      this._getStorageKeyForDatabasesNamesList(),
+      this._getDatabasesNamesListStringified()
+    );
+  }
 
-  protected async _addDatabaseOptionsToStorage(dbName: DBO['dbName'], dbOptionsSerialized: string): Promise<void> {
+  protected async _removeDatabaseOptionsFromStorage(dbName: DBO['dbName']): Promise<void> {
+    return await this._removeValueForKeyFromStorage(this._getStorageKeyForDatabase(dbName));
+  }
+
+  protected async _addDatabaseOptionsSerializedToStorage(dbName: DBO['dbName'], dbOptionsSerialized: string): Promise<void> {
     return await this._addValueForKeyInStorage(this._getStorageKeyForDatabase(dbName), dbOptionsSerialized);
+  }
+
+  protected async _addDatabaseOptionsToStorage(dbName: DBO['dbName'], dbOptions: DBO): Promise<void> {
+    return await this._addDatabaseOptionsSerializedToStorage(dbName, this._serializeDatabaseOptions(dbOptions));
+  }
+
+  protected _setDatabasesListValue(databaseList: DBL): void {
+    this._databasesList = databaseList;
+  }
+
+  protected _removeDatabaseFromTheCacheList(dbName: DBO['dbName']): void {
+    const databasesListCloned = this._getDatabasesListClone();
+    delete databasesListCloned[dbName];
+    this._setDatabasesListValue(databasesListCloned);
+  }
+
+  protected _addDatabaseToTheCacheList(dbName: DBO['dbName'], dbOptions: DBO): void {
+    const databasesListCloned = this._getDatabasesListClone();
+    databasesListCloned[dbName] = dbOptions as DBL[DBO['dbName']];
+    this._setDatabasesListValue(databasesListCloned);
+  }
+
+  /**
+   * just remove the database name from the list and leave the options
+   * @param dbName
+   */
+  protected async _removeDatabaseFromListAndSaveInStorage(dbName: DBO['dbName']): Promise<void> {
+    this._removeDatabaseFromTheCacheList(dbName);
+    await this._saveDatabasesNamesListInPersistentStorage();
+  }
+
+  protected async _addDatabaseToTheListAndSaveInStorage(dbName: DBO['dbName'], dbOptions: DBO): Promise<void> {
+    this._addDatabaseToTheCacheList(dbName, dbOptions);
+    await Promise.all([this._addDatabaseOptionsToStorage(dbName, dbOptions), this._saveDatabasesNamesListInPersistentStorage()]);
+  }
+
+  protected async _setDatabasesListValueAndSaveDatabasesNamesListInStorage(
+    databasesList: DBL,
+    attempt: number = 1
+  ): Promise<void> {
+    this._setDatabasesListValue(databasesList);
+    try {
+      await this._saveDatabasesNamesListInPersistentStorage();
+    } catch (err) {
+      if (this._isTheLastFailedOperationAllowed((attempt += 1))) {
+        throw err;
+      }
+      console.log(err);
+      await this._setDatabasesListValueAndSaveDatabasesNamesListInStorage(databasesList, attempt + 1);
+    }
+  }
+
+  protected async _runStorageOperationInTransaction<T>(runOperationInTransaction: () => Promise<T>): Promise<T> {
+    const databasesListCurrentValueClone = this._getDatabasesListClone();
+    let attempt = 0;
+    let operationResultError: Error | undefined;
+    while (!this._isTheLastFailedOperationAllowed((attempt += 1))) {
+      try {
+        const operationResult = await runOperationInTransaction();
+        operationResultError = undefined;
+        return operationResult;
+      } catch (err) {
+        console.error(err);
+        operationResultError = err as Error;
+      }
+    }
+    // restore the original value of the list if the operaion failed
+    await this._setDatabasesListValueAndSaveDatabasesNamesListInStorage(databasesListCurrentValueClone);
+    throw operationResultError;
+  }
+
+  protected async _waitQueueAndRunOperationInTransaction(runOperationInTransaction: () => Promise<void>): Promise<void> {
+    return await this._getAsyncOperationsQueue().executeQueued(
+      async () => await this._runStorageOperationInTransaction<void>(runOperationInTransaction)
+    );
+  }
+
+  protected _createRemoveDatabaseFromTheListAndStorageOperation(dbName: DBO['dbName'], attempt = 1): () => Promise<void> {
+    return async () => await this._removeDatabaseFromListAndSaveInStorage(dbName);
+  }
+
+  protected _createAddDatabaseToTheListInStorageOperation(
+    dbName: DBO['dbName'],
+    dbOptions: DBO,
+    attempt = 1
+  ): () => Promise<void> {
+    return async () => await this._addDatabaseToTheListAndSaveInStorage(dbName, dbOptions);
   }
 }
