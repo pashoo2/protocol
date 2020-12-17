@@ -26,7 +26,7 @@
   "ignorePatterns": ["temp.js", "node_modules/", "node_modules-local/", "*config.js", "app.test/"],
   "rules": {
     "no-return-await": "off",
-    "@typescript-eslint/return-await": ["error", "always"],
+    "@typescript-eslint/return-await": ["warn", "always"],
     "require-await": "off",
     "@typescript-eslint/require-await": "warn",
     "@typescript-eslint/restrict-template-expressions": "off",

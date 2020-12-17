@@ -29,6 +29,11 @@ import {
   TSwarmStoreDatabaseType,
 } from '../swarm-store-class/swarm-store-class.types';
 import { IPFS } from 'types/ipfs.types';
+import { ISerializer } from '../../types/serialization.types';
+import {
+  ISwarmStoreConnectorDatabasesPersistentListConstructorParams,
+  ISwarmStoreConnectorDatabasesPersistentList,
+} from '../swarm-store-class/swarm-store-class.types';
 
 export type TNativeConnectionType<P extends ESwarmStoreConnector> = P extends ESwarmStoreConnector.OrbitDB ? IPFS : never;
 
@@ -113,6 +118,18 @@ export interface IConnectionBridgeOptionsGetMainConnectorFabric<
   ): ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain>;
 }
 
+export interface ISwarmStoreDatabasesPersistentListFabric<
+  P extends ESwarmStoreConnector,
+  ItemType extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
+  DBL extends Record<DBO['dbName'], DBO>
+> {
+  (persistentListOptions: ISwarmStoreConnectorDatabasesPersistentListConstructorParams): Promise<
+    ISwarmStoreConnectorDatabasesPersistentList<P, ItemType, DbType, DBO, DBL>
+  >;
+}
+
 export interface IConnectionBridgeStorageOptions<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
@@ -158,23 +175,25 @@ export interface IConnectionBridgeStorageOptions<
     MCF,
     ACO,
     O
-  >
+  >,
+  SSDPLF extends ISwarmStoreDatabasesPersistentListFabric<P, T, DbType, DBO, Record<DBO['dbName'], DBO>>
 > extends Omit<
     ISwarmMessageStoreOptions<P, T, DbType, DBO, ConnectorBasic, CO, MSI, GAC, MCF, ACO>,
     | 'userId'
     | 'credentials'
     | 'messageConstructors'
     | 'providerConnectionOptions'
-    | 'databasesListStorage'
+    | 'persistentDatbasesList'
     | 'swarmMessageConstructorFabric'
   > {
   swarmMessageConstructorFabric: O['swarmMessageConstructorFabric'] | undefined;
   connectorBasicFabric: CBFO;
-  connectorMainFabric?: CFO;
   getMainConnectorFabric:
     | IConnectionBridgeOptionsGetMainConnectorFabric<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain>
     | undefined;
   swarmMessageStoreInstanceFabric: () => SMS;
+  swarmStoreDatabasesPersistentListFabric: SSDPLF;
+  connectorMainFabric?: CFO;
 }
 
 export interface IConnectionBridgeOptionsUser {
@@ -232,7 +251,8 @@ export interface IConnectionBridgeOptions<
     MCF,
     ACO,
     O
-  >
+  >,
+  SSDPLF extends ISwarmStoreDatabasesPersistentListFabric<P, T, DbType, DBO, Record<DBO['dbName'], DBO>>
 > {
   swarmStoreConnectorType: P;
   user: IConnectionBridgeOptionsUser;
@@ -260,7 +280,8 @@ export interface IConnectionBridgeOptions<
     CFO,
     CBFO,
     O,
-    SMS
+    SMS,
+    SSDPLF
   >;
   /**
    * specify options for the swarm connection native provider
@@ -268,6 +289,14 @@ export interface IConnectionBridgeOptions<
    * @memberof IConnectionBridgeOptions
    */
   nativeConnection: TNativeConnectionOptions<P>;
+  /**
+   * This serializer will be used for parsing/serialization of an various objects
+   * to a string.
+   *
+   * @type {ISerializer}
+   * @memberof IConnectionBridgeStorageOptions
+   */
+  serializer?: ISerializer;
 }
 
 export interface IConnectionBridge<
@@ -318,7 +347,8 @@ export interface IConnectionBridge<
     CBFO,
     CD,
     O,
-    SMS
+    SMS,
+    SSDPLF
   >,
   SMS extends ISwarmMessageStore<
     P,
@@ -335,7 +365,8 @@ export interface IConnectionBridge<
     MCF,
     ACO,
     O
-  >
+  >,
+  SSDPLF extends ISwarmStoreDatabasesPersistentListFabric<P, T, DbType, DBO, Record<DBO['dbName'], DBO>>
 > {
   /**
    * used to authorize the user or get
@@ -525,7 +556,14 @@ export interface IConnectionBridgeOptionsDefault<
     MCF,
     ACO,
     O
-  >
+  >,
+  SSDPLF extends ISwarmStoreDatabasesPersistentListFabric<
+    P,
+    T,
+    DbType,
+    DBO,
+    Record<DBO['dbName'], DBO>
+  > = ISwarmStoreDatabasesPersistentListFabric<P, T, DbType, DBO, Record<DBO['dbName'], DBO>>
 > extends IConnectionBridgeOptions<
     P,
     T,
@@ -543,7 +581,8 @@ export interface IConnectionBridgeOptionsDefault<
     CBFO,
     CD,
     O,
-    SMS
+    SMS,
+    SSDPLF
   > {}
 
 export type TConnectionBridgeStorageOptionsDefault<
@@ -563,5 +602,12 @@ export interface IConnectionBridgeUnknown<
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType> = TSwarmStoreDatabaseOptions<P, T, DbType>,
   MSI extends TSwarmMessageInstance | T = TSwarmMessageInstance | T,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric = ISwarmMessageConstructorWithEncryptedCacheFabric,
-  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI> = TSwarmMessagesStoreGrantAccessCallback<P, MSI>
-> extends IConnectionBridge<P, T, DbType, DBO, any, any, any, any, any, any, MSI, GAC, MCF, any, any, CD, any, any> {}
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI> = TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
+  SSDPLF extends ISwarmStoreDatabasesPersistentListFabric<
+    P,
+    T,
+    DbType,
+    DBO,
+    Record<DBO['dbName'], DBO>
+  > = ISwarmStoreDatabasesPersistentListFabric<P, T, DbType, DBO, Record<DBO['dbName'], DBO>>
+> extends IConnectionBridge<P, T, DbType, DBO, any, any, any, any, any, any, MSI, GAC, MCF, any, any, CD, any, any, SSDPLF> {}

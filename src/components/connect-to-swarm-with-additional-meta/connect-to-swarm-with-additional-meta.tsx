@@ -12,7 +12,10 @@ import {
   TSwarmStoreConnectorConnectionOptions,
   ISwarmStoreProviderOptions,
 } from '../../classes/swarm-store-class/swarm-store-class.types';
-import { IConnectionBridgeOptionsDefault } from '../../classes/connection-bridge/connection-bridge.types';
+import {
+  IConnectionBridgeOptionsDefault,
+  ISwarmStoreDatabasesPersistentListFabric,
+} from '../../classes/connection-bridge/connection-bridge.types';
 import {
   TConnectionBridgeOptionsAccessControlOptions,
   TConnectionBridgeOptionsSwarmMessageStoreOptionsWithConnectorFabric,
@@ -91,6 +94,7 @@ export class ConnectToSwarmWithAdditionalMeta<
     any
   > &
     ConnectorMain,
+  SSDPLF extends ISwarmStoreDatabasesPersistentListFabric<P, T, DbType, DBO, Record<DBO['dbName'], DBO>>,
   CBO extends IConnectionBridgeOptionsDefault<
     P,
     T,
@@ -115,7 +119,8 @@ export class ConnectToSwarmWithAdditionalMeta<
     ConnectorMain,
     any,
     any,
-    SMS
+    SMS,
+    SSDPLF
   >,
   MI extends TSwarmMessageInstance = TSwarmMessageInstance,
   MD extends ISwarmMessageInstanceDecrypted = Exclude<MI, ISwarmMessageInstanceEncrypted>,

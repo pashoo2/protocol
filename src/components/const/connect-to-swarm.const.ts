@@ -36,8 +36,8 @@ import {
   ISwarmStoreConnectorWithEntriesCount,
 } from '../../classes/swarm-store-class/swarm-store-class-extended/swarm-store-class-with-entries-count/swarm-store-class-with-entries-count.types';
 import { TSwarmStoreConnectorBasicFabric } from '../../classes/swarm-store-class/swarm-store-class.types';
-import { getClassSwarmMessageStoreWithEntriesCount } from '../../classes/swarm-message-store/swarm-message-store-extended/swarm-message-store-with-entries-count/swarm-message-store-with-entries-count';
 import { getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer } from '../../classes/swarm-message-store/swarm-message-store-extended/swarm-message-store-with-entries-count-and-options-serializer/swarm-message-store-with-entries-count-and-options-serializer';
+import { connectionBridgeSwarmStoreConnectorDatabasesPersistentListFabricDefault } from '../../classes/connection-bridge/connection-bridge.utils';
 import {
   TSwarmStoreDatabaseEntityKey,
   TSwarmStoreDatabaseEntryOperation,
@@ -130,6 +130,7 @@ export const CONNECT_TO_SWARM_CONNECTION_STORAGE_OPTIONS: TConnectionBridgeStora
   connectorBasicFabric: connectorBasicFabricOrbitDBWithEntriesCount,
   connectorMainFabric: undefined,
   getMainConnectorFabric: undefined,
+  swarmStoreDatabasesPersistentListFabric: connectionBridgeSwarmStoreConnectorDatabasesPersistentListFabricDefault,
   provider: CONNECT_TO_SWARM_STORAGE_PROVIDER_DEFAULT,
   directory: CONNECT_TO_SWARM_DATABASE_PREFIX,
   databases: [],
@@ -222,6 +223,7 @@ export const CONNECT_TO_SWARM_CONNECTION_STORAGE_WITH_STORE_META_OPTIONS: IConne
   provider: CONNECT_TO_SWARM_STORAGE_PROVIDER_DEFAULT,
   directory: CONNECT_TO_SWARM_DATABASE_PREFIX,
   databases: [],
+  swarmStoreDatabasesPersistentListFabric: connectionBridgeSwarmStoreConnectorDatabasesPersistentListFabricDefault,
   swarmMessageStoreInstanceFabric() {
     const SwarmMessageStoreWithEntriesCount = getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer();
     return new SwarmMessageStoreWithEntriesCount() as any; // TODO;

@@ -24,8 +24,13 @@ import {
   ISwarmStoreConnectorBasicWithEntriesCount,
 } from '../swarm-store-class/swarm-store-class-extended/swarm-store-class-with-entries-count/swarm-store-class-with-entries-count.types';
 import { swarmStoreConnectorOrbitDBWithEntriesCountInstanceFabric } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-extended/swarm-store-connector-orbit-db-with-entries-count/swarm-store-connector-orbit-db-with-entries-count-fabric';
-import { ISwarmStoreConnector } from '../swarm-store-class/swarm-store-class.types';
+import {
+  ISwarmStoreConnector,
+  ISwarmStoreConnectorDatabasesPersistentListConstructorParams,
+  ISwarmStoreConnectorDatabasesPersistentList,
+} from '../swarm-store-class/swarm-store-class.types';
 import { SwarmStoreConnectorOrbitDB } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db';
+import { SwarmStoreConnectorPersistentList } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-databases-persistent-list';
 
 export const connectorBasicFabricOrbitDBDefault = <
   T extends TSwarmMessageSerialized,
@@ -101,7 +106,7 @@ export const createNativeConnection = async <P extends ESwarmStoreConnector>(
 ): Promise<TNativeConnectionType<P>> => {
   switch (swarmStoreConnectorType) {
     case ESwarmStoreConnector.OrbitDB:
-      return createNativeConnectionForOrbitDB(nativeConnectionOptions) as Promise<TNativeConnectionType<P>>;
+      return (await createNativeConnectionForOrbitDB(nativeConnectionOptions)) as TNativeConnectionType<P>;
     default:
       throw new Error('Unsupported swarm connector type');
   }
@@ -195,4 +200,15 @@ export const getMainConnectorFabricWithEntriesCountDefault = <
         throw new Error('Unsupported swarm connector type');
     }
   };
+};
+
+export const connectionBridgeSwarmStoreConnectorDatabasesPersistentListFabricDefault = async <
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>
+>(
+  persistentListOptions: ISwarmStoreConnectorDatabasesPersistentListConstructorParams
+): Promise<ISwarmStoreConnectorDatabasesPersistentList<P, T, DbType, DBO, Record<DBO['dbName'], DBO>>> => {
+  return new SwarmStoreConnectorPersistentList<P, T, DbType, DBO, Record<DBO['dbName'], DBO>>(persistentListOptions);
 };

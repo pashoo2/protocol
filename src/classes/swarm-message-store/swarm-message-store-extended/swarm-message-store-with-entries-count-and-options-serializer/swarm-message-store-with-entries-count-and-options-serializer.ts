@@ -52,8 +52,7 @@ export function getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer<
     MCF,
     ACO
   >,
-  E extends ISwarmMessageStoreEvents<P, ItemType, DbType, DBO>,
-  DBL extends TSwarmStoreOptionsOfDatabasesKnownList<P, ItemType, DbType, DBO>
+  E extends ISwarmMessageStoreEvents<P, ItemType, DbType, DBO>
 >(SwarmStoreOptionsClass?: ISwarmStoreOptionsClassConstructor<P, ItemType, DbType, DBO, ConnectorBasic, PO>) {
   return extendClassSwarmStoreWithOptionsConstructor<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O>(
     getClassSwarmMessageStoreWithEntriesCount<
@@ -71,8 +70,7 @@ export function getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer<
       MCF,
       ACO,
       O,
-      E,
-      DBL
+      E
     >(),
     SwarmStoreOptionsClass
   );

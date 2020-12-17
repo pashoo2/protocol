@@ -1,4 +1,8 @@
-import { IConnectionBridgeOptions, TConnectionBridgeCFODefault } from '../connection-bridge.types';
+import {
+  IConnectionBridgeOptions,
+  TConnectionBridgeCFODefault,
+  ISwarmStoreDatabasesPersistentListFabric,
+} from '../connection-bridge.types';
 import { ESwarmStoreConnector } from '../../swarm-store-class/swarm-store-class.const';
 import { TSwarmMessageInstance } from '../../swarm-message/swarm-message-constructor.types';
 import {
@@ -135,6 +139,13 @@ export const createConnectrionBridgeConnection = async <
     ACO,
     O
   >,
+  SSDPLF extends ISwarmStoreDatabasesPersistentListFabric<
+    P,
+    T,
+    DbType,
+    DBO,
+    Record<DBO['dbName'], DBO>
+  > = ISwarmStoreDatabasesPersistentListFabric<P, T, DbType, DBO, Record<DBO['dbName'], DBO>>,
   CBO extends IConnectionBridgeOptions<
     P,
     T,
@@ -152,7 +163,8 @@ export const createConnectrionBridgeConnection = async <
     CBFO,
     CD,
     O,
-    SMS
+    SMS,
+    SSDPLF
   > = IConnectionBridgeOptions<
     P,
     T,
@@ -170,7 +182,8 @@ export const createConnectrionBridgeConnection = async <
     CBFO,
     CD,
     O,
-    SMS
+    SMS,
+    SSDPLF
   >
 >(
   options: CBO,

@@ -65,6 +65,7 @@ export class App extends React.Component {
           ReturnType<NonNullable<typeof CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS['storage']['getMainConnectorFabric']>>
         >,
         any, // TODO - ReturnType<typeof CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS['storage']['swarmMessageStoreInstanceFabric']>,
+        any, // TODO typeof CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS['storage']['swarmStoreDatabasesPersistentListFabric'],
         typeof CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS,
         TSwarmMessageInstance,
         ISwarmMessageInstanceDecrypted

@@ -1,4 +1,9 @@
-import { IConnectionBridgeOptions, TConnectionBridgeCFODefault, IConnectionBridge } from '../connection-bridge.types';
+import {
+  IConnectionBridgeOptions,
+  TConnectionBridgeCFODefault,
+  IConnectionBridge,
+  ISwarmStoreDatabasesPersistentListFabric,
+} from '../connection-bridge.types';
 import { ESwarmStoreConnector } from '../../swarm-store-class/swarm-store-class.const';
 import { TSwarmMessageInstance } from '../../swarm-message/swarm-message-constructor.types';
 import {
@@ -134,6 +139,13 @@ export interface IConnectionBridgeFabric<
     ACO,
     O
   >,
+  SSDPLF extends ISwarmStoreDatabasesPersistentListFabric<
+    P,
+    T,
+    DbType,
+    DBO,
+    Record<DBO['dbName'], DBO>
+  > = ISwarmStoreDatabasesPersistentListFabric<P, T, DbType, DBO, Record<DBO['dbName'], DBO>>,
   CBO extends IConnectionBridgeOptions<
     P,
     T,
@@ -151,7 +163,8 @@ export interface IConnectionBridgeFabric<
     CBFO,
     CD,
     O,
-    SMS
+    SMS,
+    SSDPLF
   > = IConnectionBridgeOptions<
     P,
     T,
@@ -169,10 +182,31 @@ export interface IConnectionBridgeFabric<
     CBFO,
     CD,
     O,
-    SMS
+    SMS,
+    SSDPLF
   >
 > {
   (options: CBO): Promise<
-    IConnectionBridge<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, CBFO, MSI, GAC, MCF, ACO, O, CD, CBO, SMS>
+    IConnectionBridge<
+      P,
+      T,
+      DbType,
+      DBO,
+      ConnectorBasic,
+      CO,
+      PO,
+      ConnectorMain,
+      CFO,
+      CBFO,
+      MSI,
+      GAC,
+      MCF,
+      ACO,
+      O,
+      CD,
+      CBO,
+      SMS,
+      SSDPLF
+    >
   >;
 }

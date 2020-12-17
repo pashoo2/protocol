@@ -30,18 +30,16 @@ export function getClassSwarmStoreWithEntriesCount<
   ConnectorMain extends ISwarmStoreConnectorWithEntriesCount<P, ItemType, DbType, DBO, ConnectorBasic, PO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
   O extends ISwarmStoreOptionsWithConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO>,
-  E extends ISwarmStoreEvents<P, ItemType, DbType, DBO>,
-  DBL extends TSwarmStoreOptionsOfDatabasesKnownList<P, ItemType, DbType, DBO>
+  E extends ISwarmStoreEvents<P, ItemType, DbType, DBO>
 >(
   SwarmStoreConstructorImplementation?: ConstructorType<
     ISwarmStore<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O> &
       ISwarmStoreWithConnector<P, ItemType, DbType, DBO, ConnectorBasic, PO, ConnectorMain>
   >
 ) {
-  // TODO - implement SwarmStore with custom serializer
   const BaseClass =
     SwarmStoreConstructorImplementation ||
-    class BC extends SwarmStore<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O, E, DBL> {};
+    class BC extends SwarmStore<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O, E> {};
   return extendClassSwarmStoreWithEntriesCount<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O>(
     BaseClass
   );

@@ -700,7 +700,7 @@ export interface ISwarmStoreConnectorDatabasesPersistentList<
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
-  DBL extends TSwarmStoreOptionsOfDatabasesKnownList<P, ItemType, DbType, DBO>
+  DBL extends Record<DBO['dbName'], DBO>
 > {
   /**
    * List of databases known loaded from the persistent storage
@@ -744,6 +744,11 @@ export interface ISwarmStoreConnectorDatabasesPersistentList<
    * @memberof ISwarmStoreConnectorDatabasesPersistentList
    */
   removeDatabase(dbName: DBO['dbName']): Promise<void>;
+
+  /**
+   * Perform all async operations and close the instance
+   */
+  close(): Promise<void>;
 }
 
 export interface ISwarmStoreConnectorDatabasesPersistentListConstructorParams {
@@ -754,7 +759,7 @@ export interface ISwarmStoreConnectorDatabasesPersistentListConstructorParams {
    * @type {IStorageCommon}
    * @memberof SwarmStore
    */
-  databasePersistantListStorage: IStorageCommon;
+  persistentStorage: IStorageCommon;
 
   /**
    * A directory name under which all the databases

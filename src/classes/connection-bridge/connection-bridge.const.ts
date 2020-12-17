@@ -1,5 +1,10 @@
 import { ICentralAuthorityOptions } from '../central-authority-class/central-authority-class.types';
 import { CA_CONNECTION_AUTH_PROVIDERS } from '../central-authority-class/central-authority-connections/central-authority-connections.const';
+import { ISerializer } from '../../types/serialization.types';
+
+export const CONNECTION_BRIDGE_STORAGE_DELIMETER_FOR_STORAGE_KEYS_DEFAULT = '_//_';
+
+export const CONNECTION_BRIDGE_DEFAULT_SERIALIZER: ISerializer = JSON;
 
 export enum CONNECTION_BRIDGE_SESSION_STORAGE_KEYS {
   USER_LOGIN = 'CONNECTION_BRIDGE_SESSION_STORAGE_KEYS_USER_LOGIN',
@@ -55,5 +60,3 @@ export const CONNECTION_BRIDGE_OPTIONS_DEFAULT_AUTH_PROVIDERS_POOL: ICentralAuth
 export const CONNECTION_BRIDGE_OPTIONS_DEFAULT_USER_SENSITIVE_DATA_STORE = {
   storagePrefix: CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX.CONNECTION_SESSION_DATA_STORAGE,
 };
-
-export const CONNECTION_BRIDGE_DATA_STORAGE_DATABASE_NAME_PREFIX_DELIMETER = '_//_';

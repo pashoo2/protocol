@@ -24,7 +24,7 @@ import {
   CONNECTION_BRIDGE_OPTIONS_DEFAULT_AUTH_PROVIDERS_POOL,
   CONNECTION_BRIDGE_SESSION_STORAGE_KEYS,
   CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX,
-  CONNECTION_BRIDGE_DATA_STORAGE_DATABASE_NAME_PREFIX_DELIMETER,
+  CONNECTION_BRIDGE_STORAGE_DELIMETER_FOR_STORAGE_KEYS_DEFAULT,
 } from './connection-bridge.const';
 import { CentralAuthority } from '../central-authority-class/central-authority-class';
 import { ISensitiveDataSessionStorage } from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
@@ -69,12 +69,27 @@ import {
   ISwarmStoreConnector,
   TSwarmStoreConnectorBasicFabric,
 } from '../swarm-store-class/swarm-store-class.types';
-import { getMainConnectorFabricDefault } from './connection-bridge.utils';
-import { TSwarmStoreConnectorConstructorOptions } from '../swarm-store-class/swarm-store-class.types';
+import {
+  getMainConnectorFabricDefault,
+  connectionBridgeSwarmStoreConnectorDatabasesPersistentListFabricDefault,
+} from './connection-bridge.utils';
+import {
+  TSwarmStoreConnectorConstructorOptions,
+  ISwarmStoreConnectorDatabasesPersistentList,
+  ISwarmStoreConnectorDatabasesPersistentListConstructorParams,
+} from '../swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
-import { TConnectionBridgeCFODefault, TConnectionBridgeOptionsAuthCredentials } from './connection-bridge.types';
+import {
+  TConnectionBridgeCFODefault,
+  TConnectionBridgeOptionsAuthCredentials,
+  ISwarmStoreDatabasesPersistentListFabric,
+} from './connection-bridge.types';
 import { calculateHash } from '../../utils/hash-calculation-utils/hash-calculation-utils';
 import { PromiseResolveType } from '../../types/promise.types';
+import { ISerializer } from '../../types/serialization.types';
+import { CONNECTION_BRIDGE_DEFAULT_SERIALIZER } from './connection-bridge.const';
+import { IConnectionBridgeStorageOptions } from './connection-bridge.types';
+import { IStorageCommon } from '../../types/storage.types';
 import {
   ISwarmMessageDatabaseConstructors,
   ISwarmMessageStoreOptionsWithConnectorFabric,
@@ -142,7 +157,8 @@ export class ConnectionBridge<
     CBFO,
     CD,
     O,
-    SMS
+    SMS,
+    SSDPLF
   >,
   SMS extends ISwarmMessageStore<
     P,
@@ -182,9 +198,40 @@ export class ConnectionBridge<
     DbType,
     DBO
   >,
-  NC extends TNativeConnectionType<P> = TNativeConnectionType<P>
+  NC extends TNativeConnectionType<P> = TNativeConnectionType<P>,
+  SSDPLF extends ISwarmStoreDatabasesPersistentListFabric<
+    P,
+    T,
+    DbType,
+    DBO,
+    Record<DBO['dbName'], DBO>
+  > = ISwarmStoreDatabasesPersistentListFabric<P, T, DbType, DBO, Record<DBO['dbName'], DBO>>
 > implements
-    IConnectionBridge<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, CBFO, MSI, GAC, MCF, ACO, O, CD, CBO, SMS> {
+    IConnectionBridge<
+      P,
+      T,
+      DbType,
+      DBO,
+      ConnectorBasic,
+      CO,
+      PO,
+      ConnectorMain,
+      CFO,
+      CBFO,
+      MSI,
+      GAC,
+      MCF,
+      ACO,
+      O,
+      CD,
+      CBO,
+      SMS,
+      SSDPLF
+    > {
+  static joinKeyPartsUsedForStorageValue(...parts: string[]): string {
+    return parts.join(CONNECTION_BRIDGE_STORAGE_DELIMETER_FOR_STORAGE_KEYS_DEFAULT);
+  }
+
   public centralAuthorityConnection?: ICentralAuthority;
 
   public get swarmMessageStore(): SMS | undefined {
@@ -220,6 +267,10 @@ export class ConnectionBridge<
   protected connectionBridgeSessionDataStore?: ISensitiveDataSessionStorage;
 
   protected swarmMessageEncryptedCache?: ISwarmMessageEncryptedCache;
+
+  protected _serializer: ISerializer | undefined;
+
+  protected _swarmConnectorDatabasesPeristentList: PromiseResolveType<ReturnType<SSDPLF>> | undefined;
 
   protected _secretStorage?: ISecretStorage;
 
@@ -305,13 +356,15 @@ export class ConnectionBridge<
    * @memberof ConnectionBridge
    */
   public async close(): Promise<void> {
+    await this.closeSwarmConnection();
+    await this.closeCurrentCentralAuthorityConnection();
+    await this._closeSwarmDatabasesListPersistentStorage();
+    this.closeSwarmMessageEncryptedCacheFabric();
+    this.closeSwarmMessageConstructorFabric();
     await this.closeSensitiveDataStorages();
     await this.closeStorage();
     this.closeMessageConstructor();
-    await this.closeSwarmConnection();
-    this.closeSwarmMessageEncryptedCacheFabric();
-    this.closeSwarmMessageConstructorFabric();
-    await this.closeCurrentCentralAuthorityConnection();
+    this._unsetSerializer();
   }
 
   protected isUserLogin(userLogin: unknown): userLogin is string {
@@ -332,6 +385,71 @@ export class ConnectionBridge<
       return this.options;
     }
     throw new Error('Current options are not defined');
+  }
+
+  protected _getStorageOptions(): IConnectionBridgeStorageOptions<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    CO,
+    PO,
+    ConnectorMain,
+    MSI,
+    GAC,
+    MCF,
+    ACO,
+    CFO,
+    CBFO,
+    O,
+    SMS,
+    SSDPLF
+  > {
+    const storageOptions = this.getOptions().storage;
+
+    assert(storageOptions, 'There is no storage options exists');
+    return storageOptions;
+  }
+
+  protected _setSerializer(serializer: ISerializer): void {
+    this._serializer = serializer;
+  }
+
+  protected _validateSerializerInstance(serializer: ISerializer): void {
+    // TODO - move to a separate function
+    assert(typeof serializer === 'object', 'Serializer should be an object');
+    assert(typeof serializer.parse === 'function', 'Serializer should have the "parse" method');
+    assert(typeof serializer.stringify === 'function', 'Serializer should have the "stringify" method');
+  }
+
+  protected _returnSerializerIfDefinedOrDefault(serializer?: ISerializer): ISerializer {
+    return serializer ?? CONNECTION_BRIDGE_DEFAULT_SERIALIZER;
+  }
+
+  protected _setSerializerInstanceFromOptionsOrDefault(options: { serializer?: ISerializer }) {
+    const serializerFromOptions = options.serializer;
+
+    if (!serializerFromOptions) {
+      console.log("Connection bridge: browser's JSON API will be used as a serializer");
+    }
+
+    const serializerApiToUse = this._returnSerializerIfDefinedOrDefault(serializerFromOptions);
+
+    this._validateSerializerInstance(serializerApiToUse);
+    this._setSerializer(serializerApiToUse);
+  }
+
+  protected _getSerializerFromOptions(): ISerializer {
+    const serializer = this._serializer;
+    if (!serializer) {
+      throw new Error('A serializer instance is not defined');
+    }
+    return serializer;
+  }
+
+  protected _unsetSerializer(): void {
+    this._serializer = undefined;
   }
 
   protected validatetCurrentUserOptions(): void {
@@ -465,10 +583,6 @@ export class ConnectionBridge<
     return userId;
   }
 
-  protected getMessageStorageDatabasesListStorage = (): Promise<ISwarmMessageEncryptedCache> => {
-    return this.startEncryptedCache(CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX.DATABASE_LIST_STORAGE);
-  };
-
   protected getSwarmStoreConnectionProviderOptionsFromCurrentOptions(): CO {
     const { swarmConnection } = this;
 
@@ -526,13 +640,22 @@ export class ConnectionBridge<
   };
 
   protected getConnectorMainFabricFromCurrentOptionsIfExists(): CFO | undefined {
-    return this.getOptions().storage.connectorMainFabric;
+    return this._getStorageOptions().connectorMainFabric;
   }
 
   protected getMainConnectorFabricUtilFromCurrentOptionsIfExists():
     | IConnectionBridgeOptionsGetMainConnectorFabric<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain>
     | undefined {
-    return this.getOptions().storage.getMainConnectorFabric;
+    return this._getStorageOptions().getMainConnectorFabric;
+  }
+
+  protected _getSwarmDatabasesListPersistentStorageFabricFromCurrentOptions(): SSDPLF {
+    const swarmStorageDatabasesPersistentListFabricFromOptions = this._getStorageOptions()
+      .swarmStoreDatabasesPersistentListFabric;
+    if (!swarmStorageDatabasesPersistentListFabricFromOptions) {
+      throw new Error('There is no swarm storage databases persistent list fabric is provided in the options');
+    }
+    return swarmStorageDatabasesPersistentListFabricFromOptions;
   }
 
   protected getUtilGetMainConnectorFabricForMessageStore(): IConnectionBridgeOptionsGetMainConnectorFabric<
@@ -583,6 +706,85 @@ export class ConnectionBridge<
     );
   }
 
+  protected _getPersistentEncryptedStorageForStoreDatabasesListPersistentStorage = (
+    storagePrefix: string
+  ): Promise<IStorageCommon> => {
+    return this.startEncryptedCache(storagePrefix);
+  };
+
+  protected async _getKeyPrefixForDatabasesLisInPersistentStorageForCurrentUser(): Promise<
+    ISwarmStoreConnectorDatabasesPersistentListConstructorParams['keyPrefixForDatabasesLisInPersistentStorage']
+  > {
+    const jointStoragePrefix = ConnectionBridge.joinKeyPartsUsedForStorageValue(
+      CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX.DATABASE_LIST_STORAGE,
+      this.getCurrentUserIdentityFromCurrentConnectionToCentralAuthority()
+    );
+    const jointStoragePrefixHashCalcResult = await calculateHash(jointStoragePrefix);
+
+    if (jointStoragePrefixHashCalcResult instanceof Error) {
+      throw jointStoragePrefixHashCalcResult;
+    }
+    return jointStoragePrefixHashCalcResult;
+  }
+
+  protected async _getSwarmDatabasesListPersistentStorageFabricOptionsFromCurrentOptions(): Promise<
+    ISwarmStoreConnectorDatabasesPersistentListConstructorParams
+  > {
+    const storageKeyPrefix: string = await this._getKeyPrefixForDatabasesLisInPersistentStorageForCurrentUser();
+    const persistentStorageForDatabasesList: IStorageCommon = await this._getPersistentEncryptedStorageForStoreDatabasesListPersistentStorage(
+      storageKeyPrefix
+    );
+    return {
+      persistentStorage: persistentStorageForDatabasesList,
+      serializer: this._getSerializerFromOptions(),
+      keyPrefixForDatabasesLisInPersistentStorage: storageKeyPrefix,
+    };
+  }
+
+  protected _setCurrentSwarmDatabasesListPersistentStorage(
+    swarmDatabasesListPersistentStorage: PromiseResolveType<ReturnType<SSDPLF>>
+  ): void {
+    this._swarmConnectorDatabasesPeristentList = swarmDatabasesListPersistentStorage;
+  }
+
+  protected async _createSwarmDatabasesListPersistentStorageByCurrentOptions(): Promise<PromiseResolveType<ReturnType<SSDPLF>>> {
+    const swarmDatabasesListPersistentStorageFabric = this._getSwarmDatabasesListPersistentStorageFabricFromCurrentOptions();
+    const swarmDatabasesListPersistentStorageFabricOptions = await this._getSwarmDatabasesListPersistentStorageFabricOptionsFromCurrentOptions();
+
+    return (await swarmDatabasesListPersistentStorageFabric(
+      swarmDatabasesListPersistentStorageFabricOptions
+    )) as PromiseResolveType<ReturnType<SSDPLF>>;
+  }
+
+  protected async _createSwarmDatabasesListPersistentStorageByCurrentOptionsAndSetAsCurrent(): Promise<
+    PromiseResolveType<ReturnType<SSDPLF>>
+  > {
+    const databasesPersistentListStorage = await this._createSwarmDatabasesListPersistentStorageByCurrentOptions();
+    this._setCurrentSwarmDatabasesListPersistentStorage(databasesPersistentListStorage);
+    return databasesPersistentListStorage;
+  }
+
+  protected async _getCurrentSwarmDatabasesListPersistentStorageOrCreateNew(): Promise<
+    ISwarmStoreConnectorDatabasesPersistentList<P, T, DbType, DBO, DBL>
+  > {
+    return (this._swarmConnectorDatabasesPeristentList ??
+      (await this._createSwarmDatabasesListPersistentStorageByCurrentOptionsAndSetAsCurrent())) as ISwarmStoreConnectorDatabasesPersistentList<
+      P,
+      T,
+      DbType,
+      DBO,
+      DBL
+    >;
+  }
+
+  protected async _closeSwarmDatabasesListPersistentStorage(): Promise<void> {
+    const currentSwarmDatabasesListPersistentStorage = this._swarmConnectorDatabasesPeristentList;
+
+    if (currentSwarmDatabasesListPersistentStorage) {
+      await currentSwarmDatabasesListPersistentStorage.close();
+    }
+  }
+
   protected getAccessControlOptionsToUse(): ACO {
     const { storage: storageOptions } = this.getOptions();
     const { accessControl } = storageOptions;
@@ -622,6 +824,7 @@ export class ConnectionBridge<
     const { directory, databases } = storageOptions;
     const credentials = this.getSecretStoreCredentialsOptionsForMessageStoreFromCurrentOptions();
     const userId = this.getCurrentUserIdentityFromCurrentConnectionToCentralAuthority();
+    const persistentDatbasesList = await this._getCurrentSwarmDatabasesListPersistentStorageOrCreateNew();
 
     return {
       provider: swarmStoreConnectorType,
@@ -629,10 +832,10 @@ export class ConnectionBridge<
       databases,
       credentials,
       userId,
+      persistentDatbasesList,
       swarmMessageConstructorFabric,
       accessControl: this.getAccessControlOptionsToUse(),
       messageConstructors: this.getMessageConstructorOptionsForMessageStoreFromCurrentOptions(),
-      databasesListStorage: await this.startEncryptedCache(CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX.DATABASE_LIST_STORAGE),
       providerConnectionOptions: this.getSwarmStoreConnectionProviderOptionsFromCurrentOptions(),
       connectorFabric: this.getMainConnectorFabricForSwarmMessageStore(userId, credentials) as TConnectionBridgeCFODefault<
         P,
@@ -713,7 +916,7 @@ export class ConnectionBridge<
     key: CONNECTION_BRIDGE_SESSION_STORAGE_KEYS,
     value: unknown
   ): Promise<void> {
-    return this.getAcitveConnectionBridgeSessionDataStore().setItem(key, value);
+    return await this.getAcitveConnectionBridgeSessionDataStore().setItem(key, value);
   }
 
   protected readUserLoginKeyValueFromConnectionBridgeSessionDataStore(
@@ -769,59 +972,22 @@ export class ConnectionBridge<
       CBFO,
       true,
       any,
-      any
+      any,
+      SSDPLF
     > {
     return !!options.auth.credentials?.login;
   }
 
-  protected async setUserLoginFromOptionsInConnectionBridgeSessionDataStore(
-    options: IConnectionBridgeOptions<
-      P,
-      T,
-      DbType,
-      DBO,
-      ConnectorBasic,
-      CO,
-      PO,
-      ConnectorMain,
-      MSI,
-      GAC,
-      MCF,
-      ACO,
-      CFO,
-      CBFO,
-      true,
-      any,
-      any
-    >
-  ): Promise<void> {
+  protected async setUserLoginFromOptionsInConnectionBridgeSessionDataStore(options: {
+    auth: { credentials: { login: string } };
+  }): Promise<void> {
     return void (await this.setValueInConnectionBridgeSessionDataStore(
       CONNECTION_BRIDGE_SESSION_STORAGE_KEYS.USER_LOGIN,
       options.auth.credentials.login
     ));
   }
 
-  protected async setOptionsWithUserCredentialsProvided(
-    options: IConnectionBridgeOptions<
-      P,
-      T,
-      DbType,
-      DBO,
-      ConnectorBasic,
-      CO,
-      PO,
-      ConnectorMain,
-      MSI,
-      GAC,
-      MCF,
-      ACO,
-      CFO,
-      CBFO,
-      true,
-      any,
-      any
-    >
-  ): Promise<void> {
+  protected async setOptionsWithUserCredentialsProvided(options: { auth: { credentials: { login: string } } }): Promise<void> {
     await this.setUserLoginFromOptionsInConnectionBridgeSessionDataStore(options);
     this.setOptions(options as CBO);
   }
@@ -845,7 +1011,8 @@ export class ConnectionBridge<
         CBFO,
         false,
         any,
-        any
+        any,
+        SSDPLF
       >
   ): Promise<void> {
     assert(options.auth.session, 'A session must be started if there is no credentials provided');
@@ -877,6 +1044,7 @@ export class ConnectionBridge<
    */
   protected async validateAndSetOptions(options: CBO): Promise<void> {
     this.validateOptions(options);
+    this._setSerializerInstanceFromOptionsOrDefault(options);
     if (this.isOptionsWithCredentials(options)) {
       await this.setOptionsWithUserCredentialsProvided(options);
     } else {
@@ -899,7 +1067,8 @@ export class ConnectionBridge<
             CBFO,
             false,
             any,
-            any
+            any,
+            SSDPLF
           >
       );
     }
@@ -907,7 +1076,7 @@ export class ConnectionBridge<
 
   protected async getSensitiveDataStoragePrefixForSession(sessionParams: ISensitiveDataSessionStorageOptions): Promise<string> {
     const hash = await calculateHash(
-      `${sessionParams.storagePrefix ?? ''}${CONNECTION_BRIDGE_DATA_STORAGE_DATABASE_NAME_PREFIX_DELIMETER}`
+      `${sessionParams.storagePrefix ?? ''}${CONNECTION_BRIDGE_STORAGE_DELIMETER_FOR_STORAGE_KEYS_DEFAULT}`
     );
     if (hash instanceof Error) {
       throw hash;
@@ -936,7 +1105,7 @@ export class ConnectionBridge<
     if (!sensitiveDataStorageOptions) {
       throw new Error('Params for the sensitive data storage should be defined to start the session');
     }
-    return this.connectToSensitiveDataStorage(sensitiveDataStorageOptions);
+    return await this.connectToSensitiveDataStorage(sensitiveDataStorageOptions);
   }
 
   /**
@@ -978,7 +1147,7 @@ export class ConnectionBridge<
     const optioinsCA = this.createOptionsCentralAuthority();
 
     this.setOptionsCentralAuthority(optioinsCA);
-    return this.createCentralAuthorityInstnace(optioinsCA);
+    return await this.createCentralAuthorityInstnace(optioinsCA);
   }
 
   protected setCurrentSwarmMessageConstructor(swarmMessageConstructor: ISwarmMessageConstructor): void {
@@ -996,7 +1165,7 @@ export class ConnectionBridge<
     if (!this.swarmMessageConstructorFabric) {
       throw new Error('Swarm message constructor fabric must be created before');
     }
-    return this.swarmMessageConstructorFabric(this.createOptionsMessageConstructor());
+    return await this.swarmMessageConstructorFabric(this.createOptionsMessageConstructor());
   }
 
   protected createNativeConnection = (): Promise<TNativeConnectionType<P>> => {
@@ -1079,7 +1248,7 @@ export class ConnectionBridge<
   }
 
   protected getDatabaseNamePrefixForEncryptedCahce(userLogin: string): string {
-    return `__${CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX.MESSAGE_CACHE_STORAGE}${CONNECTION_BRIDGE_DATA_STORAGE_DATABASE_NAME_PREFIX_DELIMETER}${userLogin}`;
+    return `__${CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX.MESSAGE_CACHE_STORAGE}${CONNECTION_BRIDGE_STORAGE_DELIMETER_FOR_STORAGE_KEYS_DEFAULT}${userLogin}`;
   }
 
   protected setCurrentSwarmMessageEncryptedCacheFabric(
@@ -1090,7 +1259,7 @@ export class ConnectionBridge<
 
   protected async createSwarmMessageEncryptedCacheFabric(): Promise<ISwarmMessageEncryptedCacheFabric> {
     const authOptions = this.getCredentialsWithSession();
-    return getSwarmMessageEncryptedCacheFabric(
+    return await getSwarmMessageEncryptedCacheFabric(
       this.getCredentialsWithSession(),
       this.getDatabaseNamePrefixForEncryptedCahce(authOptions.login)
     );
@@ -1118,7 +1287,7 @@ export class ConnectionBridge<
 
   protected async createSwarmMessageConstructorFabric(): Promise<ISwarmMessageConstructorWithEncryptedCacheFabric> {
     const authOptions = this.getCredentialsWithSession();
-    return getSwarmMessageConstructorWithCacheFabric(
+    return await getSwarmMessageConstructorWithCacheFabric(
       authOptions,
       this.getSwarmMessageConstructorOptions(),
       this.getDatabaseNamePrefixForEncryptedCahce(authOptions.login)
@@ -1130,12 +1299,12 @@ export class ConnectionBridge<
     if (swarmMessageConstructorFabricFromOptions) {
       return swarmMessageConstructorFabricFromOptions;
     }
-    return this.createSwarmMessageConstructorFabric();
+    return await this.createSwarmMessageConstructorFabric();
   }
 
   protected getDatabaseNameForEncryptedCacheInstance(dbNamePrefix: string): string {
     const userLogin = this.getCredentialsWithSession().login;
-    return `${dbNamePrefix}${CONNECTION_BRIDGE_DATA_STORAGE_DATABASE_NAME_PREFIX_DELIMETER}${userLogin}`;
+    return `${dbNamePrefix}${CONNECTION_BRIDGE_STORAGE_DELIMETER_FOR_STORAGE_KEYS_DEFAULT}${userLogin}`;
   }
 
   protected getOptionsForSwarmMessageEncryptedFabric(dbNamePrefix: string): { dbName: string } {
@@ -1162,7 +1331,7 @@ export class ConnectionBridge<
     if (!this.swarmMessageEncryptedCacheFabric) {
       throw new Error('Encrypted cache fabric must be started before');
     }
-    return this.startEncryptedCache(CONNECTION_BRIDGE_STORAGE_DATABASE_NAME.MESSAGE_CACHE_STORAGE);
+    return await this.startEncryptedCache(CONNECTION_BRIDGE_STORAGE_DATABASE_NAME.MESSAGE_CACHE_STORAGE);
   }
 
   protected createSwarmMessageStoreInstanceByOptionsFabric(): SMS {
@@ -1338,7 +1507,7 @@ export class ConnectionBridge<
 
   protected getSecretStorageDBName(): string {
     const userLogin = this.getCredentialsWithSession().login;
-    return `${CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX.SECRET_STORAGE}${CONNECTION_BRIDGE_DATA_STORAGE_DATABASE_NAME_PREFIX_DELIMETER}${userLogin}`;
+    return `${CONNECTION_BRIDGE_STORAGE_DATABASE_PREFIX.SECRET_STORAGE}${CONNECTION_BRIDGE_STORAGE_DELIMETER_FOR_STORAGE_KEYS_DEFAULT}${userLogin}`;
   }
 
   protected getSecretStorageDBOptions(): Partial<IStorageProviderOptions> {

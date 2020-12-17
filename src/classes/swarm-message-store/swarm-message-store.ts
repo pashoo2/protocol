@@ -71,7 +71,6 @@ import {
   TSwarmStoreConnectorConnectionOptions,
   ISwarmStoreProviderOptions,
   ISwarmStoreOptionsConnectorFabric,
-  TSwarmStoreOptionsOfDatabasesKnownList,
 } from '../swarm-store-class/swarm-store-class.types';
 
 export class SwarmMessageStore<
@@ -103,10 +102,9 @@ export class SwarmMessageStore<
       MCF,
       ACO
     >,
-    E extends ISwarmMessageStoreEvents<P, ItemType, DbType, DBO>,
-    DBL extends TSwarmStoreOptionsOfDatabasesKnownList<P, ItemType, DbType, DBO>
+    E extends ISwarmMessageStoreEvents<P, ItemType, DbType, DBO>
   >
-  extends SwarmStore<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O, E, DBL>
+  extends SwarmStore<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O, E>
   implements ISwarmMessageStore<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O> {
   protected connectorType: P | undefined;
 
@@ -222,7 +220,7 @@ export class SwarmMessageStore<
     this.extendsWithAccessControl = extendsWithAccessControl;
     this.setOptions(optionsSwarmStore);
 
-    const connectionResult = await super.connect(optionsSwarmStore, optionsSwarmStore.databasesListStorage);
+    const connectionResult = await super.connect(optionsSwarmStore);
 
     if (connectionResult instanceof Error) {
       throw connectionResult;

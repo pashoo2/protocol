@@ -168,7 +168,6 @@ export interface ISwarmMessageStoreOptions<
 > extends ISwarmStoreOptions<P, T, DbType, DBO, ConnectorBasic, PO> {
   accessControl: ACO;
   messageConstructors: ISwarmMessageDatabaseConstructors<PromiseResolveType<ReturnType<NonNullable<MCF>>>>;
-  databasesListStorage: IStorageCommon;
   swarmMessageConstructorFabric: MCF;
   /**
    * Used for caching messages constructed

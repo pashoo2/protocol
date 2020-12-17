@@ -51,10 +51,9 @@ export function getClassSwarmMessageStoreWithEntriesCount<
     MCF,
     ACO
   >,
-  E extends ISwarmMessageStoreEvents<P, ItemType, DbType, DBO>,
-  DBL extends TSwarmStoreOptionsOfDatabasesKnownList<P, ItemType, DbType, DBO>
+  E extends ISwarmMessageStoreEvents<P, ItemType, DbType, DBO>
 >() {
-  return getClassSwarmStoreWithEntriesCount<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O, E, DBL>(
+  return getClassSwarmStoreWithEntriesCount<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O, E>(
     class B extends SwarmMessageStore<
       P,
       ItemType,
@@ -70,8 +69,7 @@ export function getClassSwarmMessageStoreWithEntriesCount<
       MCF,
       ACO,
       O,
-      E,
-      DBL
+      E
     > {}
   );
 }

@@ -251,7 +251,7 @@ export class SwarmStore<
         await this.handleDatabaseClosed(dbOptions);
       }
     }
-    return result;
+    return await result;
   }
 
   public async dropDatabase(dbName: string): Promise<void | Error> {
@@ -296,7 +296,7 @@ export class SwarmStore<
     if (checkIsError(connector)) {
       return new Error('Connector is not exists');
     }
-    return connector.request<A, DT>(dbName, dbMethod, arg);
+    return await connector.request<A, DT>(dbName, dbMethod, arg);
   }
 
   /**

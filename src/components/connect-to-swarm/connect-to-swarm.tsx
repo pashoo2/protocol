@@ -149,6 +149,7 @@ export class ConnectToSwarm<
           any,
           CD,
           any,
+          any,
           any
         >
       | undefined,
