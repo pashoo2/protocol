@@ -38,6 +38,7 @@ import {
 import { TSwarmStoreConnectorBasicFabric } from '../../classes/swarm-store-class/swarm-store-class.types';
 import { getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer } from '../../classes/swarm-message-store/swarm-message-store-extended/swarm-message-store-with-entries-count-and-options-serializer/swarm-message-store-with-entries-count-and-options-serializer';
 import { connectionBridgeSwarmStoreConnectorDatabasesPersistentListFabricDefault } from '../../classes/connection-bridge/connection-bridge.utils';
+import { SerializerClass } from '../../classes/basic-classes/serializer-class/serializer-class';
 import {
   TSwarmStoreDatabaseEntityKey,
   TSwarmStoreDatabaseEntryOperation,
@@ -320,6 +321,7 @@ export const CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS: IConnectionBri
     any
   >
 > = {
+  serializer: new SerializerClass(),
   swarmStoreConnectorType: CONNECT_TO_SWARM_STORAGE_PROVIDER_DEFAULT,
   user: CONNECT_TO_SWARM_CONNECTION_USER_OPTIONS,
   auth: CONNECT_TO_SWARM_CONNECTION_AUTH_OPTOINS,

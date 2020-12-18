@@ -1,6 +1,6 @@
 export type TObjectKeys = string | number | symbol;
 
-export type TSimpleTypes = number | string | boolean | symbol | null | undefined;
+export type TSimpleTypes = number | string | boolean | null | undefined;
 
 export type TDictionary<T> = Record<TObjectKeys, T>;
 
