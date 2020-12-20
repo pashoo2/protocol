@@ -244,13 +244,13 @@ export class SwarmStoreConnectorOrbitDB<
       await this.closeDb(database, false); // close the connection to the database
       await delay(300);
       if (openAttempt > SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_RECONNECTION_ATTEMPTS_MAX) {
-        return this.handleErrorOnDbOpen(database, 'The max nunmber of connection attempts has reached');
+        return await this.handleErrorOnDbOpen(database, 'The max nunmber of connection attempts has reached');
       }
 
       const openDatabaseResult = await this.openDatabase(dbOptions, (openAttempt += 1));
 
       if (openDatabaseResult instanceof Error) {
-        return this.handleErrorOnDbOpen(database, openDatabaseResult);
+        return await this.handleErrorOnDbOpen(database, openDatabaseResult);
       }
     }
     console.log('openDatabase', dbName);
@@ -278,7 +278,7 @@ export class SwarmStoreConnectorOrbitDB<
     const db = this.getDbConnection(dbName);
 
     if (db) {
-      return this.closeDb(db);
+      return await this.closeDb(db);
     }
     return new Error(`The database named ${dbName} was not found`);
   }
@@ -305,7 +305,7 @@ export class SwarmStoreConnectorOrbitDB<
       console.error(dbConnection);
       return this.emitError(new Error('Failed to get an opened connection to the database'));
     }
-    return dbConnection[dbMethod](arg as unknown);
+    return await dbConnection[dbMethod](arg as unknown);
   };
 
   /**
@@ -425,7 +425,7 @@ export class SwarmStoreConnectorOrbitDB<
     } else {
       const removeListener = this.removeListener.bind(this);
 
-      return new Promise((res) => {
+      return await new Promise((res) => {
         let timeout: undefined | NodeJS.Timer;
         function removeListners() {
           if (timeout) {
@@ -935,14 +935,14 @@ export class SwarmStoreConnectorOrbitDB<
     await this.unsetListenersDatabaseEvents(database);
     if (optionsForDb instanceof Error || !optionsForDb) {
       this.emitError('Failed to get options to open a new db store', `restartDbConnection::${dbName}`);
-      return this.stop();
+      return await this.stop();
     }
 
     const startDbResult = await this.openDatabaseNotCheckOptionsExists(optionsForDb);
 
     if (startDbResult instanceof Error) {
       this.emitError('Failed to open a new db store', `restartDbConnection::${dbName}`);
-      return this.stop();
+      return await this.stop();
     }
   }
 

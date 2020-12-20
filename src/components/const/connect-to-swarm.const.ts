@@ -36,7 +36,7 @@ import {
   ISwarmStoreConnectorWithEntriesCount,
 } from '../../classes/swarm-store-class/swarm-store-class-extended/swarm-store-class-with-entries-count/swarm-store-class-with-entries-count.types';
 import { TSwarmStoreConnectorBasicFabric } from '../../classes/swarm-store-class/swarm-store-class.types';
-import { getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer } from '../../classes/swarm-message-store/swarm-message-store-extended/swarm-message-store-with-entries-count-and-options-serializer/swarm-message-store-with-entries-count-and-options-serializer';
+import { getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer } from '../../classes/swarm-message-store/swarm-message-store-extended/swarm-message-store-with-entries-count-and-options-serializer';
 import { connectionBridgeSwarmStoreConnectorDatabasesPersistentListFabricDefault } from '../../classes/connection-bridge/connection-bridge.utils';
 import { SerializerClass } from '../../classes/basic-classes/serializer-class/serializer-class';
 import {

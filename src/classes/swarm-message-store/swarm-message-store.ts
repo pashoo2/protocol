@@ -184,6 +184,7 @@ export class SwarmMessageStore<
     ACO,
     O
   > {
+    // TODO - make it provided from options
     const extendsWithAccessControl = swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl<
       P,
       ItemType,
@@ -216,7 +217,8 @@ export class SwarmMessageStore<
       ACO,
       O
     >(options, extendsWithAccessControl);
-
+    // TODO - add class which can use a custom datbase options constructor instead
+    // of the swarmMessageStoreUtilsConnectorOptionsProvider and extendsWithAccessControl
     this.extendsWithAccessControl = extendsWithAccessControl;
     this.setOptions(optionsSwarmStore);
 
@@ -238,6 +240,7 @@ export class SwarmMessageStore<
    */
   public async openDatabase(dbOptions: DBO): Promise<void | Error> {
     try {
+      // TODO - make the extendsWithAccessControl provided in the options
       const optionsWithAcessControl = this.extendsWithAccessControl?.(dbOptions) || dbOptions;
       const dbOpenResult = await super.openDatabase(optionsWithAcessControl);
 

@@ -317,11 +317,11 @@ export class SwarmStoreConnectorPersistentList<
   }
 
   protected _getDatabasesNamesListStringified(): string {
-    const databasesNamesList = this._databasesUniqNamesList;
-    if (!databasesNamesList) {
+    const databasesNamesListNotSerialized = this._databasesUniqNamesList;
+    if (!databasesNamesListNotSerialized) {
       throw new Error('There is no databases names list');
     }
-    return this._getSerializer().stringify(databasesNamesList);
+    return this._getSerializer().stringify(databasesNamesListNotSerialized);
   }
 
   protected async _saveDatabasesNamesListInPersistentStorage(): Promise<void> {

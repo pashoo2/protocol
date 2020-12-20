@@ -55,8 +55,9 @@ export interface ISwarmMessageStoreSwarmMessageMetadata<P extends ESwarmStoreCon
 
 export type TSwarmMessagesStoreGrantAccessCallback<
   P extends ESwarmStoreConnector,
-  MSI extends TSwarmMessageSerialized | TSwarmMessageInstance
-> = TSwarmMessageStoreAccessControlGrantAccessCallback<P, MSI>;
+  MSI extends TSwarmMessageSerialized | TSwarmMessageInstance,
+  CTX extends Record<string, unknown> = Record<string, unknown>
+> = ISwarmMessageStoreAccessControlGrantAccessCallback<P, MSI, CTX>;
 
 export interface ISwarmMessageStoreEvents<
   P extends ESwarmStoreConnector,
@@ -92,22 +93,27 @@ export interface ISwarmMessageStoreEvents<
   [ESwarmMessageStoreEventNames.NEW_MESSAGE_ERROR]: [string, string, Error, string];
 }
 
-export type TSwarmMessageStoreAccessControlGrantAccessCallback<
+export interface ISwarmMessageStoreAccessControlGrantAccessCallback<
   P extends ESwarmStoreConnector,
-  T extends TSwarmMessageSerialized | TSwarmMessageInstance
-> = (
-  // swarm message
-  message: T,
-  // identifier of the user sender of the message
-  userId: TCentralAuthorityUserIdentity,
-  // a name of the database from where the message is comming from
-  // TODO - can it be gotten from the database entry??
-  dbName: string,
-  // key for the value in the database
-  key?: TSwarmStoreDatabaseEntityKey<P>,
-  // operation on the database
-  op?: TSwarmStoreDatabaseEntryOperation<P>
-) => Promise<boolean>;
+  T extends TSwarmMessageSerialized | TSwarmMessageInstance,
+  CTX extends Record<string, unknown> = Record<string, unknown>
+> {
+  (
+    this: CTX,
+    // swarm message
+    message: T,
+    // identifier of the user sender of the message
+    userId: TCentralAuthorityUserIdentity,
+    // a name of the database from where the message is comming from
+    // TODO - can it be gotten from the database entry??
+    dbName: string,
+    // key for the value in the database
+    key?: TSwarmStoreDatabaseEntityKey<P>,
+    // operation on the database
+    op?: TSwarmStoreDatabaseEntryOperation<P>
+  ): Promise<boolean>;
+  toString(): string;
+}
 
 /**
  * grant the write access options to define access options

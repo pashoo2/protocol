@@ -6,6 +6,18 @@ import {
   ISerializerClassCheckerIsFunctionSerialized,
 } from './serializer-class.types';
 
+function isUnnamedFunctionSerialized(functionSerialized: string): boolean {
+  return functionSerialized.startsWith('function (');
+}
+
+function isNamedFunctionSerialized(functionSerialized: string): boolean {
+  return functionSerialized.startsWith('function (');
+}
+
+function isArrowFunctionSerialized(functionSerialized: string): boolean {
+  return functionSerialized.startsWith('(') && functionSerialized.includes(') => ');
+}
+
 export function serializerClassUtilFunctionSerializer(fn: (...args: any[]) => any): string {
   const functionSerialized = fn.toString();
   if (functionSerialized === 'function () { [native code] }') {
@@ -26,7 +38,15 @@ export function serializerClassUtilReplacerCallbackDefault(
 }
 
 export function serializerClassUtilIsFunctionSerialziedDefault(value: any): boolean {
-  return typeof value === 'string' && value.includes('function (');
+  if (typeof value !== 'string') {
+    return false;
+  }
+  const valueTrimmed = value.trim();
+  return (
+    isUnnamedFunctionSerialized(valueTrimmed) ||
+    isNamedFunctionSerialized(valueTrimmed) ||
+    isArrowFunctionSerialized(valueTrimmed)
+  );
 }
 
 export function serializerClassUtilFunctionParserDefault(functionSerialized: string): (...args: any[]) => any {

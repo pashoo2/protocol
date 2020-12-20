@@ -1,6 +1,6 @@
 import {
   ISwarmMessageDatabaseConstructors,
-  TSwarmMessageStoreAccessControlGrantAccessCallback,
+  ISwarmMessageStoreAccessControlGrantAccessCallback,
 } from '../../swarm-message-store.types';
 import { TSwarmStoreDatabaseEntryOperation } from '../../../swarm-store-class/swarm-store-class.types';
 import { TCentralAuthorityUserIdentity } from '../../../central-authority-class/central-authority-class-types/central-authority-class-types-common';
@@ -37,8 +37,8 @@ async function swarmMessageGrantValidator<
   T extends TSwarmMessageSerialized,
   I extends TSwarmMessageInstance,
   CB extends
-    | TSwarmMessageStoreAccessControlGrantAccessCallback<P, T>
-    | TSwarmMessageStoreAccessControlGrantAccessCallback<P, I>
+    | ISwarmMessageStoreAccessControlGrantAccessCallback<P, T>
+    | ISwarmMessageStoreAccessControlGrantAccessCallback<P, I>
     | undefined
 >(
   this: {
@@ -75,7 +75,7 @@ async function swarmMessageGrantValidator<
       return false;
     }
     if (grantAccessCb) {
-      return await (grantAccessCb as TSwarmMessageStoreAccessControlGrantAccessCallback<P, I>)(
+      return await (grantAccessCb as ISwarmMessageStoreAccessControlGrantAccessCallback<P, I, any>)(
         (swarmMessage as unknown) as I,
         userId,
         dbName,
