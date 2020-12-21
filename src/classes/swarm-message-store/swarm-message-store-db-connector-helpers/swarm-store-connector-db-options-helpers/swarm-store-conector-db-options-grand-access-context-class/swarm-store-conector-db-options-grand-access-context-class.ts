@@ -1,4 +1,4 @@
-import { ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext } from '../swarm-store-connector-db-options-helpers.types';
+import { ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 
 export class SwarmStoreConectorDbOptionsGrandAccessContext
   implements ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext {

@@ -1,11 +1,9 @@
 import { ESwarmStoreConnector } from '../../../../swarm-store-class/swarm-store-class.const';
 import { TSwarmStoreValueTypes } from '../../../../swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageInstance } from '../../../../swarm-message/swarm-message-constructor.types';
-import {
-  ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext,
-  ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound,
-} from '../swarm-store-connector-db-options-helpers.types';
+import { ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { TSwarmStoreConnectorAccessConrotllerGrantAccessCallback } from '../../../../swarm-store-class/swarm-store-class.types';
+import { ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 
 export function swarmStoreConnectorDbOptionsGrandAccessContextBinder<
   P extends ESwarmStoreConnector,

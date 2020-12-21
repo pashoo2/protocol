@@ -6,11 +6,9 @@ import {
   ISwarmStoreConnectorDatabaseAccessControlleGrantCallback,
 } from '../../../../swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageInstance } from '../../../../swarm-message/swarm-message-constructor.types';
-import { ISwarmStoreConnectorDatabaseAccessControlleGrantCallbackBound } from '../swarm-store-connector-db-options-helpers.types';
-import {
-  ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext,
-  ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder,
-} from '../swarm-store-connector-db-options-helpers.types';
+import { ISwarmMessageStoreConnectorDatabaseAccessControlleGrantCallbackBound } from '../swarm-message-store-connector-db-options-helpers.types';
+import { ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder } from '../swarm-message-store-connector-db-options-helpers.types';
+import { ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 
 export function isDbOptionsWithGrandAccess<
   P extends ESwarmStoreConnector,
@@ -31,19 +29,19 @@ export function swarmStoreConectorDbOptionsGrandAccessContextBinderToDatabaseOpt
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>
 >(
   dbo: DBO,
-  grandAccessCallbackBinder: ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder<P, ItemType, MSI, CTX>
+  grandAccessCallbackBinder: ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder<P, ItemType, MSI, CTX>
 ): DBO extends Required<ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<P, ItemType, MSI>>
-  ? DBO & ISwarmStoreConnectorDatabaseAccessControlleGrantCallbackBound<P, ItemType, MSI, CTX>
+  ? DBO & ISwarmMessageStoreConnectorDatabaseAccessControlleGrantCallbackBound<P, ItemType, MSI, CTX>
   : DBO {
   if (isDbOptionsWithGrandAccess<P, ItemType, DbType, MSI, DBO>(dbo)) {
     return {
       ...dbo,
       grantAccess: grandAccessCallbackBinder(dbo.grantAccess),
     } as DBO extends Required<ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<P, ItemType, MSI>>
-      ? DBO & ISwarmStoreConnectorDatabaseAccessControlleGrantCallbackBound<P, ItemType, MSI, CTX>
+      ? DBO & ISwarmMessageStoreConnectorDatabaseAccessControlleGrantCallbackBound<P, ItemType, MSI, CTX>
       : DBO;
   }
   return dbo as DBO extends Required<ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<P, ItemType, MSI>>
-    ? DBO & ISwarmStoreConnectorDatabaseAccessControlleGrantCallbackBound<P, ItemType, MSI, CTX>
+    ? DBO & ISwarmMessageStoreConnectorDatabaseAccessControlleGrantCallbackBound<P, ItemType, MSI, CTX>
     : DBO;
 }

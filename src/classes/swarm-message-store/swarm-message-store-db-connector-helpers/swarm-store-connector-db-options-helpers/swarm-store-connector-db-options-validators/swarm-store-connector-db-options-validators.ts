@@ -1,5 +1,5 @@
 import { ESwarmStoreConnector } from '../../../../swarm-store-class/swarm-store-class.const';
-import { ISwarmStoreConnectorUtilsDatabaseOptionsValidators } from '../swarm-store-connector-db-options-helpers.types';
+import { ISwarmStoreConnectorUtilsDatabaseOptionsValidators } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import assert from 'assert';
 import {
   TSwarmStoreValueTypes,

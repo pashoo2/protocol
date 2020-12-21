@@ -6,28 +6,23 @@ import {
   TSwarmStoreDatabaseOptionsSerialized,
 } from '../../../../swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageInstance } from '../../../../swarm-message/swarm-message-constructor.types';
-import {
-  ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructor,
-  ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorParams,
-} from '../swarm-store-connector-db-options-helpers.types';
+import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorParams } from '../swarm-message-store-connector-db-options-helpers.types';
 import { SwarmStoreConnectorDBOptionsClass } from './swarm-store-connector-orbit-db-options-class';
 import {
   IOptionsSerializerValidatorConstructorParams,
   IOptionsSerializerValidatorSerializer,
 } from '../../../../basic-classes/options-serializer-validator-class/options-serializer-validator-class.types';
 import { swarmStoreConnectorDbOptionsValidatorsInstanceFabric } from '../swarm-store-connector-db-options-validators/swarm-store-connector-db-options-validators-fabric';
-import {
-  ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext,
-  ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorFabricParams,
-} from '../swarm-store-connector-db-options-helpers.types';
-import {
-  ISwarmStoreConnectorUtilsDatabaseOptionsValidators,
-  ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder,
-} from '../swarm-store-connector-db-options-helpers.types';
+import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorFabricParams } from '../swarm-message-store-connector-db-options-helpers.types';
+import { ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder } from '../swarm-message-store-connector-db-options-helpers.types';
 import { swarmStoreConnectorDbOptionsGrandAccessContextBinderFabric } from '../swarm-store-conector-db-options-grand-access-context-binder/swarm-store-conector-db-options-grand-access-context-binder-fabric';
 import { swarmStoreConectorDbOptionsGrandAccessContextBinderToDatabaseOptionsFabric } from '../swarm-store-conector-db-options-grand-access-context-binder-to-database-options/swarm-store-conector-db-options-grand-access-context-binder-to-database-options-fabric';
-import { ISwarmStoreConnectorDatabaseOptionsWithAccessControlleGrantCallbackBound } from '../swarm-store-connector-db-options-helpers.types';
-import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructor } from '../../../swarm-message-store.types';
+import { ISwarmMessageStoreConnectorDatabaseOptionsWithAccessControlleGrantCallbackBound } from '../swarm-message-store-connector-db-options-helpers.types';
+import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor } from '../swarm-message-store-connector-db-options-helpers.types';
+import {
+  ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext,
+  ISwarmStoreConnectorUtilsDatabaseOptionsValidators,
+} from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 
 export function swarmStoreConnectorDbOptionsClassFabric<
   P extends ESwarmStoreConnector,
@@ -38,7 +33,7 @@ export function swarmStoreConnectorDbOptionsClassFabric<
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
   DBOS extends TSwarmStoreDatabaseOptionsSerialized
 >(
-  params: ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorFabricParams<
+  params: ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorFabricParams<
     P,
     ItemType,
     DbType,
@@ -47,7 +42,7 @@ export function swarmStoreConnectorDbOptionsClassFabric<
     DBO,
     DBOS
   >,
-  OptionsSerializerValidatorConstructor?: ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructor<
+  OptionsSerializerValidatorConstructor?: ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor<
     P,
     ItemType,
     DbType,
@@ -56,9 +51,17 @@ export function swarmStoreConnectorDbOptionsClassFabric<
     DBO,
     DBOS
   >
-): ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructor<P, ItemType, DbType, MSI, CTX, DBO, DBOS> {
+): ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor<
+  P,
+  ItemType,
+  DbType,
+  MSI,
+  CTX,
+  DBO,
+  DBOS
+> {
   const ConstructorToUse = (OptionsSerializerValidatorConstructor ??
-    SwarmStoreConnectorDBOptionsClass) as ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructor<
+    SwarmStoreConnectorDBOptionsClass) as ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor<
     P,
     ItemType,
     DbType,
@@ -81,7 +84,7 @@ export function swarmStoreConnectorDbOptionsClassFabric<
     >;
   };
 
-  const createGrandAccessContextBinder = (): ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder<
+  const createGrandAccessContextBinder = (): ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder<
     P,
     ItemType,
     MSI,
@@ -94,7 +97,7 @@ export function swarmStoreConnectorDbOptionsClassFabric<
     return grandAccessContextBinderFabric(context);
   };
 
-  const createGrandAccessBinderForDBOptions = (): ISwarmStoreConnectorDatabaseOptionsWithAccessControlleGrantCallbackBound<
+  const createGrandAccessBinderForDBOptions = (): ISwarmMessageStoreConnectorDatabaseOptionsWithAccessControlleGrantCallbackBound<
     P,
     ItemType,
     DbType,
@@ -109,7 +112,15 @@ export function swarmStoreConnectorDbOptionsClassFabric<
 
   const extendOptions = (
     options: Pick<IOptionsSerializerValidatorConstructorParams<DBO, DBOS>, 'options'>
-  ): ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorParams<P, ItemType, DbType, MSI, CTX, DBO, DBOS> => {
+  ): ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorParams<
+    P,
+    ItemType,
+    DbType,
+    MSI,
+    CTX,
+    DBO,
+    DBOS
+  > => {
     return {
       ...options,
       serializer: getDbOptionsSerializer(),

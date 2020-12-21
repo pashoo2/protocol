@@ -1,6 +1,6 @@
-import { ISwarmStoreConnectorUtilsDatabaseOptionsValidatorsInstanceConstructor } from '../swarm-store-connector-db-options-helpers.types';
 import { ESwarmStoreConnector } from '../../../../swarm-store-class/swarm-store-class.const';
 import { SwarmStoreConnectorDbOptionsValidators } from './swarm-store-connector-db-options-validators';
+import { ISwarmStoreConnectorUtilsDatabaseOptionsValidatorsInstanceConstructor } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import {
   TSwarmStoreValueTypes,
   TSwarmStoreDatabaseType,
