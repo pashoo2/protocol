@@ -22,6 +22,7 @@ import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm
 import { ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor } from '../../swarm-message-store-db-connector-helpers/swarm-store-connector-db-options-helpers/swarm-message-store-connector-db-options-helpers.types';
 
+// TODO - use it for ConnectionBridge
 export function getSwarmMessageStoreWithDatabaseOptionsConstructorExtended<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmMessageSerialized,

@@ -23,10 +23,7 @@ import {
   ISwarmMessagesDatabaseMessagesCollector,
   ISwarmMessagesDatabaseMessagesCollectorWithStoreMeta,
 } from '../../classes/swarm-messages-database/swarm-messages-database.messages-collector.types';
-import {
-  connectorBasicFabricOrbitDBWithEntriesCount,
-  getMainConnectorFabricWithEntriesCountDefault,
-} from '../../classes/connection-bridge/connection-bridge.utils';
+import { getMainConnectorFabricWithEntriesCountDefault } from '../../classes/connection-bridge/connection-bridge-utils/connection-bridge-utils-store-fabrics';
 import { SwarmMessageStore } from '../../classes/swarm-message-store/swarm-message-store';
 import { TCentralAuthorityUserIdentity } from '../../classes/central-authority-class/central-authority-class-types/central-authority-class-types-common';
 import { SwarmMessagesDatabaseCacheWithEntitiesCount } from '../../classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache-with-entities-count/swarm-messages-database-cache-with-entities-count';
@@ -37,12 +34,13 @@ import {
 } from '../../classes/swarm-store-class/swarm-store-class-extended/swarm-store-class-with-entries-count/swarm-store-class-with-entries-count.types';
 import { TSwarmStoreConnectorBasicFabric } from '../../classes/swarm-store-class/swarm-store-class.types';
 import { getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer } from '../../classes/swarm-message-store/swarm-message-store-extended/swarm-message-store-with-entries-count-and-options-serializer';
-import { connectionBridgeSwarmStoreConnectorDatabasesPersistentListFabricDefault } from '../../classes/connection-bridge/connection-bridge.utils';
+import { connectionBridgeSwarmStoreConnectorDatabasesPersistentListFabricDefault } from '../../classes/connection-bridge/connection-bridge-utils/connection-bridge-utils-store-database-list-storage-fabrics';
 import { SerializerClass } from '../../classes/basic-classes/serializer-class/serializer-class';
 import {
   TSwarmStoreDatabaseEntityKey,
   TSwarmStoreDatabaseEntryOperation,
 } from '../../classes/swarm-store-class/swarm-store-class.types';
+import { connectorBasicFabricOrbitDBWithEntriesCount } from '../../classes/connection-bridge/connection-bridge-utils/connection-bridge-utils-store-to-swarm-connector-fabrics';
 
 export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY = 'key';
 
