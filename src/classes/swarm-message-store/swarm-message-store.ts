@@ -23,7 +23,11 @@ import {
   TSwarmStoreDatabaseIteratorMethodArgument,
 } from '../swarm-store-class/swarm-store-class.types';
 import { TSwarmStoreConnectorOrbitDbDatabaseMethodNames } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
-import { TSwarmStoreValueTypes, TSwarmStoreDatabaseMethod } from '../swarm-store-class/swarm-store-class.types';
+import {
+  TSwarmStoreValueTypes,
+  TSwarmStoreDatabaseMethod,
+  ISwarmStoreDatabaseBaseOptions,
+} from '../swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageStoreConnectReturnType } from './swarm-message-store.types';
 import { ISwarmMessageStoreEvents, ISwarmMessageStore } from './swarm-message-store.types';
 import { swarmMessageStoreUtilsConnectorOptionsProvider } from './swarm-message-store-utils/swarm-message-store-utils-connector-options-provider';
@@ -185,42 +189,13 @@ export class SwarmMessageStore<
     O
   > {
     // TODO - make it provided from options
-    const extendsWithAccessControl = swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl<
-      P,
-      ItemType,
-      DbType,
-      DBO,
-      ConnectorBasic,
-      PO,
-      CO,
-      ConnectorMain,
-      CFO,
-      MSI,
-      GAC,
-      MCF,
-      ACO,
-      O
-    >(options);
-    const optionsSwarmStore = await swarmMessageStoreUtilsConnectorOptionsProvider<
-      P,
-      ItemType,
-      DbType,
-      DBO,
-      ConnectorBasic,
-      PO,
-      CO,
-      ConnectorMain,
-      CFO,
-      MSI,
-      GAC,
-      MCF,
-      ACO,
-      O
-    >(options, extendsWithAccessControl);
+    const extenderWithAccessControl = this._createDatabaseOptionsExtender(options);
+    const optionsSwarmStore = await this._extendSwarmMessgeStoreOptions(options, extenderWithAccessControl);
+
     // TODO - add class which can use a custom datbase options constructor instead
     // of the swarmMessageStoreUtilsConnectorOptionsProvider and extendsWithAccessControl
-    this.extendsWithAccessControl = extendsWithAccessControl;
-    this.setOptions(optionsSwarmStore);
+    this._setCurrentDatabaseOptionsExtenderWithAccessControl(extenderWithAccessControl);
+    this._setOptions(optionsSwarmStore);
 
     const connectionResult = await super.connect(optionsSwarmStore);
 
@@ -422,7 +397,7 @@ export class SwarmMessageStore<
     }
   }
 
-  protected setOptions(options: O): void {
+  protected _setOptions(options: O): void {
     this.validateOpts(options);
     this.connectorType = options.provider;
     this.accessControl = options.accessControl;
@@ -1251,4 +1226,53 @@ export class SwarmMessageStore<
       throw new Error(`Failed to connect to cache store: ${connectToCacheResult.message}`);
     }
   };
+
+  protected _createDatabaseOptionsExtender(
+    options: O
+  ): (dbOptions: DBO) => DBO & ISwarmStoreDatabaseBaseOptions & { provider: P } {
+    return swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl<
+      P,
+      ItemType,
+      DbType,
+      DBO,
+      ConnectorBasic,
+      PO,
+      CO,
+      ConnectorMain,
+      CFO,
+      MSI,
+      GAC,
+      MCF,
+      ACO,
+      O
+    >(options);
+  }
+
+  protected _setCurrentDatabaseOptionsExtenderWithAccessControl(
+    extenderDbOptionsWithAccessControl: (dbOptions: DBO) => DBO & ISwarmStoreDatabaseBaseOptions & { provider: P }
+  ): void {
+    this.extendsWithAccessControl = extenderDbOptionsWithAccessControl;
+  }
+
+  protected async _extendSwarmMessgeStoreOptions(
+    options: O,
+    extenderDbOptionsWithAccessControl: (dbOptions: DBO) => DBO & ISwarmStoreDatabaseBaseOptions & { provider: P }
+  ) {
+    return await swarmMessageStoreUtilsConnectorOptionsProvider<
+      P,
+      ItemType,
+      DbType,
+      DBO,
+      ConnectorBasic,
+      PO,
+      CO,
+      ConnectorMain,
+      CFO,
+      MSI,
+      GAC,
+      MCF,
+      ACO,
+      O
+    >(options, extenderDbOptionsWithAccessControl);
+  }
 }

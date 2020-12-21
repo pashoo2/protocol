@@ -1,4 +1,9 @@
-import { ISwarmStore, ISwarmStoreEvents, ISwarmStoreOptions } from '../swarm-store-class/swarm-store-class.types';
+import {
+  ISwarmStore,
+  ISwarmStoreEvents,
+  ISwarmStoreOptions,
+  TSwarmStoreDatabaseOptionsSerialized,
+} from '../swarm-store-class/swarm-store-class.types';
 import { ESwarmStoreConnector } from '../swarm-store-class/swarm-store-class.const';
 import {
   TSwarmMessageInstance,
@@ -16,7 +21,6 @@ import {
 } from '../swarm-message/swarm-message-constructor.types';
 import { TCentralAuthorityUserIdentity } from '../central-authority-class/central-authority-class-types/central-authority-class-types-common';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
-import { IStorageCommon } from 'types/storage.types';
 import { TSwarmStoreDatabaseEntryOperation, TSwarmStoreValueTypes } from '../swarm-store-class/swarm-store-class.types';
 import { StorageProvider } from '../storage-providers/storage-providers.types';
 import { ISwarmStoreConnectorOrbitDbDatabaseValue } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
@@ -30,6 +34,11 @@ import { ISwarmStoreConnector, ISwarmStoreOptionsWithConnectorFabric } from '../
 import { TSwarmStoreConnectorConnectionOptions, ISwarmStoreConnectorBasic } from '../swarm-store-class/swarm-store-class.types';
 import { TSwarmStoreDatabaseEntityAddress, TSwarmStoreDatabaseEntityKey } from '../swarm-store-class/swarm-store-class.types';
 import { PromiseResolveType } from '../../types/promise.types';
+import {
+  ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext,
+  ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidator,
+  ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructor,
+} from './swarm-message-store-db-connector-helpers/swarm-store-connector-db-options-helpers/swarm-store-connector-db-options-helpers.types';
 import {
   ISwarmStoreConnectorBasicWithEntriesCount,
   ISwarmStoreConnectorWithEntriesCount,
@@ -479,6 +488,39 @@ export interface ISwarmMessageStore<
   >;
 }
 
+export interface ISwarmMessageStoreConstructor<
+  P extends ESwarmStoreConnector,
+  ItemType extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType, DBO>,
+  CO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, DBO, ConnectorBasic>,
+  PO extends ISwarmStoreProviderOptions<P, ItemType, DbType, DBO, ConnectorBasic, CO>,
+  ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, DBO, ConnectorBasic, CO>,
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain>,
+  MSI extends TSwarmMessageInstance | ItemType,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
+  MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, ItemType, MSI, GAC> | undefined,
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
+    P,
+    ItemType,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    CO,
+    PO,
+    ConnectorMain,
+    CFO,
+    MSI,
+    GAC,
+    MCF,
+    ACO
+  >
+> {
+  new (): ISwarmMessageStore<P, ItemType, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>;
+}
+
 export interface ISwarmMessageStoreOptionsWithEntriesCount<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmMessageSerialized,
@@ -510,3 +552,22 @@ export interface ISwarmMessageStoreOptionsWithEntriesCount<
   >
 > extends ISwarmMessageStore<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>,
     ISwarmStoreWithEntriesCount<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O> {}
+
+export interface ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructor<
+  P extends ESwarmStoreConnector,
+  ItemType extends TSwarmStoreValueTypes<P>,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  MSI extends TSwarmMessageInstance | ItemType,
+  CTX extends ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
+  DBOS extends TSwarmStoreDatabaseOptionsSerialized,
+  META extends Record<string, unknown> | never = never
+> extends ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructor<P, ItemType, DbType, MSI, CTX, DBO, DBOS> {
+  new (options: { options: DBO; meta: META }): ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidator<
+    P,
+    ItemType,
+    DbType,
+    DBO,
+    DBOS
+  >;
+}

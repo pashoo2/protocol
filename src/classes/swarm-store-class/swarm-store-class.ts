@@ -245,7 +245,7 @@ export class SwarmStore<
     const result = connector.closeDatabase(dbName);
 
     if (!(result instanceof Error)) {
-      const dbOptions = this.getDatabaseOptions(dbName);
+      const dbOptions = await this.getDatabaseOptions(dbName);
 
       if (dbOptions) {
         await this.handleDatabaseClosed(dbOptions);
@@ -268,7 +268,7 @@ export class SwarmStore<
       return dropDatabaseResult;
     }
 
-    const dbOptions = this.getDatabaseOptions(dbName);
+    const dbOptions = await this.getDatabaseOptions(dbName);
 
     if (dbOptions) {
       await this.handleDatabaseDropped(dbOptions);
@@ -375,8 +375,11 @@ export class SwarmStore<
    * @returns {ISwarmStoreDatabaseBaseOptions | undefined}
    * @memberof SwarmStore
    */
-  protected getDatabaseOptions(dbName: DBO['dbName']): DBO | undefined {
-    return this.databases?.options?.[dbName];
+  protected async getDatabaseOptions(dbName: DBO['dbName']): Promise<DBO | undefined> {
+    if (!this.persistentDatbasesList) {
+      return undefined;
+    }
+    return await this.persistentDatbasesList.getDatabaseOptions(dbName);
   }
 
   getConnectorOrError(): ConnectorMain | Error {

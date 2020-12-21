@@ -1,10 +1,10 @@
-import { ESwarmStoreConnector } from '../../../swarm-store-class.const';
+import { ESwarmStoreConnector } from '../../../../swarm-store-class/swarm-store-class.const';
 import {
   TSwarmStoreValueTypes,
   TSwarmStoreDatabaseType,
   TSwarmStoreDatabaseOptions,
   TSwarmStoreDatabaseOptionsSerialized,
-} from '../../../swarm-store-class.types';
+} from '../../../../swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageInstance } from '../../../../swarm-message/swarm-message-constructor.types';
 import {
   ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructor,
@@ -27,6 +27,7 @@ import {
 import { swarmStoreConnectorDbOptionsGrandAccessContextBinderFabric } from '../swarm-store-conector-db-options-grand-access-context-binder/swarm-store-conector-db-options-grand-access-context-binder-fabric';
 import { swarmStoreConectorDbOptionsGrandAccessContextBinderToDatabaseOptionsFabric } from '../swarm-store-conector-db-options-grand-access-context-binder-to-database-options/swarm-store-conector-db-options-grand-access-context-binder-to-database-options-fabric';
 import { ISwarmStoreConnectorDatabaseOptionsWithAccessControlleGrantCallbackBound } from '../swarm-store-connector-db-options-helpers.types';
+import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructor } from '../../../swarm-message-store.types';
 
 export function swarmStoreConnectorDbOptionsClassFabric<
   P extends ESwarmStoreConnector,
@@ -55,7 +56,7 @@ export function swarmStoreConnectorDbOptionsClassFabric<
     DBO,
     DBOS
   >
-) {
+): ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructor<P, ItemType, DbType, MSI, CTX, DBO, DBOS> {
   const ConstructorToUse = (OptionsSerializerValidatorConstructor ??
     SwarmStoreConnectorDBOptionsClass) as ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructor<
     P,

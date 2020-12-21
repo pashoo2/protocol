@@ -1,10 +1,10 @@
-import { ESwarmStoreConnector } from '../../../swarm-store-class.const';
+import { ESwarmStoreConnector } from '../../../../swarm-store-class/swarm-store-class.const';
 import {
   TSwarmStoreValueTypes,
   TSwarmStoreDatabaseType,
   TSwarmStoreDatabaseOptions,
   ISwarmStoreConnectorDatabaseAccessControlleGrantCallback,
-} from '../../../swarm-store-class.types';
+} from '../../../../swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageInstance } from '../../../../swarm-message/swarm-message-constructor.types';
 import { ISwarmStoreConnectorDatabaseAccessControlleGrantCallbackBound } from '../swarm-store-connector-db-options-helpers.types';
 import {

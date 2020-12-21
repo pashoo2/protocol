@@ -1,4 +1,4 @@
-import { ESwarmStoreConnector } from '../../../swarm-store-class.const';
+import { ESwarmStoreConnector } from '../../../../swarm-store-class/swarm-store-class.const';
 import { ISwarmStoreConnectorUtilsDatabaseOptionsValidators } from '../swarm-store-connector-db-options-helpers.types';
 import assert from 'assert';
 import {
@@ -6,7 +6,7 @@ import {
   TSwarmStoreDatabaseType,
   TSwarmStoreDatabaseOptions,
   TSwarmStoreDatabaseOptionsSerialized,
-} from '../../../swarm-store-class.types';
+} from '../../../../swarm-store-class/swarm-store-class.types';
 
 export class SwarmStoreConnectorDbOptionsValidators<
   P extends ESwarmStoreConnector,

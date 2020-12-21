@@ -4,18 +4,18 @@ import {
   TSwarmStoreDatabaseEntryOperation,
   TSwarmStoreDatabaseType,
   TSwarmStoreDatabaseOptions,
-} from '../../swarm-store-class.types';
-import { ESwarmStoreConnector } from '../../swarm-store-class.const';
+} from '../../../swarm-store-class/swarm-store-class.types';
+import { ESwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.const';
 import {
   TSwarmStoreConnectorAccessConrotllerGrantAccessCallback,
   ISwarmStoreConnectorDatabaseAccessControlleGrantCallback,
-} from '../../swarm-store-class.types';
+} from '../../../swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageInstance } from '../../../swarm-message/swarm-message-constructor.types';
-import { ISerializer } from 'types/serialization.types';
+
 import {
   TSwarmStoreDatabaseOptionsSerialized,
   IDatabaseOptionsSerializerValidatorConstructor,
-} from '../../swarm-store-class.types';
+} from '../../../swarm-store-class/swarm-store-class.types';
 import { IOptionsSerializerValidatorSerializer } from '../../../basic-classes/options-serializer-validator-class/options-serializer-validator-class.types';
 import {
   IOptionsSerializerValidatorConstructor,
