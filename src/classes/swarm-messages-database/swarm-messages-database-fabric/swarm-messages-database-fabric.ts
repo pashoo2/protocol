@@ -42,8 +42,8 @@ import { ISwarmMessagesDatabaseMessagesCollector } from '../swarm-messages-datab
  * @template GAC
  * @template ACO
  * @template ConnectorBasic
- * @template CO
  * @template PO
+ * @template CO
  * @template ConnectorMain
  * @template CFO
  * @template O

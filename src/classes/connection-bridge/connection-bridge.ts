@@ -95,8 +95,8 @@ import {
 import {
   connectorBasicFabricOrbitDBDefault,
   getSwarmStoreConnectionProviderOptionsForSwarmStoreConnector,
-} from './connection-bridge-utils/connection-bridge-utils-store-to-swarm-connector-fabrics';
-import { getMainConnectorFabricDefault } from './connection-bridge-utils/connection-bridge-utils-store-fabrics';
+} from './connection-bridge-utils/connection-bridge-utils-store-to-swarm-database-fabrics';
+import { getMainConnectorFabricDefault } from './connection-bridge-utils/connection-bridge-utils-store-to-swarm-connector-fabrics';
 
 /**
  * this class used if front of connection

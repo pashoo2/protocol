@@ -22,31 +22,23 @@ export function extendClassSwarmStoreWithOptionsConstructor<
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType, DBO>,
-  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, DBO, ConnectorBasic>,
-  CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, DBO, ConnectorBasic, PO>,
-  ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, DBO, ConnectorBasic, PO>,
-  CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
-  O extends ISwarmStoreOptionsWithConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO>
->(
-  BaseClass: ConstructorType<
-    ISwarmStore<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O> &
-      ISwarmStoreWithConnector<P, ItemType, DbType, DBO, ConnectorBasic, PO, ConnectorMain>
-  >,
-  SwarmStoreOptionsClass?: ISwarmStoreOptionsClassConstructor<P, ItemType, DbType, DBO, ConnectorBasic, PO>
-): ConstructorType<
-  InstanceType<typeof BaseClass> & ISwarmStore<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O>
-> {
-  type TBaseClassConnectMethodType = InstanceType<typeof BaseClass>['connect'];
-  const SwarmStoreOptionsClassUsed = SwarmStoreOptionsClass ?? swarmStoreOptionsClassFabric();
-  return (class SwarmStoreWithOptionsConstructor extends BaseClass {
-    public async connect(...args: Parameters<TBaseClassConnectMethodType>): ReturnType<TBaseClassConnectMethodType> {
-      const optionsClass = new SwarmStoreOptionsClassUsed({
-        swarmStoreOptions: args[0],
-      });
-      const newConnectOptions = ([optionsClass.options, args.slice(1)] as unknown) as Parameters<TBaseClassConnectMethodType>;
-      return ((await super.connect(...newConnectOptions)) as unknown) as ReturnType<TBaseClassConnectMethodType>;
+  CO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, DBO, ConnectorBasic>,
+  PO extends ISwarmStoreProviderOptions<P, ItemType, DbType, DBO, ConnectorBasic, CO>,
+  ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, DBO, ConnectorBasic, CO>,
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain>,
+  O extends ISwarmStoreOptionsWithConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO>,
+  BC extends ConstructorType<
+    ISwarmStore<P, ItemType, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, O> &
+      ISwarmStoreWithConnector<P, ItemType, DbType, DBO, ConnectorBasic, CO, ConnectorMain>
+  >
+>(BaseClass: BC, SwarmStoreOptionsClass?: ISwarmStoreOptionsClassConstructor<P, ItemType, DbType, DBO, ConnectorBasic, CO>): BC {
+  const SwarmStoreOptionsClassUsed =
+    SwarmStoreOptionsClass ?? swarmStoreOptionsClassFabric<P, ItemType, DbType, DBO, ConnectorBasic, CO>();
+  return class SwarmStoreWithOptionsConstructor extends BaseClass {
+    public connect(swarmStoreOptions: O) {
+      const optionsClass = new SwarmStoreOptionsClassUsed({ swarmStoreOptions });
+      const swarmStoreOptionsValidated = optionsClass.options as O;
+      return super.connect(swarmStoreOptionsValidated);
     }
-  } as unknown) as ConstructorType<
-    InstanceType<typeof BaseClass> & ISwarmStore<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O>
-  >;
+  };
 }

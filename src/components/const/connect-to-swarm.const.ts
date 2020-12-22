@@ -23,7 +23,7 @@ import {
   ISwarmMessagesDatabaseMessagesCollector,
   ISwarmMessagesDatabaseMessagesCollectorWithStoreMeta,
 } from '../../classes/swarm-messages-database/swarm-messages-database.messages-collector.types';
-import { getMainConnectorFabricWithEntriesCountDefault } from '../../classes/connection-bridge/connection-bridge-utils/connection-bridge-utils-store-fabrics';
+import { getMainConnectorFabricWithEntriesCountDefault } from '../../classes/connection-bridge/connection-bridge-utils/connection-bridge-utils-store-to-swarm-connector-fabrics';
 import { SwarmMessageStore } from '../../classes/swarm-message-store/swarm-message-store';
 import { TCentralAuthorityUserIdentity } from '../../classes/central-authority-class/central-authority-class-types/central-authority-class-types-common';
 import { SwarmMessagesDatabaseCacheWithEntitiesCount } from '../../classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache-with-entities-count/swarm-messages-database-cache-with-entities-count';
@@ -40,7 +40,8 @@ import {
   TSwarmStoreDatabaseEntityKey,
   TSwarmStoreDatabaseEntryOperation,
 } from '../../classes/swarm-store-class/swarm-store-class.types';
-import { connectorBasicFabricOrbitDBWithEntriesCount } from '../../classes/connection-bridge/connection-bridge-utils/connection-bridge-utils-store-to-swarm-connector-fabrics';
+import { connectorBasicFabricOrbitDBWithEntriesCount } from '../../classes/connection-bridge/connection-bridge-utils/connection-bridge-utils-store-to-swarm-database-fabrics';
+import { swarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsSerializer } from '../../classes/connection-bridge/connection-bridge-utils/connection-bridge-utils-swarm-store-fabrics';
 
 export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY = 'key';
 
@@ -223,10 +224,7 @@ export const CONNECT_TO_SWARM_CONNECTION_STORAGE_WITH_STORE_META_OPTIONS: IConne
   directory: CONNECT_TO_SWARM_DATABASE_PREFIX,
   databases: [],
   swarmStoreDatabasesPersistentListFabric: connectionBridgeSwarmStoreConnectorDatabasesPersistentListFabricDefault,
-  swarmMessageStoreInstanceFabric() {
-    const SwarmMessageStoreWithEntriesCount = getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer();
-    return new SwarmMessageStoreWithEntriesCount() as any; // TODO;
-  },
+  swarmMessageStoreInstanceFabric: swarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsSerializer,
 };
 
 export const CONNECT_TO_SWARM_CONNECTION_AUTH_OPTOINS: IConnectionBridgeOptionsAuth<false> = {

@@ -6,7 +6,6 @@ import {
   TSwarmStoreDatabaseOptions,
   ISwarmStoreProviderOptions,
   ISwarmStoreOptionsConnectorFabric,
-  TSwarmStoreOptionsOfDatabasesKnownList,
 } from '../../../swarm-store-class/swarm-store-class.types';
 import {
   TSwarmMessagesStoreGrantAccessCallback,
@@ -17,6 +16,9 @@ import {
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { SwarmMessageStore } from '../../swarm-message-store';
 import { getClassSwarmStoreWithEntriesCount } from '../../../swarm-store-class/swarm-store-class-extended/swarm-store-class-with-entries-count';
+import { ISwarmMessageStoreOptionsWithEntriesCount } from '../../swarm-message-store.types';
+import { ConstructorType } from '../../../../types/helper.types';
+import { ISwarmStoreWithConnector } from '../../../swarm-store-class/swarm-store-class.types';
 import {
   ISwarmStoreConnectorBasicWithEntriesCount,
   ISwarmStoreConnectorWithEntriesCount,
@@ -28,10 +30,10 @@ export function getClassSwarmMessageStoreWithEntriesCount<
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
   ConnectorBasic extends ISwarmStoreConnectorBasicWithEntriesCount<P, ItemType, DbType, DBO>,
-  PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, DBO, ConnectorBasic>,
-  CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, DBO, ConnectorBasic, PO>,
-  ConnectorMain extends ISwarmStoreConnectorWithEntriesCount<P, ItemType, DbType, DBO, ConnectorBasic, PO>,
-  CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
+  CO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, DBO, ConnectorBasic>,
+  PO extends ISwarmStoreProviderOptions<P, ItemType, DbType, DBO, ConnectorBasic, CO>,
+  ConnectorMain extends ISwarmStoreConnectorWithEntriesCount<P, ItemType, DbType, DBO, ConnectorBasic, CO>,
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain>,
   MSI extends TSwarmMessageInstance | ItemType,
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
@@ -42,8 +44,8 @@ export function getClassSwarmMessageStoreWithEntriesCount<
     DbType,
     DBO,
     ConnectorBasic,
-    PO,
     CO,
+    PO,
     ConnectorMain,
     CFO,
     MSI,
@@ -52,24 +54,53 @@ export function getClassSwarmMessageStoreWithEntriesCount<
     ACO
   >,
   E extends ISwarmMessageStoreEvents<P, ItemType, DbType, DBO>
->() {
-  return getClassSwarmStoreWithEntriesCount<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O, E>(
-    class B extends SwarmMessageStore<
-      P,
-      ItemType,
-      DbType,
-      DBO,
-      ConnectorBasic,
-      PO,
-      CO,
-      ConnectorMain,
-      CFO,
-      MSI,
-      GAC,
-      MCF,
-      ACO,
-      O,
-      E
-    > {}
-  );
+>(): ConstructorType<
+  ISwarmMessageStoreOptionsWithEntriesCount<
+    P,
+    ItemType,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    CO,
+    PO,
+    ConnectorMain,
+    CFO,
+    MSI,
+    GAC,
+    MCF,
+    ACO,
+    O
+  > &
+    ISwarmStoreWithConnector<P, ItemType, DbType, DBO, ConnectorBasic, CO, ConnectorMain>
+> {
+  class SwarmMessageStoreConstructor extends SwarmMessageStore<
+    P,
+    ItemType,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    CO,
+    PO,
+    ConnectorMain,
+    CFO,
+    MSI,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    E
+  > {}
+  return getClassSwarmStoreWithEntriesCount<
+    P,
+    ItemType,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    CO,
+    PO,
+    ConnectorMain,
+    CFO,
+    O,
+    typeof SwarmMessageStoreConstructor
+  >(SwarmMessageStoreConstructor);
 }

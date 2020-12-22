@@ -1,6 +1,5 @@
 import { ESwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.const';
 import {
-  ISwarmStore,
   ISwarmStoreOptionsConnectorFabric,
   ISwarmStoreProviderOptions,
   TSwarmStoreConnectorConnectionOptions,
@@ -13,16 +12,16 @@ import { TSwarmStoreDatabaseOptionsSerialized } from '../../../swarm-store-class
 import { ConstructorType } from 'types/helper.types';
 import { TSwarmMessageInstance, TSwarmMessageSerialized } from '../../../swarm-message/swarm-message-constructor.types';
 import {
-  ISwarmMessageStoreConstructor,
   TSwarmMessagesStoreGrantAccessCallback,
   ISwarmMessageStoreAccessControlOptions,
   ISwarmMessageStoreOptionsWithConnectorFabric,
 } from '../../swarm-message-store.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
-import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor } from '../../swarm-message-store-db-connector-helpers/swarm-store-connector-db-options-helpers/swarm-message-store-connector-db-options-helpers.types';
+import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor } from '../../swarm-message-store-connectors/swarm-store-connector-db-options-helpers/swarm-message-store-connector-db-options-helpers.types';
+import { ISwarmMessageStore } from '../../swarm-message-store.types';
 
-// TODO - use it for ConnectionBridge
+// TODO - create connetction with it in the ConnectionBridge class
 export function getSwarmMessageStoreWithDatabaseOptionsConstructorExtended<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmMessageSerialized,
@@ -52,6 +51,9 @@ export function getSwarmMessageStoreWithDatabaseOptionsConstructorExtended<
     MCF,
     ACO
   >,
+  BC extends ConstructorType<
+    ISwarmMessageStore<P, ItemType, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>
+  >,
   DBOS extends TSwarmStoreDatabaseOptionsSerialized,
   CTX extends ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext,
   DBOFSC extends ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor<
@@ -64,31 +66,11 @@ export function getSwarmMessageStoreWithDatabaseOptionsConstructorExtended<
     DBOS,
     { swarmMessageStoreOptions: O }
   >
->(
-  BaseClass: ISwarmMessageStoreConstructor<
-    P,
-    ItemType,
-    DbType,
-    DBO,
-    ConnectorBasic,
-    CO,
-    PO,
-    ConnectorMain,
-    CFO,
-    MSI,
-    GAC,
-    MCF,
-    ACO,
-    O
-  >,
-  SwarmStorDatabaseOptionsClass: DBOFSC
-): ConstructorType<
-  InstanceType<typeof BaseClass> & ISwarmStore<P, ItemType, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, O>
-> {
+>(BaseClass: BC, SwarmStoreConnectorDatabaseOptionsConstructor: DBOFSC): BC {
   return class SwarmStoreWithDatabaseOptionsConstructor extends BaseClass {
     protected _createDatabaseOptionsExtender(swarmMessageStoreOptions: O): (dbOptions: DBO) => DBO {
       return (dbOptions: DBO): DBO => {
-        const dbOptionsConstructed = new SwarmStorDatabaseOptionsClass({
+        const dbOptionsConstructed = new SwarmStoreConnectorDatabaseOptionsConstructor({
           options: dbOptions,
           meta: { swarmMessageStoreOptions },
         });

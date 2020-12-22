@@ -28,15 +28,15 @@ export function extendClassSwarmStoreWithEntriesCount<
   CO extends ISwarmStoreProviderOptions<P, ItemType, DbType, DBO, ConnectorBasic, PO>,
   ConnectorMain extends ISwarmStoreConnectorWithEntriesCount<P, ItemType, DbType, DBO, ConnectorBasic, PO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
-  O extends ISwarmStoreOptionsWithConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO>
->(
-  BaseClass: ConstructorType<
+  O extends ISwarmStoreOptionsWithConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO>,
+  BC extends ConstructorType<
     ISwarmStore<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O> &
       ISwarmStoreWithConnector<P, ItemType, DbType, DBO, ConnectorBasic, PO, ConnectorMain>
   >
+>(
+  BaseClass: BC
 ): ConstructorType<
-  InstanceType<typeof BaseClass> &
-    ISwarmStoreWithEntriesCount<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O>
+  InstanceType<BC> & ISwarmStoreWithEntriesCount<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O>
 > {
   return (class SwarmStoreWithEntriesCount extends BaseClass {
     async getCountEntriesLoaded(dbName: TSwarmStoreDatabaseOptions<P, ItemType, DbType>['dbName']): Promise<number | Error> {
@@ -45,7 +45,7 @@ export function extendClassSwarmStoreWithEntriesCount<
       if (checkIsError(connector)) {
         return new Error('Connector is not exists');
       }
-      return connector.getCountEntriesLoaded(dbName);
+      return await connector.getCountEntriesLoaded(dbName);
     }
 
     async getCountEntriesAllExists(dbName: TSwarmStoreDatabaseOptions<P, ItemType, DbType>['dbName']): Promise<number | Error> {
@@ -54,7 +54,7 @@ export function extendClassSwarmStoreWithEntriesCount<
       if (checkIsError(connector)) {
         return new Error('Connector is not exists');
       }
-      return connector.getCountEntriesAllExists(dbName);
+      return await connector.getCountEntriesAllExists(dbName);
     }
   } as unknown) as ConstructorType<
     InstanceType<typeof BaseClass> &
