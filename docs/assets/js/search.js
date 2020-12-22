@@ -41406,7 +41406,7 @@ typedoc.search.data = {
     {
       id: 4678,
       kind: 64,
-      name: 'swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl',
+      name: 'createSwarmMessageStoreUtilsExtenderDatabaseOptionsWithAccessControl',
       url:
         'modules/_src_classes_swarm_message_store_swarm_message_store_utils_swarm_message_store_utils_connector_options_provider_swarm_message_store_utils_connector_options_provider_.html#swarmmessagestoreutilsextenddatabaseoptionswithaccesscontrol',
       classes: 'tsd-kind-function tsd-parent-kind-external-module',
@@ -41455,7 +41455,7 @@ typedoc.search.data = {
     {
       id: 4683,
       kind: 16777216,
-      name: 'swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl',
+      name: 'createSwarmMessageStoreUtilsExtenderDatabaseOptionsWithAccessControl',
       url:
         'modules/_src_classes_swarm_message_store_swarm_message_store_utils_swarm_message_store_utils_connector_options_provider_index_.html#swarmmessagestoreutilsextenddatabaseoptionswithaccesscontrol',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
@@ -50618,7 +50618,7 @@ typedoc.search.data = {
     {
       id: 5741,
       kind: 16777216,
-      name: 'swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl',
+      name: 'createSwarmMessageStoreUtilsExtenderDatabaseOptionsWithAccessControl',
       url:
         'modules/_src_classes_swarm_message_store_swarm_message_store_utils_index_.html#swarmmessagestoreutilsextenddatabaseoptionswithaccesscontrol',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
@@ -50666,7 +50666,7 @@ typedoc.search.data = {
     {
       id: 5747,
       kind: 16777216,
-      name: 'swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl',
+      name: 'createSwarmMessageStoreUtilsExtenderDatabaseOptionsWithAccessControl',
       url: 'modules/_src_classes_swarm_message_store_index_.html#swarmmessagestoreutilsextenddatabaseoptionswithaccesscontrol',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
       parent: '"src/classes/swarm-message-store/index"',
@@ -55972,7 +55972,7 @@ typedoc.search.data = {
     {
       id: 6366,
       kind: 16777216,
-      name: 'swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl',
+      name: 'createSwarmMessageStoreUtilsExtenderDatabaseOptionsWithAccessControl',
       url: 'modules/_src_classes_index_.html#swarmmessagestoreutilsextenddatabaseoptionswithaccesscontrol',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
       parent: '"src/classes/index"',
@@ -61427,7 +61427,7 @@ typedoc.search.data = {
     {
       id: 7042,
       kind: 16777216,
-      name: 'swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl',
+      name: 'createSwarmMessageStoreUtilsExtenderDatabaseOptionsWithAccessControl',
       url: 'modules/_src_dev_.html#swarmmessagestoreutilsextenddatabaseoptionswithaccesscontrol',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
       parent: '"src/dev"',
@@ -64291,7 +64291,7 @@ typedoc.search.data = {
     {
       id: 7400,
       kind: 16777216,
-      name: 'swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl',
+      name: 'createSwarmMessageStoreUtilsExtenderDatabaseOptionsWithAccessControl',
       url: 'modules/_src_index_.html#swarmmessagestoreutilsextenddatabaseoptionswithaccesscontrol',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
       parent: '"src/index"',
@@ -67155,7 +67155,7 @@ typedoc.search.data = {
     {
       id: 7758,
       kind: 16777216,
-      name: 'swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl',
+      name: 'createSwarmMessageStoreUtilsExtenderDatabaseOptionsWithAccessControl',
       url: 'modules/_src_prod_.html#swarmmessagestoreutilsextenddatabaseoptionswithaccesscontrol',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
       parent: '"src/prod"',

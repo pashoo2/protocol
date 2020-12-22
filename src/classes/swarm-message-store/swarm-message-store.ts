@@ -30,13 +30,13 @@ import {
 } from '../swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageStoreConnectReturnType } from './swarm-message-store.types';
 import { ISwarmMessageStoreEvents, ISwarmMessageStore } from './swarm-message-store.types';
-import { swarmMessageStoreUtilsConnectorOptionsProvider } from './swarm-message-store-utils/swarm-message-store-utils-connector-options-provider';
+import { swarmMessageStoreUtilsConnectorOptionsProvider } from './swarm-message-store-connectors/swarm-message-store-connectors-options-provider';
 import { getMessageConstructorForDatabase } from './swarm-message-store-utils/swarm-message-store-utils-common/swarm-message-store-utils-common';
 import { ISwarmMessageStoreDeleteMessageArg } from './swarm-message-store.types';
 import { TSwarmMessageSerialized, TSwarmMessageConstructorBodyMessage } from '../swarm-message/swarm-message-constructor.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { TSwarmStoreDatabaseOptions, TSwarmStoreDatabaseType } from '../swarm-store-class/swarm-store-class.types';
-import { swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl } from './swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider';
+import { createSwarmMessageStoreUtilsExtenderOrbitDBDatabaseOptionsWithAccessControl } from './swarm-message-store-connectors/swarm-store-connector-db-options/swarm-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-common-functions/swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks/swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks';
 
 import {
   ISwarmMessageStoreMessagingRequestWithMetaResult,
@@ -1230,7 +1230,7 @@ export class SwarmMessageStore<
   protected _createDatabaseOptionsExtender(
     options: O
   ): (dbOptions: DBO) => DBO & ISwarmStoreDatabaseBaseOptions & { provider: P } {
-    return swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl<
+    return createSwarmMessageStoreUtilsExtenderOrbitDBDatabaseOptionsWithAccessControl<
       P,
       ItemType,
       DbType,

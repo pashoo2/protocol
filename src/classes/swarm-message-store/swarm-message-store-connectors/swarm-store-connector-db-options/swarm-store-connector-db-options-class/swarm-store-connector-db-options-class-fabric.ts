@@ -6,19 +6,19 @@ import {
   TSwarmStoreDatabaseOptionsSerialized,
 } from '../../../../swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageInstance } from '../../../../swarm-message/swarm-message-constructor.types';
-import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorParams } from '../swarm-message-store-connector-db-options-helpers.types';
+import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorParams } from '../swarm-store-connector-db-options.types';
 import { SwarmStoreConnectorDBOptionsClass } from './swarm-store-connector-orbit-db-options-class';
 import {
   IOptionsSerializerValidatorConstructorParams,
   IOptionsSerializerValidatorSerializer,
 } from '../../../../basic-classes/options-serializer-validator-class/options-serializer-validator-class.types';
 import { swarmStoreConnectorDbOptionsValidatorsInstanceFabric } from '../swarm-store-connector-db-options-validators/swarm-store-connector-db-options-validators-fabric';
-import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorFabricParams } from '../swarm-message-store-connector-db-options-helpers.types';
-import { ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder } from '../swarm-message-store-connector-db-options-helpers.types';
-import { swarmStoreConnectorDbOptionsGrandAccessContextBinderFabric } from '../swarm-store-conector-db-options-grand-access-context-binder/swarm-store-conector-db-options-grand-access-context-binder-fabric';
-import { swarmStoreConectorDbOptionsGrandAccessContextBinderToDatabaseOptionsFabric } from '../swarm-store-conector-db-options-grand-access-context-binder-to-database-options/swarm-store-conector-db-options-grand-access-context-binder-to-database-options-fabric';
-import { ISwarmMessageStoreConnectorDatabaseOptionsWithAccessControlleGrantCallbackBound } from '../swarm-message-store-connector-db-options-helpers.types';
-import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor } from '../swarm-message-store-connector-db-options-helpers.types';
+import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorFabricParams } from '../swarm-store-connector-db-options.types';
+import { ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder } from '../swarm-store-connector-db-options.types';
+import { swarmStoreConnectorDbOptionsGrandAccessContextBinderFabric } from '../swarm-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-context/swarm-store-conector-db-options-grand-access-context-binder/swarm-store-conector-db-options-grand-access-context-binder-fabric';
+import { swarmStoreConectorDbOptionsGrandAccessContextBinderToDatabaseOptionsFabric } from '../swarm-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-context/swarm-store-conector-db-options-grand-access-context-binder-to-database-options/swarm-store-conector-db-options-grand-access-context-binder-to-database-options-fabric';
+import { ISwarmMessageStoreConnectorDatabaseOptionsWithAccessControlleGrantCallbackBound } from '../swarm-store-connector-db-options.types';
+import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor } from '../swarm-store-connector-db-options.types';
 import {
   ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext,
   ISwarmStoreConnectorUtilsDatabaseOptionsValidators,

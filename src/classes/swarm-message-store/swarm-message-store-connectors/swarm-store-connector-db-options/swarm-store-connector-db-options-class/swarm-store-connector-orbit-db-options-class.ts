@@ -14,7 +14,7 @@ import {
   ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorParams,
   ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder,
   ISwarmMessageStoreConnectorDatabaseOptionsWithAccessControlleGrantCallbackBound,
-} from '../swarm-message-store-connector-db-options-helpers.types';
+} from '../swarm-store-connector-db-options.types';
 
 export class SwarmStoreConnectorDBOptionsClass<
     P extends ESwarmStoreConnector,

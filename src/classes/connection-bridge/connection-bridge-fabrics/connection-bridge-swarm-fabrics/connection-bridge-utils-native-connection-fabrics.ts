@@ -1,6 +1,6 @@
-import { TNativeConnectionOptions, TNativeConnectionType } from '../connection-bridge.types';
-import { ESwarmStoreConnector } from '../../swarm-store-class';
-import { ipfsUtilsConnectBasic } from '../../../utils/ipfs-utils';
+import { TNativeConnectionOptions, TNativeConnectionType } from '../../connection-bridge.types';
+import { ESwarmStoreConnector } from '../../../swarm-store-class';
+import { ipfsUtilsConnectBasic } from '../../../../utils/ipfs-utils';
 
 export const createNativeConnectionForOrbitDB = (
   nativeConnectionOptions: TNativeConnectionOptions<ESwarmStoreConnector.OrbitDB>

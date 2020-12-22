@@ -1,4 +1,4 @@
-import { createConnectrionBridgeConnection } from '../../classes/connection-bridge/connection-bridge-fabric/connection-bridge-fabric';
+import { createConnectrionBridgeConnection } from '../../classes/connection-bridge/connection-bridge-fabrics/connection-bridge-fabric/connection-bridge-fabric';
 import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
 import { TSwarmStoreDatabaseType } from '../../classes/swarm-store-class/swarm-store-class.types';
 import {

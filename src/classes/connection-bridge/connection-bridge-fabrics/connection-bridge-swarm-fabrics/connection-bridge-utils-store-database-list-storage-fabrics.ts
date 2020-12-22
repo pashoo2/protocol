@@ -4,9 +4,9 @@ import {
   ISwarmStoreConnectorDatabasesPersistentListConstructorParams,
   TSwarmStoreDatabaseOptions,
   TSwarmStoreDatabaseType,
-} from '../../swarm-store-class';
-import { TSwarmMessageSerialized } from '../../swarm-message';
-import { SwarmStoreConnectorPersistentList } from '../../swarm-store-class/swarm-store-connectors/swarm-store-connector-databases-persistent-list';
+} from '../../../swarm-store-class';
+import { TSwarmMessageSerialized } from '../../../swarm-message';
+import { SwarmStoreConnectorPersistentList } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-databases-persistent-list';
 
 export const connectionBridgeSwarmStoreConnectorDatabasesPersistentListFabricDefault = async <
   P extends ESwarmStoreConnector,

@@ -2,15 +2,26 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e70e70e3-e48a-4dfd-91a6-03818e8691f6" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-utils/connection-bridge-utils-native-connection-fabrics.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-utils/connection-bridge-utils-store-database-list-storage-fabrics.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-utils/connection-bridge-utils-store-to-swarm-connector-fabrics.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-utils/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-store-connector-db-options/swarm-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-common/swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks/swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/assets/js/search.js" beforeDir="false" afterPath="$PROJECT_DIR$/docs/assets/js/search.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/node_modules-local/hypervision-browser" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules-local/hypervision-browser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge.utils.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/const/connect-to-swarm.const.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/const/connect-to-swarm.const.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/const/connect-to-swarm.with-store-meta.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/const/connect-to-swarm.with-store-meta.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-swarm-store-fabrics.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-swarm-store-fabrics.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-store-connector-db-options/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-store-connector-db-options/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-store-connector-db-options/swarm-message-store-connector-db-options-helpers.types.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-store-connector-db-options/swarm-store-conector-db-options-grand-access-context-binder-to-database-options/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-store-connector-db-options/swarm-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-context-binder-to-database-options/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-store-connector-db-options/swarm-store-conector-db-options-grand-access-context-binder-to-database-options/swarm-store-conector-db-options-grand-access-context-binder-to-database-options-fabric.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-store-connector-db-options/swarm-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-context-binder-to-database-options/swarm-store-conector-db-options-grand-access-context-binder-to-database-options-fabric.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-store-connector-db-options/swarm-store-conector-db-options-grand-access-context-binder-to-database-options/swarm-store-conector-db-options-grand-access-context-binder-to-database-options.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-store-connector-db-options/swarm-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-context-binder-to-database-options/swarm-store-conector-db-options-grand-access-context-binder-to-database-options.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-store-connector-db-options/swarm-store-conector-db-options-grand-access-context-binder/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-store-connector-db-options/swarm-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-context-binder/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-store-connector-db-options/swarm-store-conector-db-options-grand-access-context-binder/swarm-store-conector-db-options-grand-access-context-binder-fabric.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-store-connector-db-options/swarm-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-context-binder/swarm-store-conector-db-options-grand-access-context-binder-fabric.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-store-connector-db-options/swarm-store-conector-db-options-grand-access-context-binder/swarm-store-conector-db-options-grand-access-context-binder.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-store-connector-db-options/swarm-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-context-binder/swarm-store-conector-db-options-grand-access-context-binder.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-store-connector-db-options/swarm-store-conector-db-options-grand-access-context-class/swarm-store-conector-db-options-grand-access-context-class.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-store-connector-db-options/swarm-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-context-class/swarm-store-conector-db-options-grand-access-context-class.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-store-connector-db-options/swarm-store-connector-db-options-class/swarm-store-connector-db-options-class-fabric.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-store-connector-db-options/swarm-store-connector-db-options-class/swarm-store-connector-db-options-class-fabric.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-store-connector-db-options/swarm-store-connector-db-options-class/swarm-store-connector-orbit-db-options-class.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-store-connector-db-options/swarm-store-connector-db-options-class/swarm-store-connector-orbit-db-options-class.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-extended/swarm-message-store-with-database-options-constructor-mixin/swarm-message-store-with-database-options-constructor-mixin.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-extended/swarm-message-store-with-database-options-constructor-mixin/swarm-message-store-with-database-options-constructor-mixin.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store.ts" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -27,35 +38,83 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="connection-bridge-utils-store-database-list-storage-fabrics.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-utils/connection-bridge-utils-store-database-list-storage-fabrics.ts">
+      <file leaf-file-name="connect-to-swarm.const.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/components/const/connect-to-swarm.const.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
-              <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
+            <state relative-caret-position="-4">
+              <caret line="226" column="2" selection-start-line="226" selection-start-column="106" selection-end-line="226" selection-end-column="107" />
               <folding>
-                <element signature="e#0#243#0" expanded="true" />
+                <element signature="e#0#89#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="connection-bridge-utils-store-fabrics.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-utils/connection-bridge-utils-store-fabrics.ts">
+      <file leaf-file-name="swarm-store-class.const.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-class.const.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
-              <caret line="17" column="6" selection-start-line="17" selection-start-column="6" selection-end-line="17" selection-end-column="6" />
+            <state relative-caret-position="229">
+              <caret line="19" column="7" lean-forward="true" selection-start-line="19" selection-start-column="7" selection-end-line="19" selection-end-column="7" />
               <folding>
-                <element signature="e#0#526#0" expanded="true" />
+                <element signature="e#0#132#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="index.ts" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-utils/index.ts">
+      <file leaf-file-name="swarm-message-store.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/decentralized-protocol/classes/swarm-message-store/swarm-message-store.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="90">
-              <caret line="6" column="75" selection-start-line="6" selection-start-column="75" selection-end-line="6" selection-end-column="75" />
+            <state relative-caret-position="149">
+              <caret line="87" column="82" selection-start-line="87" selection-start-column="45" selection-end-line="87" selection-end-column="105" />
+              <folding>
+                <element signature="e#0#34#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="swarm-message-store-utils-connector-options-provider.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="924">
+              <caret line="66" column="24" lean-forward="true" selection-start-line="66" selection-start-column="24" selection-end-line="66" selection-end-column="24" />
+              <folding>
+                <element signature="e#0#88#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks.ts" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-store-connector-db-options/swarm-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-common/swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks/swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-97">
+              <caret line="94" column="13" selection-start-line="94" selection-start-column="13" selection-end-line="94" selection-end-column="13" />
+              <folding>
+                <element signature="e#0#347#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="swarm-message-store.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="267">
+              <caret line="38" column="46" selection-start-line="38" selection-start-column="46" selection-end-line="38" selection-end-column="46" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="swarm-message-store-with-entries-count-and-options-serializer.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-extended/swarm-message-store-with-entries-count-and-options-serializer/swarm-message-store-with-entries-count-and-options-serializer.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="308">
+              <caret line="55" column="62" selection-start-line="55" selection-start-column="62" selection-end-line="55" selection-end-column="62" />
+              <folding>
+                <element signature="e#0#90#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -64,9 +123,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>session</find>
-      <find>getSwarmMessageEncryptedCacheFabric</find>
-      <find>secretStorage</find>
       <find>authorize</find>
       <find>ISwarmMessagesDatabaseMessagesCollector</find>
       <find>SMDMCF</find>
@@ -94,10 +150,14 @@
       <find>ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructor</find>
       <find>ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorParams</find>
       <find>ISwarmStoreConnectorUtilsDatabaseOptionsValidatorsConstructor</find>
+      <find>swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControl</find>
+      <find>createSwarmMessageStoreUtilsExtenderDatabaseOptionsWithAccessControl</find>
+      <find>swarmMessageStoreUtilsExtendDatabaseOptionsWithAccessControlOrbitDB</find>
     </findStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$</dir>
       <dir>$PROJECT_DIR$/node_modules</dir>
+      <dir>$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-store-connector-db-options/swarm-store-conector-db-options-grand-access-context-binder</dir>
     </dirStrings>
   </component>
   <component name="Git.Settings">
@@ -107,8 +167,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/node_modules/ipfs/dist/index.js" />
-        <option value="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/utils/swarm-channel-options-factory/swarm-channel-options-factory.ts" />
         <option value="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channel.types.ts" />
         <option value="$PROJECT_DIR$/src/components/database-component/swarm-store-db-component.tsx" />
         <option value="$PROJECT_DIR$/src/components/message-component/message-component.tsx" />
@@ -158,6 +216,8 @@
         <option value="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-utils/connection-bridge-utils-store-fabrics.ts" />
         <option value="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-utils/connection-bridge-utils-store-database-list-storage-fabrics.ts" />
         <option value="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-utils/index.ts" />
+        <option value="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider.ts" />
+        <option value="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-store-connector-db-options/swarm-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-common/swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks/swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks.ts" />
       </list>
     </option>
   </component>
@@ -188,7 +248,7 @@
       <path value="$PROJECT_DIR$/package.json" />
     </packageJsonPaths>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="y" value="27" />
     <option name="width" value="960" />
     <option name="height" value="1007" />
@@ -199,6 +259,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -222,30 +283,57 @@
               <item name="protocol" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="classes" type="462c0819:PsiDirectoryNode" />
-              <item name="connection-bridge" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-message-store" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
               <item name="protocol" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="classes" type="462c0819:PsiDirectoryNode" />
-              <item name="connection-bridge" type="462c0819:PsiDirectoryNode" />
-              <item name="connection-bridge-utils" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-message-store" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-message-store-connectors" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
               <item name="protocol" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="classes" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-store-class" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-message-store" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-message-store-connectors" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-store-connector-db-options" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
               <item name="protocol" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="classes" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-store-class" type="462c0819:PsiDirectoryNode" />
-              <item name="swarm-store-connectors" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-message-store" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-message-store-connectors" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-store-connector-db-options" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-store-conector-db-options-grand-access-utils" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
+              <item name="protocol" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="classes" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-message-store" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-message-store-connectors" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-store-connector-db-options" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-store-conector-db-options-grand-access-utils" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-store-conector-db-options-grand-access-common" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
+              <item name="protocol" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="classes" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-message-store" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-message-store-connectors" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-store-connector-db-options" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-store-conector-db-options-grand-access-utils" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-store-conector-db-options-grand-access-common" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
@@ -253,17 +341,23 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="components" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
+              <item name="protocol" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="components" type="462c0819:PsiDirectoryNode" />
+              <item name="const" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="SearchEverywhereHistoryKey" value="src/classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider.ts&#10;src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector.ts&#10;src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter.ts&#10;src/classes/open-storage/open-storage.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/open-storage/open-storage.ts&#10;src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.ts" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-utils/connection-bridge-utils-store-database-list-storage-fabrics.ts" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-store-connector-db-options/swarm-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-common/swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks/swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks.ts" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.standard" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -277,19 +371,19 @@
     <property name="ts.external.directory.path" value="$PROJECT_DIR$/node_modules/typescript/lib" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-store-connector-db-options/swarm-store-conector-db-options-grand-access-utils" />
+      <recent name="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors" />
+      <recent name="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-class-helpers" />
+      <recent name="$PROJECT_DIR$/src/components/const" />
+      <recent name="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclasses-cache" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-utils" />
       <recent name="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-cached-store/swarm-messages-database-messages-cached-store-subclasses/swarm-messages-database-messages-cached-store" />
       <recent name="$PROJECT_DIR$/src/components/swarm-messages-database-component" />
       <recent name="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/utils/swarm-channel-options-factory" />
       <recent name="$PROJECT_DIR$/src/test" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors" />
-      <recent name="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-class-helpers" />
-      <recent name="$PROJECT_DIR$/src/components/const" />
-      <recent name="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclasses-cache" />
-      <recent name="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-cached-store/implementations" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -499,10 +593,11 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="82346000" />
+    <option name="totallyTimeSpent" value="83099000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="1366" height="741" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
@@ -511,19 +606,32 @@
       <window_info id="npm" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Terminal" order="9" weight="0.35607675" />
       <window_info anchor="bottom" id="TypeScript" order="8" weight="0.32875144" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.4633968" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17862372" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.5833333" />
+      <window_info anchor="bottom" id="Find" order="1" visible="true" weight="0.23717949" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="3" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.35738832" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
+      <window_info id="npm" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Version Control" order="10" weight="0.24600638" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.4633968" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="TypeScript" order="8" weight="0.32875144" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.28980526" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.5833333" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.35738832" />
       <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Terminal" order="9" weight="0.35607675" />
       <window_info anchor="right" id="Coverage" order="3" side_tool="true" weight="0.32960597" />
+      <window_info id="Favorites" order="3" side_tool="true" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -579,28 +687,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclasses-cache/index.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" selection-start-line="2" selection-end-line="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclasses-cache/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.types.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret selection-end-column="102" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclasses-cache/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter.types.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret selection-end-column="102" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclasses-cache/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter.const.ts" />
     <entry file="file://$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclasses-cache/swarm-store-connector-orbit-db-subclasses-cache.types.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="45">
@@ -645,13 +731,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="315">
           <caret line="21" column="35" selection-start-line="21" selection-start-column="35" selection-end-line="21" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1470">
-          <caret line="173" column="2" selection-start-line="173" selection-start-column="2" selection-end-line="173" selection-end-column="2" />
         </state>
       </provider>
     </entry>
@@ -753,8 +832,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/components/const/connect-to-swarm.const.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1138">
-          <caret line="112" column="41" selection-start-line="112" selection-start-column="41" selection-end-line="112" selection-end-column="41" />
+        <state relative-caret-position="-4">
+          <caret line="226" column="2" selection-start-line="226" selection-start-column="106" selection-end-line="226" selection-end-column="107" />
+          <folding>
+            <element signature="e#0#89#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -762,9 +844,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="885">
           <caret line="78" column="21" selection-start-line="78" selection-start-column="6" selection-end-line="78" selection-end-column="21" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -779,9 +858,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="7050">
           <caret line="529" column="62" selection-start-line="529" selection-start-column="62" selection-end-line="529" selection-end-column="62" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -799,32 +875,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-db-options-helpers/swarm-store-connector-db-options-class/swarm-store-connector-orbit-db-options-class.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="46" column="3" selection-start-line="46" selection-start-column="3" selection-end-line="46" selection-end-column="3" />
-          <folding>
-            <element signature="e#0#141#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-db-connector-helpers/swarm-store-connector-db-options-helpers/swarm-store-conector-db-options-grand-access-context-binder/swarm-store-conector-db-options-grand-access-context-binder.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#0#93#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-db-connector-helpers/swarm-store-connector-db-options-helpers/index.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="73" selection-start-line="2" selection-start-column="73" selection-end-line="2" selection-end-column="73" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-db-options-helpers/swarm-store-connector-db-options-class/swarm-store-connector-orbit-db-options-class.ts" />
+    <entry file="file://$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-db-connector-helpers/swarm-store-connector-db-options-helpers/swarm-store-conector-db-options-grand-access-context-binder/swarm-store-conector-db-options-grand-access-context-binder.ts" />
+    <entry file="file://$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-db-connector-helpers/swarm-store-connector-db-options-helpers/index.ts" />
     <entry file="file://$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-class.types.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-5920">
@@ -842,91 +895,66 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-db-connector-helpers/swarm-store-connector-db-options-helpers/swarm-message-store-connector-db-options-helpers.types.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="570">
-          <caret line="316" column="52" selection-start-line="316" selection-start-column="52" selection-end-line="316" selection-end-column="52" />
-          <folding>
-            <element signature="e#0#374#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-db-connector-helpers/swarm-store-connector-db-options-helpers/swarm-message-store-connector-db-options-helpers.types.ts" />
     <entry file="file://$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1335">
           <caret line="89" column="20" lean-forward="true" selection-start-line="89" selection-start-column="20" selection-end-line="89" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-db-connector-helpers/swarm-store-connector-db-options-helpers/swarm-store-connector-db-options-validators/swarm-store-connector-db-options-validators-fabric.ts" />
+    <entry file="file://$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-db-connector-helpers/swarm-store-connector-db-options-helpers/swarm-store-connector-db-options-class/swarm-store-connector-db-options-class-fabric.ts" />
+    <entry file="file://$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-utils/connection-bridge-utils-native-connection-fabrics.ts" />
+    <entry file="file://$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-utils/connection-bridge-utils-store-to-swarm-connector-fabrics.ts" />
+    <entry file="file://$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge.utils.ts" />
+    <entry file="file://$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-utils/connection-bridge-utils-store-database-list-storage-fabrics.ts" />
+    <entry file="file://$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-utils/connection-bridge-utils-store-fabrics.ts" />
+    <entry file="file://$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-utils/index.ts" />
+    <entry file="file://$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-class.const.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="229">
+          <caret line="19" column="7" lean-forward="true" selection-start-line="19" selection-start-column="7" selection-end-line="19" selection-end-column="7" />
           <folding>
-            <element signature="e#0#320#0" expanded="true" />
+            <element signature="e#0#132#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-db-connector-helpers/swarm-store-connector-db-options-helpers/swarm-store-connector-db-options-validators/swarm-store-connector-db-options-validators-fabric.ts">
+    <entry file="file://$PROJECT_DIR$/decentralized-protocol/classes/swarm-message-store/swarm-message-store.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="16" column="95" selection-start-line="16" selection-start-column="26" selection-end-line="16" selection-end-column="95" />
+        <state relative-caret-position="149">
+          <caret line="87" column="82" selection-start-line="87" selection-start-column="45" selection-end-line="87" selection-end-column="105" />
           <folding>
-            <element signature="e#0#93#0" expanded="true" />
+            <element signature="e#0#34#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-db-connector-helpers/swarm-store-connector-db-options-helpers/swarm-store-connector-db-options-class/swarm-store-connector-db-options-class-fabric.ts">
+    <entry file="file://$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="122" column="8" selection-start-line="122" selection-start-column="8" selection-end-line="122" selection-end-column="8" />
+        <state relative-caret-position="267">
+          <caret line="38" column="46" selection-start-line="38" selection-start-column="46" selection-end-line="38" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="924">
+          <caret line="66" column="24" lean-forward="true" selection-start-line="66" selection-start-column="24" selection-end-line="66" selection-end-column="24" />
           <folding>
-            <element signature="e#0#93#0" expanded="true" />
+            <element signature="e#0#88#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-utils/connection-bridge-utils-native-connection-fabrics.ts">
+    <entry file="file://$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-store-connector-db-options/swarm-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-common/swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks/swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="4" column="13" selection-start-line="4" selection-start-column="13" selection-end-line="4" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-utils/connection-bridge-utils-store-to-swarm-connector-fabrics.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="12" column="29" selection-start-line="12" selection-start-column="29" selection-end-line="12" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge.utils.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" lean-forward="true" selection-start-line="1" selection-end-line="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-utils/connection-bridge-utils-store-database-list-storage-fabrics.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
+        <state relative-caret-position="-97">
+          <caret line="94" column="13" selection-start-line="94" selection-start-column="13" selection-end-line="94" selection-end-column="13" />
           <folding>
-            <element signature="e#0#243#0" expanded="true" />
+            <element signature="e#0#347#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-utils/connection-bridge-utils-store-fabrics.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="17" column="6" selection-start-line="17" selection-start-column="6" selection-end-line="17" selection-end-column="6" />
-          <folding>
-            <element signature="e#0#526#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-utils/index.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="75" selection-start-line="6" selection-start-column="75" selection-end-line="6" selection-end-column="75" />
         </state>
       </provider>
     </entry>

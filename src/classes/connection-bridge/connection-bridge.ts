@@ -57,7 +57,7 @@ import {
   TNativeConnectionOptions,
   IConnectionBridgeOptionsGetMainConnectorFabric,
 } from './connection-bridge.types';
-import { createNativeConnection } from './connection-bridge-utils/connection-bridge-utils-native-connection-fabrics';
+import { createNativeConnection } from './connection-bridge-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-native-connection-fabrics';
 import { IPFS } from 'types/ipfs.types';
 import { ICentralAuthorityUserProfile } from '../central-authority-class/central-authority-class-types/central-authority-class-types-common';
 import {
@@ -65,7 +65,7 @@ import {
   ISwarmStoreConnector,
   TSwarmStoreConnectorBasicFabric,
 } from '../swarm-store-class/swarm-store-class.types';
-import { connectionBridgeSwarmStoreConnectorDatabasesPersistentListFabricDefault } from './connection-bridge-utils/connection-bridge-utils-store-database-list-storage-fabrics';
+import { connectionBridgeSwarmStoreConnectorDatabasesPersistentListFabricDefault } from './connection-bridge-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-store-database-list-storage-fabrics';
 import {
   TSwarmStoreConnectorConstructorOptions,
   ISwarmStoreConnectorDatabasesPersistentList,
@@ -95,8 +95,8 @@ import {
 import {
   connectorBasicFabricOrbitDBDefault,
   getSwarmStoreConnectionProviderOptionsForSwarmStoreConnector,
-} from './connection-bridge-utils/connection-bridge-utils-store-to-swarm-database-fabrics';
-import { getMainConnectorFabricDefault } from './connection-bridge-utils/connection-bridge-utils-store-to-swarm-connector-fabrics';
+} from './connection-bridge-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-store-to-swarm-database-fabrics';
+import { getMainConnectorFabricDefault } from './connection-bridge-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-store-to-swarm-connector-fabrics';
 
 /**
  * this class used if front of connection

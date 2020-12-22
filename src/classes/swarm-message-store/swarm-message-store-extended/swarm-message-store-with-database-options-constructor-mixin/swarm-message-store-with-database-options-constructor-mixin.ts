@@ -18,7 +18,7 @@ import {
 } from '../../swarm-message-store.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
-import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor } from '../../swarm-message-store-connectors/swarm-store-connector-db-options-helpers/swarm-message-store-connector-db-options-helpers.types';
+import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor } from '../../swarm-message-store-connectors/swarm-store-connector-db-options/swarm-store-connector-db-options.types';
 import { ISwarmMessageStore } from '../../swarm-message-store.types';
 
 // TODO - create connetction with it in the ConnectionBridge class

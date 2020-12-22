@@ -12,8 +12,8 @@ import {
   TSwarmStoreConnectorConstructorOptions,
   TSwarmStoreDatabaseOptions,
   TSwarmStoreDatabaseType,
-} from '../../swarm-store-class';
-import { TSwarmMessageSerialized } from '../../swarm-message';
+} from '../../../swarm-store-class';
+import { TSwarmMessageSerialized } from '../../../swarm-message';
 
 const getMainConnectorFabricForOrbitDBWithEntriesCount = <
   P extends ESwarmStoreConnector.OrbitDB,
