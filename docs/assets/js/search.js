@@ -41426,7 +41426,7 @@ typedoc.search.data = {
     {
       id: 4680,
       kind: 64,
-      name: 'swarmMessageStoreUtilsConnectorOptionsProvider',
+      name: 'swarmMessageStoreConnectionOptionsExtender',
       url:
         'modules/_src_classes_swarm_message_store_swarm_message_store_utils_swarm_message_store_utils_connector_options_provider_swarm_message_store_utils_connector_options_provider_.html#swarmmessagestoreutilsconnectoroptionsprovider',
       classes: 'tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter',
@@ -41445,7 +41445,7 @@ typedoc.search.data = {
     {
       id: 4682,
       kind: 16777216,
-      name: 'swarmMessageStoreUtilsConnectorOptionsProvider',
+      name: 'swarmMessageStoreConnectionOptionsExtender',
       url:
         'modules/_src_classes_swarm_message_store_swarm_message_store_utils_swarm_message_store_utils_connector_options_provider_index_.html#swarmmessagestoreutilsconnectoroptionsprovider',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
@@ -50609,7 +50609,7 @@ typedoc.search.data = {
     {
       id: 5740,
       kind: 16777216,
-      name: 'swarmMessageStoreUtilsConnectorOptionsProvider',
+      name: 'swarmMessageStoreConnectionOptionsExtender',
       url:
         'modules/_src_classes_swarm_message_store_swarm_message_store_utils_index_.html#swarmmessagestoreutilsconnectoroptionsprovider',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
@@ -50658,7 +50658,7 @@ typedoc.search.data = {
     {
       id: 5746,
       kind: 16777216,
-      name: 'swarmMessageStoreUtilsConnectorOptionsProvider',
+      name: 'swarmMessageStoreConnectionOptionsExtender',
       url: 'modules/_src_classes_swarm_message_store_index_.html#swarmmessagestoreutilsconnectoroptionsprovider',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
       parent: '"src/classes/swarm-message-store/index"',
@@ -55964,7 +55964,7 @@ typedoc.search.data = {
     {
       id: 6365,
       kind: 16777216,
-      name: 'swarmMessageStoreUtilsConnectorOptionsProvider',
+      name: 'swarmMessageStoreConnectionOptionsExtender',
       url: 'modules/_src_classes_index_.html#swarmmessagestoreutilsconnectoroptionsprovider',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
       parent: '"src/classes/index"',
@@ -61419,7 +61419,7 @@ typedoc.search.data = {
     {
       id: 7041,
       kind: 16777216,
-      name: 'swarmMessageStoreUtilsConnectorOptionsProvider',
+      name: 'swarmMessageStoreConnectionOptionsExtender',
       url: 'modules/_src_dev_.html#swarmmessagestoreutilsconnectoroptionsprovider',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
       parent: '"src/dev"',
@@ -64283,7 +64283,7 @@ typedoc.search.data = {
     {
       id: 7399,
       kind: 16777216,
-      name: 'swarmMessageStoreUtilsConnectorOptionsProvider',
+      name: 'swarmMessageStoreConnectionOptionsExtender',
       url: 'modules/_src_index_.html#swarmmessagestoreutilsconnectoroptionsprovider',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
       parent: '"src/index"',
@@ -67147,7 +67147,7 @@ typedoc.search.data = {
     {
       id: 7757,
       kind: 16777216,
-      name: 'swarmMessageStoreUtilsConnectorOptionsProvider',
+      name: 'swarmMessageStoreConnectionOptionsExtender',
       url: 'modules/_src_prod_.html#swarmmessagestoreutilsconnectoroptionsprovider',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
       parent: '"src/prod"',

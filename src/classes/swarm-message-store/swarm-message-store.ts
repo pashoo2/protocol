@@ -1,7 +1,6 @@
 import assert from 'assert';
 import { SwarmStore } from '../swarm-store-class/swarm-store-class';
 import { ESwarmStoreConnector, ESwarmStoreEventNames } from '../swarm-store-class/swarm-store-class.const';
-import { ISwarmMessageStoreAccessControlOptions, ISwarmMessageDatabaseConstructors } from './swarm-message-store.types';
 import {
   ISwarmMessageConstructor,
   TSwarmMessageInstance,
@@ -30,14 +29,14 @@ import {
 } from '../swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageStoreConnectReturnType } from './swarm-message-store.types';
 import { ISwarmMessageStoreEvents, ISwarmMessageStore } from './swarm-message-store.types';
-import { swarmMessageStoreUtilsConnectorOptionsProvider } from './swarm-message-store-connectors/swarm-message-store-connectors-options-provider';
 import { getMessageConstructorForDatabase } from './swarm-message-store-utils/swarm-message-store-utils-common/swarm-message-store-utils-common';
 import { ISwarmMessageStoreDeleteMessageArg } from './swarm-message-store.types';
 import { TSwarmMessageSerialized, TSwarmMessageConstructorBodyMessage } from '../swarm-message/swarm-message-constructor.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { TSwarmStoreDatabaseOptions, TSwarmStoreDatabaseType } from '../swarm-store-class/swarm-store-class.types';
-import { createSwarmMessageStoreUtilsExtenderOrbitDBDatabaseOptionsWithAccessControl } from './swarm-message-store-connectors/swarm-store-connector-db-options/swarm-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-common-functions/swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks/swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks';
 
+import { ISwarmMessageStoreAccessControlOptions, ISwarmMessageDatabaseConstructors } from './swarm-message-store.types';
+import { extendSwarmMessageStoreConnectionOptionsWithAccessControlAndConnectorSpecificOptions } from './swarm-message-store-connection-options/swarm-message-store-connection-options-utils/swarm-message-store-connection-options-extender';
 import {
   ISwarmMessageStoreMessagingRequestWithMetaResult,
   ISwarmMessageStoreSwarmMessageMetadata,
@@ -71,6 +70,7 @@ import {
 } from './swarm-message-store.types';
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import { PromiseResolveType } from '../../types/promise.types';
+import { createSwarmMessageStoreUtilsExtenderOrbitDBDatabaseOptionsWithAccessControl } from './swarm-message-store-connectors/swarm-message-store-connector-options/swarm-message-store-connector-db-options/swarm-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-common-functions/swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks/swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks';
 import {
   TSwarmStoreConnectorConnectionOptions,
   ISwarmStoreProviderOptions,
@@ -193,7 +193,7 @@ export class SwarmMessageStore<
     const optionsSwarmStore = await this._extendSwarmMessgeStoreOptions(options, extenderWithAccessControl);
 
     // TODO - add class which can use a custom datbase options constructor instead
-    // of the swarmMessageStoreUtilsConnectorOptionsProvider and extendsWithAccessControl
+    // of the swarmMessageStoreConnectionOptionsExtender and extendsWithAccessControl
     this._setCurrentDatabaseOptionsExtenderWithAccessControl(extenderWithAccessControl);
     this._setOptions(optionsSwarmStore);
 
@@ -1258,7 +1258,7 @@ export class SwarmMessageStore<
     options: O,
     extenderDbOptionsWithAccessControl: (dbOptions: DBO) => DBO & ISwarmStoreDatabaseBaseOptions & { provider: P }
   ) {
-    return await swarmMessageStoreUtilsConnectorOptionsProvider<
+    return await extendSwarmMessageStoreConnectionOptionsWithAccessControlAndConnectorSpecificOptions<
       P,
       ItemType,
       DbType,

@@ -1,10 +1,10 @@
-import { ESwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.const';
-import { TSwarmMessageInstance, TSwarmMessageSerialized } from '../../../swarm-message/swarm-message-constructor.types';
+import { ESwarmStoreConnector } from '../../../../swarm-store-class/swarm-store-class.const';
+import { TSwarmMessageInstance, TSwarmMessageSerialized } from '../../../../swarm-message/swarm-message-constructor.types';
 import {
   ISwarmStoreConnectorOrbitDBConnectionOptions,
   ISwarmStoreConnectorOrbitDBOptions,
-} from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.types';
-import { ipfsUtilsConnectBasic } from '../../../../utils/ipfs-utils/ipfs-utils';
+} from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.types';
+import { ipfsUtilsConnectBasic } from '../../../../../utils/ipfs-utils/ipfs-utils';
 import {
   ISwarmStoreConnector,
   ISwarmStoreConnectorBasic,
@@ -13,13 +13,13 @@ import {
   TSwarmStoreConnectorConnectionOptions,
   TSwarmStoreDatabaseOptions,
   TSwarmStoreDatabaseType,
-} from '../../../swarm-store-class/swarm-store-class.types';
+} from '../../../../swarm-store-class/swarm-store-class.types';
 import {
   ISwarmMessageStoreAccessControlOptions,
   ISwarmMessageStoreOptionsWithConnectorFabric,
   TSwarmMessagesStoreGrantAccessCallback,
-} from '../../swarm-message-store.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+} from '../../../swarm-message-store.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 
 /**
  * Extends options for connector to a databases of the OrbitDB type
@@ -33,7 +33,7 @@ import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm
  *   }
  * >)}
  */
-async function swarmMessageStoreUtilsConnectorOptionsProviderForOrbitDB<
+async function extendSwarmMessageStoreConnectionOptionsForOrbitDBConnector<
   P extends ESwarmStoreConnector.OrbitDB,
   ItemType extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
@@ -98,7 +98,7 @@ async function swarmMessageStoreUtilsConnectorOptionsProviderForOrbitDB<
  * @returns {ISwarmStoreOptions<P>}
  * @throws if the options can not be transformed then throws
  */
-export async function swarmMessageStoreUtilsConnectorOptionsProvider<
+export async function extendSwarmMessageStoreConnectionOptionsWithAccessControlAndConnectorSpecificOptions<
   P extends ESwarmStoreConnector.OrbitDB,
   ItemType extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
@@ -132,7 +132,7 @@ export async function swarmMessageStoreUtilsConnectorOptionsProvider<
 
   switch (provider) {
     case ESwarmStoreConnector.OrbitDB:
-      return swarmMessageStoreUtilsConnectorOptionsProviderForOrbitDB<
+      return (await extendSwarmMessageStoreConnectionOptionsForOrbitDBConnector<
         P,
         ItemType,
         DbType,
@@ -147,7 +147,7 @@ export async function swarmMessageStoreUtilsConnectorOptionsProvider<
         MCF,
         ACO,
         O
-      >(options, extendWithAccessControlOptions) as Promise<O>;
+      >(options, extendWithAccessControlOptions)) as O;
     default:
       throw new Error(`Failed to transform options cause the provider "${provider}" is unknown`);
   }
