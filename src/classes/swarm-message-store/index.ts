@@ -4,4 +4,4 @@ export * from './swarm-message-store-utils';
 
 export * from './swarm-message-store.const';
 
-export * from './swarm-message-store.types';
+export * from './types/swarm-message-store.types';

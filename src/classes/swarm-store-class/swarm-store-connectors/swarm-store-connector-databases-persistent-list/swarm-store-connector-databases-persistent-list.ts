@@ -21,6 +21,7 @@ import {
   ISwarmStoreConnectorDatabasesPersistentList,
 } from '../../swarm-store-class.types';
 
+//  TODO - create class which works with a database options class
 export class SwarmStoreConnectorPersistentList<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
@@ -89,6 +90,11 @@ export class SwarmStoreConnectorPersistentList<
     this._checkInstanceIsNotClosed();
     await this._loadDatabasesListIfNotLoaded();
     await this._waitQueueAndRunOperationInTransaction(this._createAddDatabaseToTheListInStorageOperation(dbName, dbOptions));
+  }
+
+  public async addDatabaseSerializedOptions(dbName: DBO['dbName'], dbOptions: string): Promise<void> {
+    this._checkInstanceIsNotClosed();
+    await this._loadDatabasesListIfNotLoaded();
   }
 
   public async removeDatabase(dbName: DBO['dbName']): Promise<void> {
@@ -420,11 +426,7 @@ export class SwarmStoreConnectorPersistentList<
     return async () => await this._removeDatabaseFromListAndSaveInStorage(dbName);
   }
 
-  protected _createAddDatabaseToTheListInStorageOperation(
-    dbName: DBO['dbName'],
-    dbOptions: DBO,
-    attempt = 1
-  ): () => Promise<void> {
+  protected _createAddDatabaseToTheListInStorageOperation(dbName: DBO['dbName'], dbOptions: DBO): () => Promise<void> {
     return async () => await this._addDatabaseToTheListAndSaveInStorage(dbName, dbOptions);
   }
 }

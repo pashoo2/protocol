@@ -27,21 +27,21 @@ import {
   TSwarmStoreDatabaseMethod,
   ISwarmStoreDatabaseBaseOptions,
 } from '../swarm-store-class/swarm-store-class.types';
-import { TSwarmMessageStoreConnectReturnType } from './swarm-message-store.types';
-import { ISwarmMessageStoreEvents, ISwarmMessageStore } from './swarm-message-store.types';
-import { getMessageConstructorForDatabase } from './swarm-message-store-utils/swarm-message-store-utils-common/swarm-message-store-utils-common';
-import { ISwarmMessageStoreDeleteMessageArg } from './swarm-message-store.types';
+import { TSwarmMessageStoreConnectReturnType } from './types/swarm-message-store.types';
+import { ISwarmMessageStoreEvents, ISwarmMessageStore } from './types/swarm-message-store.types';
+import { getMessageConstructorForDatabase } from './swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-message-store-conector-db-options-grand-access-utils/swarm-message-store-conector-db-options-grand-access-utils-common-grand-access-checker/swarm-message-store-conector-db-options-grand-access-utils-common-grand-access-checker';
+import { ISwarmMessageStoreDeleteMessageArg } from './types/swarm-message-store.types';
 import { TSwarmMessageSerialized, TSwarmMessageConstructorBodyMessage } from '../swarm-message/swarm-message-constructor.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { TSwarmStoreDatabaseOptions, TSwarmStoreDatabaseType } from '../swarm-store-class/swarm-store-class.types';
 
-import { ISwarmMessageStoreAccessControlOptions, ISwarmMessageDatabaseConstructors } from './swarm-message-store.types';
+import { ISwarmMessageStoreAccessControlOptions, ISwarmMessageDatabaseConstructors } from './types/swarm-message-store.types';
 import { extendSwarmMessageStoreConnectionOptionsWithAccessControlAndConnectorSpecificOptions } from './swarm-message-store-connection-options/swarm-message-store-connection-options-utils/swarm-message-store-connection-options-extender';
 import {
   ISwarmMessageStoreMessagingRequestWithMetaResult,
   ISwarmMessageStoreSwarmMessageMetadata,
   TSwarmMessageStoreEntryRaw,
-} from './swarm-message-store.types';
+} from './types/swarm-message-store.types';
 import {
   TSwarmStoreDatabaseRequestMethodReturnType,
   TSwarmStoreDatabaseEntityKey,
@@ -67,10 +67,10 @@ import { ISwarmStoreConnectorBasic, ISwarmStoreConnector } from '../swarm-store-
 import {
   ISwarmMessageStoreOptionsWithConnectorFabric,
   TSwarmMessagesStoreGrantAccessCallback,
-} from './swarm-message-store.types';
+} from './types/swarm-message-store.types';
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import { PromiseResolveType } from '../../types/promise.types';
-import { createSwarmMessageStoreUtilsExtenderOrbitDBDatabaseOptionsWithAccessControl } from './swarm-message-store-connectors/swarm-message-store-connector-options/swarm-message-store-connector-db-options/swarm-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-common-functions/swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks/swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks';
+import { createSwarmMessageStoreUtilsExtenderOrbitDBDatabaseOptionsWithAccessControl } from './swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-message-store-conector-db-options-grand-access-utils/swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks/swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks';
 import {
   TSwarmStoreConnectorConnectionOptions,
   ISwarmStoreProviderOptions,

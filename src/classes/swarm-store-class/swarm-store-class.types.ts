@@ -700,7 +700,8 @@ export interface ISwarmStoreConnectorDatabasesPersistentList<
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
-  DBL extends Record<DBO['dbName'], DBO>
+  DBL extends Record<DBO['dbName'], DBO>,
+  DBOS extends TSwarmStoreDatabaseOptionsSerialized = string
 > {
   /**
    * List of databases known loaded from the persistent storage

@@ -4,7 +4,7 @@ import {
   ISwarmMessageStoreOptions,
   ISwarmMessageStoreOptionsWithConnectorFabric,
   TSwarmMessagesStoreGrantAccessCallback,
-} from '../swarm-message-store/swarm-message-store.types';
+} from '../swarm-message-store/types/swarm-message-store.types';
 import { ESwarmStoreConnector } from '../swarm-store-class/swarm-store-class.const';
 import { ICentralAuthority, ICentralAuthorityOptions } from '../central-authority-class/central-authority-class.types';
 import {

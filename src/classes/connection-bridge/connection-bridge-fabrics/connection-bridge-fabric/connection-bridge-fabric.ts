@@ -8,7 +8,7 @@ import { TSwarmMessageInstance } from '../../../swarm-message/swarm-message-cons
 import {
   TSwarmMessagesStoreGrantAccessCallback,
   ISwarmMessageStoreAccessControlOptions,
-} from '../../../swarm-message-store/swarm-message-store.types';
+} from '../../../swarm-message-store/types/swarm-message-store.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import {
   TSwarmStoreDatabaseType,
@@ -23,7 +23,7 @@ import {
 import {
   ISwarmMessageStoreOptionsWithConnectorFabric,
   ISwarmMessageStore,
-} from '../../../swarm-message-store/swarm-message-store.types';
+} from '../../../swarm-message-store/types/swarm-message-store.types';
 import { ConnectionBridge } from '../../connection-bridge';
 import {
   TSwarmStoreDatabaseOptions,

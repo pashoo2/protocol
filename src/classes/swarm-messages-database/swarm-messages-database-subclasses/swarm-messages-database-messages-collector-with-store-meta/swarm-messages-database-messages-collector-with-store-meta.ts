@@ -1,7 +1,7 @@
 import {
   ISwarmMessageStore,
   ISwarmMessageStoreMessagingRequestWithMetaResult,
-} from '../../../swarm-message-store/swarm-message-store.types';
+} from '../../../swarm-message-store/types/swarm-message-store.types';
 import { ESwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.const';
 import {
   TSwarmStoreDatabaseType,
@@ -19,7 +19,7 @@ import {
   TSwarmMessagesStoreGrantAccessCallback,
   ISwarmMessageStoreAccessControlOptions,
   ISwarmMessageStoreOptionsWithConnectorFabric,
-} from '../../../swarm-message-store/swarm-message-store.types';
+} from '../../../swarm-message-store/types/swarm-message-store.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { ISwarmStoreConnectorBasic, ISwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.types';
 import {

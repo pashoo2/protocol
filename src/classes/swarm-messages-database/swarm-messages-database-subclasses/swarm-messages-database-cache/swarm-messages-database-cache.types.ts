@@ -7,7 +7,7 @@ import {
 import { ESwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.const';
 import { ISwarmMessagesDatabaseMesssageMeta, TSwarmMessageDatabaseMessagesCached } from '../../swarm-messages-database.types';
 import { ISwarmMessageInstanceDecrypted } from '../../../swarm-message/swarm-message-constructor.types';
-import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../swarm-message-store/swarm-message-store.types';
+import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../swarm-message-store/types/swarm-message-store.types';
 
 export type TSwarmMessagesDatabaseCacheMessagesRemovedFromCache<
   P extends ESwarmStoreConnector,

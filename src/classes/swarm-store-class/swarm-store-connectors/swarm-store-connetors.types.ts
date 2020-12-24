@@ -27,7 +27,7 @@ export interface ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext {
    * @type {TSwarmMessageUserIdentifierSerialized}
    * @memberof ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext
    */
-  currentUserId: TSwarmMessageUserIdentifierSerialized;
+  readonly currentUserId: TSwarmMessageUserIdentifierSerialized;
 
   /**
    * Whether the user with the identity exists
@@ -36,7 +36,7 @@ export interface ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext {
    * @returns {Promise<boolean>}
    * @memberof ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext
    */
-  isUserExists(userId: TSwarmMessageUserIdentifierSerialized): Promise<boolean>;
+  isUserValid(userId: TSwarmMessageUserIdentifierSerialized): Promise<boolean>;
 }
 
 /**

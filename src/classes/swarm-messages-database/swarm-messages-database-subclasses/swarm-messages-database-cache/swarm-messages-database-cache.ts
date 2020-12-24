@@ -26,7 +26,7 @@ import {
 import { getItemsCount, round } from '../../../../utils/common-utils';
 import { TTypedEmitter } from '../../../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 import { getEventEmitterInstance } from '../../../basic-classes/event-emitter-class-base/event-emitter-class-base';
-import { ISwarmMessageStoreMessageWithMeta } from '../../../swarm-message-store/swarm-message-store.types';
+import { ISwarmMessageStoreMessageWithMeta } from '../../../swarm-message-store/types/swarm-message-store.types';
 import { ISwarmMessagesDatabaseCacheOptions } from '../../swarm-messages-database.types';
 import {
   SWARM_MESSAGES_DATABASE_CACHE_PLANNED_CACHE_UPDATE_FAILED_RETRY_DELAY_MS,

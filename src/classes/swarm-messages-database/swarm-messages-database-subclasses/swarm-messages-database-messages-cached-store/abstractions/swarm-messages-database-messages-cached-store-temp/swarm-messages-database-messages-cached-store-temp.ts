@@ -6,7 +6,7 @@ import { TSwarmStoreDatabaseType } from '../../../../../swarm-store-class/swarm-
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { SwarmMessagesDatabaseMessagesCachedStoreKeyValue } from '../../implementations/swarm-messages-database-messages-cached-store-keyvalue/swarm-messages-database-messages-cached-store-keyvalue';
 import { SwarmMessagesDatabaseMessagesCachedStoreFeed } from '../../implementations/swarm-messages-database-messages-cached-store-feed/index';
-import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../../../swarm-message-store/swarm-message-store.types';
+import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../../../swarm-message-store/types/swarm-message-store.types';
 import { ISwarmMessageDecrypted } from '../../../../../swarm-message/swarm-message-constructor.types';
 import {
   ISwarmMessagesDatabaseMesssageMeta,

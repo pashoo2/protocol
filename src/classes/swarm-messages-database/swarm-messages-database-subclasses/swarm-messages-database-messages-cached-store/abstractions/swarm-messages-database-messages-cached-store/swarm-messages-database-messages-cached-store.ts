@@ -14,7 +14,7 @@ import {
   ISwarmMessagesDatabaseMessagesCacheStoreTemp,
 } from '../../../swarm-messages-database-cache/swarm-messages-database-cache.types';
 import { whetherAllSwarmMessagesDecryptedAreEqual } from '../../../../../swarm-message/swarm-message-utils/swarm-message-utils-common/swarm-message-utils-common-decrypted';
-import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../../../swarm-message-store/swarm-message-store.types';
+import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../../../swarm-message-store/types/swarm-message-store.types';
 import { isValidSwarmMessageDecryptedFormat } from '../../../../../swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-swarm-message';
 import { ISwarmMessageInstanceDecrypted } from '../../../../../swarm-message/swarm-message-constructor.types';
 import { commonUtilsIsTwoArraysHaveSameItems } from '../../../../../../utils/common-utils/common-utils-array';

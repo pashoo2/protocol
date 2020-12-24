@@ -10,7 +10,7 @@ import { ISwarmMessagesDatabaseMessagesCacheMessageDescription } from './swarm-m
 import {
   ISwarmMessageStoreMessageWithMeta,
   ISwarmMessageStoreMessagingRequestWithMetaResult,
-} from '../../../swarm-message-store/swarm-message-store.types';
+} from '../../../swarm-message-store/types/swarm-message-store.types';
 import { TSwarmStoreDatabaseEntityUniqueIndex } from '../../../swarm-store-class/swarm-store-class.types';
 import { isValidSwarmMessageDecryptedFormat } from '../../../swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-swarm-message';
 import { whetherAllSwarmMessagesDecryptedAreEqual } from '../../../swarm-message/swarm-message-utils/swarm-message-utils-common/swarm-message-utils-common-decrypted';

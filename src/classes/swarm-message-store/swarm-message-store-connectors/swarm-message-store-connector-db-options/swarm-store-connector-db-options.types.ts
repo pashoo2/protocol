@@ -22,9 +22,13 @@ import {
 } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 
 export interface ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContextFabric<
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  ItemType extends TSwarmStoreValueTypes<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
   CTX extends ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext
 > {
-  (): CTX;
+  (dbOptions: DBO): CTX;
 }
 
 /**
@@ -254,7 +258,13 @@ export interface ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValida
    * @type {CTX}
    * @memberof ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorFabricParams
    */
-  grandAccessCallbackContextFabric: ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContextFabric<CTX>;
+  grandAccessCallbackContextFabric: ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContextFabric<
+    P,
+    DbType,
+    ItemType,
+    DBO,
+    CTX
+  >;
   /**
    * A serializer for common object-string serialization (for simple logic JSON can be used)
    *

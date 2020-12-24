@@ -17,7 +17,7 @@ import {
 import {
   ISwarmMessageStoreDeleteMessageArg,
   ISwarmMessageStore,
-} from '../../classes/swarm-message-store/swarm-message-store.types';
+} from '../../classes/swarm-message-store/types/swarm-message-store.types';
 import { setMessageDeleteListener, setCacheUpdateListener } from './swarm-messages-database-component.utils';
 import {
   TSwarmMessageDatabaseMessagesCached,

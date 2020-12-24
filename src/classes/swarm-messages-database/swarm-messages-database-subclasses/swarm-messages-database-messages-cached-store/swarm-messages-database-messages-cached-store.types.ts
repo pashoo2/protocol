@@ -1,6 +1,6 @@
 import { ESwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.const';
 import { TSwarmStoreDatabaseType } from '../../../swarm-store-class/swarm-store-class.types';
-import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../swarm-message-store/swarm-message-store.types';
+import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../swarm-message-store/types/swarm-message-store.types';
 import { ISwarmMessagesDatabaseMessagesCacheStoreTemp } from '../swarm-messages-database-cache/swarm-messages-database-cache.types';
 import { ISwarmMessagesDatabaseMesssageMeta, TSwarmMessageDatabaseMessagesCached } from '../../swarm-messages-database.types';
 import { ISwarmMessageInstanceDecrypted } from '../../../swarm-message/swarm-message-constructor.types';

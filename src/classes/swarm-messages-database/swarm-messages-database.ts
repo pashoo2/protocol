@@ -13,7 +13,7 @@ import {
   TSwarmMessagesStoreGrantAccessCallback,
   ISwarmMessageStoreAccessControlOptions,
   ISwarmMessageStoreOptionsWithConnectorFabric,
-} from '../swarm-message-store/swarm-message-store.types';
+} from '../swarm-message-store/types/swarm-message-store.types';
 import { getEventEmitterInstance } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { ESwarmMessageStoreEventNames } from '../swarm-message-store/swarm-message-store.const';
 import {
@@ -38,7 +38,7 @@ import {
   SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_UPDATE_RETRY_DELAY_MS,
   SWARM_MESSAGES_DATABASE_MESSAGES_EMITTED_UNIQ_ID_ADDRESS_PREFIX,
 } from './swarm-messages-database.const';
-import { ISwarmMessageStoreMessageWithMeta } from '../swarm-message-store/swarm-message-store.types';
+import { ISwarmMessageStoreMessageWithMeta } from '../swarm-message-store/types/swarm-message-store.types';
 import { delay } from '../../utils/common-utils/common-utils-timer';
 import { SWARM_MESSAGES_DATABASE_MESSAGES_MAX_ATTEMPTS_CACHE_UPDATE } from './swarm-messages-database.const';
 import {

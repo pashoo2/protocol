@@ -23,7 +23,7 @@ import { SWARM_MESSGES_DATABASE_SWARM_MESSAGES_CACHED_SWARM_MESSAGES_META_HASH_D
 import { whetherAllSwarmMessagesDecryptedAreEqual } from '../../../../../swarm-message/swarm-message-utils/swarm-message-utils-common/swarm-message-utils-common-decrypted';
 import { TSwarmMessagesDatabaseMessagesCacheStore } from '../../../swarm-messages-database-cache/swarm-messages-database-cache.types';
 import { ISwarmMessagesDatabaseMessagesCacheStoreExtendedDefferedMethods } from '../../swarm-messages-database-messages-cached-store.types';
-import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../../../swarm-message-store/swarm-message-store.types';
+import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../../../swarm-message-store/types/swarm-message-store.types';
 import { _checkWhetherSameSwarmMessagesDecrypted } from '../../../swarm-messages-database-cache/swarm-messages-database-cache.utils';
 import { TSwarmStoreDatabaseEntityUniqueIndex } from '../../../../../swarm-store-class/swarm-store-class.types';
 

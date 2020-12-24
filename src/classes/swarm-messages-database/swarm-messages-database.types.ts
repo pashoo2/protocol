@@ -6,7 +6,7 @@ import {
   ISwarmMessageStoreMessagingRequestWithMetaResult,
   ISwarmMessageStoreOptionsWithConnectorFabric,
   TSwarmMessagesStoreGrantAccessCallback,
-} from '../swarm-message-store/swarm-message-store.types';
+} from '../swarm-message-store/types/swarm-message-store.types';
 import { ESwarmStoreConnector, ESwarmStoreEventNames } from '../swarm-store-class/swarm-store-class.const';
 import {
   ISwarmStoreConnector,

@@ -18,7 +18,7 @@ import {
   ISwarmMessageStoreEvents,
   TSwarmMessagesStoreGrantAccessCallback,
   ISwarmMessageStoreAccessControlOptions,
-} from '../swarm-message-store/swarm-message-store.types';
+} from '../swarm-message-store/types/swarm-message-store.types';
 import { extend } from '../../utils/common-utils/common-utils-objects';
 import {
   CONNECTION_BRIDGE_OPTIONS_DEFAULT_AUTH_PROVIDERS_POOL,
@@ -65,7 +65,6 @@ import {
   ISwarmStoreConnector,
   TSwarmStoreConnectorBasicFabric,
 } from '../swarm-store-class/swarm-store-class.types';
-import { connectionBridgeSwarmStoreConnectorDatabasesPersistentListFabricDefault } from './connection-bridge-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-store-database-list-storage-fabrics';
 import {
   TSwarmStoreConnectorConstructorOptions,
   ISwarmStoreConnectorDatabasesPersistentList,
@@ -86,7 +85,7 @@ import { IStorageCommon } from '../../types/storage.types';
 import {
   ISwarmMessageDatabaseConstructors,
   ISwarmMessageStoreOptionsWithConnectorFabric,
-} from '../swarm-message-store/swarm-message-store.types';
+} from '../swarm-message-store/types/swarm-message-store.types';
 import {
   TSwarmStoreDatabaseOptions,
   ISwarmStoreProviderOptions,

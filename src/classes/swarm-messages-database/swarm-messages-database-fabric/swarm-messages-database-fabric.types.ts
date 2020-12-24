@@ -4,7 +4,7 @@ import {
   TSwarmMessagesStoreGrantAccessCallback,
   ISwarmMessageStoreAccessControlOptions,
   ISwarmMessageStoreOptionsWithConnectorFabric,
-} from '../../swarm-message-store/swarm-message-store.types';
+} from '../../swarm-message-store/types/swarm-message-store.types';
 import {
   TSwarmMessageSerialized,
   TSwarmMessageInstance,

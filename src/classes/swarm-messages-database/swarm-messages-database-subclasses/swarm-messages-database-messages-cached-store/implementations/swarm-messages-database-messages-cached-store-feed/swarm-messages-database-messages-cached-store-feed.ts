@@ -10,7 +10,7 @@ import {
   ISwarmMessagesDatabaseMesssageMeta,
   TSwarmMessageDatabaseMessagesCached,
 } from '../../../../swarm-messages-database.types';
-import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../../../swarm-message-store/swarm-message-store.types';
+import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../../../swarm-message-store/types/swarm-message-store.types';
 import { ISwarmMessageInstanceDecrypted } from '../../../../../swarm-message/swarm-message-constructor.types';
 import assert from 'assert';
 

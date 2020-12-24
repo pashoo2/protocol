@@ -42,7 +42,7 @@ import {
 } from '../../classes/swarm-messages-database/swarm-messages-database.messages-collector.types';
 import { ConnectToSwarm, P } from '../connect-to-swarm/connect-to-swarm';
 import { createSwarmMessagesDatabaseMessagesCollectorWithStoreMetaInstance } from '../../classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector-with-store-meta/swarm-messages-database-messages-collector-with-store-meta';
-import { ISwarmMessageStore } from '../../classes/swarm-message-store/swarm-message-store.types';
+import { ISwarmMessageStore } from '../../classes/swarm-message-store/types/swarm-message-store.types';
 import {
   ISwarmStoreConnectorBasicWithEntriesCount,
   ISwarmStoreConnectorWithEntriesCount,

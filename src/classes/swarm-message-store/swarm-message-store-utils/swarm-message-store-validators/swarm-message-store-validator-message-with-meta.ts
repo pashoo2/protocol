@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { ISwarmMessageStoreMessageWithMeta } from '../../swarm-message-store.types';
+import { ISwarmMessageStoreMessageWithMeta } from '../../types/swarm-message-store.types';
 import { ESwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.const';
 import { isValidSwarmMessageDecryptedFormat } from './swarm-message-store-validator-swarm-message';
 import { TSwarmMessageSerialized, ISwarmMessageInstanceDecrypted } from '../../../swarm-message/swarm-message-constructor.types';
