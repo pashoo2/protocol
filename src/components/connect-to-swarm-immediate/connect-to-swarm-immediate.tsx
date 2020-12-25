@@ -8,7 +8,7 @@ import {
   TSwarmMessageInstance,
   ISwarmMessageInstanceDecrypted,
 } from '../../classes/swarm-message/swarm-message-constructor.types';
-import { IConnectionBridgeOptionsDefault } from '../../classes/connection-bridge/connection-bridge.types';
+import { IConnectionBridgeOptionsDefault } from '../../classes/connection-bridge/types/connection-bridge.types';
 import { IUserCredentialsCommon } from '../../types/credentials.types';
 import { TSwarmMessageUserIdentifierSerialized } from '../../classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import {

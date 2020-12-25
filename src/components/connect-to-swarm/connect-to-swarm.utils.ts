@@ -4,7 +4,7 @@ import { TSwarmStoreDatabaseType } from '../../classes/swarm-store-class/swarm-s
 import {
   TConnectionBridgeOptionsAuthCredentials,
   IConnectionBridgeOptionsDefault,
-} from '../../classes/connection-bridge/connection-bridge.types';
+} from '../../classes/connection-bridge/types/connection-bridge.types';
 import { TSwarmMessageSerialized } from '../../classes/swarm-message/swarm-message-constructor.types';
 import {
   TConnectionBridgeOptionsConnectorMain,

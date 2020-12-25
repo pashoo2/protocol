@@ -5,5 +5,5 @@ export interface ISwarmMessageStoreConectorDbOptionsGrandAccessContextClassFabri
   readonly dbName: string;
   readonly isPublicDb: boolean;
   readonly usersIdsWithWriteAccess: TSwarmMessageUserIdentifierSerialized[];
-  readonly SwarmMessageConstructor: SMC;
+  readonly swarmMessageConstructor: SMC;
 }

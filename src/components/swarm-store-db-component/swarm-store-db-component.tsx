@@ -3,7 +3,7 @@ import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../classes/swarm-sto
 import { CONNECT_TO_SWARM_STORAGE_DEFAULT_MESSAGE_BODY } from '../const/connect-to-swarm.const';
 import { MessageComponent } from '../message-component/message-component';
 import { IMessageDescription } from '../connect-to-swarm/connect-to-swarm';
-import { IConnectionBridgeUnknown } from '../../classes/connection-bridge/connection-bridge.types';
+import { IConnectionBridgeUnknown } from '../../classes/connection-bridge/types/connection-bridge.types';
 import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
 import {
   TSwarmStoreDatabaseType,

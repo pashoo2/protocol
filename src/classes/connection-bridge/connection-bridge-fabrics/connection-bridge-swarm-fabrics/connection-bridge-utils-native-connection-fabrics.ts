@@ -1,4 +1,4 @@
-import { TNativeConnectionOptions, TNativeConnectionType } from '../../connection-bridge.types';
+import { TNativeConnectionOptions, TNativeConnectionType } from '../../types/connection-bridge.types';
 import { ESwarmStoreConnector } from '../../../swarm-store-class';
 import { ipfsUtilsConnectBasic } from '../../../../utils/ipfs-utils';
 

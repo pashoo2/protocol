@@ -7,7 +7,7 @@ import {
 } from 'classes/swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageInstance } from 'classes/swarm-message/swarm-message-constructor.types';
 import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorParams } from '../swarm-store-connector-db-options.types';
-import { SwarmStoreConnectorDBOptionsClass } from './swarm-store-connector-orbit-db-options-class';
+import { SwarmMessageStoreConnectorDBOptionsClass } from './swarm-message-store-connector-db-options-class';
 import {
   IOptionsSerializerValidatorConstructorParams,
   IOptionsSerializerValidatorSerializer,
@@ -19,6 +19,7 @@ import { swarmStoreConnectorDbOptionsGrandAccessContextBinderFabric } from '../s
 import { swarmStoreConectorDbOptionsGrandAccessContextBinderToDatabaseOptionsFabric } from '../swarm-message-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-context/swarm-store-conector-db-options-grand-access-context-binder-to-database-options/swarm-store-conector-db-options-grand-access-context-binder-to-database-options-fabric';
 import { ISwarmMessageStoreConnectorDatabaseOptionsWithAccessControlleGrantCallbackBound } from '../swarm-store-connector-db-options.types';
 import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor } from '../swarm-store-connector-db-options.types';
+import { IDatabaseOptionsSerializerValidatorConstructor } from '../../../../swarm-store-class/swarm-store-class.types';
 import {
   ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext,
   ISwarmStoreConnectorUtilsDatabaseOptionsValidators,
@@ -42,26 +43,10 @@ export function getSwarmMessageStoreConnectorDbOptionsClass<
     DBO,
     DBOS
   >,
-  OptionsSerializerValidatorConstructor?: ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor<
-    P,
-    ItemType,
-    DbType,
-    MSI,
-    CTX,
-    DBO,
-    DBOS
-  >
-): ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor<
-  P,
-  ItemType,
-  DbType,
-  MSI,
-  CTX,
-  DBO,
-  DBOS
-> {
+  OptionsSerializerValidatorConstructor?: IDatabaseOptionsSerializerValidatorConstructor<P, ItemType, DbType, DBO, DBOS>
+): IDatabaseOptionsSerializerValidatorConstructor<P, ItemType, DbType, DBO, DBOS> {
   const ConstructorToUse = (OptionsSerializerValidatorConstructor ??
-    SwarmStoreConnectorDBOptionsClass) as ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor<
+    SwarmMessageStoreConnectorDBOptionsClass) as ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor<
     P,
     ItemType,
     DbType,

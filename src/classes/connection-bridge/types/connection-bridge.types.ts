@@ -4,19 +4,19 @@ import {
   ISwarmMessageStoreOptions,
   ISwarmMessageStoreOptionsWithConnectorFabric,
   TSwarmMessagesStoreGrantAccessCallback,
-} from '../swarm-message-store/types/swarm-message-store.types';
-import { ESwarmStoreConnector } from '../swarm-store-class/swarm-store-class.const';
-import { ICentralAuthority, ICentralAuthorityOptions } from '../central-authority-class/central-authority-class.types';
+} from '../../swarm-message-store/types/swarm-message-store.types';
+import { ESwarmStoreConnector } from '../../swarm-store-class/swarm-store-class.const';
+import { ICentralAuthority, ICentralAuthorityOptions } from '../../central-authority-class/central-authority-class.types';
 import {
   ISwarmMessageConstructor,
   TSwarmMessageInstance,
   TSwarmMessageSerialized,
-} from '../swarm-message/swarm-message-constructor.types';
+} from '../../swarm-message/swarm-message-constructor.types';
 import { ISensitiveDataSessionStorageOptions } from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
 import {
   ISwarmMessageConstructorWithEncryptedCacheFabric,
   ISwarmMessageEncryptedCacheFabric,
-} from '../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+} from '../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import {
   ISwarmStoreConnector,
   ISwarmStoreConnectorBasic,
@@ -27,13 +27,13 @@ import {
   TSwarmStoreConnectorConstructorOptions,
   TSwarmStoreDatabaseOptions,
   TSwarmStoreDatabaseType,
-} from '../swarm-store-class/swarm-store-class.types';
+} from '../../swarm-store-class/swarm-store-class.types';
 import { IPFS } from 'types/ipfs.types';
-import { ISerializer } from '../../types/serialization.types';
+import { ISerializer } from '../../../types/serialization.types';
 import {
   ISwarmStoreConnectorDatabasesPersistentListConstructorParams,
   ISwarmStoreConnectorDatabasesPersistentList,
-} from '../swarm-store-class/swarm-store-class.types';
+} from '../../swarm-store-class/swarm-store-class.types';
 
 export type TNativeConnectionType<P extends ESwarmStoreConnector> = P extends ESwarmStoreConnector.OrbitDB ? IPFS : never;
 

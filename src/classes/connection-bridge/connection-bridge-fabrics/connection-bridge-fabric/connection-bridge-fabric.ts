@@ -2,7 +2,7 @@ import {
   IConnectionBridgeOptions,
   TConnectionBridgeCFODefault,
   ISwarmStoreDatabasesPersistentListFabric,
-} from '../../connection-bridge.types';
+} from '../../types/connection-bridge.types';
 import { ESwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.const';
 import { TSwarmMessageInstance } from '../../../swarm-message/swarm-message-constructor.types';
 import {

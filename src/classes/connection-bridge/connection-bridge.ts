@@ -4,7 +4,7 @@ import {
   IConnectionBridge,
   TNativeConnectionType,
   IConnectionBridgeOptionsAuth,
-} from './connection-bridge.types';
+} from './types/connection-bridge.types';
 import { ESwarmStoreConnector } from '../swarm-store-class/swarm-store-class.const';
 import { ICentralAuthorityOptions, ICentralAuthority } from '../central-authority-class/central-authority-class.types';
 import {
@@ -56,7 +56,7 @@ import {
   IConnectionBridgeSwarmConnection,
   TNativeConnectionOptions,
   IConnectionBridgeOptionsGetMainConnectorFabric,
-} from './connection-bridge.types';
+} from './types/connection-bridge.types';
 import { createNativeConnection } from './connection-bridge-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-native-connection-fabrics';
 import { IPFS } from 'types/ipfs.types';
 import { ICentralAuthorityUserProfile } from '../central-authority-class/central-authority-class-types/central-authority-class-types-common';
@@ -75,12 +75,12 @@ import {
   TConnectionBridgeCFODefault,
   TConnectionBridgeOptionsAuthCredentials,
   ISwarmStoreDatabasesPersistentListFabric,
-} from './connection-bridge.types';
+} from './types/connection-bridge.types';
 import { calculateHash } from '../../utils/hash-calculation-utils/hash-calculation-utils';
 import { PromiseResolveType } from '../../types/promise.types';
 import { ISerializer } from '../../types/serialization.types';
 import { CONNECTION_BRIDGE_DEFAULT_SERIALIZER } from './connection-bridge.const';
-import { IConnectionBridgeStorageOptions } from './connection-bridge.types';
+import { IConnectionBridgeStorageOptions } from './types/connection-bridge.types';
 import { IStorageCommon } from '../../types/storage.types';
 import {
   ISwarmMessageDatabaseConstructors,

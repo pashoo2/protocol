@@ -15,7 +15,7 @@ import {
 import {
   IConnectionBridgeOptionsDefault,
   ISwarmStoreDatabasesPersistentListFabric,
-} from '../../classes/connection-bridge/connection-bridge.types';
+} from '../../classes/connection-bridge/types/connection-bridge.types';
 import {
   TConnectionBridgeOptionsAccessControlOptions,
   TConnectionBridgeOptionsSwarmMessageStoreOptionsWithConnectorFabric,

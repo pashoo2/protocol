@@ -21,7 +21,6 @@ import { ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext } from '../
 import { ISwarmMessageStore } from '../../types/swarm-message-store.types';
 import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor } from '../../swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-store-connector-db-options.types';
 
-// TODO - create connetction with it in the ConnectionBridge class
 export function getSwarmMessageStoreWithDatabaseOptionsConstructorExtended<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmMessageSerialized,
@@ -56,7 +55,7 @@ export function getSwarmMessageStoreWithDatabaseOptionsConstructorExtended<
   >,
   DBOS extends TSwarmStoreDatabaseOptionsSerialized,
   CTX extends ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext,
-  DBOFSC extends ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor<
+  SSDOC extends ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor<
     P,
     ItemType,
     DbType,
@@ -66,7 +65,7 @@ export function getSwarmMessageStoreWithDatabaseOptionsConstructorExtended<
     DBOS,
     { swarmMessageStoreOptions: O }
   >
->(BaseClass: BC, SwarmStoreConnectorDatabaseOptionsConstructor: DBOFSC): BC {
+>(BaseClass: BC, SwarmStoreConnectorDatabaseOptionsConstructor: SSDOC): BC {
   return class SwarmStoreWithDatabaseOptionsConstructor extends BaseClass {
     protected _createDatabaseOptionsExtender(swarmMessageStoreOptions: O): (dbOptions: DBO) => DBO {
       return (dbOptions: DBO): DBO => {
