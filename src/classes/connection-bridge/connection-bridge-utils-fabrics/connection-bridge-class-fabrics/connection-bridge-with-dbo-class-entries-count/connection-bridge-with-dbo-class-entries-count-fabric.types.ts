@@ -98,32 +98,43 @@ export interface IConnectionBridgeWithDatabaseOptionsClassAndDBListPeristentStor
   CTXC extends ConstructorType<CTX>,
   SMSDBOGACF extends ISwarmMessageStoreConectorDbOptionsGrandAccessContextClassFabric<SMC, CTXC>,
   DBOC extends ISwarmMessageStoreConnectorDbOptionsClassFabric<P, T, DbType, MSI, CTX, DBOE, DBOS, SMC, CTXC, SMSDBOGACF>
-> extends IConnectionBridgeStorageOptions<
+> extends Omit<
+    IConnectionBridgeStorageOptions<
+      P,
+      T,
+      DbType,
+      DBOE,
+      ConnectorBasic,
+      CO,
+      PO,
+      ConnectorMain,
+      MSI,
+      GAC,
+      MCF,
+      ACO,
+      CFO,
+      CBFO,
+      O,
+      SMS,
+      SSDPLF,
+      CFOD
+    >,
+    'swarmMessageStoreInstanceFabric'
+  > {
+  swarmMessageStoreDatabaseGrandAccessBaseContextClassFabric: ISwarmMessageStoreDatabaseGrandAccessBaseContextClassFabric<CTXC>;
+  swarmMessageStoreDatabaseOptionsClassFabric: ISwarmMessageStoreConnectorDbOptionsClassFabric<
     P,
     T,
     DbType,
-    DBOE,
-    ConnectorBasic,
-    CO,
-    PO,
-    ConnectorMain,
     MSI,
-    GAC,
-    MCF,
-    ACO,
-    CFO,
-    CBFO,
-    O,
-    SMS,
-    SSDPLF,
-    CFOD
-  > {
-  swarmMessageStoreInstanceFabric: never;
-  swarmMessageStoreDatabaseGrandAccessBaseContextClassFabric: ISwarmMessageStoreDatabaseGrandAccessBaseContextClassFabric<CTXC>;
-
-  swarmMessageStoreDBOGrandAccessCallbackFabric: SMSDBOGACF;
-  swarmMessageStoreDatabaseOptionsClassFabric: DBOC;
-  swarmMessageStoreInstanceWithDBOClassFabric: ISwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsSerializerAndDatabaseOptionsFabric<
+    CTX,
+    DBOE,
+    DBOS,
+    SMC,
+    CTXC,
+    SMSDBOGACF
+  >;
+  swarmMessageStoreInstanceFabric: ISwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsSerializerAndDatabaseOptionsFabric<
     P,
     T,
     DbType,
@@ -205,25 +216,28 @@ export interface IConnectionBridgeWithDatabaseOptionsClassAndDBListPeristentStor
   CTXC extends ConstructorType<CTX>,
   SMSDBOGACF extends ISwarmMessageStoreConectorDbOptionsGrandAccessContextClassFabric<SMC, CTXC>,
   DBOC extends ISwarmMessageStoreConnectorDbOptionsClassFabric<P, T, DbType, MSI, CTX, DBOE, DBOS, SMC, CTXC, SMSDBOGACF>
-> extends IConnectionBridgeOptions<
-    P,
-    T,
-    DbType,
-    DBOE,
-    ConnectorBasic,
-    CO,
-    PO,
-    ConnectorMain,
-    MSI,
-    GAC,
-    MCF,
-    ACO,
-    CFO,
-    CBFO,
-    CD,
-    O,
-    SMS,
-    SSDPLF
+> extends Omit<
+    IConnectionBridgeOptions<
+      P,
+      T,
+      DbType,
+      DBOE,
+      ConnectorBasic,
+      CO,
+      PO,
+      ConnectorMain,
+      MSI,
+      GAC,
+      MCF,
+      ACO,
+      CFO,
+      CBFO,
+      CD,
+      O,
+      SMS,
+      SSDPLF
+    >,
+    'storage'
   > {
   storage: IConnectionBridgeWithDatabaseOptionsClassAndDBListPeristentStorageAndSwarmMessageCountStorageOptions<
     P,

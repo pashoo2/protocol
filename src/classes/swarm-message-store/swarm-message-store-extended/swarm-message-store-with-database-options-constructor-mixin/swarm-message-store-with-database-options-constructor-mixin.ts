@@ -17,7 +17,7 @@ import {
   ISwarmMessageStoreOptionsWithConnectorFabric,
 } from '../../types/swarm-message-store.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
-import { ISwarmDbOptionsGrandAccessCbCTX } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { ISwarmMessageStore } from '../../types/swarm-message-store.types';
 import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor } from '../../swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-store-connector-db-options.types';
 
@@ -54,7 +54,7 @@ export function getSwarmMessageStoreWithDatabaseOptionsConstructorExtended<
     ISwarmMessageStore<P, ItemType, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>
   >,
   DBOS extends TSwarmStoreDatabaseOptionsSerialized,
-  CTX extends ISwarmDbOptionsGrandAccessCbCTX,
+  CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   SSDOC extends ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor<
     P,
     ItemType,

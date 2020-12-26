@@ -1,4 +1,4 @@
-import { ISwarmDbOptionsGrandAccessCbCTX } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { ConstructorType } from 'types/helper.types';
 import { ISwarmMessageStoreDbOptionsGrandAccessCallbackContext } from '../../../../../../types/swarm-message-store-db-options.types';
 import { ISwarmMessageConstructor } from '../../../../../../../swarm-message/swarm-message-constructor.types';
@@ -7,7 +7,7 @@ import { TSwarmMessageUserIdentifierSerialized } from '../../../../../../../swar
 
 export function getSwarmStoreConectorDbOptionsGrandAccessContextClass<
   SMC extends ISwarmMessageConstructor,
-  BC extends ConstructorType<ISwarmDbOptionsGrandAccessCbCTX>
+  BC extends ConstructorType<ISwarmStoreDBOGrandAccessCallbackBaseContext>
 >(
   BaseContext: BC,
   params: ISwarmMessageStoreConectorDbOptionsGrandAccessContextClassFabricParams<SMC>

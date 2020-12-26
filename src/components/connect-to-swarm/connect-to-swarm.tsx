@@ -410,8 +410,8 @@ export class ConnectToSwarm<
 
       sessionStorage.setItem(CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY, 'true');
 
-      const userId = connectionBridge?.centralAuthorityConnection?.getUserIdentity();
-      const userProfileData = await connectionBridge?.centralAuthorityConnection?.getCAUserProfile();
+      const userId = connectionBridge?._centralAuthorityConnection?.getUserIdentity();
+      const userProfileData = await connectionBridge?._centralAuthorityConnection?.getCAUserProfile();
 
       this.setState({
         connectionBridge,

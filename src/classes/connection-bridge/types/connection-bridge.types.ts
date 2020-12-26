@@ -372,7 +372,7 @@ export interface IConnectionBridge<
    * @type {ICentralAuthority}
    * @memberof IConnectionBridge
    */
-  centralAuthorityConnection?: ICentralAuthority;
+  readonly centralAuthorityConnection?: ICentralAuthority;
   /**
    * storage allows to add or read messages from
    * the swarm

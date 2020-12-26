@@ -28,7 +28,7 @@ import {
   ISwarmStoreWithConnector,
 } from '../../../swarm-store-class/swarm-store-class.types';
 import { getSwarmMessageStoreWithDatabaseOptionsConstructorExtended } from '../../../swarm-message-store/swarm-message-store-extended/swarm-message-store-with-database-options-constructor-mixin/swarm-message-store-with-database-options-constructor-mixin';
-import { ISwarmDbOptionsGrandAccessCbCTX } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor } from '../../../swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-store-connector-db-options.types';
 import { ISwarmMessageStoreWithEntriesCount } from '../../../swarm-message-store/types/swarm-message-store.types';
 import {
@@ -139,7 +139,7 @@ export function swarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsSer
   >,
   E extends ISwarmMessageStoreEvents<P, ItemType, DbType, DBO>,
   DBOS extends TSwarmStoreDatabaseOptionsSerialized,
-  CTX extends ISwarmDbOptionsGrandAccessCbCTX,
+  CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBOFSC extends ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor<
     P,
     ItemType,
@@ -241,7 +241,7 @@ export function getSwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptions
   >,
   E extends ISwarmMessageStoreEvents<P, ItemType, DbType, DBOE>,
   DBOS extends TSwarmStoreDatabaseOptionsSerialized,
-  CTX extends ISwarmDbOptionsGrandAccessCbCTX,
+  CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   SSDOC extends IDatabaseOptionsSerializerValidatorConstructor<P, ItemType, DbType, DBO, DBOS>,
   OEXTENDERFABRIC extends (options: O) => (dbOptions: DBO) => DBOE
 >(
@@ -358,7 +358,7 @@ export function getSwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptions
   >,
   E extends ISwarmMessageStoreEvents<P, ItemType, DbType, DBO & ISwarmStoreDatabaseBaseOptions & { provider: P }>,
   DBOS extends TSwarmStoreDatabaseOptionsSerialized,
-  CTX extends ISwarmDbOptionsGrandAccessCbCTX,
+  CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   SMC extends ISwarmMessageConstructor,
   CTXC extends ConstructorType<CTX>,
   SMSDBOGACF extends ISwarmMessageStoreConectorDbOptionsGrandAccessContextClassFabric<SMC, CTXC>,

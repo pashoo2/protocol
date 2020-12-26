@@ -224,7 +224,6 @@ export const createConnectionBridgeConnection = async <
   if (useSessionIfExists) {
     useSessionAuth = await connectionBridge.checkSessionAvailable(optionsWithoutCredentials);
   }
-
   await connectionBridge.connect(useSessionAuth ? optionsWithoutCredentials : options);
   return connectionBridge;
 };

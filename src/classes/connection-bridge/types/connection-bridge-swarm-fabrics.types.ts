@@ -1,5 +1,5 @@
 import { ConstructorType } from '../../../types/helper.types';
-import { ISwarmDbOptionsGrandAccessCbCTX } from '../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { ICentralAuthority } from '../../central-authority-class/central-authority-class.types';
 import {
   IDatabaseOptionsSerializerValidatorConstructor,
@@ -36,7 +36,7 @@ import { ISwarmStoreWithConnector } from '../../swarm-store-class/swarm-store-cl
 import { ISwarmMessageStoreConectorDbOptionsGrandAccessContextClassFabric } from '../../swarm-message-store/types/swarm-message-store-db-options.types';
 
 export interface ISwarmMessageStoreDatabaseGrandAccessBaseContextClassFabric<
-  RT extends ConstructorType<ISwarmDbOptionsGrandAccessCbCTX>
+  RT extends ConstructorType<ISwarmStoreDBOGrandAccessCallbackBaseContext>
 > {
   (params: {
     centralAuthority: {
@@ -52,7 +52,7 @@ export interface ISwarmMessageStoreConnectorDbOptionsClassFabric<
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
   MSI extends TSwarmMessageInstance | ItemType,
-  CTX extends ISwarmDbOptionsGrandAccessCbCTX,
+  CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
   DBOS extends TSwarmStoreDatabaseOptionsSerialized,
   SMC extends ISwarmMessageConstructor,
@@ -113,7 +113,7 @@ export interface ISwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsS
     ACO
   >,
   DBOS extends TSwarmStoreDatabaseOptionsSerialized,
-  CTX extends ISwarmDbOptionsGrandAccessCbCTX,
+  CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   SMC extends ISwarmMessageConstructor,
   CTXC extends ConstructorType<CTX>,
   SMSDBOGACF extends ISwarmMessageStoreConectorDbOptionsGrandAccessContextClassFabric<SMC, CTXC>,

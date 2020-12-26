@@ -1,4 +1,4 @@
-import { createConnectrionBridgeConnection } from '../../classes/connection-bridge/connection-bridge-utils-fabrics/connection-bridge-class-fabrics/connection-bridge-fabric/connection-bridge-fabric';
+import { createConnectionBridgeConnection } from '../../classes/connection-bridge/connection-bridge-utils-fabrics/connection-bridge-class-fabrics/connection-bridge-fabric/connection-bridge-fabric';
 import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
 import { TSwarmStoreDatabaseType } from '../../classes/swarm-store-class/swarm-store-class.types';
 import {
@@ -44,7 +44,7 @@ export async function connectToSwarmUtil<
     },
   };
   type CBO = typeof optionsWithCredentials;
-  const connectionBridgeInstance = await createConnectrionBridgeConnection<
+  const connectionBridgeInstance = await createConnectionBridgeConnection<
     P,
     T,
     DbType,

@@ -80,7 +80,6 @@ import { calculateHash } from '../../utils/hash-calculation-utils/hash-calculati
 import { PromiseResolveType } from '../../types/promise.types';
 import { ISerializer } from '../../types/serialization.types';
 import { CONNECTION_BRIDGE_DEFAULT_SERIALIZER } from './connection-bridge.const';
-import { IConnectionBridgeStorageOptions } from './types/connection-bridge.types';
 import { IStorageCommon } from '../../types/storage.types';
 import {
   ISwarmMessageDatabaseConstructors,
@@ -229,10 +228,12 @@ export class ConnectionBridge<
     return parts.join(CONNECTION_BRIDGE_STORAGE_DELIMETER_FOR_STORAGE_KEYS_DEFAULT);
   }
 
-  public centralAuthorityConnection?: ICentralAuthority;
-
   public get swarmMessageStore(): SMS | undefined {
     return this._swarmMessageStore;
+  }
+
+  public get centralAuthorityConnection(): ICentralAuthority | undefined {
+    return this._centralAuthorityConnection;
   }
 
   public messageConstructor?: PromiseResolveType<ReturnType<NonNullable<MCF>>>;
@@ -248,6 +249,8 @@ export class ConnectionBridge<
   protected options?: CBO;
 
   protected _swarmMessageStore?: SMS;
+
+  protected _centralAuthorityConnection?: ICentralAuthority;
 
   protected get swarmStoreConnectorType(): P | undefined {
     return this.options?.swarmStoreConnectorType;
@@ -377,36 +380,27 @@ export class ConnectionBridge<
     return true;
   }
 
-  protected getOptions(): CBO {
+  protected _getOptions(): CBO {
     if (this.checkCurrentOptionsIsDefined()) {
       return this.options;
     }
     throw new Error('Current options are not defined');
   }
 
-  protected _getStorageOptions(): IConnectionBridgeStorageOptions<
-    P,
-    T,
-    DbType,
-    DBO,
-    ConnectorBasic,
-    CO,
-    PO,
-    ConnectorMain,
-    MSI,
-    GAC,
-    MCF,
-    ACO,
-    CFO,
-    CBFO,
-    O,
-    SMS,
-    SSDPLF
-  > {
-    const storageOptions = this.getOptions().storage;
+  protected _getStorageOptions(): CBO['storage'] {
+    const storageOptions = this._getOptions().storage;
 
     assert(storageOptions, 'There is no storage options exists');
     return storageOptions;
+  }
+
+  protected _getCentralAuthorityConnection(): ICentralAuthority {
+    const centralAuthorityConnection = this._centralAuthorityConnection;
+
+    if (!centralAuthorityConnection) {
+      throw new Error('There is no connection with the central authority');
+    }
+    return centralAuthorityConnection;
   }
 
   protected _setSerializer(serializer: ISerializer): void {
@@ -450,7 +444,7 @@ export class ConnectionBridge<
   }
 
   protected validatetCurrentUserOptions(): void {
-    const { user: userOptions } = this.getOptions();
+    const { user: userOptions } = this._getOptions();
 
     assert(userOptions, 'User options must be defined');
     assert(typeof userOptions === 'object', 'User options must be an object');
@@ -486,7 +480,7 @@ export class ConnectionBridge<
   }
 
   protected createOptionsForCentralAuthorityWithCurrentConnectionBridgeOptions(): ICentralAuthorityOptions {
-    const { auth: authOptions, user: userOptions } = this.getOptions();
+    const { auth: authOptions, user: userOptions } = this._getOptions();
     return this.createOptionsForCentralAuthority(authOptions, userOptions);
   }
 
@@ -517,11 +511,7 @@ export class ConnectionBridge<
    * @throws
    */
   protected createOptionsMessageConstructor(): TSwarmMessageConstructorOptions {
-    const { centralAuthorityConnection: caConnection } = this;
-
-    if (!caConnection) {
-      throw new Error('There is no connection to the central authoriry');
-    }
+    const caConnection = this._getCentralAuthorityConnection();
     return {
       caConnection,
       instances: {
@@ -568,10 +558,7 @@ export class ConnectionBridge<
   }
 
   protected getCurrentUserIdentityFromCurrentConnectionToCentralAuthority(): TSwarmMessageUserIdentifierSerialized {
-    const { centralAuthorityConnection: caConnection } = this;
-    if (!caConnection) {
-      throw new Error('There is no message central authority connection defined');
-    }
+    const caConnection = this._getCentralAuthorityConnection();
     const userId = caConnection.getUserIdentity();
 
     if (userId instanceof Error) {
@@ -589,15 +576,19 @@ export class ConnectionBridge<
     return this.getSwarmStoreConnectionProviderOptions(swarmConnection);
   }
 
-  protected getMessageConstructorOptionsForMessageStoreFromCurrentOptions(): ISwarmMessageDatabaseConstructors<
-    PromiseResolveType<ReturnType<NonNullable<MCF>>>
-  > {
+  protected _getSwarmMessageConstructor(): PromiseResolveType<ReturnType<NonNullable<MCF>>> {
     const { messageConstructor } = this;
     if (!messageConstructor) {
       throw new Error('There is no message constructor defined');
     }
+    return messageConstructor;
+  }
+
+  protected getMessageConstructorOptionsForMessageStoreFromCurrentOptions(): ISwarmMessageDatabaseConstructors<
+    PromiseResolveType<ReturnType<NonNullable<MCF>>>
+  > {
     return {
-      default: messageConstructor,
+      default: this._getSwarmMessageConstructor(),
     };
   }
 
@@ -622,7 +613,7 @@ export class ConnectionBridge<
     userId: TSwarmMessageUserIdentifierSerialized,
     credentials: TSecretStorageAuthorizazionOptions
   ): TSwarmStoreConnectorConstructorOptions<P, T, DbType> => {
-    const options = this.getOptions();
+    const options = this._getOptions();
 
     switch (options.swarmStoreConnectorType) {
       case ESwarmStoreConnector.OrbitDB:
@@ -783,7 +774,7 @@ export class ConnectionBridge<
   }
 
   protected getAccessControlOptionsToUse(): ACO {
-    const { storage: storageOptions } = this.getOptions();
+    const { storage: storageOptions } = this._getOptions();
     const { accessControl } = storageOptions;
     return accessControl;
   }
@@ -817,7 +808,7 @@ export class ConnectionBridge<
       throw new Error('Swarm messages constructor fabric should be defined');
     }
 
-    const { storage: storageOptions } = this.getOptions();
+    const { storage: storageOptions } = this._getOptions();
     const { directory, databases } = storageOptions;
     const credentials = this.getSecretStoreCredentialsOptionsForMessageStoreFromCurrentOptions();
     const userId = this.getCurrentUserIdentityFromCurrentConnectionToCentralAuthority();
@@ -1130,7 +1121,7 @@ export class ConnectionBridge<
   }
 
   protected setCurrentCentralAuthorityConnection(centralAuthority: ICentralAuthority): void {
-    this.centralAuthorityConnection = centralAuthority;
+    this._centralAuthorityConnection = centralAuthority;
   }
 
   /**
@@ -1215,7 +1206,7 @@ export class ConnectionBridge<
       } {
     const {
       auth: { credentials },
-    } = this.getOptions();
+    } = this._getOptions();
     const sessionDataStorage = this.sessionSensitiveStorage;
 
     if (!credentials) {
@@ -1263,11 +1254,8 @@ export class ConnectionBridge<
   }
 
   protected getSwarmMessageConstructorOptions(): TSwarmMessageConstructorOptions {
-    if (!this.centralAuthorityConnection) {
-      throw new Error('Connection to the Central authority should exists');
-    }
     return {
-      caConnection: this.centralAuthorityConnection,
+      caConnection: this._getCentralAuthorityConnection(),
       instances: {},
     };
   }
@@ -1279,7 +1267,7 @@ export class ConnectionBridge<
   }
 
   protected getSwarmMessageConstructorFabricFromOptions(): MCF | undefined {
-    return this.getOptions().storage.swarmMessageConstructorFabric;
+    return this._getOptions().storage.swarmMessageConstructorFabric;
   }
 
   protected async createSwarmMessageConstructorFabric(): Promise<ISwarmMessageConstructorWithEncryptedCacheFabric> {
@@ -1332,13 +1320,14 @@ export class ConnectionBridge<
   }
 
   protected createSwarmMessageStoreInstanceByOptionsFabric(): SMS {
-    const { storage } = this.getOptions();
-    return storage.swarmMessageStoreInstanceFabric();
+    const { swarmMessageStoreInstanceFabric } = this._getStorageOptions();
+    assert(swarmMessageStoreInstanceFabric, 'swarmMessageStoreInstanceFabric should be defined in the storage options');
+    return swarmMessageStoreInstanceFabric();
   }
 
-  protected createSwarmMessageStoreInstance = (): SMS => {
+  protected createSwarmMessageStoreInstance(): SMS {
     return this.createSwarmMessageStoreInstanceByOptionsFabric();
-  };
+  }
 
   protected connectToSwarmMessageStore = async (
     swarmMessageStorage: ISwarmMessageStore<
@@ -1471,7 +1460,7 @@ export class ConnectionBridge<
    * @memberof ConnectionBridge
    */
   protected async closeCurrentCentralAuthorityConnection(): Promise<void> {
-    const { centralAuthorityConnection: caConnection } = this;
+    const { _centralAuthorityConnection: caConnection } = this;
 
     if (caConnection) {
       try {
@@ -1480,7 +1469,7 @@ export class ConnectionBridge<
         console.error('closeCentralAuthorityConnection failed to close the connection to the central authority', err);
       }
     }
-    this.centralAuthorityConnection = undefined;
+    this._centralAuthorityConnection = undefined;
     this.optionsCentralAuthority = undefined;
   }
 
