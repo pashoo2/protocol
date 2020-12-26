@@ -21,7 +21,7 @@ import {
 import { getClassSwarmMessageStoreWithEntriesCount as getClassSwarmMessageStoreWithEntriesCountAndConnector } from 'classes/swarm-message-store/swarm-message-store-extended/swarm-message-store-with-entries-count/swarm-message-store-with-entries-count';
 import { extendClassSwarmStoreWithOptionsConstructor } from '../../../swarm-store-class/swarm-store-class-extended/swarm-store-class-with-options-constructor/swarm-store-class-with-options-constructor-mixin';
 import { ISwarmStoreOptionsClassConstructor, ISwarmStoreWithConnector } from '../../../swarm-store-class/swarm-store-class.types';
-import { ISwarmMessageStoreOptionsWithEntriesCount } from '../../types/swarm-message-store.types';
+import { ISwarmMessageStoreWithEntriesCount } from '../../types/swarm-message-store.types';
 import { ConstructorType } from '../../../../types/helper.types';
 
 export function getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer<
@@ -57,7 +57,7 @@ export function getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer<
 >(
   SwarmStoreOptionsClass?: ISwarmStoreOptionsClassConstructor<P, ItemType, DbType, DBO, ConnectorBasic, CO>
 ): ConstructorType<
-  ISwarmMessageStoreOptionsWithEntriesCount<
+  ISwarmMessageStoreWithEntriesCount<
     P,
     ItemType,
     DbType,

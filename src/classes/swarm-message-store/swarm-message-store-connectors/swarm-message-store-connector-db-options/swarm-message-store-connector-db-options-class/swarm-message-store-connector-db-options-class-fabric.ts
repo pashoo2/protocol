@@ -21,7 +21,7 @@ import { ISwarmMessageStoreConnectorDatabaseOptionsWithAccessControlleGrantCallb
 import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor } from '../swarm-store-connector-db-options.types';
 import { IDatabaseOptionsSerializerValidatorConstructor } from '../../../../swarm-store-class/swarm-store-class.types';
 import {
-  ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext,
+  ISwarmDbOptionsGrandAccessCbCTX,
   ISwarmStoreConnectorUtilsDatabaseOptionsValidators,
 } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 
@@ -30,7 +30,7 @@ export function getSwarmMessageStoreConnectorDbOptionsClass<
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
   MSI extends TSwarmMessageInstance | ItemType,
-  CTX extends ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext,
+  CTX extends ISwarmDbOptionsGrandAccessCbCTX,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
   DBOS extends TSwarmStoreDatabaseOptionsSerialized
 >(

@@ -20,7 +20,7 @@ import {
  * @export
  * @interface ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext
  */
-export interface ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext {
+export interface ISwarmDbOptionsGrandAccessCbCTX {
   /**
    * Identity of the current user
    *
@@ -54,7 +54,7 @@ export interface ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   MSI extends TSwarmMessageInstance | ItemType,
-  CTX extends ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext
+  CTX extends ISwarmDbOptionsGrandAccessCbCTX
 > extends TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, ItemType, MSI> {
   (
     this: CTX,

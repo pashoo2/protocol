@@ -516,7 +516,7 @@ export interface ISwarmMessageStoreConstructor<
   new (): ISwarmMessageStore<P, ItemType, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>;
 }
 
-export interface ISwarmMessageStoreOptionsWithEntriesCount<
+export interface ISwarmMessageStoreWithEntriesCount<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,

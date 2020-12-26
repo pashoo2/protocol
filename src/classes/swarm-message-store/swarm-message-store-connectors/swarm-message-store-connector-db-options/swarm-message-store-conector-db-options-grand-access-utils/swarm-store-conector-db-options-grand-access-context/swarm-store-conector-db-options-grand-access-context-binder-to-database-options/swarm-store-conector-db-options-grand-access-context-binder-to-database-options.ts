@@ -8,7 +8,7 @@ import {
 import { TSwarmMessageInstance } from 'classes/swarm-message/swarm-message-constructor.types';
 import { ISwarmMessageStoreConnectorDatabaseAccessControlleGrantCallbackBound } from '../../../swarm-store-connector-db-options.types';
 import { ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder } from '../../../swarm-store-connector-db-options.types';
-import { ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmDbOptionsGrandAccessCbCTX } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 
 export function isDbOptionsWithGrandAccess<
   P extends ESwarmStoreConnector,
@@ -25,7 +25,7 @@ export function swarmStoreConectorDbOptionsGrandAccessContextBinderToDatabaseOpt
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
   MSI extends TSwarmMessageInstance | ItemType,
-  CTX extends ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext,
+  CTX extends ISwarmDbOptionsGrandAccessCbCTX,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>
 >(
   dbo: DBO,

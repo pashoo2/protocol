@@ -3,33 +3,33 @@ import {
   TConnectionBridgeCFODefault,
   IConnectionBridge,
   ISwarmStoreDatabasesPersistentListFabric,
-} from '../../types/connection-bridge.types';
-import { ESwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.const';
-import { TSwarmMessageInstance } from '../../../swarm-message/swarm-message-constructor.types';
+} from '../../../types/connection-bridge.types';
+import { ESwarmStoreConnector } from '../../../../swarm-store-class/swarm-store-class.const';
+import { TSwarmMessageInstance } from '../../../../swarm-message/swarm-message-constructor.types';
 import {
   TSwarmMessagesStoreGrantAccessCallback,
   ISwarmMessageStoreAccessControlOptions,
-} from '../../../swarm-message-store/types/swarm-message-store.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+} from '../../../../swarm-message-store/types/swarm-message-store.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import {
   TSwarmStoreDatabaseType,
   TSwarmStoreConnectorConnectionOptions,
-} from '../../../swarm-store-class/swarm-store-class.types';
-import { TSwarmMessageSerialized } from '../../../swarm-message/swarm-message-constructor.types';
+} from '../../../../swarm-store-class/swarm-store-class.types';
+import { TSwarmMessageSerialized } from '../../../../swarm-message/swarm-message-constructor.types';
 import {
   ISwarmStoreConnectorBasic,
   ISwarmStoreConnector,
   TSwarmStoreConnectorBasicFabric,
-} from '../../../swarm-store-class/swarm-store-class.types';
+} from '../../../../swarm-store-class/swarm-store-class.types';
 import {
   ISwarmMessageStoreOptionsWithConnectorFabric,
   ISwarmMessageStore,
-} from '../../../swarm-message-store/types/swarm-message-store.types';
+} from '../../../../swarm-message-store/types/swarm-message-store.types';
 import {
   TSwarmStoreDatabaseOptions,
   ISwarmStoreProviderOptions,
   ISwarmStoreOptionsConnectorFabric,
-} from '../../../swarm-store-class/swarm-store-class.types';
+} from '../../../../swarm-store-class/swarm-store-class.types';
 
 export interface IConnectionBridgeFabric<
   P extends ESwarmStoreConnector,

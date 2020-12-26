@@ -154,13 +154,15 @@ export interface IConnectionBridgeStorageOptions<
     CO,
     PO,
     ConnectorMain,
-    TConnectionBridgeCFODefault<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO>,
+    CFOD,
     MSI,
     GAC,
     MCF,
     ACO
   >,
-  SMS extends ISwarmMessageStore<
+  SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFOD, MSI, GAC, MCF, ACO, O>,
+  SSDPLF extends ISwarmStoreDatabasesPersistentListFabric<P, T, DbType, DBO, Record<DBO['dbName'], DBO>>,
+  CFOD extends TConnectionBridgeCFODefault<
     P,
     T,
     DbType,
@@ -169,14 +171,8 @@ export interface IConnectionBridgeStorageOptions<
     CO,
     PO,
     ConnectorMain,
-    TConnectionBridgeCFODefault<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO>,
-    MSI,
-    GAC,
-    MCF,
-    ACO,
-    O
-  >,
-  SSDPLF extends ISwarmStoreDatabasesPersistentListFabric<P, T, DbType, DBO, Record<DBO['dbName'], DBO>>
+    CFO
+  > = TConnectionBridgeCFODefault<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO>
 > extends Omit<
     ISwarmMessageStoreOptions<P, T, DbType, DBO, ConnectorBasic, CO, MSI, GAC, MCF, ACO>,
     | 'userId'

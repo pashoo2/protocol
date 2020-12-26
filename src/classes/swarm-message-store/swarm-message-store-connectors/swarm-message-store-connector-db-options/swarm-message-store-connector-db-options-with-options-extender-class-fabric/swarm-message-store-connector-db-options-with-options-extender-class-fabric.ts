@@ -7,7 +7,7 @@ import {
   ISwarmStoreConnectorBasic,
 } from '../../../../swarm-store-class/swarm-store-class.types';
 import { ESwarmStoreConnector } from '../../../../swarm-store-class/swarm-store-class.const';
-import { ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmDbOptionsGrandAccessCbCTX } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { TSwarmMessageInstance } from '../../../../swarm-message/swarm-message-constructor.types';
 import { ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidator } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { ConstructorType } from '../../../../../types/helper.types';
@@ -31,7 +31,7 @@ export function createSwarmMessageStoreConnectorDBOptionsWithOptionsExtenderFabr
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  CTX extends ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext,
+  CTX extends ISwarmDbOptionsGrandAccessCbCTX,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType, DBO>,
   CO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, DBO, ConnectorBasic>,
