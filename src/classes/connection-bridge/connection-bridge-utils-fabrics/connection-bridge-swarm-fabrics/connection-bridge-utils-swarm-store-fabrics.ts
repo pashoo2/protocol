@@ -326,7 +326,6 @@ export function getSwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptions
   return new SwarmMessageStoreWithDbOptionsConstructor();
 }
 
-// TODO - add ConnectionBridgeClass to support this fabric along with a ContextBaseClass fabcric
 export function getSwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsSerializerAndDatabaseOptionsExtendedConstructorWithDefaultParams<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmMessageSerialized,

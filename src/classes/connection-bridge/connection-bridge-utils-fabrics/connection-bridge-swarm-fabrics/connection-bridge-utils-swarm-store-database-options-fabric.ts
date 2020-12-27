@@ -15,7 +15,7 @@ import { ISwarmMessageStoreConectorDbOptionsGrandAccessContextClassFabricParams 
 import { IDatabaseOptionsSerializerValidatorConstructor } from '../../../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageStoreConectorDbOptionsGrandAccessContextClassFabric } from '../../../swarm-message-store/types/swarm-message-store-db-options.types';
 
-export function getSwarmMessageStoreConnectorDbOptionsClassConnectionBridgeUtil<
+export function getSwarmMessageStoreConnectorDbOptionsValidatorSerializerClass<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
