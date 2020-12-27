@@ -33,7 +33,6 @@ import {
   ISwarmStoreConnectorWithEntriesCount,
 } from '../../classes/swarm-store-class/swarm-store-class-extended/swarm-store-class-with-entries-count/swarm-store-class-with-entries-count.types';
 import { TSwarmStoreConnectorBasicFabric } from '../../classes/swarm-store-class/swarm-store-class.types';
-import { getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer } from '../../classes/swarm-message-store/swarm-message-store-extended/swarm-message-store-with-entries-count-and-options-serializer';
 import { connectionBridgeSwarmStoreConnectorDatabasesPersistentListFabricDefault } from '../../classes/connection-bridge/connection-bridge-utils-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-store-database-list-storage-fabrics';
 import { SerializerClass } from '../../classes/basic-classes/serializer-class/serializer-class';
 import {
@@ -249,74 +248,7 @@ export const CONNECT_TO_SWARM_CONNECTION_OPTIONS: IConnectionBridgeOptionsDefaul
   nativeConnection: CONNECT_TO_SWARM_CONNECTION_NATIVE_CONNECTION_OPTIONS, // use the default value
 };
 
-export const CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS: IConnectionBridgeOptionsDefault<
-  ESwarmStoreConnector.OrbitDB,
-  TSwarmMessageSerialized,
-  ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
-  false,
-  TSwarmStoreDatabaseOptions<
-    ESwarmStoreConnector.OrbitDB,
-    TSwarmMessageSerialized,
-    ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED
-  >,
-  ISwarmMessageInstanceDecrypted | TSwarmMessageSerialized,
-  any,
-  any,
-  any,
-  ISwarmStoreConnectorBasicWithEntriesCount<
-    ESwarmStoreConnector.OrbitDB,
-    TSwarmMessageSerialized,
-    ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
-    TSwarmStoreDatabaseOptions<
-      ESwarmStoreConnector.OrbitDB,
-      TSwarmMessageSerialized,
-      ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED
-    >
-  >,
-  TSwarmStoreConnectorBasicFabric<
-    ESwarmStoreConnector.OrbitDB,
-    TSwarmMessageSerialized,
-    ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
-    TSwarmStoreDatabaseOptions<
-      ESwarmStoreConnector.OrbitDB,
-      TSwarmMessageSerialized,
-      ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED
-    >,
-    ISwarmStoreConnectorBasicWithEntriesCount<
-      ESwarmStoreConnector.OrbitDB,
-      TSwarmMessageSerialized,
-      ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
-      TSwarmStoreDatabaseOptions<
-        ESwarmStoreConnector.OrbitDB,
-        TSwarmMessageSerialized,
-        ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED
-      >
-    >
-  >,
-  any,
-  any,
-  ISwarmStoreConnectorWithEntriesCount<
-    ESwarmStoreConnector.OrbitDB,
-    TSwarmMessageSerialized,
-    ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
-    TSwarmStoreDatabaseOptions<
-      ESwarmStoreConnector.OrbitDB,
-      TSwarmMessageSerialized,
-      ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED
-    >,
-    ISwarmStoreConnectorBasicWithEntriesCount<
-      ESwarmStoreConnector.OrbitDB,
-      TSwarmMessageSerialized,
-      ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
-      TSwarmStoreDatabaseOptions<
-        ESwarmStoreConnector.OrbitDB,
-        TSwarmMessageSerialized,
-        ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED
-      >
-    >,
-    any
-  >
-> = {
+export const CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS = {
   serializer: new SerializerClass(),
   swarmStoreConnectorType: CONNECT_TO_SWARM_STORAGE_PROVIDER_DEFAULT,
   user: CONNECT_TO_SWARM_CONNECTION_USER_OPTIONS,

@@ -1,12 +1,12 @@
 import React from 'react';
-import { connectToSwarmUtil } from './connect-to-swarm-utils/connect-to-swarm.utils';
+import { connectToSwarmWithDBOUtil } from './connect-to-swarm-with-dbo-utils/connect-to-swarm-with-dbo-utils';
 import { CONNECT_TO_SWARM_STORAGE_DEFAULT_MESSAGE_BODY } from '../const/connect-to-swarm.const';
 import { CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY } from '../const/connect-to-swarm.const';
 import {
   ESwarmStoreConnectorOrbitDbDatabaseMethodNames,
   ISwarmStoreDatabasesCommonStatusList,
   ESwarmStoreEventNames,
-} from '../connect-to-swarm-with-dbo/node_modules/classes';
+} from 'classes';
 import { SwarmStoreDbComponent } from '../swarm-store-db-component/swarm-store-db-component';
 import { ESwarmMessageStoreEventNames } from '../../classes/swarm-message-store/swarm-message-store.const';
 import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
@@ -97,7 +97,7 @@ export interface IConnectToSwarmProps<
   userCredentialsToConnectImmediate?: IUserCredentialsCommon;
 }
 
-export class ConnectToSwarm<
+export class ConnectToSwarmWithDBO<
   DbType extends TSwarmStoreDatabaseType<P>,
   T extends TSwarmMessageSerialized,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
@@ -386,7 +386,7 @@ export class ConnectToSwarm<
     }
   };
 
-  protected setListenersConnectionBridge(connectionBridge: PromiseResolveType<ReturnType<typeof connectToSwarmUtil>>) {
+  protected setListenersConnectionBridge(connectionBridge: PromiseResolveType<ReturnType<typeof connectToSwarmWithDBOUtil>>) {
     const swarmMessageStore = connectionBridge.swarmMessageStore;
 
     if (!swarmMessageStore) {
@@ -406,7 +406,7 @@ export class ConnectToSwarm<
       userCredentialsActive: credentials,
     });
     try {
-      const connectionBridge = await connectToSwarmUtil<P, DbType, T, any>(this.props.connectionBridgeOptions, credentials);
+      const connectionBridge = await connectToSwarmWithDBOUtil(this.props.connectionBridgeOptions, credentials);
 
       sessionStorage.setItem(CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY, 'true');
 
@@ -421,7 +421,7 @@ export class ConnectToSwarm<
         userProfileData,
       });
       this.setListenersConnectionBridge(
-        (connectionBridge as unknown) as PromiseResolveType<ReturnType<typeof connectToSwarmUtil>>
+        (connectionBridge as unknown) as PromiseResolveType<ReturnType<typeof connectToSwarmWithDBOUtil>>
       );
 
       const { dbo } = this.props;

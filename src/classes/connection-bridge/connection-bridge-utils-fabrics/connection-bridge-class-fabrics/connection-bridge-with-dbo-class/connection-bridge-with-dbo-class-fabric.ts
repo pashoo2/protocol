@@ -33,7 +33,11 @@ import {
   ISwarmMessageStoreWithEntriesCount,
   ISwarmMessageStoreEvents,
 } from '../../../../swarm-message-store/types/swarm-message-store.types';
-import { TConnectionBridgeCFODefault, TNativeConnectionType } from '../../../types/connection-bridge.types';
+import {
+  TConnectionBridgeCFODefault,
+  TNativeConnectionType,
+  TConnectionBridgeOptionsAuthCredentials,
+} from '../../../types/connection-bridge.types';
 import { IConnectionBridgeWithDatabaseOptionsClassAndDBListPeristentStorageAndSwarmMessageCountOptions } from './connection-bridge-with-dbo-class-fabric.types';
 import {
   ISwarmStoreConnectorBasicWithEntriesCount,
@@ -43,7 +47,7 @@ import { ISwarmStoreDatabasesPersistentListFabric } from '../../../types/connect
 import { ISwarmMessageStoreConnectorDbOptionsClassFabric } from '../../../types/connection-bridge-swarm-fabrics.types';
 import { ConnectionBridgeWithDBOClassEntriesCount } from './connection-bridge-with-dbo-class';
 
-export const createConnectionBridgeConnection = async <
+export const createConnectionBridgeConnectionWithDBOClass = async <
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
@@ -138,6 +142,7 @@ export const createConnectionBridgeConnection = async <
   NC extends TNativeConnectionType<P> = TNativeConnectionType<P>
 >(
   options: CBO,
+  credentials?: TConnectionBridgeOptionsAuthCredentials,
   useSessionIfExists: boolean = false
 ) => {
   const connectionBridge = new ConnectionBridgeWithDBOClassEntriesCount<
@@ -173,6 +178,15 @@ export const createConnectionBridgeConnection = async <
     NC
   >();
   let useSessionAuth: boolean = false;
+  const optionsWithCredentials = credentials
+    ? {
+        ...options,
+        auth: {
+          ...options.auth,
+          credentials,
+        },
+      }
+    : options;
   const optionsWithoutCredentials = {
     ...options,
     auth: {
@@ -184,6 +198,41 @@ export const createConnectionBridgeConnection = async <
   if (useSessionIfExists) {
     useSessionAuth = await connectionBridge.checkSessionAvailable(optionsWithoutCredentials);
   }
-  await connectionBridge.connect(useSessionAuth ? optionsWithoutCredentials : options);
+  await connectionBridge.connect(useSessionAuth ? optionsWithoutCredentials : optionsWithCredentials);
   return connectionBridge;
+};
+
+export const createConnectionBridgeConnectionWithDBOClassByOptions = (
+  options: IConnectionBridgeWithDatabaseOptionsClassAndDBListPeristentStorageAndSwarmMessageCountOptions<
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any
+  >,
+  credentials?: TConnectionBridgeOptionsAuthCredentials,
+  useSessionIfExists: boolean = false
+) => {
+  return createConnectionBridgeConnectionWithDBOClass(options, credentials, useSessionIfExists);
 };

@@ -118,7 +118,7 @@ export interface IConnectionBridgeWithDatabaseOptionsClassAndDBListPeristentStor
     SSDPLF,
     CFOD
   > {
-  swarmMessageStoreInstanceFabric: never;
+  swarmMessageStoreInstanceFabric: () => never;
   swarmMessageStoreDatabaseGrandAccessBaseContextClassFabric: ISwarmMessageStoreDatabaseGrandAccessBaseContextClassFabric<CTXC>;
 
   swarmMessageStoreDBOGrandAccessCallbackFabric: SMSDBOGACF;
