@@ -1,12 +1,12 @@
-import { ESwarmStoreConnector } from '../../../../../swarm-store-class/swarm-store-class.const';
+import { ESwarmStoreConnector } from 'classes/swarm-store-class/swarm-store-class.const';
 import { SwarmStoreConnectorDbOptionsValidators } from './swarm-store-connector-db-options-validators';
-import { ISwarmStoreConnectorUtilsDatabaseOptionsValidatorsInstanceConstructor } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreConnectorUtilsDatabaseOptionsValidatorsInstanceConstructor } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import {
   TSwarmStoreValueTypes,
   TSwarmStoreDatabaseType,
   TSwarmStoreDatabaseOptions,
   TSwarmStoreDatabaseOptionsSerialized,
-} from '../../../../../swarm-store-class/swarm-store-class.types';
+} from 'classes/swarm-store-class/swarm-store-class.types';
 
 export function swarmStoreConnectorDbOptionsValidatorsInstanceFabric<
   P extends ESwarmStoreConnector,

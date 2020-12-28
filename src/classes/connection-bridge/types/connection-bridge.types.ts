@@ -181,6 +181,7 @@ export interface IConnectionBridgeStorageOptions<
     | 'providerConnectionOptions'
     | 'persistentDatbasesList'
     | 'swarmMessageConstructorFabric'
+    | 'cache'
   > {
   swarmMessageConstructorFabric: O['swarmMessageConstructorFabric'] | undefined;
   connectorBasicFabric: CBFO;

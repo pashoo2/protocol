@@ -406,7 +406,10 @@ export class ConnectToSwarmWithDBO<
       userCredentialsActive: credentials,
     });
     try {
-      const connectionBridge = await connectToSwarmWithDBOUtil(this.props.connectionBridgeOptions, credentials);
+      const connectionBridge = await connectToSwarmWithDBOUtil<P, T, DbType, DBO>(
+        this.props.connectionBridgeOptions,
+        credentials
+      );
 
       sessionStorage.setItem(CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY, 'true');
 

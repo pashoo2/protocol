@@ -2,14 +2,9 @@ import React from 'react';
 import { connectToSwarmUtil } from './connect-to-swarm-utils/connect-to-swarm.utils';
 import { CONNECT_TO_SWARM_STORAGE_DEFAULT_MESSAGE_BODY } from '../const/connect-to-swarm.const';
 import { CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY } from '../const/connect-to-swarm.const';
-import {
-  ESwarmStoreConnectorOrbitDbDatabaseMethodNames,
-  ISwarmStoreDatabasesCommonStatusList,
-  ESwarmStoreEventNames,
-} from '../connect-to-swarm-with-dbo/node_modules/classes';
 import { SwarmStoreDbComponent } from '../swarm-store-db-component/swarm-store-db-component';
 import { ESwarmMessageStoreEventNames } from '../../classes/swarm-message-store/swarm-message-store.const';
-import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
+import { ESwarmStoreConnector, ESwarmStoreEventNames } from '../../classes/swarm-store-class/swarm-store-class.const';
 import {
   TSwarmMessageInstance,
   TSwarmMessageSerialized,
@@ -19,7 +14,11 @@ import { ISwarmMessageInstanceDecrypted } from '../../classes/swarm-message/swar
 import { ISecretStorage } from '../../classes/secret-storage-class/secret-storage-class.types';
 import { ICentralAuthorityUserProfile } from '../../classes/central-authority-class/central-authority-class-types/central-authority-class-types-common';
 import { UserProfile } from '../userProfile/userProfile';
-import { TSwarmStoreDatabaseType, TSwarmStoreDatabaseOptions } from '../../classes/swarm-store-class/swarm-store-class.types';
+import {
+  TSwarmStoreDatabaseType,
+  TSwarmStoreDatabaseOptions,
+  ISwarmStoreDatabasesCommonStatusList,
+} from '../../classes/swarm-store-class/swarm-store-class.types';
 import { SwarmMessagesDatabaseComponent } from '../swarm-messages-database-component/swarm-messages-database-component';
 import { PromiseResolveType } from '../../types/promise.types';
 import {
@@ -58,6 +57,7 @@ import {
   TConnectionBridgeOptionsConnectorConnectionOptions,
 } from '../../classes/connection-bridge/connection-bridge.types-helpers';
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../classes/swarm-messages-database/swarm-messages-database.messages-collector.types';
+import { ESwarmStoreConnectorOrbitDbDatabaseMethodNames } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.types';
 
 export type P = ESwarmStoreConnector.OrbitDB;
 
@@ -599,7 +599,7 @@ export class ConnectToSwarm<
   };
 
   protected createDatabaseConnector = async (dbOptions: DBO) => {
-    return swarmMessagesDatabaseConnectedFabric<
+    return await swarmMessagesDatabaseConnectedFabric<
       P,
       T,
       DbType,

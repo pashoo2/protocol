@@ -34,6 +34,7 @@ import { StorageProvider } from '../../storage-providers/storage-providers.types
 import { ISwarmStoreConnectorOrbitDbDatabaseValue } from '../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { PromiseResolveType } from '../../../types/promise.types';
+import { ISwarmMessageDecrypted } from '../../swarm-message/swarm-message-constructor.types';
 import {
   ISwarmStoreConnectorBasicWithEntriesCount,
   ISwarmStoreConnectorWithEntriesCount,
@@ -186,7 +187,7 @@ export interface ISwarmMessageStoreOptions<
    * @type {IStorageCommon}
    * @memberof ISwarmMessageStoreOptions
    */
-  cache?: StorageProvider<Exclude<MSI, T | ISwarmMessageInstanceEncrypted>>;
+  cache?: StorageProvider<ISwarmMessageDecrypted>;
 }
 
 export interface ISwarmMessageStoreOptionsWithConnectorFabric<
