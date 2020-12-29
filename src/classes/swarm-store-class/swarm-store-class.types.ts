@@ -667,7 +667,7 @@ export interface ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<
   grantAccess?: TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, I>;
 }
 
-export interface IDatabaseOptionsSerializerValidatorConstructor<
+export interface IDatabaseOptionsClass<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,

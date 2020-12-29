@@ -25,6 +25,7 @@ import {
   ISwarmMessageStore,
 } from '../../../../swarm-message-store/types/swarm-message-store.types';
 import { ConnectionBridge } from '../../../connection-bridge';
+import { ISerializer } from '../../../../../types/serialization.types';
 import {
   TSwarmStoreDatabaseOptions,
   ISwarmStoreProviderOptions,
@@ -149,6 +150,7 @@ export const createConnectionBridgeConnection = async <
     DBO,
     Record<DBO['dbName'], DBO>
   > = ISwarmStoreDatabasesPersistentListFabric<P, T, DbType, DBO, Record<DBO['dbName'], DBO>>,
+  SRLZR extends ISerializer = ISerializer,
   CBO extends IConnectionBridgeOptions<
     P,
     T,
@@ -167,7 +169,8 @@ export const createConnectionBridgeConnection = async <
     CD,
     O,
     SMS,
-    SSDPLF
+    SSDPLF,
+    SRLZR
   > = IConnectionBridgeOptions<
     P,
     T,
@@ -186,7 +189,8 @@ export const createConnectionBridgeConnection = async <
     CD,
     O,
     SMS,
-    SSDPLF
+    SSDPLF,
+    SRLZR
   >
 >(
   options: CBO,

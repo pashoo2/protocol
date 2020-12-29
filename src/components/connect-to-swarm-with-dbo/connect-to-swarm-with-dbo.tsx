@@ -58,6 +58,7 @@ import {
   TConnectionBridgeOptionsConnectorConnectionOptions,
 } from '../../classes/connection-bridge/connection-bridge.types-helpers';
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../classes/swarm-messages-database/swarm-messages-database.messages-collector.types';
+import { ISerializer } from '../../types/serialization.types';
 
 export type P = ESwarmStoreConnector.OrbitDB;
 
@@ -103,6 +104,7 @@ export class ConnectToSwarmWithDBO<
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   CD extends boolean,
   CBO extends IConnectionBridgeOptionsDefault<P, T, DbType, CD>,
+  SRLZR extends ISerializer,
   MI extends TSwarmMessageInstance = TSwarmMessageInstance,
   MD extends ISwarmMessageInstanceDecrypted = Exclude<MI, ISwarmMessageInstanceEncrypted>,
   SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD> = ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
@@ -150,7 +152,8 @@ export class ConnectToSwarmWithDBO<
           CD,
           any,
           any,
-          any
+          any,
+          SRLZR
         >
       | undefined,
     userId: undefined as string | undefined,

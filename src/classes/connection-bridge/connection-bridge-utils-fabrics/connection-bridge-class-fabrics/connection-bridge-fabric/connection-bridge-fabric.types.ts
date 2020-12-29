@@ -16,6 +16,7 @@ import {
   TSwarmStoreConnectorConnectionOptions,
 } from '../../../../swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageSerialized } from '../../../../swarm-message/swarm-message-constructor.types';
+import { ISerializer } from '../../../../../types/serialization.types';
 import {
   ISwarmStoreConnectorBasic,
   ISwarmStoreConnector,
@@ -149,6 +150,7 @@ export interface IConnectionBridgeFabric<
     DBO,
     Record<DBO['dbName'], DBO>
   > = ISwarmStoreDatabasesPersistentListFabric<P, T, DbType, DBO, Record<DBO['dbName'], DBO>>,
+  SRLZR extends ISerializer = ISerializer,
   CBO extends IConnectionBridgeOptions<
     P,
     T,
@@ -167,7 +169,8 @@ export interface IConnectionBridgeFabric<
     CD,
     O,
     SMS,
-    SSDPLF
+    SSDPLF,
+    SRLZR
   > = IConnectionBridgeOptions<
     P,
     T,
@@ -186,7 +189,8 @@ export interface IConnectionBridgeFabric<
     CD,
     O,
     SMS,
-    SSDPLF
+    SSDPLF,
+    SRLZR
   >
 > {
   (options: CBO): Promise<
@@ -209,7 +213,8 @@ export interface IConnectionBridgeFabric<
       CD,
       CBO,
       SMS,
-      SSDPLF
+      SSDPLF,
+      SRLZR
     >
   >;
 }

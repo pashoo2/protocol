@@ -1,4 +1,4 @@
-import { getSwarmMessageStoreConnectorDbOptionsClass } from '../../../swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-message-store-connector-db-options-class/swarm-message-store-connector-db-options-class-fabric';
+import { getSwarmMessageStoreConnectorDbOptionsClass as getSwarmMessageStoreDBOClass } from '../../../swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-message-store-connector-db-options-class/swarm-message-store-connector-db-options-class-fabric';
 import {
   TSwarmStoreValueTypes,
   TSwarmStoreDatabaseType,
@@ -12,16 +12,19 @@ import { ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContextFabric } fro
 import { ConstructorType } from '../../../../types/helper.types';
 import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorFabricParams } from '../../../swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-store-connector-db-options.types';
 import { ISwarmMessageStoreConectorDbOptionsGrandAccessContextClassFabricParams } from '../../../swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-message-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-context/swarm-store-conector-db-options-grand-access-context-classes/swarm-message-store-conector-db-options-grand-access-context-class/swarm-message-store-conector-db-options-grand-access-context-class.types';
-import { IDatabaseOptionsSerializerValidatorConstructor } from '../../../swarm-store-class/swarm-store-class.types';
+import { IDatabaseOptionsClass } from '../../../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageStoreConectorDbOptionsGrandAccessContextClassFabric } from '../../../swarm-message-store/types/swarm-message-store-db-options.types';
+import { ISwarmMessageStoreConnectorDbOptionsClassFabric } from '../../types/connection-bridge-swarm-fabrics.types';
+import { ISerializer } from '../../../../types/serialization.types';
+import { IOptionsSerializerValidatorSerializer } from '../../../basic-classes/options-serializer-validator-class/options-serializer-validator-class.types';
 
-export function getSwarmMessageStoreConnectorDbOptionsValidatorSerializerClass<
+export function getSwarmMessageStoreConnectorDBOClass<
   P extends ESwarmStoreConnector,
-  ItemType extends TSwarmStoreValueTypes<P>,
+  T extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  MSI extends TSwarmMessageInstance | ItemType,
+  MSI extends TSwarmMessageInstance | T,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   DBOS extends TSwarmStoreDatabaseOptionsSerialized,
   SMC extends ISwarmMessageConstructor,
   CTXC extends ConstructorType<CTX>,
@@ -30,24 +33,16 @@ export function getSwarmMessageStoreConnectorDbOptionsValidatorSerializerClass<
   ContextBaseClass: CTXC,
   swarmMessageConstructor: SMC,
   swarmMessageStoreDBOGrandAccessCallbackContextFabric: SMSDBOGACF,
-  OptionsSerializerValidatorConstructor?: IDatabaseOptionsSerializerValidatorConstructor<P, ItemType, DbType, DBO, DBOS>,
+  OptionsSerializerValidatorConstructor?: IDatabaseOptionsClass<P, T, DbType, DBO, DBOS>,
   additionalParams?: Omit<
-    ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorFabricParams<
-      P,
-      ItemType,
-      DbType,
-      MSI,
-      CTX,
-      DBO,
-      DBOS
-    >,
+    ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorFabricParams<P, T, DbType, MSI, CTX, DBO, DBOS>,
     'grandAccessCallbackContextFabric'
   >
-): IDatabaseOptionsSerializerValidatorConstructor<P, ItemType, DbType, DBO, DBOS> {
+): IDatabaseOptionsClass<P, T, DbType, DBO, DBOS> {
   const grandAccessCallbackContextFabric: ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContextFabric<
     P,
     DbType,
-    ItemType,
+    T,
     DBO,
     CTX
   > = (dbOptions: DBO): CTX => {
@@ -63,8 +58,55 @@ export function getSwarmMessageStoreConnectorDbOptionsValidatorSerializerClass<
     );
     return new SwarmMessagesStoreDBOGrandAccessCallbackContextClass();
   };
-  return getSwarmMessageStoreConnectorDbOptionsClass<P, ItemType, DbType, MSI, CTX, DBO, DBOS>(
+  return getSwarmMessageStoreDBOClass<P, T, DbType, MSI, CTX, DBO, DBOS>(
     { ...additionalParams, grandAccessCallbackContextFabric },
     OptionsSerializerValidatorConstructor
   );
+}
+
+export function getSwarmMessageStoreConnectorDBOClassFabric<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmStoreValueTypes<P>,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  MSI extends TSwarmMessageInstance | T,
+  CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
+  DBOS extends TSwarmStoreDatabaseOptionsSerialized,
+  SMC extends ISwarmMessageConstructor,
+  CTXC extends ConstructorType<CTX>,
+  SMSDBOGACF extends ISwarmMessageStoreConectorDbOptionsGrandAccessContextClassFabric<SMC, CTXC>,
+  DBOCF extends ISwarmMessageStoreConnectorDbOptionsClassFabric<P, T, DbType, MSI, CTX, DBO, DBOS, SMC, CTXC, SMSDBOGACF>,
+  SRLZR extends ISerializer
+>(serializer: SRLZR): DBOCF {
+  const dboFabric = (
+    ContextBaseClass: CTXC,
+    swarmMessageConstructor: SMC,
+    swarmMessageStoreDBOGrandAccessCallbackContextFabric: SMSDBOGACF,
+    OptionsSerializerValidatorConstructor?: IDatabaseOptionsClass<P, T, DbType, DBO, DBOS>,
+    additionalParams?: Omit<
+      ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorFabricParams<
+        P,
+        T,
+        DbType,
+        MSI,
+        CTX,
+        DBO,
+        DBOS
+      >,
+      'grandAccessCallbackContextFabric'
+    >
+  ): IDatabaseOptionsClass<P, T, DbType, DBO, DBOS> => {
+    const additionalParamsResulted = {
+      ...additionalParams,
+      optionsSerializer: (serializer as unknown) as IOptionsSerializerValidatorSerializer<DBO, DBOS>,
+    };
+    return getSwarmMessageStoreConnectorDBOClass<P, T, DbType, MSI, CTX, DBO, DBOS, SMC, CTXC, SMSDBOGACF>(
+      ContextBaseClass,
+      swarmMessageConstructor,
+      swarmMessageStoreDBOGrandAccessCallbackContextFabric,
+      OptionsSerializerValidatorConstructor,
+      additionalParamsResulted
+    );
+  };
+  return dboFabric as DBOCF;
 }

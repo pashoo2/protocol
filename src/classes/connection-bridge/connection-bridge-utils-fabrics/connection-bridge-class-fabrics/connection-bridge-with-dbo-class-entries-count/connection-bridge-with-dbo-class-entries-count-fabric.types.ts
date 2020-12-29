@@ -29,6 +29,7 @@ import { ISwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsSerialize
 import { ISwarmStoreWithConnector } from '../../../../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageStoreWithEntriesCount } from '../../../../swarm-message-store/types/swarm-message-store.types';
 import { TConnectionBridgeCFODefault, IConnectionBridgeOptions } from '../../../types/connection-bridge.types';
+import { ISerializer } from '../../../../../types/serialization.types';
 import {
   ISwarmStoreConnectorBasicWithEntriesCount,
   ISwarmStoreConnectorWithEntriesCount,
@@ -215,7 +216,8 @@ export interface IConnectionBridgeWithDatabaseOptionsClassAndDBListPeristentStor
   SSDPLF extends ISwarmStoreDatabasesPersistentListFabric<P, T, DbType, DBOE, Record<DBOE['dbName'], DBOE>>,
   CTXC extends ConstructorType<CTX>,
   SMSDBOGACF extends ISwarmMessageStoreConectorDbOptionsGrandAccessContextClassFabric<SMC, CTXC>,
-  DBOC extends ISwarmMessageStoreConnectorDbOptionsClassFabric<P, T, DbType, MSI, CTX, DBOE, DBOS, SMC, CTXC, SMSDBOGACF>
+  DBOC extends ISwarmMessageStoreConnectorDbOptionsClassFabric<P, T, DbType, MSI, CTX, DBOE, DBOS, SMC, CTXC, SMSDBOGACF>,
+  SRLZR extends ISerializer = ISerializer
 > extends Omit<
     IConnectionBridgeOptions<
       P,
@@ -235,7 +237,8 @@ export interface IConnectionBridgeWithDatabaseOptionsClassAndDBListPeristentStor
       CD,
       O,
       SMS,
-      SSDPLF
+      SSDPLF,
+      SRLZR
     >,
     'storage'
   > {

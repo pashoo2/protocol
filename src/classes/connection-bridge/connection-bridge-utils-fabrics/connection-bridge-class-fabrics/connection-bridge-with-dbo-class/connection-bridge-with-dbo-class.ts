@@ -43,6 +43,7 @@ import {
 } from '../../../../swarm-store-class/swarm-store-class-extended/swarm-store-class-with-entries-count/swarm-store-class-with-entries-count.types';
 import { ISwarmStoreDatabasesPersistentListFabric } from '../../../types/connection-bridge.types';
 import { ISwarmMessageStoreConnectorDbOptionsClassFabric } from '../../../types/connection-bridge-swarm-fabrics.types';
+import { ISerializer } from '../../../../../types/serialization.types';
 
 export class ConnectionBridgeWithDBOClassEntriesCount<
   P extends ESwarmStoreConnector,
@@ -106,7 +107,9 @@ export class ConnectionBridgeWithDBOClassEntriesCount<
     SSDPLF,
     CTXC,
     SMSDBOGACF,
-    DBOC
+    DBOCF,
+    SRLZR,
+    DBOCFF
   >,
   SMS extends ISwarmMessageStoreWithEntriesCount<
     P,
@@ -128,7 +131,8 @@ export class ConnectionBridgeWithDBOClassEntriesCount<
   SSDPLF extends ISwarmStoreDatabasesPersistentListFabric<P, T, DbType, DBOE, Record<DBOE['dbName'], DBOE>>,
   CTXC extends ConstructorType<CTX>,
   SMSDBOGACF extends ISwarmMessageStoreConectorDbOptionsGrandAccessContextClassFabric<SMC, CTXC>,
-  DBOC extends ISwarmMessageStoreConnectorDbOptionsClassFabric<P, T, DbType, MSI, CTX, DBOE, DBOS, SMC, CTXC, SMSDBOGACF>,
+  DBOCF extends ISwarmMessageStoreConnectorDbOptionsClassFabric<P, T, DbType, MSI, CTX, DBOE, DBOS, SMC, CTXC, SMSDBOGACF>,
+  DBOCFF extends (serializer: SRLZR) => DBOCF,
   E extends ISwarmMessageStoreEvents<P, T, DbType, DBOE> = ISwarmMessageStoreEvents<P, T, DbType, DBOE>,
   DBL extends TSwarmStoreOptionsOfDatabasesKnownList<P, T, DbType, DBOE> = TSwarmStoreOptionsOfDatabasesKnownList<
     P,
@@ -136,7 +140,8 @@ export class ConnectionBridgeWithDBOClassEntriesCount<
     DbType,
     DBOE
   >,
-  NC extends TNativeConnectionType<P> = TNativeConnectionType<P>
+  NC extends TNativeConnectionType<P> = TNativeConnectionType<P>,
+  SRLZR extends ISerializer = ISerializer
 > extends ConnectionBridge<
   P,
   T,
@@ -170,13 +175,39 @@ export class ConnectionBridgeWithDBOClassEntriesCount<
     return swarmMessageStoreDatabaseGrandAccessBaseContextClassFabric;
   }
 
-  protected __getSwarmMessageStoreDatabaseOptionsClassFabricFromOptions(): CBO['storage']['swarmMessageStoreDatabaseOptionsClassFabric'] {
-    const { swarmMessageStoreDatabaseOptionsClassFabric } = this._getStorageOptions();
+  protected __getOptionsForSwarmMessageStoreDatabaseOptionsClassFarbricOfFabric(): {
+    serializer: SRLZR;
+  } {
+    const activeSerializerInstance = this._getSerializer() as SRLZR;
+
+    return {
+      serializer: activeSerializerInstance,
+    };
+  }
+
+  protected __createSarmMessageStoreDatabaseOptionsClassFabric<SMSDBOCFF extends (serializer: SRLZR) => DBOCF>(
+    swarmMessageStoreDatabaseOptionsClassFabricOfFabric: SMSDBOCFF,
+    options: {
+      serializer: SRLZR;
+    }
+  ): DBOCF {
+    return swarmMessageStoreDatabaseOptionsClassFabricOfFabric(options.serializer);
+  }
+
+  protected __crateAndGetSwarmMessageStoreDatabaseOptionsClassFabric(): ReturnType<
+    CBO['storage']['swarmMessageStoreDatabaseOptionsClassFabricOfFabric']
+  > {
+    const { swarmMessageStoreDatabaseOptionsClassFabricOfFabric } = this._getStorageOptions();
     assert(
-      swarmMessageStoreDatabaseOptionsClassFabric,
+      swarmMessageStoreDatabaseOptionsClassFabricOfFabric,
       'swarmMessageStoreDatabaseOptionsClassFabric should be defined in the "storage" options'
     );
-    return swarmMessageStoreDatabaseOptionsClassFabric;
+    const optionsForFabricOfFabric = this.__getOptionsForSwarmMessageStoreDatabaseOptionsClassFarbricOfFabric();
+
+    return this.__createSarmMessageStoreDatabaseOptionsClassFabric(
+      swarmMessageStoreDatabaseOptionsClassFabricOfFabric,
+      optionsForFabricOfFabric
+    ) as ReturnType<CBO['storage']['swarmMessageStoreDatabaseOptionsClassFabricOfFabric']>;
   }
 
   protected __getSwarmMessageStoreDBOGrandAccessCallbackFabricFromOptions(): CBO['storage']['swarmMessageStoreDBOGrandAccessCallbackFabric'] {
@@ -209,12 +240,12 @@ export class ConnectionBridgeWithDBOClassEntriesCount<
     ContextBaseClass: CTXC;
     swarmMessageConstructor: SMC;
     swarmMessageStoreDBOGrandAccessCallbackFabric: SMSDBOGACF;
-    databaseOptionsClassFabric: DBOC;
+    databaseOptionsClassFabric: DBOCF;
   } {
     const swarmMessageConstructor = this._getSwarmMessageConstructor() as SMC;
     const swarmMessageStoreDBOGrandAccessCallbackFabric = this.__getSwarmMessageStoreDBOGrandAccessCallbackFabricFromOptions();
     const ContextBaseClass = this.__createSwarmStoreGrandAccessCallbackBaseClassByCurrentOptions();
-    const databaseOptionsClassFabric = this.__getSwarmMessageStoreDatabaseOptionsClassFabricFromOptions();
+    const databaseOptionsClassFabric = this.__crateAndGetSwarmMessageStoreDatabaseOptionsClassFabric();
     return {
       ContextBaseClass,
       swarmMessageStoreDBOGrandAccessCallbackFabric,
@@ -231,6 +262,7 @@ export class ConnectionBridgeWithDBOClassEntriesCount<
       databaseOptionsClassFabric,
     } = this._createAndGetSwarmMessageStoreInstanceWithDBOClassFabricOptions();
     const swarmMessageStoreInstanceWithDBOClassFabric = this.__getSwarmMessageStoreInstanceWithDBOClassFabricFromOptions();
+
     return swarmMessageStoreInstanceWithDBOClassFabric(
       ContextBaseClass,
       swarmMessageConstructor,

@@ -249,7 +249,8 @@ export interface IConnectionBridgeOptions<
     ACO,
     O
   >,
-  SSDPLF extends ISwarmStoreDatabasesPersistentListFabric<P, T, DbType, DBO, Record<DBO['dbName'], DBO>>
+  SSDPLF extends ISwarmStoreDatabasesPersistentListFabric<P, T, DbType, DBO, Record<DBO['dbName'], DBO>>,
+  SRLZR extends ISerializer
 > {
   swarmStoreConnectorType: P;
   user: IConnectionBridgeOptionsUser;
@@ -293,7 +294,7 @@ export interface IConnectionBridgeOptions<
    * @type {ISerializer}
    * @memberof IConnectionBridgeStorageOptions
    */
-  serializer?: ISerializer;
+  serializer: SRLZR;
 }
 
 export interface IConnectionBridge<
@@ -345,7 +346,8 @@ export interface IConnectionBridge<
     CD,
     O,
     SMS,
-    SSDPLF
+    SSDPLF,
+    SRLZR
   >,
   SMS extends ISwarmMessageStore<
     P,
@@ -363,7 +365,8 @@ export interface IConnectionBridge<
     ACO,
     O
   >,
-  SSDPLF extends ISwarmStoreDatabasesPersistentListFabric<P, T, DbType, DBO, Record<DBO['dbName'], DBO>>
+  SSDPLF extends ISwarmStoreDatabasesPersistentListFabric<P, T, DbType, DBO, Record<DBO['dbName'], DBO>>,
+  SRLZR extends ISerializer
 > {
   /**
    * used to authorize the user or get
@@ -560,7 +563,8 @@ export interface IConnectionBridgeOptionsDefault<
     DbType,
     DBO,
     Record<DBO['dbName'], DBO>
-  > = ISwarmStoreDatabasesPersistentListFabric<P, T, DbType, DBO, Record<DBO['dbName'], DBO>>
+  > = ISwarmStoreDatabasesPersistentListFabric<P, T, DbType, DBO, Record<DBO['dbName'], DBO>>,
+  SRLZR extends ISerializer = ISerializer
 > extends IConnectionBridgeOptions<
     P,
     T,
@@ -579,7 +583,8 @@ export interface IConnectionBridgeOptionsDefault<
     CD,
     O,
     SMS,
-    SSDPLF
+    SSDPLF,
+    SRLZR
   > {}
 
 export type TConnectionBridgeStorageOptionsDefault<
@@ -606,5 +611,27 @@ export interface IConnectionBridgeUnknown<
     DbType,
     DBO,
     Record<DBO['dbName'], DBO>
-  > = ISwarmStoreDatabasesPersistentListFabric<P, T, DbType, DBO, Record<DBO['dbName'], DBO>>
-> extends IConnectionBridge<P, T, DbType, DBO, any, any, any, any, any, any, MSI, GAC, MCF, any, any, CD, any, any, SSDPLF> {}
+  > = ISwarmStoreDatabasesPersistentListFabric<P, T, DbType, DBO, Record<DBO['dbName'], DBO>>,
+  SRLZR extends ISerializer = ISerializer
+> extends IConnectionBridge<
+    P,
+    T,
+    DbType,
+    DBO,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    MSI,
+    GAC,
+    MCF,
+    any,
+    any,
+    CD,
+    any,
+    any,
+    SSDPLF,
+    SRLZR
+  > {}

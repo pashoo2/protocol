@@ -79,7 +79,6 @@ import {
 import { calculateHash } from '../../utils/hash-calculation-utils/hash-calculation-utils';
 import { PromiseResolveType } from '../../types/promise.types';
 import { ISerializer } from '../../types/serialization.types';
-import { CONNECTION_BRIDGE_DEFAULT_SERIALIZER } from './connection-bridge.const';
 import { IStorageCommon } from '../../types/storage.types';
 import {
   ISwarmMessageDatabaseConstructors,
@@ -154,7 +153,8 @@ export class ConnectionBridge<
     CD,
     O,
     SMS,
-    SSDPLF
+    SSDPLF,
+    SRLZR
   >,
   SMS extends ISwarmMessageStore<
     P,
@@ -201,7 +201,8 @@ export class ConnectionBridge<
     DbType,
     DBO,
     Record<DBO['dbName'], DBO>
-  > = ISwarmStoreDatabasesPersistentListFabric<P, T, DbType, DBO, Record<DBO['dbName'], DBO>>
+  > = ISwarmStoreDatabasesPersistentListFabric<P, T, DbType, DBO, Record<DBO['dbName'], DBO>>,
+  SRLZR extends ISerializer = ISerializer
 > implements
     IConnectionBridge<
       P,
@@ -222,7 +223,8 @@ export class ConnectionBridge<
       CD,
       CBO,
       SMS,
-      SSDPLF
+      SSDPLF,
+      SRLZR
     > {
   static joinKeyPartsUsedForStorageValue(...parts: string[]): string {
     return parts.join(CONNECTION_BRIDGE_STORAGE_DELIMETER_FOR_STORAGE_KEYS_DEFAULT);
@@ -268,7 +270,7 @@ export class ConnectionBridge<
 
   protected swarmMessageEncryptedCache?: ISwarmMessageEncryptedCache;
 
-  protected _serializer: ISerializer | undefined;
+  protected _serializer: SRLZR | undefined;
 
   protected _swarmConnectorDatabasesPeristentList: PromiseResolveType<ReturnType<SSDPLF>> | undefined;
 
@@ -403,38 +405,37 @@ export class ConnectionBridge<
     return centralAuthorityConnection;
   }
 
-  protected _setSerializer(serializer: ISerializer): void {
+  protected _setSerializer(serializer: SRLZR): void {
     this._serializer = serializer;
   }
 
-  protected _validateSerializerInstance(serializer: ISerializer): void {
+  protected _validateSerializerInstance(serializer: SRLZR): void {
     // TODO - move to a separate function
     assert(typeof serializer === 'object', 'Serializer should be an object');
     assert(typeof serializer.parse === 'function', 'Serializer should have the "parse" method');
     assert(typeof serializer.stringify === 'function', 'Serializer should have the "stringify" method');
   }
 
-  protected _returnSerializerIfDefinedOrDefault(serializer?: ISerializer): ISerializer {
-    return serializer ?? CONNECTION_BRIDGE_DEFAULT_SERIALIZER;
+  protected _getSerializerFromOptions(): SRLZR {
+    const serializer = this._serializer;
+    if (!serializer) {
+      throw new Error('A serializer instance is not defined');
+    }
+    return serializer;
   }
 
-  protected _setSerializerInstanceFromOptionsOrDefault(options: { serializer?: ISerializer }) {
-    const serializerFromOptions = options.serializer;
-
-    if (!serializerFromOptions) {
-      console.log("Connection bridge: browser's JSON API will be used as a serializer");
-    }
-
-    const serializerApiToUse = this._returnSerializerIfDefinedOrDefault(serializerFromOptions);
+  protected _setSerializerInstanceFromOptionsOrDefault(options: { serializer?: SRLZR }) {
+    const serializerApiToUse = this._getSerializerFromOptions();
 
     this._validateSerializerInstance(serializerApiToUse);
     this._setSerializer(serializerApiToUse);
   }
 
-  protected _getSerializerFromOptions(): ISerializer {
+  protected _getSerializer(): SRLZR {
     const serializer = this._serializer;
+
     if (!serializer) {
-      throw new Error('A serializer instance is not defined');
+      throw new Error('Thre is no an active serializer instance');
     }
     return serializer;
   }
@@ -961,7 +962,8 @@ export class ConnectionBridge<
       true,
       any,
       any,
-      SSDPLF
+      SSDPLF,
+      SRLZR
     > {
     return !!options.auth.credentials?.login;
   }
@@ -1000,7 +1002,8 @@ export class ConnectionBridge<
         false,
         any,
         any,
-        SSDPLF
+        SSDPLF,
+        SRLZR
       >
   ): Promise<void> {
     assert(options.auth.session, 'A session must be started if there is no credentials provided');
@@ -1056,7 +1059,8 @@ export class ConnectionBridge<
             false,
             any,
             any,
-            SSDPLF
+            SSDPLF,
+            SRLZR
           >
       );
     }

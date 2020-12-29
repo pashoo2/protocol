@@ -46,6 +46,7 @@ import {
 import { ISwarmStoreDatabasesPersistentListFabric } from '../../../types/connection-bridge.types';
 import { ISwarmMessageStoreConnectorDbOptionsClassFabric } from '../../../types/connection-bridge-swarm-fabrics.types';
 import { ConnectionBridgeWithDBOClassEntriesCount } from './connection-bridge-with-dbo-class';
+import { ISerializer } from '../../../../../types/serialization.types';
 
 export const createConnectionBridgeConnectionWithDBOClass = async <
   P extends ESwarmStoreConnector,
@@ -109,7 +110,9 @@ export const createConnectionBridgeConnectionWithDBOClass = async <
     SSDPLF,
     CTXC,
     SMSDBOGACF,
-    DBOC
+    DBOCF,
+    SRLZR,
+    DBOCFF
   >,
   SMS extends ISwarmMessageStoreWithEntriesCount<
     P,
@@ -131,7 +134,8 @@ export const createConnectionBridgeConnectionWithDBOClass = async <
   SSDPLF extends ISwarmStoreDatabasesPersistentListFabric<P, T, DbType, DBOE, Record<DBOE['dbName'], DBOE>>,
   CTXC extends ConstructorType<CTX>,
   SMSDBOGACF extends ISwarmMessageStoreConectorDbOptionsGrandAccessContextClassFabric<SMC, CTXC>,
-  DBOC extends ISwarmMessageStoreConnectorDbOptionsClassFabric<P, T, DbType, MSI, CTX, DBOE, DBOS, SMC, CTXC, SMSDBOGACF>,
+  DBOCF extends ISwarmMessageStoreConnectorDbOptionsClassFabric<P, T, DbType, MSI, CTX, DBOE, DBOS, SMC, CTXC, SMSDBOGACF>,
+  DBOCFF extends (serializer: SRLZR) => DBOCF,
   E extends ISwarmMessageStoreEvents<P, T, DbType, DBOE> = ISwarmMessageStoreEvents<P, T, DbType, DBOE>,
   DBL extends TSwarmStoreOptionsOfDatabasesKnownList<P, T, DbType, DBOE> = TSwarmStoreOptionsOfDatabasesKnownList<
     P,
@@ -139,7 +143,8 @@ export const createConnectionBridgeConnectionWithDBOClass = async <
     DbType,
     DBOE
   >,
-  NC extends TNativeConnectionType<P> = TNativeConnectionType<P>
+  NC extends TNativeConnectionType<P> = TNativeConnectionType<P>,
+  SRLZR extends ISerializer = ISerializer
 >(
   options: CBO,
   credentials?: TConnectionBridgeOptionsAuthCredentials,
@@ -172,10 +177,12 @@ export const createConnectionBridgeConnectionWithDBOClass = async <
     SSDPLF,
     CTXC,
     SMSDBOGACF,
-    DBOC,
+    DBOCF,
+    DBOCFF,
     E,
     DBL,
-    NC
+    NC,
+    SRLZR
   >();
   let useSessionAuth: boolean = false;
   const optionsWithCredentials = credentials
@@ -204,6 +211,8 @@ export const createConnectionBridgeConnectionWithDBOClass = async <
 
 export const createConnectionBridgeConnectionWithDBOClassByOptions = (
   options: IConnectionBridgeWithDatabaseOptionsClassAndDBListPeristentStorageAndSwarmMessageCountOptions<
+    any,
+    any,
     any,
     any,
     any,

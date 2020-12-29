@@ -15,6 +15,7 @@ import {
 } from '../swarm-message-store';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-message-encrypted-cache';
 import { IConnectionBridgeOptions, ISwarmStoreDatabasesPersistentListFabric } from './types/connection-bridge.types';
+import { ISerializer } from '../../types/serialization.types';
 
 export type TConnectionBridgeOptionsDatabaseOptions<
   T extends IConnectionBridgeOptions<
@@ -35,6 +36,7 @@ export type TConnectionBridgeOptionsDatabaseOptions<
     any,
     any,
     any,
+    any,
     any
   >
 > = T extends IConnectionBridgeOptions<
@@ -42,6 +44,7 @@ export type TConnectionBridgeOptionsDatabaseOptions<
   any,
   any,
   infer DBO,
+  any,
   any,
   any,
   any,
@@ -78,6 +81,7 @@ export type TConnectionBridgeOptionsConnectorBasic<
     any,
     any,
     any,
+    any,
     any
   >
 > = T extends IConnectionBridgeOptions<
@@ -86,6 +90,7 @@ export type TConnectionBridgeOptionsConnectorBasic<
   any,
   any,
   infer CB,
+  any,
   any,
   any,
   any,
@@ -121,6 +126,7 @@ export type TConnectionBridgeOptionsConnectorConnectionOptions<
     any,
     any,
     any,
+    any,
     any
   >
 > = T extends IConnectionBridgeOptions<
@@ -130,6 +136,7 @@ export type TConnectionBridgeOptionsConnectorConnectionOptions<
   any,
   any,
   infer CO,
+  any,
   any,
   any,
   any,
@@ -164,6 +171,7 @@ export type TConnectionBridgeOptionsProviderOptions<
     any,
     any,
     any,
+    any,
     any
   >
 > = T extends IConnectionBridgeOptions<
@@ -174,6 +182,7 @@ export type TConnectionBridgeOptionsProviderOptions<
   any,
   any,
   infer PO,
+  any,
   any,
   any,
   any,
@@ -207,6 +216,7 @@ export type TConnectionBridgeOptionsConnectorMain<
     any,
     any,
     any,
+    any,
     any
   >
 > = T extends IConnectionBridgeOptions<
@@ -218,6 +228,7 @@ export type TConnectionBridgeOptionsConnectorMain<
   any,
   any,
   infer ConnectorMain,
+  any,
   any,
   any,
   any,
@@ -250,6 +261,7 @@ export type TConnectionBridgeOptionsSwarmMessageInstance<
     any,
     any,
     any,
+    any,
     any
   >
 > = T extends IConnectionBridgeOptions<
@@ -262,6 +274,7 @@ export type TConnectionBridgeOptionsSwarmMessageInstance<
   any,
   any,
   infer MSI,
+  any,
   any,
   any,
   any,
@@ -293,6 +306,7 @@ export type TConnectionBridgeOptionsGrandAccessCallback<
     any,
     any,
     any,
+    any,
     any
   >
 > = T extends IConnectionBridgeOptions<
@@ -306,6 +320,7 @@ export type TConnectionBridgeOptionsGrandAccessCallback<
   any,
   any,
   infer GAC,
+  any,
   any,
   any,
   any,
@@ -336,6 +351,7 @@ export type TConnectionBridgeOptionsConstructorWithEncryptedCacheFabric<
     any,
     any,
     any,
+    any,
     any
   >
 > = T extends IConnectionBridgeOptions<
@@ -350,6 +366,7 @@ export type TConnectionBridgeOptionsConstructorWithEncryptedCacheFabric<
   any,
   any,
   infer MCF,
+  any,
   any,
   any,
   any,
@@ -379,6 +396,7 @@ export type TConnectionBridgeOptionsAccessControlOptions<
     any,
     any,
     any,
+    any,
     any
   >
 > = T extends IConnectionBridgeOptions<
@@ -394,6 +412,7 @@ export type TConnectionBridgeOptionsAccessControlOptions<
   any,
   any,
   infer ACO,
+  any,
   any,
   any,
   any,
@@ -422,6 +441,7 @@ export type TConnectionBridgeOptionsConnectorFabricOptions<
     any,
     any,
     any,
+    any,
     any
   >
 > = T extends IConnectionBridgeOptions<
@@ -438,6 +458,7 @@ export type TConnectionBridgeOptionsConnectorFabricOptions<
   any,
   any,
   infer CFO,
+  any,
   any,
   any,
   any,
@@ -465,6 +486,7 @@ export type TConnectionBridgeOptionsConnectorBasicFabric<
     any,
     any,
     any,
+    any,
     any
   >
 > = T extends IConnectionBridgeOptions<
@@ -482,6 +504,7 @@ export type TConnectionBridgeOptionsConnectorBasicFabric<
   any,
   any,
   infer CBFO,
+  any,
   any,
   any,
   any,
@@ -509,6 +532,7 @@ export type TConnectionBridgeOptionsSwarmMessageStoreOptionsWithConnectorFabric<
     any,
     ISwarmMessageStoreOptionsWithConnectorFabric<any, any, any, any, any, any, any, any, any, any, any, any, any>,
     any,
+    any,
     any
   >
 > = T extends IConnectionBridgeOptions<
@@ -528,6 +552,7 @@ export type TConnectionBridgeOptionsSwarmMessageStoreOptionsWithConnectorFabric<
   any,
   any,
   infer O,
+  any,
   any,
   any
 >
@@ -553,6 +578,7 @@ export type TConnectionBridgeOptionsSwarmMessageStoreInstance<
     any,
     ISwarmMessageStoreOptionsWithConnectorFabric<any, any, any, any, any, any, any, any, any, any, any, any, any>,
     ISwarmMessageStore<any, any, any, any, any, any, any, any, any, any, any, any, any, any>,
+    any,
     any
   >
 > = T extends IConnectionBridgeOptions<
@@ -573,6 +599,7 @@ export type TConnectionBridgeOptionsSwarmMessageStoreInstance<
   any,
   any,
   infer SMS,
+  any,
   any
 >
   ? SMS
@@ -597,7 +624,8 @@ export type TSwarmStoreDatabasesPersistentListFabric<
     any,
     ISwarmMessageStoreOptionsWithConnectorFabric<any, any, any, any, any, any, any, any, any, any, any, any, any>,
     ISwarmMessageStore<any, any, any, any, any, any, any, any, any, any, any, any, any, any>,
-    ISwarmStoreDatabasesPersistentListFabric<any, any, any, any, any>
+    ISwarmStoreDatabasesPersistentListFabric<any, any, any, any, any>,
+    any
   >
 > = T extends IConnectionBridgeOptions<
   any,
@@ -617,7 +645,54 @@ export type TSwarmStoreDatabasesPersistentListFabric<
   any,
   any,
   any,
-  infer SSDPLF
+  infer SSDPLF,
+  any
 >
   ? SSDPLF
+  : never;
+
+export type TSerializer<
+  T extends IConnectionBridgeOptions<
+    any,
+    any,
+    any,
+    any,
+    ISwarmStoreConnectorBasic<any, any, any, any>,
+    TSwarmStoreConnectorConnectionOptions<any, any, any, any, any>,
+    ISwarmStoreProviderOptions<any, any, any, any, any, any>,
+    ISwarmStoreConnector<any, any, any, any, any, any>,
+    any,
+    TSwarmMessagesStoreGrantAccessCallback<any, any>,
+    ISwarmMessageConstructorWithEncryptedCacheFabric,
+    ISwarmMessageStoreAccessControlOptions<any, any, any, any>,
+    ISwarmStoreOptionsConnectorFabric<any, any, any, any, any, any, any, any>,
+    TSwarmStoreConnectorBasicFabric<any, any, any, any, any>,
+    any,
+    ISwarmMessageStoreOptionsWithConnectorFabric<any, any, any, any, any, any, any, any, any, any, any, any, any>,
+    ISwarmMessageStore<any, any, any, any, any, any, any, any, any, any, any, any, any, any>,
+    ISwarmStoreDatabasesPersistentListFabric<any, any, any, any, any>,
+    ISerializer
+  >
+> = T extends IConnectionBridgeOptions<
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  any,
+  infer SRLZR
+>
+  ? SRLZR
   : never;

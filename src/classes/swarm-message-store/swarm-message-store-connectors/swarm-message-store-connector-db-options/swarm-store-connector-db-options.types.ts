@@ -1,5 +1,5 @@
 import {
-  IDatabaseOptionsSerializerValidatorConstructor,
+  IDatabaseOptionsClass,
   ISwarmStoreConnectorDatabaseAccessControlleGrantCallback,
   TSwarmStoreConnectorAccessConrotllerGrantAccessCallback,
   TSwarmStoreDatabaseOptions,
@@ -314,7 +314,7 @@ export interface ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValida
       DBO,
       DBOS
     >
-  ): IDatabaseOptionsSerializerValidatorConstructor<P, ItemType, DbType, DBO, DBOS>;
+  ): IDatabaseOptionsClass<P, ItemType, DbType, DBO, DBOS>;
 }
 
 export interface ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor<

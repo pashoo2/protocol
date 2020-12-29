@@ -2,7 +2,7 @@ import { ConstructorType } from '../../../types/helper.types';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { ICentralAuthority } from '../../central-authority-class/central-authority-class.types';
 import {
-  IDatabaseOptionsSerializerValidatorConstructor,
+  IDatabaseOptionsClass,
   TSwarmStoreValueTypes,
   TSwarmStoreDatabaseType,
   TSwarmStoreDatabaseOptions,
@@ -58,17 +58,19 @@ export interface ISwarmMessageStoreConnectorDbOptionsClassFabric<
   SMC extends ISwarmMessageConstructor,
   CTXC extends ConstructorType<CTX>,
   SMSDBOGACF extends ISwarmMessageStoreConectorDbOptionsGrandAccessContextClassFabric<SMC, CTXC>,
-  OSVC extends IDatabaseOptionsSerializerValidatorConstructor<P, ItemType, DbType, DBO, DBOS> | never = never,
+  OSVC extends IDatabaseOptionsClass<P, ItemType, DbType, DBO, DBOS> | never = never,
   AP extends
     | Omit<
-        ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorFabricParams<
-          P,
-          ItemType,
-          DbType,
-          MSI,
-          CTX,
-          DBO,
-          DBOS
+        Partial<
+          ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorFabricParams<
+            P,
+            ItemType,
+            DbType,
+            MSI,
+            CTX,
+            DBO,
+            DBOS
+          >
         >,
         'grandAccessCallbackContextFabric'
       >
@@ -80,7 +82,7 @@ export interface ISwarmMessageStoreConnectorDbOptionsClassFabric<
     swarmMessageStoreDBOGrandAccessCallbackFabric: SMSDBOGACF,
     OptionsSerializerValidatorConstructor?: OSVC,
     additionalParams?: AP
-  ): IDatabaseOptionsSerializerValidatorConstructor<P, ItemType, DbType, DBO, DBOS>;
+  ): IDatabaseOptionsClass<P, ItemType, DbType, DBO, DBOS>;
 }
 
 export interface ISwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsSerializerAndDatabaseOptionsFabric<

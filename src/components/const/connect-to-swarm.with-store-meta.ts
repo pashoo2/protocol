@@ -115,14 +115,18 @@ export const CONNECT_TO_SWARM_CONNECTION_STORAGE_OPTIONS: TConnectionBridgeStora
   ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED
 > = {
   accessControl: {
-    grantAccess: (
+    grantAccess: function grandAccess(
       message: unknown,
       userId: TCentralAuthorityUserIdentity,
       dbName: string,
       key?: TSwarmStoreDatabaseEntityKey<ESwarmStoreConnector.OrbitDB>,
       // operation on the database
       op?: TSwarmStoreDatabaseEntryOperation<ESwarmStoreConnector.OrbitDB>
-    ) => Promise.resolve(true),
+    ) {
+      console.log(this);
+      debugger;
+      return Promise.resolve(true);
+    },
   }, // use the default access control
   swarmMessageConstructorFabric: undefined, // use the default swarm message constructor fabric
   connectorBasicFabric: connectorBasicFabricOrbitDBWithEntriesCount,
@@ -204,14 +208,18 @@ export const CONNECT_TO_SWARM_CONNECTION_STORAGE_WITH_STORE_META_OPTIONS: IConne
   >
 >['storage'] = {
   accessControl: {
-    grantAccess: (
+    grantAccess: function grandAccess(
       message: unknown,
       userId: TCentralAuthorityUserIdentity,
       dbName: string,
       key?: TSwarmStoreDatabaseEntityKey<ESwarmStoreConnector.OrbitDB>,
       // operation on the database
       op?: TSwarmStoreDatabaseEntryOperation<ESwarmStoreConnector.OrbitDB>
-    ) => Promise.resolve(true),
+    ) {
+      console.log(this);
+      debugger;
+      return Promise.resolve(true);
+    },
   }, // use the default access control
   swarmMessageConstructorFabric: undefined, // use the default swarm message constructor fabric
   connectorBasicFabric: connectorBasicFabricOrbitDBWithEntriesCount,
