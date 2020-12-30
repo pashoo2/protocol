@@ -110,7 +110,7 @@ export interface ISwarmStoreConnectorUtilsDatabaseOptionsValidatorsConstructor<
   new (): ISwarmStoreConnectorUtilsDatabaseOptionsValidators<P, ItemType, DbType, DBO, DBOS>;
 }
 
-export interface ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidator<
+export interface ISwarmStoreDBOSerializerValidator<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,

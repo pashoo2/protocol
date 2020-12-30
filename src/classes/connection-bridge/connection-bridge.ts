@@ -416,7 +416,7 @@ export class ConnectionBridge<
     assert(typeof serializer.stringify === 'function', 'Serializer should have the "stringify" method');
   }
 
-  protected _getSerializerFromOptions(): SRLZR {
+  protected _getSerializerCurrentInstance(): SRLZR {
     const serializer = this._serializer;
     if (!serializer) {
       throw new Error('A serializer instance is not defined');
@@ -424,11 +424,11 @@ export class ConnectionBridge<
     return serializer;
   }
 
-  protected _setSerializerInstanceFromOptionsOrDefault(options: { serializer?: SRLZR }) {
-    const serializerApiToUse = this._getSerializerFromOptions();
+  protected _setSerializerInstanceFromOptionsOrDefault(options: { serializer: SRLZR }) {
+    const { serializer } = options;
 
-    this._validateSerializerInstance(serializerApiToUse);
-    this._setSerializer(serializerApiToUse);
+    this._validateSerializerInstance(serializer);
+    this._setSerializer(serializer);
   }
 
   protected _getSerializer(): SRLZR {
@@ -725,7 +725,7 @@ export class ConnectionBridge<
     );
     return {
       persistentStorage: persistentStorageForDatabasesList,
-      serializer: this._getSerializerFromOptions(),
+      serializer: this._getSerializer(),
       keyPrefixForDatabasesLisInPersistentStorage: storageKeyPrefix,
     };
   }

@@ -9,7 +9,7 @@ import {
 import { ESwarmStoreConnector } from '../../../../swarm-store-class/swarm-store-class.const';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { TSwarmMessageInstance } from '../../../../swarm-message/swarm-message-constructor.types';
-import { ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidator } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOSerializerValidator } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { ConstructorType } from '../../../../../types/helper.types';
 import {
   TSwarmStoreConnectorConnectionOptions,
@@ -24,10 +24,12 @@ import {
 } from '../../../types/swarm-message-store.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { ISwarmStoreDatabaseBaseOptions } from '../../../../swarm-store-class/swarm-store-class.types';
-import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructor } from '../swarm-store-connector-db-options.types';
-import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorParams } from '../swarm-store-connector-db-options.types';
+import {
+  ISwarmMessageStoreDBOSerializerValidatorConstructorParams,
+  ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorByDBO,
+} from '../swarm-store-connector-db-options.types';
 
-export function createSwarmMessageStoreConnectorDBOptionsWithOptionsExtenderFabric<
+export function createSwarmMessageStoreDBOWithOptionsExtenderFabric<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
@@ -58,41 +60,28 @@ export function createSwarmMessageStoreConnectorDBOptionsWithOptionsExtenderFabr
     ACO
   >,
   DBOS extends TSwarmStoreDatabaseOptionsSerialized,
-  BC extends ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructor<
-    P,
-    ItemType,
-    DbType,
-    MSI,
-    CTX,
-    DBO,
-    DBOS
-  >,
+  BC extends ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorByDBO<P, ItemType, DbType, DBO, DBOS>,
   META extends { swarmMessageStoreOptions: O },
   DBOE extends DBO & ISwarmStoreDatabaseBaseOptions & { provider: P },
   OEXTENDERFABRIC extends (options: O) => (dbOptions: DBO) => DBOE
 >(
   BaseClass: BC,
   databaseOptionsExtenderFabric: OEXTENDERFABRIC
-): BC & ConstructorType<ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidator<P, ItemType, DbType, DBOE, DBOS>> {
+): BC & ConstructorType<ISwarmStoreDBOSerializerValidator<P, ItemType, DbType, DBOE, DBOS>> {
   assert(databaseOptionsExtenderFabric, 'Opions extender fabric is not provided');
   assert(typeof databaseOptionsExtenderFabric === 'function', 'Options extender fabric should be a function');
-  class SwarmMessageStoreConnectorDBOptionsWithExtendedGrandAccessClass {
+  class SwarmMessageStoreDBOWithExtendedGrandAccessClass {
     constructor(
-      params: ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorParams<
-        P,
-        ItemType,
-        DbType,
-        MSI,
-        CTX,
-        DBOE,
-        DBOS
-      >,
-      meta: META
+      params: ISwarmMessageStoreDBOSerializerValidatorConstructorParams<P, ItemType, DbType, MSI, CTX, DBOE, DBOS> & {
+        meta: META;
+      }
     ) {
+      const { meta } = params;
       const { options: dbOptions } = new BaseClass(params);
       const optionsExtender = this.__createdOptionsExtender(meta);
       const dbOptionsExtended = this.__extendDatabaseOptions(dbOptions, optionsExtender);
-      return this.__createInstanceOfBaseClassWithDbOptionsExtended(params, dbOptionsExtended) as any;
+      const dboClassInstance = this.__createInstanceOfBaseClassWithDBOExtended(params, dbOptionsExtended);
+      return dboClassInstance as any;
     }
 
     protected __createdOptionsExtender(meta: META): (dbOptions: DBO) => DBOE {
@@ -104,31 +93,17 @@ export function createSwarmMessageStoreConnectorDBOptionsWithOptionsExtenderFabr
       return optionsExtender(dbOptionsCopy);
     }
 
-    protected __createInstanceOfBaseClassWithDbOptionsExtended(
-      params: ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorParams<
-        P,
-        ItemType,
-        DbType,
-        MSI,
-        CTX,
-        DBOE,
-        DBOS
-      >,
+    protected __createInstanceOfBaseClassWithDBOExtended(
+      params: ISwarmMessageStoreDBOSerializerValidatorConstructorParams<P, ItemType, DbType, MSI, CTX, DBOE, DBOS>,
       dbOptionsExtended: DBOE
-    ): ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidator<P, ItemType, DbType, DBOE, DBOS> {
+    ): ISwarmStoreDBOSerializerValidator<P, ItemType, DbType, DBOE, DBOS> {
       const paramsWithExtendedDbOptions = {
         ...params,
         options: dbOptionsExtended,
       };
-      return new BaseClass(paramsWithExtendedDbOptions) as ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidator<
-        P,
-        ItemType,
-        DbType,
-        DBOE,
-        DBOS
-      >;
+      return new BaseClass(paramsWithExtendedDbOptions) as ISwarmStoreDBOSerializerValidator<P, ItemType, DbType, DBOE, DBOS>;
     }
   }
-  return (SwarmMessageStoreConnectorDBOptionsWithExtendedGrandAccessClass as unknown) as BC &
-    ConstructorType<ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidator<P, ItemType, DbType, DBOE, DBOS>>;
+  return (SwarmMessageStoreDBOWithExtendedGrandAccessClass as unknown) as BC &
+    ConstructorType<ISwarmStoreDBOSerializerValidator<P, ItemType, DbType, DBOE, DBOS>>;
 }

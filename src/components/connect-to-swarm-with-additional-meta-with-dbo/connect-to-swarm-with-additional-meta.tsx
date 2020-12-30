@@ -152,7 +152,7 @@ export class ConnectToSwarmWithAdditionalMetaWithDBO<
     DCCRT
   > = ISwarmMessagesDatabaseCacheConstructor<P, T, DbType, DBO, MD, SMSM, DCO, DCCRT>
   // TODO - use CBO instead of any
-> extends ConnectToSwarmWithDBO<DbType, T, DBO, CD, any, MI, MD, SMSM, DCO, DCCRT, SMDCC> {
+> extends ConnectToSwarmWithDBO<DbType, T, DBO, CD, any, CBO['serializer'], MI, MD, SMSM, DCO, DCCRT, SMDCC> {
   protected getSwarmMessagesCollector(): SMSM {
     const { connectionBridge } = this.state;
 

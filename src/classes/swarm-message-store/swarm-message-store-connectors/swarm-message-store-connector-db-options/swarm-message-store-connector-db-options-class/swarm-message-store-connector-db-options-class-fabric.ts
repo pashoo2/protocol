@@ -6,7 +6,7 @@ import {
   TSwarmStoreDatabaseOptionsSerialized,
 } from 'classes/swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageInstance } from 'classes/swarm-message/swarm-message-constructor.types';
-import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorParams } from '../swarm-store-connector-db-options.types';
+import { ISwarmMessageStoreDBOSerializerValidatorConstructorParams } from '../swarm-store-connector-db-options.types';
 import { SwarmMessageStoreConnectorDBOptionsClass } from './swarm-message-store-connector-db-options-class';
 import {
   IOptionsSerializerValidatorConstructorParams,
@@ -94,15 +94,7 @@ export function getSwarmMessageStoreConnectorDbOptionsClass<
 
   const extendOptions = (options: {
     options: DBO | DBOS;
-  }): ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorParams<
-    P,
-    ItemType,
-    DbType,
-    MSI,
-    CTX,
-    DBO,
-    DBOS
-  > => {
+  }): ISwarmMessageStoreDBOSerializerValidatorConstructorParams<P, ItemType, DbType, MSI, CTX, DBO, DBOS> => {
     const dbOptionsSerializer = getDbOptionsSerializer();
     const dbOptionsParsed = typeof options.options === 'string' ? dbOptionsSerializer.parse(options.options) : options.options;
 

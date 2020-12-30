@@ -53,7 +53,7 @@ export class SerializerClass<T = any> implements ISerializer {
 
   constructor(protected readonly _options: ISerializerClassConstructorOptions = {}) {}
   public stringify(obj: ISerializableObject<T> | TSimpleTypes): string {
-    const replacer = this._getReplacer();
+    const replacer = this._getReplacerArgumentForJSONStringify();
     return this._getStringifier()(obj, replacer);
   }
   public parse(str: string): ISerializableObject<T> | TSimpleTypes {
@@ -77,7 +77,7 @@ export class SerializerClass<T = any> implements ISerializer {
     return this._options.replacer ?? this._defaultReplacerCallback;
   }
 
-  protected _getReplacer(): (this: any, key: string, value: any) => any {
+  protected _getReplacerArgumentForJSONStringify(): (this: any, key: string, value: any) => any {
     const functionSerializer = this._getFunctionSerializer();
     const replacerCallback = this._getReplacerCallback();
     return serializerClassUtilCreateReplacerArgumentForJSONStringify(functionSerializer, replacerCallback);

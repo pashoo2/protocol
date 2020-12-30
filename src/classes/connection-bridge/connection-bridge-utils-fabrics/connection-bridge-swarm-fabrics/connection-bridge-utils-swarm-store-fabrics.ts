@@ -32,7 +32,7 @@ import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../swarm-sto
 import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor } from '../../../swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-store-connector-db-options.types';
 import { ISwarmMessageStoreWithEntriesCount } from '../../../swarm-message-store/types/swarm-message-store.types';
 import { ISwarmStoreDatabaseBaseOptions, IDatabaseOptionsClass } from '../../../swarm-store-class/swarm-store-class.types';
-import { createSwarmMessageStoreConnectorDBOptionsWithOptionsExtenderFabric } from '../../../swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-message-store-connector-db-options-with-options-extender-class-fabric/swarm-message-store-connector-db-options-with-options-extender-class-fabric';
+import { createSwarmMessageStoreDBOWithOptionsExtenderFabric } from '../../../swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-message-store-connector-db-options-with-options-extender-class-fabric/swarm-message-store-connector-db-options-with-options-extender-class-fabric';
 import { createSwarmMessageStoreUtilsExtenderOrbitDBDatabaseOptionsWithAccessControl } from '../../../swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-message-store-conector-db-options-grand-access-utils/swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks/swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks';
 import { ConstructorType } from '../../../../types/helper.types';
 import { ISwarmMessageStoreConnectorDbOptionsClassFabric } from '../../types/connection-bridge-swarm-fabrics.types';
@@ -262,7 +262,7 @@ export function getSwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptions
   O
 > &
   ISwarmStoreWithConnector<P, ItemType, DbType, DBOE, ConnectorBasic, CO, ConnectorMain> {
-  class DatabaseOptionsConstructorWithExtender extends createSwarmMessageStoreConnectorDBOptionsWithOptionsExtenderFabric<
+  class DatabaseOptionsConstructorWithExtender extends createSwarmMessageStoreDBOWithOptionsExtenderFabric<
     P,
     ItemType,
     DbType,

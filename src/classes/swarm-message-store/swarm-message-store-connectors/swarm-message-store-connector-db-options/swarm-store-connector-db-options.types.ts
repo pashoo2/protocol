@@ -16,7 +16,7 @@ import {
 } from '../../../basic-classes/options-serializer-validator-class/options-serializer-validator-class.types';
 import {
   ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidator,
+  ISwarmStoreDBOSerializerValidator,
   ISwarmStoreConnectorUtilsDatabaseOptionsValidatorsInstanceFabric,
   ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound,
 } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
@@ -121,7 +121,7 @@ export interface ISwarmMessageStoreConnectorDatabaseOptionsWithAccessControlleGr
   (): ISwarmMessageStoreConnectorDatabaseOptionsWithAccessControlleGrantCallbackBound<P, ItemType, DbType, MSI, CTX, DBO>;
 }
 
-export interface ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorParams<
+export interface ISwarmMessageStoreDBOSerializerValidatorConstructorParams<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
@@ -163,16 +163,18 @@ export interface ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValida
   DBOS extends TSwarmStoreDatabaseOptionsSerialized
 > extends IOptionsSerializerValidatorConstructor<DBO, DBOS> {
   new (
-    params: ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorParams<
-      P,
-      ItemType,
-      DbType,
-      MSI,
-      CTX,
-      DBO,
-      DBOS
-    >
-  ): ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidator<P, ItemType, DbType, DBO, DBOS>;
+    params: ISwarmMessageStoreDBOSerializerValidatorConstructorParams<P, ItemType, DbType, MSI, CTX, DBO, DBOS>
+  ): ISwarmStoreDBOSerializerValidator<P, ItemType, DbType, DBO, DBOS>;
+}
+
+export interface ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorByDBO<
+  P extends ESwarmStoreConnector,
+  ItemType extends TSwarmStoreValueTypes<P>,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
+  DBOS extends TSwarmStoreDatabaseOptionsSerialized
+> extends IOptionsSerializerValidatorConstructor<DBO, DBOS> {
+  new (params: { options: DBO }): ISwarmStoreDBOSerializerValidator<P, ItemType, DbType, DBO, DBOS>;
 }
 
 /**
@@ -197,16 +199,8 @@ export interface ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValida
   DBOS extends TSwarmStoreDatabaseOptionsSerialized
 > extends IOptionsSerializerValidatorConstructor<DBO, DBOS> {
   new (
-    params: ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorParams<
-      P,
-      ItemType,
-      DbType,
-      MSI,
-      CTX,
-      DBO,
-      DBOS
-    >
-  ): ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidator<P, ItemType, DbType, DBO, DBOS>;
+    params: ISwarmMessageStoreDBOSerializerValidatorConstructorParams<P, ItemType, DbType, MSI, CTX, DBO, DBOS>
+  ): ISwarmStoreDBOSerializerValidator<P, ItemType, DbType, DBO, DBOS>;
 }
 
 /**
@@ -231,16 +225,8 @@ export interface ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValida
   DBOS extends TSwarmStoreDatabaseOptionsSerialized
 > extends IOptionsSerializerValidatorConstructor<DBO, DBOS> {
   new (
-    params: ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorParams<
-      P,
-      ItemType,
-      DbType,
-      MSI,
-      CTX,
-      DBO,
-      DBOS
-    >
-  ): ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidator<P, ItemType, DbType, DBO, DBOS>;
+    params: ISwarmMessageStoreDBOSerializerValidatorConstructorParams<P, ItemType, DbType, MSI, CTX, DBO, DBOS>
+  ): ISwarmStoreDBOSerializerValidator<P, ItemType, DbType, DBO, DBOS>;
 }
 
 export interface ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorFabricParams<
@@ -317,6 +303,17 @@ export interface ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValida
   ): IDatabaseOptionsClass<P, ItemType, DbType, DBO, DBOS>;
 }
 
+export interface ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructorArguments<
+  P extends ESwarmStoreConnector,
+  ItemType extends TSwarmStoreValueTypes<P>,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
+  META extends Record<string, unknown> | never = never
+> {
+  options: DBO;
+  meta: META;
+}
+
 export interface ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
@@ -335,11 +332,13 @@ export interface ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValida
     DBO,
     DBOS
   > {
-  new (options: { options: DBO; meta: META }): ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidator<
-    P,
-    ItemType,
-    DbType,
-    DBO,
-    DBOS
-  >;
+  new (
+    options: ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructorArguments<
+      P,
+      ItemType,
+      DbType,
+      DBO,
+      META
+    >
+  ): ISwarmStoreDBOSerializerValidator<P, ItemType, DbType, DBO, DBOS>;
 }

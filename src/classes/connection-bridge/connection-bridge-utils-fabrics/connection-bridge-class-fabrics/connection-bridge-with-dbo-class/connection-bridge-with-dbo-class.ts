@@ -202,11 +202,11 @@ export class ConnectionBridgeWithDBOClassEntriesCount<
       swarmMessageStoreDatabaseOptionsClassFabricOfFabric,
       'swarmMessageStoreDatabaseOptionsClassFabric should be defined in the "storage" options'
     );
-    const optionsForFabricOfFabric = this.__getOptionsForSwarmMessageStoreDatabaseOptionsClassFarbricOfFabric();
+    const optionsForDBOClassFabricOfFabric = this.__getOptionsForSwarmMessageStoreDatabaseOptionsClassFarbricOfFabric();
 
     return this.__createSarmMessageStoreDatabaseOptionsClassFabric(
       swarmMessageStoreDatabaseOptionsClassFabricOfFabric,
-      optionsForFabricOfFabric
+      optionsForDBOClassFabricOfFabric
     ) as ReturnType<CBO['storage']['swarmMessageStoreDatabaseOptionsClassFabricOfFabric']>;
   }
 

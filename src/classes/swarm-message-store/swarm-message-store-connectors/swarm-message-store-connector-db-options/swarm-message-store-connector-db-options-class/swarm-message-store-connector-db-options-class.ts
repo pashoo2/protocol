@@ -9,9 +9,9 @@ import { ESwarmStoreConnector } from '../../../../swarm-store-class/swarm-store-
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { TSwarmMessageInstance } from '../../../../swarm-message/swarm-message-constructor.types';
 import assert from 'assert';
-import { ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidator } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOSerializerValidator } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import {
-  ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorParams,
+  ISwarmMessageStoreDBOSerializerValidatorConstructorParams,
   ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder,
   ISwarmMessageStoreConnectorDatabaseOptionsWithAccessControlleGrantCallbackBound,
 } from '../swarm-store-connector-db-options.types';
@@ -26,7 +26,7 @@ export class SwarmMessageStoreConnectorDBOptionsClass<
     DBOS extends TSwarmStoreDatabaseOptionsSerialized
   >
   extends OptionsSerializerValidator<DBO, DBOS>
-  implements ISwarmStoreConnectorUtilsDatabaseOptionsSerializerValidator<P, ItemType, DbType, DBO, DBOS> {
+  implements ISwarmStoreDBOSerializerValidator<P, ItemType, DbType, DBO, DBOS> {
   protected _grandAccessContextBinder:
     | ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder<P, ItemType, MSI, CTX>
     | undefined;
@@ -35,17 +35,7 @@ export class SwarmMessageStoreConnectorDBOptionsClass<
     | ISwarmMessageStoreConnectorDatabaseOptionsWithAccessControlleGrantCallbackBound<P, ItemType, DbType, MSI, CTX, DBO>
     | undefined;
 
-  constructor(
-    params: ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorParams<
-      P,
-      ItemType,
-      DbType,
-      MSI,
-      CTX,
-      DBO,
-      DBOS
-    >
-  ) {
+  constructor(params: ISwarmMessageStoreDBOSerializerValidatorConstructorParams<P, ItemType, DbType, MSI, CTX, DBO, DBOS>) {
     super(params);
     this._validateParams(params);
     this._setGrandAccessCallbackContextBinder(params.grandAccessBinder);
@@ -55,7 +45,7 @@ export class SwarmMessageStoreConnectorDBOptionsClass<
   }
 
   protected _validateParams(params: {
-    grandAccessBinder: ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorParams<
+    grandAccessBinder: ISwarmMessageStoreDBOSerializerValidatorConstructorParams<
       P,
       ItemType,
       DbType,
@@ -64,7 +54,7 @@ export class SwarmMessageStoreConnectorDBOptionsClass<
       DBO,
       DBOS
     >['grandAccessBinder'];
-    grandAccessBinderForDBOptions: ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorParams<
+    grandAccessBinderForDBOptions: ISwarmMessageStoreDBOSerializerValidatorConstructorParams<
       P,
       ItemType,
       DbType,
@@ -141,9 +131,10 @@ export class SwarmMessageStoreConnectorDBOptionsClass<
   }
 
   protected _bindGrandAccessContextToOptions() {
-    const databaseOptionsUnbound = this._getOptionsHandled();
-    const databaseOptionsWithGrandAccessBound = this._getGrandAccessCallbackToDbOptionsBinder()(
-      databaseOptionsUnbound,
+    const databaseOptionsUnboundToContext = this._getOptionsHandled();
+    const databaseOptionsContextBinder = this._getGrandAccessCallbackToDbOptionsBinder();
+    const databaseOptionsWithGrandAccessBound = databaseOptionsContextBinder(
+      databaseOptionsUnboundToContext,
       this._getGrandAccessContextBinder()
     );
     this._validateAndSetOptionsUnserialized(databaseOptionsWithGrandAccessBound);

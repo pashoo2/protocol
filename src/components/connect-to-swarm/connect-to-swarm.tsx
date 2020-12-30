@@ -150,7 +150,8 @@ export class ConnectToSwarm<
           CD,
           any,
           any,
-          any
+          any,
+          CBO['serializer']
         >
       | undefined,
     userId: undefined as string | undefined,

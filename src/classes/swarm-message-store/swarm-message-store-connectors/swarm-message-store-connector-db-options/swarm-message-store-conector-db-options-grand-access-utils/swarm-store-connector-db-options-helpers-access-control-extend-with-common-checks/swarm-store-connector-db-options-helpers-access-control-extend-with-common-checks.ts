@@ -73,14 +73,20 @@ function swarmMessageStoreUtilsExtendOrbitDbDatabaseOptionsWithAccessControlOrbi
   grantAccessCallback: GAC | undefined
 ): TSwarmStoreDatabaseOptions<ESwarmStoreConnector.OrbitDB, ItemType, DbType> &
   ISwarmStoreDatabaseBaseOptions & { provider: ESwarmStoreConnector.OrbitDB } {
+  const grantAccessCallbackToUse = grantAccessCallback || (dbOptions.grantAccess as GAC | undefined);
   const grantAccess = getMessageValidator<P, ItemType, DbType, DBO, MSI, GAC, PromiseResolveType<ReturnType<NonNullable<MCF>>>>(
     dbOptions,
     options.messageConstructors,
     // TODO - TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<string, P>
-    grantAccessCallback || (dbOptions.grantAccess as GAC | undefined),
+    grantAccessCallbackToUse,
     options.userId
   );
 
+  if (grantAccessCallbackToUse) {
+    grantAccess.toString = () => {
+      return grantAccessCallbackToUse.toString();
+    };
+  }
   return {
     write: allowAccessForUsers,
     ...dbOptions,

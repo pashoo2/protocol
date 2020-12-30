@@ -17,5 +17,13 @@ export function swarmStoreConnectorDbOptionsGrandAccessContextBinder<
   if (!ctx) {
     throw new Error('Context should be provided');
   }
-  return grandAccessCallback.bind(ctx);
+
+  const grandAccessCallbackBound = grandAccessCallback.bind(ctx);
+
+  // to make the function's body serializable
+  // becuase a bound functions can't be serialized
+  grandAccessCallbackBound.toString = (): string => {
+    return grandAccessCallback.toString();
+  };
+  return grandAccessCallbackBound;
 }

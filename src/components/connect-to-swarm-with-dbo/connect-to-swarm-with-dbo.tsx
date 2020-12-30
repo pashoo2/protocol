@@ -409,7 +409,7 @@ export class ConnectToSwarmWithDBO<
       userCredentialsActive: credentials,
     });
     try {
-      const connectionBridge = await connectToSwarmWithDBOUtil<P, T, DbType, DBO>(
+      const connectionBridge = await connectToSwarmWithDBOUtil<P, T, DbType, DBO, CBO['serializer']>(
         this.props.connectionBridgeOptions,
         credentials
       );
