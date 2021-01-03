@@ -6,20 +6,21 @@ import {
   TSwarmStoreDatabaseOptionsSerialized,
 } from 'classes/swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageInstance } from 'classes/swarm-message/swarm-message-constructor.types';
-import { ISwarmMessageStoreDBOSerializerValidatorConstructorParams } from '../swarm-store-connector-db-options.types';
-import { SwarmMessageStoreDBOptionsClass } from './swarm-message-store-connector-db-options-class';
 import {
-  IOptionsSerializerValidatorConstructorParams,
-  IOptionsSerializerValidatorSerializer,
-} from 'classes/basic-classes/options-serializer-validator-class/options-serializer-validator-class.types';
+  ISwarmMessageStoreDBOSerializerValidatorConstructorParams,
+  ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructorArguments,
+} from '../swarm-store-connector-db-options.types';
+import { SwarmMessageStoreDBOptionsClass } from './swarm-message-store-connector-db-options-class';
+import { IOptionsSerializerValidatorSerializer } from 'classes/basic-classes/options-serializer-validator-class/options-serializer-validator-class.types';
 import { swarmStoreConnectorDbOptionsValidatorsInstanceFabric } from '../swarm-message-store-connector-db-options-validators/swarm-store-connector-db-options-validators-fabric';
 import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorFabricParams } from '../swarm-store-connector-db-options.types';
 import { ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder } from '../swarm-store-connector-db-options.types';
 import { swarmStoreConnectorDbOptionsGrandAccessContextBinderFabric } from '../swarm-message-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-context/swarm-store-conector-db-options-grand-access-context-binder/swarm-store-conector-db-options-grand-access-context-binder-fabric';
 import { swarmStoreConectorDbOptionsGrandAccessContextBinderToDatabaseOptionsFabric } from '../swarm-message-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-context/swarm-store-conector-db-options-grand-access-context-binder-to-database-options/swarm-store-conector-db-options-grand-access-context-binder-to-database-options-fabric';
 import { ISwarmMessageStoreConnectorDatabaseOptionsWithAccessControlleGrantCallbackBound } from '../swarm-store-connector-db-options.types';
-import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor } from '../swarm-store-connector-db-options.types';
+import { ISwarmMessageStoreDatabaseOptionsWithMetaClass } from '../swarm-store-connector-db-options.types';
 import { IDatabaseOptionsClass } from '../../../../swarm-store-class/swarm-store-class.types';
+import { ISwarmMessageConstructor } from '../../../../swarm-message/swarm-message-constructor.types';
 import {
   ISwarmStoreDBOGrandAccessCallbackBaseContext,
   ISwarmStoreConnectorUtilsDatabaseOptionsValidators,
@@ -32,7 +33,8 @@ export function getSwarmMessageStoreDBOClass<
   MSI extends TSwarmMessageInstance | ItemType,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
-  DBOS extends TSwarmStoreDatabaseOptionsSerialized
+  DBOS extends TSwarmStoreDatabaseOptionsSerialized,
+  SMC extends ISwarmMessageConstructor
 >(
   params: ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorFabricParams<
     P,
@@ -41,20 +43,13 @@ export function getSwarmMessageStoreDBOClass<
     MSI,
     CTX,
     DBO,
-    DBOS
+    DBOS,
+    SMC
   >,
   OptionsSerializerValidatorConstructor?: IDatabaseOptionsClass<P, ItemType, DbType, DBO, DBOS>
-): IDatabaseOptionsClass<P, ItemType, DbType, DBO, DBOS> {
+): ISwarmMessageStoreDatabaseOptionsWithMetaClass<P, ItemType, DbType, MSI, CTX, DBO, DBOS, { swarmMessageConstructor: SMC }> {
   const ConstructorToUse = (OptionsSerializerValidatorConstructor ??
-    SwarmMessageStoreDBOptionsClass) as ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor<
-    P,
-    ItemType,
-    DbType,
-    MSI,
-    CTX,
-    DBO,
-    DBOS
-  >;
+    SwarmMessageStoreDBOptionsClass) as ISwarmMessageStoreDatabaseOptionsWithMetaClass<P, ItemType, DbType, MSI, CTX, DBO, DBOS>;
   const getDbOptionsSerializer = (): IOptionsSerializerValidatorSerializer<DBO, DBOS> =>
     params.optionsSerializer ?? ((JSON as unknown) as IOptionsSerializerValidatorSerializer<DBO, DBOS>);
 
@@ -70,9 +65,10 @@ export function getSwarmMessageStoreDBOClass<
   };
 
   const createGrandAccessContextBinder = (
-    dbOptions: DBO
+    dbOptions: DBO,
+    swarmMessageConstructor: SMC
   ): ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder<P, ItemType, MSI, CTX> => {
-    const context = params.grandAccessCallbackContextFabric(dbOptions);
+    const context = params.grandAccessCallbackContextFabric(dbOptions, swarmMessageConstructor);
     const grandAccessContextBinderFabric =
       params.grandAccessBinderFabric || swarmStoreConnectorDbOptionsGrandAccessContextBinderFabric;
 
@@ -94,22 +90,47 @@ export function getSwarmMessageStoreDBOClass<
 
   const extendOptions = (options: {
     options: DBO | DBOS;
+    meta: { swarmMessageConstructor: SMC };
   }): ISwarmMessageStoreDBOSerializerValidatorConstructorParams<P, ItemType, DbType, MSI, CTX, DBO, DBOS> => {
     const dbOptionsSerializer = getDbOptionsSerializer();
-    const dbOptionsParsed = typeof options.options === 'string' ? dbOptionsSerializer.parse(options.options) : options.options;
+    const {
+      meta: { swarmMessageConstructor },
+      options: dbOptions,
+    } = options;
+    const dbOptionsParsed = typeof dbOptions === 'string' ? dbOptionsSerializer.parse(dbOptions) : dbOptions;
 
     return {
       options: dbOptionsParsed,
       serializer: dbOptionsSerializer,
       validators: createValidators(),
-      grandAccessBinder: createGrandAccessContextBinder(dbOptionsParsed),
+      grandAccessBinder: createGrandAccessContextBinder(dbOptionsParsed, swarmMessageConstructor),
       grandAccessBinderForDBOptions: createGrandAccessBinderForDBOptions(),
     };
   };
   class SwarmMessageStoreDBOptionsClassCreated extends ConstructorToUse {
-    constructor(options: Pick<IOptionsSerializerValidatorConstructorParams<DBO, DBOS>, 'options'>) {
+    constructor(
+      options: Pick<
+        ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructorArguments<
+          P,
+          ItemType,
+          DbType,
+          DBO,
+          { swarmMessageConstructor: SMC }
+        >,
+        'options' | 'meta'
+      >
+    ) {
       super(extendOptions(options));
     }
   }
-  return SwarmMessageStoreDBOptionsClassCreated;
+  return SwarmMessageStoreDBOptionsClassCreated as ISwarmMessageStoreDatabaseOptionsWithMetaClass<
+    P,
+    ItemType,
+    DbType,
+    MSI,
+    CTX,
+    DBO,
+    DBOS,
+    { swarmMessageConstructor: SMC }
+  >;
 }

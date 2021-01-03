@@ -121,7 +121,7 @@ export class SwarmMessageStore<
 
   protected swarmMessageConstructorFabric?: MCF;
 
-  protected extendsWithAccessControl?: ISwarmMessageStoreDatabaseOptionsExtender<
+  protected extendDBOWithAccessControl?: ISwarmMessageStoreDatabaseOptionsExtender<
     P,
     ItemType,
     DbType,
@@ -225,14 +225,14 @@ export class SwarmMessageStore<
    */
   public async openDatabase(dbOptions: DBO): Promise<void | Error> {
     try {
-      const { extendsWithAccessControl } = this;
+      const { extendDBOWithAccessControl: extendsWithAccessControl } = this;
 
       if (!extendsWithAccessControl) {
         throw new Error('There is no "extendsWithAccessControl" utility for the current instance');
       }
 
       const swarmMessageConstructorForDatabase = await this._getSwarmMessageConstructorForDb(dbOptions.dbName);
-      const optionsWithAcessControl = extendsWithAccessControl(dbOptions, swarmMessageConstructorForDatabase) || dbOptions;
+      const optionsWithAcessControl = extendsWithAccessControl(dbOptions, swarmMessageConstructorForDatabase);
       const dbOpenResult = await super.openDatabase(optionsWithAcessControl);
 
       if (!(dbOpenResult instanceof Error)) {
@@ -1300,7 +1300,7 @@ export class SwarmMessageStore<
       PromiseResolveType<ReturnType<NonNullable<MCF>>>
     >
   ): void {
-    this.extendsWithAccessControl = extenderDbOptionsWithAccessControl;
+    this.extendDBOWithAccessControl = extenderDbOptionsWithAccessControl;
   }
 
   protected async _extendSwarmMessgeStoreOptions(options: O) {

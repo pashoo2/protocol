@@ -577,7 +577,7 @@ export class ConnectionBridge<
     return this.getSwarmStoreConnectionProviderOptions(swarmConnection);
   }
 
-  protected _getSwarmMessageConstructor(): PromiseResolveType<ReturnType<NonNullable<MCF>>> {
+  protected _getDefaultSwarmMessageConstructor(): PromiseResolveType<ReturnType<NonNullable<MCF>>> {
     const { messageConstructor } = this;
     if (!messageConstructor) {
       throw new Error('There is no message constructor defined');
@@ -589,7 +589,7 @@ export class ConnectionBridge<
     PromiseResolveType<ReturnType<NonNullable<MCF>>>
   > {
     return {
-      default: this._getSwarmMessageConstructor(),
+      default: this._getDefaultSwarmMessageConstructor(),
     };
   }
 

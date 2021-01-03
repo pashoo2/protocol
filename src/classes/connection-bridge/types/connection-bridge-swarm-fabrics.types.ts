@@ -8,7 +8,10 @@ import {
   TSwarmStoreDatabaseOptions,
   TSwarmStoreDatabaseOptionsSerialized,
 } from '../../swarm-store-class/swarm-store-class.types';
-import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorFabricParams } from '../../swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-store-connector-db-options.types';
+import {
+  ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorFabricParams,
+  ISwarmMessageStoreDatabaseOptionsWithMetaClass,
+} from '../../swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-store-connector-db-options.types';
 import { ESwarmStoreConnector } from '../../swarm-store-class/swarm-store-class.const';
 import {
   TSwarmMessageInstance,
@@ -69,7 +72,8 @@ export interface ISwarmMessageStoreConnectorDbOptionsClassFabric<
             MSI,
             CTX,
             DBO,
-            DBOS
+            DBOS,
+            SMC
           >
         >,
         'grandAccessCallbackContextFabric'
@@ -78,7 +82,44 @@ export interface ISwarmMessageStoreConnectorDbOptionsClassFabric<
 > {
   (
     ContextBaseClass: CTXC,
-    swarmMessageConstructor: SMC,
+    swarmMessageStoreDBOGrandAccessCallbackFabric: SMSDBOGACF,
+    OptionsSerializerValidatorConstructor?: OSVC,
+    additionalParams?: AP
+  ): ISwarmMessageStoreDatabaseOptionsWithMetaClass<P, ItemType, DbType, MSI, CTX, DBO, DBOS, { swarmMessageConstructor: SMC }>;
+}
+
+export interface ISwarmMessageStoreConnectorDbOptionsClassWithMetaFabric<
+  P extends ESwarmStoreConnector,
+  ItemType extends TSwarmStoreValueTypes<P>,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  MSI extends TSwarmMessageInstance | ItemType,
+  CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
+  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
+  DBOS extends TSwarmStoreDatabaseOptionsSerialized,
+  SMC extends ISwarmMessageConstructor,
+  CTXC extends ConstructorType<CTX>,
+  SMSDBOGACF extends ISwarmMessageStoreConectorDbOptionsGrandAccessContextClassFabric<SMC, CTXC>,
+  OSVC extends IDatabaseOptionsClass<P, ItemType, DbType, DBO, DBOS> | never = never,
+  AP extends
+    | Omit<
+        Partial<
+          ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorFabricParams<
+            P,
+            ItemType,
+            DbType,
+            MSI,
+            CTX,
+            DBO,
+            DBOS,
+            SMC
+          >
+        >,
+        'grandAccessCallbackContextFabric'
+      >
+    | never = never
+> {
+  (
+    ContextBaseClass: CTXC,
     swarmMessageStoreDBOGrandAccessCallbackFabric: SMSDBOGACF,
     OptionsSerializerValidatorConstructor?: OSVC,
     additionalParams?: AP
@@ -148,7 +189,6 @@ export interface ISwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsS
 > {
   (
     ContextBaseClass: CTXC,
-    swarmMessageConstructor: SMC,
     swarmMessageStoreDBOGrandAccessCallbackContextFabric: SMSDBOGACF,
     databaseOptionsClassFabric: DBOC
   ): SMS;

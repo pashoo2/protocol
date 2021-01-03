@@ -8,7 +8,7 @@ import {
   TSwarmStoreValueTypes,
 } from '../../../swarm-store-class/swarm-store-class.types';
 import { ESwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.const';
-import { TSwarmMessageInstance } from '../../../swarm-message/swarm-message-constructor.types';
+import { TSwarmMessageInstance, ISwarmMessageConstructor } from '../../../swarm-message/swarm-message-constructor.types';
 import {
   IOptionsSerializerValidatorConstructor,
   IOptionsSerializerValidatorConstructorParams,
@@ -26,9 +26,10 @@ export interface ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContextFabr
   DbType extends TSwarmStoreDatabaseType<P>,
   ItemType extends TSwarmStoreValueTypes<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
+  SMC extends ISwarmMessageConstructor,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext
 > {
-  (dbOptions: DBO): CTX;
+  (dbOptions: DBO, swarmMessageConstructor: SMC): CTX;
 }
 
 /**
@@ -236,7 +237,8 @@ export interface ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValida
   MSI extends TSwarmMessageInstance | ItemType,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
-  DBOS extends TSwarmStoreDatabaseOptionsSerialized
+  DBOS extends TSwarmStoreDatabaseOptionsSerialized,
+  SMC extends ISwarmMessageConstructor
 > {
   /**
    * context for grand access callback function
@@ -249,6 +251,7 @@ export interface ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValida
     DbType,
     ItemType,
     DBO,
+    SMC,
     CTX
   >;
   /**
@@ -288,7 +291,8 @@ export interface ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValida
   MSI extends TSwarmMessageInstance | ItemType,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
-  DBOS extends TSwarmStoreDatabaseOptionsSerialized
+  DBOS extends TSwarmStoreDatabaseOptionsSerialized,
+  SMC extends ISwarmMessageConstructor
 > {
   (
     params: ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorFabricParams<
@@ -298,7 +302,8 @@ export interface ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValida
       MSI,
       CTX,
       DBO,
-      DBOS
+      DBOS,
+      SMC
     >
   ): IDatabaseOptionsClass<P, ItemType, DbType, DBO, DBOS>;
 }
@@ -314,7 +319,7 @@ export interface ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValida
   meta: META;
 }
 
-export interface ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor<
+export interface ISwarmMessageStoreDatabaseOptionsWithMetaClass<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,

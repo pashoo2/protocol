@@ -26,6 +26,7 @@ import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../sw
 import { ISwarmStoreDatabaseBaseOptions } from '../../../../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageStoreDatabaseOptionsExtender } from '../../../types/swarm-message-store-utils.types';
 import { PromiseResolveType } from '../../../../../types/promise.types';
+import { ISwarmMessageStoreDatabaseOptionsWithMetaClass } from '../swarm-store-connector-db-options.types';
 import {
   ISwarmMessageStoreDBOSerializerValidatorConstructorParams,
   ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorByDBO,
@@ -62,16 +63,25 @@ export function createSwarmMessageStoreDBOWithOptionsExtenderFabric<
     ACO
   >,
   DBOS extends TSwarmStoreDatabaseOptionsSerialized,
-  BC extends ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorByDBO<P, ItemType, DbType, DBO, DBOS>,
+  SSDOC extends ISwarmMessageStoreDatabaseOptionsWithMetaClass<
+    P,
+    ItemType,
+    DbType,
+    MSI,
+    CTX,
+    DBO,
+    DBOS,
+    { swarmMessageStoreOptions: O; swarmMessageConstructor: PromiseResolveType<ReturnType<NonNullable<MCF>>> }
+  >,
   META extends { swarmMessageStoreOptions: O; swarmMessageConstructor: PromiseResolveType<ReturnType<NonNullable<MCF>>> },
   DBOE extends DBO & ISwarmStoreDatabaseBaseOptions & { provider: P },
   OEXTENDERFABRIC extends (
     options: O
   ) => ISwarmMessageStoreDatabaseOptionsExtender<P, ItemType, DbType, DBO, DBOE, PromiseResolveType<ReturnType<NonNullable<MCF>>>>
 >(
-  BaseClass: BC,
+  BaseClass: SSDOC,
   databaseOptionsExtenderFabric: OEXTENDERFABRIC
-): BC & ConstructorType<ISwarmStoreDBOSerializerValidator<P, ItemType, DbType, DBOE, DBOS>> {
+): SSDOC & ConstructorType<ISwarmStoreDBOSerializerValidator<P, ItemType, DbType, DBOE, DBOS>> {
   assert(databaseOptionsExtenderFabric, 'Opions extender fabric is not provided');
   assert(typeof databaseOptionsExtenderFabric === 'function', 'Options extender fabric should be a function');
   class SwarmMessageStoreDBOWithExtendedGrandAccessClass {
@@ -129,6 +139,6 @@ export function createSwarmMessageStoreDBOWithOptionsExtenderFabric<
       return optionsExtender(dbOptionsCopy, swarmMessageConstructor);
     }
   }
-  return (SwarmMessageStoreDBOWithExtendedGrandAccessClass as unknown) as BC &
+  return (SwarmMessageStoreDBOWithExtendedGrandAccessClass as unknown) as SSDOC &
     ConstructorType<ISwarmStoreDBOSerializerValidator<P, ItemType, DbType, DBOE, DBOS>>;
 }

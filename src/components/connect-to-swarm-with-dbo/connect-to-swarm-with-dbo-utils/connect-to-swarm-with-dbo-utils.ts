@@ -47,7 +47,7 @@ export async function connectToSwarmWithDBOUtil<
   const optionsResulted = {
     ...options,
     storage: storageOptions,
-  };
+  } as any;
   const connectionBridgeInstance = await createConnectionBridgeConnectionWithDBOClassByOptions(
     optionsResulted,
     credentials,

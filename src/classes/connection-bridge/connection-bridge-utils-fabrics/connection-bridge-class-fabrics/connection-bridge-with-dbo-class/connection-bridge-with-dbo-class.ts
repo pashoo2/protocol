@@ -238,18 +238,15 @@ export class ConnectionBridgeWithDBOClassEntriesCount<
 
   protected _createAndGetSwarmMessageStoreInstanceWithDBOClassFabricOptions(): {
     ContextBaseClass: CTXC;
-    swarmMessageConstructor: SMC;
     swarmMessageStoreDBOGrandAccessCallbackFabric: SMSDBOGACF;
     databaseOptionsClassFabric: DBOCF;
   } {
-    const swarmMessageConstructor = this._getSwarmMessageConstructor() as SMC;
     const swarmMessageStoreDBOGrandAccessCallbackFabric = this.__getSwarmMessageStoreDBOGrandAccessCallbackFabricFromOptions();
     const ContextBaseClass = this.__createSwarmStoreGrandAccessCallbackBaseClassByCurrentOptions();
     const databaseOptionsClassFabric = this.__crateAndGetSwarmMessageStoreDatabaseOptionsClassFabric();
     return {
       ContextBaseClass,
       swarmMessageStoreDBOGrandAccessCallbackFabric,
-      swarmMessageConstructor,
       databaseOptionsClassFabric,
     };
   }
@@ -257,7 +254,6 @@ export class ConnectionBridgeWithDBOClassEntriesCount<
   protected createSwarmMessageStoreInstance(): SMS {
     const {
       ContextBaseClass,
-      swarmMessageConstructor,
       swarmMessageStoreDBOGrandAccessCallbackFabric,
       databaseOptionsClassFabric,
     } = this._createAndGetSwarmMessageStoreInstanceWithDBOClassFabricOptions();
@@ -265,7 +261,6 @@ export class ConnectionBridgeWithDBOClassEntriesCount<
 
     return swarmMessageStoreInstanceWithDBOClassFabric(
       ContextBaseClass,
-      swarmMessageConstructor,
       swarmMessageStoreDBOGrandAccessCallbackFabric,
       databaseOptionsClassFabric
     );
