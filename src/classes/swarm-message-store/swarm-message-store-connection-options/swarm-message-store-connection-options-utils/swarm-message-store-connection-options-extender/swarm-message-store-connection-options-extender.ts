@@ -1,5 +1,9 @@
 import { ESwarmStoreConnector } from '../../../../swarm-store-class/swarm-store-class.const';
-import { TSwarmMessageInstance, TSwarmMessageSerialized } from '../../../../swarm-message/swarm-message-constructor.types';
+import {
+  TSwarmMessageInstance,
+  TSwarmMessageSerialized,
+  ISwarmMessageConstructor,
+} from '../../../../swarm-message/swarm-message-constructor.types';
 import {
   ISwarmStoreConnectorOrbitDBConnectionOptions,
   ISwarmStoreConnectorOrbitDBOptions,
@@ -20,6 +24,7 @@ import {
   TSwarmMessagesStoreGrantAccessCallback,
 } from '../../../types/swarm-message-store.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageStoreDatabaseOptionsExtender } from '../../../types/swarm-message-store-utils.types';
 
 /**
  * Extends options for connector to a databases of the OrbitDB type
@@ -63,8 +68,7 @@ async function extendSwarmMessageStoreConnectionOptionsForOrbitDBConnector<
     ACO
   >
 >(
-  options: O,
-  extendWithAccessControlOptions: (dbOptions: DBO) => DBO
+  options: O
 ): Promise<
   ISwarmStoreConnectorOrbitDBOptions<ItemType, DbType> & {
     providerConnectionOptions: ISwarmStoreConnectorOrbitDBConnectionOptions<ItemType, DbType, DBO, ConnectorBasic>;
@@ -75,7 +79,6 @@ async function extendSwarmMessageStoreConnectionOptionsForOrbitDBConnector<
     options.providerConnectionOptions && options.providerConnectionOptions.ipfs
       ? options.providerConnectionOptions.ipfs
       : await ipfsUtilsConnectBasic();
-  const databases = (options.databases as DBO[]).map(extendWithAccessControlOptions);
 
   return {
     ...options,
@@ -83,7 +86,6 @@ async function extendSwarmMessageStoreConnectionOptionsForOrbitDBConnector<
       ...options.providerConnectionOptions,
       ipfs: ipfsConnection,
     },
-    databases,
   };
 }
 
@@ -127,7 +129,7 @@ export async function extendSwarmMessageStoreConnectionOptionsWithAccessControlA
     MCF,
     ACO
   >
->(options: O, extendWithAccessControlOptions: (dbOptions: DBO) => DBO): Promise<O> {
+>(options: O): Promise<O> {
   const { provider } = options;
 
   switch (provider) {
@@ -147,7 +149,7 @@ export async function extendSwarmMessageStoreConnectionOptionsWithAccessControlA
         MCF,
         ACO,
         O
-      >(options, extendWithAccessControlOptions)) as O;
+      >(options)) as O;
     default:
       throw new Error(`Failed to transform options cause the provider "${provider}" is unknown`);
   }

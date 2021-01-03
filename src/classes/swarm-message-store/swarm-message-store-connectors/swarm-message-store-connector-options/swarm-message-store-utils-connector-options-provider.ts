@@ -132,7 +132,7 @@ export async function swarmMessageStoreUtilsConnectorOptionsProvider<
 
   switch (provider) {
     case ESwarmStoreConnector.OrbitDB:
-      return swarmMessageStoreUtilsConnectorOptionsProviderForOrbitDB<
+      return (await swarmMessageStoreUtilsConnectorOptionsProviderForOrbitDB<
         P,
         ItemType,
         DbType,
@@ -147,7 +147,7 @@ export async function swarmMessageStoreUtilsConnectorOptionsProvider<
         MCF,
         ACO,
         O
-      >(options, extendWithAccessControlOptions) as Promise<O>;
+      >(options, extendWithAccessControlOptions)) as O;
     default:
       throw new Error(`Failed to transform options cause the provider "${provider}" is unknown`);
   }

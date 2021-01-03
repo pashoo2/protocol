@@ -16,7 +16,7 @@ import {
   ISwarmMessageStoreConnectorDatabaseOptionsWithAccessControlleGrantCallbackBound,
 } from '../swarm-store-connector-db-options.types';
 
-export class SwarmMessageStoreConnectorDBOptionsClass<
+export class SwarmMessageStoreDBOptionsClass<
     P extends ESwarmStoreConnector,
     ItemType extends TSwarmStoreValueTypes<P>,
     DbType extends TSwarmStoreDatabaseType<P>,

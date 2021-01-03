@@ -55,17 +55,18 @@ async function swarmMessageGrantValidator<
   op?: TSwarmStoreDatabaseEntryOperation<P>
 ) {
   const { dbName, messageConstructor, grantAccessCb, isPublic, isUserCanWrite, currentUserId } = this;
+  const isUserHasWriteOrDeletePermissions = isPublic || isUserCanWrite;
 
-  if ((isPublic || isUserCanWrite) && userId === currentUserId) {
+  if (isUserHasWriteOrDeletePermissions && userId === currentUserId) {
     // TODO - may be it's necessary to parse a message and compare
     // the uid of the message to the currentUserId instead of the
     // userId === currentUserId
     return true;
   }
-  if (op === EOrbitDbFeedStoreOperation.DELETE && !value) {
-    return true;
-  } else if (!value) {
-    return false;
+
+  // DELETE message have no value or contains a hash of a message deleted
+  if (op === EOrbitDbFeedStoreOperation.DELETE) {
+    return isUserHasWriteOrDeletePermissions;
   }
 
   try {
@@ -100,12 +101,11 @@ export const getMessageValidator = <
   SMC extends ISwarmMessageConstructor
 >(
   dboptions: DBO,
-  messageConstructors: ISwarmMessageDatabaseConstructors<SMC>,
+  messageConstructor: SMC,
   grantAccessCb: GAC | undefined,
   currentUserId: TCentralAuthorityUserIdentity
 ): TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, MSI> => {
   const { dbName, isPublic, write } = dboptions;
-  const messageConstructor = getMessageConstructorForDatabase(dbName, messageConstructors);
 
   if (!messageConstructor) {
     throw new Error(`There is no message contructor found for the ${dbName}`);
@@ -118,4 +118,96 @@ export const getMessageValidator = <
     isUserCanWrite: !!isPublic || (!!write && write.includes(currentUserId)),
     currentUserId,
   });
+};
+
+async function swarmMessageGrantValidatorWithGrandAccessCallbackParam<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  I extends TSwarmMessageInstance,
+  CB extends
+    | ISwarmMessageStoreAccessControlGrantAccessCallback<P, T>
+    | ISwarmMessageStoreAccessControlGrantAccessCallback<P, I>
+    | undefined
+>(
+  this: {
+    dbName: string;
+    messageConstructor: ISwarmMessageConstructor;
+    isPublic: boolean | undefined;
+    isUserCanWrite: boolean;
+    currentUserId: TCentralAuthorityUserIdentity;
+  },
+  grantAccessCb: CB,
+  value: T,
+  userId: TCentralAuthorityUserIdentity,
+  key?: TSwarmStoreDatabaseEntityKey<P>,
+  op?: TSwarmStoreDatabaseEntryOperation<P>
+) {
+  const { dbName, messageConstructor, isPublic, isUserCanWrite, currentUserId } = this;
+  const isUserHasWriteOrDeletePermissions = isPublic || isUserCanWrite;
+
+  if (isUserHasWriteOrDeletePermissions && userId === currentUserId) {
+    // TODO - may be it's necessary to parse a message and compare
+    // the uid of the message to the currentUserId instead of the
+    // userId === currentUserId
+    return true;
+  }
+
+  // DELETE message have no value or contains a hash of a message deleted
+  if (op === EOrbitDbFeedStoreOperation.DELETE) {
+    return isUserHasWriteOrDeletePermissions;
+  }
+
+  try {
+    const swarmMessage = await messageConstructor.construct(value);
+
+    if (swarmMessage.uid !== userId) {
+      return false;
+    }
+    if (grantAccessCb) {
+      return await (grantAccessCb as ISwarmMessageStoreAccessControlGrantAccessCallback<P, I, any>).call(
+        this,
+        (swarmMessage as unknown) as I,
+        userId,
+        dbName,
+        key,
+        op
+      );
+    }
+    return true;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+}
+
+export const getMessageValidatorUnbound = <
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
+  MSI extends TSwarmMessageInstance | T,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
+  SMC extends ISwarmMessageConstructor
+>(
+  dboptions: DBO,
+  messageConstructor: SMC,
+  grantAccessCb: GAC | undefined,
+  currentUserId: TCentralAuthorityUserIdentity
+): TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, MSI> => {
+  function swarmMessageGrantValidator(
+    this: {
+      dbName: string;
+      messageConstructor: SMC;
+      isPublic: boolean | undefined;
+      isUserCanWrite: boolean;
+      currentUserId: TCentralAuthorityUserIdentity;
+    },
+    value: T,
+    userId: TCentralAuthorityUserIdentity,
+    key?: TSwarmStoreDatabaseEntityKey<P>,
+    op?: TSwarmStoreDatabaseEntryOperation<P>
+  ): ReturnType<TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, MSI>> {
+    return swarmMessageGrantValidatorWithGrandAccessCallbackParam.call(this, grantAccessCb, value, userId, key, op);
+  }
+  return swarmMessageGrantValidator as TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, MSI>;
 };

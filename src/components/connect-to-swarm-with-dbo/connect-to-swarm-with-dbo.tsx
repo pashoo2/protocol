@@ -323,7 +323,7 @@ export class ConnectToSwarmWithDBO<
           {messagingSending ? 'Stop' : 'Start'} private messages sending
         </button>
         {this.renderUserProfile()}
-        {this.renderDatabasesList()}
+        {/* TODO {this.renderDatabasesList()} */}
         {this.renderSwarmMessagesDatabasesList()}
         {this.renderConnectToDatabase()}
         {this.renderLoadMessages()}
@@ -588,10 +588,6 @@ export class ConnectToSwarmWithDBO<
 
     const dbOptions: DBO = {
       ...dbsOptions,
-      grantAccess: async (...args: any[]) => {
-        console.log(...args);
-        return true;
-      },
     };
     return {
       dbOptions,

@@ -20,9 +20,11 @@ import {
   TSwarmMessagesStoreGrantAccessCallback,
 } from '../../../../types/swarm-message-store.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../swarm-message-encrypted-cache';
-import { getMessageValidator } from '../swarm-message-store-conector-db-options-grand-access-utils-common-grand-access-checker';
 import { PromiseResolveType } from '../../../../../../types/promise.types';
 import assert from 'assert';
+import { TCentralAuthorityUserIdentity } from '../../../../../central-authority-class/central-authority-class-types/central-authority-class-types-common';
+import { TSwarmStoreConnectorAccessConrotllerGrantAccessCallback } from '../../../../../swarm-store-class/swarm-store-class.types';
+import { ISwarmMessageDatabaseConstructors } from '../../../../types/swarm-message-store.types';
 
 /**
  * Add access control options for OrbitDB provided
@@ -69,14 +71,21 @@ function swarmMessageStoreUtilsExtendOrbitDbDatabaseOptionsWithAccessControlOrbi
 >(
   options: O,
   dbOptions: DBO,
+  messageConstructor: PromiseResolveType<ReturnType<NonNullable<MCF>>>,
   allowAccessForUsers: string[] | undefined,
-  grantAccessCallback: GAC | undefined
+  grantAccessCallback: GAC | undefined,
+  swarmMessageValidatorFabric: (
+    dboptions: DBO,
+    messageConstructor: PromiseResolveType<ReturnType<NonNullable<MCF>>>,
+    grantAccessCb: GAC | undefined,
+    currentUserId: TCentralAuthorityUserIdentity
+  ) => TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, ItemType, MSI>
 ): TSwarmStoreDatabaseOptions<ESwarmStoreConnector.OrbitDB, ItemType, DbType> &
   ISwarmStoreDatabaseBaseOptions & { provider: ESwarmStoreConnector.OrbitDB } {
   const grantAccessCallbackToUse = grantAccessCallback || (dbOptions.grantAccess as GAC | undefined);
-  const grantAccess = getMessageValidator<P, ItemType, DbType, DBO, MSI, GAC, PromiseResolveType<ReturnType<NonNullable<MCF>>>>(
+  const grantAccess = swarmMessageValidatorFabric(
     dbOptions,
-    options.messageConstructors,
+    messageConstructor,
     // TODO - TSwarmStoreConnectorOrbitDbAccessConrotllerGrantAccessCallback<string, P>
     grantAccessCallbackToUse,
     options.userId
@@ -99,7 +108,7 @@ function swarmMessageStoreUtilsExtendOrbitDbDatabaseOptionsWithAccessControlOrbi
  * Return a function which extends a database options with
  * access control
  *
- * @param {ISwarmMessageStoreOptions<ESwarmStoreConnector.OrbitDB>} options
+ * @param {ISwarmMessageStoreOptions<ESwarmStoreConnector.OrbitDB>} swarmMessageStoreOptions
  * @throw
  * @exports
  */
@@ -133,29 +142,33 @@ export const createSwarmMessageStoreUtilsExtenderOrbitDBDatabaseOptionsWithAcces
     ACO
   >
 >(
-  options: O
-) => (dbOptions: DBO): DBO & ISwarmStoreDatabaseBaseOptions & { provider: P } => {
-  const { accessControl } = options;
-  let grantAccessCallback: GAC | undefined;
-  let allowAccessForUsers: TSwarmMessageUserIdentifierSerialized[] | undefined;
+  swarmMessageStoreOptions: O,
+  swarmMessageValidatorFabric: (
+    dboptions: DBO,
+    messageConstructor: PromiseResolveType<ReturnType<NonNullable<MCF>>>,
+    grantAccessCb: GAC | undefined,
+    currentUserId: TCentralAuthorityUserIdentity
+  ) => TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, ItemType, MSI>
+) => (
+  dbOptions: DBO,
+  messageConstructor: PromiseResolveType<ReturnType<NonNullable<MCF>>>
+): DBO & ISwarmStoreDatabaseBaseOptions & { provider: P } => {
+  const { accessControl: swarmMessageStoreOptionsAccessControl } = swarmMessageStoreOptions;
+  const grantAccessCallback: GAC | undefined = (dbOptions.grantAccess ?? swarmMessageStoreOptionsAccessControl?.grantAccess) as
+    | GAC
+    | undefined;
+  const allowAccessForUsers: TSwarmMessageUserIdentifierSerialized[] | undefined =
+    dbOptions.write ?? swarmMessageStoreOptionsAccessControl?.allowAccessFor;
 
-  // validate options first
-  if (accessControl) {
-    const { grantAccess, allowAccessFor } = accessControl as ISwarmMessageStoreAccessControlOptions<P, ItemType, MSI, GAC>;
-
-    if (!grantAccess) {
-      throw new Error('"Grant access" callback function must be provided');
-    }
-    assert(
-      typeof grantAccess === 'function' && grantAccess.length >= 3 && grantAccess.length <= 5,
-      '"Grant access" callback must be a function which accepts a 3 arguments'
-    );
-    if (allowAccessFor) {
-      assert(allowAccessFor instanceof Array, 'Users list for which access is uncinditionally granted for must be a function');
-      allowAccessFor.forEach((userId) => assert(typeof userId === 'string', 'The user identity must be a string'));
-      allowAccessForUsers = allowAccessFor;
-    }
-    grantAccessCallback = grantAccess;
+  if (!grantAccessCallback) {
+    throw new Error('"Grant access" callback function must be provided');
+  }
+  if (grantAccessCallback.length >= 3 && grantAccessCallback.length <= 5) {
+    console.warn('"Grant access" callback must be a function which accepts a 3 arguments');
+  }
+  if (allowAccessForUsers) {
+    assert(allowAccessForUsers instanceof Array, 'Users list for which access is uncinditionally granted for must be a function');
+    allowAccessForUsers.forEach((userId) => assert(typeof userId === 'string', 'The user identity must be a string'));
   }
   return swarmMessageStoreUtilsExtendOrbitDbDatabaseOptionsWithAccessControlOrbitDB<
     P,
@@ -172,5 +185,12 @@ export const createSwarmMessageStoreUtilsExtenderOrbitDBDatabaseOptionsWithAcces
     MCF,
     ACO,
     O
-  >(options, dbOptions, allowAccessForUsers, grantAccessCallback) as DBO & ISwarmStoreDatabaseBaseOptions & { provider: P };
+  >(
+    swarmMessageStoreOptions,
+    dbOptions,
+    messageConstructor,
+    allowAccessForUsers,
+    grantAccessCallback,
+    swarmMessageValidatorFabric
+  ) as DBO & ISwarmStoreDatabaseBaseOptions & { provider: P };
 };

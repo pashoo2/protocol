@@ -18,11 +18,7 @@ import {
   ISwarmMessageStoreOptionsWithConnectorFabric,
   TSwarmMessagesStoreGrantAccessCallback,
 } from '../../../swarm-message-store/types/swarm-message-store.types';
-import {
-  TSwarmMessageInstance,
-  TSwarmMessageSerialized,
-  ISwarmMessageConstructor,
-} from '../../../swarm-message/swarm-message-constructor.types';
+import { TSwarmMessageInstance, TSwarmMessageSerialized } from '../../../swarm-message/swarm-message-constructor.types';
 import {
   TSwarmStoreDatabaseOptionsSerialized,
   ISwarmStoreWithConnector,
@@ -31,13 +27,20 @@ import { getSwarmMessageStoreWithDatabaseOptionsConstructorExtended } from '../.
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor } from '../../../swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-store-connector-db-options.types';
 import { ISwarmMessageStoreWithEntriesCount } from '../../../swarm-message-store/types/swarm-message-store.types';
-import { ISwarmStoreDatabaseBaseOptions, IDatabaseOptionsClass } from '../../../swarm-store-class/swarm-store-class.types';
+import {
+  ISwarmStoreDatabaseBaseOptions,
+  IDatabaseOptionsClass,
+  TSwarmStoreConnectorAccessConrotllerGrantAccessCallback,
+} from '../../../swarm-store-class/swarm-store-class.types';
 import { createSwarmMessageStoreDBOWithOptionsExtenderFabric } from '../../../swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-message-store-connector-db-options-with-options-extender-class-fabric/swarm-message-store-connector-db-options-with-options-extender-class-fabric';
 import { createSwarmMessageStoreUtilsExtenderOrbitDBDatabaseOptionsWithAccessControl } from '../../../swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-message-store-conector-db-options-grand-access-utils/swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks/swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks';
 import { ConstructorType } from '../../../../types/helper.types';
 import { ISwarmMessageStoreConnectorDbOptionsClassFabric } from '../../types/connection-bridge-swarm-fabrics.types';
 import { ISwarmMessageStoreConectorDbOptionsGrandAccessContextClassFabric } from '../../../swarm-message-store/types/swarm-message-store-db-options.types';
-import { ISerializer } from '../../../../types/serialization.types';
+import { PromiseResolveType } from '../../../../types/promise.types';
+import { TCentralAuthorityUserIdentity } from '../../../central-authority-class/central-authority-class-types/central-authority-class-types-common';
+import { getMessageValidatorUnbound } from '../../../swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-message-store-conector-db-options-grand-access-utils/swarm-message-store-conector-db-options-grand-access-utils-common-grand-access-checker/swarm-message-store-conector-db-options-grand-access-utils-common-grand-access-checker';
+import { ISwarmMessageStoreDatabaseOptionsExtender } from '../../../swarm-message-store/types/swarm-message-store-utils.types';
 
 export function swarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsSerializer<
   P extends ESwarmStoreConnector,
@@ -167,7 +170,7 @@ export function swarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsSer
   O
 > &
   ISwarmStoreWithConnector<P, ItemType, DbType, DBO, ConnectorBasic, CO, ConnectorMain> {
-  class SwarmMessageStoreWithEntriesCount extends getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer<
+  const SwarmMessageStoreWithEntriesCount = getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer<
     P,
     ItemType,
     DbType,
@@ -183,8 +186,8 @@ export function swarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsSer
     ACO,
     O,
     E
-  >() {}
-  class SwarmMessageStoreWithDbOptionsConstructor extends getSwarmMessageStoreWithDatabaseOptionsConstructorExtended<
+  >();
+  const SwarmMessageStoreWithDbOptionsConstructor = getSwarmMessageStoreWithDatabaseOptionsConstructorExtended<
     P,
     ItemType,
     DbType,
@@ -203,7 +206,7 @@ export function swarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsSer
     DBOS,
     CTX,
     DBOFSC
-  >(SwarmMessageStoreWithEntriesCount, SwarmStorDatabaseOptionsClass) {}
+  >(SwarmMessageStoreWithEntriesCount, SwarmStorDatabaseOptionsClass);
   return new SwarmMessageStoreWithDbOptionsConstructor();
 }
 
@@ -241,9 +244,11 @@ export function getSwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptions
   DBOS extends TSwarmStoreDatabaseOptionsSerialized,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   SSDOC extends IDatabaseOptionsClass<P, ItemType, DbType, DBO, DBOS>,
-  OEXTENDERFABRIC extends (options: O) => (dbOptions: DBO) => DBOE
+  OEXTENDERFABRIC extends (
+    options: O
+  ) => ISwarmMessageStoreDatabaseOptionsExtender<P, ItemType, DbType, DBO, DBOE, PromiseResolveType<ReturnType<NonNullable<MCF>>>>
 >(
-  SwarmStorDatabaseOptionsClass: SSDOC,
+  SwarmStoreDatabaseOptionsClass: SSDOC,
   databaseOptionsExtenderFabric: OEXTENDERFABRIC
 ): ISwarmMessageStoreWithEntriesCount<
   P,
@@ -262,7 +267,7 @@ export function getSwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptions
   O
 > &
   ISwarmStoreWithConnector<P, ItemType, DbType, DBOE, ConnectorBasic, CO, ConnectorMain> {
-  class DatabaseOptionsConstructorWithExtender extends createSwarmMessageStoreDBOWithOptionsExtenderFabric<
+  const DatabaseOptionsConstructorWithExtender = createSwarmMessageStoreDBOWithOptionsExtenderFabric<
     P,
     ItemType,
     DbType,
@@ -280,11 +285,11 @@ export function getSwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptions
     O,
     DBOS,
     SSDOC,
-    { swarmMessageStoreOptions: O },
+    { swarmMessageStoreOptions: O; swarmMessageConstructor: PromiseResolveType<ReturnType<NonNullable<MCF>>> },
     DBOE,
     OEXTENDERFABRIC
-  >(SwarmStorDatabaseOptionsClass, databaseOptionsExtenderFabric) {}
-  class SwarmMessageStoreWithEntriesCount extends getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer<
+  >(SwarmStoreDatabaseOptionsClass, databaseOptionsExtenderFabric);
+  const SwarmMessageStoreWithEntriesCount = getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer<
     P,
     ItemType,
     DbType,
@@ -300,8 +305,8 @@ export function getSwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptions
     ACO,
     O,
     E
-  >() {}
-  class SwarmMessageStoreWithDbOptionsConstructor extends getSwarmMessageStoreWithDatabaseOptionsConstructorExtended<
+  >();
+  const SwarmMessageStoreWithDbOptionsConstructor = getSwarmMessageStoreWithDatabaseOptionsConstructorExtended<
     P,
     ItemType,
     DbType,
@@ -320,7 +325,7 @@ export function getSwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptions
     DBOS,
     CTX,
     typeof DatabaseOptionsConstructorWithExtender
-  >(SwarmMessageStoreWithEntriesCount, DatabaseOptionsConstructorWithExtender) {}
+  >(SwarmMessageStoreWithEntriesCount, DatabaseOptionsConstructorWithExtender);
   return new SwarmMessageStoreWithDbOptionsConstructor();
 }
 
@@ -356,15 +361,34 @@ export function getSwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptions
   E extends ISwarmMessageStoreEvents<P, ItemType, DbType, DBO & ISwarmStoreDatabaseBaseOptions & { provider: P }>,
   DBOS extends TSwarmStoreDatabaseOptionsSerialized,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  SMC extends ISwarmMessageConstructor,
   CTXC extends ConstructorType<CTX>,
-  SMSDBOGACF extends ISwarmMessageStoreConectorDbOptionsGrandAccessContextClassFabric<SMC, CTXC>,
-  DBOC extends ISwarmMessageStoreConnectorDbOptionsClassFabric<P, ItemType, DbType, MSI, CTX, DBO, DBOS, SMC, CTXC, SMSDBOGACF>
+  SMSDBOGACF extends ISwarmMessageStoreConectorDbOptionsGrandAccessContextClassFabric<
+    PromiseResolveType<ReturnType<NonNullable<MCF>>>,
+    CTXC
+  >,
+  DBOC extends ISwarmMessageStoreConnectorDbOptionsClassFabric<
+    P,
+    ItemType,
+    DbType,
+    MSI,
+    CTX,
+    DBO,
+    DBOS,
+    PromiseResolveType<ReturnType<NonNullable<MCF>>>,
+    CTXC,
+    SMSDBOGACF
+  >
 >(
   ContextBaseClass: CTXC,
-  swarmMessageConstructor: SMC,
+  swarmMessageConstructor: PromiseResolveType<ReturnType<NonNullable<MCF>>>,
   swarmMessageStoreDBOGrandAccessCallbackContextFabric: SMSDBOGACF,
-  databaseOptionsClassFabric: DBOC
+  databaseOptionsClassFabric: DBOC,
+  swarmMessageValidatorFabric: (
+    dboptions: DBO,
+    swarmMessageConstructor: PromiseResolveType<ReturnType<NonNullable<MCF>>>,
+    grantAccessCb: GAC | undefined,
+    currentUserId: TCentralAuthorityUserIdentity
+  ) => TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, ItemType, MSI> = getMessageValidatorUnbound
 ): ISwarmMessageStoreWithEntriesCount<
   P,
   ItemType,
@@ -395,6 +419,40 @@ export function getSwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptions
     swarmMessageConstructor,
     swarmMessageStoreDBOGrandAccessCallbackContextFabric
   );
+  const dboExtender = (
+    options: O
+  ): ISwarmMessageStoreDatabaseOptionsExtender<
+    P,
+    ItemType,
+    DbType,
+    DBO,
+    DBO & ISwarmStoreDatabaseBaseOptions & { provider: P },
+    PromiseResolveType<ReturnType<NonNullable<MCF>>>
+  > =>
+    createSwarmMessageStoreUtilsExtenderOrbitDBDatabaseOptionsWithAccessControl<
+      P,
+      ItemType,
+      DbType,
+      DBO,
+      ConnectorBasic,
+      CO,
+      PO,
+      ConnectorMain,
+      CFO,
+      MSI,
+      GAC,
+      MCF,
+      ACO,
+      O
+    >(options, swarmMessageValidatorFabric) as ISwarmMessageStoreDatabaseOptionsExtender<
+      P,
+      ItemType,
+      DbType,
+      DBO,
+      DBO & ISwarmStoreDatabaseBaseOptions & { provider: P },
+      PromiseResolveType<ReturnType<NonNullable<MCF>>>
+    >;
+
   return getSwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsSerializerAndDatabaseOptionsExtendedConstructor<
     P,
     ItemType,
@@ -415,11 +473,15 @@ export function getSwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptions
     DBOS,
     InstanceType<typeof ContextBaseClass>,
     typeof DatabaseOptionsClass,
-    (options: O) => (dbOptions: DBO) => DBO & ISwarmStoreDatabaseBaseOptions & { provider: P }
-  >(
-    DatabaseOptionsClass,
-    createSwarmMessageStoreUtilsExtenderOrbitDBDatabaseOptionsWithAccessControl as (
+    (
       options: O
-    ) => (dbOptions: DBO) => DBO & ISwarmStoreDatabaseBaseOptions & { provider: P }
-  );
+    ) => ISwarmMessageStoreDatabaseOptionsExtender<
+      P,
+      ItemType,
+      DbType,
+      DBO,
+      DBO & ISwarmStoreDatabaseBaseOptions & { provider: P },
+      PromiseResolveType<ReturnType<NonNullable<MCF>>>
+    >
+  >(DatabaseOptionsClass, dboExtender);
 }

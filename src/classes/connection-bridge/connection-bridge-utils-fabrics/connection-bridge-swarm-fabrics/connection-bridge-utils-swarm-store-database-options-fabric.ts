@@ -1,4 +1,4 @@
-import { getSwarmMessageStoreConnectorDbOptionsClass as getSwarmMessageStoreDBOClass } from '../../../swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-message-store-connector-db-options-class/swarm-message-store-connector-db-options-class-fabric';
+import { getSwarmMessageStoreDBOClass } from '../../../swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-message-store-connector-db-options-class/swarm-message-store-connector-db-options-class-fabric';
 import {
   TSwarmStoreValueTypes,
   TSwarmStoreDatabaseType,
@@ -58,10 +58,12 @@ export function getSwarmMessageStoreConnectorDBOClass<
     );
     return new SwarmMessagesStoreDBOGrandAccessCallbackContextClass();
   };
-  return getSwarmMessageStoreDBOClass<P, T, DbType, MSI, CTX, DBO, DBOS>(
+  const SwarmMessageStoreDBOClass = getSwarmMessageStoreDBOClass<P, T, DbType, MSI, CTX, DBO, DBOS>(
     { ...additionalParams, grandAccessCallbackContextFabric },
     OptionsSerializerValidatorConstructor
   );
+
+  return SwarmMessageStoreDBOClass;
 }
 
 export function getSwarmMessageStoreConnectorDBOClassFabric<
@@ -100,13 +102,25 @@ export function getSwarmMessageStoreConnectorDBOClassFabric<
       ...additionalParams,
       optionsSerializer: (serializer as unknown) as IOptionsSerializerValidatorSerializer<DBO, DBOS>,
     };
-    return getSwarmMessageStoreConnectorDBOClass<P, T, DbType, MSI, CTX, DBO, DBOS, SMC, CTXC, SMSDBOGACF>(
+    const SwarmMessageStoreConnectorDBOClassCreated = getSwarmMessageStoreConnectorDBOClass<
+      P,
+      T,
+      DbType,
+      MSI,
+      CTX,
+      DBO,
+      DBOS,
+      SMC,
+      CTXC,
+      SMSDBOGACF
+    >(
       ContextBaseClass,
       swarmMessageConstructor,
       swarmMessageStoreDBOGrandAccessCallbackContextFabric,
       OptionsSerializerValidatorConstructor,
       additionalParamsResulted
     );
+    return SwarmMessageStoreConnectorDBOClassCreated;
   };
   return dboFabric as DBOCF;
 }

@@ -23,7 +23,9 @@ import {
 import {
   CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS,
   CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_2,
+  CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_1,
   CONNECT_TO_SWARM_AUTH_CREDENTIALS_1,
+  CONNECT_TO_SWARM_AUTH_CREDENTIALS_2,
 } from './const/connect-to-swarm.const';
 
 export class App extends React.Component {
@@ -80,6 +82,12 @@ export class App extends React.Component {
     //     swarmMessagesDatabaseCacheOptions={CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_WITH_STORE_META_OPTIONS}
     //   />
     // );
+    const userToConnectWith = window.prompt('Which user did you chose 1 or 2', '1');
+    const userToConnectWithCredentials =
+      userToConnectWith === '1' ? CONNECT_TO_SWARM_AUTH_CREDENTIALS_1 : CONNECT_TO_SWARM_AUTH_CREDENTIALS_2;
+    const userIdReceiverMessages =
+      userToConnectWith === '1' ? CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_2 : CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_1;
+
     return (
       <ConnectToSwarmWithAdditionalMetaWithDBO<
         typeof CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_FEED['dbType'],
@@ -98,9 +106,9 @@ export class App extends React.Component {
       >
         dbo={CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_FEED}
         connectionBridgeOptions={CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS}
-        userCredentialsList={[CONNECT_TO_SWARM_AUTH_CREDENTIALS_1]}
-        userCredentialsToConnectImmediate={CONNECT_TO_SWARM_AUTH_CREDENTIALS_1}
-        userIdReceiverSwarmMessages={CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_2}
+        userCredentialsList={[userToConnectWithCredentials]}
+        userCredentialsToConnectImmediate={userToConnectWithCredentials}
+        userIdReceiverSwarmMessages={userIdReceiverMessages}
         swarmMessagesDatabaseCacheOptions={CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_WITH_STORE_META_OPTIONS}
       />
     );

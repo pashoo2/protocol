@@ -24,6 +24,8 @@ import {
 } from '../../../types/swarm-message-store.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { ISwarmStoreDatabaseBaseOptions } from '../../../../swarm-store-class/swarm-store-class.types';
+import { ISwarmMessageStoreDatabaseOptionsExtender } from '../../../types/swarm-message-store-utils.types';
+import { PromiseResolveType } from '../../../../../types/promise.types';
 import {
   ISwarmMessageStoreDBOSerializerValidatorConstructorParams,
   ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorByDBO,
@@ -61,9 +63,11 @@ export function createSwarmMessageStoreDBOWithOptionsExtenderFabric<
   >,
   DBOS extends TSwarmStoreDatabaseOptionsSerialized,
   BC extends ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorByDBO<P, ItemType, DbType, DBO, DBOS>,
-  META extends { swarmMessageStoreOptions: O },
+  META extends { swarmMessageStoreOptions: O; swarmMessageConstructor: PromiseResolveType<ReturnType<NonNullable<MCF>>> },
   DBOE extends DBO & ISwarmStoreDatabaseBaseOptions & { provider: P },
-  OEXTENDERFABRIC extends (options: O) => (dbOptions: DBO) => DBOE
+  OEXTENDERFABRIC extends (
+    options: O
+  ) => ISwarmMessageStoreDatabaseOptionsExtender<P, ItemType, DbType, DBO, DBOE, PromiseResolveType<ReturnType<NonNullable<MCF>>>>
 >(
   BaseClass: BC,
   databaseOptionsExtenderFabric: OEXTENDERFABRIC
@@ -76,32 +80,53 @@ export function createSwarmMessageStoreDBOWithOptionsExtenderFabric<
         meta: META;
       }
     ) {
-      const { meta } = params;
-      const { options: dbOptions } = new BaseClass(params);
-      const optionsExtender = this.__createdOptionsExtender(meta);
-      const dbOptionsExtended = this.__extendDatabaseOptions(dbOptions, optionsExtender);
-      const dboClassInstance = this.__createInstanceOfBaseClassWithDBOExtended(params, dbOptionsExtended);
-      return dboClassInstance as any;
-    }
-
-    protected __createdOptionsExtender(meta: META): (dbOptions: DBO) => DBOE {
-      return databaseOptionsExtenderFabric(meta.swarmMessageStoreOptions);
-    }
-
-    protected __extendDatabaseOptions(dbOptions: DBO, optionsExtender: (dbOptions: DBO) => DBOE): DBOE {
-      const dbOptionsCopy = { ...dbOptions };
-      return optionsExtender(dbOptionsCopy);
-    }
-
-    protected __createInstanceOfBaseClassWithDBOExtended(
-      params: ISwarmMessageStoreDBOSerializerValidatorConstructorParams<P, ItemType, DbType, MSI, CTX, DBOE, DBOS>,
-      dbOptionsExtended: DBOE
-    ): ISwarmStoreDBOSerializerValidator<P, ItemType, DbType, DBOE, DBOS> {
+      const { meta, options: dbOptions } = params;
+      const { swarmMessageConstructor, swarmMessageStoreOptions } = meta;
+      const optionsExtender = this.__createdOptionsExtender(swarmMessageStoreOptions);
+      const dbOptionsExtended = this.__extendDatabaseOptions(dbOptions as DBO, swarmMessageConstructor, optionsExtender);
       const paramsWithExtendedDbOptions = {
         ...params,
         options: dbOptionsExtended,
       };
-      return new BaseClass(paramsWithExtendedDbOptions) as ISwarmStoreDBOSerializerValidator<P, ItemType, DbType, DBOE, DBOS>;
+      // we have to use the BaseClass constructor twice for consistency, because we may need
+      // the same logic for options not extended and options extended.
+      const dboClassInstance = new BaseClass(paramsWithExtendedDbOptions) as ISwarmStoreDBOSerializerValidator<
+        P,
+        ItemType,
+        DbType,
+        DBOE,
+        DBOS
+      >;
+      return dboClassInstance as any;
+    }
+
+    protected __createdOptionsExtender(
+      swarmMessageStoreOptions: O
+    ): ISwarmMessageStoreDatabaseOptionsExtender<
+      P,
+      ItemType,
+      DbType,
+      DBO,
+      DBOE,
+      PromiseResolveType<ReturnType<NonNullable<MCF>>>
+    > {
+      return databaseOptionsExtenderFabric(swarmMessageStoreOptions);
+    }
+
+    protected __extendDatabaseOptions(
+      dbOptions: DBO,
+      swarmMessageConstructor: PromiseResolveType<ReturnType<NonNullable<MCF>>>,
+      optionsExtender: ISwarmMessageStoreDatabaseOptionsExtender<
+        P,
+        ItemType,
+        DbType,
+        DBO,
+        DBOE,
+        PromiseResolveType<ReturnType<NonNullable<MCF>>>
+      >
+    ): DBOE {
+      const dbOptionsCopy = { ...dbOptions };
+      return optionsExtender(dbOptionsCopy, swarmMessageConstructor);
     }
   }
   return (SwarmMessageStoreDBOWithExtendedGrandAccessClass as unknown) as BC &

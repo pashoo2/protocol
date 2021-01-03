@@ -218,7 +218,6 @@ export const CONNECT_TO_SWARM_CONNECTION_STORAGE_WITH_STORE_META_OPTIONS: IConne
       op?: TSwarmStoreDatabaseEntryOperation<ESwarmStoreConnector.OrbitDB>
     ) {
       console.log(this);
-      debugger;
       return Promise.resolve(true);
     },
   }, // use the default access control

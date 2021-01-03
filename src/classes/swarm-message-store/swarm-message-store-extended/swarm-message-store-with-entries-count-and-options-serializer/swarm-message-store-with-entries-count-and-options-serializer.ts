@@ -75,7 +75,7 @@ export function getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer<
   > &
     ISwarmStoreWithConnector<P, ItemType, DbType, DBO, ConnectorBasic, CO, ConnectorMain>
 > {
-  class SwarmMessageStoreWithEntriesCountAndConnectorClass extends getClassSwarmMessageStoreWithEntriesCountAndConnector<
+  const SwarmMessageStoreWithEntriesCountAndConnectorClass = getClassSwarmMessageStoreWithEntriesCountAndConnector<
     P,
     ItemType,
     DbType,
@@ -91,8 +91,8 @@ export function getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer<
     ACO,
     O,
     E
-  >() {}
-  return extendClassSwarmStoreWithOptionsConstructor<
+  >();
+  const ClassSwarmStoreWithOptionsConstructor = extendClassSwarmStoreWithOptionsConstructor<
     P,
     ItemType,
     DbType,
@@ -105,4 +105,5 @@ export function getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer<
     O,
     typeof SwarmMessageStoreWithEntriesCountAndConnectorClass
   >(SwarmMessageStoreWithEntriesCountAndConnectorClass, SwarmStoreOptionsClass);
+  return ClassSwarmStoreWithOptionsConstructor;
 }

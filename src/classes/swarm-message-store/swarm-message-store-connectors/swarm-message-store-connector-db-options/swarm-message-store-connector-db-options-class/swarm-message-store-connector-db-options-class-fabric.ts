@@ -7,7 +7,7 @@ import {
 } from 'classes/swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageInstance } from 'classes/swarm-message/swarm-message-constructor.types';
 import { ISwarmMessageStoreDBOSerializerValidatorConstructorParams } from '../swarm-store-connector-db-options.types';
-import { SwarmMessageStoreConnectorDBOptionsClass } from './swarm-message-store-connector-db-options-class';
+import { SwarmMessageStoreDBOptionsClass } from './swarm-message-store-connector-db-options-class';
 import {
   IOptionsSerializerValidatorConstructorParams,
   IOptionsSerializerValidatorSerializer,
@@ -25,7 +25,7 @@ import {
   ISwarmStoreConnectorUtilsDatabaseOptionsValidators,
 } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 
-export function getSwarmMessageStoreConnectorDbOptionsClass<
+export function getSwarmMessageStoreDBOClass<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
@@ -46,7 +46,7 @@ export function getSwarmMessageStoreConnectorDbOptionsClass<
   OptionsSerializerValidatorConstructor?: IDatabaseOptionsClass<P, ItemType, DbType, DBO, DBOS>
 ): IDatabaseOptionsClass<P, ItemType, DbType, DBO, DBOS> {
   const ConstructorToUse = (OptionsSerializerValidatorConstructor ??
-    SwarmMessageStoreConnectorDBOptionsClass) as ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor<
+    SwarmMessageStoreDBOptionsClass) as ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructor<
     P,
     ItemType,
     DbType,
@@ -106,9 +106,10 @@ export function getSwarmMessageStoreConnectorDbOptionsClass<
       grandAccessBinderForDBOptions: createGrandAccessBinderForDBOptions(),
     };
   };
-  return class SwarmMessageStoreConnectorDBOptionsClassCreated extends ConstructorToUse {
+  class SwarmMessageStoreDBOptionsClassCreated extends ConstructorToUse {
     constructor(options: Pick<IOptionsSerializerValidatorConstructorParams<DBO, DBOS>, 'options'>) {
       super(extendOptions(options));
     }
-  };
+  }
+  return SwarmMessageStoreDBOptionsClassCreated;
 }

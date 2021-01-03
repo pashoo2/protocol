@@ -10,7 +10,11 @@ import {
 } from '../../../swarm-store-class/swarm-store-class.types';
 import { TSwarmStoreDatabaseOptionsSerialized } from '../../../swarm-store-class/swarm-store-class.types';
 import { ConstructorType } from 'types/helper.types';
-import { TSwarmMessageInstance, TSwarmMessageSerialized } from '../../../swarm-message/swarm-message-constructor.types';
+import {
+  TSwarmMessageInstance,
+  TSwarmMessageSerialized,
+  ISwarmMessageConstructor,
+} from '../../../swarm-message/swarm-message-constructor.types';
 import {
   TSwarmMessagesStoreGrantAccessCallback,
   ISwarmMessageStoreAccessControlOptions,
@@ -63,15 +67,17 @@ export function getSwarmMessageStoreWithDatabaseOptionsConstructorExtended<
     CTX,
     DBO,
     DBOS,
-    { swarmMessageStoreOptions: O }
+    { swarmMessageStoreOptions: O; swarmMessageConstructor: ISwarmMessageConstructor }
   >
 >(BaseClass: BC, SwarmStoreConnectorDatabaseOptionsConstructor: SSDOC): BC {
   return class SwarmStoreWithDatabaseOptionsConstructor extends BaseClass {
-    protected _createDatabaseOptionsExtender(swarmMessageStoreOptions: O): (dbOptions: DBO) => DBO {
-      return (dbOptions: DBO): DBO => {
+    protected _createDatabaseOptionsExtender(
+      swarmMessageStoreOptions: O
+    ): (dbOptions: DBO, swarmMessageConstructor: ISwarmMessageConstructor) => DBO {
+      return (dbOptions: DBO, swarmMessageConstructor: ISwarmMessageConstructor): DBO => {
         const dbOptionsConstructed = new SwarmStoreConnectorDatabaseOptionsConstructor({
           options: dbOptions,
-          meta: { swarmMessageStoreOptions },
+          meta: { swarmMessageStoreOptions, swarmMessageConstructor },
         });
         return dbOptionsConstructed.options;
       };
