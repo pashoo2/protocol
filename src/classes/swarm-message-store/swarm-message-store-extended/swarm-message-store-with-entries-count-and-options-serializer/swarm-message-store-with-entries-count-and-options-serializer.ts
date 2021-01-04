@@ -1,5 +1,9 @@
 import { ESwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.const';
-import { TSwarmMessageSerialized, TSwarmMessageInstance } from '../../../swarm-message/swarm-message-constructor.types';
+import {
+  TSwarmMessageSerialized,
+  TSwarmMessageInstance,
+  ISwarmMessageInstanceEncrypted,
+} from '../../../swarm-message/swarm-message-constructor.types';
 import {
   TSwarmStoreDatabaseType,
   TSwarmStoreConnectorConnectionOptions,
@@ -23,6 +27,7 @@ import { extendClassSwarmStoreWithOptionsConstructor } from '../../../swarm-stor
 import { ISwarmStoreOptionsClassConstructor, ISwarmStoreWithConnector } from '../../../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageStoreWithEntriesCount } from '../../types/swarm-message-store.types';
 import { ConstructorType } from '../../../../types/helper.types';
+import { ISwarmMessageInstanceDecrypted } from '../../../swarm-message/swarm-message-constructor.types';
 
 export function getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer<
   P extends ESwarmStoreConnector,
@@ -34,10 +39,10 @@ export function getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer<
   PO extends ISwarmStoreProviderOptions<P, ItemType, DbType, DBO, ConnectorBasic, CO>,
   ConnectorMain extends ISwarmStoreConnectorWithEntriesCount<P, ItemType, DbType, DBO, ConnectorBasic, CO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain>,
-  MSI extends TSwarmMessageInstance | ItemType,
-  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
+  I extends ISwarmMessageInstanceDecrypted,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, I | ItemType>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
-  ACO extends ISwarmMessageStoreAccessControlOptions<P, ItemType, MSI, GAC> | undefined,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, ItemType, I | ItemType, GAC> | undefined,
   O extends ISwarmMessageStoreOptionsWithConnectorFabric<
     P,
     ItemType,
@@ -48,7 +53,7 @@ export function getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer<
     PO,
     ConnectorMain,
     CFO,
-    MSI,
+    I | ItemType,
     GAC,
     MCF,
     ACO
@@ -67,7 +72,7 @@ export function getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer<
     PO,
     ConnectorMain,
     CFO,
-    MSI,
+    I | ItemType,
     GAC,
     MCF,
     ACO,
@@ -85,7 +90,7 @@ export function getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer<
     PO,
     ConnectorMain,
     CFO,
-    MSI,
+    I,
     GAC,
     MCF,
     ACO,

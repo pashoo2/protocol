@@ -51,7 +51,7 @@ import {
   TSwarmStoreConnectorConnectionOptions,
   TSwarmStoreOptionsOfDatabasesKnownList,
 } from '../swarm-store-class/swarm-store-class.types';
-import { TSwarmMessageSerialized } from '../swarm-message/swarm-message-constructor.types';
+import { TSwarmMessageSerialized, ISwarmMessageInstanceEncrypted } from '../swarm-message/swarm-message-constructor.types';
 import {
   IConnectionBridgeSwarmConnection,
   TNativeConnectionOptions,
@@ -116,9 +116,9 @@ export class ConnectionBridge<
   CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain>,
   CBFO extends TSwarmStoreConnectorBasicFabric<P, T, DbType, DBO, ConnectorBasic>,
   MSI extends TSwarmMessageInstance | T,
-  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, Exclude<MSI, ISwarmMessageInstanceEncrypted>>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric,
-  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC>,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, Exclude<MSI, ISwarmMessageInstanceEncrypted>, GAC>,
   O extends ISwarmMessageStoreOptionsWithConnectorFabric<
     P,
     T,

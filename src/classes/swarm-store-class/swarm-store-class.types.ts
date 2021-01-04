@@ -30,7 +30,7 @@ import {
   EOrbitDbFeedStoreOperation,
   ESwarmStoreConnectorOrbitDbDatabaseType,
 } from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
-import { TSwarmMessageSerialized, ISwarmMessageConstructor } from '../swarm-message/swarm-message-constructor.types';
+import { TSwarmMessageSerialized } from '../swarm-message/swarm-message-constructor.types';
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import { ISerializer } from '../../types/serialization.types';
 import {
@@ -641,10 +641,11 @@ export interface ISwarmStoreOptionsClassConstructor<
 export type TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<
   P extends ESwarmStoreConnector,
   T extends TSwarmStoreValueTypes<P>,
-  I extends unknown = never
+  I extends unknown | never = never
 > = (
   // value
   payload: T | I,
+  // user who sent the message
   userId: TSwarmMessageUserIdentifierSerialized,
   // key of the value
   key?: string,
@@ -655,7 +656,7 @@ export type TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<
 export interface ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<
   P extends ESwarmStoreConnector,
   T extends TSwarmStoreValueTypes<P>,
-  I extends unknown = never
+  I extends unknown | never = never
 > {
   /**
    * check whether to grant access for the user with

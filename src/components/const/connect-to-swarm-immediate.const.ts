@@ -24,9 +24,8 @@ export const CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_FEED = {
   preloadCount: 0,
   dbType: ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
   grantAccess: async function grantAccess(...args: any[]) {
-    console.log(...args);
-    console.log(this);
-    debugger;
+    console.log('grantAccess arguments', ...args);
+    console.log('grantAccess context', this);
     return true;
   },
 };

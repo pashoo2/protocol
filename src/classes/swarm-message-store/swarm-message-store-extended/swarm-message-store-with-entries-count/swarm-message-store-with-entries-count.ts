@@ -1,5 +1,9 @@
 import { ESwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.const';
-import { TSwarmMessageSerialized, TSwarmMessageInstance } from '../../../swarm-message/swarm-message-constructor.types';
+import {
+  TSwarmMessageSerialized,
+  TSwarmMessageInstance,
+  ISwarmMessageInstanceDecrypted,
+} from '../../../swarm-message/swarm-message-constructor.types';
 import {
   TSwarmStoreDatabaseType,
   TSwarmStoreConnectorConnectionOptions,
@@ -34,10 +38,10 @@ export function getClassSwarmMessageStoreWithEntriesCount<
   PO extends ISwarmStoreProviderOptions<P, ItemType, DbType, DBO, ConnectorBasic, CO>,
   ConnectorMain extends ISwarmStoreConnectorWithEntriesCount<P, ItemType, DbType, DBO, ConnectorBasic, CO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain>,
-  MSI extends TSwarmMessageInstance | ItemType,
-  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
+  I extends ISwarmMessageInstanceDecrypted,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, I | ItemType>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
-  ACO extends ISwarmMessageStoreAccessControlOptions<P, ItemType, MSI, GAC> | undefined,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, ItemType, I | ItemType, GAC> | undefined,
   O extends ISwarmMessageStoreOptionsWithConnectorFabric<
     P,
     ItemType,
@@ -48,7 +52,7 @@ export function getClassSwarmMessageStoreWithEntriesCount<
     PO,
     ConnectorMain,
     CFO,
-    MSI,
+    I | ItemType,
     GAC,
     MCF,
     ACO
@@ -65,7 +69,7 @@ export function getClassSwarmMessageStoreWithEntriesCount<
     PO,
     ConnectorMain,
     CFO,
-    MSI,
+    I | ItemType,
     GAC,
     MCF,
     ACO,
@@ -83,7 +87,7 @@ export function getClassSwarmMessageStoreWithEntriesCount<
     PO,
     ConnectorMain,
     CFO,
-    MSI,
+    I | ItemType,
     GAC,
     MCF,
     ACO,
@@ -102,5 +106,23 @@ export function getClassSwarmMessageStoreWithEntriesCount<
     CFO,
     O,
     typeof SwarmMessageStoreConstructor
-  >(SwarmMessageStoreConstructor);
+  >(SwarmMessageStoreConstructor) as ConstructorType<
+    ISwarmMessageStoreWithEntriesCount<
+      P,
+      ItemType,
+      DbType,
+      DBO,
+      ConnectorBasic,
+      CO,
+      PO,
+      ConnectorMain,
+      CFO,
+      I | ItemType,
+      GAC,
+      MCF,
+      ACO,
+      O
+    > &
+      ISwarmStoreWithConnector<P, ItemType, DbType, DBO, ConnectorBasic, CO, ConnectorMain>
+  >;
 }

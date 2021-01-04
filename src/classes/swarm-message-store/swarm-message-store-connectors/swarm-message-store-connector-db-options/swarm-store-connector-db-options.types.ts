@@ -8,7 +8,12 @@ import {
   TSwarmStoreValueTypes,
 } from '../../../swarm-store-class/swarm-store-class.types';
 import { ESwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.const';
-import { TSwarmMessageInstance, ISwarmMessageConstructor } from '../../../swarm-message/swarm-message-constructor.types';
+import { ISwarmMessageInstanceDecrypted } from '../../../swarm-message/swarm-message-constructor.types';
+import {
+  TSwarmMessageInstance,
+  ISwarmMessageConstructor,
+  ISwarmMessageInstanceEncrypted,
+} from '../../../swarm-message/swarm-message-constructor.types';
 import {
   IOptionsSerializerValidatorConstructor,
   IOptionsSerializerValidatorConstructorParams,
@@ -46,13 +51,13 @@ export interface ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContextFabr
 export interface ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
-  MSI extends TSwarmMessageInstance | ItemType,
+  I extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext
 > {
   (
-    grandAccessCallback: TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, ItemType, MSI>,
+    grandAccessCallback: TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, ItemType, I>,
     ctx?: CTX
-  ): ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<P, ItemType, MSI, CTX>;
+  ): ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<P, ItemType, I, CTX>;
 }
 
 /**
@@ -68,19 +73,19 @@ export interface ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackCon
 export interface ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinderFabric<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
-  MSI extends TSwarmMessageInstance | ItemType,
+  I extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext
 > {
-  (ctx: CTX): ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder<P, ItemType, MSI, CTX>;
+  (ctx: CTX): ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder<P, ItemType, I, CTX>;
 }
 
 export interface ISwarmMessageStoreConnectorDatabaseAccessControlleGrantCallbackBound<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
-  MSI extends TSwarmMessageInstance | ItemType,
+  I extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext
-> extends ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<P, ItemType> {
-  grantAccess?: ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<P, ItemType, MSI, CTX>;
+> extends ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<P, ItemType, I> {
+  grantAccess?: ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<P, ItemType, I, CTX>;
 }
 
 /**
@@ -99,15 +104,15 @@ export interface ISwarmMessageStoreConnectorDatabaseOptionsWithAccessControlleGr
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  MSI extends TSwarmMessageInstance | ItemType,
+  I extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>
 > {
   (
     dbo: DBO,
-    grandAccessCallbackBinder: ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder<P, ItemType, MSI, CTX>
-  ): DBO extends Required<ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<P, ItemType, MSI>>
-    ? DBO & ISwarmMessageStoreConnectorDatabaseAccessControlleGrantCallbackBound<P, ItemType, MSI, CTX>
+    grandAccessCallbackBinder: ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder<P, ItemType, I, CTX>
+  ): DBO extends Required<ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<P, ItemType, I>>
+    ? DBO & ISwarmMessageStoreConnectorDatabaseAccessControlleGrantCallbackBound<P, ItemType, I, CTX>
     : DBO;
 }
 
@@ -115,28 +120,28 @@ export interface ISwarmMessageStoreConnectorDatabaseOptionsWithAccessControlleGr
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  MSI extends TSwarmMessageInstance | ItemType,
+  I extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>
 > {
-  (): ISwarmMessageStoreConnectorDatabaseOptionsWithAccessControlleGrantCallbackBound<P, ItemType, DbType, MSI, CTX, DBO>;
+  (): ISwarmMessageStoreConnectorDatabaseOptionsWithAccessControlleGrantCallbackBound<P, ItemType, DbType, I, CTX, DBO>;
 }
 
 export interface ISwarmMessageStoreDBOSerializerValidatorConstructorParams<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  MSI extends TSwarmMessageInstance | ItemType,
+  I extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
   DBOS extends TSwarmStoreDatabaseOptionsSerialized
 > extends IOptionsSerializerValidatorConstructorParams<DBO, DBOS> {
-  grandAccessBinder: ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder<P, ItemType, MSI, CTX>;
+  grandAccessBinder: ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder<P, ItemType, I, CTX>;
   grandAccessBinderForDBOptions: ISwarmMessageStoreConnectorDatabaseOptionsWithAccessControlleGrantCallbackBound<
     P,
     ItemType,
     DbType,
-    MSI,
+    I,
     CTX,
     DBO
   >;
@@ -158,13 +163,13 @@ export interface ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValida
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  MSI extends TSwarmMessageInstance | ItemType,
+  I extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
   DBOS extends TSwarmStoreDatabaseOptionsSerialized
 > extends IOptionsSerializerValidatorConstructor<DBO, DBOS> {
   new (
-    params: ISwarmMessageStoreDBOSerializerValidatorConstructorParams<P, ItemType, DbType, MSI, CTX, DBO, DBOS>
+    params: ISwarmMessageStoreDBOSerializerValidatorConstructorParams<P, ItemType, DbType, I, CTX, DBO, DBOS>
   ): ISwarmStoreDBOSerializerValidator<P, ItemType, DbType, DBO, DBOS>;
 }
 
@@ -194,13 +199,13 @@ export interface ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValida
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  MSI extends TSwarmMessageInstance | ItemType,
+  I extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
   DBOS extends TSwarmStoreDatabaseOptionsSerialized
 > extends IOptionsSerializerValidatorConstructor<DBO, DBOS> {
   new (
-    params: ISwarmMessageStoreDBOSerializerValidatorConstructorParams<P, ItemType, DbType, MSI, CTX, DBO, DBOS>
+    params: ISwarmMessageStoreDBOSerializerValidatorConstructorParams<P, ItemType, DbType, I, CTX, DBO, DBOS>
   ): ISwarmStoreDBOSerializerValidator<P, ItemType, DbType, DBO, DBOS>;
 }
 
@@ -220,13 +225,13 @@ export interface ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValida
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  MSI extends TSwarmMessageInstance | ItemType,
+  I extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
   DBOS extends TSwarmStoreDatabaseOptionsSerialized
 > extends IOptionsSerializerValidatorConstructor<DBO, DBOS> {
   new (
-    params: ISwarmMessageStoreDBOSerializerValidatorConstructorParams<P, ItemType, DbType, MSI, CTX, DBO, DBOS>
+    params: ISwarmMessageStoreDBOSerializerValidatorConstructorParams<P, ItemType, DbType, I, CTX, DBO, DBOS>
   ): ISwarmStoreDBOSerializerValidator<P, ItemType, DbType, DBO, DBOS>;
 }
 
@@ -234,7 +239,7 @@ export interface ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValida
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  MSI extends TSwarmMessageInstance | ItemType,
+  I extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
   DBOS extends TSwarmStoreDatabaseOptionsSerialized,
@@ -268,17 +273,12 @@ export interface ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValida
    * @memberof ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorFabricParams
    */
   validatorsFabric?: ISwarmStoreConnectorUtilsDatabaseOptionsValidatorsInstanceFabric<P, ItemType, DbType, DBO, DBOS>;
-  grandAccessBinderFabric?: ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinderFabric<
-    P,
-    ItemType,
-    MSI,
-    CTX
-  >;
+  grandAccessBinderFabric?: ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinderFabric<P, ItemType, I, CTX>;
   grandAccessBinderForDBOptionsFabric?: ISwarmMessageStoreConnectorDatabaseOptionsWithAccessControlleGrantCallbackBoundFabric<
     P,
     ItemType,
     DbType,
-    MSI,
+    I,
     CTX,
     DBO
   >;
@@ -288,7 +288,7 @@ export interface ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValida
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  MSI extends TSwarmMessageInstance | ItemType,
+  I extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
   DBOS extends TSwarmStoreDatabaseOptionsSerialized,
@@ -299,7 +299,7 @@ export interface ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValida
       P,
       ItemType,
       DbType,
-      MSI,
+      I,
       CTX,
       DBO,
       DBOS,
@@ -323,20 +323,12 @@ export interface ISwarmMessageStoreDatabaseOptionsWithMetaClass<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  MSI extends TSwarmMessageInstance | ItemType,
+  I extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
   DBOS extends TSwarmStoreDatabaseOptionsSerialized,
   META extends Record<string, unknown> | never = never
-> extends ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructor<
-    P,
-    ItemType,
-    DbType,
-    MSI,
-    CTX,
-    DBO,
-    DBOS
-  > {
+> extends ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructor<P, ItemType, DbType, I, CTX, DBO, DBOS> {
   new (
     options: ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructorArguments<
       P,

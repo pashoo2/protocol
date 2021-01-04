@@ -44,6 +44,7 @@ import {
 import { ISwarmStoreDatabasesPersistentListFabric } from '../../../types/connection-bridge.types';
 import { ISwarmMessageStoreConnectorDbOptionsClassFabric } from '../../../types/connection-bridge-swarm-fabrics.types';
 import { ISerializer } from '../../../../../types/serialization.types';
+import { ISwarmMessageInstanceEncrypted } from '../../../../swarm-message/swarm-message-constructor.types';
 
 export class ConnectionBridgeWithDBOClassEntriesCount<
   P extends ESwarmStoreConnector,
@@ -59,9 +60,9 @@ export class ConnectionBridgeWithDBOClassEntriesCount<
   CO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBOE, ConnectorBasic>,
   PO extends ISwarmStoreProviderOptions<P, T, DbType, DBOE, ConnectorBasic, CO>,
   ConnectorMain extends ISwarmStoreConnectorWithEntriesCount<P, T, DbType, DBOE, ConnectorBasic, CO>,
-  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, Exclude<MSI, ISwarmMessageInstanceEncrypted>>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric,
-  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC>,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, Exclude<MSI, ISwarmMessageInstanceEncrypted>, GAC>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBOE, ConnectorBasic, CO, PO, ConnectorMain>,
   CFOD extends TConnectionBridgeCFODefault<P, T, DbType, DBOE, ConnectorBasic, CO, PO, ConnectorMain, CFO>,
   CBFO extends TSwarmStoreConnectorBasicFabric<P, T, DbType, DBOE, ConnectorBasic>,
@@ -131,7 +132,18 @@ export class ConnectionBridgeWithDBOClassEntriesCount<
   SSDPLF extends ISwarmStoreDatabasesPersistentListFabric<P, T, DbType, DBOE, Record<DBOE['dbName'], DBOE>>,
   CTXC extends ConstructorType<CTX>,
   SMSDBOGACF extends ISwarmMessageStoreConectorDbOptionsGrandAccessContextClassFabric<SMC, CTXC>,
-  DBOCF extends ISwarmMessageStoreConnectorDbOptionsClassFabric<P, T, DbType, MSI, CTX, DBOE, DBOS, SMC, CTXC, SMSDBOGACF>,
+  DBOCF extends ISwarmMessageStoreConnectorDbOptionsClassFabric<
+    P,
+    T,
+    DbType,
+    Exclude<Exclude<MSI, ISwarmMessageInstanceEncrypted>, T>,
+    CTX,
+    DBOE,
+    DBOS,
+    SMC,
+    CTXC,
+    SMSDBOGACF
+  >,
   DBOCFF extends (serializer: SRLZR) => DBOCF,
   E extends ISwarmMessageStoreEvents<P, T, DbType, DBOE> = ISwarmMessageStoreEvents<P, T, DbType, DBOE>,
   DBL extends TSwarmStoreOptionsOfDatabasesKnownList<P, T, DbType, DBOE> = TSwarmStoreOptionsOfDatabasesKnownList<

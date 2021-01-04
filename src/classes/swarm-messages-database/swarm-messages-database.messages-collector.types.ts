@@ -47,10 +47,10 @@ export interface ISwarmMessagesDatabaseMessagesCollectorOptions<
   PO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, CO>,
   ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, CO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain>,
-  MSI extends TSwarmMessageInstance | T,
-  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
+  MD extends ISwarmMessageInstanceDecrypted,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MD | T>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
-  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MD | T, GAC> | undefined,
   O extends ISwarmMessageStoreOptionsWithConnectorFabric<
     P,
     T,
@@ -61,12 +61,12 @@ export interface ISwarmMessagesDatabaseMessagesCollectorOptions<
     PO,
     ConnectorMain,
     CFO,
-    MSI,
+    MD | T,
     GAC,
     MCF,
     ACO
   >,
-  SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>
+  SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, MD | T, GAC, MCF, ACO, O>
 > {
   swarmMessageStore: SMS;
 }
@@ -81,10 +81,10 @@ export interface ISwarmMessagesDatabaseMessagesCollectorWithStorageMetaOptions<
   PO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, CO>,
   ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, CO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain>,
-  MSI extends TSwarmMessageInstance | T,
-  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
+  MD extends ISwarmMessageInstanceDecrypted,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MD | T>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
-  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MD | T, GAC> | undefined,
   O extends ISwarmMessageStoreOptionsWithConnectorFabric<
     P,
     T,
@@ -95,12 +95,12 @@ export interface ISwarmMessagesDatabaseMessagesCollectorWithStorageMetaOptions<
     PO,
     ConnectorMain,
     CFO,
-    MSI,
+    MD | T,
     GAC,
     MCF,
     ACO
   >,
-  SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>,
+  SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, MD | T, GAC, MCF, ACO, O>,
   SMSMeta extends ISwarmMessagesStoreMeta
 > extends ISwarmMessagesDatabaseMessagesCollectorOptions<
     P,
@@ -112,7 +112,7 @@ export interface ISwarmMessagesDatabaseMessagesCollectorWithStorageMetaOptions<
     PO,
     ConnectorMain,
     CFO,
-    MSI,
+    MD,
     GAC,
     MCF,
     ACO,
@@ -188,10 +188,9 @@ export interface ISwarmMessagesDatabaseMessagesCollectorFabric<
   PO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, CO>,
   ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, CO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain>,
-  MSI extends TSwarmMessageInstance | T,
-  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MD | T>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
-  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MD | T, GAC> | undefined,
   O extends ISwarmMessageStoreOptionsWithConnectorFabric<
     P,
     T,
@@ -202,12 +201,12 @@ export interface ISwarmMessagesDatabaseMessagesCollectorFabric<
     PO,
     ConnectorMain,
     CFO,
-    MSI,
+    MD,
     GAC,
     MCF,
     ACO
   >,
-  SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>,
+  SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, MD, GAC, MCF, ACO, O>,
   MD extends ISwarmMessageInstanceDecrypted,
   OPTS extends ISwarmMessagesDatabaseMessagesCollectorOptions<
     P,
@@ -219,7 +218,7 @@ export interface ISwarmMessagesDatabaseMessagesCollectorFabric<
     PO,
     ConnectorMain,
     CFO,
-    MSI,
+    MD,
     GAC,
     MCF,
     ACO,
@@ -241,10 +240,9 @@ export interface ISwarmMessagesDatabaseMessagesCollectorWithStoreMetaFabric<
   PO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, CO>,
   ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, CO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain>,
-  MSI extends TSwarmMessageInstance | T,
-  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MD | T>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
-  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MD | T, GAC> | undefined,
   O extends ISwarmMessageStoreOptionsWithConnectorFabric<
     P,
     T,
@@ -255,12 +253,12 @@ export interface ISwarmMessagesDatabaseMessagesCollectorWithStoreMetaFabric<
     PO,
     ConnectorMain,
     CFO,
-    MSI,
+    MD | T,
     GAC,
     MCF,
     ACO
   >,
-  SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>,
+  SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, MD, GAC, MCF, ACO, O>,
   MD extends ISwarmMessageInstanceDecrypted,
   SMSMeta extends ISwarmMessagesStoreMeta,
   OPTS extends ISwarmMessagesDatabaseMessagesCollectorWithStorageMetaOptions<
@@ -273,7 +271,7 @@ export interface ISwarmMessagesDatabaseMessagesCollectorWithStoreMetaFabric<
     PO,
     ConnectorMain,
     CFO,
-    MSI,
+    MD,
     GAC,
     MCF,
     ACO,

@@ -4,7 +4,7 @@ import {
   ISwarmStoreDatabasesPersistentListFabric,
 } from '../../../types/connection-bridge.types';
 import { ESwarmStoreConnector } from '../../../../swarm-store-class/swarm-store-class.const';
-import { TSwarmMessageInstance } from '../../../../swarm-message/swarm-message-constructor.types';
+import { TSwarmMessageInstance, ISwarmMessageInstanceEncrypted } from '../../../../swarm-message/swarm-message-constructor.types';
 import {
   TSwarmMessagesStoreGrantAccessCallback,
   ISwarmMessageStoreAccessControlOptions,
@@ -40,8 +40,16 @@ export const createConnectionBridgeConnection = async <
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType> = TSwarmStoreDatabaseOptions<P, T, DbType>,
   MSI extends TSwarmMessageInstance | T = TSwarmMessageInstance | T,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | never = ISwarmMessageConstructorWithEncryptedCacheFabric,
-  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI> = TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
-  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> = ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC>,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<
+    P,
+    Exclude<MSI, ISwarmMessageInstanceEncrypted>
+  > = TSwarmMessagesStoreGrantAccessCallback<P, Exclude<MSI, ISwarmMessageInstanceEncrypted>>,
+  ACO extends ISwarmMessageStoreAccessControlOptions<
+    P,
+    T,
+    Exclude<MSI, ISwarmMessageInstanceEncrypted>,
+    GAC
+  > = ISwarmMessageStoreAccessControlOptions<P, T, Exclude<MSI, ISwarmMessageInstanceEncrypted>, GAC>,
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO> = ISwarmStoreConnectorBasic<P, T, DbType, DBO>,
   CBFO extends TSwarmStoreConnectorBasicFabric<P, T, DbType, DBO, ConnectorBasic> = TSwarmStoreConnectorBasicFabric<
     P,

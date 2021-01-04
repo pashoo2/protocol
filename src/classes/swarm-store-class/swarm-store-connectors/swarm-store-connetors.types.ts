@@ -9,6 +9,7 @@ import {
   TSwarmStoreValueTypes,
 } from '../swarm-store-class.types';
 import { TSwarmMessageInstance } from '../../swarm-message';
+import { ISwarmMessageInstanceDecrypted } from '../../swarm-message/swarm-message-constructor.types';
 import {
   IOptionsSerializerValidator,
   IOptionsSerializerValidatorValidators,
@@ -53,13 +54,13 @@ export interface ISwarmStoreDBOGrandAccessCallbackBaseContext {
 export interface ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
-  MSI extends TSwarmMessageInstance | ItemType,
+  I extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext
-> extends TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, ItemType, MSI> {
+> extends TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, ItemType, I> {
   (
     this: CTX,
     // value
-    payload: ItemType | MSI,
+    payload: I | ItemType,
     userId: TSwarmMessageUserIdentifierSerialized,
     // key of the value
     key?: string,

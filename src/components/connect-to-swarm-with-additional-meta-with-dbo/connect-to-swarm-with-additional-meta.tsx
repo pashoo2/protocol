@@ -175,7 +175,6 @@ export class ConnectToSwarmWithAdditionalMetaWithDBO<
       TConnectionBridgeOptionsProviderOptions<CBO>,
       TConnectionBridgeOptionsConnectorMain<CBO>,
       TConnectionBridgeOptionsConnectorFabricOptions<CBO>,
-      MI | T,
       TConnectionBridgeOptionsGrandAccessCallback<CBO>,
       TConnectionBridgeOptionsConstructorWithEncryptedCacheFabric<CBO>,
       TConnectionBridgeOptionsAccessControlOptions<CBO>,

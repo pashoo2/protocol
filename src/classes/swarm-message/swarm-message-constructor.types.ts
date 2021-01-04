@@ -247,15 +247,6 @@ export interface ISwarmMessageConstructor {
 export type TSwarmMessageConstructorArgumentBody = Omit<ISwarmMessageBodyDeserialized, 'ts'> &
   Partial<ISwarmMessageBodyDeserialized>;
 
-export type TSwarmMessageConstructorBodyMessage =
-  | TSwarmMessageConstructorArgumentBodyPrivate
-  | TSwarmMessageConstructorArgumentBody;
-
-// construct message from an object which represents message's body
-export interface ISwarmMessageConstructor {
-  construct(messageBody: TSwarmMessageConstructorArgumentBody): Promise<TSwarmMessageInstance>;
-}
-
 /**
  * This signature constructs a private message for the user with
  * id === receiverId. The message's body will be encrypted
@@ -266,4 +257,13 @@ export interface ISwarmMessageConstructor {
  */
 export interface ISwarmMessageConstructor {
   construct(messageBody: TSwarmMessageConstructorArgumentBodyPrivate): Promise<TSwarmMessageInstance>;
+}
+
+export type TSwarmMessageConstructorBodyMessage =
+  | TSwarmMessageConstructorArgumentBodyPrivate
+  | TSwarmMessageConstructorArgumentBody;
+
+// construct message from an object which represents message's body
+export interface ISwarmMessageConstructor {
+  construct(messageBody: TSwarmMessageConstructorArgumentBody): Promise<TSwarmMessageInstance>;
 }

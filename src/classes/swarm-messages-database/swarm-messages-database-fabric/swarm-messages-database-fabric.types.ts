@@ -19,7 +19,6 @@ import {
   ISwarmStoreOptionsConnectorFabric,
 } from '../../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
-import { ISwarmMessageInstanceEncrypted } from '../../swarm-message/swarm-message-constructor.types';
 import { ESwarmStoreConnector } from 'classes/swarm-store-class/swarm-store-class.const';
 import { ISwarmMessagesDatabaseCacheOptions, ISwarmMessagesDatabaseCache } from '../swarm-messages-database.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from '../swarm-messages-database.messages-collector.types';
@@ -29,12 +28,10 @@ export type TConnectToSwarmMessagesDatabaseReturnType<
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType> = TSwarmStoreDatabaseOptions<P, T, DbType>,
-  MSI extends TSwarmMessageInstance | T = TSwarmMessageInstance | T,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined = undefined,
-  MD extends ISwarmMessageInstanceDecrypted = Exclude<MSI, T | ISwarmMessageInstanceEncrypted> &
-    Exclude<Exclude<MSI, T>, ISwarmMessageInstanceEncrypted>,
-  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI> = TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
-  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined = undefined,
+  MD extends ISwarmMessageInstanceDecrypted = ISwarmMessageInstanceDecrypted,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MD | T> = TSwarmMessagesStoreGrantAccessCallback<P, MD | T>,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MD | T, GAC> | undefined = undefined,
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO> = ISwarmStoreConnectorBasic<P, T, DbType, DBO>,
   PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic> = TSwarmStoreConnectorConnectionOptions<
     P,
@@ -79,7 +76,7 @@ export type TConnectToSwarmMessagesDatabaseReturnType<
     CO,
     ConnectorMain,
     CFO,
-    MSI,
+    MD | T,
     GAC,
     MCF,
     ACO
@@ -93,7 +90,7 @@ export type TConnectToSwarmMessagesDatabaseReturnType<
     CO,
     ConnectorMain,
     CFO,
-    MSI,
+    MD | T,
     GAC,
     MCF,
     ACO
@@ -108,12 +105,12 @@ export type TConnectToSwarmMessagesDatabaseReturnType<
     CO,
     ConnectorMain,
     CFO,
-    MSI,
+    MD | T,
     GAC,
     MCF,
     ACO,
     O
-  > = ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>,
+  > = ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MD | T, GAC, MCF, ACO, O>,
   SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD> = ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
   DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM> = ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>,
   DCCRT extends ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM> = ISwarmMessagesDatabaseCache<
@@ -134,7 +131,6 @@ export type TConnectToSwarmMessagesDatabaseReturnType<
     CO,
     ConnectorMain,
     CFO,
-    MSI,
     GAC,
     MCF,
     ACO,
@@ -154,7 +150,6 @@ export type TConnectToSwarmMessagesDatabaseReturnType<
     CO,
     ConnectorMain,
     CFO,
-    MSI,
     GAC,
     MCF,
     ACO,
@@ -175,7 +170,6 @@ export type TConnectToSwarmMessagesDatabaseReturnType<
   CO,
   ConnectorMain,
   CFO,
-  MSI,
   GAC,
   MCF,
   ACO,
@@ -216,10 +210,8 @@ export interface ISwarmMessagesDatabaseConnectedFabric<
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType> = TSwarmStoreDatabaseOptions<P, T, DbType>,
-  MSI extends TSwarmMessageInstance | T = TSwarmMessageInstance | T,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined = undefined,
-  MD extends ISwarmMessageInstanceDecrypted = Exclude<MSI, T | ISwarmMessageInstanceEncrypted> &
-    Exclude<Exclude<MSI, T>, ISwarmMessageInstanceEncrypted>,
+  MD extends ISwarmMessageInstanceDecrypted = ISwarmMessageInstanceDecrypted,
   SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD> = ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
   DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM> = ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>,
   DCCRT extends ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM> = ISwarmMessagesDatabaseCache<
@@ -230,8 +222,8 @@ export interface ISwarmMessagesDatabaseConnectedFabric<
     MD,
     SMSM
   >,
-  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI> = TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
-  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined = undefined,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MD | T> = TSwarmMessagesStoreGrantAccessCallback<P, MD | T>,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MD | T, GAC> | undefined = undefined,
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO> = ISwarmStoreConnectorBasic<P, T, DbType, DBO>,
   PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic> = TSwarmStoreConnectorConnectionOptions<
     P,
@@ -276,7 +268,7 @@ export interface ISwarmMessagesDatabaseConnectedFabric<
     CO,
     ConnectorMain,
     CFO,
-    MSI,
+    MD | T,
     GAC,
     MCF,
     ACO
@@ -290,7 +282,7 @@ export interface ISwarmMessagesDatabaseConnectedFabric<
     CO,
     ConnectorMain,
     CFO,
-    MSI,
+    MD | T,
     GAC,
     MCF,
     ACO
@@ -305,12 +297,12 @@ export interface ISwarmMessagesDatabaseConnectedFabric<
     CO,
     ConnectorMain,
     CFO,
-    MSI,
+    MD | T,
     GAC,
     MCF,
     ACO,
     O
-  > = ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>,
+  > = ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MD | T, GAC, MCF, ACO, O>,
   ODC extends ISwarmMessagesDatabaseConnectOptions<
     P,
     T,
@@ -321,7 +313,6 @@ export interface ISwarmMessagesDatabaseConnectedFabric<
     CO,
     ConnectorMain,
     CFO,
-    MSI,
     GAC,
     MCF,
     ACO,
@@ -341,7 +332,6 @@ export interface ISwarmMessagesDatabaseConnectedFabric<
     CO,
     ConnectorMain,
     CFO,
-    MSI,
     GAC,
     MCF,
     ACO,
@@ -357,7 +347,6 @@ export interface ISwarmMessagesDatabaseConnectedFabric<
     T,
     DbType,
     DBO,
-    MSI,
     MCF,
     MD,
     GAC,
@@ -374,7 +363,6 @@ export interface ISwarmMessagesDatabaseConnectedFabric<
     T,
     DbType,
     DBO,
-    MSI,
     MCF,
     MD,
     GAC,
@@ -412,11 +400,9 @@ export type TSwarmMessagesDatabaseConnectedFabricOptions<
     any,
     any,
     any,
-    any,
     any
   >
 > = IF extends ISwarmMessagesDatabaseConnectedFabric<
-  any,
   any,
   any,
   any,

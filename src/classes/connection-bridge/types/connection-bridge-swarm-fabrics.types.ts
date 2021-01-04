@@ -35,8 +35,15 @@ import {
 } from '../../swarm-message-store/types/swarm-message-store.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { ISwarmMessageStoreWithEntriesCount } from '../../swarm-message-store/types/swarm-message-store.types';
-import { ISwarmStoreWithConnector } from '../../swarm-store-class/swarm-store-class.types';
+import {
+  ISwarmStoreWithConnector,
+  TSwarmStoreConnectorAccessConrotllerGrantAccessCallback,
+} from '../../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageStoreConectorDbOptionsGrandAccessContextClassFabric } from '../../swarm-message-store/types/swarm-message-store-db-options.types';
+import {
+  ISwarmMessageInstanceEncrypted,
+  ISwarmMessageInstanceDecrypted,
+} from '../../swarm-message/swarm-message-constructor.types';
 
 export interface ISwarmMessageStoreDatabaseGrandAccessBaseContextClassFabric<
   RT extends ConstructorType<ISwarmStoreDBOGrandAccessCallbackBaseContext>
@@ -54,7 +61,7 @@ export interface ISwarmMessageStoreConnectorDbOptionsClassFabric<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  MSI extends TSwarmMessageInstance | ItemType,
+  I extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
   DBOS extends TSwarmStoreDatabaseOptionsSerialized,
@@ -69,7 +76,7 @@ export interface ISwarmMessageStoreConnectorDbOptionsClassFabric<
             P,
             ItemType,
             DbType,
-            MSI,
+            I,
             CTX,
             DBO,
             DBOS,
@@ -85,14 +92,14 @@ export interface ISwarmMessageStoreConnectorDbOptionsClassFabric<
     swarmMessageStoreDBOGrandAccessCallbackFabric: SMSDBOGACF,
     OptionsSerializerValidatorConstructor?: OSVC,
     additionalParams?: AP
-  ): ISwarmMessageStoreDatabaseOptionsWithMetaClass<P, ItemType, DbType, MSI, CTX, DBO, DBOS, { swarmMessageConstructor: SMC }>;
+  ): ISwarmMessageStoreDatabaseOptionsWithMetaClass<P, ItemType, DbType, I, CTX, DBO, DBOS, { swarmMessageConstructor: SMC }>;
 }
 
 export interface ISwarmMessageStoreConnectorDbOptionsClassWithMetaFabric<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  MSI extends TSwarmMessageInstance | ItemType,
+  I extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
   DBOS extends TSwarmStoreDatabaseOptionsSerialized,
@@ -107,7 +114,7 @@ export interface ISwarmMessageStoreConnectorDbOptionsClassWithMetaFabric<
             P,
             ItemType,
             DbType,
-            MSI,
+            I,
             CTX,
             DBO,
             DBOS,
@@ -137,9 +144,9 @@ export interface ISwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsS
   ConnectorMain extends ISwarmStoreConnectorWithEntriesCount<P, ItemType, DbType, DBO, ConnectorBasic, CO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain>,
   MSI extends TSwarmMessageInstance | ItemType,
-  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, Exclude<MSI, ISwarmMessageInstanceEncrypted>>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
-  ACO extends ISwarmMessageStoreAccessControlOptions<P, ItemType, MSI, GAC> | undefined,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, ItemType, Exclude<MSI, ISwarmMessageInstanceEncrypted>, GAC> | undefined,
   O extends ISwarmMessageStoreOptionsWithConnectorFabric<
     P,
     ItemType,
@@ -160,7 +167,18 @@ export interface ISwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsS
   SMC extends ISwarmMessageConstructor,
   CTXC extends ConstructorType<CTX>,
   SMSDBOGACF extends ISwarmMessageStoreConectorDbOptionsGrandAccessContextClassFabric<SMC, CTXC>,
-  DBOC extends ISwarmMessageStoreConnectorDbOptionsClassFabric<P, ItemType, DbType, MSI, CTX, DBO, DBOS, SMC, CTXC, SMSDBOGACF>,
+  DBOC extends ISwarmMessageStoreConnectorDbOptionsClassFabric<
+    P,
+    ItemType,
+    DbType,
+    Exclude<Exclude<MSI, ISwarmMessageInstanceEncrypted>, ItemType>,
+    CTX,
+    DBO,
+    DBOS,
+    SMC,
+    CTXC,
+    SMSDBOGACF
+  >,
   SMS extends ISwarmMessageStoreWithEntriesCount<
     P,
     ItemType,
@@ -190,6 +208,13 @@ export interface ISwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsS
   (
     ContextBaseClass: CTXC,
     swarmMessageStoreDBOGrandAccessCallbackContextFabric: SMSDBOGACF,
-    databaseOptionsClassFabric: DBOC
+    databaseOptionsClassFabric: DBOC,
+    swarmMessageValidatorFabric?: (
+      grantAccessCb: GAC | undefined
+    ) => TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<
+      P,
+      ItemType,
+      Exclude<Exclude<MSI, ItemType>, ISwarmMessageInstanceEncrypted>
+    >
   ): SMS;
 }

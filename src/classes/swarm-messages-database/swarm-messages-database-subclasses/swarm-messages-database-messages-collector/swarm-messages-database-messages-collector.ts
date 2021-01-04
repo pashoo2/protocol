@@ -35,10 +35,9 @@ export class SwarmMessagesDatabaseMessagesCollector<
   PO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, CO>,
   ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, CO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain>,
-  MSI extends TSwarmMessageInstance | T,
-  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MD | T>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
-  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MD | T, GAC> | undefined,
   O extends ISwarmMessageStoreOptionsWithConnectorFabric<
     P,
     T,
@@ -49,12 +48,12 @@ export class SwarmMessagesDatabaseMessagesCollector<
     PO,
     ConnectorMain,
     CFO,
-    MSI,
+    MD | T,
     GAC,
     MCF,
     ACO
   >,
-  SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>,
+  SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, MD | T, GAC, MCF, ACO, O>,
   MD extends ISwarmMessageInstanceDecrypted
 > implements ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD> {
   protected get _swarmMesssagesStore(): SMS {
@@ -72,7 +71,7 @@ export class SwarmMessagesDatabaseMessagesCollector<
       PO,
       ConnectorMain,
       CFO,
-      MSI,
+      MD,
       GAC,
       MCF,
       ACO,
@@ -106,10 +105,9 @@ export function createSwarmMessagesDatabaseMessagesCollectorInstance<
   PO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, CO>,
   ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, CO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain>,
-  MSI extends TSwarmMessageInstance | T,
-  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MD | T>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
-  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MD | T, GAC> | undefined,
   O extends ISwarmMessageStoreOptionsWithConnectorFabric<
     P,
     T,
@@ -120,12 +118,12 @@ export function createSwarmMessagesDatabaseMessagesCollectorInstance<
     PO,
     ConnectorMain,
     CFO,
-    MSI,
+    MD | T,
     GAC,
     MCF,
     ACO
   >,
-  SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>,
+  SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, MD | T, GAC, MCF, ACO, O>,
   MD extends ISwarmMessageInstanceDecrypted
 >(
   options: ISwarmMessagesDatabaseMessagesCollectorOptions<
@@ -138,7 +136,7 @@ export function createSwarmMessagesDatabaseMessagesCollectorInstance<
     PO,
     ConnectorMain,
     CFO,
-    MSI,
+    MD,
     GAC,
     MCF,
     ACO,

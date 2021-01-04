@@ -1,7 +1,4 @@
-import {
-  TSwarmStoreConnectorAccessConrotllerGrantAccessCallback,
-  TSwarmStoreValueTypes,
-} from '../../../../swarm-store-class.types';
+import { TSwarmStoreValueTypes } from '../../../../swarm-store-class.types';
 import { ESwarmStoreConnector } from '../../../../swarm-store-class.const';
 import { ISwarmStoreConnectorDatabaseAccessControlleGrantCallback } from '../../../../swarm-store-class.types';
 

@@ -63,10 +63,9 @@ export class SwarmMessagesDatabase<
   CO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, PO>,
   ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, PO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
-  MSI extends TSwarmMessageInstance | T,
-  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MD | T>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
-  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MSI, GAC> | undefined,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MD | T, GAC> | undefined,
   O extends ISwarmMessageStoreOptionsWithConnectorFabric<
     P,
     T,
@@ -77,12 +76,12 @@ export class SwarmMessagesDatabase<
     CO,
     ConnectorMain,
     CFO,
-    MSI,
+    MD | T,
     GAC,
     MCF,
     ACO
   >,
-  SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>,
+  SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MD | T, GAC, MCF, ACO, O>,
   MD extends ISwarmMessageInstanceDecrypted,
   SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
   DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>,
@@ -97,7 +96,6 @@ export class SwarmMessagesDatabase<
     CO,
     ConnectorMain,
     CFO,
-    MSI,
     GAC,
     MCF,
     ACO,
@@ -119,7 +117,6 @@ export class SwarmMessagesDatabase<
       CO,
       ConnectorMain,
       CFO,
-      MSI,
       GAC,
       MCF,
       ACO,
@@ -329,7 +326,6 @@ export class SwarmMessagesDatabase<
     CO,
     ConnectorMain,
     CFO,
-    MSI,
     GAC,
     MCF,
     ACO,
@@ -417,7 +413,7 @@ export class SwarmMessagesDatabase<
   }
 
   protected _checkDatabaseProps(): this is Omit<
-    ISwarmMessagesDatabaseReady<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O, MD, SMSM>,
+    ISwarmMessagesDatabaseReady<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, GAC, MCF, ACO, O, MD, SMSM>,
     'isReady'
   > {
     const swarmMessageStore = this._swarmMessageStore;

@@ -24,6 +24,10 @@ import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { ISwarmMessageStore } from '../../types/swarm-message-store.types';
 import { ISwarmMessageStoreDatabaseOptionsWithMetaClass } from '../../swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-store-connector-db-options.types';
+import {
+  ISwarmMessageInstanceEncrypted,
+  ISwarmMessageInstanceDecrypted,
+} from '../../../swarm-message/swarm-message-constructor.types';
 
 export function getSwarmMessageStoreWithDatabaseOptionsConstructorExtended<
   P extends ESwarmStoreConnector,
@@ -35,10 +39,10 @@ export function getSwarmMessageStoreWithDatabaseOptionsConstructorExtended<
   PO extends ISwarmStoreProviderOptions<P, ItemType, DbType, DBO, ConnectorBasic, CO>,
   ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, DBO, ConnectorBasic, CO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain>,
-  MSI extends TSwarmMessageInstance | ItemType,
-  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
+  I extends ISwarmMessageInstanceDecrypted,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, I | ItemType>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
-  ACO extends ISwarmMessageStoreAccessControlOptions<P, ItemType, MSI, GAC> | undefined,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, ItemType, I | ItemType, GAC> | undefined,
   O extends ISwarmMessageStoreOptionsWithConnectorFabric<
     P,
     ItemType,
@@ -49,13 +53,13 @@ export function getSwarmMessageStoreWithDatabaseOptionsConstructorExtended<
     PO,
     ConnectorMain,
     CFO,
-    MSI,
+    I | ItemType,
     GAC,
     MCF,
     ACO
   >,
   BC extends ConstructorType<
-    ISwarmMessageStore<P, ItemType, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>
+    ISwarmMessageStore<P, ItemType, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, I, GAC, MCF, ACO, O>
   >,
   DBOS extends TSwarmStoreDatabaseOptionsSerialized,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
@@ -63,7 +67,7 @@ export function getSwarmMessageStoreWithDatabaseOptionsConstructorExtended<
     P,
     ItemType,
     DbType,
-    MSI,
+    I,
     CTX,
     DBO,
     DBOS,

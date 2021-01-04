@@ -8,7 +8,11 @@ import {
 } from '../../../../swarm-store-class/swarm-store-class.types';
 import { ESwarmStoreConnector } from '../../../../swarm-store-class/swarm-store-class.const';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
-import { TSwarmMessageInstance } from '../../../../swarm-message/swarm-message-constructor.types';
+import {
+  TSwarmMessageInstance,
+  ISwarmMessageInstanceEncrypted,
+  ISwarmMessageInstanceDecrypted,
+} from '../../../../swarm-message/swarm-message-constructor.types';
 import { ISwarmStoreDBOSerializerValidator } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { ConstructorType } from '../../../../../types/helper.types';
 import {
@@ -27,10 +31,7 @@ import { ISwarmStoreDatabaseBaseOptions } from '../../../../swarm-store-class/sw
 import { ISwarmMessageStoreDatabaseOptionsExtender } from '../../../types/swarm-message-store-utils.types';
 import { PromiseResolveType } from '../../../../../types/promise.types';
 import { ISwarmMessageStoreDatabaseOptionsWithMetaClass } from '../swarm-store-connector-db-options.types';
-import {
-  ISwarmMessageStoreDBOSerializerValidatorConstructorParams,
-  ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorByDBO,
-} from '../swarm-store-connector-db-options.types';
+import { ISwarmMessageStoreDBOSerializerValidatorConstructorParams } from '../swarm-store-connector-db-options.types';
 
 export function createSwarmMessageStoreDBOWithOptionsExtenderFabric<
   P extends ESwarmStoreConnector,
@@ -43,10 +44,10 @@ export function createSwarmMessageStoreDBOWithOptionsExtenderFabric<
   PO extends ISwarmStoreProviderOptions<P, ItemType, DbType, DBO, ConnectorBasic, CO>,
   ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, DBO, ConnectorBasic, CO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain>,
-  MSI extends TSwarmMessageInstance | ItemType,
-  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
+  I extends ISwarmMessageInstanceDecrypted,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, I | ItemType>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
-  ACO extends ISwarmMessageStoreAccessControlOptions<P, ItemType, MSI, GAC> | undefined,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, ItemType, I | ItemType, GAC> | undefined,
   O extends ISwarmMessageStoreOptionsWithConnectorFabric<
     P,
     ItemType,
@@ -57,7 +58,7 @@ export function createSwarmMessageStoreDBOWithOptionsExtenderFabric<
     PO,
     ConnectorMain,
     CFO,
-    MSI,
+    I | ItemType,
     GAC,
     MCF,
     ACO
@@ -67,7 +68,7 @@ export function createSwarmMessageStoreDBOWithOptionsExtenderFabric<
     P,
     ItemType,
     DbType,
-    MSI,
+    I,
     CTX,
     DBO,
     DBOS,
@@ -86,7 +87,7 @@ export function createSwarmMessageStoreDBOWithOptionsExtenderFabric<
   assert(typeof databaseOptionsExtenderFabric === 'function', 'Options extender fabric should be a function');
   class SwarmMessageStoreDBOWithExtendedGrandAccessClass {
     constructor(
-      params: ISwarmMessageStoreDBOSerializerValidatorConstructorParams<P, ItemType, DbType, MSI, CTX, DBOE, DBOS> & {
+      params: ISwarmMessageStoreDBOSerializerValidatorConstructorParams<P, ItemType, DbType, I, CTX, DBOE, DBOS> & {
         meta: META;
       }
     ) {

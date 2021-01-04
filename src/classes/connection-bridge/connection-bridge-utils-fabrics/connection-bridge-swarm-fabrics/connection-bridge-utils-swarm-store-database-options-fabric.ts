@@ -6,7 +6,11 @@ import {
   TSwarmStoreDatabaseOptionsSerialized,
 } from '../../../swarm-store-class/swarm-store-class.types';
 import { ESwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.const';
-import { TSwarmMessageInstance, ISwarmMessageConstructor } from '../../../swarm-message/swarm-message-constructor.types';
+import {
+  TSwarmMessageInstance,
+  ISwarmMessageConstructor,
+  ISwarmMessageInstanceDecrypted,
+} from '../../../swarm-message/swarm-message-constructor.types';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import {
   ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContextFabric,
@@ -25,7 +29,7 @@ export function getSwarmMessageStoreConnectorDBOClass<
   P extends ESwarmStoreConnector,
   T extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  MSI extends TSwarmMessageInstance | T,
+  I extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   DBOS extends TSwarmStoreDatabaseOptionsSerialized,
@@ -41,7 +45,7 @@ export function getSwarmMessageStoreConnectorDBOClass<
       P,
       T,
       DbType,
-      MSI,
+      I,
       CTX,
       DBO,
       DBOS,
@@ -49,7 +53,7 @@ export function getSwarmMessageStoreConnectorDBOClass<
     >,
     'grandAccessCallbackContextFabric'
   >
-): ISwarmMessageStoreDatabaseOptionsWithMetaClass<P, T, DbType, MSI, CTX, DBO, DBOS, { swarmMessageConstructor: SMC }> {
+): ISwarmMessageStoreDatabaseOptionsWithMetaClass<P, T, DbType, I, CTX, DBO, DBOS, { swarmMessageConstructor: SMC }> {
   const grandAccessCallbackContextFabric: ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContextFabric<
     P,
     DbType,
@@ -70,7 +74,7 @@ export function getSwarmMessageStoreConnectorDBOClass<
     );
     return new SwarmMessagesStoreDBOGrandAccessCallbackContextClass();
   };
-  const SwarmMessageStoreDBOClass = getSwarmMessageStoreDBOClass<P, T, DbType, MSI, CTX, DBO, DBOS, SMC>(
+  const SwarmMessageStoreDBOClass = getSwarmMessageStoreDBOClass<P, T, DbType, I, CTX, DBO, DBOS, SMC>(
     { ...additionalParams, grandAccessCallbackContextFabric },
     OptionsSerializerValidatorConstructor
   );
@@ -82,14 +86,14 @@ export function getSwarmMessageStoreConnectorDBOClassFabric<
   P extends ESwarmStoreConnector,
   T extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  MSI extends TSwarmMessageInstance | T,
+  I extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   DBOS extends TSwarmStoreDatabaseOptionsSerialized,
   SMC extends ISwarmMessageConstructor,
   CTXC extends ConstructorType<CTX>,
   SMSDBOGACF extends ISwarmMessageStoreConectorDbOptionsGrandAccessContextClassFabric<SMC, CTXC>,
-  DBOCF extends ISwarmMessageStoreConnectorDbOptionsClassFabric<P, T, DbType, MSI, CTX, DBO, DBOS, SMC, CTXC, SMSDBOGACF>,
+  DBOCF extends ISwarmMessageStoreConnectorDbOptionsClassFabric<P, T, DbType, I, CTX, DBO, DBOS, SMC, CTXC, SMSDBOGACF>,
   SRLZR extends ISerializer
 >(serializer: SRLZR): DBOCF {
   const dboFabric = (
@@ -101,7 +105,7 @@ export function getSwarmMessageStoreConnectorDBOClassFabric<
         P,
         T,
         DbType,
-        MSI,
+        I,
         CTX,
         DBO,
         DBOS,
@@ -109,7 +113,7 @@ export function getSwarmMessageStoreConnectorDBOClassFabric<
       >,
       'grandAccessCallbackContextFabric'
     >
-  ): ISwarmMessageStoreDatabaseOptionsWithMetaClass<P, T, DbType, MSI, CTX, DBO, DBOS, { swarmMessageConstructor: SMC }> => {
+  ): ISwarmMessageStoreDatabaseOptionsWithMetaClass<P, T, DbType, I, CTX, DBO, DBOS, { swarmMessageConstructor: SMC }> => {
     const additionalParamsResulted = {
       ...additionalParams,
       optionsSerializer: (serializer as unknown) as IOptionsSerializerValidatorSerializer<DBO, DBOS>,
@@ -118,7 +122,7 @@ export function getSwarmMessageStoreConnectorDBOClassFabric<
       P,
       T,
       DbType,
-      MSI,
+      I,
       CTX,
       DBO,
       DBOS,

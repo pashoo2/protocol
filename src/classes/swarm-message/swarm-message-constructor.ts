@@ -132,9 +132,9 @@ export class SwarmMessageConstructor implements ISwarmMessageConstructor {
   ): Promise<TSwarmMessageInstance> => {
     assert(message, 'Message must not be empty');
     if (typeof message === 'string') {
-      return this.parse(message);
+      return await this.parse(message);
     } else if (typeof message === 'object') {
-      return this.serialize(message as TSwarmMessageConstructorArgumentBody | TSwarmMessageConstructorArgumentBodyPrivate);
+      return await this.serialize(message as TSwarmMessageConstructorArgumentBody | TSwarmMessageConstructorArgumentBodyPrivate);
     }
     throw new Error('A message must be an object or a string');
   };

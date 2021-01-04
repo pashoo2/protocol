@@ -49,8 +49,13 @@ import { TSwarmStoreConnectorOrbitDbDatabaseStoreHash } from './swarm-store-conn
 import { SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_PRELOAD_COUNT_MIN } from './swarm-store-connector-orbit-db-subclass-database.const';
 import { ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore } from '../swarm-store-connector-orbit-db-subclasses-cache/swarm-store-connector-orbit-db-subclasses-cache.types';
 import { IPromisePending } from '../../../../../../types/promise.types';
-import { ISwarmStoreConnectorBasic } from '../../../../swarm-store-class.types';
+import {
+  ISwarmStoreConnectorBasic,
+  ISwarmStoreConnectorDatabaseAccessControlleGrantCallback,
+} from '../../../../swarm-store-class.types';
 import { createPromisePending, resolvePromisePending } from '../../../../../../utils/common-utils/commom-utils.promies';
+import { isDbOptionsWithGrandAccess } from '../../../../../swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-message-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-context/swarm-store-conector-db-options-grand-access-context-binder-to-database-options/swarm-store-conector-db-options-grand-access-context-binder-to-database-options';
+import { ISwarmMessageInstanceDecrypted } from '../../../../../swarm-message/swarm-message-constructor.types';
 import {
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_EMIT_BATCH_INT_MS,
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_EMIT_BATCH_SIZE,
@@ -1060,27 +1065,32 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   }
 
   private getAccessControllerOptions(): ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions<ItemType> {
-    const { options } = this;
+    const { options: dbOptions } = this;
     const resultedOptions: ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions<ItemType> = {
       type: SwarmStoreConnectorOrbitDBSubclassAccessController.type,
     };
 
-    if (!options) {
+    if (!dbOptions) {
       return resultedOptions;
     }
 
-    const { isPublic, write, grantAccess } = options;
+    const { isPublic, write } = dbOptions;
 
     if (isPublic) {
       resultedOptions.write = ['*'];
     } else if (write instanceof Array) {
       resultedOptions.write = write.filter((identity) => identity && typeof identity === 'string');
     }
-    if (typeof grantAccess === 'function') {
-      if (grantAccess.length !== 2) {
+
+    if (
+      isDbOptionsWithGrandAccess<ESwarmStoreConnector.OrbitDB, ItemType, DbType, ISwarmMessageInstanceDecrypted, DBO>(
+        dbOptions as DBO
+      )
+    ) {
+      if ((dbOptions as any).grantAccess.length !== 2) {
         console.warn('The grant access callback function must have 2 arguments');
       }
-      resultedOptions.grantAccess = grantAccess;
+      (resultedOptions as any).grantAccess = dbOptions.grantAccess;
     }
     return resultedOptions;
   }
@@ -1100,7 +1110,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   private async createDbInstance(isSilent: boolean = false): Promise<Error | TSwarmStoreConnectorOrbitDbDatabase<ItemType>> {
     const { creatingNewDBInstancePromise } = this;
     if (creatingNewDBInstancePromise) {
-      return creatingNewDBInstancePromise;
+      return await creatingNewDBInstancePromise;
     }
 
     let methodResult: Error | TSwarmStoreConnectorOrbitDbDatabase<ItemType> = new Error(

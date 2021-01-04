@@ -5,6 +5,7 @@ import {
   TSwarmMessageInstance,
   ISwarmMessageInstanceEncrypted,
   ISwarmMessageEncrypted,
+  ISwarmMessageInstanceDecrypted,
 } from '../swarm-message/swarm-message-constructor.types';
 import {
   ESwarmMessageStoreEventNames,
@@ -35,7 +36,11 @@ import {
 import { ISwarmMessageStoreDeleteMessageArg } from './types/swarm-message-store.types';
 import { TSwarmMessageSerialized, TSwarmMessageConstructorBodyMessage } from '../swarm-message/swarm-message-constructor.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
-import { TSwarmStoreDatabaseOptions, TSwarmStoreDatabaseType } from '../swarm-store-class/swarm-store-class.types';
+import {
+  TSwarmStoreDatabaseOptions,
+  TSwarmStoreDatabaseType,
+  TSwarmStoreConnectorAccessConrotllerGrantAccessCallback,
+} from '../swarm-store-class/swarm-store-class.types';
 
 import { ISwarmMessageStoreAccessControlOptions, ISwarmMessageDatabaseConstructors } from './types/swarm-message-store.types';
 import { extendSwarmMessageStoreConnectionOptionsWithAccessControlAndConnectorSpecificOptions } from './swarm-message-store-connection-options/swarm-message-store-connection-options-utils/swarm-message-store-connection-options-extender';
@@ -74,6 +79,7 @@ import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-me
 import { PromiseResolveType } from '../../types/promise.types';
 import { createSwarmMessageStoreUtilsExtenderOrbitDBDatabaseOptionsWithAccessControl } from './swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-message-store-conector-db-options-grand-access-utils/swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks/swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks';
 import { ISwarmMessageStoreDatabaseOptionsExtender } from './types/swarm-message-store-utils.types';
+import { TCentralAuthorityUserIdentity } from '../central-authority-class/central-authority-class-types/central-authority-class-types-common';
 import {
   TSwarmStoreConnectorConnectionOptions,
   ISwarmStoreProviderOptions,
@@ -91,9 +97,9 @@ export class SwarmMessageStore<
     ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, DBO, ConnectorBasic, PO>,
     CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
     MSI extends TSwarmMessageInstance | ItemType,
-    GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MSI>,
+    GAC extends TSwarmMessagesStoreGrantAccessCallback<P, I | ItemType>,
     MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
-    ACO extends ISwarmMessageStoreAccessControlOptions<P, ItemType, MSI, GAC> | undefined,
+    ACO extends ISwarmMessageStoreAccessControlOptions<P, ItemType, I | ItemType, GAC> | undefined,
     O extends ISwarmMessageStoreOptionsWithConnectorFabric<
       P,
       ItemType,
@@ -104,15 +110,17 @@ export class SwarmMessageStore<
       CO,
       ConnectorMain,
       CFO,
-      MSI,
+      I | ItemType,
       GAC,
       MCF,
       ACO
     >,
-    E extends ISwarmMessageStoreEvents<P, ItemType, DbType, DBO>
+    E extends ISwarmMessageStoreEvents<P, ItemType, DbType, DBO>,
+    I extends ISwarmMessageInstanceDecrypted = Exclude<Exclude<MSI, ISwarmMessageInstanceEncrypted>, ItemType>
   >
   extends SwarmStore<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O, E>
-  implements ISwarmMessageStore<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O> {
+  implements
+    ISwarmMessageStore<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, I | ItemType, GAC, MCF, ACO, O> {
   protected connectorType: P | undefined;
 
   protected accessControl?: ACO;
@@ -132,9 +140,7 @@ export class SwarmMessageStore<
 
   protected _dbTypes: Record<string, DbType> = {};
 
-  protected _cache?: StorageProvider<Exclude<MSI, ItemType | ISwarmMessageEncrypted>> = new StorageProviderInMemory<
-    Exclude<MSI, ItemType | ISwarmMessageEncrypted>
-  >();
+  protected _cache?: StorageProvider<I> = new StorageProviderInMemory<I>();
 
   protected _databasesMessagesCaches: Record<
     string,
@@ -192,7 +198,7 @@ export class SwarmMessageStore<
     CO,
     ConnectorMain,
     CFO,
-    MSI,
+    I | ItemType,
     GAC,
     MCF,
     ACO,
@@ -360,7 +366,7 @@ export class SwarmMessageStore<
     return await this.collectMessages(dbName, iterator as TSwarmStoreDatabaseIteratorMethodAnswer<P, ValueType>, dbType);
   }
 
-  public async collectWithMeta<MD extends Exclude<Exclude<MSI, ItemType>, ISwarmMessageInstanceEncrypted>>(
+  public async collectWithMeta<MD extends I>(
     dbName: DBO['dbName'],
     options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>
   ): Promise<Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined>> {
@@ -420,7 +426,7 @@ export class SwarmMessageStore<
     this.messageConstructors = options.messageConstructors;
 
     if (options.cache) {
-      this._cache = options.cache as StorageProvider<Exclude<MSI, ItemType | ISwarmMessageEncrypted>>;
+      this._cache = options.cache as StorageProvider<I>;
     }
     this.swarmMessageConstructorFabric = options.swarmMessageConstructorFabric;
   }
@@ -494,7 +500,7 @@ export class SwarmMessageStore<
     >;
   }
 
-  protected getMessagesWithMeta<MD extends Exclude<Exclude<MSI, ItemType>, ISwarmMessageInstanceEncrypted>>(
+  protected getMessagesWithMeta<MD extends I>(
     messages: Array<Error | MD>,
     rawEntriesIterator: TSwarmStoreDatabaseRequestMethodEntitiesReturnType<P, ItemType>,
     dbName: DBO['dbName'],
@@ -506,7 +512,7 @@ export class SwarmMessageStore<
     return [];
   }
 
-  protected joinMessagesWithRawOrbitDBEntries<M extends Exclude<Exclude<MSI, ItemType>, ISwarmMessageInstanceEncrypted>>(
+  protected joinMessagesWithRawOrbitDBEntries<M extends I>(
     messages: Array<Error | M>,
     rawEntriesIterator: TSwarmStoreDatabaseRequestMethodEntitiesReturnType<P, ItemType>,
     dbName: DBO['dbName'],
@@ -1282,12 +1288,20 @@ export class SwarmMessageStore<
       CO,
       ConnectorMain,
       CFO,
-      MSI,
+      I,
       GAC,
       MCF,
       ACO,
       O
-    >(options, getMessageValidator);
+    >(
+      options,
+      getMessageValidator as (
+        dboptions: DBO,
+        messageConstructor: PromiseResolveType<ReturnType<NonNullable<MCF>>>,
+        grantAccessCb: GAC | undefined,
+        currentUserId: TCentralAuthorityUserIdentity
+      ) => TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, ItemType, I>
+    );
   }
 
   protected _setCurrentDatabaseOptionsExtenderWithAccessControl(
@@ -1314,7 +1328,7 @@ export class SwarmMessageStore<
       CO,
       ConnectorMain,
       CFO,
-      MSI,
+      I | ItemType,
       GAC,
       MCF,
       ACO,

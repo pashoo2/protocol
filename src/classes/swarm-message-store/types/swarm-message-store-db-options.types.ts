@@ -6,9 +6,33 @@ import { ISwarmMessageStoreConectorDbOptionsGrandAccessContextClassFabricParams 
 
 export interface ISwarmMessageStoreDbOptionsGrandAccessCallbackContext<SMC extends ISwarmMessageConstructor>
   extends ISwarmStoreDBOGrandAccessCallbackBaseContext {
+  /**
+   * Name of the database where is the message stored
+   *
+   * @type {string}
+   * @memberof ISwarmMessageStoreDbOptionsGrandAccessCallbackContext
+   */
   readonly dbName: string;
+  /**
+   * Is it a public database
+   *
+   * @type {boolean}
+   * @memberof ISwarmMessageStoreDbOptionsGrandAccessCallbackContext
+   */
   readonly isPublicDb: boolean;
+  /**
+   * Identifiers of users who have access to the database
+   *
+   * @type {TSwarmMessageUserIdentifierSerialized[]}
+   * @memberof ISwarmMessageStoreDbOptionsGrandAccessCallbackContext
+   */
   readonly usersIdsWithWriteAccess: TSwarmMessageUserIdentifierSerialized[];
+  /**
+   * Swarm message constructor used within the database
+   *
+   * @type {SMC}
+   * @memberof ISwarmMessageStoreDbOptionsGrandAccessCallbackContext
+   */
   readonly swarmMessageConstructor: SMC;
 }
 

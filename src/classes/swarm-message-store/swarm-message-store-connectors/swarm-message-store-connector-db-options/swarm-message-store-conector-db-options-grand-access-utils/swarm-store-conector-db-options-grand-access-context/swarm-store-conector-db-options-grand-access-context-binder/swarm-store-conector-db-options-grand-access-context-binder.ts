@@ -1,19 +1,19 @@
 import { ESwarmStoreConnector } from 'classes/swarm-store-class/swarm-store-class.const';
 import { TSwarmStoreValueTypes } from 'classes/swarm-store-class/swarm-store-class.types';
-import { TSwarmMessageInstance } from 'classes/swarm-message/swarm-message-constructor.types';
 import { ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { TSwarmStoreConnectorAccessConrotllerGrantAccessCallback } from 'classes/swarm-store-class/swarm-store-class.types';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmMessageInstanceDecrypted } from '../../../../../../swarm-message/swarm-message-constructor.types';
 
 export function swarmStoreConnectorDbOptionsGrandAccessContextBinder<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
-  MSI extends TSwarmMessageInstance | ItemType,
+  I extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext
 >(
-  grandAccessCallback: TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, ItemType, MSI>,
+  grandAccessCallback: TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, ItemType, I>,
   ctx: CTX
-): ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<P, ItemType, MSI, CTX> {
+): ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<P, ItemType, I, CTX> {
   if (!ctx) {
     throw new Error('Context should be provided');
   }

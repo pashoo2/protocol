@@ -561,7 +561,6 @@ export class ConnectToSwarmWithDBO<
       TConnectionBridgeOptionsProviderOptions<CBO>,
       TConnectionBridgeOptionsConnectorMain<CBO>,
       TConnectionBridgeOptionsConnectorFabricOptions<CBO>,
-      MI | T,
       TConnectionBridgeOptionsGrandAccessCallback<CBO>,
       TConnectionBridgeOptionsConstructorWithEncryptedCacheFabric<CBO>,
       TConnectionBridgeOptionsAccessControlOptions<CBO>,
@@ -601,12 +600,11 @@ export class ConnectToSwarmWithDBO<
   };
 
   protected createDatabaseConnector = async (dbOptions: DBO) => {
-    return swarmMessagesDatabaseConnectedFabric<
+    return await swarmMessagesDatabaseConnectedFabric<
       P,
       T,
       DbType,
       DBO,
-      MI | T,
       any,
       MD,
       TConnectionBridgeOptionsGrandAccessCallback<CBO>,
@@ -650,7 +648,6 @@ export class ConnectToSwarmWithDBO<
                 DbType,
                 IConnectionBridgeUnknown<P, T, DbType, any, DBO, MI | T>,
                 DBO,
-                MI | T,
                 MD,
                 SMSM,
                 DCO,

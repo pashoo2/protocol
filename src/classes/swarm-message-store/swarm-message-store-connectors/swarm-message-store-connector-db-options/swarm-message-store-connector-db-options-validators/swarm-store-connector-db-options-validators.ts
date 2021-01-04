@@ -1,6 +1,8 @@
 import { ESwarmStoreConnector } from '../../../../swarm-store-class/swarm-store-class.const';
 import { ISwarmStoreConnectorUtilsDatabaseOptionsValidators } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import assert from 'assert';
+import { ISwarmMessageInstanceDecrypted } from '../../../../swarm-message/swarm-message-constructor.types';
+import { ISwarmStoreConnectorDatabaseAccessControlleGrantCallback } from '../../../../swarm-store-class/swarm-store-class.types';
 import {
   TSwarmStoreValueTypes,
   TSwarmStoreDatabaseType,
@@ -26,7 +28,9 @@ export class SwarmStoreConnectorDbOptionsValidators<
     assert(typeof dbOptionsToValidate === 'object', 'Database options should be an object');
     assert(typeof dbOptionsToValidate.dbName === 'string', 'Database name should be defined in options');
     assert(
-      !dbOptionsToValidate.grantAccess || typeof dbOptionsToValidate.grantAccess === 'function',
+      typeof (dbOptionsToValidate as DBO &
+        Required<ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<P, ItemType, ISwarmMessageInstanceDecrypted>>)
+        ?.grantAccess === 'function',
       'Grand access should be a function'
     );
     return true;

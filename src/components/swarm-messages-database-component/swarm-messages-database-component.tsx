@@ -37,9 +37,8 @@ type P = ESwarmStoreConnector.OrbitDB;
 interface IProps<
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  CB extends IConnectionBridgeUnknown<P, T, DbType, any, DBO, MSI>,
+  CB extends IConnectionBridgeUnknown<P, T, DbType, any, DBO, MD | T>,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
-  MSI extends TSwarmMessageInstance | T,
   MD extends ISwarmMessageInstanceDecrypted,
   SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
   SMDC extends ISwarmMessagesDatabaseConnector<
@@ -52,12 +51,11 @@ interface IProps<
     any,
     any,
     any,
-    MSI,
     any,
     any,
     any,
     any,
-    ISwarmMessageStore<P, T, DbType, DBO, any, any, any, any, any, MSI, any, any, any, any>,
+    ISwarmMessageStore<P, T, DbType, DBO, any, any, any, any, any, MD | T, any, any, any, any>,
     MD,
     SMSM,
     any,
@@ -76,7 +74,6 @@ interface IState<
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
-  MSI extends TSwarmMessageInstance | T,
   MD extends ISwarmMessageInstanceDecrypted,
   SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
   SMDC extends ISwarmMessagesDatabaseConnector<
@@ -89,12 +86,11 @@ interface IState<
     any,
     any,
     any,
-    MSI,
     any,
     any,
     any,
     any,
-    ISwarmMessageStore<P, T, DbType, DBO, any, any, any, any, any, MSI, any, any, any, any>,
+    ISwarmMessageStore<P, T, DbType, DBO, any, any, any, any, any, MD | T, any, any, any, any>,
     MD,
     SMSM,
     any,
@@ -111,9 +107,8 @@ interface IState<
 export class SwarmMessagesDatabaseComponent<
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  CB extends IConnectionBridgeUnknown<P, T, DbType, any, DBO, MSI>,
+  CB extends IConnectionBridgeUnknown<P, T, DbType, any, DBO, MD | T>,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType> = TSwarmStoreDatabaseOptions<P, T, DbType>,
-  MSI extends TSwarmMessageInstance | T = TSwarmMessageInstance | T,
   MD extends ISwarmMessageInstanceDecrypted = ISwarmMessageInstanceDecrypted,
   SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD> = ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
   DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM> = ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>,
@@ -135,12 +130,11 @@ export class SwarmMessagesDatabaseComponent<
     any,
     any,
     any,
-    MSI,
     any,
     any,
     any,
     any,
-    ISwarmMessageStore<P, T, DbType, DBO, any, any, any, any, any, MSI, any, any, any, any>,
+    ISwarmMessageStore<P, T, DbType, DBO, any, any, any, any, any, MD | T, any, any, any, any>,
     MD,
     SMSM,
     any,
@@ -156,20 +150,19 @@ export class SwarmMessagesDatabaseComponent<
     any,
     any,
     any,
-    MSI,
     any,
     any,
     any,
     any,
-    ISwarmMessageStore<P, T, DbType, DBO, any, any, any, any, any, MSI, any, any, any, any>,
+    ISwarmMessageStore<P, T, DbType, DBO, any, any, any, any, any, MD | T, any, any, any, any>,
     MD,
     SMSM,
     any,
     any,
     any
   >
-> extends React.PureComponent<IProps<T, DbType, CB, DBO, MSI, MD, SMSM, SMDC>, IState<T, DbType, DBO, MSI, MD, SMSM, SMDC>> {
-  state: IState<T, DbType, DBO, MSI, MD, SMSM, SMDC> = {
+> extends React.PureComponent<IProps<T, DbType, CB, DBO, MD, SMSM, SMDC>, IState<T, DbType, DBO, MD, SMSM, SMDC>> {
+  state: IState<T, DbType, DBO, MD, SMSM, SMDC> = {
     messages: undefined,
     isOpening: false,
     isClosing: false,
@@ -257,9 +250,9 @@ export class SwarmMessagesDatabaseComponent<
 
         const db = await this.props.createDb(this.props.databaseOptions);
 
-        setMessageListener<P, T, DbType, DBO, MSI, MD, SMSM, DCO, DCCRT, typeof db>(db, this.onNewMessage);
-        setMessageDeleteListener<P, T, DbType, DBO, MSI, MD, SMSM, DCO, DCCRT, typeof db>(db, this.onMessageDelete);
-        setCacheUpdateListener<P, T, DbType, DBO, MSI, MD, SMSM, DCO, DCCRT, typeof db>(db, this.onMessagesCacheUpdated);
+        setMessageListener<P, T, DbType, DBO, MD, SMSM, DCO, DCCRT, typeof db>(db, this.onNewMessage);
+        setMessageDeleteListener<P, T, DbType, DBO, MD, SMSM, DCO, DCCRT, typeof db>(db, this.onMessageDelete);
+        setCacheUpdateListener<P, T, DbType, DBO, MD, SMSM, DCO, DCCRT, typeof db>(db, this.onMessagesCacheUpdated);
         this.setState({ db });
       } catch (err) {
         console.error(err);

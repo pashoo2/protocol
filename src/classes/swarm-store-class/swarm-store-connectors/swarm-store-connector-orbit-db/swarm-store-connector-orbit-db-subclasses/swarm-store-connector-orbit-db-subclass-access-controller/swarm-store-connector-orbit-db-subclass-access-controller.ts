@@ -139,8 +139,8 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
    * @returns {Promise<boolean>}
    * @memberof SwarmStoreConnectorOrbitDBSubclassAccessController
    */
-  protected verifyIdentity(identity: IdentityJson, identityProvider: IdentityProvider): Promise<boolean> {
-    return (identityProvider as any).verifyIdentity(identity);
+  protected async verifyIdentity(identity: IdentityJson, identityProvider: IdentityProvider): Promise<boolean> {
+    return await (identityProvider as any).verifyIdentity(identity);
   }
 
   /**
