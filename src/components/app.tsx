@@ -90,9 +90,9 @@ export class App extends React.Component {
 
     return (
       <ConnectToSwarmWithAdditionalMetaWithDBO<
-        typeof CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_FEED['dbType'],
+        typeof CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_KEY_VALUE['dbType'],
         TSwarmMessageSerialized,
-        typeof CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_FEED,
+        typeof CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_KEY_VALUE,
         false,
         ReturnType<typeof CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS['storage']['connectorBasicFabric']>,
         ReturnType<
@@ -104,7 +104,7 @@ export class App extends React.Component {
         TSwarmMessageInstance,
         ISwarmMessageInstanceDecrypted
       >
-        dbo={CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_FEED}
+        dbo={CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_KEY_VALUE}
         connectionBridgeOptions={CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS}
         userCredentialsList={[userToConnectWithCredentials]}
         userCredentialsToConnectImmediate={userToConnectWithCredentials}

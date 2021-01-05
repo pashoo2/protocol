@@ -28,7 +28,6 @@ import { isValidSwarmMessageDecryptedFormat } from '../../classes/swarm-message-
 import { TSwarmMessageUserIdentifierSerialized } from '../../classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import { TSwarmStoreDatabaseOptions } from '../../classes/swarm-store-class/swarm-store-class.types';
 import { IConnectionBridgeUnknown } from '../../classes/connection-bridge/types/connection-bridge.types';
-import { TSwarmMessageInstance } from '../../classes/swarm-message/swarm-message-constructor.types';
 import { ISwarmMessagesDatabaseConnector } from '../../classes/swarm-messages-database/swarm-messages-database.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../classes/swarm-messages-database/swarm-messages-database.messages-collector.types';
 
