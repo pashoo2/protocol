@@ -34,8 +34,8 @@ import { TSwarmMessageSerialized } from '../swarm-message/swarm-message-construc
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import { ISerializer } from '../../types/serialization.types';
 import {
-  IOptionsSerializerValidatorValidators,
   IOptionsSerializerValidatorConstructorParams,
+  IOptionsSerializerValidatorValidators,
 } from '../basic-classes/options-serializer-validator-class/options-serializer-validator-class.types';
 import { ISwarmStoreDBOSerializerValidator } from './swarm-store-connectors/swarm-store-connetors.types';
 
@@ -184,12 +184,52 @@ export type TSwarmStoreDatabaseMethodAnswer<
   T extends TSwarmStoreValueTypes<P>
 > = P extends ESwarmStoreConnector.OrbitDB ? ISwarmStoreConnectorOrbitDbDatabaseValue<T> : never;
 
-export interface ISwarmStoreDatabaseBaseOptions {
-  // Database name
+/**
+ * return true or false
+ * to allow or disallow the acces
+ * on the entry for the user with
+ * userId === id
+ */
+
+export interface ISwarmStoreDatabaseBaseOptionsWithWriteAccess {
+  /**
+   * An array of hex encoded public keys which are used to set write access to the database.
+   * ["*"] can be passed in to give write access to everyone.
+   * See the GETTING STARTED guide for more info.
+   * (Default: uses the OrbitDB instance key orbitdb.key, which would give write access only to yourself)
+   */
+  write?: string[];
+}
+
+/**
+ * A standard database options for a swarm database
+ *
+ * @export
+ * @interface ISwarmStoreDatabaseBaseOptions
+ * @extends {ISwarmStoreDatabaseBaseOptionsWithWriteAccess}
+ */
+export interface ISwarmStoreDatabaseBaseOptions extends ISwarmStoreDatabaseBaseOptionsWithWriteAccess {
+  /**
+   * Name of the database
+   *
+   * @type {string}
+   * @memberof ISwarmStoreDatabaseBaseOptions
+   */
   dbName: string;
-  // is a puclic database. Private by
+  /**
+   * Is it a puclic database. If the database is
+   * public than everyone has the write access.
+   *
+   * @type {boolean}
+   * @memberof ISwarmStoreDatabaseBaseOptions
+   */
   isPublic?: boolean;
-  // how many records to preload
+  /**
+   * How many records to preload on database opening
+   *
+   * @type {number}
+   * @memberof ISwarmStoreDatabaseBaseOptions
+   */
   preloadCount?: number;
   /**
    * use encrypted storage for the database

@@ -1,35 +1,55 @@
-import { ESwarmStoreConnector } from '../swarm-store-class/swarm-store-class.const';
-import { TSwarmMessageSerialized, ISwarmMessageInstanceDecrypted } from '../swarm-message/swarm-message-constructor.types';
+import { ESwarmStoreConnector } from 'classes/swarm-store-class/swarm-store-class.const';
+import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from 'classes/swarm-message/swarm-message-constructor.types';
 import {
-  TSwarmStoreDatabaseType,
-  TSwarmStoreDatabaseOptions,
-  ISwarmStoreConnectorBasic,
-  TSwarmStoreConnectorConnectionOptions,
-  ISwarmStoreProviderOptions,
   ISwarmStoreConnector,
+  ISwarmStoreConnectorBasic,
   ISwarmStoreOptionsConnectorFabric,
-} from '../swarm-store-class/swarm-store-class.types';
-import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from './swarm-messages-channel.const';
-import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
+  ISwarmStoreProviderOptions,
+  TSwarmStoreConnectorAccessConrotllerGrantAccessCallback,
+  TSwarmStoreConnectorConnectionOptions,
+  TSwarmStoreDatabaseOptions,
+  TSwarmStoreDatabaseOptionsSerialized,
+  TSwarmStoreDatabaseType,
+} from 'classes/swarm-store-class/swarm-store-class.types';
+import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../swarm-messages-channel.const';
+import { TSwarmMessageUserIdentifierSerialized } from 'classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import {
-  TSwarmMessagesStoreGrantAccessCallback,
+  ISwarmMessageStore,
   ISwarmMessageStoreAccessControlOptions,
   ISwarmMessageStoreOptionsWithConnectorFabric,
-  ISwarmMessageStore,
-} from '../swarm-message-store/types/swarm-message-store.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+  TSwarmMessagesStoreGrantAccessCallback,
+} from 'classes/swarm-message-store/types/swarm-message-store.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from 'classes/swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import {
-  ISwarmMessagesDatabaseCacheOptions,
   ISwarmMessagesDatabaseCache,
+  ISwarmMessagesDatabaseCacheOptions,
   ISwarmMessagesDatabaseConnectOptions,
-} from '../swarm-messages-database/swarm-messages-database.types';
-import { ISwarmMessagesDatabaseMessagesCollector } from '../swarm-messages-database/swarm-messages-database.messages-collector.types';
-import { ISwarmMessagesDatabaseConnector } from '../swarm-messages-database/swarm-messages-database.types';
-import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
+  ISwarmMessagesDatabaseConnector,
+} from 'classes/swarm-messages-database/swarm-messages-database.types';
+import { ISwarmMessagesDatabaseMessagesCollector } from 'classes/swarm-messages-database/swarm-messages-database.messages-collector.types';
+import { ESwarmStoreConnectorOrbitDbDatabaseType } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
+import { ISerializer } from 'types/serialization.types';
+import {
+  IGetDatabaseKeyForChannelDescription,
+  IBodyCreatorOfSwarmMessageWithChannelDescription,
+} from './swarm-messages-channel-utils.types';
+import {
+  IGetSwarmMessageWithChannelDescriptionIssuerByChannelListDescription,
+  IGetSwarmMessageWithChannelDescriptionTypeByChannelListDescription,
+} from './swarm-messages-channel-utils.types';
+import { IValidatorOfSwarmMessageWithChannelDescription } from './swarm-messages-channel-validation.types';
+import { ISwarmMessagesChannelDescriptionFormatValidator } from './swarm-messages-channel-validation.types';
 
 export type TSwarmMessagesChannelId = string;
 
 // TODO - create implementations
+
+export type TSwarmMessageChannelDatabaseOptions<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>
+> = Pick<DBO, 'isPublic' | 'write' | 'grantAccess'>;
 
 /**
  * Description of a channel used for messaging
@@ -80,13 +100,6 @@ export interface ISwarmMessageChannelDescriptionRaw<
    */
   tags: string[];
   /**
-   * Connector used for the channel
-   *
-   * @type {P}
-   * @memberof ISwarmMessageChannelDescriptionRaw
-   */
-  connector: P;
-  /**
    * Database type used for the channel
    *
    * @type {DbType}
@@ -99,7 +112,7 @@ export interface ISwarmMessageChannelDescriptionRaw<
    * @type {DBO}
    * @memberof ISwarmMessageChannelDescriptionRaw
    */
-  dbOptions: DBO;
+  dbOptions: TSwarmMessageChannelDatabaseOptions<P, T, DbType, DBO>;
   /**
    * Messages encryption used for the channel
    *
@@ -271,6 +284,21 @@ export interface ISwarmMessagesChannel<
 }
 
 /**
+ * Database options for swarm messages channels list with required grant access callback
+ */
+export type TSwrmMessagesChannelsListDBOWithGrantAccess<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized
+> = TSwarmStoreDatabaseOptions<P, T, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE> & {
+  /**
+   * Grant access callback supports for validation of a swarm messages decrypted
+   *
+   * @type {TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, ISwarmMessageInstanceDecrypted>}
+   */
+  grantAccess: TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, ISwarmMessageInstanceDecrypted>;
+};
+
+/**
  * Description of a known channels descriptions collection.
  *
  * @export
@@ -381,4 +409,173 @@ export interface ISwarmMessagesChannelsDescriptionsList<
    * @memberof ISwarmMessagesChannelsDescriptionsList
    */
   getAllChannelsDescriptions(): Promise<Record<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any>>>;
+}
+
+export interface ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T>
+> {
+  /**
+   * Fabric which creates a connection to the swarm messages database by a database options
+   *
+   * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArguments
+   */
+  (dbo: DBO): Promise<
+    ISwarmMessagesDatabaseConnector<
+      P,
+      T,
+      ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
+      DBO,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any
+    >
+  >;
+}
+
+/**
+ * Utilities used by the swarm messages channels list instance
+ *
+ * @export
+ * @interface ISwarmMessagesChannelsDescriptionsListConstructorArguments
+ * @template P
+ * @template T
+ * @template DBO
+ */
+export interface ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T>
+> {
+  /**
+   * Validator of channel description format
+   *
+   * @type {ISwarmMessagesChannelDescriptionFormatValidator<P, T, any, any>}
+   * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArguments
+   */
+  swarmMessagesChannelDescriptionFormatValidator: ISwarmMessagesChannelDescriptionFormatValidator<P, T, any, any>;
+  /**
+   * Fabric which creates a connection to the swarm messages database by a database options
+   *
+   * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArguments
+   */
+  databaseConnectionFabric: ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<P, T, DBO>;
+  /**
+   * Validator of a swarm messages wich contains description of a swarm messages channel
+   * or DELETE operation of a swarm messages channel.
+   *
+   * @type {IValidatorOfSwarmMessageWithChannelDescription<P, T, DBO>}
+   * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArguments
+   */
+  channelDescriptionSwarmMessageValidator: IValidatorOfSwarmMessageWithChannelDescription<P, T, DBO>;
+  /**
+   * This utility will be used by the channelDescriptionSwarmMessageValidator validator
+   * and till swarm message with a channel description construction
+   * to get issuer value for the message's body.
+   *
+   * @type {IGetSwarmMessageWithChannelDescriptionIssuerByChannelListDescription<
+   *     P,
+   *     T,
+   *     DBO
+   *   >}
+   * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils
+   */
+  getIssuerForSwarmMessageWithChannelDescriptionByChannelDescription: IGetSwarmMessageWithChannelDescriptionIssuerByChannelListDescription<
+    P,
+    T,
+    DBO
+  >;
+  /**
+   * This utility will be used by the channelDescriptionSwarmMessageValidator validator
+   * and till swarm message with a channel description construction
+   * to get issuer value for the message's body.
+   *
+   * @type {IGetSwarmMessageWithChannelDescriptionIssuerByChannelListDescription<
+   *     P,
+   *     T,
+   *     DBO
+   *   >}
+   * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils
+   */
+  getTypeForSwarmMessageWithChannelDescriptionByChannelDescription: IGetSwarmMessageWithChannelDescriptionTypeByChannelListDescription<
+    P,
+    T,
+    DBO
+  >;
+  /**
+   * Interface for utility which have to return key in a swarm database
+   * for a swarm messages channel description.
+   *
+   * @type {IGetDatabaseKeyForChannelDescription<P, T>}
+   * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils
+   */
+  getDatabaseKeyForChannelDescription: IGetDatabaseKeyForChannelDescription<P, T>;
+  /**
+   * This utility will be used for creation of a swarm message body with a channel
+   * description.
+   */
+  createSwarmMessageBodyForChannelDescription: IBodyCreatorOfSwarmMessageWithChannelDescription<P, T, DBO>;
+}
+
+/**
+ * Arguments for the swarm messages channels descriptions list constructor
+ *
+ * @export
+ * @interface ISwarmMessagesChannelsDescriptionsListConstructorArguments
+ * @template P
+ * @template T
+ * @template DBO
+ */
+export interface ISwarmMessagesChannelsDescriptionsListConstructorArguments<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T>,
+  DBOS extends TSwarmStoreDatabaseOptionsSerialized
+> {
+  /**
+   * Description for the channels descriptions list
+   *
+   * @type {Readonly<ISwarmMessagesChannelsDescriptionsListDescription<P, T, DBO>>}
+   * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArguments
+   */
+  description: Readonly<ISwarmMessagesChannelsDescriptionsListDescription<P, T, DBO>>;
+  /**
+   * Used for channels descriptions serialization
+   *
+   * @type {ISerializer}
+   * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArguments
+   */
+  serializer: ISerializer;
+
+  /**
+   * Utilities used by the swarm messages channels list instance constucted
+   * by the constructor.
+   *
+   * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArguments
+   */
+  utilities: ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils<P, T, DBO>;
+}
+
+export interface ISwarmMessagesChannelsDescriptionsListConstructor<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T>,
+  DBOS extends TSwarmStoreDatabaseOptionsSerialized
+> {
+  new (
+    constructorArguments: ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, DBO, DBOS>
+  ): ISwarmMessagesChannelsDescriptionsList<P, T, DBO>;
 }

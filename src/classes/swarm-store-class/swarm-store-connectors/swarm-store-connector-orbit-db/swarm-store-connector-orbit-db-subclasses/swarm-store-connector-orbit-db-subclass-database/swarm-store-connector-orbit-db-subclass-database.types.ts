@@ -1,20 +1,19 @@
 import {
-  ISwarmStoreDatabaseBaseOptions,
-  TSwarmStoreDatabaseEntityUniqueIndex,
-  TSwarmStoreDatabaseType,
-  TSwarmStoreValueTypes,
+    ISwarmStoreDatabaseBaseOptionsWithWriteAccess,
+    ISwarmStoreDatabaseBaseOptions,
+    TSwarmStoreDatabaseEntityUniqueIndex,
+    TSwarmStoreDatabaseType,
+    TSwarmStoreValueTypes,
 } from '../../../../swarm-store-class.types';
 import { ESwarmStoreConnector, ESwarmStoreEventNames } from '../../../../swarm-store-class.const';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from './swarm-store-connector-orbit-db-subclass-database.const';
 import {
-  ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess,
   ISwarmStoreConnectorOrbitDbDatabaseAccessControlleGrantCallback,
 } from '../swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types';
 import OrbitDbFeedStore from 'orbit-db-feedstore';
 import OrbitDbKeyValueStore from 'orbit-db-kvstore';
 import { ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore } from '../swarm-store-connector-orbit-db-subclasses-cache/swarm-store-connector-orbit-db-subclasses-cache.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseMethodNames } from '../../swarm-store-connector-orbit-db.types';
-import { ISwarmStoreConnectorDatabaseAccessControlleGrantCallback } from '../../../../swarm-store-class.types';
 
 export type TSwarmStoreConnectorOrbitDbDatabaseStoreHash = string;
 
@@ -30,7 +29,7 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseOptions<
   TStoreValueType extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>,
   DbType extends ESwarmStoreConnectorOrbitDbDatabaseType
 > extends ISwarmStoreConnectorOrbitDbDatabaseAccessControlleGrantCallback<TStoreValueType>,
-    ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess,
+    ISwarmStoreDatabaseBaseOptionsWithWriteAccess,
     ISwarmStoreDatabaseBaseOptions {
   /**
    * Datatbase type, may be feed store or key-value store.

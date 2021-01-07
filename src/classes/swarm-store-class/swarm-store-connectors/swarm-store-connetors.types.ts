@@ -1,3 +1,4 @@
+import { JSONSchema7 } from 'json-schema';
 import { TSwarmMessageUserIdentifierSerialized } from '../../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier';
 import { ESwarmStoreConnector } from '../swarm-store-class.const';
 import {
@@ -8,7 +9,6 @@ import {
   TSwarmStoreDatabaseType,
   TSwarmStoreValueTypes,
 } from '../swarm-store-class.types';
-import { TSwarmMessageInstance } from '../../swarm-message';
 import { ISwarmMessageInstanceDecrypted } from '../../swarm-message/swarm-message-constructor.types';
 import {
   IOptionsSerializerValidator,
@@ -16,12 +16,40 @@ import {
 } from '../../basic-classes/options-serializer-validator-class';
 
 /**
+ * Base context methods
+ *
+ * @export
+ * @interface ISwarmStoreDBOGrandAccessCallbackBaseContextMethods
+ */
+export interface ISwarmStoreDBOGrandAccessCallbackBaseContextMethods {
+  /**
+   * Whether the user with the identity exists
+   *
+   * @param {TSwarmMessageUserIdentifierSerialized} userId
+   * @returns {Promise<true>} - only true, if invalid will throw an error
+   * @memberof ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext
+   * @throws {Error} - throws an error if the user is not valid
+   */
+  isUserValid(userId: TSwarmMessageUserIdentifierSerialized): Promise<true>;
+  /**
+   * Validator for json schema object
+   *
+   * @param {JSONSchema7} jsonSchema
+   * @param {*} valueToValidate
+   * @returns {true} - only true, if invalid will throw an error
+   * @memberof ISwarmStoreDBOGrandAccessCallbackBaseContext
+   * @throws {Error} - throws an error if invalid data
+   */
+  jsonSchemaValidator(jsonSchema: JSONSchema7, valueToValidate: any): Promise<true>;
+}
+
+/**
  * A context in which a grand access function will be executed
  *
  * @export
  * @interface ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext
  */
-export interface ISwarmStoreDBOGrandAccessCallbackBaseContext {
+export interface ISwarmStoreDBOGrandAccessCallbackBaseContext extends ISwarmStoreDBOGrandAccessCallbackBaseContextMethods {
   /**
    * Identity of the current user
    *
@@ -29,15 +57,6 @@ export interface ISwarmStoreDBOGrandAccessCallbackBaseContext {
    * @memberof ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext
    */
   readonly currentUserId: TSwarmMessageUserIdentifierSerialized;
-
-  /**
-   * Whether the user with the identity exists
-   *
-   * @param {TSwarmMessageUserIdentifierSerialized} userId
-   * @returns {Promise<boolean>}
-   * @memberof ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContext
-   */
-  isUserValid(userId: TSwarmMessageUserIdentifierSerialized): Promise<boolean>;
 }
 
 /**

@@ -1,28 +1,22 @@
-import { IFunctionSerializer, IFunctionParser } from '../../../types/serialization.types';
+import { IFunctionParser, IFunctionSerializer } from '../../../types/serialization.types';
 import { TSimpleTypes } from '../../../types/common.types';
+import { isNativeFunction } from 'utils/common-utils/common-utils.functions';
 import {
+  ISerializerClassCheckerIsFunctionSerialized,
   ISerializerClassReplacerCallback,
   ISerializerClassReviverCallback,
-  ISerializerClassCheckerIsFunctionSerialized,
 } from './serializer-class.types';
-
-function isUnnamedFunctionSerialized(functionSerialized: string): boolean {
-  return functionSerialized.startsWith('function (');
-}
-
-function isNamedFunctionSerialized(functionSerialized: string): boolean {
-  return functionSerialized.startsWith('function (');
-}
-
-function isArrowFunctionSerialized(functionSerialized: string): boolean {
-  return functionSerialized.startsWith('(') && functionSerialized.includes(') => ');
-}
+import {
+  isArrowFunctionSerialized,
+  isNamedFunctionSerialized,
+  isUnnamedFunctionSerialized,
+} from '../../../utils/common-utils/common-utils.functions';
 
 export function serializerClassUtilFunctionSerializer(fn: (...args: any[]) => any): string {
-  const functionSerialized = fn.toString();
-  if (functionSerialized === 'function () { [native code] }') {
+  if (isNativeFunction(fn)) {
     throw new Error('Function cannot be serialized');
   }
+  const functionSerialized = fn.toString();
   return functionSerialized;
 }
 

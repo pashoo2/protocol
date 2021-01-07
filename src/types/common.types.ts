@@ -17,3 +17,8 @@ export interface IResolvable<T> {
 export interface IRejectable<E extends MaybeError> {
   reject: (err: E) => unknown;
 }
+
+export interface IKeyValueDataStructure {
+  [k: string]: IKeyValueDataStructure | TSimpleTypes;
+  [k: number]: IKeyValueDataStructure | TSimpleTypes;
+}

@@ -33514,7 +33514,7 @@ typedoc.search.data = {
     {
       id: 3821,
       kind: 256,
-      name: 'ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess',
+      name: 'ISwarmStoreDatabaseBaseOptionsWithWriteAccess',
       url:
         'interfaces/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_subclasses_swarm_store_connector_orbit_db_subclass_access_controller_swarm_store_connector_orbit_db_subclass_access_controller_types_.iswarmstoreconnectororbitdbaccessconrotllerorbitdbstandardoptionswriteaccess.html',
       classes: 'tsd-kind-interface tsd-parent-kind-external-module',
@@ -33529,7 +33529,7 @@ typedoc.search.data = {
         'interfaces/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_subclasses_swarm_store_connector_orbit_db_subclass_access_controller_swarm_store_connector_orbit_db_subclass_access_controller_types_.iswarmstoreconnectororbitdbaccessconrotllerorbitdbstandardoptionswriteaccess.html#write',
       classes: 'tsd-kind-property tsd-parent-kind-interface',
       parent:
-        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types".ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess',
+        '"src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types".ISwarmStoreDatabaseBaseOptionsWithWriteAccess',
     },
     {
       id: 3823,
@@ -50830,7 +50830,7 @@ typedoc.search.data = {
     {
       id: 5766,
       kind: 16777216,
-      name: 'ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess',
+      name: 'ISwarmStoreDatabaseBaseOptionsWithWriteAccess',
       url:
         'modules/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_subclasses_swarm_store_connector_orbit_db_subclass_access_controller_index_.html#iswarmstoreconnectororbitdbaccessconrotllerorbitdbstandardoptionswriteaccess',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
@@ -51593,7 +51593,7 @@ typedoc.search.data = {
     {
       id: 5843,
       kind: 16777216,
-      name: 'ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess',
+      name: 'ISwarmStoreDatabaseBaseOptionsWithWriteAccess',
       url:
         'modules/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_swarm_store_connector_orbit_db_subclasses_index_.html#iswarmstoreconnectororbitdbaccessconrotllerorbitdbstandardoptionswriteaccess',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
@@ -52094,7 +52094,7 @@ typedoc.search.data = {
     {
       id: 5894,
       kind: 16777216,
-      name: 'ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess',
+      name: 'ISwarmStoreDatabaseBaseOptionsWithWriteAccess',
       url:
         'modules/_src_classes_swarm_store_class_swarm_store_connectors_swarm_store_connector_orbit_db_index_.html#iswarmstoreconnectororbitdbaccessconrotllerorbitdbstandardoptionswriteaccess',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
@@ -52658,7 +52658,7 @@ typedoc.search.data = {
     {
       id: 5957,
       kind: 16777216,
-      name: 'ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess',
+      name: 'ISwarmStoreDatabaseBaseOptionsWithWriteAccess',
       url:
         'modules/_src_classes_swarm_store_class_swarm_store_connectors_index_.html#iswarmstoreconnectororbitdbaccessconrotllerorbitdbstandardoptionswriteaccess',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
@@ -53480,7 +53480,7 @@ typedoc.search.data = {
     {
       id: 6055,
       kind: 16777216,
-      name: 'ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess',
+      name: 'ISwarmStoreDatabaseBaseOptionsWithWriteAccess',
       url:
         'modules/_src_classes_swarm_store_class_index_.html#iswarmstoreconnectororbitdbaccessconrotllerorbitdbstandardoptionswriteaccess',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
@@ -56404,7 +56404,7 @@ typedoc.search.data = {
     {
       id: 6420,
       kind: 16777216,
-      name: 'ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess',
+      name: 'ISwarmStoreDatabaseBaseOptionsWithWriteAccess',
       url: 'modules/_src_classes_index_.html#iswarmstoreconnectororbitdbaccessconrotllerorbitdbstandardoptionswriteaccess',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
       parent: '"src/classes/index"',
@@ -61859,7 +61859,7 @@ typedoc.search.data = {
     {
       id: 7096,
       kind: 16777216,
-      name: 'ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess',
+      name: 'ISwarmStoreDatabaseBaseOptionsWithWriteAccess',
       url: 'modules/_src_dev_.html#iswarmstoreconnectororbitdbaccessconrotllerorbitdbstandardoptionswriteaccess',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
       parent: '"src/dev"',
@@ -64723,7 +64723,7 @@ typedoc.search.data = {
     {
       id: 7454,
       kind: 16777216,
-      name: 'ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess',
+      name: 'ISwarmStoreDatabaseBaseOptionsWithWriteAccess',
       url: 'modules/_src_index_.html#iswarmstoreconnectororbitdbaccessconrotllerorbitdbstandardoptionswriteaccess',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
       parent: '"src/index"',
@@ -67587,7 +67587,7 @@ typedoc.search.data = {
     {
       id: 7812,
       kind: 16777216,
-      name: 'ISwarmStoreConnectorOrbitDbAccessConrotllerOrbitDBStandardOptionsWriteAccess',
+      name: 'ISwarmStoreDatabaseBaseOptionsWithWriteAccess',
       url: 'modules/_src_prod_.html#iswarmstoreconnectororbitdbaccessconrotllerorbitdbstandardoptionswriteaccess',
       classes: 'tsd-kind-reference tsd-parent-kind-external-module',
       parent: '"src/prod"',
