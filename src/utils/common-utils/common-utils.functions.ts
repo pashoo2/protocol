@@ -10,12 +10,15 @@ export function isArrowFunctionSerialized(functionSerialized: string): boolean {
   return functionSerialized.startsWith('(') && functionSerialized.includes(') => ');
 }
 
-export function isNativeFunction(fn: (...args: any[]) => any): boolean {
+// eslint-disable-next-line @typescript-eslint/ban-types
+export function isNativeFunction(fn: Function): boolean {
   if (typeof fn !== 'function') return false;
   // Used to resolve the internal `[[Class]]` of values
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   const toString = Object.prototype.toString;
 
   // Used to resolve the decompiled source of functions
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   const fnToString = Function.prototype.toString;
 
   // Used to detect host constructors (Safari > 4; really typed array specific)
@@ -46,7 +49,8 @@ export function isNativeFunction(fn: (...args: any[]) => any): boolean {
       (fn && type === 'object' && reHostCtor.test(toString.call(fn))) || false;
 }
 
-export function isArrowFunction(fn: (...args: any[]) => any): boolean {
+// eslint-disable-next-line @typescript-eslint/ban-types
+export function isArrowFunction(fn: Function): boolean {
   if (typeof fn !== 'function') return false;
   if (isNativeFunction(fn)) {
     return false;

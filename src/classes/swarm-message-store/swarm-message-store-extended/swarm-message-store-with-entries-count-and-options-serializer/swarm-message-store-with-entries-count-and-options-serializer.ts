@@ -31,21 +31,21 @@ import { ISwarmMessageInstanceDecrypted } from '../../../swarm-message/swarm-mes
 
 export function getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer<
   P extends ESwarmStoreConnector,
-  ItemType extends TSwarmMessageSerialized,
+  T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
-  ConnectorBasic extends ISwarmStoreConnectorBasicWithEntriesCount<P, ItemType, DbType, DBO>,
-  CO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, DBO, ConnectorBasic>,
-  PO extends ISwarmStoreProviderOptions<P, ItemType, DbType, DBO, ConnectorBasic, CO>,
-  ConnectorMain extends ISwarmStoreConnectorWithEntriesCount<P, ItemType, DbType, DBO, ConnectorBasic, CO>,
-  CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain>,
-  I extends ISwarmMessageInstanceDecrypted,
-  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, I | ItemType>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
+  ConnectorBasic extends ISwarmStoreConnectorBasicWithEntriesCount<P, T, DbType, DBO>,
+  CO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
+  PO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, CO>,
+  ConnectorMain extends ISwarmStoreConnectorWithEntriesCount<P, T, DbType, DBO, ConnectorBasic, CO>,
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain>,
+  MD extends ISwarmMessageInstanceDecrypted,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MD | T>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
-  ACO extends ISwarmMessageStoreAccessControlOptions<P, ItemType, I | ItemType, GAC> | undefined,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MD | T, GAC> | undefined,
   O extends ISwarmMessageStoreOptionsWithConnectorFabric<
     P,
-    ItemType,
+    T,
     DbType,
     DBO,
     ConnectorBasic,
@@ -53,36 +53,21 @@ export function getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer<
     PO,
     ConnectorMain,
     CFO,
-    I | ItemType,
+    MD | T,
     GAC,
     MCF,
     ACO
   >,
-  E extends ISwarmMessageStoreEvents<P, ItemType, DbType, DBO>
+  E extends ISwarmMessageStoreEvents<P, T, DbType, DBO>
 >(
-  SwarmStoreOptionsClass?: ISwarmStoreOptionsClassConstructor<P, ItemType, DbType, DBO, ConnectorBasic, CO>
+  SwarmStoreOptionsClass?: ISwarmStoreOptionsClassConstructor<P, T, DbType, DBO, ConnectorBasic, CO>
 ): ConstructorType<
-  ISwarmMessageStoreWithEntriesCount<
-    P,
-    ItemType,
-    DbType,
-    DBO,
-    ConnectorBasic,
-    CO,
-    PO,
-    ConnectorMain,
-    CFO,
-    I | ItemType,
-    GAC,
-    MCF,
-    ACO,
-    O
-  > &
-    ISwarmStoreWithConnector<P, ItemType, DbType, DBO, ConnectorBasic, CO, ConnectorMain>
+  ISwarmMessageStoreWithEntriesCount<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, MD | T, GAC, MCF, ACO, O> &
+    ISwarmStoreWithConnector<P, T, DbType, DBO, ConnectorBasic, CO, ConnectorMain>
 > {
   const SwarmMessageStoreWithEntriesCountAndConnectorClass = getClassSwarmMessageStoreWithEntriesCountAndConnector<
     P,
-    ItemType,
+    T,
     DbType,
     DBO,
     ConnectorBasic,
@@ -90,7 +75,7 @@ export function getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer<
     PO,
     ConnectorMain,
     CFO,
-    I,
+    MD,
     GAC,
     MCF,
     ACO,
@@ -99,7 +84,7 @@ export function getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer<
   >();
   const ClassSwarmStoreWithOptionsConstructor = extendClassSwarmStoreWithOptionsConstructor<
     P,
-    ItemType,
+    T,
     DbType,
     DBO,
     ConnectorBasic,

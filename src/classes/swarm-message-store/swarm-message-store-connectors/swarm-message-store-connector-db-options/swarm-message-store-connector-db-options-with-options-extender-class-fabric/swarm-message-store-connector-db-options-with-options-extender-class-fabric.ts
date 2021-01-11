@@ -44,10 +44,10 @@ export function createSwarmMessageStoreDBOWithOptionsExtenderFabric<
   PO extends ISwarmStoreProviderOptions<P, ItemType, DbType, DBO, ConnectorBasic, CO>,
   ConnectorMain extends ISwarmStoreConnector<P, ItemType, DbType, DBO, ConnectorBasic, CO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain>,
-  I extends ISwarmMessageInstanceDecrypted,
-  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, I | ItemType>,
+  MD extends ISwarmMessageInstanceDecrypted,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MD | ItemType>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
-  ACO extends ISwarmMessageStoreAccessControlOptions<P, ItemType, I | ItemType, GAC> | undefined,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, ItemType, MD | ItemType, GAC> | undefined,
   O extends ISwarmMessageStoreOptionsWithConnectorFabric<
     P,
     ItemType,
@@ -58,7 +58,7 @@ export function createSwarmMessageStoreDBOWithOptionsExtenderFabric<
     PO,
     ConnectorMain,
     CFO,
-    I | ItemType,
+    MD | ItemType,
     GAC,
     MCF,
     ACO
@@ -68,7 +68,7 @@ export function createSwarmMessageStoreDBOWithOptionsExtenderFabric<
     P,
     ItemType,
     DbType,
-    I,
+    MD,
     CTX,
     DBO,
     DBOS,
@@ -87,7 +87,7 @@ export function createSwarmMessageStoreDBOWithOptionsExtenderFabric<
   assert(typeof databaseOptionsExtenderFabric === 'function', 'Options extender fabric should be a function');
   class SwarmMessageStoreDBOWithExtendedGrandAccessClass {
     constructor(
-      params: ISwarmMessageStoreDBOSerializerValidatorConstructorParams<P, ItemType, DbType, I, CTX, DBOE, DBOS> & {
+      params: ISwarmMessageStoreDBOSerializerValidatorConstructorParams<P, ItemType, DbType, MD, CTX, DBOE, DBOS> & {
         meta: META;
       }
     ) {

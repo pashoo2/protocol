@@ -203,10 +203,10 @@ export interface ISwarmMessageDatabaseEvents<
  */
 export interface ISwarmMessageDatabaseMessagingMethods<
   P extends ESwarmStoreConnector,
-  ItemType extends TSwarmMessageSerialized,
+  T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
   MI extends TSwarmMessageInstance,
-  SMS extends ISwarmMessageStoreMessagingMethods<P, ItemType, DbType, MI>
+  SMS extends ISwarmMessageStoreMessagingMethods<P, T, DbType, MI>
 > {
   addMessage: OmitFirstArg<SMS['addMessage']>;
   deleteMessage: OmitFirstArg<SMS['deleteMessage']>;
@@ -216,9 +216,9 @@ export interface ISwarmMessageDatabaseMessagingMethods<
 
 export interface ISwarmMessagesDatabaseProperties<
   P extends ESwarmStoreConnector,
-  ItemType extends TSwarmMessageSerialized,
+  T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   MD extends ISwarmMessageInstanceDecrypted
 > {
   /**
@@ -253,7 +253,7 @@ export interface ISwarmMessagesDatabaseProperties<
    * @type {TTypedEmitter<ISwarmMessageDatabaseEvents<P>>}
    * @memberof ISwarmMessagesDatabaseProperties
    */
-  emitter: TTypedEmitter<ISwarmMessageDatabaseEvents<P, ItemType, DbType, DBO, MD>>;
+  emitter: TTypedEmitter<ISwarmMessageDatabaseEvents<P, T, DbType, DBO, MD>>;
 
   /**
    * Whether the messages cache update is in progress.

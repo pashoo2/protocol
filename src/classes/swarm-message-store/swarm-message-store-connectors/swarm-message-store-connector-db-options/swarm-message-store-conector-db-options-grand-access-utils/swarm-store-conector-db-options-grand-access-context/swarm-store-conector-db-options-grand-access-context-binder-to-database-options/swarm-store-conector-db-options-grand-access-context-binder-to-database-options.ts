@@ -14,11 +14,11 @@ export function isDbOptionsWithGrandAccess<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>
->(dbo: DBO): dbo is DBO & Required<ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<P, ItemType, I>> {
+>(dbo: DBO): dbo is DBO & Required<ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<P, ItemType, MD>> {
   return (
-    typeof (dbo as DBO & Required<ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<P, ItemType, I>>).grantAccess ===
+    typeof (dbo as DBO & Required<ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<P, ItemType, MD>>).grantAccess ===
     'function'
   );
 }
@@ -27,25 +27,25 @@ export function swarmStoreConectorDbOptionsGrandAccessContextBinderToDatabaseOpt
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>
 >(
   dbo: DBO,
-  grandAccessCallbackBinder: ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder<P, ItemType, I, CTX>
-): DBO extends Required<ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<P, ItemType, I>>
-  ? DBO & ISwarmMessageStoreConnectorDatabaseAccessControlleGrantCallbackBound<P, ItemType, I, CTX>
+  grandAccessCallbackBinder: ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder<P, ItemType, MD, CTX>
+): DBO extends Required<ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<P, ItemType, MD>>
+  ? DBO & ISwarmMessageStoreConnectorDatabaseAccessControlleGrantCallbackBound<P, ItemType, MD, CTX>
   : DBO {
-  if (isDbOptionsWithGrandAccess<P, ItemType, DbType, I, DBO>(dbo)) {
+  if (isDbOptionsWithGrandAccess<P, ItemType, DbType, MD, DBO>(dbo)) {
     const { grantAccess } = dbo;
     return {
       ...dbo,
       grantAccess: grandAccessCallbackBinder(grantAccess),
-    } as DBO extends Required<ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<P, ItemType, I>>
-      ? DBO & ISwarmMessageStoreConnectorDatabaseAccessControlleGrantCallbackBound<P, ItemType, I, CTX>
+    } as DBO extends Required<ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<P, ItemType, MD>>
+      ? DBO & ISwarmMessageStoreConnectorDatabaseAccessControlleGrantCallbackBound<P, ItemType, MD, CTX>
       : DBO;
   }
-  return dbo as DBO extends Required<ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<P, ItemType, I>>
-    ? DBO & ISwarmMessageStoreConnectorDatabaseAccessControlleGrantCallbackBound<P, ItemType, I, CTX>
+  return dbo as DBO extends Required<ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<P, ItemType, MD>>
+    ? DBO & ISwarmMessageStoreConnectorDatabaseAccessControlleGrantCallbackBound<P, ItemType, MD, CTX>
     : DBO;
 }

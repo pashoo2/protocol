@@ -47,15 +47,15 @@ export const getMessageConstructorForDatabase = <SMC extends ISwarmMessageConstr
 async function swarmMessageGrantValidatorWithCBContext<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   CB extends
     | ISwarmMessageStoreAccessControlGrantAccessCallback<P, T>
-    | ISwarmMessageStoreAccessControlGrantAccessCallback<P, I>
+    | ISwarmMessageStoreAccessControlGrantAccessCallback<P, MD>
     | undefined,
   CTX extends any | never
 >(
-  this: ISwarmMessageGrantValidatorContext<P, T, I, CB>,
-  value: T | I | string,
+  this: ISwarmMessageGrantValidatorContext<P, T, MD, CB>,
+  value: T | MD | string,
   senderUserId: TCentralAuthorityUserIdentity,
   key?: TSwarmStoreDatabaseEntityKey<P>,
   op?: TSwarmStoreDatabaseEntryOperation<P>,
@@ -74,13 +74,13 @@ async function swarmMessageGrantValidatorWithCBContext<
     return true;
   }
 
-  let swarmMessage: undefined | I;
+  let swarmMessage: undefined | MD;
 
   // DELETE message have no value or contains a hash of a message deleted
   if (op !== EOrbitDbFeedStoreOperation.DELETE) {
     try {
       if (typeof value === 'string') {
-        swarmMessage = (await messageConstructor.construct(value)) as I;
+        swarmMessage = (await messageConstructor.construct(value)) as MD;
       } else {
         // is swarm message decrypted
         if (isValidSwarmMessageDecryptedFormat(value)) {
@@ -101,7 +101,7 @@ async function swarmMessageGrantValidatorWithCBContext<
     }
   }
   if (grantAccessCb) {
-    return await (grantAccessCb as ISwarmMessageStoreAccessControlGrantAccessCallback<P, I, any>).call(
+    return await (grantAccessCb as ISwarmMessageStoreAccessControlGrantAccessCallback<P, MD, any>).call(
       callbackContext,
       swarmMessage ?? value,
       senderUserId,
@@ -167,22 +167,22 @@ export const getMessageValidator = <
 export const getMessageValidatorForGrandAccessCallbackBound = <
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends ISwarmMessageInstanceDecrypted,
-  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, I | T>,
+  MD extends ISwarmMessageInstanceDecrypted,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MD | T>,
   SMC extends ISwarmMessageConstructor
 >(
   grantAccessCb: GAC | undefined
-): TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, I> => {
+): TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, MD> => {
   async function swarmMessageGrantValidatorWithSwarmMessageStoreContext(
     this: IGetMessageValidatorUnboundFabricReturnedSwarmMessageGrantValidatorFunctionContext<SMC>,
     payload: T,
     senderUserId: TCentralAuthorityUserIdentity,
     key?: TSwarmStoreDatabaseEntityKey<P>,
     op?: TSwarmStoreDatabaseEntryOperation<P>
-  ): ReturnType<TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, I>> {
+  ): ReturnType<TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, MD>> {
     const { currentUserId, dbName, isPublicDb, swarmMessageConstructor, usersIdsWithWriteAccess } = this;
 
-    const swarmMessageGrantValidatorContext: ISwarmMessageGrantValidatorContext<P, T, I, GAC> = {
+    const swarmMessageGrantValidatorContext: ISwarmMessageGrantValidatorContext<P, T, MD, GAC> = {
       dbName,
       currentUserId,
       isPublic: isPublicDb,
@@ -202,6 +202,6 @@ export const getMessageValidatorForGrandAccessCallbackBound = <
   return swarmMessageGrantValidatorWithSwarmMessageStoreContext as TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<
     P,
     T,
-    I
+    MD
   >;
 };

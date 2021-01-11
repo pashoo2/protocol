@@ -121,13 +121,13 @@ export interface IConnectionBridgeOptionsGetMainConnectorFabric<
 
 export interface ISwarmStoreDatabasesPersistentListFabric<
   P extends ESwarmStoreConnector,
-  ItemType extends TSwarmMessageSerialized,
+  T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   DBL extends Record<DBO['dbName'], DBO>
 > {
   (persistentListOptions: ISwarmStoreConnectorDatabasesPersistentListConstructorParams): Promise<
-    ISwarmStoreConnectorDatabasesPersistentList<P, ItemType, DbType, DBO, DBL>
+    ISwarmStoreConnectorDatabasesPersistentList<P, T, DbType, DBO, DBL>
   >;
 }
 

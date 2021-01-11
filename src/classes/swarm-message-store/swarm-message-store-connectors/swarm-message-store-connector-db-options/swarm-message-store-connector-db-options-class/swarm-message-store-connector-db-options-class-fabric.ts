@@ -9,15 +9,15 @@ import {
   ISwarmMessageStoreDBOSerializerValidatorConstructorParams,
   ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructorArguments,
 } from '../swarm-store-connector-db-options.types';
-import { SwarmMessageStoreDBOptionsClass } from './swarm-message-store-connector-db-options-class';
 import { IOptionsSerializerValidatorSerializer } from 'classes/basic-classes/options-serializer-validator-class/options-serializer-validator-class.types';
-import { swarmStoreConnectorDbOptionsValidatorsInstanceFabric } from '../swarm-message-store-connector-db-options-validators/swarm-store-connector-db-options-validators-fabric';
 import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorFabricParams } from '../swarm-store-connector-db-options.types';
 import { ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder } from '../swarm-store-connector-db-options.types';
 import { swarmStoreConnectorDbOptionsGrandAccessContextBinderFabric } from '../swarm-message-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-context/swarm-store-conector-db-options-grand-access-context-binder/swarm-store-conector-db-options-grand-access-context-binder-fabric';
 import { swarmStoreConectorDbOptionsGrandAccessContextBinderToDatabaseOptionsFabric } from '../swarm-message-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-context/swarm-store-conector-db-options-grand-access-context-binder-to-database-options/swarm-store-conector-db-options-grand-access-context-binder-to-database-options-fabric';
 import { ISwarmMessageStoreConnectorDatabaseOptionsWithAccessControlleGrantCallbackBound } from '../swarm-store-connector-db-options.types';
 import { ISwarmMessageStoreDatabaseOptionsWithMetaClass } from '../swarm-store-connector-db-options.types';
+import { ConstructorType } from '../../../../../types/helper.types';
+import { ISwarmStoreDBOSerializerValidator } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { IDatabaseOptionsClass } from '../../../../swarm-store-class/swarm-store-class.types';
 import {
   ISwarmMessageConstructor,
@@ -32,7 +32,7 @@ export function getSwarmMessageStoreDBOClass<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
   DBOS extends TSwarmStoreDatabaseOptionsSerialized,
@@ -42,34 +42,28 @@ export function getSwarmMessageStoreDBOClass<
     P,
     ItemType,
     DbType,
-    I,
+    MD,
     CTX,
     DBO,
     DBOS,
     SMC
   >,
-  OptionsSerializerValidatorConstructor?: IDatabaseOptionsClass<P, ItemType, DbType, DBO, DBOS>
-): ISwarmMessageStoreDatabaseOptionsWithMetaClass<P, ItemType, DbType, I, CTX, DBO, DBOS, { swarmMessageConstructor: SMC }> {
-  const ConstructorToUse = (OptionsSerializerValidatorConstructor ??
-    SwarmMessageStoreDBOptionsClass) as ISwarmMessageStoreDatabaseOptionsWithMetaClass<P, ItemType, DbType, I, CTX, DBO, DBOS>;
+  DBOBaseClassSerializerValidator:
+    | ConstructorType<ISwarmStoreDBOSerializerValidator<P, ItemType, DbType, DBO, DBOS>>
+    | IDatabaseOptionsClass<P, ItemType, DbType, DBO, DBOS>
+): ISwarmMessageStoreDatabaseOptionsWithMetaClass<P, ItemType, DbType, MD, CTX, DBO, DBOS, { swarmMessageConstructor: SMC }> {
   const getDbOptionsSerializer = (): IOptionsSerializerValidatorSerializer<DBO, DBOS> =>
     params.optionsSerializer ?? ((JSON as unknown) as IOptionsSerializerValidatorSerializer<DBO, DBOS>);
 
   const createDBOValidators = (): ISwarmStoreConnectorUtilsDatabaseOptionsValidators<P, ItemType, DbType, DBO, DBOS> => {
-    const validatorsFabric = params.validatorsFabric ?? swarmStoreConnectorDbOptionsValidatorsInstanceFabric;
-    return validatorsFabric<P, ItemType, DbType, DBO, DBOS>() as ISwarmStoreConnectorUtilsDatabaseOptionsValidators<
-      P,
-      ItemType,
-      DbType,
-      DBO,
-      DBOS
-    >;
+    const validatorsFabric = params.validatorsFabric;
+    return validatorsFabric();
   };
 
   const createGrandAccessCallbackContextBinder = (
     dbOptions: DBO,
     swarmMessageConstructor: SMC
-  ): ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder<P, ItemType, I, CTX> => {
+  ): ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder<P, ItemType, MD, CTX> => {
     const context = params.grandAccessCallbackContextFabric(dbOptions, swarmMessageConstructor);
     const grandAccessContextBinderFabric =
       params.grandAccessBinderFabric || swarmStoreConnectorDbOptionsGrandAccessContextBinderFabric;
@@ -81,7 +75,7 @@ export function getSwarmMessageStoreDBOClass<
     P,
     ItemType,
     DbType,
-    I,
+    MD,
     CTX,
     DBO
   > => {
@@ -93,7 +87,7 @@ export function getSwarmMessageStoreDBOClass<
   const extendDatabaseOptions = (options: {
     options: DBO | DBOS;
     meta: { swarmMessageConstructor: SMC };
-  }): ISwarmMessageStoreDBOSerializerValidatorConstructorParams<P, ItemType, DbType, I, CTX, DBO, DBOS> => {
+  }): ISwarmMessageStoreDBOSerializerValidatorConstructorParams<P, ItemType, DbType, MD, CTX, DBO, DBOS> => {
     const {
       meta: { swarmMessageConstructor },
       options: dbOptions,
@@ -114,7 +108,7 @@ export function getSwarmMessageStoreDBOClass<
       grandAccessBinderForDBOptions: createGrandAccessCallbackBinderForDBOptions(),
     };
   };
-  class SwarmMessageStoreDBOptionsClassCreated extends ConstructorToUse {
+  class SwarmMessageStoreDBOptionsClassCreated extends DBOBaseClassSerializerValidator {
     constructor(
       options: Pick<
         ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorWithMetaConstructorArguments<
@@ -134,7 +128,7 @@ export function getSwarmMessageStoreDBOClass<
     P,
     ItemType,
     DbType,
-    I,
+    MD,
     CTX,
     DBO,
     DBOS,

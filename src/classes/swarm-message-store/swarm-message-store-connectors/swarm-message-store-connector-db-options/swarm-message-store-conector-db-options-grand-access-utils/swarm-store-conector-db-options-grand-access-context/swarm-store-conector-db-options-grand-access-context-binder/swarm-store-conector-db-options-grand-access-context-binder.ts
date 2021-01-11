@@ -8,12 +8,12 @@ import { ISwarmMessageInstanceDecrypted } from '../../../../../../swarm-message/
 export function swarmStoreConnectorDbOptionsGrandAccessContextBinder<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext
 >(
-  grandAccessCallback: TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, ItemType, I>,
+  grandAccessCallback: TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, ItemType, MD>,
   ctx: CTX
-): ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<P, ItemType, I, CTX> {
+): ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<P, ItemType, MD, CTX> {
   if (!ctx) {
     throw new Error('Context should be provided');
   }

@@ -4,10 +4,10 @@ import { TSwarmStoreDatabaseType, TSwarmStoreDatabaseOptions } from '../../swarm
 
 export interface ISwarmMessageStoreDatabaseOptionsExtender<
   P extends ESwarmStoreConnector,
-  ItemType extends TSwarmMessageSerialized,
+  T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
-  DBOE extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
+  DBOE extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   SMC extends ISwarmMessageConstructor
 > {
   (dbOptions: DBO, swarmMessageConstructor: SMC): DBOE;
