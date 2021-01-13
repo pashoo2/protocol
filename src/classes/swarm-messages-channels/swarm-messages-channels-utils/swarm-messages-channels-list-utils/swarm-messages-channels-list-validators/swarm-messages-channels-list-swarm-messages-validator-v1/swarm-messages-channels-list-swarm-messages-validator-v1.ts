@@ -9,13 +9,14 @@ import {
   ISwarmMessagesChannelValidationContext,
 } from '../../../../types/swarm-messages-channels-validation.types';
 import { TSwrmMessagesChannelsListDBOWithGrantAccess } from '../../../../types/swarm-messages-channels-list.types';
+import { IValidatorOfSwarmMessageWithChannelDescription } from '../../../../types/swarm-messages-channels-validation.types';
 
 export async function validatorOfSwrmMessageWithChannelDescription<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T>,
-  SMCVCTX extends ISwarmMessagesChannelValidationContext
->(this: SMCVCTX, argument: IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, DBO>): Promise<void> {
+  CTX extends ISwarmMessagesChannelValidationContext
+>(this: CTX, argument: IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, DBO>): Promise<void> {
   if (!this) {
     throw new Error('A context value should be provided in for the grant access callback function');
   }
@@ -108,4 +109,12 @@ export async function validatorOfSwrmMessageWithChannelDescription<
     }
     assert(await channelDescriptionFormatValidator.call(this, messageBody.pld), 'Channel description format is not valid');
   }
+}
+
+export function getValidatorOfSwrmMessageWithChannelDescription<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T>
+>(): IValidatorOfSwarmMessageWithChannelDescription<P, T, DBO> {
+  return validatorOfSwrmMessageWithChannelDescription;
 }

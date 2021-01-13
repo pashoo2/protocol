@@ -130,6 +130,7 @@
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-peer-deps-external": "^2.2.2",
     "strict-event-emitter-types": "^2.0.0",
+    "ts-essentials": "^7.0.1",
     "ts-jest": "^25.1.0",
     "ts-transformer-imports": "^0.4.3",
     "ttypescript": "^1.5.10",

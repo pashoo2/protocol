@@ -1,9 +1,5 @@
 import { TSwarmMessageConstructorBodyMessage } from '../../swarm-message/swarm-message-constructor.types';
-import {
-  ESwarmStoreConnector,
-  ESwarmStoreConnectorOrbitDbDatabaseType,
-  TSwarmStoreDatabaseOptions,
-} from '../../swarm-store-class';
+import { ESwarmStoreConnector } from '../../swarm-store-class';
 import { TSwarmMessageSerialized } from '../../swarm-message';
 import { ISwarmMessageChannelDescriptionRaw } from './swarm-messages-channel.types';
 import { ISwarmMessagesChannelsListDescription } from './swarm-messages-channels-list.types';
@@ -67,8 +63,7 @@ export interface IGetDatabaseKeyForChannelDescription<P extends ESwarmStoreConne
  */
 export interface IBodyCreatorOfSwarmMessageWithChannelDescriptionArgument<
   P extends ESwarmStoreConnector,
-  T extends TSwarmMessageSerialized,
-  DBO extends TSwarmStoreDatabaseOptions<P, T, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>
+  T extends TSwarmMessageSerialized
 > {
   /**
    * A description of a channel which should be wrapped with the swarm message.
@@ -96,11 +91,7 @@ export interface IBodyCreatorOfSwarmMessageWithChannelDescriptionArgument<
    *   >}
    * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils
    */
-  getIssuerForSwarmMessageWithChannelDescriptionByChannelsListDescription: IGetSwarmMessageWithChannelDescriptionIssuerByChannelListDescription<
-    P,
-    T,
-    DBO
-  >;
+  getIssuerForSwarmMessageWithChannelDescriptionByChannelsListDescription: IGetSwarmMessageWithChannelDescriptionIssuerByChannelListDescription;
   /**
    * This utility will be used by the channelDescriptionSwarmMessageValidator validator
    * and till swarm message with a channel description construction
@@ -113,11 +104,7 @@ export interface IBodyCreatorOfSwarmMessageWithChannelDescriptionArgument<
    *   >}
    * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils
    */
-  getTypeForSwarmMessageWithChannelDescriptionByChannelsListDescription: IGetSwarmMessageWithChannelDescriptionTypeByChannelListDescription<
-    P,
-    T,
-    DBO
-  >;
+  getTypeForSwarmMessageWithChannelDescriptionByChannelsListDescription: IGetSwarmMessageWithChannelDescriptionTypeByChannelListDescription;
 }
 
 /**
@@ -134,10 +121,9 @@ export interface IBodyCreatorOfSwarmMessageWithChannelDescriptionArgument<
  */
 export interface IBodyCreatorOfSwarmMessageWithChannelDescription<
   P extends ESwarmStoreConnector,
-  T extends TSwarmMessageSerialized,
-  DBO extends TSwarmStoreDatabaseOptions<P, T, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>
+  T extends TSwarmMessageSerialized
 > {
-  (argument: IBodyCreatorOfSwarmMessageWithChannelDescriptionArgument<P, T, DBO>): TSwarmMessageConstructorBodyMessage;
+  (argument: IBodyCreatorOfSwarmMessageWithChannelDescriptionArgument<P, T>): TSwarmMessageConstructorBodyMessage;
 }
 
 /**

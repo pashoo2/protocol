@@ -57,3 +57,14 @@ export function isArrowFunction(fn: Function): boolean {
   }
   return fn.prototype === undefined;
 }
+
+/**
+ * Returns whether the argument is a non native function.
+ *
+ * @export
+ * @param {unknown} value
+ * @returns {value is (...args: unknown[])}
+ */
+export function isNonNativeFunction(value: unknown): value is (...args: unknown[]) => unknown {
+  return typeof value === 'function' && !isNativeFunction(value);
+}

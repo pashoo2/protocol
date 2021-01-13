@@ -1,3 +1,4 @@
+import { DeepReadonly } from 'ts-essentials';
 import {
   ESwarmStoreConnector,
   ESwarmStoreConnectorOrbitDbDatabaseType,
@@ -9,7 +10,10 @@ import { ISwarmMessageChannelDescriptionRaw, TSwarmMessagesChannelId } from './s
 import { ISwarmMessagesDatabaseConnector } from '../../swarm-messages-database';
 import { ISerializer } from '../../../types/serialization.types';
 import { ISwarmMessagesListDatabaseNameByDescriptionGenerator } from './swarm-messages-channels-utils.types';
-import { IValidatorOfSwarmMessagesChannelsListDescription } from './swarm-messages-channels-validation.types';
+import {
+  IValidatorOfSwarmMessagesChannelsListDescription,
+  ISwamChannelsListDatabaseOptionsValidator,
+} from './swarm-messages-channels-validation.types';
 import {
   ISwarmMessagesChannelDescriptionFormatValidator,
   IValidatorOfSwarmMessageWithChannelDescription,
@@ -23,7 +27,7 @@ import {
 
 export type TSwrmMessagesChannelsListDBOWithGrantAccess<P extends ESwarmStoreConnector, T extends TSwarmMessageSerialized> = Omit<
   TSwarmStoreDatabaseOptions<P, T, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>,
-  'dbName' | 'dbType'
+  'dbName' | 'dbType' | 'grantAccess'
 > & {
   /**
    * Grant access callback supports for validation of a swarm messages decrypted
@@ -104,7 +108,7 @@ export interface ISwarmMessagesChannelsDescriptionsList<P extends ESwarmStoreCon
    * @type {ISwarmMessagesChannelsListDescription}
    * @memberof ISwarmMessagesChannelsDescriptionsList
    */
-  readonly description: Readonly<ISwarmMessagesChannelsListDescription>;
+  readonly description: DeepReadonly<ISwarmMessagesChannelsListDescription>;
 
   /**
    * Add new channel in the list by it's description
@@ -167,7 +171,7 @@ export interface ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils
    *
    * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArguments
    */
-  (dbo: DBO): Promise<
+  (connectorType: P, dbo: DBO): Promise<
     ISwarmMessagesDatabaseConnector<
       P,
       T,
@@ -201,7 +205,7 @@ export interface ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils
  * @template T
  * @template DBO
  */
-export interface ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils<
+export interface ISwarmMessagesChannelsDescriptionsListConstructorArgumentsValidators<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T>
@@ -228,12 +232,21 @@ export interface ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils
    * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils
    */
   channelsListDescriptionValidator: IValidatorOfSwarmMessagesChannelsListDescription;
+  /**
+   * Validator of a database options which is used as a swarm database
+   * for handling swarm channels list.
+   *
+   * @param {unknown} dbOptions
+   * @returns {dbOptions is TSwrmMessagesChannelsListDBOWithGrantAccess<any, any>}
+   * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArgumentsValidators
+   */
+  swamChannelsListDatabaseOptionsValidator: ISwamChannelsListDatabaseOptionsValidator;
 }
 
 /**
  * Utilities used by the swarm messages channels list instance
  *
- * @export
+ * @exportviolators will be towed
  * @interface ISwarmMessagesChannelsDescriptionsListConstructorArguments
  * @template P
  * @template T
@@ -295,7 +308,7 @@ export interface ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils
    * This utility will be used for creation of a swarm message body with a channel
    * description.
    */
-  createSwarmMessageBodyForChannelDescription: IBodyCreatorOfSwarmMessageWithChannelDescription<P, T, DBO>;
+  createSwarmMessageBodyForChannelDescription: IBodyCreatorOfSwarmMessageWithChannelDescription<P, T>;
 }
 
 /**
@@ -348,7 +361,7 @@ export interface ISwarmMessagesChannelsDescriptionsListConstructorArguments<
    * @type {ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils<P, T, DBO>}
    * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArguments
    */
-  validators: ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils<P, T, DBO>;
+  validators: ISwarmMessagesChannelsDescriptionsListConstructorArgumentsValidators<P, T, DBO>;
 }
 
 export interface ISwarmMessagesChannelsDescriptionsListConstructor<

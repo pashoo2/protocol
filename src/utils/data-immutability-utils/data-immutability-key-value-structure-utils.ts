@@ -1,16 +1,20 @@
-export const createImmutableObjectClone = <T extends Record<string, unknown>>(object: T): Readonly<T> => {
+import { DeepReadonly } from 'ts-essentials';
+import { isSimpleObject } from '../common-utils/common-utils-objects';
+
+export const createImmutableObjectClone = <T extends Record<string | number, any>>(object: T): DeepReadonly<T> => {
   const objectClone = {};
   const objectPropsDescriptors: PropertyDescriptorMap = {};
+
+  if (!isSimpleObject(object)) {
+    throw new Error('The object is not a key-value dictionary');
+  }
   Object.entries(object).forEach(([key, value]): void => {
     objectPropsDescriptors[key] = {
-      value:
-        typeof value === 'object' && value && value !== Object.prototype
-          ? createImmutableObjectClone(value as Record<string, unknown>)
-          : value,
+      value: isSimpleObject(value) ? createImmutableObjectClone(value) : value,
       writable: false,
       configurable: false,
     };
   });
   Object.defineProperties(objectClone, objectPropsDescriptors);
-  return objectClone as Readonly<T>;
+  return objectClone as DeepReadonly<T>;
 };

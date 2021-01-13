@@ -4,65 +4,38 @@ import {
   TSwarmMessageConstructorBodyMessage,
   ISwarmMessageInstanceDecrypted,
 } from '../../../../swarm-message/swarm-message-constructor.types';
-import {
-  TSwarmStoreDatabaseOptions,
-  TSwarmStoreDatabaseOptionsSerialized,
-} from '../../../../swarm-store-class/swarm-store-class.types';
-import {
-  ESwarmStoreConnectorOrbitDbDatabaseType,
-  EOrbitDbFeedStoreOperation,
-} from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { ISwarmMessageChannelDescriptionRaw } from '../../../types/swarm-messages-channel.types';
-import { createImmutableObjectClone } from '../../../../../utils/data-immutability-utils/data-immutability-key-value-structure-utils';
 import { PromiseResolveType } from '../../../../../types/promise.types';
 import { TSwarmMessagesChannelId } from '../../../types/swarm-messages-channel.types';
-import { TSwarmStoreConnectorAccessConrotllerGrantAccessCallback } from '../../../../swarm-store-class/swarm-store-class.types';
-import { IValidatorOfSwarmMessageWithChannelDescription } from '../../../types/swarm-messages-channels-validation.types';
-import assert from 'assert';
 import {
-  ISwarmMessagesChannelsDescriptionsListConnectionOptions,
-  TSwrmMessagesChannelsListDBOWithGrantAccess,
-} from '../../../types/swarm-messages-channels-list.types';
-import { isNativeFunction, isArrowFunction } from '../../../../../utils/common-utils/common-utils.functions';
+  TSwarmStoreConnectorAccessConrotllerGrantAccessCallback,
+  TSwarmStoreDatabaseOptions,
+} from '../../../../swarm-store-class/swarm-store-class.types';
+import { TSwrmMessagesChannelsListDBOWithGrantAccess } from '../../../types/swarm-messages-channels-list.types';
+import { SwarmMessagesChannelsListVersionOneInitializer } from './swarm-messages-channels-list-v1-class-initializer';
+import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
+import { DeepReadonly } from 'ts-essentials';
 import {
   ISwarmMessagesChannelsDescriptionsList,
   ISwarmMessagesChannelsDescriptionsListConstructorArguments,
 } from '../../../types/swarm-messages-channels-list.types';
 
 export class SwarmMessagesChannelsListVersionOne<
-  P extends ESwarmStoreConnector,
-  T extends TSwarmMessageSerialized,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T>,
-  CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, DBO>
-> implements ISwarmMessagesChannelsDescriptionsList<P, T> {
-  public get description(): CARGS['description'] {
-    return this._channelsListDescription;
+    P extends ESwarmStoreConnector,
+    T extends TSwarmMessageSerialized,
+    DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T>,
+    CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, DBO>
+  >
+  extends SwarmMessagesChannelsListVersionOneInitializer<P, T, DBO, CARGS>
+  implements ISwarmMessagesChannelsDescriptionsList<P, T> {
+  public get description(): DeepReadonly<CARGS['description']> {
+    return this._getChannelsListDescription();
   }
 
-  protected readonly _channelsListDescription: CARGS['description'];
-
-  protected readonly _connectionOptions: CARGS['connectionOptions'];
-
-  protected readonly _serializer: CARGS['serializer'];
-
-  protected readonly _utilities: CARGS['utilities'];
-
-  protected readonly _validators: CARGS['validators'];
-
   constructor(constructorArguments: CARGS) {
-    const {
-      databaseConnectionFabric,
-      serializer,
-      description,
-      swarmMessagesChannelDescriptionFormatValidator,
-    } = constructorArguments;
-
-    this._serializer = serializer;
-    this._swarmMessagesChannelDescriptionFormatValidator = swarmMessagesChannelDescriptionFormatValidator;
-    this._connectionOptions = createImmutableObjectClone(description);
-    this._swarmMessagesDatabasePending = databaseConnectionFabric(description.dbOptions) as ReturnType<
-      CARGS['databaseConnectionFabric']
-    >;
+    super(constructorArguments);
+    // TODO - create database options and connect to it
+    this._swarmMessagesDatabasePending = databaseConnectionFabric(description.dbOptions);
   }
 
   public async addChannel(channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>): Promise<void> {
@@ -74,36 +47,42 @@ export class SwarmMessagesChannelsListVersionOne<
     await this._setChannelDescriptionSerializedInSwarm(channelDescriptionRaw.id, serializedChannelDescription);
   }
 
-  // TODO - move validation in another class or util
+  protected _getChannelsListDatabaseName(): string {
+    const channelListDescription = this._getChannelsListDescription();
+    const { databaseNameGenerator } = this._getUtilities();
 
-  protected _validateConstructorArgumentsConnectionOptionsDbOptions(dbOptions: DBO): void {
-    assert((dbOptions as unknown).dbName, 'A database name should not be provided in the options');
-    assert((dbOptions as unknown).dbType, 'A database type should not be provided in the options');
-    // TODO - create grant access function validator common and pass it in the params
-    assert(dbOptions.grantAccess, 'Grant access callback must be provided in the databse options');
-    assert(typeof dbOptions.grantAccess === 'function', 'Grant access callback should be a function');
-    assert(dbOptions.grantAccess.name === 'function', 'Grant access callback should have a name');
-    assert(dbOptions.grantAccess.length >= 3, 'Grant access callback should handle at leas 3 params');
-    assert(!isNativeFunction(dbOptions.grantAccess), 'Grant access callback should not be a native function');
-    assert(!isArrowFunction(dbOptions.grantAccess), 'Grant access callback should not be an arrow function function');
+    return databaseNameGenerator(channelListDescription);
   }
 
-  protected _validateConstructorArgumentsConnectionOptions(
-    connectionOptions: Readonly<ISwarmMessagesChannelsDescriptionsListConnectionOptions<P, T, DBO>>
-  ): void {
-    assert(connectionOptions, 'Conection options should be provided');
-    assert(connectionOptions.connectorType, 'Connector type is not provided');
-    assert(connectionOptions.dbOptions, 'A database options must be provided');
-    this._validateConstructorArgumentsConnectionOptionsDbOptions(connectionOptions.dbOptions);
+  protected _getGrantAccessCallbackForChannelsListDatabase() {
+    const { dbOptions } = this._getConnectionOptions();
+    const { grantAccess } = dbOptions;
+    return () => {};
   }
 
-  protected _validateConstructorArguments(constructorArguments: CARGS): void {
-    assert(constructorArguments, 'Constructor arguments must be provided');
+  /**
+   * Should create options for connection to the database
+   *
+   * @protected
+   * @returns {TSwarmStoreDatabaseOptions<P, T, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>}
+   * @memberof SwarmMessagesChannelsListVersionOne
+   */
+  protected _getChannelsListDatabaseOptions(): TSwarmStoreDatabaseOptions<
+    P,
+    T,
+    ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+  > {
+    const databaseName = this._getChannelsListDatabaseName();
+    const { dbOptions, connectorType } = this._getConnectionOptions();
+    return {
+      ...dbOptions,
+      dbType: connectorType,
+      dbName: databaseName,
+    };
+  }
 
-    const { serializer, connectionOptions } = constructorArguments;
-
-    assert(serializer, 'A serializer must be provided in arguments');
-    assert(connectionOptions, '');
+  protected _createConnectionToDatabase(): void {
+    const;
   }
 
   protected _createGrandAccessCallbackForChannelsListDatabase(

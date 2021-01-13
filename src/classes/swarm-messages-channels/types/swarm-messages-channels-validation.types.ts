@@ -15,7 +15,6 @@ import {
   IGetSwarmMessageWithChannelDescriptionTypeByChannelListDescription,
 } from './swarm-messages-channels-utils.types';
 import {
-  ISwarmMessagesChannelsDescriptionsListConnectionOptions,
   ISwarmMessagesChannelsListDescription,
   TSwrmMessagesChannelsListDBOWithGrantAccess,
 } from './swarm-messages-channels-list.types';
@@ -50,6 +49,53 @@ export interface ISwarmMessagesChannelDescriptionFormatValidator<
     this: ISwarmMessagesChannelValidationContext,
     channelDescription: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>
   ): Promise<void>;
+}
+
+/**
+ * Callback will be called for validation of a swarm message
+ * with a swarm messages channel's description validation
+ *
+ * @export
+ * @interface IValidatorOfSwarmMessageWithChannelDescription
+ * @template P
+ * @template T
+ * @template DbType
+ * @template DBO
+ * @throws
+ */
+export interface IValidatorOfSwarmMessageWithChannelDescription<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T>
+> {
+  (
+    /** context will be passed from the database, but should contatain specific for swarm channel validators methods */
+    this: ISwarmMessagesChannelValidationContext,
+    /** argument will be passed from the swarm messages channels list instance */
+    argument: IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, DBO>
+  ): Promise<void>;
+}
+
+/**
+ * Validate swarm messages channels list description
+ *
+ * @export
+ * @interface IValidatorOfSwarmMessagesChannelsListDescription
+ * @throws
+ */
+export interface IValidatorOfSwarmMessagesChannelsListDescription {
+  (swarmMessagesChannelsListDescription: ISwarmMessagesChannelsListDescription): void;
+}
+
+/**
+ * Validate database options which is used for connection
+ * to the swarm database related to this swarm channels list.
+ *
+ * @export
+ * @interface ISwamChannelsListDatabaseOptionsValidator
+ */
+export interface ISwamChannelsListDatabaseOptionsValidator {
+  (dbOptions: unknown): dbOptions is TSwrmMessagesChannelsListDBOWithGrantAccess<any, any>;
 }
 
 /**
@@ -162,40 +208,4 @@ export interface IValidatorOfSwarmMessageWithChannelDescriptionArgument<
    * @memberof IValidatorOfSwarmMessageWithChannelDescriptionArgument
    */
   channelDescriptionFormatValidator: ISwarmMessagesChannelDescriptionFormatValidator<P, T, any, DBO>;
-}
-
-/**
- * Callback will be called for validation of a swarm message
- * with a swarm messages channel's description validation
- *
- * @export
- * @interface IValidatorOfSwarmMessageWithChannelDescription
- * @template P
- * @template T
- * @template DbType
- * @template DBO
- * @throws
- */
-export interface IValidatorOfSwarmMessageWithChannelDescription<
-  P extends ESwarmStoreConnector,
-  T extends TSwarmMessageSerialized,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T>
-> {
-  (
-    /** context will be passed from the database, but should contatain specific for swarm channel validators methods */
-    this: ISwarmMessagesChannelValidationContext,
-    /** argument will be passed from the swarm messages channels list instance */
-    agument: IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, DBO>
-  ): Promise<void>;
-}
-
-/**
- * Validate swarm messages channels list description
- *
- * @export
- * @interface IValidatorOfSwarmMessagesChannelsListDescription
- * @throws
- */
-export interface IValidatorOfSwarmMessagesChannelsListDescription {
-  (swarmMessagesListDescription: ISwarmMessagesChannelsListDescription): void;
 }
