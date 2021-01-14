@@ -9,11 +9,11 @@ import {
   TSwarmStoreDatabaseType,
   TSwarmStoreValueTypes,
 } from '../swarm-store-class.types';
-import { ISwarmMessageInstanceDecrypted } from '../../swarm-message/swarm-message-constructor.types';
 import {
   IOptionsSerializerValidator,
   IOptionsSerializerValidatorValidators,
 } from '../../basic-classes/options-serializer-validator-class';
+import { ISwarmMessageInstanceDecrypted } from '../../swarm-message/swarm-message-constructor.types';
 
 /**
  * Base context methods
@@ -59,35 +59,6 @@ export interface ISwarmStoreDBOGrandAccessCallbackBaseContext extends ISwarmStor
   readonly currentUserId: TSwarmMessageUserIdentifierSerialized;
 }
 
-/**
- * Grand access callback function which has already been bound to a context.
- *
- * @export
- * @interface ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound
- * @extends {TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, ItemType, MSI>}
- * @template P
- * @template ItemType
- * @template MSI
- * @template CTX context in which the function will be executed
- */
-export interface ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<
-  P extends ESwarmStoreConnector,
-  ItemType extends TSwarmStoreValueTypes<P>,
-  I extends ISwarmMessageInstanceDecrypted,
-  CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext
-> extends TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, ItemType, I> {
-  (
-    this: CTX,
-    // value
-    payload: I | ItemType,
-    userId: TSwarmMessageUserIdentifierSerialized,
-    // key of the value
-    key?: string,
-    // operation which is processed (like delete, add or something else)
-    operation?: TSwarmStoreDatabaseEntryOperation<P>
-  ): Promise<boolean>;
-}
-
 export interface ISwarmStoreConnectorUtilsDatabaseOptionsValidators<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
@@ -98,6 +69,33 @@ export interface ISwarmStoreConnectorUtilsDatabaseOptionsValidators<
   isValidSerializedOptions(optsSerialized: unknown): optsSerialized is DBOS;
 
   isValidOptions(opts: unknown): opts is DBO;
+}
+
+/**
+ * Grand access callback function which has already been bound to a context.
+ *
+ * @export
+ * @interface ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound
+ * @extends {TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, ItemType, MSI>}
+ * @template P
+ * @template ItemType
+ * @template CTX context in which the function will be executed
+ */
+export interface ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<
+  P extends ESwarmStoreConnector,
+  ItemType extends TSwarmStoreValueTypes<P>,
+  CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext
+> extends TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, ItemType, I> {
+  (
+    this: CTX,
+    // value
+    payload: ItemType,
+    userId: TSwarmMessageUserIdentifierSerialized,
+    // key of the value
+    key?: string,
+    // operation which is processed (like delete, add or something else)
+    operation?: TSwarmStoreDatabaseEntryOperation<P>
+  ): Promise<boolean>;
 }
 
 export interface ISwarmStoreConnectorUtilsDatabaseOptionsValidatorsInstanceConstructor<

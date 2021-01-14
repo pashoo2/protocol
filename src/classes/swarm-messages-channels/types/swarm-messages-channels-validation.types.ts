@@ -7,7 +7,10 @@ import {
   TSwarmStoreDatabaseType,
 } from '../../swarm-store-class';
 import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from '../../swarm-message';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContextMethods } from '../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import {
+  ISwarmStoreDBOGrandAccessCallbackBaseContextMethods,
+  ISwarmStoreDBOGrandAccessCallbackBaseContext,
+} from '../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { ISwarmMessageChannelDescriptionRaw } from './swarm-messages-channel.types';
 import {
   IGetDatabaseKeyForChannelDescription,
@@ -112,7 +115,9 @@ export interface ISwamChannelsListDatabaseOptionsValidator {
 export interface IValidatorOfSwarmMessageWithChannelDescriptionArgument<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T>
+  I extends ISwarmMessageInstanceDecrypted,
+  CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>
 > {
   /**
    * If operation is DELETE, then it should be a hash of the message deleted.

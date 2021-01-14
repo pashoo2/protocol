@@ -7,6 +7,7 @@ import {
   ISwarmStoreOptionsConnectorFabric,
   ISwarmStoreOptionsWithConnectorFabric,
   ISwarmStoreProviderOptions,
+  TSwarmStoreConnectorAccessConrotllerGrantAccessCallback,
   TSwarmStoreConnectorConnectionOptions,
   TSwarmStoreDatabaseEntityAddress,
   TSwarmStoreDatabaseEntityKey,
@@ -19,6 +20,7 @@ import {
 import { ESwarmStoreConnector } from '../../swarm-store-class/swarm-store-class.const';
 import {
   ISwarmMessageConstructor,
+  ISwarmMessageDecrypted,
   ISwarmMessageInstanceDecrypted,
   ISwarmMessageInstanceEncrypted,
   TSwarmMessageConstructorBodyMessage,
@@ -34,12 +36,15 @@ import { StorageProvider } from '../../storage-providers/storage-providers.types
 import { ISwarmStoreConnectorOrbitDbDatabaseValue } from '../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { PromiseResolveType } from '../../../types/promise.types';
-import { ISwarmMessageDecrypted } from '../../swarm-message/swarm-message-constructor.types';
 import {
   ISwarmStoreConnectorBasicWithEntriesCount,
   ISwarmStoreConnectorWithEntriesCount,
   ISwarmStoreWithEntriesCount,
 } from '../../swarm-store-class/swarm-store-class-extended/swarm-store-class-with-entries-count/swarm-store-class-with-entries-count.types';
+import {
+  ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound,
+  ISwarmStoreDBOGrandAccessCallbackBaseContext,
+} from '../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 
 export interface ISwarmMessageStoreSwarmMessageMetadata<P extends ESwarmStoreConnector> {
   /**
@@ -529,3 +534,27 @@ export interface ISwarmMessageStoreWithEntriesCount<
   >
 > extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MSI, GAC, MCF, ACO, O>,
     ISwarmStoreWithEntriesCount<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O> {}
+
+/**
+ * Grand access callback function which has already been bound to a context.
+ *
+ * @export
+ * @interface ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound
+ * @extends {TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, ItemType, MSI>}
+ * @template P
+ * @template ItemType
+ * @template I
+ * @template CTX context in which the function will be executed
+ */
+export interface ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<
+  P extends ESwarmStoreConnector,
+  ItemType extends TSwarmStoreValueTypes<P>,
+  I extends ISwarmMessageInstanceDecrypted,
+  CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext
+> extends ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<P, ItemType, CTX> {
+  (
+    this: CTX,
+    // value
+    payload: I | ItemType
+  ): Promise<boolean>;
+}

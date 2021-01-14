@@ -14,7 +14,15 @@ import {
 import { TSwrmMessagesChannelsListDBOWithGrantAccess } from '../../../types/swarm-messages-channels-list.types';
 import { SwarmMessagesChannelsListVersionOneInitializer } from './swarm-messages-channels-list-v1-class-initializer';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
-import { DeepReadonly } from 'ts-essentials';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { TSwarmStoreDatabaseEntryOperation } from '../../../../swarm-store-class/swarm-store-class.types';
+import { TSwarmMessageUserIdentifierSerialized } from '../../../../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
+import { IValidatorOfSwarmMessageWithChannelDescriptionArgument } from '../../../types/swarm-messages-channels-validation.types';
+import { ESwarmStoreConnectorOrbitDbDatabaseIteratorOption } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
+import {
+  ISwarmMessagesChannelsListV1GrantAccessConstantArguments,
+  ISwarmMessagesChannelsListV1GrantAccessVariableArguments,
+} from './swarm-messages-channels-list-v1-class.types';
 import {
   ISwarmMessagesChannelsDescriptionsList,
   ISwarmMessagesChannelsDescriptionsListConstructorArguments,
@@ -23,20 +31,20 @@ import {
 export class SwarmMessagesChannelsListVersionOne<
     P extends ESwarmStoreConnector,
     T extends TSwarmMessageSerialized,
-    DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T>,
-    CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, DBO>
+    I extends ISwarmMessageInstanceDecrypted,
+    CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
+    DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>,
+    CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, I, CTX, DBO>
   >
-  extends SwarmMessagesChannelsListVersionOneInitializer<P, T, DBO, CARGS>
+  extends SwarmMessagesChannelsListVersionOneInitializer<P, T, I, CTX, DBO, CARGS>
   implements ISwarmMessagesChannelsDescriptionsList<P, T> {
-  public get description(): DeepReadonly<CARGS['description']> {
+  public get description(): Readonly<CARGS['description']> {
     return this._getChannelsListDescription();
   }
 
-  constructor(constructorArguments: CARGS) {
-    super(constructorArguments);
-    // TODO - create database options and connect to it
-    this._swarmMessagesDatabasePending = databaseConnectionFabric(description.dbOptions);
-  }
+  protected _swarmMessagesKeyValueDatabaseConnection:
+    | PromiseResolveType<ReturnType<CARGS['utilities']['databaseConnectionFabric']>>
+    | undefined;
 
   public async addChannel(channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>): Promise<void> {
     if (!this._validateChannelDescription(channelDescriptionRaw)) {
@@ -54,10 +62,141 @@ export class SwarmMessagesChannelsListVersionOne<
     return databaseNameGenerator(channelListDescription);
   }
 
-  protected _getGrantAccessCallbackForChannelsListDatabase() {
-    const { dbOptions } = this._getConnectionOptions();
-    const { grantAccess } = dbOptions;
-    return () => {};
+  protected _getConstantArgumentsForGrantAccessCallbackValidator(): ISwarmMessagesChannelsListV1GrantAccessConstantArguments<
+    P,
+    T,
+    I,
+    CTX,
+    DBO
+  > {
+    const channelsListDescription = this._getChannelsListDescription();
+    const {
+      dbOptions: { grantAccess },
+    } = this._getConnectionOptions();
+    const {
+      getDatabaseKeyForChannelDescription,
+      getTypeForSwarmMessageWithChannelDescriptionByChannelDescription,
+      getIssuerForSwarmMessageWithChannelDescriptionByChannelDescription,
+    } = this._getUtilities();
+    const { swarmMessagesChannelDescriptionFormatValidator } = this._getValidators();
+
+    return {
+      channelsListDescription,
+      grandAccessCallbackFromDbOptions: grantAccess as NonNullable<DBO['grantAccess']>,
+      getIssuerForSwarmMessageWithChannelDescriptionByChannelsListDescription: getIssuerForSwarmMessageWithChannelDescriptionByChannelDescription,
+      getTypeForSwarmMessageWithChannelDescriptionByChannelsListDescription: getTypeForSwarmMessageWithChannelDescriptionByChannelDescription,
+      getDatabaseKeyForChannelDescription,
+      channelDescriptionFormatValidator: swarmMessagesChannelDescriptionFormatValidator,
+    };
+  }
+
+  protected _getSwarmMessagesKeyValueDatabaseConnection(): PromiseResolveType<
+    ReturnType<CARGS['utilities']['databaseConnectionFabric']>
+  > {
+    const swarmMessagesKeyValueDatabaseConnection = this._swarmMessagesKeyValueDatabaseConnection;
+    if (!swarmMessagesKeyValueDatabaseConnection) {
+      throw new Error('There is no an active connection with the swarm messages databse');
+    }
+    return swarmMessagesKeyValueDatabaseConnection;
+  }
+
+  protected async _readValueForDbKey(dbbKey: string): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any> | undefined> {
+    const dbConnection = this._getSwarmMessagesKeyValueDatabaseConnection();
+    const messageForTheKey = await dbConnection.collectWithMeta({
+      [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq]: dbbKey,
+      [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.limit]: 1,
+    });
+    // TODO
+    return messageForTheKey;
+  }
+
+  protected async _getExistingChannelDescriptionByMessageKey(
+    dbbKey: string
+  ): Promise<IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, I, CTX, DBO>['channelExistingDescription']> {
+    return await this._readValueForDbKey(dbbKey);
+  }
+
+  protected _getVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidator({
+    payload,
+    userId,
+    key,
+    operation,
+  }: {
+    payload: T | I;
+    userId: TSwarmMessageUserIdentifierSerialized;
+    // key of the value
+    key?: string;
+    // operation which is processed (like delete, add or something else)
+    operation?: TSwarmStoreDatabaseEntryOperation<P>;
+  }): Omit<Required<ISwarmMessagesChannelsListV1GrantAccessVariableArguments<P, T, I, CTX, DBO>>, 'channelExistingDescription'> {
+    if (!key) {
+      throw new Error('A key must be provided for swarm messages channel description');
+    }
+    if (!operation) {
+      throw new Error('A database operation must be provided for any changing of swarm messages channel description');
+    }
+    return {
+      keyInDb: key,
+      messageOrHash: payload,
+      operationInDb: operation,
+      senderUserId: userId,
+    };
+  }
+
+  protected _getArgumentsForSwarmMessageWithChannelDescriptionValidator(
+    constantArguments: ISwarmMessagesChannelsListV1GrantAccessConstantArguments<P, T, I, CTX, DBO>,
+    variableArguments: ISwarmMessagesChannelsListV1GrantAccessVariableArguments<P, T, I, CTX, DBO>,
+    channelExistingDescription: IValidatorOfSwarmMessageWithChannelDescriptionArgument<
+      P,
+      T,
+      I,
+      CTX,
+      DBO
+    >['channelExistingDescription']
+  ): IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, I, CTX, DBO> {
+    return {
+      ...constantArguments,
+      ...variableArguments,
+      channelExistingDescription,
+    };
+  }
+
+  protected _createGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidator(
+    constantArguments: ISwarmMessagesChannelsListV1GrantAccessConstantArguments<P, T, I, CTX, DBO>,
+    channelDescriptionSwarmMessageValidator: CARGS['validators']['channelDescriptionSwarmMessageValidator']
+  ): DBO['grantAccess'] {
+    return function channelsListGrantAccessCallbackFunction(
+      this: CTX,
+      payload: T | I,
+      userId: TSwarmMessageUserIdentifierSerialized,
+      // key of the value
+      key?: string,
+      // operation which is processed (like delete, add or something else)
+      operation?: TSwarmStoreDatabaseEntryOperation<P>
+    ): Promise<boolean> {
+      const variableArguments = this._getVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidator({
+        payload,
+        userId,
+        key,
+        operation,
+      });
+      const swarmMessagesChannelExistingDescription = await this._getExistingChannelDescriptionByMessageKey(key);
+      const argumentsForChannelDescriptionSwarmMessageValidator = this._getArgumentsForSwarmMessageWithChannelDescriptionValidator(
+        constantArguments,
+        variableArguments,
+        swarmMessagesChannelExistingDescription
+      );
+      return await channelDescriptionSwarmMessageValidator.call(this, argumentsForChannelDescriptionSwarmMessageValidator);
+    } as DBO['grantAccess'];
+  }
+
+  protected _getGrantAccessCallbackForChannelsListDatabase(): DBO['grantAccess'] {
+    const { channelDescriptionSwarmMessageValidator } = this._getValidators();
+    const argumentsConstant = this._getConstantArgumentsForGrantAccessCallbackValidator();
+    return this._createGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidator(
+      argumentsConstant,
+      channelDescriptionSwarmMessageValidator
+    );
   }
 
   /**

@@ -18,8 +18,8 @@ import {
   ISwarmStoreDBOGrandAccessCallbackBaseContext,
   ISwarmStoreDBOSerializerValidator,
   ISwarmStoreConnectorUtilsDatabaseOptionsValidatorsInstanceFabric,
-  ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound,
 } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound } from '../..';
 
 export interface ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContextFabric<
   P extends ESwarmStoreConnector,
@@ -52,7 +52,7 @@ export interface ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackCon
   (
     grandAccessCallback: TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, ItemType, MD>,
     ctx?: CTX
-  ): ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<P, ItemType, MD, CTX>;
+  ): ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<P, ItemType, MD, CTX>;
 }
 
 /**
@@ -80,7 +80,7 @@ export interface ISwarmMessageStoreConnectorDatabaseAccessControlleGrantCallback
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext
 > extends ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<P, ItemType, MD> {
-  grantAccess?: ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<P, ItemType, MD, CTX>;
+  grantAccess?: ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<P, ItemType, MD, CTX>;
 }
 
 /**

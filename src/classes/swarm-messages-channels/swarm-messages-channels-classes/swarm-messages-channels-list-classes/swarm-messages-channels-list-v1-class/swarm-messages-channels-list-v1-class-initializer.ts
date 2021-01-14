@@ -1,6 +1,8 @@
-import { DeepReadonly, DictionaryValues } from 'ts-essentials';
 import { ESwarmStoreConnector } from '../../../../swarm-store-class/swarm-store-class.const';
-import { TSwarmMessageSerialized } from '../../../../swarm-message/swarm-message-constructor.types';
+import {
+  TSwarmMessageSerialized,
+  ISwarmMessageInstanceDecrypted,
+} from '../../../../swarm-message/swarm-message-constructor.types';
 import { createImmutableObjectClone } from '../../../../../utils/data-immutability-utils/data-immutability-key-value-structure-utils';
 import assert from 'assert';
 import {
@@ -9,12 +11,15 @@ import {
 } from '../../../types/swarm-messages-channels-list.types';
 import { isNonNativeFunction } from '../../../../../utils/common-utils/common-utils.functions';
 import { ISwarmMessagesChannelsDescriptionsListConstructorArguments } from '../../../types/swarm-messages-channels-list.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 
 export class SwarmMessagesChannelsListVersionOneInitializer<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T>,
-  CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, DBO>
+  I extends ISwarmMessageInstanceDecrypted,
+  CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>,
+  CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, I, CTX, DBO>
 > {
   protected readonly _serializer: CARGS['serializer'];
 
@@ -37,10 +42,12 @@ export class SwarmMessagesChannelsListVersionOneInitializer<
     this._connectionOptions = createImmutableObjectClone(connectionOptions) as Readonly<CARGS['connectionOptions']>;
     this._validators = createImmutableObjectClone(validators) as Readonly<CARGS['validators']>;
     this._utilities = createImmutableObjectClone(utilities) as Readonly<CARGS['utilities']>;
+    // TODO - create database options and connect to it
+    this._swarmMessagesDatabasePending = databaseConnectionFabric(description.dbOptions);
   }
 
   protected _validateConstructorArgumentsConnectionOptions(
-    connectionOptions: Readonly<ISwarmMessagesChannelsDescriptionsListConnectionOptions<P, T, DBO>>
+    connectionOptions: Readonly<ISwarmMessagesChannelsDescriptionsListConnectionOptions<P, T, I, CTX, DBO>>
   ): void {
     assert(connectionOptions, 'Conection options should be provided');
     assert(connectionOptions.connectorType, 'Connector type is not provided');
@@ -155,7 +162,7 @@ export class SwarmMessagesChannelsListVersionOneInitializer<
     return utilities;
   }
 
-  protected getValidators(): Readonly<CARGS['validators']> {
+  protected _getValidators(): Readonly<CARGS['validators']> {
     const validators = this._validators;
     if (!validators) {
       throw new Error('There is no a helpers functions provided');
