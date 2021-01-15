@@ -1,19 +1,19 @@
-import { ESwarmStoreConnector } from '../../../../swarm-store-class/swarm-store-class.const';
+import { ESwarmStoreConnector } from '../../../../../../../swarm-store-class/swarm-store-class.const';
 import {
   TSwarmMessageSerialized,
   ISwarmMessageInstanceDecrypted,
-} from '../../../../swarm-message/swarm-message-constructor.types';
-import { createImmutableObjectClone } from '../../../../../utils/data-immutability-utils/data-immutability-key-value-structure-utils';
+} from '../../../../../../../swarm-message/swarm-message-constructor.types';
+import { createImmutableObjectClone } from '../../../../../../../../utils/data-immutability-utils/data-immutability-key-value-structure-utils';
 import assert from 'assert';
 import {
   ISwarmMessagesChannelsDescriptionsListConnectionOptions,
   TSwrmMessagesChannelsListDBOWithGrantAccess,
-} from '../../../types/swarm-messages-channels-list.types';
-import { isNonNativeFunction } from '../../../../../utils/common-utils/common-utils.functions';
-import { ISwarmMessagesChannelsDescriptionsListConstructorArguments } from '../../../types/swarm-messages-channels-list.types';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+} from '../../../../../../types/swarm-messages-channels-list.types';
+import { isNonNativeFunction } from '../../../../../../../../utils/common-utils/common-utils.functions';
+import { ISwarmMessagesChannelsDescriptionsListConstructorArguments } from '../../../../../../types/swarm-messages-channels-list.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 
-export class SwarmMessagesChannelsListVersionOneInitializer<
+export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   I extends ISwarmMessageInstanceDecrypted,

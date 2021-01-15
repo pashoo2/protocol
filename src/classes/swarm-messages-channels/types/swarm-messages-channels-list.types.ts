@@ -181,7 +181,7 @@ export interface ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils
    *
    * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArguments
    */
-  (connectorType: P, dbo: DBO): Promise<
+  (dbo: DBO): Promise<
     ISwarmMessagesDatabaseConnector<
       P,
       T,
