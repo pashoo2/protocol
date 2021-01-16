@@ -43,6 +43,26 @@ export type TSwrmMessagesChannelsListDBOWithGrantAccess<
   grantAccess: ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<P, T, I, CTX>;
 };
 
+export type TSwrmMessagesChannelsListFullDBO<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  I extends ISwarmMessageInstanceDecrypted,
+  CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>
+> = TSwarmStoreDatabaseOptions<P, T, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE> &
+  DBO & {
+    // a name of the database
+    dbName: string;
+    // a
+    dbType: ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE;
+    /**
+     * Grant access callback supports for validation of a swarm messages decrypted
+     *
+     * @type {TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, ISwarmMessageInstanceDecrypted>}
+     */
+    grantAccess: ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<P, T, I, CTX>;
+  };
+
 /**
  * Description of a colleation of a swarm messages channels.
  *
@@ -186,7 +206,7 @@ export interface ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils
       P,
       T,
       ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
-      DBO,
+      TSwrmMessagesChannelsListFullDBO<P, T, I, CTX, DBO>,
       any,
       any,
       any,

@@ -12,6 +12,7 @@ import {
 import { isNonNativeFunction } from '../../../../../../../../utils/common-utils/common-utils.functions';
 import { ISwarmMessagesChannelsDescriptionsListConstructorArguments } from '../../../../../../types/swarm-messages-channels-list.types';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp } from '../../types/swarm-messages-channels-list-v1-class-options-setup.types';
 
 export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
   P extends ESwarmStoreConnector,
@@ -20,7 +21,7 @@ export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>,
   CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, I, CTX, DBO>
-> {
+> extends AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<P, T, I, CTX, DBO, CARGS> {
   protected readonly _serializer: CARGS['serializer'];
 
   protected readonly _channelsListDescription: Readonly<CARGS['description']>;
@@ -32,6 +33,7 @@ export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
   protected readonly _validators: Readonly<CARGS['validators']>;
 
   constructor(constructorArguments: CARGS) {
+    super();
     this._validateConstructorArguments(constructorArguments);
 
     const { serializer, connectionOptions, validators, description, utilities } = constructorArguments;
@@ -42,8 +44,6 @@ export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
     this._connectionOptions = createImmutableObjectClone(connectionOptions) as Readonly<CARGS['connectionOptions']>;
     this._validators = createImmutableObjectClone(validators) as Readonly<CARGS['validators']>;
     this._utilities = createImmutableObjectClone(utilities) as Readonly<CARGS['utilities']>;
-    // TODO - create database options and connect to it
-    this._swarmMessagesDatabasePending = databaseConnectionFabric(description.dbOptions);
   }
 
   protected _validateConstructorArgumentsConnectionOptions(

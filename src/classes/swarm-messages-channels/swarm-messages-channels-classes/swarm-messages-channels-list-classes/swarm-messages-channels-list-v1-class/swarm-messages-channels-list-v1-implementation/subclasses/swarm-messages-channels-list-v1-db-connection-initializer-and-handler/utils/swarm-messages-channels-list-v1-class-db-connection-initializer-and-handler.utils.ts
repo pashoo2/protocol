@@ -12,7 +12,7 @@ import {
   ISwarmMessagesChannelsListV1GrantAccessConstantArguments,
 } from '../../../types/swarm-messages-channels-list-v1-class.types';
 import { IValidatorOfSwarmMessageWithChannelDescriptionArgument } from '../../../../../../../types/swarm-messages-channels-validation.types';
-import { ICreateGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidatorArguments } from '../swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.types';
+import { ICreateGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidatorArguments } from '../../../types/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.types';
 
 export function getVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidator<
   P extends ESwarmStoreConnector,
