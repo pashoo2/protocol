@@ -297,7 +297,7 @@ export class SwarmMessagesChannelsListVersionOne<
     };
   }
 
-  protected _getKeyInDatabaseForMessagesChannelId(channelId: TSwarmMessagesChannelId): string {
+  protected _getKeyInDatabaseForStoringChannelsListDescription(channelId: TSwarmMessagesChannelId): string {
     return channelId;
   }
 
@@ -307,7 +307,7 @@ export class SwarmMessagesChannelsListVersionOne<
   ): Promise<void> {
     const keyValueDatabase = await this._getSwarmMessagesKeyValueDatabase();
     const swarmMessageWithChannelDescription = this._createChannelDescriptionMessageBody(channelDescriptionSerialized);
-    const keyInDatabaseForChannelDescription = this._getKeyInDatabaseForMessagesChannelId(channelId);
+    const keyInDatabaseForChannelDescription = this._getKeyInDatabaseForStoringChannelsListDescription(channelId);
     await keyValueDatabase.addMessage(swarmMessageWithChannelDescription, keyInDatabaseForChannelDescription);
   }
 }

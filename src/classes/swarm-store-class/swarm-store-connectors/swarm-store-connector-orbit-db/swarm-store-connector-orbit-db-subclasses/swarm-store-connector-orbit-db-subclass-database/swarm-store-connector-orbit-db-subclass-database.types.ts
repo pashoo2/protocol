@@ -1,15 +1,13 @@
 import {
-    ISwarmStoreDatabaseBaseOptionsWithWriteAccess,
-    ISwarmStoreDatabaseBaseOptions,
-    TSwarmStoreDatabaseEntityUniqueIndex,
-    TSwarmStoreDatabaseType,
-    TSwarmStoreValueTypes,
+  ISwarmStoreDatabaseBaseOptionsWithWriteAccess,
+  ISwarmStoreDatabaseBaseOptions,
+  TSwarmStoreDatabaseEntityUniqueIndex,
+  TSwarmStoreDatabaseType,
+  TSwarmStoreValueTypes,
 } from '../../../../swarm-store-class.types';
 import { ESwarmStoreConnector, ESwarmStoreEventNames } from '../../../../swarm-store-class.const';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from './swarm-store-connector-orbit-db-subclass-database.const';
-import {
-  ISwarmStoreConnectorOrbitDbDatabaseAccessControlleGrantCallback,
-} from '../swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types';
+import { ISwarmStoreConnectorOrbitDbDatabaseAccessControlleGrantCallback } from '../swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types';
 import OrbitDbFeedStore from 'orbit-db-feedstore';
 import OrbitDbKeyValueStore from 'orbit-db-kvstore';
 import { ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore } from '../swarm-store-connector-orbit-db-subclasses-cache/swarm-store-connector-orbit-db-subclasses-cache.types';

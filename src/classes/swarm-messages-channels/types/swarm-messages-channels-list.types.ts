@@ -136,7 +136,7 @@ export interface ISwarmMessagesChannelsDescriptionsList<P extends ESwarmStoreCon
    * @type {ISwarmMessagesChannelsListDescription}
    * @memberof ISwarmMessagesChannelsDescriptionsList
    */
-  readonly description: DeepReadonly<ISwarmMessagesChannelsListDescription>;
+  readonly description: Readonly<ISwarmMessagesChannelsListDescription>;
 
   /**
    * Add new channel in the list by it's description

@@ -38,6 +38,7 @@ import {
   TSwarmStoreDatabaseIteratorMethodArgument,
 } from '../swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageConstructorBodyMessage } from '../swarm-message/swarm-message-constructor.types';
+import { ISwarmMessageStoreDeleteMessageArg } from '../swarm-message-store/types/swarm-message-store.types';
 
 export type TSwarmMessageDatabaseMessagesCached<
   P extends ESwarmStoreConnector,
@@ -218,7 +219,7 @@ export interface ISwarmMessageDatabaseMessagingMethods<
     message: TSwarmMessageConstructorBodyMessage,
     key?: TSwarmStoreDatabaseEntityKey<P>
   ): Promise<TSwarmStoreDatabaseEntityAddress<P>>;
-  deleteMessage: OmitFirstArg<SMS['deleteMessage']>;
+  deleteMessage(messageAddressOrKey: ISwarmMessageStoreDeleteMessageArg<P, DbType>): Promise<void>;
   collect: OmitFirstArg<SMS['collect']>;
   collectWithMeta(
     options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>

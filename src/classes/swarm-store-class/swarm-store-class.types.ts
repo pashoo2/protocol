@@ -38,6 +38,7 @@ import {
   IOptionsSerializerValidatorValidators,
 } from '../basic-classes/options-serializer-validator-class/options-serializer-validator-class.types';
 import { ISwarmStoreDBOSerializerValidator } from './swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmMessageStoreDeleteMessageArg } from '../swarm-message-store/types/swarm-message-store.types';
 
 export type TSwarmStoreDatabaseType<P extends ESwarmStoreConnector> = ESwarmStoreConnectorOrbitDbDatabaseType;
 
@@ -141,11 +142,16 @@ export interface ISwarmStoreEvents<
 }
 
 // arguments avalilable for a database method
-export type TSwarmStoreDatabaseMethodArgument<
+export type TSwarmStoreDatabaseMethodArgumentBase<
   P extends ESwarmStoreConnector,
-  M,
+  T,
   DbType extends TSwarmStoreDatabaseType<P>
-> = P extends ESwarmStoreConnector.OrbitDB ? TSwarmStoreConnectorOrbitDbDatabaseMethodArgument<M, DbType> : never;
+> = P extends ESwarmStoreConnector.OrbitDB ? TSwarmStoreConnectorOrbitDbDatabaseMethodArgument<T, DbType> : never;
+
+// arguments avalilable for a database method
+export type TSwarmStoreDatabaseMethodArgument<P extends ESwarmStoreConnector, M, DbType extends TSwarmStoreDatabaseType<P>> =
+  | ISwarmMessageStoreDeleteMessageArg<P, DbType>
+  | TSwarmStoreDatabaseMethodArgumentBase<P, M, DbType>;
 
 export type TSwarmStoreDatabaseEntryOperation<P extends ESwarmStoreConnector> = P extends ESwarmStoreConnector.OrbitDB
   ? EOrbitDbFeedStoreOperation

@@ -8,6 +8,7 @@ import { ISwarmMessagesChannelsDescriptionsListConstructorArguments } from '../.
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { ISwarmMessageChannelDescriptionRaw } from '../../../../../types/swarm-messages-channel.types';
 import { TSwarmMessageConstructorBodyMessage } from '../../../../../../swarm-message/swarm-message-constructor.types';
+import { TSwarmStoreDatabaseEntityKey } from '../../../../../../swarm-store-class/swarm-store-class.types';
 
 export abstract class AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<
   P extends ESwarmStoreConnector,
@@ -62,6 +63,11 @@ export abstract class AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<
   protected abstract _createChannelDescriptionMessageIssuer(
     channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>
   ): Pick<TSwarmMessageConstructorBodyMessage, 'iss'>['iss'];
+
+  // TODO - move it into a separate class
+  protected abstract _getKeyInDatabaseForStoringChannelsListDescription(
+    channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>
+  ): TSwarmStoreDatabaseEntityKey<P>;
 }
 
 export interface IConstructorAbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<

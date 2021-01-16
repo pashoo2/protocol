@@ -5,7 +5,7 @@ import { ISwarmMessageSerializerUser } from './swarm-message-subclass-serializer
 import CentralAuthorityIdentity from '../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
 import { typedArrayToString } from '../../../../utils/typed-array-utils';
 import { ISwarmMessageBody, TSwarmMessageBodyRawEncrypted } from '../../swarm-message-constructor.types';
-import { TSwarmMessageInstance, TSwarmMessagePayloadDeserialized } from '../../swarm-message-constructor.types';
+import { TSwarmMessageInstance, TDeserializedSwarmMessageSerializedPayload } from '../../swarm-message-constructor.types';
 import { TSwarmMessageBodyRaw, ISwarmMessageRaw } from '../../swarm-message-constructor.types';
 import { ISwarmMessageBodyDeserialized } from '../../swarm-message-constructor.types';
 import {
@@ -205,7 +205,7 @@ export class SwarmMessageSerializer implements ISwarmMessageSerializer {
    * body
    */
   protected serializeMessageBody(msgBody: ISwarmMessageBodyDeserialized): ISwarmMessageBody {
-    let msgPayload: TSwarmMessagePayloadDeserialized;
+    let msgPayload: TDeserializedSwarmMessageSerializedPayload;
     const { pld } = msgBody;
 
     if (pld instanceof ArrayBuffer) {

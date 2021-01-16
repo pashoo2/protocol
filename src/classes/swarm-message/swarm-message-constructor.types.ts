@@ -41,7 +41,7 @@ export type TSwarmMessageSerialized = string;
 /**
  * message payload deserialized
  */
-export type TSwarmMessagePayloadDeserialized = string;
+export type TDeserializedSwarmMessageSerializedPayload = string;
 
 /**
  * message for sending an information in
@@ -62,7 +62,7 @@ export type TSwarmMessagePayloadDeserialized = string;
  */
 export interface ISwarmMessageBodyDeserialized {
   typ: string | number;
-  pld: TSwarmMessagePayloadDeserialized | ArrayBuffer;
+  pld: TDeserializedSwarmMessageSerializedPayload | ArrayBuffer;
   ts: number;
   iss: string;
 }
@@ -143,7 +143,7 @@ export type TSwarmMessageConstructorArgumentBodyPrivate = TSwarmMessageConstruct
  * @extends {Omit<ISwarmMessageBodyDeserialized, 'pld'>}
  */
 export interface ISwarmMessageBody extends Omit<ISwarmMessageBodyDeserialized, 'pld'>, Partial<ISwarmMessageReceiver> {
-  pld: TSwarmMessagePayloadDeserialized;
+  pld: TDeserializedSwarmMessageSerializedPayload;
 }
 
 /**

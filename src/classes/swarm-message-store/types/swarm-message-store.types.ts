@@ -248,9 +248,12 @@ export type TSwarmMessageStoreEntryRaw<
   T extends TSwarmStoreValueTypes<P>
 > = P extends ESwarmStoreConnector ? ISwarmStoreConnectorOrbitDbDatabaseValue<T> : never;
 
-export type ISwarmMessageStoreDeleteMessageArg<P extends ESwarmStoreConnector> = P extends ESwarmStoreConnector.OrbitDB
-  ? TSwarmStoreDatabaseEntityAddress<P> // swarm message address
-  : never; // instance of the message to remove
+export type ISwarmMessageStoreDeleteMessageArg<
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>
+> = DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.FEED
+  ? TSwarmStoreDatabaseEntityAddress<P>
+  : TSwarmStoreDatabaseEntityKey<P>; // swarm message address
 
 export type ISwarmMessageStoreDatabaseType<P extends ESwarmStoreConnector> = P extends ESwarmStoreConnector.OrbitDB
   ? ESwarmStoreConnectorOrbitDbDatabaseType
@@ -385,7 +388,7 @@ export interface ISwarmMessageStoreMessagingMethods<
    * @memberof ISwarmMessageStore
    * @throws
    */
-  deleteMessage(dbName: string, messageAddressOrKey: ISwarmMessageStoreDeleteMessageArg<P>): Promise<void>;
+  deleteMessage(dbName: string, messageAddressOrKey: ISwarmMessageStoreDeleteMessageArg<P, DbType>): Promise<void>;
   /**
    * read all messages existing (not removed) in the database
    * with the name provided.

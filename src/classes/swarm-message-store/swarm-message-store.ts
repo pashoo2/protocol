@@ -314,7 +314,10 @@ export class SwarmMessageStore<
     return deserializedResponse;
   }
 
-  public async deleteMessage(dbName: DBO['dbName'], messageAddressOrDbKey: ISwarmMessageStoreDeleteMessageArg<P>): Promise<void> {
+  public async deleteMessage<DBT extends DbType>(
+    dbName: DBO['dbName'],
+    messageAddressOrDbKey: ISwarmMessageStoreDeleteMessageArg<P, DBT>
+  ): Promise<void> {
     assert(dbName, 'Database name must be provided');
     if (!messageAddressOrDbKey || typeof messageAddressOrDbKey !== 'string') {
       throw new Error('Message address must be a non empty string');
@@ -323,7 +326,7 @@ export class SwarmMessageStore<
     const result = await this.request<T, DbType>(
       dbName,
       this.dbMethodRemoveMessage,
-      this.getArgRemoveMessage(messageAddressOrDbKey)
+      this.getArgRemoveMessage<DBT>(messageAddressOrDbKey)
     );
 
     if (result instanceof Error) {
@@ -817,18 +820,18 @@ export class SwarmMessageStore<
    * accepted by the connector type provided
    *
    * @protected
-   * @param {string} messageAddress
+   * @param {string} messageAddressOrKey
    * @returns {TSwarmStoreDatabaseMethodArgument<P, TSwarmStoreValueTypes<P>>}
    * @memberof SwarmMessageStore
    */
   protected getArgRemoveMessage<DBT extends DbType>(
-    messageAddress: TSwarmStoreDatabaseEntityAddress<P>
+    messageAddressOrKey: ISwarmMessageStoreDeleteMessageArg<P, DBT>
   ): TSwarmStoreDatabaseMethodArgument<P, T, DBT> {
     const { connectorType } = this;
 
     switch (connectorType) {
       case ESwarmStoreConnector.OrbitDB:
-        return messageAddress as TSwarmStoreDatabaseMethodArgument<P, T, DBT>;
+        return (messageAddressOrKey as unknown) as TSwarmStoreDatabaseMethodArgument<P, T, DBT>;
       default:
         throw new Error('Failed to define argument value for a swarm message removing');
     }

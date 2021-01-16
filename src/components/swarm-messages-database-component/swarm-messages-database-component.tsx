@@ -282,7 +282,7 @@ export class SwarmMessagesDatabaseComponent<
       } else {
         removeArg = message;
       }
-      return db.deleteMessage(removeArg as ISwarmMessageStoreDeleteMessageArg<P>);
+      return await db.deleteMessage(removeArg as ISwarmMessageStoreDeleteMessageArg<P, DbType>);
     }
   };
 

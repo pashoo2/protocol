@@ -12,6 +12,11 @@ import {
 import { AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp } from './swarm-messages-channels-list-v1-class-options-setup.types';
 import { ISwarmMessageChannelDescriptionRaw } from '../../../../../types/swarm-messages-channel.types';
 import {
+  TSwarmStoreDatabaseEntityKey,
+  TSwarmStoreDatabaseEntityAddress,
+} from '../../../../../../swarm-store-class/swarm-store-class.types';
+import { TSwarmMessageConstructorBodyMessage } from '../../../../../../swarm-message/swarm-message-constructor.types';
+import {
   ISwarmMessagesChannelsListV1GrantAccessConstantArguments,
   ISwarmMessagesChannelsListV1GrantAccessVariableArguments,
 } from './swarm-messages-channels-list-v1-class.types';
@@ -115,7 +120,7 @@ export interface ICreateGrantAccessCallbackByConstantArgumentsAndMessageWithChan
   DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>
 > {
   constantArguments: ISwarmMessagesChannelsListV1GrantAccessConstantArguments<P, T, I, CTX, DBO>;
-  channelDescriptionSwarmMessageValidator: IValidatorOfSwarmMessageWithChannelDescription<P, T, DBO>;
+  channelDescriptionSwarmMessageValidator: IValidatorOfSwarmMessageWithChannelDescription<P, T, I, CTX, DBO>;
   getVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidator: IGetVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidatorCreator<
     P,
     T,
@@ -143,11 +148,14 @@ export abstract class AbstractSwarmMessagesChannelsListVersionOneDatabaseConnect
   DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>,
   CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, I, CTX, DBO>
 > extends AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<P, T, I, CTX, DBO, CARGS> {
-  public abstract readonly description: Readonly<CARGS['description']>;
-
   protected abstract async _readSwarmMessageForDbKey(
-    dbbKey: string
+    dbbKey: TSwarmStoreDatabaseEntityKey<P>
   ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any> | undefined>;
+
+  protected abstract _addSwarmMessageBodyInDatabase(
+    dbKey: TSwarmStoreDatabaseEntityKey<P>,
+    messageBody: TSwarmMessageConstructorBodyMessage
+  ): Promise<TSwarmStoreDatabaseEntityAddress<P>>;
 }
 
 export interface IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler<

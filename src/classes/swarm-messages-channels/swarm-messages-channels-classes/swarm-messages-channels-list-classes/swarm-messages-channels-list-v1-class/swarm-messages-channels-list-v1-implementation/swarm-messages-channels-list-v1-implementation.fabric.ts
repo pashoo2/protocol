@@ -9,7 +9,10 @@ import {
   ISwarmMessagesChannelsDescriptionsListConstructorArguments,
 } from '../../../../types/swarm-messages-channels-list.types';
 import { IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler } from './types/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.types';
-import { ISwarmMessagesChannelsDescriptionsList } from '../../../../types/swarm-messages-channels-list.types';
+import {
+  ISwarmMessagesChannelsDescriptionsList,
+  ISwarmMessagesChannelsListDescription,
+} from '../../../../types/swarm-messages-channels-list.types';
 import { ConstructorType } from '../../../../../../types/helper.types';
 import { ISwarmMessageChannelDescriptionRaw, TSwarmMessagesChannelId } from '../../../../types/swarm-messages-channel.types';
 import { TSwarmMessageConstructorBodyMessage } from '../../../../../swarm-message/swarm-message-constructor.types';
@@ -34,27 +37,20 @@ export function getSwarmMessagesChannelsListVersionOneClass<
   abstract class SwarmMessagesChannelsListVersionOne
     extends ClassSwarmMessagesChannelsListVersionOneOptionsSetUp
     implements ISwarmMessagesChannelsDescriptionsList<P, T> {
+    public get description(): Readonly<ISwarmMessagesChannelsListDescription> {
+      return this._getChannelsListDescription();
+    }
+
     public async addChannel(channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>): Promise<void> {
       await this._validateChannelDescription(channelDescriptionRaw);
-
-      await this._setChannelDescriptionSerializedInSwarm(channelDescriptionRaw.id, serializedChannelDescription);
+      await this._addChannelDescriptionRawInSwarmDatabase(channelDescriptionRaw);
     }
 
-    protected _createChannelDescriptionMessageBody(channelDescriptionSerialized: string): TSwarmMessageConstructorBodyMessage {
-      const channelDescriptionMessageBodyWithoutPayload = this._createChannelDescriptionMessageBodyRequiredPropsWithoutPayload();
-      return {
-        ...channelDescriptionMessageBodyWithoutPayload,
-        pld: channelDescriptionSerialized,
-      };
-    }
+    public async removeChannelById(channelId: TSwarmMessagesChannelId): Promise<void> {}
 
-    protected _getKeyInDatabaseForMessagesChannelId(channelId: TSwarmMessagesChannelId): string {
-      return channelId;
-    }
-
-    protected _createSwarmMessageRawForChannelDescriptionSerialized(
+    protected _createMessageBodyForChannelDescription(
       channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>
-    ) {
+    ): TSwarmMessageConstructorBodyMessage {
       const messageTyp = this._createChannelDescriptionMessageTyp(channelDescriptionRaw);
       const messageIss = this._createChannelDescriptionMessageIssuer(channelDescriptionRaw);
       const messagePayload = this._serializeChannelDescriptionRaw(channelDescriptionRaw);
@@ -62,18 +58,16 @@ export function getSwarmMessagesChannelsListVersionOneClass<
       return {
         typ: messageTyp,
         iss: messageIss,
-        payload: messagePayload,
+        pld: messagePayload,
       };
     }
 
-    protected async _setChannelDescriptionSerializedInSwarm(
-      channelId: TSwarmMessagesChannelId,
-      channelDescriptionSerialized: string
+    protected async _addChannelDescriptionRawInSwarmDatabase(
+      channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>
     ): Promise<void> {
-      const keyValueDatabase = await this._getSwarmMessagesKeyValueDatabase();
-      const swarmMessageWithChannelDescription = this._createChannelDescriptionMessageBody(channelDescriptionSerialized);
-      const keyInDatabaseForChannelDescription = this._getKeyInDatabaseForMessagesChannelId(channelId);
-      await keyValueDatabase.addMessage(swarmMessageWithChannelDescription, keyInDatabaseForChannelDescription);
+      const swarmMessageWithChannelDescription = this._createMessageBodyForChannelDescription(channelDescriptionRaw);
+      const keyInDatabaseForChannelDescription = this._getKeyInDatabaseForStoringChannelsListDescription(channelDescriptionRaw);
+      await this._addSwarmMessageBodyInDatabase(keyInDatabaseForChannelDescription, swarmMessageWithChannelDescription);
     }
   }
 

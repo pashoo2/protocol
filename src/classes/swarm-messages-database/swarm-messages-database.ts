@@ -274,21 +274,21 @@ export class SwarmMessagesDatabase<
   };
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  addMessage = ((...args: Parameters<OmitFirstArg<SMS['addMessage']>>): ReturnType<SMS['addMessage']> => {
+  addMessage = (...args: Parameters<OmitFirstArg<SMS['addMessage']>>): ReturnType<SMS['addMessage']> => {
     if (!this._checkIsReady()) {
       throw new Error('The instance is not ready to use');
     }
     // TODO - remove cast to any https://github.com/microsoft/TypeScript/issues/28010
     return (this._swarmMessageStore.addMessage as any)(this._dbName, ...args);
-  }) as OmitFirstArg<SMS['addMessage']>;
+  };
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  deleteMessage = ((messageAddressOrKey: ISwarmMessageStoreDeleteMessageArg<P>): ReturnType<SMS['deleteMessage']> => {
+  deleteMessage = (messageAddressOrKey: ISwarmMessageStoreDeleteMessageArg<P, DbType>): ReturnType<SMS['deleteMessage']> => {
     if (!this._checkIsReady()) {
       throw new Error('The instance is not ready to use');
     }
     return this._swarmMessageStore.deleteMessage(this._dbName, messageAddressOrKey) as ReturnType<SMS['deleteMessage']>;
-  }) as OmitFirstArg<SMS['deleteMessage']>;
+  };
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   collect = ((...args: Parameters<OmitFirstArg<SMS['collect']>>): ReturnType<SMS['collect']> => {
@@ -300,7 +300,7 @@ export class SwarmMessagesDatabase<
   }) as OmitFirstArg<SMS['collect']>;
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  collectWithMeta = ((
+  collectWithMeta = (
     ...args: Parameters<OmitFirstArg<SMS['collectWithMeta']>>
   ): ReturnType<OmitFirstArg<SMS['collectWithMeta']>> => {
     if (!this._checkIsReady()) {
@@ -308,7 +308,7 @@ export class SwarmMessagesDatabase<
     }
     // TODO - remove cast to any https://github.com/microsoft/TypeScript/issues/28010
     return (this._swarmMessageStore.collectWithMeta as any)(this._dbName, ...args);
-  }) as OmitFirstArg<SMS['collectWithMeta']>;
+  };
 
   /**
    * Checks if the instance is ready to use

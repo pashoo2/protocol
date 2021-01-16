@@ -15,6 +15,7 @@ import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../
 import { AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp } from '../../types/swarm-messages-channels-list-v1-class-options-setup.types';
 import { ISwarmMessageChannelDescriptionRaw } from '../../../../../../types/swarm-messages-channel.types';
 import { TSwarmMessageConstructorBodyMessage } from '../../../../../../../swarm-message/swarm-message-constructor.types';
+import { TSwarmStoreDatabaseEntityKey } from '../../../../../../../swarm-store-class/swarm-store-class.types';
 
 export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
   P extends ESwarmStoreConnector,
@@ -239,5 +240,20 @@ export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
   ): Pick<TSwarmMessageConstructorBodyMessage, 'iss'>['iss'] {
     const { getIssuerForSwarmMessageWithChannelDescriptionByChannelDescription } = this._getUtilities();
     return getIssuerForSwarmMessageWithChannelDescriptionByChannelDescription(channelDescriptionRaw);
+  }
+
+  /**
+   * Return a database key for storing the swarm messages channel description
+   *
+   * @protected
+   * @param {ISwarmMessageChannelDescriptionRaw<P, T, any, any>} channelDescriptionRaw
+   * @returns {string}
+   * @memberof SwarmMessagesChannelsListVersionOneOptionsSetUp
+   */
+  protected _getKeyInDatabaseForStoringChannelsListDescription(
+    channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>
+  ): TSwarmStoreDatabaseEntityKey<P> {
+    const { getDatabaseKeyForChannelDescription } = this._getUtilities();
+    return getDatabaseKeyForChannelDescription(channelDescriptionRaw);
   }
 }
