@@ -48,10 +48,7 @@ export interface ISwarmMessagesChannelDescriptionFormatValidator<
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>
 > {
-  (
-    this: ISwarmMessagesChannelValidationContext,
-    channelDescription: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>
-  ): Promise<void>;
+  (channelDescription: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>): Promise<void>;
 }
 
 /**
@@ -69,13 +66,15 @@ export interface ISwarmMessagesChannelDescriptionFormatValidator<
 export interface IValidatorOfSwarmMessageWithChannelDescription<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T>
+  I extends ISwarmMessageInstanceDecrypted,
+  CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>
 > {
   (
     /** context will be passed from the database, but should contatain specific for swarm channel validators methods */
     this: ISwarmMessagesChannelValidationContext,
     /** argument will be passed from the swarm messages channels list instance */
-    argument: IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, DBO>
+    argument: IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, I, CTX, DBO>
   ): Promise<void>;
 }
 
@@ -98,7 +97,7 @@ export interface IValidatorOfSwarmMessagesChannelsListDescription {
  * @interface ISwamChannelsListDatabaseOptionsValidator
  */
 export interface ISwamChannelsListDatabaseOptionsValidator {
-  (dbOptions: unknown): dbOptions is TSwrmMessagesChannelsListDBOWithGrantAccess<any, any>;
+  (dbOptions: unknown): dbOptions is TSwrmMessagesChannelsListDBOWithGrantAccess<any, any, any, any>;
 }
 
 /**
@@ -212,5 +211,10 @@ export interface IValidatorOfSwarmMessageWithChannelDescriptionArgument<
    * @type {ISwarmMessagesChannelDescriptionFormatValidator<P, T, any, DBO>}
    * @memberof IValidatorOfSwarmMessageWithChannelDescriptionArgument
    */
-  channelDescriptionFormatValidator: ISwarmMessagesChannelDescriptionFormatValidator<P, T, any, DBO>;
+  channelDescriptionFormatValidator: ISwarmMessagesChannelDescriptionFormatValidator<
+    P,
+    T,
+    any,
+    TSwarmStoreDatabaseOptions<P, T, any>
+  >;
 }

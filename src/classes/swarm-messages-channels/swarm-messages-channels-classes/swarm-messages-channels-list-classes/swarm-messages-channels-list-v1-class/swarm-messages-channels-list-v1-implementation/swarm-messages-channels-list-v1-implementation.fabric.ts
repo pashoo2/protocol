@@ -11,7 +11,9 @@ import {
 import { IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler } from './types/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.types';
 import { ISwarmMessagesChannelsDescriptionsList } from '../../../../types/swarm-messages-channels-list.types';
 import { ConstructorType } from '../../../../../../types/helper.types';
-import { ISwarmMessageChannelDescriptionRaw } from '../../../../types/swarm-messages-channel.types';
+import { ISwarmMessageChannelDescriptionRaw, TSwarmMessagesChannelId } from '../../../../types/swarm-messages-channel.types';
+import { TSwarmMessageConstructorBodyMessage } from '../../../../../swarm-message/swarm-message-constructor.types';
+
 export function getSwarmMessagesChannelsListVersionOneClass<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
@@ -33,60 +35,9 @@ export function getSwarmMessagesChannelsListVersionOneClass<
     extends ClassSwarmMessagesChannelsListVersionOneOptionsSetUp
     implements ISwarmMessagesChannelsDescriptionsList<P, T> {
     public async addChannel(channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>): Promise<void> {
-      if (!this._validateChannelDescription(channelDescriptionRaw)) {
-        throw new Error('The channel description is not ready');
-      }
+      await this._validateChannelDescription(channelDescriptionRaw);
 
-      const serializedChannelDescription = this._serializeChannelDescriptionRaw(channelDescriptionRaw);
       await this._setChannelDescriptionSerializedInSwarm(channelDescriptionRaw.id, serializedChannelDescription);
-    }
-
-    protected _validateChannelDescription(channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>): boolean {
-      return this._swarmMessagesChannelDescriptionFormatValidator(channelDescriptionRaw);
-    }
-
-    protected _serializeChannelDescriptionRaw(channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>): string {
-      return this._serializer.stringify(channelDescriptionRaw.dbOptions);
-    }
-
-    /**
-     * Returns type of a message, which represents a swarm messages channel description
-     *
-     * @protected
-     * @returns {Pick<TSwarmMessageConstructorBodyMessage, 'typ'>['typ']}
-     * @memberof SwarmMessagesChannelsListVersionOne
-     */
-    protected _createChannelDescriptionMessageTyp(): Pick<TSwarmMessageConstructorBodyMessage, 'typ'>['typ'] {
-      return this._connectionOptions.version;
-    }
-
-    /**
-     * Return an issuer of a message, which represents a swarm messages channel description
-     *
-     * @protected
-     * @returns {Pick<TSwarmMessageConstructorBodyMessage, 'iss'>['iss']}
-     * @memberof SwarmMessagesChannelsListVersionOne
-     */
-    protected _createChannelDescriptionMessageIssuer(): Pick<TSwarmMessageConstructorBodyMessage, 'iss'>['iss'] {
-      return this._connectionOptions.id;
-    }
-
-    /**
-     * Returns swarm message's channel description type and issuer
-     * params
-     *
-     * @protected
-     * @returns {Omit<TSwarmMessageConstructorBodyMessage, 'pld'>}
-     * @memberof SwarmMessagesChannelsListVersionOne
-     */
-    protected _createChannelDescriptionMessageBodyRequiredPropsWithoutPayload(): Omit<
-      TSwarmMessageConstructorBodyMessage,
-      'pld'
-    > {
-      return {
-        typ: this._createChannelDescriptionMessageTyp(),
-        iss: this._createChannelDescriptionMessageIssuer(),
-      };
     }
 
     protected _createChannelDescriptionMessageBody(channelDescriptionSerialized: string): TSwarmMessageConstructorBodyMessage {
@@ -99,6 +50,20 @@ export function getSwarmMessagesChannelsListVersionOneClass<
 
     protected _getKeyInDatabaseForMessagesChannelId(channelId: TSwarmMessagesChannelId): string {
       return channelId;
+    }
+
+    protected _createSwarmMessageRawForChannelDescriptionSerialized(
+      channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>
+    ) {
+      const messageTyp = this._createChannelDescriptionMessageTyp(channelDescriptionRaw);
+      const messageIss = this._createChannelDescriptionMessageIssuer(channelDescriptionRaw);
+      const messagePayload = this._serializeChannelDescriptionRaw(channelDescriptionRaw);
+
+      return {
+        typ: messageTyp,
+        iss: messageIss,
+        payload: messagePayload,
+      };
     }
 
     protected async _setChannelDescriptionSerializedInSwarm(

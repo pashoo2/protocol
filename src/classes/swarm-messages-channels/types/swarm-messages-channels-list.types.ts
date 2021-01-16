@@ -256,7 +256,7 @@ export interface ISwarmMessagesChannelsDescriptionsListConstructorArgumentsValid
    * @type {IValidatorOfSwarmMessageWithChannelDescription<P, T, DBO>}
    * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArguments
    */
-  channelDescriptionSwarmMessageValidator: IValidatorOfSwarmMessageWithChannelDescription<P, T, DBO>;
+  channelDescriptionSwarmMessageValidator: IValidatorOfSwarmMessageWithChannelDescription<P, T, I, CTX, DBO>;
   /**
    * Validator of a description of a swarm channels list.
    *

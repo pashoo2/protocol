@@ -145,7 +145,7 @@ export abstract class AbstractSwarmMessagesChannelsListVersionOneDatabaseConnect
 > extends AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<P, T, I, CTX, DBO, CARGS> {
   public abstract readonly description: Readonly<CARGS['description']>;
 
-  protected abstract async _readValueForDbKey(
+  protected abstract async _readSwarmMessageForDbKey(
     dbbKey: string
   ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any> | undefined>;
 }

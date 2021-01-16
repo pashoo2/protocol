@@ -33,7 +33,11 @@ import { ESwarmMessagesDatabaseCacheEventsNames } from './swarm-messages-databas
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from './swarm-messages-database.messages-collector.types';
-import { TSwarmStoreDatabaseEntityUniqueIndex } from '../swarm-store-class/swarm-store-class.types';
+import {
+  TSwarmStoreDatabaseEntityUniqueIndex,
+  TSwarmStoreDatabaseIteratorMethodArgument,
+} from '../swarm-store-class/swarm-store-class.types';
+import { TSwarmMessageConstructorBodyMessage } from '../swarm-message/swarm-message-constructor.types';
 
 export type TSwarmMessageDatabaseMessagesCached<
   P extends ESwarmStoreConnector,
@@ -208,10 +212,17 @@ export interface ISwarmMessageDatabaseMessagingMethods<
   MI extends TSwarmMessageInstance,
   SMS extends ISwarmMessageStoreMessagingMethods<P, T, DbType, MI>
 > {
-  addMessage: OmitFirstArg<SMS['addMessage']>;
+  addMessage(message: MI, key?: TSwarmStoreDatabaseEntityKey<P>): Promise<TSwarmStoreDatabaseEntityAddress<P>>;
+  addMessage(message: T, key?: TSwarmStoreDatabaseEntityKey<P>): Promise<TSwarmStoreDatabaseEntityAddress<P>>;
+  addMessage(
+    message: TSwarmMessageConstructorBodyMessage,
+    key?: TSwarmStoreDatabaseEntityKey<P>
+  ): Promise<TSwarmStoreDatabaseEntityAddress<P>>;
   deleteMessage: OmitFirstArg<SMS['deleteMessage']>;
   collect: OmitFirstArg<SMS['collect']>;
-  collectWithMeta: OmitFirstArg<SMS['collectWithMeta']>;
+  collectWithMeta(
+    options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>
+  ): Promise<Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P, Exclude<MI, ISwarmMessageInstanceEncrypted>> | undefined>>;
 }
 
 export interface ISwarmMessagesDatabaseProperties<

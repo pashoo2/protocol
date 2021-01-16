@@ -2,22 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e70e70e3-e48a-4dfd-91a6-03818e8691f6" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/class/swarm-messages-channels-list-v1-class.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/subclasses/swarm-messages-channels-list-v1-db-connection-initializer-and-handler/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.fabric.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/swarm-messages-channels-list-v1-implementation.fabric.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/types/swarm-messages-channels-list-v1-class-options-setup.types.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/node_modules-local/hypervision-browser" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules-local/hypervision-browser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-message-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-context/swarm-store-conector-db-options-grand-access-context-binder-to-database-options/swarm-store-conector-db-options-grand-access-context-binder-to-database-options.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-message-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-context/swarm-store-conector-db-options-grand-access-context-binder-to-database-options/swarm-store-conector-db-options-grand-access-context-binder-to-database-options.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/subclasses/swarm-messages-channels-list-v1-class-options-setup/swarm-messages-channels-list-v1-class-options-setup.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/subclasses/swarm-messages-channels-list-v1-class-options-setup/swarm-messages-channels-list-v1-class-options-setup.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/subclasses/swarm-messages-channels-list-v1-db-connection-initializer-and-handler/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/subclasses/swarm-messages-channels-list-v1-db-connection-initializer-and-handler/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/subclasses/swarm-messages-channels-list-v1-db-connection-initializer-and-handler/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/subclasses/swarm-messages-channels-list-v1-db-connection-initializer-and-handler/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/types/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/subclasses/swarm-messages-channels-list-v1-db-connection-initializer-and-handler/utils/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/subclasses/swarm-messages-channels-list-v1-db-connection-initializer-and-handler/utils/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.utils.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/types/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/types/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/subclasses/swarm-messages-channels-list-v1-db-connection-initializer-and-handler/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.fabric.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/subclasses/swarm-messages-channels-list-v1-db-connection-initializer-and-handler/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.fabric.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/swarm-messages-channels-list-v1-implementation.fabric.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/swarm-messages-channels-list-v1-implementation.fabric.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/types/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/types/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/types/swarm-messages-channels-list-v1-class-options-setup.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/types/swarm-messages-channels-list-v1-class-options-setup.types.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/types/swarm-messages-channels-list.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/types/swarm-messages-channels-list.types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/types/helper.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/helper.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/types/swarm-messages-channels-validation.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/types/swarm-messages-channels-validation.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database.types.ts" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -38,7 +32,7 @@
         <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-channels/types/swarm-messages-channels-list.types.ts">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="205">
-              <caret line="408" column="7" lean-forward="true" selection-start-line="408" selection-start-column="7" selection-end-line="408" selection-end-column="7" />
+              <caret line="408" column="7" selection-start-line="408" selection-start-column="7" selection-end-line="408" selection-end-column="7" />
             </state>
           </provider>
         </entry>
@@ -69,8 +63,8 @@
       <file leaf-file-name="swarm-messages-channels-validation.types.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-channels/types/swarm-messages-channels-validation.types.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2632">
-              <caret line="210" column="4" selection-start-line="210" selection-start-column="4" selection-end-line="210" selection-end-column="4" />
+            <state relative-caret-position="2618">
+              <caret line="209" column="4" selection-start-line="209" selection-start-column="4" selection-end-line="209" selection-end-column="4" />
               <folding>
                 <element signature="e#0#42#0" expanded="true" />
               </folding>
@@ -596,7 +590,7 @@
       <workItem from="1610652089739" duration="1857000" />
       <workItem from="1610738751942" duration="3451000" />
       <workItem from="1610801349449" duration="664000" />
-      <workItem from="1610803025588" duration="4951000" />
+      <workItem from="1610803025588" duration="6345000" />
     </task>
     <servers />
   </component>
@@ -633,7 +627,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="114217000" />
+    <option name="totallyTimeSpent" value="115611000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="1366" height="741" extended-state="7" />
@@ -847,8 +841,8 @@
     <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/swarm-messages-channels-list-v1-class.ts" />
     <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-channels/types/swarm-messages-channels-validation.types.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2632">
-          <caret line="210" column="4" selection-start-line="210" selection-start-column="4" selection-end-line="210" selection-end-column="4" />
+        <state relative-caret-position="2618">
+          <caret line="209" column="4" selection-start-line="209" selection-start-column="4" selection-end-line="209" selection-end-column="4" />
           <folding>
             <element signature="e#0#42#0" expanded="true" />
           </folding>
@@ -935,7 +929,7 @@
     <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-channels/types/swarm-messages-channels-list.types.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="205">
-          <caret line="408" column="7" lean-forward="true" selection-start-line="408" selection-start-column="7" selection-end-line="408" selection-end-column="7" />
+          <caret line="408" column="7" selection-start-line="408" selection-start-column="7" selection-end-line="408" selection-end-column="7" />
         </state>
       </provider>
     </entry>

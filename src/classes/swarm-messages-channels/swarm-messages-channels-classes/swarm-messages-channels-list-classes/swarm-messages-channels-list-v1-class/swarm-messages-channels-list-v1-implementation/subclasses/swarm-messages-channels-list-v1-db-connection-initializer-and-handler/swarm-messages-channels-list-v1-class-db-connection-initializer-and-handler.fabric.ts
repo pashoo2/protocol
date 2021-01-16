@@ -12,7 +12,10 @@ import {
 } from '../../../../../../types/swarm-messages-channels-list.types';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { IValidatorOfSwarmMessageWithChannelDescriptionArgument } from '../../../../../../types/swarm-messages-channels-validation.types';
-import { ESwarmStoreConnectorOrbitDbDatabaseIteratorOption } from '../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
+import {
+  ESwarmStoreConnectorOrbitDbDatabaseIteratorOption,
+  ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions,
+} from '../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import { ISwarmMessagesChannelsDescriptionsListConstructorArguments } from '../../../../../../types/swarm-messages-channels-list.types';
 import { createImmutableObjectClone } from '../../../../../../../../utils/data-immutability-utils/data-immutability-key-value-structure-utils';
 import { isNonNativeFunction } from '../../../../../../../../utils/common-utils/common-utils.functions';
@@ -21,6 +24,16 @@ import { ISwarmMessagesChannelsListV1GrantAccessConstantArguments } from '../../
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { IConstructorAbstactSwarmMessagesChannelsListVersionOneOptionsSetUp } from '../../types/swarm-messages-channels-list-v1-class-options-setup.types';
 import { IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler } from '../../types/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.types';
+import {
+  TSwarmMessageConstructorBodyMessage,
+  ISwarmMessageBody,
+} from '../../../../../../../swarm-message/swarm-message-constructor.types';
+import { TSwarmStoreDatabaseIteratorMethodArgument } from '../../../../../../../swarm-store-class/swarm-store-class.types';
+import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../../../../../swarm-message-store/types/swarm-message-store.types';
+import {
+  TSwarmStoreDatabaseEntityAddress,
+  TSwarmStoreDatabaseEntityKey,
+} from '../../../../../../../swarm-store-class/swarm-store-class.types';
 
 export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandlerClass<
   P extends ESwarmStoreConnector,
@@ -93,6 +106,110 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       );
     }
 
+    protected async _getSwarmMessagesKeyValueDatabaseConnection(): Promise<
+      PromiseResolveType<ReturnType<CARGS['utilities']['databaseConnectionFabric']>>
+    > {
+      const swarmMessagesKeyValueDatabaseConnection = this._swarmMessagesKeyValueDatabaseConnectionPending;
+      if (!swarmMessagesKeyValueDatabaseConnection) {
+        throw new Error('There is no an active connection with the swarm messages databse');
+      }
+      return await swarmMessagesKeyValueDatabaseConnection;
+    }
+
+    protected _createOptionsForCollectingDbKey(
+      dbbKey: string
+    ): TSwarmStoreDatabaseIteratorMethodArgument<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE> {
+      if (this._connectorType === ESwarmStoreConnector.OrbitDB) {
+        return {
+          [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq]: dbbKey,
+          [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.limit]: 1,
+        } as TSwarmStoreDatabaseIteratorMethodArgument<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>;
+      }
+      throw new Error('Swarm connector type is not supported');
+    }
+
+    protected async _getValidSwarmMessagesChannelDescriptionFromSwarmMessageBody(
+      swarmMessageBody: ISwarmMessageBody
+    ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any> | undefined> {
+      const { pld, typ, iss } = swarmMessageBody;
+      const swarmMessagesChannelDescriptionSerialized = pld;
+      const swarmMessagesChannelDescriptionDeserialized = this._deserializeChannelDescriptionRaw(
+        swarmMessagesChannelDescriptionSerialized
+      );
+      await this._validateChannelDescription(swarmMessagesChannelDescriptionDeserialized);
+      if (this._createChannelDescriptionMessageIssuer(swarmMessagesChannelDescriptionDeserialized) !== iss) {
+        throw new Error('"Issuer" of the swarm message with the swarm messages channel description is not valid');
+      }
+      if (this._createChannelDescriptionMessageTyp(swarmMessagesChannelDescriptionDeserialized) !== typ) {
+        throw new Error('"Typ" of the swarm message with the swarm messages channel description is not valid');
+      }
+      return swarmMessagesChannelDescriptionDeserialized;
+    }
+
+    protected async _getSwarmChannelDescriptionRawBySwarmDbRequestResult(
+      requestResult: ISwarmMessageStoreMessagingRequestWithMetaResult<P, I>
+    ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any> | undefined> {
+      const messageDecryptedOrError = requestResult.message;
+
+      if (messageDecryptedOrError instanceof Error) {
+        throw new Error(`${messageDecryptedOrError.message}`);
+      }
+      const swarmMessagesChannelDescriptionDeserialized = await this._getValidSwarmMessagesChannelDescriptionFromSwarmMessageBody(
+        messageDecryptedOrError.bdy
+      );
+      return swarmMessagesChannelDescriptionDeserialized;
+    }
+
+    protected _getRequestResultFromAllRequestResultsOnASingleDatabaseKeyRead(
+      requestResults: (ISwarmMessageStoreMessagingRequestWithMetaResult<P, I> | undefined)[]
+    ): ISwarmMessageStoreMessagingRequestWithMetaResult<P, I> | undefined {
+      if (Array.isArray(requestResults)) {
+        assert(requestResults.length === 1, 'Request result for one datbase key should be an array with the lenght of 1');
+        return requestResults[0];
+      }
+      return undefined;
+    }
+
+    protected async _requestDatabaseForDbKey(
+      dbbKey: string
+    ): Promise<(ISwarmMessageStoreMessagingRequestWithMetaResult<P, I> | undefined)[]> {
+      const dbConnection = await this._getSwarmMessagesKeyValueDatabaseConnection();
+      const optionsForReadingKeyValue = this._createOptionsForCollectingDbKey(dbbKey);
+      return await dbConnection.collectWithMeta(optionsForReadingKeyValue);
+    }
+
+    protected async _readValueStoredInDatabaseByDbKey(
+      dbbKey: string
+    ): Promise<ISwarmMessageStoreMessagingRequestWithMetaResult<P, I> | undefined> {
+      const requestResults = await this._requestDatabaseForDbKey(dbbKey);
+      const requestResultForDbKey = this._getRequestResultFromAllRequestResultsOnASingleDatabaseKeyRead(requestResults);
+      return requestResultForDbKey;
+    }
+
+    protected async _readSwarmMessageForDbKey(
+      dbbKey: string
+    ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any> | undefined> {
+      const requestResultForDbKey = await this._readValueStoredInDatabaseByDbKey(dbbKey);
+
+      if (!requestResultForDbKey) {
+        return undefined;
+      }
+
+      const messageForDbKey = await this._getSwarmChannelDescriptionRawBySwarmDbRequestResult(requestResultForDbKey);
+
+      return messageForDbKey;
+    }
+
+    protected async _addSwarmMessageByItsBody(
+      dbKey: TSwarmStoreDatabaseEntityKey<P>,
+      messageBody: TSwarmMessageConstructorBodyMessage
+    ): Promise<TSwarmStoreDatabaseEntityAddress<P>> {
+      const dbConnection = await this._getSwarmMessagesKeyValueDatabaseConnection();
+      // TODO - the dbConnection.addMessage(optionsForReadingKeyValue) returns the "any" type
+      const swarmMessageAddress = await dbConnection.addMessage(messageBody, dbKey);
+      return swarmMessageAddress;
+    }
+
     protected _getChannelsListDatabaseName(): string {
       const channelListDescription = this._getChannelsListDescription();
       const { databaseNameGenerator } = this._getUtilities();
@@ -128,37 +245,10 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       };
     }
 
-    protected async _getSwarmMessagesKeyValueDatabaseConnection(): Promise<
-      PromiseResolveType<ReturnType<CARGS['utilities']['databaseConnectionFabric']>>
-    > {
-      const swarmMessagesKeyValueDatabaseConnection = this._swarmMessagesKeyValueDatabaseConnectionPending;
-      if (!swarmMessagesKeyValueDatabaseConnection) {
-        throw new Error('There is no an active connection with the swarm messages databse');
-      }
-      return await swarmMessagesKeyValueDatabaseConnection;
-    }
-
-    protected _createOptionsForCollectingDbKey(
-      dbbKey: string
-    ): Parameters<PromiseResolveType<ReturnType<CARGS['utilities']['databaseConnectionFabric']>>['collect']>[0] {
-      return {
-        [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq]: dbbKey,
-        [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.limit]: 1,
-      };
-    }
-
-    protected async _readValueForDbKey(dbbKey: string): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any> | undefined> {
-      const dbConnection = await this._getSwarmMessagesKeyValueDatabaseConnection();
-      const optionsForReadingKeyValue = this._createOptionsForCollectingDbKey(dbbKey);
-      // TODO - dbConnection.collectWithMeta(optionsForReadingKeyValue) returns the "any" type
-      const messageForTheKey = await dbConnection.collectWithMeta(optionsForReadingKeyValue);
-      return messageForTheKey;
-    }
-
     protected _getExistingChannelDescriptionByMessageKey = async (
       dbbKey: string
     ): Promise<IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, I, CTX, DBO>['channelExistingDescription']> => {
-      return await this._readValueForDbKey(dbbKey);
+      return await this._readSwarmMessageForDbKey(dbbKey);
     };
 
     protected _createGrantAccessCallbackForChannelsListDatabase(): DBO['grantAccess'] {

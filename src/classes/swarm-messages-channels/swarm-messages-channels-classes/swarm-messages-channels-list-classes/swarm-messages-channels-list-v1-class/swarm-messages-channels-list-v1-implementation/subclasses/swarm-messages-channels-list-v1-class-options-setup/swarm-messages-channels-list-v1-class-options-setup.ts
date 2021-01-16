@@ -13,6 +13,8 @@ import { isNonNativeFunction } from '../../../../../../../../utils/common-utils/
 import { ISwarmMessagesChannelsDescriptionsListConstructorArguments } from '../../../../../../types/swarm-messages-channels-list.types';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp } from '../../types/swarm-messages-channels-list-v1-class-options-setup.types';
+import { ISwarmMessageChannelDescriptionRaw } from '../../../../../../types/swarm-messages-channel.types';
+import { TSwarmMessageConstructorBodyMessage } from '../../../../../../../swarm-message/swarm-message-constructor.types';
 
 export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
   P extends ESwarmStoreConnector,
@@ -31,6 +33,10 @@ export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
   protected readonly _utilities: Readonly<CARGS['utilities']>;
 
   protected readonly _validators: Readonly<CARGS['validators']>;
+
+  protected get _connectorType(): P {
+    return this._connectionOptions.connectorType;
+  }
 
   constructor(constructorArguments: CARGS) {
     super();
@@ -168,5 +174,70 @@ export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
       throw new Error('There is no a helpers functions provided');
     }
     return validators;
+  }
+
+  protected _getSwarmMessagesChannelDescriptionFormatValidator(): CARGS['validators']['swarmMessagesChannelDescriptionFormatValidator'] {
+    const { swarmMessagesChannelDescriptionFormatValidator } = this._getValidators();
+    if (!swarmMessagesChannelDescriptionFormatValidator) {
+      throw new Error('"swarmMessagesChannelDescriptionFormatValidator" is not available');
+    }
+    return swarmMessagesChannelDescriptionFormatValidator;
+  }
+
+  /**
+   * validates channel description format
+   *
+   * @param channelDescriptionRaw
+   * @return {Promise<void>}
+   * @throws - if the format is not valid
+   */
+  protected async _validateChannelDescription(
+    channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>
+  ): Promise<void> {
+    await this._getSwarmMessagesChannelDescriptionFormatValidator()(channelDescriptionRaw);
+  }
+
+  protected _serializeChannelDescriptionRaw(channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>): string {
+    // TODO - may be it is necessary to serialize channelDescriptionRaw.dbOptions
+    // separately because the channelDescriptionRaw.dbOptions.grandAccess is a function
+    return this._serializer.stringify(channelDescriptionRaw);
+  }
+
+  protected _deserializeChannelDescriptionRaw(
+    channelDescriptionSerialized: string
+  ): ISwarmMessageChannelDescriptionRaw<P, T, any, any> {
+    // TODO - may be it is necessary to deserialize channelDescriptionRaw.dbOptions
+    // separately because the channelDescriptionRaw.dbOptions.grandAccess is a function
+    return this._serializer.parse(channelDescriptionSerialized);
+  }
+
+  /**
+   * Returns a "type" param for a message, which represents a swarm messages channel description
+   *
+   * @protected
+   * @param {ISwarmMessageChannelDescriptionRaw<P, T, any, any>} channelDescriptionRaw
+   * @returns {Pick<TSwarmMessageConstructorBodyMessage, 'typ'>['typ']}
+   * @memberof SwarmMessagesChannelsListVersionOne
+   */
+  protected _createChannelDescriptionMessageTyp(
+    channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>
+  ): Pick<TSwarmMessageConstructorBodyMessage, 'typ'>['typ'] {
+    const { getTypeForSwarmMessageWithChannelDescriptionByChannelDescription } = this._getUtilities();
+    return getTypeForSwarmMessageWithChannelDescriptionByChannelDescription(channelDescriptionRaw);
+  }
+
+  /**
+   * Return an issuer param for a swarm message, which represents a swarm messages channel description
+   *
+   * @protected
+   * @param {ISwarmMessageChannelDescriptionRaw<P, T, any, any>} channelDescriptionRaw
+   * @returns {Pick<TSwarmMessageConstructorBodyMessage, 'iss'>['iss']}
+   * @memberof SwarmMessagesChannelsListVersionOne
+   */
+  protected _createChannelDescriptionMessageIssuer(
+    channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>
+  ): Pick<TSwarmMessageConstructorBodyMessage, 'iss'>['iss'] {
+    const { getIssuerForSwarmMessageWithChannelDescriptionByChannelDescription } = this._getUtilities();
+    return getIssuerForSwarmMessageWithChannelDescriptionByChannelDescription(channelDescriptionRaw);
   }
 }
