@@ -10,7 +10,10 @@ import {
   ISwarmMessagesChannelsDescriptionsListConstructorArguments,
 } from '../../../../../types/swarm-messages-channels-list.types';
 import { AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp } from './swarm-messages-channels-list-v1-class-options-setup.types';
-import { ISwarmMessageChannelDescriptionRaw } from '../../../../../types/swarm-messages-channel.types';
+import {
+  ISwarmMessageChannelDescriptionRaw,
+  ISwarmMessagesChannelDescriptionWithMetadata,
+} from '../../../../../types/swarm-messages-channel.types';
 import {
   TSwarmStoreDatabaseEntityKey,
   TSwarmStoreDatabaseEntityAddress,
@@ -148,14 +151,20 @@ export abstract class AbstractSwarmMessagesChannelsListVersionOneDatabaseConnect
   DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>,
   CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, I, CTX, DBO>
 > extends AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<P, T, I, CTX, DBO, CARGS> {
-  protected abstract async _readSwarmMessageForDbKey(
+  protected abstract async _readSwarmMessagesChannelDescriptionOrUndefinedForDbKey(
     dbbKey: TSwarmStoreDatabaseEntityKey<P>
   ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any> | undefined>;
+
+  protected abstract async _removeValueForDbKey(dbbKey: TSwarmStoreDatabaseEntityKey<P>): Promise<void>;
 
   protected abstract _addSwarmMessageBodyInDatabase(
     dbKey: TSwarmStoreDatabaseEntityKey<P>,
     messageBody: TSwarmMessageConstructorBodyMessage
   ): Promise<TSwarmStoreDatabaseEntityAddress<P>>;
+
+  protected abstract _readAllChannelsDescriptionsWithMeta(): Promise<
+    ISwarmMessagesChannelDescriptionWithMetadata<P, T, I, any, any>[]
+  >;
 }
 
 export interface IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler<

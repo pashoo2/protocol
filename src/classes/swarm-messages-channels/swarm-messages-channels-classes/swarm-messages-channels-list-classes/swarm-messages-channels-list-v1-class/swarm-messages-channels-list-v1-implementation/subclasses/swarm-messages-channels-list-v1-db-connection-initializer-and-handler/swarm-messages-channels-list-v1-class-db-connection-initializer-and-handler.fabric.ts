@@ -1,11 +1,13 @@
 import assert from 'assert';
-import { Mixin } from 'ts-mixer';
 import { ESwarmStoreConnector } from '../../../../../../../swarm-store-class/swarm-store-class.const';
 import {
   TSwarmMessageSerialized,
   ISwarmMessageInstanceDecrypted,
 } from '../../../../../../../swarm-message/swarm-message-constructor.types';
-import { ISwarmMessageChannelDescriptionRaw } from '../../../../../../types/swarm-messages-channel.types';
+import {
+  ISwarmMessageChannelDescriptionRaw,
+  ISwarmMessagesChannelDescriptionWithMetadata,
+} from '../../../../../../types/swarm-messages-channel.types';
 import { PromiseResolveType } from '../../../../../../../../types/promise.types';
 import {
   TSwrmMessagesChannelsListDBOWithGrantAccess,
@@ -27,6 +29,8 @@ import {
   ISwarmMessageBody,
 } from '../../../../../../../swarm-message/swarm-message-constructor.types';
 import { TSwarmStoreDatabaseIteratorMethodArgument } from '../../../../../../../swarm-store-class/swarm-store-class.types';
+import { isDefined } from '../../../../../../../../utils/common-utils/common-utils-main';
+import { SwarmMessagesChannelDescriptionWithMeta } from '../../../../../../swarm-messages-channels-subclasses/swarm-messages-channel-description-with-meta/swarm-messages-channel-description-with-meta';
 import {
   ISwarmMessageStoreMessagingRequestWithMetaResult,
   ISwarmMessageStoreDeleteMessageArg,
@@ -125,9 +129,21 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       throw new Error('Swarm connector type is not supported');
     }
 
+    private _createOptionsForCollectingAllDatabaseValues(): TSwarmStoreDatabaseIteratorMethodArgument<
+      P,
+      ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+    > {
+      if (this._connectorType === ESwarmStoreConnector.OrbitDB) {
+        return {
+          [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.limit]: -1,
+        } as TSwarmStoreDatabaseIteratorMethodArgument<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>;
+      }
+      throw new Error('Swarm connector type is not supported');
+    }
+
     private async _getValidSwarmMessagesChannelDescriptionFromSwarmMessageBody(
       swarmMessageBody: ISwarmMessageBody
-    ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any> | undefined> {
+    ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any>> {
       const { pld, typ, iss } = swarmMessageBody;
       const swarmMessagesChannelDescriptionSerialized = pld;
       const swarmMessagesChannelDescriptionDeserialized = this._deserializeChannelDescriptionRaw(
@@ -147,7 +163,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
 
     private async _getSwarmChannelDescriptionRawBySwarmDbRequestResult(
       requestResult: ISwarmMessageStoreMessagingRequestWithMetaResult<P, I>
-    ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any> | undefined> {
+    ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any>> {
       const messageDecryptedOrError = requestResult.message;
 
       if (messageDecryptedOrError instanceof Error) {
@@ -159,6 +175,23 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       return swarmMessagesChannelDescriptionDeserialized;
     }
 
+    private _getSwarmChannelDescriptionRawOrErrorBySwarmDbRequestResult = async (
+      requestResult: ISwarmMessageStoreMessagingRequestWithMetaResult<P, I>
+    ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error> => {
+      try {
+        return await this._getSwarmChannelDescriptionRawBySwarmDbRequestResult(requestResult);
+      } catch (err) {
+        return err;
+      }
+    };
+
+    private _getSwarmChannelDescriptionWithMetadataBySwarmDbRequestResultWithMetadata = async (
+      requestResult: ISwarmMessageStoreMessagingRequestWithMetaResult<P, I>
+    ): Promise<ISwarmMessagesChannelDescriptionWithMetadata<P, T, I, any, any>> => {
+      const channelDescriptionOrError = await this._getSwarmChannelDescriptionRawOrErrorBySwarmDbRequestResult(requestResult);
+      return new SwarmMessagesChannelDescriptionWithMeta(requestResult, channelDescriptionOrError);
+    };
+
     private _getRequestResultFromAllRequestResultsOnASingleDatabaseKeyRead(
       requestResults: (ISwarmMessageStoreMessagingRequestWithMetaResult<P, I> | undefined)[]
     ): ISwarmMessageStoreMessagingRequestWithMetaResult<P, I> | undefined {
@@ -169,12 +202,18 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       return undefined;
     }
 
+    private async _requestDatabase(
+      options: TSwarmStoreDatabaseIteratorMethodArgument<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>
+    ): Promise<(ISwarmMessageStoreMessagingRequestWithMetaResult<P, I> | undefined)[]> {
+      const dbConnection = await this._getSwarmMessagesKeyValueDatabaseConnection();
+      return await dbConnection.collectWithMeta(options);
+    }
+
     private async _requestDatabaseForDbKey(
       dbbKey: string
     ): Promise<(ISwarmMessageStoreMessagingRequestWithMetaResult<P, I> | undefined)[]> {
-      const dbConnection = await this._getSwarmMessagesKeyValueDatabaseConnection();
       const optionsForReadingKeyValue = this._createOptionsForCollectingDbKey(dbbKey);
-      return await dbConnection.collectWithMeta(optionsForReadingKeyValue);
+      return await this._requestDatabase(optionsForReadingKeyValue);
     }
 
     private async _readValueStoredInDatabaseByDbKey(
@@ -194,7 +233,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       throw new Error('Swarm connector type is not supported');
     }
 
-    protected async _readSwarmMessageForDbKey(
+    protected async _readSwarmMessagesChannelDescriptionOrUndefinedForDbKey(
       dbbKey: string
     ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any> | undefined> {
       const requestResultForDbKey = await this._readValueStoredInDatabaseByDbKey(dbbKey);
@@ -208,21 +247,30 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       return messageForDbKey;
     }
 
+    protected async _readAllChannelsDescriptionsWithMeta(): Promise<
+      ISwarmMessagesChannelDescriptionWithMetadata<P, T, I, any, any>[]
+    > {
+      const optionsForReadingAllValues = this._createOptionsForCollectingAllDatabaseValues();
+      const messagesReadFromDatabase = await this._requestDatabase(optionsForReadingAllValues);
+      const swarmMessagesChannelsDescriptionsOrErrors = await this._convertDatabaseRequestResultIntoSwarmChannelsDescriptionsWithMeta(
+        messagesReadFromDatabase
+      );
+      return swarmMessagesChannelsDescriptionsOrErrors;
+    }
+
     protected async _addSwarmMessageBodyInDatabase(
       dbKey: TSwarmStoreDatabaseEntityKey<P>,
       messageBody: TSwarmMessageConstructorBodyMessage
     ): Promise<TSwarmStoreDatabaseEntityAddress<P>> {
       const dbConnection = await this._getSwarmMessagesKeyValueDatabaseConnection();
-      // TODO - the dbConnection.addMessage(optionsForReadingKeyValue) returns the "any" type
       const swarmMessageAddress = await dbConnection.addMessage(messageBody, dbKey);
       return swarmMessageAddress;
     }
 
     protected async _removeValueForDbKey(dbKey: TSwarmStoreDatabaseEntityKey<P>): Promise<void> {
       const dbConnection = await this._getSwarmMessagesKeyValueDatabaseConnection();
-      // TODO - the dbConnection.addMessage(optionsForReadingKeyValue) returns the "any" type
-      const argumentForDeleteValueForKeyFromDbMethod = this._getArgumentForDeleteFromDbSwarmDbMethodByDbKey(dbKey);
-      await dbConnection.deleteMessage(argumentForDeleteValueForKeyFromDbMethod);
+      const argumentForDeleteValueForKeyFromDb = this._getArgumentForDeleteFromDbSwarmDbMethodByDbKey(dbKey);
+      await dbConnection.deleteMessage(argumentForDeleteValueForKeyFromDb);
     }
 
     private _getChannelsListDatabaseName(): string {
@@ -263,7 +311,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
     private _getExistingChannelDescriptionByMessageKey = async (
       dbbKey: string
     ): Promise<IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, I, CTX, DBO>['channelExistingDescription']> => {
-      return await this._readSwarmMessageForDbKey(dbbKey);
+      return await this._readSwarmMessagesChannelDescriptionOrUndefinedForDbKey(dbbKey);
     };
 
     private _createGrantAccessCallbackForChannelsListDatabase(): DBO['grantAccess'] {
@@ -311,6 +359,15 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       const { databaseConnectionFabric } = this._getUtilities();
       const connectionToDatabase = await databaseConnectionFabric(optionsForDatabase);
       return connectionToDatabase as PromiseResolveType<ReturnType<CARGS['utilities']['databaseConnectionFabric']>>;
+    }
+
+    protected async _convertDatabaseRequestResultIntoSwarmChannelsDescriptionsWithMeta(
+      swarmMessagesFromDatabase: (ISwarmMessageStoreMessagingRequestWithMetaResult<P, I> | undefined)[]
+    ): Promise<ISwarmMessagesChannelDescriptionWithMetadata<P, T, I, any, any>[]> {
+      const nonNullableSwarmMessagesFromDatabase = swarmMessagesFromDatabase.filter(isDefined);
+      return await Promise.all(
+        nonNullableSwarmMessagesFromDatabase.map(this._getSwarmChannelDescriptionWithMetadataBySwarmDbRequestResultWithMetadata)
+      );
     }
   }
   // TODO - typescript issue https://github.com/microsoft/TypeScript/issues/22815

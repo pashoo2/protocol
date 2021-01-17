@@ -5,11 +5,18 @@ import {
   TSwarmStoreDatabaseOptions,
 } from '../../swarm-store-class';
 import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from '../../swarm-message';
-import { ISwarmMessageChannelDescriptionRaw, TSwarmMessagesChannelId } from './swarm-messages-channel.types';
+import {
+  ISwarmMessageChannelDescriptionRaw,
+  TSwarmMessagesChannelId,
+  ISwarmMessagesChannelDescriptionWithMetadata,
+} from './swarm-messages-channel.types';
 import { ISwarmMessagesDatabaseConnector } from '../../swarm-messages-database';
 import { ISerializer } from '../../../types/serialization.types';
 import { ISwarmMessagesListDatabaseNameByDescriptionGenerator } from './swarm-messages-channels-utils.types';
-import { ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound } from '../../swarm-message-store/types/swarm-message-store.types';
+import {
+  ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound,
+  ISwarmMessageStoreMessagingRequestWithMetaResult,
+} from '../../swarm-message-store/types/swarm-message-store.types';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import {
   IValidatorOfSwarmMessagesChannelsListDescription,
@@ -129,7 +136,11 @@ export interface ISwarmMessagesChannelsDescriptionsListConnectionOptions<
  * @template T
  * @template DBO
  */
-export interface ISwarmMessagesChannelsDescriptionsList<P extends ESwarmStoreConnector, T extends TSwarmMessageSerialized> {
+export interface ISwarmMessagesChannelsDescriptionsList<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  I extends ISwarmMessageInstanceDecrypted
+> {
   /**
    * Description of the swarm messages channel list
    *
@@ -157,19 +168,6 @@ export interface ISwarmMessagesChannelsDescriptionsList<P extends ESwarmStoreCon
   removeChannelById(channelId: TSwarmMessagesChannelId): Promise<void>;
 
   /**
-   * Update channel's description by channel's identifier
-   *
-   * @param {TSwarmMessagesChannelId} channelId
-   * @param {Omit<ISwarmMessageChannelDescriptionRaw<P, T, any, any>, 'id'>} channelDescriptionRaw
-   * @returns {Promise<void>}
-   * @memberof ISwarmMessagesChannelsDescriptionsList
-   */
-  updateChannelDescriptionById(
-    channelId: TSwarmMessagesChannelId,
-    channelDescriptionRaw: Omit<ISwarmMessageChannelDescriptionRaw<P, T, any, any>, 'id'>
-  ): Promise<void>;
-
-  /**
    * Get description of the channel by it's identifier
    *
    * @param {TSwarmMessagesChannelId} channelId
@@ -183,10 +181,10 @@ export interface ISwarmMessagesChannelsDescriptionsList<P extends ESwarmStoreCon
   /**
    * Get all known channels descriptions and identifiers
    *
-   * @returns {Record<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any>>}
+   * @returns {Promise<ISwarmMessagesChannelDescriptionWithMetadata<P, T, I, any, any>>}
    * @memberof ISwarmMessagesChannelsDescriptionsList
    */
-  getAllChannelsDescriptions(): Promise<Record<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any>>>;
+  getAllChannelsDescriptions(): Promise<ISwarmMessagesChannelDescriptionWithMetadata<P, T, I, any, any>[]>;
 }
 
 export interface ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<
@@ -415,5 +413,5 @@ export interface ISwarmMessagesChannelsDescriptionsListConstructor<
 > {
   new (
     constructorArguments: ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, I, CTX, DBO>
-  ): ISwarmMessagesChannelsDescriptionsList<P, T>;
+  ): ISwarmMessagesChannelsDescriptionsList<P, T, I>;
 }

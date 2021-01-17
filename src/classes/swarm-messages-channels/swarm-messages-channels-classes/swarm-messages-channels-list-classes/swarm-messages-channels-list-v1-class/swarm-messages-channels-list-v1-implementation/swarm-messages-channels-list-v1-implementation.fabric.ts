@@ -14,8 +14,13 @@ import {
   ISwarmMessagesChannelsListDescription,
 } from '../../../../types/swarm-messages-channels-list.types';
 import { ConstructorType } from '../../../../../../types/helper.types';
-import { ISwarmMessageChannelDescriptionRaw, TSwarmMessagesChannelId } from '../../../../types/swarm-messages-channel.types';
+import {
+  ISwarmMessageChannelDescriptionRaw,
+  TSwarmMessagesChannelId,
+  ISwarmMessagesChannelDescriptionWithMetadata,
+} from '../../../../types/swarm-messages-channel.types';
 import { TSwarmMessageConstructorBodyMessage } from '../../../../../swarm-message/swarm-message-constructor.types';
+import { TSwarmStoreDatabaseEntityKey } from '../../../../../swarm-store-class/swarm-store-class.types';
 
 export function getSwarmMessagesChannelsListVersionOneClass<
   P extends ESwarmStoreConnector,
@@ -33,10 +38,10 @@ export function getSwarmMessagesChannelsListVersionOneClass<
     DBO,
     CARGS
   >
-): ConstructorType<ISwarmMessagesChannelsDescriptionsList<P, T>> {
+): ConstructorType<ISwarmMessagesChannelsDescriptionsList<P, T, I>> {
   abstract class SwarmMessagesChannelsListVersionOne
     extends ClassSwarmMessagesChannelsListVersionOneOptionsSetUp
-    implements ISwarmMessagesChannelsDescriptionsList<P, T> {
+    implements ISwarmMessagesChannelsDescriptionsList<P, T, I> {
     public get description(): Readonly<ISwarmMessagesChannelsListDescription> {
       return this._getChannelsListDescription();
     }
@@ -46,7 +51,19 @@ export function getSwarmMessagesChannelsListVersionOneClass<
       await this._addChannelDescriptionRawInSwarmDatabase(channelDescriptionRaw);
     }
 
-    public async removeChannelById(channelId: TSwarmMessagesChannelId): Promise<void> {}
+    public async removeChannelById(channelId: TSwarmMessagesChannelId): Promise<void> {
+      await this._removeValueForDbKey(channelId as TSwarmStoreDatabaseEntityKey<P>);
+    }
+
+    public async getAllChannelsDescriptions(): Promise<ISwarmMessagesChannelDescriptionWithMetadata<P, T, I, any, any>[]> {
+      return await this._readAllChannelsDescriptionsWithMeta();
+    }
+
+    public async getChannelDescriptionById(
+      channelId: TSwarmMessagesChannelId
+    ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any> | undefined> {
+      return await this._readSwarmMessagesChannelDescriptionOrUndefinedForDbKey(channelId as TSwarmStoreDatabaseEntityKey<P>);
+    }
 
     protected _createMessageBodyForChannelDescription(
       channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>
@@ -69,9 +86,15 @@ export function getSwarmMessagesChannelsListVersionOneClass<
       const keyInDatabaseForChannelDescription = this._getKeyInDatabaseForStoringChannelsListDescription(channelDescriptionRaw);
       await this._addSwarmMessageBodyInDatabase(keyInDatabaseForChannelDescription, swarmMessageWithChannelDescription);
     }
+
+    protected async _getExistingChannelDescription(
+      channelId: TSwarmMessagesChannelId
+    ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any> | undefined> {
+      return await this._readSwarmMessagesChannelDescriptionOrUndefinedForDbKey(channelId as TSwarmStoreDatabaseEntityKey<P>);
+    }
   }
 
   // TODO - typescript issue https://github.com/microsoft/TypeScript/issues/22815
   // Abstract classes that implement interfaces shouldn't require method signatures
-  return (SwarmMessagesChannelsListVersionOne as unknown) as ConstructorType<ISwarmMessagesChannelsDescriptionsList<P, T>>;
+  return (SwarmMessagesChannelsListVersionOne as unknown) as ConstructorType<ISwarmMessagesChannelsDescriptionsList<P, T, I>>;
 }

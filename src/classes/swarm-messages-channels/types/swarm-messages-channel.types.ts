@@ -25,6 +25,7 @@ import {
   ISwarmMessagesDatabaseConnector,
 } from 'classes/swarm-messages-database/swarm-messages-database.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from 'classes/swarm-messages-database/swarm-messages-database.messages-collector.types';
+import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../swarm-message-store/types/swarm-message-store.types';
 
 export type TSwarmMessagesChannelId = string;
 
@@ -113,6 +114,16 @@ export interface ISwarmMessageChannelDescriptionRaw<
    * @memberof ISwarmMessageChannelDescriptionRaw
    */
   admins: Array<TSwarmMessageUserIdentifierSerialized>;
+}
+
+export interface ISwarmMessagesChannelDescriptionWithMetadata<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  I extends ISwarmMessageInstanceDecrypted,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>
+> extends Readonly<ISwarmMessageStoreMessagingRequestWithMetaResult<P, I>> {
+  readonly channelDescription: Error | ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>;
 }
 
 /**
