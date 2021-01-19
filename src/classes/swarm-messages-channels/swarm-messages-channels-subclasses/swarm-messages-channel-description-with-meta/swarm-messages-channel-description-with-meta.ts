@@ -15,15 +15,15 @@ import { TSwarmStoreDatabaseEntityKey } from '../../../swarm-store-class/swarm-s
 export class SwarmMessagesChannelDescriptionWithMeta<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>
-> implements ISwarmMessagesChannelDescriptionWithMetadata<P, T, I, DbType, DBO> {
+> implements ISwarmMessagesChannelDescriptionWithMetadata<P, T, MD, DbType, DBO> {
   get channelDescription(): Error | ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO> {
     return this.__swarmMessagesChannelDescription;
   }
 
-  get message(): Error | I {
+  get message(): Error | MD {
     return this.__requestWithMetadata.message;
   }
 
@@ -40,7 +40,7 @@ export class SwarmMessagesChannelDescriptionWithMeta<
   }
 
   constructor(
-    private __requestWithMetadata: ISwarmMessageStoreMessagingRequestWithMetaResult<P, I>,
+    private __requestWithMetadata: ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD>,
     private __swarmMessagesChannelDescription: Error | ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>
   ) {}
 }

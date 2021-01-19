@@ -7,7 +7,7 @@ import {
   TSwarmStoreConnectorOrbitDbDatabaseAddMethodArgument,
 } from '../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 
-export interface ISwarmStoreConnectorBasic<
+export interface ISwarmStoreConnectorBasicMethods<
   TSwarmStoreConnectorType extends ESwarmStoreConnector,
   TStoreValue extends TSwarmStoreValueTypes<TSwarmStoreConnectorType>,
   DbType extends TSwarmStoreDatabaseType<TSwarmStoreConnectorType>

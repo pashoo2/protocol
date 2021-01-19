@@ -8,7 +8,7 @@ import {
 import { ISwarmMessageInstanceDecrypted } from 'classes/swarm-message/swarm-message-constructor.types';
 import { ISwarmMessageStoreConnectorDatabaseAccessControlleGrantCallbackBound } from '../../../swarm-store-connector-db-options.types';
 import { ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder } from '../../../swarm-store-connector-db-options.types';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/class/node_modules/classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 
 export function isDbOptionsWithGrandAccess<
   P extends ESwarmStoreConnector,

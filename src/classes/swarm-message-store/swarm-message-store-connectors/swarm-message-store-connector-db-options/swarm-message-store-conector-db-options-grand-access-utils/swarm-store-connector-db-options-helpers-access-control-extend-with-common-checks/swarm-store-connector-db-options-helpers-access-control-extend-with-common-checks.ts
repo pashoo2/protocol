@@ -342,10 +342,10 @@ export const createSwarmMessageStoreUtilsExtenderOrbitDBDatabaseOptionsWithAcces
   CO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, PO>,
   ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, PO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
-  I extends ISwarmMessageInstanceDecrypted,
-  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, I | T>,
+  MD extends ISwarmMessageInstanceDecrypted,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MD | T>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
-  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, I | T, GAC> | undefined,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MD | T, GAC> | undefined,
   O extends ISwarmMessageStoreOptionsWithConnectorFabric<
     P,
     T,
@@ -356,7 +356,7 @@ export const createSwarmMessageStoreUtilsExtenderOrbitDBDatabaseOptionsWithAcces
     CO,
     ConnectorMain,
     CFO,
-    I | T,
+    MD | T,
     GAC,
     MCF,
     ACO
@@ -365,7 +365,7 @@ export const createSwarmMessageStoreUtilsExtenderOrbitDBDatabaseOptionsWithAcces
   swarmMessageStoreOptions: O,
   swarmMessageValidatorFabricForGrandAccessCallbackBoundToContext: (
     grantAccessCb: GAC
-  ) => TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, I>
+  ) => TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, MD>
 ) => (dbOptions: DBO): DBO & ISwarmStoreDatabaseBaseOptions & { provider: P } => {
   const { grantAccessCallback, allowAccessForUsers } = returnGACAndUsersWithWriteAccessForOrbitDbDatabase<
     P,
@@ -377,7 +377,7 @@ export const createSwarmMessageStoreUtilsExtenderOrbitDBDatabaseOptionsWithAcces
     CO,
     ConnectorMain,
     CFO,
-    I | T,
+    MD | T,
     GAC,
     MCF,
     ACO,
@@ -388,7 +388,7 @@ export const createSwarmMessageStoreUtilsExtenderOrbitDBDatabaseOptionsWithAcces
     T,
     DbType,
     DBO,
-    I,
+    MD,
     GAC
   >(dbOptions, allowAccessForUsers, grantAccessCallback, swarmMessageValidatorFabricForGrandAccessCallbackBoundToContext) as DBO &
     ISwarmStoreDatabaseBaseOptions & { provider: P };

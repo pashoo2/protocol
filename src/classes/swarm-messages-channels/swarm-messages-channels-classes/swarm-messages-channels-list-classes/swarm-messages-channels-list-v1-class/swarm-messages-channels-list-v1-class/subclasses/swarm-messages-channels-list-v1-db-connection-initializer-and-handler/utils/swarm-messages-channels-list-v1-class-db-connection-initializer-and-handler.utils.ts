@@ -17,22 +17,22 @@ import { ICreateGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescr
 export function getVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidator<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 >({
   payload,
   userId,
   key,
   operation,
 }: {
-  payload: T | I;
+  payload: T | MD;
   userId: TSwarmMessageUserIdentifierSerialized;
   // key of the value
   key?: string;
   // operation which is processed (like delete, add or something else)
   operation?: TSwarmStoreDatabaseEntryOperation<P>;
-}): Omit<Required<ISwarmMessagesChannelsListV1GrantAccessVariableArguments<P, T, I, CTX, DBO>>, 'channelExistingDescription'> {
+}): Omit<Required<ISwarmMessagesChannelsListV1GrantAccessVariableArguments<P, T, MD, CTX, DBO>>, 'channelExistingDescription'> {
   if (!key) {
     throw new Error('A key must be provided for swarm messages channel description');
   }
@@ -50,20 +50,20 @@ export function getVariableArgumentsWithoutExistingChannelDescriptionForGrantAcc
 export function getArgumentsForSwarmMessageWithChannelDescriptionValidator<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 >(
-  constantArguments: ISwarmMessagesChannelsListV1GrantAccessConstantArguments<P, T, I, CTX, DBO>,
-  variableArguments: ISwarmMessagesChannelsListV1GrantAccessVariableArguments<P, T, I, CTX, DBO>,
+  constantArguments: ISwarmMessagesChannelsListV1GrantAccessConstantArguments<P, T, MD, CTX, DBO>,
+  variableArguments: ISwarmMessagesChannelsListV1GrantAccessVariableArguments<P, T, MD, CTX, DBO>,
   channelExistingDescription: IValidatorOfSwarmMessageWithChannelDescriptionArgument<
     P,
     T,
-    I,
+    MD,
     CTX,
     DBO
   >['channelExistingDescription']
-): IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, I, CTX, DBO> {
+): IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, MD, CTX, DBO> {
   return {
     ...constantArguments,
     ...variableArguments,
@@ -74,9 +74,9 @@ export function getArgumentsForSwarmMessageWithChannelDescriptionValidator<
 export function createGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidator<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 >({
   constantArguments,
   channelDescriptionSwarmMessageValidator,
@@ -86,13 +86,13 @@ export function createGrantAccessCallbackByConstantArgumentsAndMessageWithChanne
 }: ICreateGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidatorArguments<
   P,
   T,
-  I,
+  MD,
   CTX,
   DBO
 >): DBO['grantAccess'] {
   async function channelsListGrantAccessCallbackFunction(
     this: CTX,
-    payload: T | I,
+    payload: T | MD,
     userId: TSwarmMessageUserIdentifierSerialized,
     // key of the value
     key?: string,

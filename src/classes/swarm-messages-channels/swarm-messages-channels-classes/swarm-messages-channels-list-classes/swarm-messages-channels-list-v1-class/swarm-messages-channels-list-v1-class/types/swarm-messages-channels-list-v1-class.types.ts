@@ -17,21 +17,21 @@ export type TSwarmMessagesChannelsListV1GrantAccessVariableArgumentsPropNames =
 export interface ISwarmMessagesChannelsListV1GrantAccessConstantArguments<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 > extends Omit<
-    IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, I, CTX, DBO>,
+    IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, MD, CTX, DBO>,
     TSwarmMessagesChannelsListV1GrantAccessVariableArgumentsPropNames
   > {}
 
 export interface ISwarmMessagesChannelsListV1GrantAccessVariableArguments<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 > extends Pick<
-    IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, I, CTX, DBO>,
+    IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, MD, CTX, DBO>,
     TSwarmMessagesChannelsListV1GrantAccessVariableArgumentsPropNames
   > {}

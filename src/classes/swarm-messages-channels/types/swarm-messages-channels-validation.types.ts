@@ -1,4 +1,3 @@
-import { JSONSchema7 } from 'json-schema';
 import { TSwarmMessageUserIdentifierSerialized } from '../../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import {
   ESwarmStoreConnector,
@@ -7,10 +6,7 @@ import {
   TSwarmStoreDatabaseType,
 } from '../../swarm-store-class';
 import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from '../../swarm-message';
-import {
-  ISwarmStoreDBOGrandAccessCallbackBaseContextMethods,
-  ISwarmStoreDBOGrandAccessCallbackBaseContext,
-} from '../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { ISwarmMessageChannelDescriptionRaw } from './swarm-messages-channel.types';
 import {
   IGetDatabaseKeyForChannelDescription,
@@ -21,15 +17,6 @@ import {
   ISwarmMessagesChannelsListDescription,
   TSwrmMessagesChannelsListDBOWithGrantAccess,
 } from './swarm-messages-channels-list.types';
-
-/**
- * Context for various validation functions
- *
- * @export
- * @interface ISwarmMessagesChannelValidationContext
- */
-export interface ISwarmMessagesChannelValidationContext
-  extends Pick<ISwarmStoreDBOGrandAccessCallbackBaseContextMethods, 'isUserValid'> {}
 
 /**
  * Validate the swarm messages channel description format
@@ -66,15 +53,15 @@ export interface ISwarmMessagesChannelDescriptionFormatValidator<
 export interface IValidatorOfSwarmMessageWithChannelDescription<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 > {
   (
     /** context will be passed from the database, but should contatain specific for swarm channel validators methods */
-    this: ISwarmMessagesChannelValidationContext,
+    this: CTX,
     /** argument will be passed from the swarm messages channels list instance */
-    argument: IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, I, CTX, DBO>
+    argument: IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, MD, CTX, DBO>
   ): Promise<void>;
 }
 
@@ -114,18 +101,18 @@ export interface ISwamChannelsListDatabaseOptionsValidator {
 export interface IValidatorOfSwarmMessageWithChannelDescriptionArgument<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 > {
   /**
    * If operation is DELETE, then it should be a hash of the message deleted.
    * Otherwise it should be swarm message deserialized and decrypted.
    *
-   * @type {(T | ISwarmMessageInstanceDecrypted)}
+   * @type {(T | MD)}
    * @memberof IGrantAccessCallbackSwrmMessagesChannelsListArguments
    */
-  messageOrHash: T | ISwarmMessageInstanceDecrypted;
+  messageOrHash: T | MD;
   /**
    * Who is a sender of the message
    *

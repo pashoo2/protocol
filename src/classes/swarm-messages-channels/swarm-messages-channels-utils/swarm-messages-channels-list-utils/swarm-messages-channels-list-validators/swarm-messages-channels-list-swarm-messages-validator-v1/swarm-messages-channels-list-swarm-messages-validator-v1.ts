@@ -1,22 +1,24 @@
 import { ESwarmStoreConnector } from '../../../../../swarm-store-class/swarm-store-class.const';
-import { TSwarmMessageSerialized } from '../../../../../swarm-message/swarm-message-constructor.types';
+import {
+  TSwarmMessageSerialized,
+  ISwarmMessageInstanceDecrypted,
+} from '../../../../../swarm-message/swarm-message-constructor.types';
 import { EOrbitDbFeedStoreOperation } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import assert from 'assert';
 import { ISwarmMessageChannelDescriptionRaw } from '../../../../types/swarm-messages-channel.types';
 import { isValidSwarmMessageDecryptedFormat } from '../../../../../swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-swarm-message';
-import {
-  IValidatorOfSwarmMessageWithChannelDescriptionArgument,
-  ISwarmMessagesChannelValidationContext,
-} from '../../../../types/swarm-messages-channels-validation.types';
+import { IValidatorOfSwarmMessageWithChannelDescriptionArgument } from '../../../../types/swarm-messages-channels-validation.types';
 import { TSwrmMessagesChannelsListDBOWithGrantAccess } from '../../../../types/swarm-messages-channels-list.types';
 import { IValidatorOfSwarmMessageWithChannelDescription } from '../../../../types/swarm-messages-channels-validation.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 
 export async function validatorOfSwrmMessageWithChannelDescription<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T>,
-  CTX extends ISwarmMessagesChannelValidationContext
->(this: CTX, argument: IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, DBO>): Promise<void> {
+  MD extends ISwarmMessageInstanceDecrypted,
+  CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
+>(this: CTX, argument: IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, MD, CTX, DBO>): Promise<void> {
   if (!this) {
     throw new Error('A context value should be provided in for the grant access callback function');
   }
@@ -114,7 +116,9 @@ export async function validatorOfSwrmMessageWithChannelDescription<
 export function getValidatorOfSwrmMessageWithChannelDescription<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T>
->(): IValidatorOfSwarmMessageWithChannelDescription<P, T, DBO> {
+  MD extends ISwarmMessageInstanceDecrypted,
+  CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
+>(): IValidatorOfSwarmMessageWithChannelDescription<P, T, MD, CTX, DBO> {
   return validatorOfSwrmMessageWithChannelDescription;
 }

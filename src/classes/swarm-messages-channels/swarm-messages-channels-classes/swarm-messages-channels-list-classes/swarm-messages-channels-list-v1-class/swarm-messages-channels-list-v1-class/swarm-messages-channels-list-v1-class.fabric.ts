@@ -25,23 +25,23 @@ import { TSwarmStoreDatabaseEntityKey } from '../../../../../swarm-store-class/s
 export function getSwarmMessagesChannelsListVersionOneClass<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>,
-  CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, I, CTX, DBO>
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
+  CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO>
 >(
   ClassSwarmMessagesChannelsListVersionOneOptionsSetUp: IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler<
     P,
     T,
-    I,
+    MD,
     CTX,
     DBO,
     CARGS
   >
-): ConstructorType<ISwarmMessagesChannelsDescriptionsList<P, T, I>> {
+): ConstructorType<ISwarmMessagesChannelsDescriptionsList<P, T, MD>> {
   abstract class SwarmMessagesChannelsListVersionOne
     extends ClassSwarmMessagesChannelsListVersionOneOptionsSetUp
-    implements ISwarmMessagesChannelsDescriptionsList<P, T, I> {
+    implements ISwarmMessagesChannelsDescriptionsList<P, T, MD> {
     public get description(): Readonly<ISwarmMessagesChannelsListDescription> {
       return this._getChannelsListDescription();
     }
@@ -55,7 +55,7 @@ export function getSwarmMessagesChannelsListVersionOneClass<
       await this._removeValueForDbKey(channelId as TSwarmStoreDatabaseEntityKey<P>);
     }
 
-    public async getAllChannelsDescriptions(): Promise<ISwarmMessagesChannelDescriptionWithMetadata<P, T, I, any, any>[]> {
+    public async getAllChannelsDescriptions(): Promise<ISwarmMessagesChannelDescriptionWithMetadata<P, T, MD, any, any>[]> {
       return await this._readAllChannelsDescriptionsWithMeta();
     }
 
@@ -96,5 +96,5 @@ export function getSwarmMessagesChannelsListVersionOneClass<
 
   // TODO - typescript issue https://github.com/microsoft/TypeScript/issues/22815
   // Abstract classes that implement interfaces shouldn't require method signatures
-  return (SwarmMessagesChannelsListVersionOne as unknown) as ConstructorType<ISwarmMessagesChannelsDescriptionsList<P, T, I>>;
+  return (SwarmMessagesChannelsListVersionOne as unknown) as ConstructorType<ISwarmMessagesChannelsDescriptionsList<P, T, MD>>;
 }

@@ -1,4 +1,3 @@
-import { DeepReadonly } from 'ts-essentials';
 import {
   ESwarmStoreConnector,
   ESwarmStoreConnectorOrbitDbDatabaseType,
@@ -13,10 +12,7 @@ import {
 import { ISwarmMessagesDatabaseConnector } from '../../swarm-messages-database';
 import { ISerializer } from '../../../types/serialization.types';
 import { ISwarmMessagesListDatabaseNameByDescriptionGenerator } from './swarm-messages-channels-utils.types';
-import {
-  ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound,
-  ISwarmMessageStoreMessagingRequestWithMetaResult,
-} from '../../swarm-message-store/types/swarm-message-store.types';
+import { ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound } from '../../swarm-message-store/types/swarm-message-store.types';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import {
   IValidatorOfSwarmMessagesChannelsListDescription,
@@ -27,7 +23,6 @@ import {
   IValidatorOfSwarmMessageWithChannelDescription,
 } from './swarm-messages-channels-validation.types';
 import {
-  IBodyCreatorOfSwarmMessageWithChannelDescription,
   IGetDatabaseKeyForChannelDescription,
   IGetSwarmMessageWithChannelDescriptionIssuerByChannelListDescription,
   IGetSwarmMessageWithChannelDescriptionTypeByChannelListDescription,
@@ -36,7 +31,7 @@ import {
 export type TSwrmMessagesChannelsListDBOWithGrantAccess<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext
 > = Omit<
   TSwarmStoreDatabaseOptions<P, T, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>,
@@ -47,15 +42,15 @@ export type TSwrmMessagesChannelsListDBOWithGrantAccess<
    *
    * @type {TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, ISwarmMessageInstanceDecrypted>}
    */
-  grantAccess: ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<P, T, I, CTX>;
+  grantAccess: ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<P, T, MD, CTX>;
 };
 
-export type TSwrmMessagesChannelsListFullDBO<
+export type DBOFULL<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 > = TSwarmStoreDatabaseOptions<P, T, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE> &
   DBO & {
     // a name of the database
@@ -67,7 +62,7 @@ export type TSwrmMessagesChannelsListFullDBO<
      *
      * @type {TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, ISwarmMessageInstanceDecrypted>}
      */
-    grantAccess: ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<P, T, I, CTX>;
+    grantAccess: ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<P, T, MD, CTX>;
   };
 
 /**
@@ -107,9 +102,9 @@ export interface ISwarmMessagesChannelsListDescription {
 export interface ISwarmMessagesChannelsDescriptionsListConnectionOptions<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 > {
   /**
    * Connector type used for the list
@@ -139,7 +134,7 @@ export interface ISwarmMessagesChannelsDescriptionsListConnectionOptions<
 export interface ISwarmMessagesChannelsDescriptionsList<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends ISwarmMessageInstanceDecrypted
+  MD extends ISwarmMessageInstanceDecrypted
 > {
   /**
    * Description of the swarm messages channel list
@@ -181,30 +176,30 @@ export interface ISwarmMessagesChannelsDescriptionsList<
   /**
    * Get all known channels descriptions and identifiers
    *
-   * @returns {Promise<ISwarmMessagesChannelDescriptionWithMetadata<P, T, I, any, any>>}
+   * @returns {Promise<ISwarmMessagesChannelDescriptionWithMetadata<P, T, MD, any, any>>}
    * @memberof ISwarmMessagesChannelsDescriptionsList
    */
-  getAllChannelsDescriptions(): Promise<ISwarmMessagesChannelDescriptionWithMetadata<P, T, I, any, any>[]>;
+  getAllChannelsDescriptions(): Promise<ISwarmMessagesChannelDescriptionWithMetadata<P, T, MD, any, any>[]>;
 }
 
 export interface ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 > {
   /**
    * Fabric which creates a connection to the swarm messages database by a database options
    *
    * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArguments
    */
-  (dbo: DBO): Promise<
+  <DBOF extends DBOFULL<P, T, MD, CTX, DBO>>(dbo: DBOF): Promise<
     ISwarmMessagesDatabaseConnector<
       P,
       T,
       ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
-      TSwrmMessagesChannelsListFullDBO<P, T, I, CTX, DBO>,
+      DBOF,
       any,
       any,
       any,
@@ -236,9 +231,9 @@ export interface ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils
 export interface ISwarmMessagesChannelsDescriptionsListConstructorArgumentsValidators<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 > {
   /**
    * Validator of channel description format
@@ -254,7 +249,7 @@ export interface ISwarmMessagesChannelsDescriptionsListConstructorArgumentsValid
    * @type {IValidatorOfSwarmMessageWithChannelDescription<P, T, DBO>}
    * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArguments
    */
-  channelDescriptionSwarmMessageValidator: IValidatorOfSwarmMessageWithChannelDescription<P, T, I, CTX, DBO>;
+  channelDescriptionSwarmMessageValidator: IValidatorOfSwarmMessageWithChannelDescription<P, T, MD, CTX, DBO>;
   /**
    * Validator of a description of a swarm channels list.
    *
@@ -285,9 +280,9 @@ export interface ISwarmMessagesChannelsDescriptionsListConstructorArgumentsValid
 export interface ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 > {
   /**
    * Generator of a database name by the swarm channels list description.
@@ -304,7 +299,7 @@ export interface ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils
   databaseConnectionFabric: ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<
     P,
     T,
-    I,
+    MD,
     CTX,
     DBO
   >;
@@ -342,11 +337,6 @@ export interface ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils
    * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils
    */
   getDatabaseKeyForChannelDescription: IGetDatabaseKeyForChannelDescription<P, T>;
-  /**
-   * This utility will be used for creation of a swarm message body with a channel
-   * description.
-   */
-  createSwarmMessageBodyForChannelDescription: IBodyCreatorOfSwarmMessageWithChannelDescription<P, T>;
 }
 
 /**
@@ -361,9 +351,9 @@ export interface ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils
 export interface ISwarmMessagesChannelsDescriptionsListConstructorArguments<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 > {
   /**
    * Description of the channels list
@@ -379,7 +369,7 @@ export interface ISwarmMessagesChannelsDescriptionsListConstructorArguments<
    * @type {Readonly<ISwarmMessagesChannelsDescriptionsListConnectionOptions<P, T, DBO>>}
    * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArguments
    */
-  connectionOptions: Readonly<ISwarmMessagesChannelsDescriptionsListConnectionOptions<P, T, I, CTX, DBO>>;
+  connectionOptions: Readonly<ISwarmMessagesChannelsDescriptionsListConnectionOptions<P, T, MD, CTX, DBO>>;
   /**
    * Used for channels descriptions serialization
    *
@@ -394,24 +384,24 @@ export interface ISwarmMessagesChannelsDescriptionsListConstructorArguments<
    *
    * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArguments
    */
-  utilities: ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils<P, T, I, CTX, DBO>;
+  utilities: ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils<P, T, MD, CTX, DBO>;
   /**
    * Validators used for validate various options or params
    *
    * @type {ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils<P, T, DBO>}
    * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArguments
    */
-  validators: ISwarmMessagesChannelsDescriptionsListConstructorArgumentsValidators<P, T, I, CTX, DBO>;
+  validators: ISwarmMessagesChannelsDescriptionsListConstructorArgumentsValidators<P, T, MD, CTX, DBO>;
 }
 
 export interface ISwarmMessagesChannelsDescriptionsListConstructor<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 > {
   new (
-    constructorArguments: ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, I, CTX, DBO>
-  ): ISwarmMessagesChannelsDescriptionsList<P, T, I>;
+    constructorArguments: ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO>
+  ): ISwarmMessagesChannelsDescriptionsList<P, T, MD>;
 }

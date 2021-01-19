@@ -20,11 +20,11 @@ import { TSwarmStoreDatabaseEntityKey } from '../../../../../../../swarm-store-c
 export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>,
-  CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, I, CTX, DBO>
-> extends AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<P, T, I, CTX, DBO, CARGS> {
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
+  CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO>
+> extends AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<P, T, MD, CTX, DBO, CARGS> {
   protected readonly _serializer: CARGS['serializer'];
 
   protected readonly _channelsListDescription: Readonly<CARGS['description']>;
@@ -54,7 +54,7 @@ export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
   }
 
   protected _validateConstructorArgumentsConnectionOptions(
-    connectionOptions: Readonly<ISwarmMessagesChannelsDescriptionsListConnectionOptions<P, T, I, CTX, DBO>>
+    connectionOptions: Readonly<ISwarmMessagesChannelsDescriptionsListConnectionOptions<P, T, MD, CTX, DBO>>
   ): void {
     assert(connectionOptions, 'Conection options should be provided');
     assert(connectionOptions.connectorType, 'Connector type is not provided');
@@ -96,7 +96,6 @@ export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
     assert(typeof utilities === 'object', 'Utilities option must be an object');
 
     const {
-      createSwarmMessageBodyForChannelDescription,
       databaseConnectionFabric,
       databaseNameGenerator,
       getDatabaseKeyForChannelDescription,
@@ -104,10 +103,6 @@ export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
       getTypeForSwarmMessageWithChannelDescriptionByChannelDescription,
     } = utilities;
 
-    assert(
-      isNonNativeFunction(createSwarmMessageBodyForChannelDescription),
-      '"createSwarmMessageBodyForChannelDescription" utility must be a non native functon'
-    );
     assert(isNonNativeFunction(databaseConnectionFabric), '"databaseConnectionFabric" utility must be a non native functon');
     assert(isNonNativeFunction(databaseNameGenerator), '"databaseNameGenerator" utility must be a non native functon');
     assert(

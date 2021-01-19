@@ -119,7 +119,7 @@ export interface ISwarmMessageChannelDescriptionRaw<
 export interface ISwarmMessagesChannelDescriptionWithMetadata<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>
 > extends Readonly<ISwarmMessageStoreMessagingRequestWithMetaResult<P, I>> {

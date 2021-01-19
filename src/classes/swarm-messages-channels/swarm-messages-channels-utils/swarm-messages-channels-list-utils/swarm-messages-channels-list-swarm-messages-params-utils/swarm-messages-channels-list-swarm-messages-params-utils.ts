@@ -5,6 +5,7 @@ import {
 } from '../../../../swarm-message/swarm-message-constructor.types';
 import { ISwarmMessageChannelDescriptionRaw } from '../../../types/swarm-messages-channel.types';
 import { ISwarmMessagesChannelsListDescription } from '../../../types/swarm-messages-channels-list.types';
+import { TSwarmStoreDatabaseEntityKey } from '../../../../swarm-store-class/swarm-store-class.types';
 
 /**
  * Return database key equals to the channel identity.
@@ -18,10 +19,8 @@ import { ISwarmMessagesChannelsListDescription } from '../../../types/swarm-mess
 export function getChannelsListDatabaseKeyForChannelDescription<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized
->(
-  channelDescription: Readonly<ISwarmMessageChannelDescriptionRaw<P, T, any, any>>
-): Pick<TSwarmMessageConstructorBodyMessage, 'iss'>['iss'] {
-  return channelDescription.id;
+>(channelDescription: Readonly<ISwarmMessageChannelDescriptionRaw<P, T, any, any>>): TSwarmStoreDatabaseEntityKey<P> {
+  return channelDescription.id as TSwarmStoreDatabaseEntityKey<P>;
 }
 
 /**
@@ -66,7 +65,7 @@ export function getSwarmMessageWithChannelDescriptionIssuerByChannelListDescript
  * @returns {string}
  */
 export function getSwarmMessagesListDatbaseNameByChannelDescription(
-  channelsListDescription: Readonly<ISwarmMessagesChannelsListDescription>
+  swarmMessagesListDescription: ISwarmMessagesChannelsListDescription
 ): string {
-  return channelsListDescription.id;
+  return swarmMessagesListDescription.id;
 }

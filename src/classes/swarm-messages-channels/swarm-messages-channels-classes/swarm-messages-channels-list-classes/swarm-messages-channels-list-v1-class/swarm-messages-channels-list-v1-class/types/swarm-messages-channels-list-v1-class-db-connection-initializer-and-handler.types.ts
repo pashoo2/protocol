@@ -31,9 +31,9 @@ import {
 export interface IGetVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidatorCreator<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 > {
   ({
     payload,
@@ -41,75 +41,75 @@ export interface IGetVariableArgumentsWithoutExistingChannelDescriptionForGrantA
     key,
     operation,
   }: {
-    payload: T | I;
+    payload: T | MD;
     userId: TSwarmMessageUserIdentifierSerialized;
     // key of the value
     key?: string;
     // operation which is processed (like delete, add or something else)
     operation?: TSwarmStoreDatabaseEntryOperation<P>;
-  }): Omit<Required<ISwarmMessagesChannelsListV1GrantAccessVariableArguments<P, T, I, CTX, DBO>>, 'channelExistingDescription'>;
+  }): Omit<Required<ISwarmMessagesChannelsListV1GrantAccessVariableArguments<P, T, MD, CTX, DBO>>, 'channelExistingDescription'>;
 }
 
 export interface IGetArgumentsForSwarmMessageWithChannelDescriptionValidator<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 > {
   (
-    constantArguments: ISwarmMessagesChannelsListV1GrantAccessConstantArguments<P, T, I, CTX, DBO>,
+    constantArguments: ISwarmMessagesChannelsListV1GrantAccessConstantArguments<P, T, MD, CTX, DBO>,
     variableArguments: Omit<
-      Required<ISwarmMessagesChannelsListV1GrantAccessVariableArguments<P, T, I, CTX, DBO>>,
+      Required<ISwarmMessagesChannelsListV1GrantAccessVariableArguments<P, T, MD, CTX, DBO>>,
       'channelExistingDescription'
     >,
     channelExistingDescription: IValidatorOfSwarmMessageWithChannelDescriptionArgument<
       P,
       T,
-      I,
+      MD,
       CTX,
       DBO
     >['channelExistingDescription']
-  ): IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, I, CTX, DBO>;
+  ): IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, MD, CTX, DBO>;
 }
 
 export interface ICreateGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidator<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 > {
   (
-    params: ICreateGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidatorArguments<P, T, I, CTX, DBO>
+    params: ICreateGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidatorArguments<P, T, MD, CTX, DBO>
   ): DBO['grantAccess'];
 }
 
 export interface IAdditionalUtils<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 > {
   createGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidator: ICreateGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidator<
     P,
     T,
-    I,
+    MD,
     CTX,
     DBO
   >;
   getVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidator: IGetVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidatorCreator<
     P,
     T,
-    I,
+    MD,
     CTX,
     DBO
   >;
   getArgumentsForSwarmMessageWithChannelDescriptionValidator: IGetArgumentsForSwarmMessageWithChannelDescriptionValidator<
     P,
     T,
-    I,
+    MD,
     CTX,
     DBO
   >;
@@ -118,39 +118,39 @@ export interface IAdditionalUtils<
 export interface ICreateGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidatorArguments<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 > {
-  constantArguments: ISwarmMessagesChannelsListV1GrantAccessConstantArguments<P, T, I, CTX, DBO>;
-  channelDescriptionSwarmMessageValidator: IValidatorOfSwarmMessageWithChannelDescription<P, T, I, CTX, DBO>;
+  constantArguments: ISwarmMessagesChannelsListV1GrantAccessConstantArguments<P, T, MD, CTX, DBO>;
+  channelDescriptionSwarmMessageValidator: IValidatorOfSwarmMessageWithChannelDescription<P, T, MD, CTX, DBO>;
   getVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidator: IGetVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidatorCreator<
     P,
     T,
-    I,
+    MD,
     CTX,
     DBO
   >;
   getArgumentsForSwarmMessageWithChannelDescriptionValidator: IGetArgumentsForSwarmMessageWithChannelDescriptionValidator<
     P,
     T,
-    I,
+    MD,
     CTX,
     DBO
   >;
   getExistingChannelDescriptionByMessageKey: (
     dbbKey: string
-  ) => Promise<IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, I, CTX, DBO>['channelExistingDescription']>;
+  ) => Promise<IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, MD, CTX, DBO>['channelExistingDescription']>;
 }
 
 export abstract class AbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>,
-  CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, I, CTX, DBO>
-> extends AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<P, T, I, CTX, DBO, CARGS> {
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
+  CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO>
+> extends AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<P, T, MD, CTX, DBO, CARGS> {
   protected abstract async _readSwarmMessagesChannelDescriptionOrUndefinedForDbKey(
     dbbKey: TSwarmStoreDatabaseEntityKey<P>
   ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any> | undefined>;
@@ -163,17 +163,24 @@ export abstract class AbstractSwarmMessagesChannelsListVersionOneDatabaseConnect
   ): Promise<TSwarmStoreDatabaseEntityAddress<P>>;
 
   protected abstract _readAllChannelsDescriptionsWithMeta(): Promise<
-    ISwarmMessagesChannelDescriptionWithMetadata<P, T, I, any, any>[]
+    ISwarmMessagesChannelDescriptionWithMetadata<P, T, MD, any, any>[]
   >;
 }
 
 export interface IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>,
-  CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, I, CTX, DBO>
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
+  CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO>
 > {
-  new (args: CARGS): AbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler<P, T, I, CTX, DBO, CARGS>;
+  new (args: CARGS): AbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler<
+    P,
+    T,
+    MD,
+    CTX,
+    DBO,
+    CARGS
+  >;
 }

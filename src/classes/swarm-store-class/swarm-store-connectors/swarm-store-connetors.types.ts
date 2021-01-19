@@ -13,7 +13,6 @@ import {
   IOptionsSerializerValidator,
   IOptionsSerializerValidatorValidators,
 } from '../../basic-classes/options-serializer-validator-class';
-import { ISwarmMessageInstanceDecrypted } from '../../swarm-message/swarm-message-constructor.types';
 
 /**
  * Base context methods

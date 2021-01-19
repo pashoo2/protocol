@@ -1,10 +1,10 @@
+import assert from 'assert';
 import { ESwarmStoreConnector } from '../../../../../../swarm-store-class/swarm-store-class.const';
 import { TSwarmMessageSerialized } from '../../../../../../swarm-message/swarm-message-constructor.types';
 import { TSwarmStoreDatabaseOptions } from '../../../../../../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageChannelDescriptionRaw } from '../../../../../types/swarm-messages-channel.types';
-import { ISwarmMessagesChannelValidationContext } from '../../../../../types/swarm-messages-channels-validation.types';
-import assert from 'assert';
 import { isArrowFunction, isNativeFunction } from '../../../../../../../utils/common-utils/common-utils.functions';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 
 /**
  * Used for validation the swarm channel description format
@@ -17,9 +17,9 @@ export async function swarmMessagesChannelValidationDescriptionFormatV1<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DBO extends TSwarmStoreDatabaseOptions<P, T, any>,
-  SMCVCTX extends ISwarmMessagesChannelValidationContext
+  CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext
 >(
-  this: SMCVCTX,
+  this: CTX,
   swarmMessagesChannelDescriptionRawV1Format: ISwarmMessageChannelDescriptionRaw<P, T, any, DBO>,
   additionalParams: {
     /**
@@ -51,6 +51,8 @@ export async function swarmMessagesChannelValidationDescriptionFormatV1<
   assert(admins.length, 'List with admins must must contain at least one user identity');
 
   const { write: usersIdsWithWriteAccess, grantAccess } = dbOptions;
+  // eslint-disable-next-line @typescript-eslint/unbound-method
+  const { isUserValid } = this;
 
   if (grantAccess) {
     assert(typeof grantAccess === 'function', 'Grant access function must be a function');
@@ -68,14 +70,14 @@ export async function swarmMessagesChannelValidationDescriptionFormatV1<
     );
     assert(Array.isArray(usersIdsWithWriteAccess), 'A list with users which have a write access to the channel must be an array');
     try {
-      await validateUsersList(usersIdsWithWriteAccess as string[], this.isUserValid);
+      await validateUsersList(usersIdsWithWriteAccess as string[], isUserValid);
     } catch (err) {
       throw new Error(`Users identifiers list, which have a write access is not valid: ${err.message}`);
     }
   }
 
   try {
-    await validateUsersList(admins, this.isUserValid);
+    await validateUsersList(admins, isUserValid);
   } catch (err) {
     throw new Error(`Admin users identities are not valid: ${err.message}`);
   }

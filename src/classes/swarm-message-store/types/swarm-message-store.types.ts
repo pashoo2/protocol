@@ -552,7 +552,7 @@ export interface ISwarmMessageStoreWithEntriesCount<
 export interface ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext
 > extends ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<P, ItemType, CTX> {
   (

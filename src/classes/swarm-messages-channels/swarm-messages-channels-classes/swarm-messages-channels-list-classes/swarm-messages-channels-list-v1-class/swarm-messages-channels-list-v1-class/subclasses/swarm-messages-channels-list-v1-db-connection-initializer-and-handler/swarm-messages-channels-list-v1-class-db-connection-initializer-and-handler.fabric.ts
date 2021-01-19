@@ -9,10 +9,7 @@ import {
   ISwarmMessagesChannelDescriptionWithMetadata,
 } from '../../../../../../types/swarm-messages-channel.types';
 import { PromiseResolveType } from '../../../../../../../../types/promise.types';
-import {
-  TSwrmMessagesChannelsListDBOWithGrantAccess,
-  TSwrmMessagesChannelsListFullDBO,
-} from '../../../../../../types/swarm-messages-channels-list.types';
+import { TSwrmMessagesChannelsListDBOWithGrantAccess, DBOFULL } from '../../../../../../types/swarm-messages-channels-list.types';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { IValidatorOfSwarmMessageWithChannelDescriptionArgument } from '../../../../../../types/swarm-messages-channels-validation.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseIteratorOption } from '../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
@@ -43,25 +40,25 @@ import {
 export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandlerClass<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends ISwarmMessageInstanceDecrypted,
+  MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, I, CTX>,
-  CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, I, CTX, DBO>
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
+  CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO>
 >(
   ClassSwarmMessagesChannelsListVersionOneOptionsSetUp: IConstructorAbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<
     P,
     T,
-    I,
+    MD,
     CTX,
     DBO,
     CARGS
   >,
-  additionalUtils: IAdditionalUtils<P, T, I, CTX, DBO>
-): IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler<P, T, I, CTX, DBO, CARGS> {
+  additionalUtils: IAdditionalUtils<P, T, MD, CTX, DBO>
+): IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler<P, T, MD, CTX, DBO, CARGS> {
   abstract class SwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler extends ClassSwarmMessagesChannelsListVersionOneOptionsSetUp {
-    private readonly __additionalUtils: Readonly<IAdditionalUtils<P, T, I, CTX, DBO>>;
+    private readonly __additionalUtils: Readonly<IAdditionalUtils<P, T, MD, CTX, DBO>>;
 
-    private get _additionalUtils(): Readonly<IAdditionalUtils<P, T, I, CTX, DBO>> {
+    private get _additionalUtils(): Readonly<IAdditionalUtils<P, T, MD, CTX, DBO>> {
       const additionalUtils = this.__additionalUtils;
       if (!additionalUtils) {
         throw new Error('Additional utilities for the instance are not exists');
@@ -80,7 +77,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       this._swarmMessagesKeyValueDatabaseConnectionPending = this._createActiveConnectionToChannelsListDatabase();
     }
 
-    private _validateAdditionalUtils(additionalUtils: IAdditionalUtils<P, T, I, CTX, DBO>): void {
+    private _validateAdditionalUtils(additionalUtils: IAdditionalUtils<P, T, MD, CTX, DBO>): void {
       assert(
         additionalUtils,
         'Additional utils should be provided for the SwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler constructor'
@@ -162,7 +159,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
     }
 
     private async _getSwarmChannelDescriptionRawBySwarmDbRequestResult(
-      requestResult: ISwarmMessageStoreMessagingRequestWithMetaResult<P, I>
+      requestResult: ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD>
     ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any>> {
       const messageDecryptedOrError = requestResult.message;
 
@@ -176,7 +173,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
     }
 
     private _getSwarmChannelDescriptionRawOrErrorBySwarmDbRequestResult = async (
-      requestResult: ISwarmMessageStoreMessagingRequestWithMetaResult<P, I>
+      requestResult: ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD>
     ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error> => {
       try {
         return await this._getSwarmChannelDescriptionRawBySwarmDbRequestResult(requestResult);
@@ -186,15 +183,15 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
     };
 
     private _getSwarmChannelDescriptionWithMetadataBySwarmDbRequestResultWithMetadata = async (
-      requestResult: ISwarmMessageStoreMessagingRequestWithMetaResult<P, I>
-    ): Promise<ISwarmMessagesChannelDescriptionWithMetadata<P, T, I, any, any>> => {
+      requestResult: ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD>
+    ): Promise<ISwarmMessagesChannelDescriptionWithMetadata<P, T, MD, any, any>> => {
       const channelDescriptionOrError = await this._getSwarmChannelDescriptionRawOrErrorBySwarmDbRequestResult(requestResult);
       return new SwarmMessagesChannelDescriptionWithMeta(requestResult, channelDescriptionOrError);
     };
 
     private _getRequestResultFromAllRequestResultsOnASingleDatabaseKeyRead(
-      requestResults: (ISwarmMessageStoreMessagingRequestWithMetaResult<P, I> | undefined)[]
-    ): ISwarmMessageStoreMessagingRequestWithMetaResult<P, I> | undefined {
+      requestResults: (ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined)[]
+    ): ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined {
       if (Array.isArray(requestResults)) {
         assert(requestResults.length === 1, 'Request result for one datbase key should be an array with the lenght of 1');
         return requestResults[0];
@@ -204,21 +201,21 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
 
     private async _requestDatabase(
       options: TSwarmStoreDatabaseIteratorMethodArgument<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>
-    ): Promise<(ISwarmMessageStoreMessagingRequestWithMetaResult<P, I> | undefined)[]> {
+    ): Promise<(ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined)[]> {
       const dbConnection = await this._getSwarmMessagesKeyValueDatabaseConnection();
       return await dbConnection.collectWithMeta(options);
     }
 
     private async _requestDatabaseForDbKey(
       dbbKey: string
-    ): Promise<(ISwarmMessageStoreMessagingRequestWithMetaResult<P, I> | undefined)[]> {
+    ): Promise<(ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined)[]> {
       const optionsForReadingKeyValue = this._createOptionsForCollectingDbKey(dbbKey);
       return await this._requestDatabase(optionsForReadingKeyValue);
     }
 
     private async _readValueStoredInDatabaseByDbKey(
       dbbKey: string
-    ): Promise<ISwarmMessageStoreMessagingRequestWithMetaResult<P, I> | undefined> {
+    ): Promise<ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined> {
       const requestResults = await this._requestDatabaseForDbKey(dbbKey);
       const requestResultForDbKey = this._getRequestResultFromAllRequestResultsOnASingleDatabaseKeyRead(requestResults);
       return requestResultForDbKey;
@@ -248,7 +245,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
     }
 
     protected async _readAllChannelsDescriptionsWithMeta(): Promise<
-      ISwarmMessagesChannelDescriptionWithMetadata<P, T, I, any, any>[]
+      ISwarmMessagesChannelDescriptionWithMetadata<P, T, MD, any, any>[]
     > {
       const optionsForReadingAllValues = this._createOptionsForCollectingAllDatabaseValues();
       const messagesReadFromDatabase = await this._requestDatabase(optionsForReadingAllValues);
@@ -283,7 +280,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
     private _getConstantArgumentsForGrantAccessCallbackValidator(): ISwarmMessagesChannelsListV1GrantAccessConstantArguments<
       P,
       T,
-      I,
+      MD,
       CTX,
       DBO
     > {
@@ -310,7 +307,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
 
     private _getExistingChannelDescriptionByMessageKey = async (
       dbbKey: string
-    ): Promise<IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, I, CTX, DBO>['channelExistingDescription']> => {
+    ): Promise<IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, MD, CTX, DBO>['channelExistingDescription']> => {
       return await this._readSwarmMessagesChannelDescriptionOrUndefinedForDbKey(dbbKey);
     };
 
@@ -339,7 +336,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
      * @returns {TSwarmStoreDatabaseOptions<P, T, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>}
      * @memberof SwarmMessagesChannelsListVersionOne
      */
-    private _getChannelsListDatabaseOptions(): TSwrmMessagesChannelsListFullDBO<P, T, I, CTX, DBO> {
+    private _getChannelsListDatabaseOptions(): DBOFULL<P, T, MD, CTX, DBO> {
       const databaseName = this._getChannelsListDatabaseName();
       const { dbOptions } = this._getConnectionOptions();
       const databaseGrantAccessCallback = this._createGrantAccessCallbackForChannelsListDatabase();
@@ -349,7 +346,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
         dbType: ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
         dbName: databaseName,
         grantAccess: databaseGrantAccessCallback,
-      } as unknown) as TSwrmMessagesChannelsListFullDBO<P, T, I, CTX, DBO>;
+      } as unknown) as DBOFULL<P, T, MD, CTX, DBO>;
     }
 
     protected async _createActiveConnectionToChannelsListDatabase(): Promise<
@@ -362,8 +359,8 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
     }
 
     protected async _convertDatabaseRequestResultIntoSwarmChannelsDescriptionsWithMeta(
-      swarmMessagesFromDatabase: (ISwarmMessageStoreMessagingRequestWithMetaResult<P, I> | undefined)[]
-    ): Promise<ISwarmMessagesChannelDescriptionWithMetadata<P, T, I, any, any>[]> {
+      swarmMessagesFromDatabase: (ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined)[]
+    ): Promise<ISwarmMessagesChannelDescriptionWithMetadata<P, T, MD, any, any>[]> {
       const nonNullableSwarmMessagesFromDatabase = swarmMessagesFromDatabase.filter(isDefined);
       return await Promise.all(
         nonNullableSwarmMessagesFromDatabase.map(this._getSwarmChannelDescriptionWithMetadataBySwarmDbRequestResultWithMetadata)
@@ -375,7 +372,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
   return (SwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler as unknown) as IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler<
     P,
     T,
-    I,
+    MD,
     CTX,
     DBO,
     CARGS

@@ -9,11 +9,7 @@ import {
   ISwarmMessageStoreAccessControlOptions,
   ISwarmMessageStoreOptionsWithConnectorFabric,
 } from '../../swarm-message-store/types/swarm-message-store.types';
-import {
-  TSwarmMessageSerialized,
-  TSwarmMessageInstance,
-  ISwarmMessageInstanceDecrypted,
-} from '../../swarm-message/swarm-message-constructor.types';
+import { TSwarmMessageSerialized, ISwarmMessageInstanceDecrypted } from '../../swarm-message/swarm-message-constructor.types';
 import { TSwarmStoreDatabaseOptions, TSwarmStoreDatabaseType } from '../../swarm-store-class/swarm-store-class.types';
 import {
   ISwarmStoreConnectorBasic,
@@ -23,7 +19,6 @@ import {
   ISwarmStoreOptionsConnectorFabric,
 } from '../../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
-import { ISwarmMessageInstanceEncrypted } from '../../swarm-message/swarm-message-constructor.types';
 import { SwarmMessagesDatabase } from '../swarm-messages-database';
 import { ESwarmStoreConnector } from 'classes/swarm-store-class/swarm-store-class.const';
 import { TConnectToSwarmMessagesDatabaseReturnType } from './swarm-messages-database-fabric.types';
