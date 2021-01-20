@@ -9,7 +9,10 @@ import {
   ISwarmMessagesChannelsDescriptionsListConstructorArguments,
 } from '../../../../types/swarm-messages-channels-list.types';
 import { IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler } from './types/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.types';
-import { ISwarmMessagesChannelsDescriptionsList } from '../../../../types/swarm-messages-channels-list.types';
+import {
+  ISwarmMessagesChannelsDescriptionsList,
+  ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric,
+} from '../../../../types/swarm-messages-channels-list.types';
 
 import { getSwarmMessagesChannelsListVersionOneClass } from './swarm-messages-channels-list-v1-class.fabric';
 
@@ -19,19 +22,21 @@ export function getSwarmMessagesChannelsListVersionOneInstance<
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
-  CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO>
+  CF extends ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<P, T, MD, CTX, DBO>,
+  CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>
 >(
-  constructorArguments: ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO>,
+  constructorArguments: CARGS,
   ClassSwarmMessagesChannelsListVersionOneOptionsSetUp: IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler<
     P,
     T,
     MD,
     CTX,
     DBO,
+    CF,
     CARGS
   >
 ): ISwarmMessagesChannelsDescriptionsList<P, T, MD> {
-  const Class = getSwarmMessagesChannelsListVersionOneClass<P, T, MD, CTX, DBO, CARGS>(
+  const Class = getSwarmMessagesChannelsListVersionOneClass<P, T, MD, CTX, DBO, CF, CARGS>(
     ClassSwarmMessagesChannelsListVersionOneOptionsSetUp
   );
   return new Class(constructorArguments);

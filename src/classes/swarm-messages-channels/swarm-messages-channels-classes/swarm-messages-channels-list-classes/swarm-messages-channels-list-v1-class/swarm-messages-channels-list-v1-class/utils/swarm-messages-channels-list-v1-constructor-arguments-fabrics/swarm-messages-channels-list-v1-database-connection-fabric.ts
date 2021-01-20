@@ -38,53 +38,49 @@ export function getDatabaseConnectionFabricByDatabaseOptions<
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
+  DBOF extends DBOFULL<P, T, MD, CTX, DBO>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined = undefined,
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MD | T> = TSwarmMessagesStoreGrantAccessCallback<P, MD | T>,
   ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MD | T, GAC> | undefined = undefined,
-  ConnectorBasic extends ISwarmStoreConnectorBasic<
-    P,
-    T,
-    ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
-    DBOFULL<P, T, MD, CTX, DBO>
-  > = ISwarmStoreConnectorBasic<P, T, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE, DBOFULL<P, T, MD, CTX, DBO>>,
-  CO extends TSwarmStoreConnectorConnectionOptions<
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBOF> = ISwarmStoreConnectorBasic<P, T, DbType, DBOF>,
+  CO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBOF, ConnectorBasic> = TSwarmStoreConnectorConnectionOptions<
     P,
     T,
     DbType,
-    DBOFULL<P, T, MD, CTX, DBO>,
+    DBOF,
     ConnectorBasic
-  > = TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBOFULL<P, T, MD, CTX, DBO>, ConnectorBasic>,
-  PO extends ISwarmStoreProviderOptions<
+  >,
+  PO extends ISwarmStoreProviderOptions<P, T, DbType, DBOF, ConnectorBasic, CO> = ISwarmStoreProviderOptions<
     P,
     T,
     DbType,
-    DBOFULL<P, T, MD, CTX, DBO>,
+    DBOF,
     ConnectorBasic,
     CO
-  > = ISwarmStoreProviderOptions<P, T, DbType, DBOFULL<P, T, MD, CTX, DBO>, ConnectorBasic, CO>,
-  ConnectorMain extends ISwarmStoreConnector<
+  >,
+  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBOF, ConnectorBasic, CO> = ISwarmStoreConnector<
     P,
     T,
     DbType,
-    DBOFULL<P, T, MD, CTX, DBO>,
+    DBOF,
     ConnectorBasic,
     CO
-  > = ISwarmStoreConnector<P, T, DbType, DBOFULL<P, T, MD, CTX, DBO>, ConnectorBasic, CO>,
+  >,
   CFO extends ISwarmStoreOptionsConnectorFabric<
     P,
     T,
     DbType,
-    DBOFULL<P, T, MD, CTX, DBO>,
+    DBOF,
     ConnectorBasic,
     CO,
     PO,
     ConnectorMain
-  > = ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBOFULL<P, T, MD, CTX, DBO>, ConnectorBasic, CO, PO, ConnectorMain>,
+  > = ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBOF, ConnectorBasic, CO, PO, ConnectorMain>,
   O extends ISwarmMessageStoreOptionsWithConnectorFabric<
     P,
     T,
     DbType,
-    DBOFULL<P, T, MD, CTX, DBO>,
+    DBOF,
     ConnectorBasic,
     CO,
     PO,
@@ -98,7 +94,7 @@ export function getDatabaseConnectionFabricByDatabaseOptions<
     P,
     T,
     DbType,
-    DBOFULL<P, T, MD, CTX, DBO>,
+    DBOF,
     ConnectorBasic,
     CO,
     PO,
@@ -113,7 +109,7 @@ export function getDatabaseConnectionFabricByDatabaseOptions<
     P,
     T,
     DbType,
-    DBOFULL<P, T, MD, CTX, DBO>,
+    DBOF,
     ConnectorBasic,
     CO,
     PO,
@@ -124,29 +120,14 @@ export function getDatabaseConnectionFabricByDatabaseOptions<
     MCF,
     ACO,
     O
-  > = ISwarmMessageStore<
-    P,
-    T,
-    DbType,
-    DBOFULL<P, T, MD, CTX, DBO>,
-    ConnectorBasic,
-    CO,
-    PO,
-    ConnectorMain,
-    CFO,
-    MD | T,
-    GAC,
-    MCF,
-    ACO,
-    O
-  >,
+  > = ISwarmMessageStore<P, T, DbType, DBOF, ConnectorBasic, CO, PO, ConnectorMain, CFO, MD | T, GAC, MCF, ACO, O>,
   SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD> = ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
   DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM> = ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>,
-  DCCRT extends ISwarmMessagesDatabaseCache<P, T, DbType, DBOFULL<P, T, MD, CTX, DBO>, MD, SMSM> = ISwarmMessagesDatabaseCache<
+  DCCRT extends ISwarmMessagesDatabaseCache<P, T, DbType, DBOF, MD, SMSM> = ISwarmMessagesDatabaseCache<
     P,
     T,
     DbType,
-    DBOFULL<P, T, MD, CTX, DBO>,
+    DBOF,
     MD,
     SMSM
   >,
@@ -154,7 +135,7 @@ export function getDatabaseConnectionFabricByDatabaseOptions<
     P,
     T,
     DbType,
-    DBOFULL<P, T, MD, CTX, DBO>,
+    DBOF,
     ConnectorBasic,
     CO,
     PO,
@@ -173,7 +154,7 @@ export function getDatabaseConnectionFabricByDatabaseOptions<
     P,
     T,
     DbType,
-    DBOFULL<P, T, MD, CTX, DBO>,
+    DBOF,
     ConnectorBasic,
     CO,
     PO,
@@ -196,36 +177,72 @@ export function getDatabaseConnectionFabricByDatabaseOptions<
   T,
   MD,
   CTX,
-  DBOFULL<P, T, MD, CTX, DBO>
+  DBO,
+  DBOF,
+  MCF,
+  GAC,
+  ACO,
+  ConnectorBasic,
+  CO,
+  PO,
+  ConnectorMain,
+  CFO,
+  O,
+  SMS,
+  SMSM,
+  DCO,
+  DCCRT,
+  OPT
 > {
-  return async (
-    databaseOptions: DBOFULL<P, T, MD, CTX, DBO>
+  async function swarmMessagesChannelsListDatabaseConnectionFabric(
+    databaseOptions: DBOF
   ): Promise<
     ISwarmMessagesDatabaseConnector<
       P,
       T,
       DbType,
-      DBOFULL<P, T, MD, CTX, DBO>,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any
+      DBOF,
+      ConnectorBasic,
+      CO,
+      PO,
+      ConnectorMain,
+      CFO,
+      GAC,
+      MCF,
+      ACO,
+      O,
+      SMS,
+      MD,
+      SMSM,
+      DCO,
+      DCCRT,
+      OPT
     >
-  > => {
-    return await swarmMessagesDatabaseConnectedFabric({
+  > {
+    const optionsForSwamMessagesDatabaseConnectedFabric = {
       ...options,
       dbOptions: databaseOptions,
-    });
-  };
+    } as OPT;
+    return await swarmMessagesDatabaseConnectedFabric<
+      P,
+      T,
+      DbType,
+      DBOF,
+      MCF,
+      MD,
+      GAC,
+      ACO,
+      ConnectorBasic,
+      CO,
+      PO,
+      ConnectorMain,
+      CFO,
+      O,
+      SMS,
+      SMSM,
+      DCO,
+      DCCRT
+    >(optionsForSwamMessagesDatabaseConnectedFabric);
+  }
+  return swarmMessagesChannelsListDatabaseConnectionFabric;
 }

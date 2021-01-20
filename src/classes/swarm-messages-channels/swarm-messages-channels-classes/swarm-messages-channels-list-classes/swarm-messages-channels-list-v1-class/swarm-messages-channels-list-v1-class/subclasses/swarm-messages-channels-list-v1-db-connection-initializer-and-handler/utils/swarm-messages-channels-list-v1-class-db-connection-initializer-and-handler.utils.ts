@@ -55,7 +55,10 @@ export function getArgumentsForSwarmMessageWithChannelDescriptionValidator<
   DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 >(
   constantArguments: ISwarmMessagesChannelsListV1GrantAccessConstantArguments<P, T, MD, CTX, DBO>,
-  variableArguments: ISwarmMessagesChannelsListV1GrantAccessVariableArguments<P, T, MD, CTX, DBO>,
+  variableArguments: Omit<
+    ISwarmMessagesChannelsListV1GrantAccessVariableArguments<P, T, MD, CTX, DBO>,
+    'channelExistingDescription'
+  >,
   channelExistingDescription: IValidatorOfSwarmMessageWithChannelDescriptionArgument<
     P,
     T,

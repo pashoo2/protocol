@@ -9,7 +9,11 @@ import {
   ISwarmMessagesChannelDescriptionWithMetadata,
 } from '../../../../../../types/swarm-messages-channel.types';
 import { PromiseResolveType } from '../../../../../../../../types/promise.types';
-import { TSwrmMessagesChannelsListDBOWithGrantAccess, DBOFULL } from '../../../../../../types/swarm-messages-channels-list.types';
+import {
+  TSwrmMessagesChannelsListDBOWithGrantAccess,
+  DBOFULL,
+  ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric,
+} from '../../../../../../types/swarm-messages-channels-list.types';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { IValidatorOfSwarmMessageWithChannelDescriptionArgument } from '../../../../../../types/swarm-messages-channels-validation.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseIteratorOption } from '../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
@@ -43,7 +47,8 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
-  CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO>
+  CF extends ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<P, T, MD, CTX, DBO>,
+  CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>
 >(
   ClassSwarmMessagesChannelsListVersionOneOptionsSetUp: IConstructorAbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<
     P,
@@ -51,10 +56,11 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
     MD,
     CTX,
     DBO,
+    CF,
     CARGS
   >,
   additionalUtils: IAdditionalUtils<P, T, MD, CTX, DBO>
-): IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler<P, T, MD, CTX, DBO, CARGS> {
+): IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler<P, T, MD, CTX, DBO, CF, CARGS> {
   abstract class SwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler extends ClassSwarmMessagesChannelsListVersionOneOptionsSetUp {
     private readonly __additionalUtils: Readonly<IAdditionalUtils<P, T, MD, CTX, DBO>>;
 
@@ -375,6 +381,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
     MD,
     CTX,
     DBO,
+    CF,
     CARGS
   >;
 }

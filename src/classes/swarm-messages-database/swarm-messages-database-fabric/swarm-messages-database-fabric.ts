@@ -84,7 +84,7 @@ import { ISwarmMessagesDatabaseMessagesCollector } from '../swarm-messages-datab
  *   >
  * >}
  */
-export const swarmMessagesDatabaseConnectedFabric = async <
+export async function swarmMessagesDatabaseConnectedFabric<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
@@ -244,7 +244,7 @@ export const swarmMessagesDatabaseConnectedFabric = async <
     DCO,
     DCCRT
   >
-> => {
+> {
   const db = new SwarmMessagesDatabase<
     P,
     T,
@@ -269,4 +269,4 @@ export const swarmMessagesDatabaseConnectedFabric = async <
 
   await db.connect(options);
   return db;
-};
+}

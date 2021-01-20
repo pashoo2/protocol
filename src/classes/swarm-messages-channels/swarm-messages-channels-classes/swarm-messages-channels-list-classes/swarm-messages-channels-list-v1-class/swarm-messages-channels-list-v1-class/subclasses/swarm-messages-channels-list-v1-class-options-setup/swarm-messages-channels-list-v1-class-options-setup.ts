@@ -10,9 +10,15 @@ import {
   TSwrmMessagesChannelsListDBOWithGrantAccess,
 } from '../../../../../../types/swarm-messages-channels-list.types';
 import { isNonNativeFunction } from '../../../../../../../../utils/common-utils/common-utils.functions';
-import { ISwarmMessagesChannelsDescriptionsListConstructorArguments } from '../../../../../../types/swarm-messages-channels-list.types';
+import {
+  ISwarmMessagesChannelsDescriptionsListConstructorArguments,
+  ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric,
+} from '../../../../../../types/swarm-messages-channels-list.types';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
-import { AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp } from '../../types/swarm-messages-channels-list-v1-class-options-setup.types';
+import {
+  AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp,
+  IConstructorAbstactSwarmMessagesChannelsListVersionOneOptionsSetUp,
+} from '../../types/swarm-messages-channels-list-v1-class-options-setup.types';
 import { ISwarmMessageChannelDescriptionRaw } from '../../../../../../types/swarm-messages-channel.types';
 import { TSwarmMessageConstructorBodyMessage } from '../../../../../../../swarm-message/swarm-message-constructor.types';
 import { TSwarmStoreDatabaseEntityKey } from '../../../../../../../swarm-store-class/swarm-store-class.types';
@@ -23,8 +29,9 @@ export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
-  CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO>
-> extends AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<P, T, MD, CTX, DBO, CARGS> {
+  CF extends ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<P, T, MD, CTX, DBO>,
+  CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>
+> extends AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<P, T, MD, CTX, DBO, CF, CARGS> {
   protected readonly _serializer: CARGS['serializer'];
 
   protected readonly _channelsListDescription: Readonly<CARGS['description']>;
@@ -251,4 +258,25 @@ export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
     const { getDatabaseKeyForChannelDescription } = this._getUtilities();
     return getDatabaseKeyForChannelDescription(channelDescriptionRaw);
   }
+}
+
+export function getIConstructorAbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  MD extends ISwarmMessageInstanceDecrypted,
+  CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
+  CF extends ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<P, T, MD, CTX, DBO>,
+  CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>
+>(): IConstructorAbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<P, T, MD, CTX, DBO, CF, CARGS> {
+  // TODO - remove the type cast
+  return (SwarmMessagesChannelsListVersionOneOptionsSetUp as unknown) as IConstructorAbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<
+    P,
+    T,
+    MD,
+    CTX,
+    DBO,
+    CF,
+    CARGS
+  >;
 }

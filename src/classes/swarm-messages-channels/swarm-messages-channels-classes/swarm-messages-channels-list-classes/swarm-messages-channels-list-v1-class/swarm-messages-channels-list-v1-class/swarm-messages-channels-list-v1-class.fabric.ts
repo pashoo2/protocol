@@ -21,6 +21,7 @@ import {
 } from '../../../../types/swarm-messages-channel.types';
 import { TSwarmMessageConstructorBodyMessage } from '../../../../../swarm-message/swarm-message-constructor.types';
 import { TSwarmStoreDatabaseEntityKey } from '../../../../../swarm-store-class/swarm-store-class.types';
+import { ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric } from '../../../../types/swarm-messages-channels-list.types';
 
 export function getSwarmMessagesChannelsListVersionOneClass<
   P extends ESwarmStoreConnector,
@@ -28,7 +29,8 @@ export function getSwarmMessagesChannelsListVersionOneClass<
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
-  CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO>
+  CF extends ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<P, T, MD, CTX, DBO>,
+  CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>
 >(
   ClassSwarmMessagesChannelsListVersionOneOptionsSetUp: IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler<
     P,
@@ -36,6 +38,7 @@ export function getSwarmMessagesChannelsListVersionOneClass<
     MD,
     CTX,
     DBO,
+    CF,
     CARGS
   >
 ): ConstructorType<ISwarmMessagesChannelsDescriptionsList<P, T, MD>> {

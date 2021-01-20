@@ -12,8 +12,32 @@ import {
 import { ISwarmMessagesDatabaseConnector } from '../../swarm-messages-database';
 import { ISerializer } from '../../../types/serialization.types';
 import { ISwarmMessagesListDatabaseNameByDescriptionGenerator } from './swarm-messages-channels-utils.types';
-import { ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound } from '../../swarm-message-store/types/swarm-message-store.types';
+import {
+  ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound,
+  TSwarmMessagesStoreGrantAccessCallback,
+  ISwarmMessageStoreAccessControlOptions,
+} from '../../swarm-message-store/types/swarm-message-store.types';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessagesDatabaseMessagesCollector } from '../../swarm-messages-database/swarm-messages-database.messages-collector.types';
+import {
+  ISwarmMessagesDatabaseCacheOptions,
+  ISwarmMessagesDatabaseCache,
+  ISwarmMessagesDatabaseConnectOptions,
+} from '../../swarm-messages-database/swarm-messages-database.types';
+import {
+  ISwarmStoreProviderOptions,
+  ISwarmStoreConnector,
+  ISwarmStoreOptionsConnectorFabric,
+} from '../../swarm-store-class/swarm-store-class.types';
+import {
+  ISwarmMessageStoreOptionsWithConnectorFabric,
+  ISwarmMessageStore,
+} from '../../swarm-message-store/types/swarm-message-store.types';
+import {
+  ISwarmStoreConnectorBasic,
+  TSwarmStoreConnectorConnectionOptions,
+} from '../../swarm-store-class/swarm-store-class.types';
 import {
   IValidatorOfSwarmMessagesChannelsListDescription,
   ISwamChannelsListDatabaseOptionsValidator,
@@ -28,15 +52,14 @@ import {
   IGetSwarmMessageWithChannelDescriptionTypeByChannelListDescription,
 } from './swarm-messages-channels-utils.types';
 
+export type TSwarmMessagesChannelsListDbType = ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE;
+
 export type TSwrmMessagesChannelsListDBOWithGrantAccess<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext
-> = Omit<
-  TSwarmStoreDatabaseOptions<P, T, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>,
-  'dbName' | 'dbType' | 'grantAccess'
-> & {
+> = Omit<TSwarmStoreDatabaseOptions<P, T, TSwarmMessagesChannelsListDbType>, 'dbName' | 'dbType' | 'grantAccess'> & {
   /**
    * Grant access callback supports for validation of a swarm messages decrypted
    *
@@ -51,12 +74,12 @@ export type DBOFULL<
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
-> = TSwarmStoreDatabaseOptions<P, T, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE> &
+> = TSwarmStoreDatabaseOptions<P, T, TSwarmMessagesChannelsListDbType> &
   DBO & {
     // a name of the database
     dbName: string;
     // a
-    dbType: ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE;
+    dbType: TSwarmMessagesChannelsListDbType;
     /**
      * Grant access callback supports for validation of a swarm messages decrypted
      *
@@ -182,43 +205,6 @@ export interface ISwarmMessagesChannelsDescriptionsList<
   getAllChannelsDescriptions(): Promise<ISwarmMessagesChannelDescriptionWithMetadata<P, T, MD, any, any>[]>;
 }
 
-export interface ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<
-  P extends ESwarmStoreConnector,
-  T extends TSwarmMessageSerialized,
-  MD extends ISwarmMessageInstanceDecrypted,
-  CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
-> {
-  /**
-   * Fabric which creates a connection to the swarm messages database by a database options
-   *
-   * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArguments
-   */
-  <DBOF extends DBOFULL<P, T, MD, CTX, DBO>>(dbo: DBOF): Promise<
-    ISwarmMessagesDatabaseConnector<
-      P,
-      T,
-      ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
-      DBOF,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any
-    >
-  >;
-}
-
 /**
  * Utilities used by the swarm messages channels list instance
  *
@@ -282,8 +268,15 @@ export interface ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils
   T extends TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
+  CF extends ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<P, T, MD, CTX, DBO>
 > {
+  /**
+   * Fabric which creates a connection to the swarm messages database by a database options
+   *
+   * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArguments
+   */
+  databaseConnectionFabric: CF;
   /**
    * Generator of a database name by the swarm channels list description.
    *
@@ -291,18 +284,6 @@ export interface ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils
    * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils
    */
   databaseNameGenerator: ISwarmMessagesListDatabaseNameByDescriptionGenerator;
-  /**
-   * Fabric which creates a connection to the swarm messages database by a database options
-   *
-   * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArguments
-   */
-  databaseConnectionFabric: ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<
-    P,
-    T,
-    MD,
-    CTX,
-    DBO
-  >;
   /**
    * This utility will be used by the channelDescriptionSwarmMessageValidator validator
    * and till swarm message with a channel description construction
@@ -353,7 +334,8 @@ export interface ISwarmMessagesChannelsDescriptionsListConstructorArguments<
   T extends TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
+  CF extends ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<P, T, MD, CTX, DBO>
 > {
   /**
    * Description of the channels list
@@ -384,7 +366,7 @@ export interface ISwarmMessagesChannelsDescriptionsListConstructorArguments<
    *
    * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArguments
    */
-  utilities: ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils<P, T, MD, CTX, DBO>;
+  utilities: ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils<P, T, MD, CTX, DBO, CF>;
   /**
    * Validators used for validate various options or params
    *
@@ -399,9 +381,208 @@ export interface ISwarmMessagesChannelsDescriptionsListConstructor<
   T extends TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
+  CF extends ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<P, T, MD, CTX, DBO>
 > {
   new (
-    constructorArguments: ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO>
+    constructorArguments: ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>
   ): ISwarmMessagesChannelsDescriptionsList<P, T, MD>;
+}
+
+export interface ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  MD extends ISwarmMessageInstanceDecrypted,
+  CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
+  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
+  DBOF extends DBOFULL<P, T, MD, CTX, DBO> = DBOFULL<P, T, MD, CTX, DBO>,
+  MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined = undefined,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MD | T> = TSwarmMessagesStoreGrantAccessCallback<P, MD | T>,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MD | T, GAC> | undefined = undefined,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, TSwarmMessagesChannelsListDbType, DBOF> = ISwarmStoreConnectorBasic<
+    P,
+    T,
+    TSwarmMessagesChannelsListDbType,
+    DBOF
+  >,
+  CO extends TSwarmStoreConnectorConnectionOptions<
+    P,
+    T,
+    TSwarmMessagesChannelsListDbType,
+    DBOF,
+    ConnectorBasic
+  > = TSwarmStoreConnectorConnectionOptions<P, T, TSwarmMessagesChannelsListDbType, DBOF, ConnectorBasic>,
+  PO extends ISwarmStoreProviderOptions<
+    P,
+    T,
+    TSwarmMessagesChannelsListDbType,
+    DBOF,
+    ConnectorBasic,
+    CO
+  > = ISwarmStoreProviderOptions<P, T, TSwarmMessagesChannelsListDbType, DBOF, ConnectorBasic, CO>,
+  ConnectorMain extends ISwarmStoreConnector<
+    P,
+    T,
+    TSwarmMessagesChannelsListDbType,
+    DBOF,
+    ConnectorBasic,
+    CO
+  > = ISwarmStoreConnector<P, T, TSwarmMessagesChannelsListDbType, DBOF, ConnectorBasic, CO>,
+  CFO extends ISwarmStoreOptionsConnectorFabric<
+    P,
+    T,
+    TSwarmMessagesChannelsListDbType,
+    DBOF,
+    ConnectorBasic,
+    CO,
+    PO,
+    ConnectorMain
+  > = ISwarmStoreOptionsConnectorFabric<P, T, TSwarmMessagesChannelsListDbType, DBOF, ConnectorBasic, CO, PO, ConnectorMain>,
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
+    P,
+    T,
+    TSwarmMessagesChannelsListDbType,
+    DBOF,
+    ConnectorBasic,
+    CO,
+    PO,
+    ConnectorMain,
+    CFO,
+    MD | T,
+    GAC,
+    MCF,
+    ACO
+  > = ISwarmMessageStoreOptionsWithConnectorFabric<
+    P,
+    T,
+    TSwarmMessagesChannelsListDbType,
+    DBOF,
+    ConnectorBasic,
+    CO,
+    PO,
+    ConnectorMain,
+    CFO,
+    MD | T,
+    GAC,
+    MCF,
+    ACO
+  >,
+  SMS extends ISwarmMessageStore<
+    P,
+    T,
+    TSwarmMessagesChannelsListDbType,
+    DBOF,
+    ConnectorBasic,
+    CO,
+    PO,
+    ConnectorMain,
+    CFO,
+    MD | T,
+    GAC,
+    MCF,
+    ACO,
+    O
+  > = ISwarmMessageStore<
+    P,
+    T,
+    TSwarmMessagesChannelsListDbType,
+    DBOF,
+    ConnectorBasic,
+    CO,
+    PO,
+    ConnectorMain,
+    CFO,
+    MD | T,
+    GAC,
+    MCF,
+    ACO,
+    O
+  >,
+  SMSM extends ISwarmMessagesDatabaseMessagesCollector<
+    P,
+    TSwarmMessagesChannelsListDbType,
+    MD
+  > = ISwarmMessagesDatabaseMessagesCollector<P, TSwarmMessagesChannelsListDbType, MD>,
+  DCO extends ISwarmMessagesDatabaseCacheOptions<
+    P,
+    TSwarmMessagesChannelsListDbType,
+    MD,
+    SMSM
+  > = ISwarmMessagesDatabaseCacheOptions<P, TSwarmMessagesChannelsListDbType, MD, SMSM>,
+  DCCRT extends ISwarmMessagesDatabaseCache<P, T, TSwarmMessagesChannelsListDbType, DBOF, MD, SMSM> = ISwarmMessagesDatabaseCache<
+    P,
+    T,
+    TSwarmMessagesChannelsListDbType,
+    DBOF,
+    MD,
+    SMSM
+  >,
+  OPT extends ISwarmMessagesDatabaseConnectOptions<
+    P,
+    T,
+    TSwarmMessagesChannelsListDbType,
+    DBOF,
+    ConnectorBasic,
+    CO,
+    PO,
+    ConnectorMain,
+    CFO,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS,
+    MD,
+    SMSM,
+    DCO,
+    DCCRT
+  > = ISwarmMessagesDatabaseConnectOptions<
+    P,
+    T,
+    TSwarmMessagesChannelsListDbType,
+    DBOF,
+    ConnectorBasic,
+    CO,
+    PO,
+    ConnectorMain,
+    CFO,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS,
+    MD,
+    SMSM,
+    DCO,
+    DCCRT
+  >
+> {
+  /**
+   * Fabric which creates a connection to the swarm messages database by a database options
+   *
+   * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArguments
+   */
+  (dbo: DBOF): Promise<
+    ISwarmMessagesDatabaseConnector<
+      P,
+      T,
+      TSwarmMessagesChannelsListDbType,
+      DBOF,
+      ConnectorBasic,
+      CO,
+      PO,
+      ConnectorMain,
+      CFO,
+      GAC,
+      MCF,
+      ACO,
+      O,
+      SMS,
+      MD,
+      SMSM,
+      DCO,
+      DCCRT,
+      OPT
+    >
+  >;
 }

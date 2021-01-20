@@ -3,7 +3,10 @@ import {
   TSwarmMessageSerialized,
   ISwarmMessageInstanceDecrypted,
 } from '../../../../../../swarm-message/swarm-message-constructor.types';
-import { TSwrmMessagesChannelsListDBOWithGrantAccess } from '../../../../../types/swarm-messages-channels-list.types';
+import {
+  TSwrmMessagesChannelsListDBOWithGrantAccess,
+  ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric,
+} from '../../../../../types/swarm-messages-channels-list.types';
 import { ISwarmMessagesChannelsDescriptionsListConstructorArguments } from '../../../../../types/swarm-messages-channels-list.types';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { ISwarmMessageChannelDescriptionRaw } from '../../../../../types/swarm-messages-channel.types';
@@ -16,7 +19,8 @@ export abstract class AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
-  CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO>
+  CF extends ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<P, T, MD, CTX, DBO>,
+  CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>
 > {
   protected abstract readonly _connectorType: P;
   protected abstract readonly _serializer: CARGS['serializer'];
@@ -76,7 +80,8 @@ export interface IConstructorAbstactSwarmMessagesChannelsListVersionOneOptionsSe
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
-  CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO>
+  CF extends ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<P, T, MD, CTX, DBO>,
+  CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>
 > {
-  new (args: CARGS): AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<P, T, MD, CTX, DBO, CARGS>;
+  new (args: CARGS): AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<P, T, MD, CTX, DBO, CF, CARGS>;
 }

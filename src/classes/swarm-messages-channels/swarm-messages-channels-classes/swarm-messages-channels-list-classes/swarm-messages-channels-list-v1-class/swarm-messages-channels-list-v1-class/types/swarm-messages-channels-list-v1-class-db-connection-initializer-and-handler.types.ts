@@ -19,6 +19,7 @@ import {
   TSwarmStoreDatabaseEntityAddress,
 } from '../../../../../../swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageConstructorBodyMessage } from '../../../../../../swarm-message/swarm-message-constructor.types';
+import { ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric } from '../../../../../types/swarm-messages-channels-list.types';
 import {
   ISwarmMessagesChannelsListV1GrantAccessConstantArguments,
   ISwarmMessagesChannelsListV1GrantAccessVariableArguments,
@@ -149,8 +150,9 @@ export abstract class AbstractSwarmMessagesChannelsListVersionOneDatabaseConnect
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
-  CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO>
-> extends AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<P, T, MD, CTX, DBO, CARGS> {
+  CF extends ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<P, T, MD, CTX, DBO>,
+  CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>
+> extends AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<P, T, MD, CTX, DBO, CF, CARGS> {
   protected abstract async _readSwarmMessagesChannelDescriptionOrUndefinedForDbKey(
     dbbKey: TSwarmStoreDatabaseEntityKey<P>
   ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any> | undefined>;
@@ -173,7 +175,8 @@ export interface IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabase
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
-  CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO>
+  CF extends ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<P, T, MD, CTX, DBO>,
+  CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>
 > {
   new (args: CARGS): AbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler<
     P,
@@ -181,6 +184,7 @@ export interface IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabase
     MD,
     CTX,
     DBO,
+    CF,
     CARGS
   >;
 }
