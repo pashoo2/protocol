@@ -122,7 +122,7 @@ export interface ISwarmMessagesChannelDescriptionWithMetadata<
   MD extends ISwarmMessageInstanceDecrypted,
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>
-> extends Readonly<ISwarmMessageStoreMessagingRequestWithMetaResult<P, I>> {
+> extends Readonly<ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD>> {
   readonly channelDescription: Error | ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>;
 }
 

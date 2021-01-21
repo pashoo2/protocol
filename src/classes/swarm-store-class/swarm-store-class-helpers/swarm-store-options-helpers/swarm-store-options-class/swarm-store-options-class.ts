@@ -13,14 +13,12 @@ import { OptionsSerializerValidator } from '../../../../basic-classes/options-se
 
 export class SwarmStoreOptions<
     P extends ESwarmStoreConnector,
-    ItemType extends TSwarmStoreValueTypes<P>,
+    T extends TSwarmStoreValueTypes<P>,
     DbType extends TSwarmStoreDatabaseType<P>,
-    DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
-    ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType, DBO>,
-    PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, DBO, ConnectorBasic>
+    DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
+    ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO>,
+    CO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
+    SSO extends ISwarmStoreOptions<P, T, DbType, DBO, ConnectorBasic, CO>
   >
-  extends OptionsSerializerValidator<
-    ISwarmStoreOptions<P, ItemType, DbType, DBO, ConnectorBasic, PO>,
-    TSwarmStoreOptionsSerialized
-  >
-  implements ISwarmStoreOptionsClass<P, ItemType, DbType, DBO, ConnectorBasic, PO> {}
+  extends OptionsSerializerValidator<SSO, TSwarmStoreOptionsSerialized>
+  implements ISwarmStoreOptionsClass<P, T, DbType, DBO, ConnectorBasic, CO, SSO> {}

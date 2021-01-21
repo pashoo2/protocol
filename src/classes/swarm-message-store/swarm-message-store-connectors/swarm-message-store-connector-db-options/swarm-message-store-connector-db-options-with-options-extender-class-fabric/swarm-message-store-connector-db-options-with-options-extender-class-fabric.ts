@@ -30,7 +30,7 @@ import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../sw
 import { ISwarmStoreDatabaseBaseOptions } from '../../../../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageStoreDatabaseOptionsExtender } from '../../../types/swarm-message-store-utils.types';
 import { PromiseResolveType } from '../../../../../types/promise.types';
-import { ISwarmMessageStoreDatabaseOptionsWithMetaClass } from '../swarm-store-connector-db-options.types';
+import { ISwarmMessageStoreDatabaseOptionsWithMetaConstructor } from '../swarm-store-connector-db-options.types';
 import { ISwarmMessageStoreDBOSerializerValidatorConstructorParams } from '../swarm-store-connector-db-options.types';
 
 export function createSwarmMessageStoreDBOWithOptionsExtenderFabric<
@@ -64,7 +64,7 @@ export function createSwarmMessageStoreDBOWithOptionsExtenderFabric<
     ACO
   >,
   DBOS extends TSwarmStoreDatabaseOptionsSerialized,
-  SSDOC extends ISwarmMessageStoreDatabaseOptionsWithMetaClass<
+  SSDOC extends ISwarmMessageStoreDatabaseOptionsWithMetaConstructor<
     P,
     ItemType,
     DbType,

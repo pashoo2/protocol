@@ -13,7 +13,7 @@ import {
 } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import {
   ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContextFabric,
-  ISwarmMessageStoreDatabaseOptionsWithMetaClass,
+  ISwarmMessageStoreDatabaseOptionsWithMetaConstructor,
 } from '../../../swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-store-connector-db-options.types';
 import { ConstructorType } from '../../../../types/helper.types';
 import { ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorFabricParams } from '../../../swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-store-connector-db-options.types';
@@ -61,7 +61,7 @@ export function getSwarmMessageStoreConnectorDBOClass<
     >,
     'grandAccessCallbackContextFabric'
   >
-): ISwarmMessageStoreDatabaseOptionsWithMetaClass<P, T, DbType, MD, CTX, DBO, DBOS, { swarmMessageConstructor: SMC }> {
+): ISwarmMessageStoreDatabaseOptionsWithMetaConstructor<P, T, DbType, MD, CTX, DBO, DBOS, { swarmMessageConstructor: SMC }> {
   const grandAccessCallbackContextFabric: ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContextFabric<
     P,
     DbType,
@@ -130,7 +130,7 @@ export function getSwarmMessageStoreConnectorDBOClassFabric<
       >,
       'grandAccessCallbackContextFabric'
     >
-  ): ISwarmMessageStoreDatabaseOptionsWithMetaClass<P, T, DbType, MD, CTX, DBO, DBOS, { swarmMessageConstructor: SMC }> => {
+  ): ISwarmMessageStoreDatabaseOptionsWithMetaConstructor<P, T, DbType, MD, CTX, DBO, DBOS, { swarmMessageConstructor: SMC }> => {
     const fabricDBOValidator = () => new DboValidatorClass();
     const additionalParamsResulted = {
       ...additionalParams,

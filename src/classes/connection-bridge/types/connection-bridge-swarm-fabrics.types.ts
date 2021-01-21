@@ -10,7 +10,7 @@ import {
 } from '../../swarm-store-class/swarm-store-class.types';
 import {
   ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValidatorConstructorFabricParams,
-  ISwarmMessageStoreDatabaseOptionsWithMetaClass,
+  ISwarmMessageStoreDatabaseOptionsWithMetaConstructor,
 } from '../../swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-store-connector-db-options.types';
 import { ESwarmStoreConnector } from '../../swarm-store-class/swarm-store-class.const';
 import {
@@ -90,7 +90,16 @@ export interface ISwarmMessageStoreConnectorDbOptionsClassFabric<
     ContextBaseClass: CTXC,
     swarmMessageStoreDBOGrandAccessCallbackFabric: SMSDBOGACF,
     additionalParams?: AP
-  ): ISwarmMessageStoreDatabaseOptionsWithMetaClass<P, ItemType, DbType, MD, CTX, DBO, DBOS, { swarmMessageConstructor: SMC }>;
+  ): ISwarmMessageStoreDatabaseOptionsWithMetaConstructor<
+    P,
+    ItemType,
+    DbType,
+    MD,
+    CTX,
+    DBO,
+    DBOS,
+    { swarmMessageConstructor: SMC }
+  >;
 }
 
 export interface ISwarmMessageStoreConnectorDbOptionsClassWithMetaFabric<

@@ -213,17 +213,10 @@ export interface ISwarmMessageDatabaseMessagingMethods<
   MI extends TSwarmMessageInstance,
   SMS extends ISwarmMessageStoreMessagingMethods<P, T, DbType, MI>
 > {
-  addMessage(message: MI, key?: TSwarmStoreDatabaseEntityKey<P>): Promise<TSwarmStoreDatabaseEntityAddress<P>>;
-  addMessage(message: T, key?: TSwarmStoreDatabaseEntityKey<P>): Promise<TSwarmStoreDatabaseEntityAddress<P>>;
-  addMessage(
-    message: TSwarmMessageConstructorBodyMessage,
-    key?: TSwarmStoreDatabaseEntityKey<P>
-  ): Promise<TSwarmStoreDatabaseEntityAddress<P>>;
+  addMessage(message: Parameters<SMS['addMessage']>[1], key?: TSwarmStoreDatabaseEntityKey<P>): ReturnType<SMS['addMessage']>;
   deleteMessage(messageAddressOrKey: ISwarmMessageStoreDeleteMessageArg<P, DbType>): Promise<void>;
-  collect: OmitFirstArg<SMS['collect']>;
-  collectWithMeta(
-    options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>
-  ): Promise<Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P, Exclude<MI, ISwarmMessageInstanceEncrypted>> | undefined>>;
+  collect(options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>): ReturnType<SMS['collect']>;
+  collectWithMeta(options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>): ReturnType<SMS['collectWithMeta']>;
 }
 
 export interface ISwarmMessagesDatabaseProperties<

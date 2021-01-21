@@ -20,6 +20,7 @@ import {
   ISwarmStoreConnectorUtilsDatabaseOptionsValidatorsInstanceFabric,
 } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound } from '../..';
+import { ISwarmStoreOptionsClassConstructor } from '../../../swarm-store-class/swarm-store-class.types';
 
 export interface ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContextFabric<
   P extends ESwarmStoreConnector,
@@ -314,7 +315,7 @@ export interface ISwarmMessageStoreConnectorUtilsDatabaseOptionsSerializerValida
   meta: META;
 }
 
-export interface ISwarmMessageStoreDatabaseOptionsWithMetaClass<
+export interface ISwarmMessageStoreDatabaseOptionsWithMetaConstructor<
   P extends ESwarmStoreConnector,
   ItemType extends TSwarmStoreValueTypes<P>,
   DbType extends TSwarmStoreDatabaseType<P>,

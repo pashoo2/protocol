@@ -14,7 +14,6 @@ import {
 } from '../../swarm-store-class.types';
 import { ConstructorType } from '../../../../types/helper.types';
 import { ISwarmStoreOptionsClassConstructor } from '../../swarm-store-class.types';
-import { swarmStoreOptionsClassFabric } from '../../swarm-store-class-helpers/swarm-store-options-helpers/swarm-store-options-class-fabric/swarm-store-options-class-fabric';
 
 export function extendClassSwarmStoreWithOptionsConstructor<
   P extends ESwarmStoreConnector,
@@ -30,13 +29,12 @@ export function extendClassSwarmStoreWithOptionsConstructor<
   BC extends ConstructorType<
     ISwarmStore<P, ItemType, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, O> &
       ISwarmStoreWithConnector<P, ItemType, DbType, DBO, ConnectorBasic, CO, ConnectorMain>
-  >
->(BaseClass: BC, SwarmStoreOptionsClass?: ISwarmStoreOptionsClassConstructor<P, ItemType, DbType, DBO, ConnectorBasic, CO>): BC {
-  const SwarmStoreOptionsClassUsed =
-    SwarmStoreOptionsClass ?? swarmStoreOptionsClassFabric<P, ItemType, DbType, DBO, ConnectorBasic, CO>();
+  >,
+  SSOC extends ISwarmStoreOptionsClassConstructor<P, ItemType, DbType, DBO, ConnectorBasic, CO, O>
+>(BaseClass: BC, SwarmStoreOptionsClass: SSOC): BC {
   return class SwarmStoreWithOptionsConstructor extends BaseClass {
     public connect(swarmStoreOptions: O) {
-      const optionsClass = new SwarmStoreOptionsClassUsed({ swarmStoreOptions });
+      const optionsClass = new SwarmStoreOptionsClass({ swarmStoreOptions });
       const swarmStoreOptionsValidated = optionsClass.options as O;
       return super.connect(swarmStoreOptionsValidated);
     }

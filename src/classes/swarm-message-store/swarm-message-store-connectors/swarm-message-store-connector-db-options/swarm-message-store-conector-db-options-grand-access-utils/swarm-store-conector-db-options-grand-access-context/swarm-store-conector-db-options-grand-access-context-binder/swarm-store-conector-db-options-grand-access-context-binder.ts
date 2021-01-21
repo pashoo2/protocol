@@ -25,5 +25,5 @@ export function swarmStoreConnectorDbOptionsGrandAccessContextBinder<
   grandAccessCallbackBound.toString = (): string => {
     return grandAccessCallback.toString();
   };
-  return grandAccessCallbackBound;
+  return grandAccessCallbackBound as ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<P, ItemType, MD, CTX>;
 }

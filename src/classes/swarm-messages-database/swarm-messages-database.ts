@@ -16,11 +16,7 @@ import {
 } from '../swarm-message-store/types/swarm-message-store.types';
 import { getEventEmitterInstance } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { ESwarmMessageStoreEventNames } from '../swarm-message-store/swarm-message-store.const';
-import {
-  TSwarmMessageSerialized,
-  TSwarmMessageInstance,
-  ISwarmMessageInstanceDecrypted,
-} from '../swarm-message/swarm-message-constructor.types';
+import { TSwarmMessageSerialized, ISwarmMessageInstanceDecrypted } from '../swarm-message/swarm-message-constructor.types';
 import { TTypedEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 import {
   TSwarmStoreDatabaseEntityAddress,
@@ -52,6 +48,7 @@ import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messa
 import { OmitFirstArg } from '../../types/helper.types';
 import { ISwarmMessagesDatabaseConnector } from './swarm-messages-database.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from './swarm-messages-database.messages-collector.types';
+import { TSwarmStoreDatabaseIteratorMethodArgument } from '../swarm-store-class/swarm-store-class.types';
 
 export class SwarmMessagesDatabase<
   P extends ESwarmStoreConnector,
@@ -274,12 +271,14 @@ export class SwarmMessagesDatabase<
   };
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  addMessage = (...args: Parameters<OmitFirstArg<SMS['addMessage']>>): ReturnType<SMS['addMessage']> => {
+  addMessage = (
+    message: Parameters<SMS['addMessage']>[1],
+    key?: TSwarmStoreDatabaseEntityKey<P>
+  ): ReturnType<SMS['addMessage']> => {
     if (!this._checkIsReady()) {
       throw new Error('The instance is not ready to use');
     }
-    // TODO - remove cast to any https://github.com/microsoft/TypeScript/issues/28010
-    return (this._swarmMessageStore.addMessage as any)(this._dbName, ...args);
+    return this._swarmMessageStore.addMessage(this._dbName, message, key) as ReturnType<SMS['addMessage']>;
   };
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
@@ -291,23 +290,20 @@ export class SwarmMessagesDatabase<
   };
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  collect = ((...args: Parameters<OmitFirstArg<SMS['collect']>>): ReturnType<SMS['collect']> => {
+  collect = (options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>): ReturnType<SMS['collect']> => {
     if (!this._checkIsReady()) {
       throw new Error('The instance is not ready to use');
     }
-    // TODO - remove cast to any https://github.com/microsoft/TypeScript/issues/28010
-    return (this._swarmMessageStore.collect as any)(this._dbName, ...args);
-  }) as OmitFirstArg<SMS['collect']>;
+    return this._swarmMessageStore.collect(this._dbName, options) as ReturnType<SMS['collect']>;
+  };
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  collectWithMeta = (
-    ...args: Parameters<OmitFirstArg<SMS['collectWithMeta']>>
-  ): ReturnType<OmitFirstArg<SMS['collectWithMeta']>> => {
+  collectWithMeta = (options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>): ReturnType<SMS['collectWithMeta']> => {
     if (!this._checkIsReady()) {
       throw new Error('The instance is not ready to use');
     }
     // TODO - remove cast to any https://github.com/microsoft/TypeScript/issues/28010
-    return (this._swarmMessageStore.collectWithMeta as any)(this._dbName, ...args);
+    return this._swarmMessageStore.collectWithMeta(this._dbName, options) as ReturnType<SMS['collectWithMeta']>;
   };
 
   /**

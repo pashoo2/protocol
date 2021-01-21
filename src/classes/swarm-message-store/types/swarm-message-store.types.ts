@@ -558,6 +558,6 @@ export interface ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBo
   (
     this: CTX,
     // value
-    payload: I | ItemType
+    payload: MD | ItemType
   ): Promise<boolean>;
 }

@@ -19,10 +19,11 @@ import {
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { ISwarmMessageStore } from '../../types/swarm-message-store.types';
-import { ISwarmMessageStoreDatabaseOptionsWithMetaClass } from '../../swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-store-connector-db-options.types';
+import { ISwarmMessageStoreDatabaseOptionsWithMetaConstructor } from '../../swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-store-connector-db-options.types';
 import { ISwarmMessageInstanceDecrypted } from '../../../swarm-message/swarm-message-constructor.types';
+import { PromiseResolveType } from '../../../../types/promise.types';
 
-abstract class SwarmMessageStoreWithCreateDatabaseOptionsExtender<
+export abstract class SwarmMessageStoreWithCreateDatabaseOptionsExtender<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
@@ -54,7 +55,7 @@ abstract class SwarmMessageStoreWithCreateDatabaseOptionsExtender<
 > {
   protected abstract _createDatabaseOptionsExtender(
     swarmMessageStoreOptions: O
-  ): (dbOptions: DBO, swarmMessageConstructor: ISwarmMessageConstructor) => DBO;
+  ): (dbOptions: DBO, swarmMessageConstructor: PromiseResolveType<ReturnType<NonNullable<MCF>>>) => DBO;
 }
 
 export function getSwarmMessageStoreWithDatabaseOptionsConstructorExtended<
@@ -107,7 +108,7 @@ export function getSwarmMessageStoreWithDatabaseOptionsConstructorExtended<
   >,
   DBOS extends TSwarmStoreDatabaseOptionsSerialized,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  SSDOC extends ISwarmMessageStoreDatabaseOptionsWithMetaClass<
+  SSDOC extends ISwarmMessageStoreDatabaseOptionsWithMetaConstructor<
     P,
     T,
     DbType,

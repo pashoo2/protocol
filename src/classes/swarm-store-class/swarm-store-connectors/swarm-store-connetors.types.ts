@@ -75,20 +75,20 @@ export interface ISwarmStoreConnectorUtilsDatabaseOptionsValidators<
  *
  * @export
  * @interface ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound
- * @extends {TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, ItemType, MSI>}
+ * @extends {TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, MSI>}
  * @template P
- * @template ItemType
+ * @template T
  * @template CTX context in which the function will be executed
  */
 export interface ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<
   P extends ESwarmStoreConnector,
-  ItemType extends TSwarmStoreValueTypes<P>,
+  T extends TSwarmStoreValueTypes<P>,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext
-> extends TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, ItemType, I> {
+> extends TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, T> {
   (
     this: CTX,
     // value
-    payload: ItemType,
+    payload: T,
     userId: TSwarmMessageUserIdentifierSerialized,
     // key of the value
     key?: string,

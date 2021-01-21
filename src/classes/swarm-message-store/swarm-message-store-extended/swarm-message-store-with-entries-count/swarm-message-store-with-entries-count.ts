@@ -19,6 +19,7 @@ import { getClassSwarmStoreWithEntriesCount } from '../../../swarm-store-class/s
 import { ISwarmMessageStoreWithEntriesCount } from '../../types/swarm-message-store.types';
 import { ConstructorType } from '../../../../types/helper.types';
 import { ISwarmStoreWithConnector } from '../../../swarm-store-class/swarm-store-class.types';
+import { SwarmMessageStoreWithCreateDatabaseOptionsExtender } from '../swarm-message-store-with-database-options-constructor-mixin/swarm-message-store-with-database-options-constructor-mixin';
 import {
   ISwarmStoreConnectorBasicWithEntriesCount,
   ISwarmStoreConnectorWithEntriesCount,
@@ -54,10 +55,7 @@ export function getClassSwarmMessageStoreWithEntriesCount<
     ACO
   >,
   E extends ISwarmMessageStoreEvents<P, T, DbType, DBO>
->(): ConstructorType<
-  ISwarmMessageStoreWithEntriesCount<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, MD | T, GAC, MCF, ACO, O> &
-    ISwarmStoreWithConnector<P, T, DbType, DBO, ConnectorBasic, CO, ConnectorMain>
-> {
+>() {
   class SwarmMessageStoreConstructor extends SwarmMessageStore<
     P,
     T,
@@ -75,7 +73,7 @@ export function getClassSwarmMessageStoreWithEntriesCount<
     O,
     E
   > {}
-  return getClassSwarmStoreWithEntriesCount<
+  const Class = getClassSwarmStoreWithEntriesCount<
     P,
     T,
     DbType,
@@ -87,8 +85,25 @@ export function getClassSwarmMessageStoreWithEntriesCount<
     CFO,
     O,
     typeof SwarmMessageStoreConstructor
-  >(SwarmMessageStoreConstructor) as ConstructorType<
+  >(SwarmMessageStoreConstructor);
+  return (Class as unknown) as ConstructorType<
     ISwarmMessageStoreWithEntriesCount<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, MD | T, GAC, MCF, ACO, O> &
-      ISwarmStoreWithConnector<P, T, DbType, DBO, ConnectorBasic, CO, ConnectorMain>
+      ISwarmStoreWithConnector<P, T, DbType, DBO, ConnectorBasic, CO, ConnectorMain> &
+      SwarmMessageStoreWithCreateDatabaseOptionsExtender<
+        P,
+        T,
+        DbType,
+        DBO,
+        ConnectorBasic,
+        CO,
+        PO,
+        ConnectorMain,
+        CFO,
+        MD,
+        GAC,
+        MCF,
+        ACO,
+        O
+      >
   >;
 }
