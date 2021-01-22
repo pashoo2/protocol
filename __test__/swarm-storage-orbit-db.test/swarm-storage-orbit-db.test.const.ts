@@ -2,14 +2,11 @@ import { IStorageProviderOptions } from 'classes/storage-providers/storage-provi
 import { ISwarmStoreConnectorOrbitDBOptions } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.types';
 import { ISecretStoreCredentials } from 'classes/secret-storage-class/secret-storage-class.types';
 
-export const SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_DB_NAME =
-  'database_test';
+export const SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_DB_NAME = 'database_test';
 
-export const SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_TWO_DATABASE_DB_NAME =
-  'database_test_2';
+export const SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_TWO_DATABASE_DB_NAME = 'database_test_2';
 
-export const SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_THREE_DATABASE_DB_NAME =
-  'database_test_3';
+export const SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_THREE_DATABASE_DB_NAME = 'database_test_3';
 
 export const SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE: ISwarmStoreConnectorOrbitDBOptions<string> = {
   databases: [
@@ -25,7 +22,7 @@ export const SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_ACCESS_C
     {
       dbName: SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_ONE_DATABASE_DB_NAME,
       isPublic: true,
-      grantAccess: async (entity, id) => {
+      grantAccess: async function gantAccessCallback(entity, id) {
         return true;
       },
     },
@@ -107,7 +104,7 @@ export const SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_THREE_DATABASES_CUSTO
     {
       ...SWARM_STORE_CONNECTOR_TEST_CONNECTION_OPTIONS_DATABASE_THREE,
       isPublic: true,
-      grantAccess: async (entity, id): Promise<boolean> => {
+      grantAccess: async function gantAccessCallback(entity, id): Promise<boolean> {
         return !!entity && !!id;
       },
     },

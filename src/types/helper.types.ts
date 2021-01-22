@@ -29,13 +29,7 @@ export type ParametersWithoutFirst<F extends (...args: any[]) => any> = F extend
   ? U
   : never;
 
-// export type OmitFirstArg<F> = F extends (x: unknown, ...args: infer P) => unknown ? (...args: P) => ReturnType<F> : never;
-
-export type OmitFirstParameter<F extends (...argsRest: any[]) => any> = Parameters<F> extends [any, ...infer Rest] ? Rest : never;
-
-export type OmitFirstArg<F extends (arg1: any, ...argsRest: any[] | never) => any> = (
-  ...argsRest: OmitFirstParameter<F>
-) => ReturnType<F>;
+export type OmitFirstArg<F> = F extends (x: unknown, ...args: infer P) => unknown ? (...args: P) => ReturnType<F> : never;
 
 export type ArrayElement<ArrayType extends readonly unknown[]> = ArrayType[number];
 

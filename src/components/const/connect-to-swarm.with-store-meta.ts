@@ -41,6 +41,8 @@ import {
 } from '../../classes/swarm-store-class/swarm-store-class.types';
 import { connectorBasicFabricOrbitDBWithEntriesCount } from '../../classes/connection-bridge/connection-bridge-utils-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-store-to-swarm-database-fabrics';
 import { SerializerClass } from '../../classes/basic-classes/serializer-class/serializer-class';
+import { swarmStoreOptionsClassFabric } from '../../classes/swarm-store-class/swarm-store-class-helpers/swarm-store-options-helpers/swarm-store-options-class-fabric/swarm-store-options-class-fabric';
+import { swarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsSerializer } from '../../classes/connection-bridge/connection-bridge-utils-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-swarm-store-fabrics';
 
 export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY = 'key';
 
@@ -137,7 +139,7 @@ export const CONNECT_TO_SWARM_CONNECTION_STORAGE_OPTIONS: TConnectionBridgeStora
   directory: CONNECT_TO_SWARM_DATABASE_PREFIX,
   databases: [],
   swarmStoreDatabasesPersistentListFabric: connectionBridgeSwarmStoreConnectorDatabasesPersistentListFabricDefault,
-  swarmMessageStoreInstanceFabric: () => new SwarmMessageStore(),
+  swarmMessageStoreInstanceFabric: swarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsSerializer as any, // TODO
 };
 
 export const CONNECT_TO_SWARM_CONNECTION_STORAGE_WITH_STORE_META_OPTIONS: IConnectionBridgeOptionsDefault<
@@ -231,8 +233,11 @@ export const CONNECT_TO_SWARM_CONNECTION_STORAGE_WITH_STORE_META_OPTIONS: IConne
   directory: CONNECT_TO_SWARM_DATABASE_PREFIX,
   databases: [],
   swarmMessageStoreInstanceFabric() {
-    const SwarmMessageStoreWithEntriesCount = getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer();
-    return new SwarmMessageStoreWithEntriesCount() as any; // TODO;
+    const SwarmStoreOptionsClass = swarmStoreOptionsClassFabric();
+    const SwarmMessageStoreWithEntriesCount = getClassSwarmMessageStoreWithEntriesCountAndOptionsSerializer(
+      SwarmStoreOptionsClass as any // TODO
+    );
+    return new SwarmMessageStoreWithEntriesCount();
   },
   swarmStoreDatabasesPersistentListFabric: connectionBridgeSwarmStoreConnectorDatabasesPersistentListFabricDefault,
 };

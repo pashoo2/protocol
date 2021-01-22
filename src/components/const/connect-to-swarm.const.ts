@@ -137,7 +137,7 @@ export const CONNECT_TO_SWARM_CONNECTION_STORAGE_OPTIONS: TConnectionBridgeStora
   provider: CONNECT_TO_SWARM_STORAGE_PROVIDER_DEFAULT,
   directory: CONNECT_TO_SWARM_DATABASE_PREFIX,
   databases: [],
-  swarmMessageStoreInstanceFabric: () => new SwarmMessageStore(),
+  swarmMessageStoreInstanceFabric: swarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsSerializer as any, // TODO,
 };
 
 export const CONNECT_TO_SWARM_CONNECTION_STORAGE_WITH_STORE_META_OPTIONS: IConnectionBridgeOptionsDefault<

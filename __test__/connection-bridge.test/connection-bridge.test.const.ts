@@ -22,7 +22,9 @@ export const CONNECTION_BRIDGE_TEST_CONNECT_OPTIONS_ACCESS_CONTROL: IConnectionB
   ESwarmStoreConnector.OrbitDB
 >['storage']['accessControl'] = {
   allowAccessFor: [],
-  grantAccess: async (message, userId, dbName) => true,
+  grantAccess: async function gantAccessCallback(message, userId, dbName) {
+    return true;
+  },
 };
 
 export const CONNECTION_BRIDGE_TEST_CONNECT_OPTIONS_AUTH_CREDENTIALS = {
@@ -32,8 +34,7 @@ export const CONNECTION_BRIDGE_TEST_CONNECT_OPTIONS_AUTH_CREDENTIALS = {
 
 export const CONNECTION_BRIDGE_TEST_CONNECT_OPTIONS_AUTH = {
   credentials: CONNECTION_BRIDGE_TEST_CONNECT_OPTIONS_AUTH_CREDENTIALS,
-  providerUrl:
-    CONNECTION_BRIDGE_OPTIONS_DEFAULT_AUTH_PROVIDERS_POOL_FIREBASE_DB_WATCHA.databaseURL,
+  providerUrl: CONNECTION_BRIDGE_OPTIONS_DEFAULT_AUTH_PROVIDERS_POOL_FIREBASE_DB_WATCHA.databaseURL,
 };
 
 export const CONNECTION_BRIDGE_TEST_CONNECT_OPTIONS_AUTH_NO_EMAIL_VERIFIED = {
@@ -41,8 +42,7 @@ export const CONNECTION_BRIDGE_TEST_CONNECT_OPTIONS_AUTH_NO_EMAIL_VERIFIED = {
     ...CONNECTION_BRIDGE_TEST_CONNECT_OPTIONS_AUTH_CREDENTIALS,
     login: 'fagawa6394@mailernam.com',
   },
-  providerUrl:
-    CONNECTION_BRIDGE_OPTIONS_DEFAULT_AUTH_PROVIDERS_POOL_FIREBASE_DB_WATCHA.databaseURL,
+  providerUrl: CONNECTION_BRIDGE_OPTIONS_DEFAULT_AUTH_PROVIDERS_POOL_FIREBASE_DB_WATCHA.databaseURL,
 };
 
 export const CONNECTION_BRIDGE_TEST_CONNECT_OPTIONS: IConnectionBridgeOptions<ESwarmStoreConnector.OrbitDB> = {

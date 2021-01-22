@@ -36,8 +36,8 @@ export async function validatorOfSwrmMessageWithChannelDescription<
     getTypeForSwarmMessageWithChannelDescriptionByChannelsListDescription,
     channelDescriptionFormatValidator,
   } = argument;
-  assert(keyInDb, 'Database key should be defined for a swarm message with channel description');
 
+  assert(keyInDb, 'Database key should be defined for a swarm message with channel description');
   if (channelExistingDescription) {
     assert(
       getDatabaseKeyForChannelDescription(channelExistingDescription) === keyInDb,
@@ -50,9 +50,9 @@ export async function validatorOfSwrmMessageWithChannelDescription<
       'The user who sends the channel descriptions should be in the list of the channel administrators'
     );
   }
-
+  // TODO - resolve cast of the type to T
   assert(
-    await grandAccessCallbackFromDbOptions.call(this, messageOrHash, senderUserId, keyInDb, operationInDb),
+    await grandAccessCallbackFromDbOptions.call(this, messageOrHash as T, senderUserId, keyInDb, operationInDb),
     'Failed to get access by the main grand access function'
   );
 

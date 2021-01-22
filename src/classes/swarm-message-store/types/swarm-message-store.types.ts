@@ -543,21 +543,21 @@ export interface ISwarmMessageStoreWithEntriesCount<
  *
  * @export
  * @interface ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound
- * @extends {TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, ItemType, MSI>}
+ * @extends {TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, MSI>}
  * @template P
- * @template ItemType
+ * @template T
  * @template I
  * @template CTX context in which the function will be executed
  */
 export interface ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<
   P extends ESwarmStoreConnector,
-  ItemType extends TSwarmStoreValueTypes<P>,
+  T extends TSwarmStoreValueTypes<P>,
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext
-> extends ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<P, ItemType, CTX> {
+> extends ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<P, T, CTX> {
   (
     this: CTX,
     // value
-    payload: MD | ItemType
+    payload: MD | T
   ): Promise<boolean>;
 }
