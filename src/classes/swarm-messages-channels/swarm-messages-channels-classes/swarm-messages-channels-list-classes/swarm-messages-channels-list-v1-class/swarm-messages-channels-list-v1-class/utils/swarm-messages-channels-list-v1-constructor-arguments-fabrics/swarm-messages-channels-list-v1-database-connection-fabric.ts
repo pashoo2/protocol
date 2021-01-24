@@ -32,13 +32,13 @@ import { swarmMessagesDatabaseConnectedFabric } from '../../../../../../../swarm
 
 type DbType = ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE;
 
-export function getDatabaseConnectionFabricByDatabaseOptions<
+export function getDatabaseConnectionByDatabaseOptionsFabric<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
-  DBOF extends DBOFULL<P, T, MD, CTX, DBO>,
+  DBOF extends DBOFULL<P, T, MD, CTX, DBO> = DBOFULL<P, T, MD, CTX, DBO>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined = undefined,
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MD | T> = TSwarmMessagesStoreGrantAccessCallback<P, MD | T>,
   ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MD | T, GAC> | undefined = undefined,

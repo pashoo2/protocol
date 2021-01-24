@@ -18,7 +18,10 @@ export function validateGrantAccessCallback(
     throw new Error('Grant access callback should be a function');
   }
   assert(grantAccess.length <= 5, 'Grant access callback should handle maximum 5 arguments');
-  assert(grantAccess.length >= 1, 'Grant access callback should handle minimum 1 argument');
+  if (!grantAccess.length) {
+    // TODO length for a function with rest spread arguments is 0
+    console.warn('Grant access callback should handle minimum 1 argument');
+  }
   assert(!isNativeFunction(grantAccess), 'Grant access callback should not be a native function');
   return true;
 }

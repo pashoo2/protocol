@@ -18,6 +18,19 @@ export const CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_KEY_VALUE = {
   },
 };
 
+export const CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_SWARM_CHANNELS_LIST = {
+  isPublic: true,
+  dbName: CONNECT_TO_SWARM_IMMEDIATE_DATABASE_NAME_KEY_VALUE,
+  preloadCount: 0,
+  grantAccess: async function grantAccess(...args: any[]) {
+    console.log('grantAccess');
+    console.log(...args);
+    console.log(this);
+    debugger;
+    return true;
+  },
+};
+
 export const CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_FEED = {
   isPublic: true,
   dbName: CONNECT_TO_SWARM_IMMEDIATE_DATABASE_NAME_FEED_STORE,

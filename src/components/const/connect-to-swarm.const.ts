@@ -32,7 +32,10 @@ import {
   ISwarmStoreConnectorBasicWithEntriesCount,
   ISwarmStoreConnectorWithEntriesCount,
 } from '../../classes/swarm-store-class/swarm-store-class-extended/swarm-store-class-with-entries-count/swarm-store-class-with-entries-count.types';
-import { TSwarmStoreConnectorBasicFabric } from '../../classes/swarm-store-class/swarm-store-class.types';
+import {
+  TSwarmStoreConnectorBasicFabric,
+  TSwarmStoreDatabaseType,
+} from '../../classes/swarm-store-class/swarm-store-class.types';
 import { connectionBridgeSwarmStoreConnectorDatabasesPersistentListFabricDefault } from '../../classes/connection-bridge/connection-bridge-utils-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-store-database-list-storage-fabrics';
 import { SerializerClass } from '../../classes/basic-classes/serializer-class/serializer-class';
 import {
@@ -143,12 +146,12 @@ export const CONNECT_TO_SWARM_CONNECTION_STORAGE_OPTIONS: TConnectionBridgeStora
 export const CONNECT_TO_SWARM_CONNECTION_STORAGE_WITH_STORE_META_OPTIONS: IConnectionBridgeOptionsDefault<
   ESwarmStoreConnector.OrbitDB,
   TSwarmMessageSerialized,
-  ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
+  TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>,
   false,
   TSwarmStoreDatabaseOptions<
     ESwarmStoreConnector.OrbitDB,
     TSwarmMessageSerialized,
-    ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED
+    TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>
   >,
   ISwarmMessageInstanceDecrypted | TSwarmMessageSerialized,
   any,
@@ -157,30 +160,30 @@ export const CONNECT_TO_SWARM_CONNECTION_STORAGE_WITH_STORE_META_OPTIONS: IConne
   ISwarmStoreConnectorBasicWithEntriesCount<
     ESwarmStoreConnector.OrbitDB,
     TSwarmMessageSerialized,
-    ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
+    TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>,
     TSwarmStoreDatabaseOptions<
       ESwarmStoreConnector.OrbitDB,
       TSwarmMessageSerialized,
-      ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED
+      TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>
     >
   >,
   TSwarmStoreConnectorBasicFabric<
     ESwarmStoreConnector.OrbitDB,
     TSwarmMessageSerialized,
-    ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
+    TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>,
     TSwarmStoreDatabaseOptions<
       ESwarmStoreConnector.OrbitDB,
       TSwarmMessageSerialized,
-      ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED
+      TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>
     >,
     ISwarmStoreConnectorBasicWithEntriesCount<
       ESwarmStoreConnector.OrbitDB,
       TSwarmMessageSerialized,
-      ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
+      TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>,
       TSwarmStoreDatabaseOptions<
         ESwarmStoreConnector.OrbitDB,
         TSwarmMessageSerialized,
-        ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED
+        TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>
       >
     >
   >,
@@ -189,20 +192,20 @@ export const CONNECT_TO_SWARM_CONNECTION_STORAGE_WITH_STORE_META_OPTIONS: IConne
   ISwarmStoreConnectorWithEntriesCount<
     ESwarmStoreConnector.OrbitDB,
     TSwarmMessageSerialized,
-    ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
+    TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>,
     TSwarmStoreDatabaseOptions<
       ESwarmStoreConnector.OrbitDB,
       TSwarmMessageSerialized,
-      ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED
+      TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>
     >,
     ISwarmStoreConnectorBasicWithEntriesCount<
       ESwarmStoreConnector.OrbitDB,
       TSwarmMessageSerialized,
-      ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
+      TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>,
       TSwarmStoreDatabaseOptions<
         ESwarmStoreConnector.OrbitDB,
         TSwarmMessageSerialized,
-        ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED
+        TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>
       >
     >,
     any

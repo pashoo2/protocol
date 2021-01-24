@@ -2,19 +2,19 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$ref": "#/definitions/ISwarmMessagesChannelsDescriptionsListDescription",
   "definitions": {
+    "GUID": {
+      "type": "string",
+      "$comment": "GUID random - uuidv4",
+      "pattern": "^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$"
+    },
     "ISwarmMessagesChannelsDescriptionsListDescription": {
       "type": "object",
       "properties": {
-        "GUID": {
-          "type": "string",
-          "$comment": "GUID random - uuidv4",
-          "pattern": "^?:^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[a-f0-9]{4}-[a-f0-9]{12}$)|(?:^0{8}-0{4}-0{4}-0{4}-0{12}$)"
-        },
         "version": {
           "const": "1"
         },
         "id": {
-          "$ref": "#/definitions/TSwarmMessagesChannelId"
+          "$ref": "#/definitions/GUID"
         },
         "name": {
           "type": "string",

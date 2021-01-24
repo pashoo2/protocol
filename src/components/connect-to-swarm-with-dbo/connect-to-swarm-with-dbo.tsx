@@ -572,30 +572,37 @@ export class ConnectToSwarmWithDBO<
     }) as SMSM;
   }
 
-  protected getOptionsForSwarmMessagesDatabaseConnectedFabric = (
-    dbsOptions: DBO
-  ): TSwarmMessagesDatabaseConnectedFabricOptions<typeof swarmMessagesDatabaseConnectedFabric> => {
+  protected _getOptionsForSwarmMessagesDatabaseConnectedWithoutDatabaseOptionsFabric = (): Omit<
+    TSwarmMessagesDatabaseConnectedFabricOptions<typeof swarmMessagesDatabaseConnectedFabric>,
+    'dbOptions'
+  > => {
     const { connectionBridge, userId } = this.state;
     const { swarmMessagesDatabaseCacheOptions } = this.props;
 
     if (!connectionBridge || !connectionBridge.swarmMessageStore) {
-      throw new Error('A connection bridge instance is not provided in the options');
+      throw new Error('A connection bridge instance is not exists in the state');
     }
     if (!userId) {
       throw new Error('User id should be defined');
     }
 
-    const dbOptions: DBO = {
-      ...dbsOptions,
-    };
     return {
-      dbOptions,
       cacheOptions: swarmMessagesDatabaseCacheOptions,
       swarmMessageStore: connectionBridge.swarmMessageStore,
       swarmMessagesCollector: this.getSwarmMessagesCollector(),
       user: {
         userId,
       },
+    };
+  };
+
+  protected getOptionsForSwarmMessagesDatabaseConnectedFabric = (
+    dbsOptions: DBO
+  ): TSwarmMessagesDatabaseConnectedFabricOptions<typeof swarmMessagesDatabaseConnectedFabric> => {
+    const options = this._getOptionsForSwarmMessagesDatabaseConnectedWithoutDatabaseOptionsFabric();
+    return {
+      ...options,
+      dbOptions: { ...dbsOptions },
     };
   };
 

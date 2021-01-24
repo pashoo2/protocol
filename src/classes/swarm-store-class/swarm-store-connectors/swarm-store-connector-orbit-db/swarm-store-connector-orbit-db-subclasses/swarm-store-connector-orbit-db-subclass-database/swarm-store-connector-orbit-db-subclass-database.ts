@@ -571,7 +571,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       // if the equal operand passed within the argument
       // return just values queried by it and
       // ignore all other operators.
-      return this.getValues(eqOperand, database);
+      return await this.getValues(eqOperand, database);
     }
 
     let result = database.iterator(iteratorOptionsRes).collect();
@@ -629,7 +629,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     eqOperand: string | string[]
   ): Promise<Error | Array<ISwarmStoreConnectorOrbitDbDatabaseValue<ItemType> | Error | undefined>> => {
     if (eqOperand instanceof Array) {
-      return Promise.all(eqOperand.map(this._get));
+      return await Promise.all(eqOperand.map(this._get));
     }
     return [await this._get(eqOperand)];
   };

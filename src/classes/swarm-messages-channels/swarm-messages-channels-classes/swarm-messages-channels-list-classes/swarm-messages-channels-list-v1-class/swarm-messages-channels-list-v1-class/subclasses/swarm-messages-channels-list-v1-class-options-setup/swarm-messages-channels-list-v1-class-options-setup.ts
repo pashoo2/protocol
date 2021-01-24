@@ -42,9 +42,7 @@ export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
 
   protected readonly _validators: Readonly<CARGS['validators']>;
 
-  protected get _connectorType(): P {
-    return this._connectionOptions.connectorType;
-  }
+  protected readonly _connectorType: P;
 
   constructor(constructorArguments: CARGS) {
     super();
@@ -58,6 +56,7 @@ export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
     this._connectionOptions = createImmutableObjectClone(connectionOptions) as Readonly<CARGS['connectionOptions']>;
     this._validators = createImmutableObjectClone(validators) as Readonly<CARGS['validators']>;
     this._utilities = createImmutableObjectClone(utilities) as Readonly<CARGS['utilities']>;
+    this._connectorType = connectionOptions.connectorType;
   }
 
   protected _validateConstructorArgumentsConnectionOptions(

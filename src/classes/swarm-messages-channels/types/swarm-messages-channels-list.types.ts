@@ -58,8 +58,13 @@ export type TSwrmMessagesChannelsListDBOWithGrantAccess<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted,
-  CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext
-> = Omit<TSwarmStoreDatabaseOptions<P, T, TSwarmMessagesChannelsListDbType>, 'dbName' | 'dbType' | 'grantAccess'> & {
+  CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, TSwarmMessagesChannelsListDbType> = TSwarmStoreDatabaseOptions<
+    P,
+    T,
+    TSwarmMessagesChannelsListDbType
+  >
+> = Omit<DBO, 'dbName' | 'dbType' | 'grantAccess'> & {
   /**
    * Grant access callback supports for validation of a swarm messages decrypted
    *

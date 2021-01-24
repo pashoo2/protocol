@@ -14,8 +14,12 @@ export function validateSwamChannelsListDatabaseOptions(
 
   const dbOptionsObj = dbOptions as Record<string, any>;
 
-  assert(dbOptionsObj.dbName, 'A database name should not be provided in the options');
-  assert(dbOptionsObj.dbType, 'A database type should not be provided in the options');
+  if (dbOptionsObj.dbName) {
+    console.warn('A database name should not be provided in the options');
+  }
+  if (dbOptionsObj.dbType) {
+    console.warn('A database type should not be provided in the options');
+  }
   return true;
 }
 

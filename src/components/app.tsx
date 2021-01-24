@@ -7,7 +7,10 @@ import {
   CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_KEY_VALUE,
   CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_FEED,
 } from './const/connect-to-swarm-immediate.const';
-import { CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_WITH_STORE_META_OPTIONS } from './const/connect-to-swarm.const';
+import {
+  CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_WITH_STORE_META_OPTIONS,
+  CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS,
+} from './const/connect-to-swarm.const';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { ESwarmStoreConnector } from '../classes/swarm-store-class/swarm-store-class.const';
 import { ISwarmMessagesDatabaseMessagesCollector } from '../classes/swarm-messages-database/swarm-messages-database.messages-collector.types';
@@ -15,18 +18,22 @@ import { ConstructorArgumentType } from '../types/helper.types';
 import { ConnectToSwarmWithAdditionalMeta } from './connect-to-swarm-with-additional-meta/connect-to-swarm-with-additional-meta';
 import { ConnectToSwarmWithDBO } from './connect-to-swarm-with-dbo/connect-to-swarm-with-dbo';
 import { ConnectToSwarmWithAdditionalMetaWithDBO } from './connect-to-swarm-with-additional-meta-with-dbo/connect-to-swarm-with-additional-meta';
+import { ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaWithDBO } from './connect-to-swarm-channels-list-with-additional-meta-with-dbo/connect-to-swarm-channels-list-with-additional-meta-with-dbo';
+import { CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_SWARM_CHANNELS_LIST } from './const/connect-to-swarm-immediate.const';
 import {
   TSwarmMessageSerialized,
   TSwarmMessageInstance,
   ISwarmMessageInstanceDecrypted,
 } from '../classes/swarm-message/swarm-message-constructor.types';
 import {
-  CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS,
   CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_2,
   CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_1,
   CONNECT_TO_SWARM_AUTH_CREDENTIALS_1,
   CONNECT_TO_SWARM_AUTH_CREDENTIALS_2,
 } from './const/connect-to-swarm.const';
+import swarmChannelsListDescription from 'classes/swarm-messages-channels/const/swarm-messages-channels-list/swarm-messages-channels-list-description/schemas/swarm-messages-channels-list-description-v1-format-schema.json';
+import swarmChannelDescription from 'classes/swarm-messages-channels/const/swarm-messages-channel/swarm-messages-channel-description/schemas/swarm-message-channel-description-v1-format-schema.json';
+import { validateBySchema } from '../utils/validation-utils/validation-utils';
 
 export class App extends React.Component {
   render() {
@@ -88,23 +95,33 @@ export class App extends React.Component {
     const userIdReceiverMessages =
       userToConnectWith === '1' ? CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_2 : CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_1;
 
+    // return (
+    //   <ConnectToSwarmWithAdditionalMetaWithDBO<
+    //     typeof CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_KEY_VALUE['dbType'],
+    //     TSwarmMessageSerialized,
+    //     typeof CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_KEY_VALUE,
+    //     false,
+    //     ReturnType<typeof CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS['storage']['connectorBasicFabric']>,
+    //     ReturnType<
+    //       ReturnType<NonNullable<typeof CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS['storage']['getMainConnectorFabric']>>
+    //     >,
+    //     any, // TODO - ReturnType<typeof CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS['storage']['swarmMessageStoreInstanceFabric']>,
+    //     any, // TODO typeof CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS['storage']['swarmStoreDatabasesPersistentListFabric'],
+    //     typeof CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS,
+    //     TSwarmMessageInstance,
+    //     ISwarmMessageInstanceDecrypted
+    //   >
+    //     dbo={CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_FEED}
+    //     connectionBridgeOptions={CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS}
+    //     userCredentialsList={[userToConnectWithCredentials]}
+    //     userCredentialsToConnectImmediate={userToConnectWithCredentials}
+    //     userIdReceiverSwarmMessages={userIdReceiverMessages}
+    //     swarmMessagesDatabaseCacheOptions={CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_WITH_STORE_META_OPTIONS}
+    //   />
+    // );
     return (
-      <ConnectToSwarmWithAdditionalMetaWithDBO<
-        typeof CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_KEY_VALUE['dbType'],
-        TSwarmMessageSerialized,
-        typeof CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_KEY_VALUE,
-        false,
-        ReturnType<typeof CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS['storage']['connectorBasicFabric']>,
-        ReturnType<
-          ReturnType<NonNullable<typeof CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS['storage']['getMainConnectorFabric']>>
-        >,
-        any, // TODO - ReturnType<typeof CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS['storage']['swarmMessageStoreInstanceFabric']>,
-        any, // TODO typeof CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS['storage']['swarmStoreDatabasesPersistentListFabric'],
-        typeof CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS,
-        TSwarmMessageInstance,
-        ISwarmMessageInstanceDecrypted
-      >
-        dbo={CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_KEY_VALUE}
+      <ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaWithDBO
+        dbo={CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_SWARM_CHANNELS_LIST}
         connectionBridgeOptions={CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS}
         userCredentialsList={[userToConnectWithCredentials]}
         userCredentialsToConnectImmediate={userToConnectWithCredentials}

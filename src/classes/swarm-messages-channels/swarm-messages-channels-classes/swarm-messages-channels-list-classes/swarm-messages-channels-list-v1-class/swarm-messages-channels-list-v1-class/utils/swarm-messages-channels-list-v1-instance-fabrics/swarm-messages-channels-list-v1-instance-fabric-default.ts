@@ -5,7 +5,10 @@ import {
   TSwrmMessagesChannelsListDBOWithGrantAccess,
   ISwarmMessagesChannelsDescriptionsListConstructorArguments,
 } from '../../../../../../types/swarm-messages-channels-list.types';
-import { ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric } from '../../../../../../types/swarm-messages-channels-list.types';
+import {
+  ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric,
+  ISwarmMessagesChannelsDescriptionsList,
+} from '../../../../../../types/swarm-messages-channels-list.types';
 import { getSwarmMessagesChannelsListVersionOneInstance } from '../../swarm-messages-channels-list-v1-instance.fabric';
 import {
   IAdditionalUtils,
@@ -37,7 +40,7 @@ import {
  *     Pick<
  *       ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>,
  *       'description' | 'serializer' | 'connectionOptions'
- *     >)} optionsConstructorArgumentsFabric
+ *     >)} optionsForConstructorArgumentsFabric
  * @param {CF} connectionFabtic
  * @returns {{}}
  */
@@ -47,20 +50,21 @@ export function getSwarmMessagesChannelsListVersionOneInstanceWithDefaultParamet
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
-  CF extends ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<P, T, MD, CTX, DBO>
->(
-  optionsConstructorArgumentsFabric: Pick<
+  CF extends ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<P, T, MD, CTX, DBO>,
+  OFCAF extends Pick<
     ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>,
     'description' | 'serializer'
   > &
     Pick<
       ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>,
       'description' | 'serializer' | 'connectionOptions'
-    >,
+    >
+>(
   // This one can be used for creation of the datbaase conneciton fabric
   // src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-constructor-arguments-fabrics/swarm-messages-channels-list-v1-database-connection-fabric.ts
-  databaseConnectionFabric: CF
-) {
+  databaseConnectionFabric: CF,
+  optionsForConstructorArgumentsFabric: OFCAF
+): ISwarmMessagesChannelsDescriptionsList<ESwarmStoreConnector, T, MD> {
   const additionalUtils: IAdditionalUtils<P, T, MD, CTX, DBO> = {
     getVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidator: getVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidator as IGetVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidatorCreator<
       P,
@@ -91,11 +95,11 @@ export function getSwarmMessagesChannelsListVersionOneInstanceWithDefaultParamet
     ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>
   >(SwarmMessagesChannelsListVersionOneOptionsSetUp, additionalUtils);
   const options = {
-    ...optionsConstructorArgumentsFabric,
+    ...optionsForConstructorArgumentsFabric,
     databaseConnectionFabric,
   };
   const constructorArguments = getSwarmMessagesChannelsListVersionOneConstructorOptionsDefault<P, T, MD, CTX, DBO, CF>(options);
-  return getSwarmMessagesChannelsListVersionOneInstance<
+  const swarmMessagesChannelsListV1Instance = getSwarmMessagesChannelsListVersionOneInstance<
     P,
     T,
     MD,
@@ -104,4 +108,5 @@ export function getSwarmMessagesChannelsListVersionOneInstanceWithDefaultParamet
     CF,
     ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>
   >(constructorArguments, SwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler);
+  return swarmMessagesChannelsListV1Instance;
 }
