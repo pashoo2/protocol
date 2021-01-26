@@ -21,7 +21,7 @@ export class AsyncQueueClassBase extends TAsyncQueueBaseClass {
   public do = async <T>(
     promiseProvider: TAsyncQueueBaseClassPromiseProviderPending<T>
   ): Promise<T | Error | (T extends any[] ? Array<T | Error> : never)> => {
-    return new Promise((res) => {
+    return await new Promise((res) => {
       this.queue.push(() => {
         return this.createPromise<T>(promiseProvider).then(res).catch(res);
       });
@@ -40,7 +40,7 @@ export class AsyncQueueClassBase extends TAsyncQueueBaseClass {
     if (!this.runPromiseProvider) {
       throw new Error('runPromiseProvider is not defined');
     }
-    return Promise.all(promisePendingBatch.map(this.runPromiseProvider)).catch((err) =>
+    return await Promise.all(promisePendingBatch.map(this.runPromiseProvider)).catch((err) =>
       new Array(promisePendingBatch.length).fill(err)
     ); // fill with an error if the batch was rejected
   }

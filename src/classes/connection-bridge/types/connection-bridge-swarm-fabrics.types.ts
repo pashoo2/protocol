@@ -40,6 +40,7 @@ import {
   TSwarmStoreConnectorAccessConrotllerGrantAccessCallback,
 } from '../../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageStoreConectorDbOptionsGrandAccessContextClassFabric } from '../../swarm-message-store/types/swarm-message-store-db-options.types';
+import { JSONSchema7 } from 'json-schema';
 import {
   ISwarmMessageInstanceEncrypted,
   ISwarmMessageInstanceDecrypted,
@@ -54,6 +55,7 @@ export interface ISwarmMessageStoreDatabaseGrandAccessBaseContextClassFabric<
       getSwarmUserCredentials: ICentralAuthority['getSwarmUserCredentials'];
       getUserIdentity: ICentralAuthority['getUserIdentity'];
     };
+    jsonSchemaValidator: (jsonSchema: JSONSchema7, valueToValidate: any) => Promise<void>;
   }): RT;
 }
 

@@ -39,7 +39,7 @@ export interface ISwarmStoreDBOGrandAccessCallbackBaseContextMethods {
    * @memberof ISwarmStoreDBOGrandAccessCallbackBaseContext
    * @throws {Error} - throws an error if invalid data
    */
-  jsonSchemaValidator(jsonSchema: JSONSchema7, valueToValidate: any): Promise<true>;
+  jsonSchemaValidator(jsonSchema: JSONSchema7, valueToValidate: any): Promise<void>;
 }
 
 /**

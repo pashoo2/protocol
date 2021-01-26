@@ -579,8 +579,14 @@ export class ConnectToSwarmWithDBO<
     const { connectionBridge, userId } = this.state;
     const { swarmMessagesDatabaseCacheOptions } = this.props;
 
-    if (!connectionBridge || !connectionBridge.swarmMessageStore) {
+    if (!connectionBridge) {
       throw new Error('A connection bridge instance is not exists in the state');
+    }
+
+    const { swarmMessageStore } = connectionBridge;
+
+    if (!swarmMessageStore) {
+      throw new Error('A connection bridge have no an active instance of the Swarm message store');
     }
     if (!userId) {
       throw new Error('User id should be defined');
@@ -588,7 +594,7 @@ export class ConnectToSwarmWithDBO<
 
     return {
       cacheOptions: swarmMessagesDatabaseCacheOptions,
-      swarmMessageStore: connectionBridge.swarmMessageStore,
+      swarmMessageStore,
       swarmMessagesCollector: this.getSwarmMessagesCollector(),
       user: {
         userId,

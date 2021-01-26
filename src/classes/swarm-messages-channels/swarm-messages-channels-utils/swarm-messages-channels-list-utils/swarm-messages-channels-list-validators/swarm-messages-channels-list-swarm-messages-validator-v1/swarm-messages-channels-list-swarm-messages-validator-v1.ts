@@ -11,6 +11,7 @@ import { IValidatorOfSwarmMessageWithChannelDescriptionArgument } from '../../..
 import { TSwrmMessagesChannelsListDBOWithGrantAccess } from '../../../../types/swarm-messages-channels-list.types';
 import { IValidatorOfSwarmMessageWithChannelDescription } from '../../../../types/swarm-messages-channels-validation.types';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { validateUsersList } from '../../../swarm-messages-channel-utils/swarm-messages-channel-validation-utils/swarm-messages-channel-validation-description-utils/swarm-messages-channel-validation-utils-common/swarm-messages-channel-validation-utils-common';
 
 export async function validatorOfSwrmMessageWithChannelDescription<
   P extends ESwarmStoreConnector,
@@ -109,7 +110,31 @@ export async function validatorOfSwrmMessageWithChannelDescription<
       assert(channelDescriptionRaw.id === channelExistingDescription.id, 'Identity of the channel cannot be changed');
       assert(channelDescriptionRaw.dbType === channelExistingDescription.dbType, 'Type of channel database cannot be changed');
     }
-    assert(await channelDescriptionFormatValidator.call(this, messageBody.pld), 'Channel description format is not valid');
+
+    // validate the channel description raw format
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    const { jsonSchemaValidator, isUserValid } = this;
+    await channelDescriptionFormatValidator(channelDescriptionRaw, jsonSchemaValidator);
+
+    const { admins, dbOptions } = channelDescriptionRaw;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const { write: usersIdsWithWriteAccess } = dbOptions;
+
+    // validate users presented in the channel description
+
+    if (usersIdsWithWriteAccess) {
+      try {
+        await validateUsersList(usersIdsWithWriteAccess as string[], isUserValid);
+      } catch (err) {
+        throw new Error(`Users identifiers list, which have a write access is not valid: ${err.message}`);
+      }
+    }
+
+    try {
+      await validateUsersList(admins, isUserValid);
+    } catch (err) {
+      throw new Error(`Admin users identities are not valid: ${err.message}`);
+    }
   }
 }
 

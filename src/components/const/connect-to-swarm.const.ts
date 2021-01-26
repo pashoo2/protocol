@@ -24,7 +24,6 @@ import {
   ISwarmMessagesDatabaseMessagesCollectorWithStoreMeta,
 } from '../../classes/swarm-messages-database/swarm-messages-database.messages-collector.types';
 import { getMainConnectorFabricWithEntriesCountDefault } from '../../classes/connection-bridge/connection-bridge-utils-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-store-to-swarm-connector-fabrics';
-import { SwarmMessageStore } from '../../classes/swarm-message-store/swarm-message-store';
 import { TCentralAuthorityUserIdentity } from '../../classes/central-authority-class/central-authority-class-types/central-authority-class-types-common';
 import { SwarmMessagesDatabaseCacheWithEntitiesCount } from '../../classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache-with-entities-count/swarm-messages-database-cache-with-entities-count';
 import { ISwarmMessagesStoreMeta } from '../../classes/swarm-messages-database/swarm-messages-database.messages-collector.types';
@@ -44,6 +43,7 @@ import {
 } from '../../classes/swarm-store-class/swarm-store-class.types';
 import { connectorBasicFabricOrbitDBWithEntriesCount } from '../../classes/connection-bridge/connection-bridge-utils-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-store-to-swarm-database-fabrics';
 import { swarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsSerializer } from '../../classes/connection-bridge/connection-bridge-utils-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-swarm-store-fabrics';
+import { validateVerboseBySchemaWithVoidResult } from '../../utils/validation-utils/validation-utils';
 
 export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY = 'key';
 
@@ -252,6 +252,7 @@ export const CONNECT_TO_SWARM_CONNECTION_OPTIONS: IConnectionBridgeOptionsDefaul
   false
 > = {
   serializer: new SerializerClass(),
+  jsonSchemaValidator: validateVerboseBySchemaWithVoidResult,
   swarmStoreConnectorType: CONNECT_TO_SWARM_STORAGE_PROVIDER_DEFAULT,
   user: CONNECT_TO_SWARM_CONNECTION_USER_OPTIONS,
   auth: CONNECT_TO_SWARM_CONNECTION_AUTH_OPTOINS,
@@ -261,6 +262,7 @@ export const CONNECT_TO_SWARM_CONNECTION_OPTIONS: IConnectionBridgeOptionsDefaul
 
 export const CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS = {
   serializer: new SerializerClass(),
+  jsonSchemaValidator: validateVerboseBySchemaWithVoidResult,
   swarmStoreConnectorType: CONNECT_TO_SWARM_STORAGE_PROVIDER_DEFAULT,
   user: CONNECT_TO_SWARM_CONNECTION_USER_OPTIONS,
   auth: CONNECT_TO_SWARM_CONNECTION_AUTH_OPTOINS,

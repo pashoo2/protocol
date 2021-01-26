@@ -31,6 +31,7 @@ import {
 import { IPFS } from 'types/ipfs.types';
 import { ISerializer } from '../../../types/serialization.types';
 import { ISwarmMessageInstanceEncrypted } from '../../swarm-message/swarm-message-constructor.types';
+import { JSONSchema7 } from 'json-schema';
 import {
   ISwarmStoreConnectorDatabasesPersistentListConstructorParams,
   ISwarmStoreConnectorDatabasesPersistentList,
@@ -296,6 +297,14 @@ export interface IConnectionBridgeOptions<
    * @memberof IConnectionBridgeStorageOptions
    */
   serializer: SRLZR;
+
+  /**
+   * This is utility for validation of values
+   * by the json schema.
+   *
+   * @memberof IConnectionBridgeOptions
+   */
+  jsonSchemaValidator: (jsonSchema: JSONSchema7, valueToValidate: any) => Promise<void>;
 }
 
 export interface IConnectionBridge<

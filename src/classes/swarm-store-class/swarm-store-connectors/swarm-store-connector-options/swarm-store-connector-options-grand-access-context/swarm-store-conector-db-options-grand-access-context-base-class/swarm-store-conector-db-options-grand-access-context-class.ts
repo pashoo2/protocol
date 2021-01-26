@@ -3,7 +3,6 @@ import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from 'classes/swarm-stor
 import { TSwarmMessageUserIdentifierSerialized } from '../../../../../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import { ISwarmStoreConnectorDbOptionsGrandAccessContextClassFabricParams } from './swarm-store-conector-db-options-grand-access-context-class.types';
 import { ConstructorType } from '../../../../../../types/helper.types';
-import { validateVerboseBySchema } from '../../../../../../utils/validation-utils/validation-utils';
 
 export function getSwarmStoreConectorDbOptionsGrandAccessContextClass(
   params: ISwarmStoreConnectorDbOptionsGrandAccessContextClassFabricParams
@@ -20,12 +19,8 @@ export function getSwarmStoreConectorDbOptionsGrandAccessContextClass(
       return true;
     }
 
-    async jsonSchemaValidator(jsonSchema: JSONSchema7, valueToValidate: any): Promise<true> {
-      const validationError = validateVerboseBySchema(jsonSchema, valueToValidate);
-      if (!validationError) {
-        throw validationError;
-      }
-      return true;
+    async jsonSchemaValidator(jsonSchema: JSONSchema7, valueToValidate: any): Promise<void> {
+      return await params.jsonSchemaValidator(jsonSchema, valueToValidate);
     }
   }
 

@@ -3,7 +3,7 @@ import { ErrorObject } from 'ajv';
 export class ValidationError extends Error {
   static mergeErrorObjects(errors: ErrorObject[]): string {
     return errors.reduce((errMessage: string, err: ErrorObject, idx: number) => {
-      return `${errMessage}. ${idx}::${err.message}`;
+      return `${errMessage}\n\r "${err.dataPath}" - ${err.message}`;
     }, '');
   }
 

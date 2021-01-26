@@ -245,6 +245,7 @@ export class ConnectionBridgeWithDBOClassEntriesCount<
     const centralAuthorityConnection = this._getCentralAuthorityConnection();
     return swarmMessageStoreDatabaseGrandAccessBaseContextClassFabric({
       centralAuthority: centralAuthorityConnection,
+      jsonSchemaValidator: this._getOptions().jsonSchemaValidator,
     });
   }
 

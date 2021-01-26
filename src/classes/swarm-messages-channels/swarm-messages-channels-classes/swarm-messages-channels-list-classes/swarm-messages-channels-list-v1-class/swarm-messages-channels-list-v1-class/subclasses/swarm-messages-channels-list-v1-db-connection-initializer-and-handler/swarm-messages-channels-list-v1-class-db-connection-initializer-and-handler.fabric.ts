@@ -152,7 +152,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       const swarmMessagesChannelDescriptionDeserialized = this._deserializeChannelDescriptionRaw(
         swarmMessagesChannelDescriptionSerialized
       );
-      await this._validateChannelDescription(swarmMessagesChannelDescriptionDeserialized);
+      await this._validateChannelDescriptionFormat(swarmMessagesChannelDescriptionDeserialized);
       assert(
         this._createChannelDescriptionMessageIssuer(swarmMessagesChannelDescriptionDeserialized) !== iss,
         '"Issuer" of the swarm message with the swarm messages channel description is not valid'
@@ -299,7 +299,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
         getTypeForSwarmMessageWithChannelDescriptionByChannelDescription,
         getIssuerForSwarmMessageWithChannelDescriptionByChannelDescription,
       } = this._getUtilities();
-      const { swarmMessagesChannelDescriptionFormatValidator } = this._getValidators();
+      const { swarmMessagesChannelDescriptionFormatValidator: swarmMessagesChannelDescriptionValidator } = this._getValidators();
 
       return {
         channelsListDescription,
@@ -307,7 +307,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
         getIssuerForSwarmMessageWithChannelDescriptionByChannelsListDescription: getIssuerForSwarmMessageWithChannelDescriptionByChannelDescription,
         getTypeForSwarmMessageWithChannelDescriptionByChannelsListDescription: getTypeForSwarmMessageWithChannelDescriptionByChannelDescription,
         getDatabaseKeyForChannelDescription,
-        channelDescriptionFormatValidator: swarmMessagesChannelDescriptionFormatValidator,
+        channelDescriptionFormatValidator: swarmMessagesChannelDescriptionValidator,
       };
     }
 

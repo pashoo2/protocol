@@ -32,8 +32,6 @@ export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
   CF extends ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<P, T, MD, CTX, DBO>,
   CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>
 > extends AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<P, T, MD, CTX, DBO, CF, CARGS> {
-  protected readonly _serializer: CARGS['serializer'];
-
   protected readonly _channelsListDescription: Readonly<CARGS['description']>;
 
   protected readonly _connectionOptions: Readonly<CARGS['connectionOptions']>;
@@ -48,10 +46,9 @@ export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
     super();
     this._validateConstructorArguments(constructorArguments);
 
-    const { serializer, connectionOptions, validators, description, utilities } = constructorArguments;
+    const { connectionOptions, validators, description, utilities } = constructorArguments;
 
-    // TODO - https://github.com/microsoft/TypeScript/issues/15300 issue Index signature is missing in type (only on interfaces, not on type alias)
-    this._serializer = serializer;
+    // TODO - https://github.com/microsoft/TypeScript/issues/15300 issue - Index signature is missing in type (only on interfaces, not on type alias)
     this._channelsListDescription = createImmutableObjectClone(description) as Readonly<CARGS['description']>;
     this._connectionOptions = createImmutableObjectClone(connectionOptions) as Readonly<CARGS['connectionOptions']>;
     this._validators = createImmutableObjectClone(validators) as Readonly<CARGS['validators']>;
@@ -102,6 +99,7 @@ export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
     assert(typeof utilities === 'object', 'Utilities option must be an object');
 
     const {
+      serializer,
       databaseConnectionFabric,
       databaseNameGenerator,
       getDatabaseKeyForChannelDescription,
@@ -123,27 +121,19 @@ export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
       isNonNativeFunction(getTypeForSwarmMessageWithChannelDescriptionByChannelDescription),
       '"getTypeForSwarmMessageWithChannelDescriptionByChannelDescription" utility must be a non native functon'
     );
+    assert(serializer, 'A serializer must be provided in arguments');
   }
 
   protected _validateConstructorArguments(constructorArguments: CARGS): void {
     assert(constructorArguments, 'Constructor arguments must be provided');
 
-    const { serializer, connectionOptions, validators, description, utilities } = constructorArguments;
+    const { connectionOptions, validators, description, utilities } = constructorArguments;
 
-    assert(serializer, 'A serializer must be provided in arguments');
     this._validateConstructorArgumentsValidators(validators);
     this._validateConstructorArgumentsConnectionOptions(connectionOptions);
     this._validateConstructorArgumentsUtitlities(utilities);
     validators.swamChannelsListDatabaseOptionsValidator(connectionOptions.dbOptions);
     validators.channelsListDescriptionValidator(description);
-  }
-
-  protected _getSerializer(): CARGS['serializer'] {
-    const serializer = this._serializer;
-    if (!serializer) {
-      throw new Error('Serializer is not defiend');
-    }
-    return serializer;
   }
 
   protected _getChannelsListDescription(): Readonly<CARGS['description']> {
@@ -170,6 +160,10 @@ export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
     return utilities;
   }
 
+  protected _getSerializer(): CARGS['utilities']['serializer'] {
+    return this._getUtilities().serializer;
+  }
+
   protected _getValidators(): Readonly<CARGS['validators']> {
     const validators = this._validators;
     if (!validators) {
@@ -178,12 +172,16 @@ export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
     return validators;
   }
 
-  protected _getSwarmMessagesChannelDescriptionFormatValidator(): CARGS['validators']['swarmMessagesChannelDescriptionFormatValidator'] {
-    const { swarmMessagesChannelDescriptionFormatValidator } = this._getValidators();
-    if (!swarmMessagesChannelDescriptionFormatValidator) {
-      throw new Error('"swarmMessagesChannelDescriptionFormatValidator" is not available');
+  protected _getJSONSchemaValidator(): CARGS['validators']['jsonSchemaValidator'] {
+    return this._getValidators().jsonSchemaValidator;
+  }
+
+  protected _getSwarmMessagesChannelDescriptionValidator(): CARGS['validators']['swarmMessagesChannelDescriptionFormatValidator'] {
+    const { swarmMessagesChannelDescriptionFormatValidator: swarmMessagesChannelDescriptionValidator } = this._getValidators();
+    if (!swarmMessagesChannelDescriptionValidator) {
+      throw new Error('"swarmMessagesChannelDescriptionValidator" is not available');
     }
-    return swarmMessagesChannelDescriptionFormatValidator;
+    return swarmMessagesChannelDescriptionValidator;
   }
 
   /**
@@ -193,16 +191,17 @@ export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
    * @return {Promise<void>}
    * @throws - if the format is not valid
    */
-  protected async _validateChannelDescription(
+  protected async _validateChannelDescriptionFormat(
     channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>
   ): Promise<void> {
-    await this._getSwarmMessagesChannelDescriptionFormatValidator()(channelDescriptionRaw);
+    // TODO - context is not provided on here, so we need to move the context usages
+    await this._getSwarmMessagesChannelDescriptionValidator()(channelDescriptionRaw, this._getJSONSchemaValidator());
   }
 
   protected _serializeChannelDescriptionRaw(channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>): string {
     // TODO - may be it is necessary to serialize channelDescriptionRaw.dbOptions
     // separately because the channelDescriptionRaw.dbOptions.grandAccess is a function
-    return this._serializer.stringify(channelDescriptionRaw);
+    return this._getSerializer().stringify(channelDescriptionRaw);
   }
 
   protected _deserializeChannelDescriptionRaw(
@@ -210,7 +209,7 @@ export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
   ): ISwarmMessageChannelDescriptionRaw<P, T, any, any> {
     // TODO - may be it is necessary to deserialize channelDescriptionRaw.dbOptions
     // separately because the channelDescriptionRaw.dbOptions.grandAccess is a function
-    return this._serializer.parse(channelDescriptionSerialized);
+    return this._getSerializer().parse(channelDescriptionSerialized);
   }
 
   /**

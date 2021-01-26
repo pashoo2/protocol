@@ -18,7 +18,6 @@ import {
 } from '../../../../../../types/swarm-messages-channels-list.types';
 import swarmMessageChannelDescriptionFormatSchema from 'classes/swarm-messages-channels/const/swarm-messages-channel/swarm-messages-channel-description/schemas/swarm-message-channel-description-v1-format-schema.json';
 import jsonSchemaForChannelsListDescriptionV1 from 'classes/swarm-messages-channels/const/swarm-messages-channels-list/swarm-messages-channels-list-description/schemas/swarm-messages-channels-list-description-v1-format-schema.json';
-import { validateUsersList } from '../../../../../../swarm-messages-channels-utils/swarm-messages-channel-utils/swarm-messages-channel-validation-utils/swarm-messages-channel-validation-description-utils/swarm-messages-channel-validation-utils-common/swarm-messages-channel-validation-utils-common';
 import { validatorOfSwrmMessageWithChannelDescription } from 'classes/swarm-messages-channels/swarm-messages-channels-utils/swarm-messages-channels-list-utils/swarm-messages-channels-list-validators/swarm-messages-channels-list-swarm-messages-validator-v1';
 import { getSwarmMessagesChannelDescriptionFormatValidatorISwarmMessagesChannelDescriptionFormatValidator } from '../../../../../../swarm-messages-channels-utils/swarm-messages-channels-list-utils/swarm-messages-channels-list-validators/swarm-messages-channels-list-description-validator-v1/swarm-messages-channels-list-description-validator-v1';
 import { getValidatorSwarmChannelsListDatabaseOptions } from '../../../../../../swarm-messages-channels-utils/swarm-messages-channels-list-utils/swarm-messages-channels-list-validators/swarm-messages-channels-list-dbo-validator-v1/swarm-messages-channels-list-dbo-validator-v1';
@@ -31,16 +30,27 @@ export function getSwarmMessagesChannelsListVersionOneConstructorOptionsDefault<
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
-  CF extends ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<P, T, MD, CTX, DBO>
->(
-  optionsPartial: Pick<
+  CF extends ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<P, T, MD, CTX, DBO>,
+  OFCAF extends Pick<
     ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>,
-    'description' | 'serializer'
-  > &
-    Pick<
-      ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>,
-      'description' | 'serializer' | 'connectionOptions'
-    > &
+    'description' | 'connectionOptions'
+  > & {
+    utilities: {
+      serializer: ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>['utilities']['serializer'];
+    };
+    validators: {
+      jsonSchemaValidator: ISwarmMessagesChannelsDescriptionsListConstructorArguments<
+        P,
+        T,
+        MD,
+        CTX,
+        DBO,
+        CF
+      >['validators']['jsonSchemaValidator'];
+    };
+  }
+>(
+  optionsPartial: OFCAF &
     Pick<
       ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>['utilities'],
       'databaseConnectionFabric'
@@ -54,10 +64,10 @@ export function getSwarmMessagesChannelsListVersionOneConstructorOptionsDefault<
     getIssuerForSwarmMessageWithChannelDescriptionByChannelDescription: getSwarmMessageWithChannelDescriptionIssuerByChannelListDescription,
     getTypeForSwarmMessageWithChannelDescriptionByChannelDescription: getSwarmMessageWithChannelDescriptionTypeByChannelListDescription,
     getDatabaseKeyForChannelDescription: getChannelsListDatabaseKeyForChannelDescription,
+    ...optionsPartial.utilities,
   };
   const swarmMessagesChannelDescriptionFormatValidator = createSwarmMessagesChannelValidationDescriptionFormatV1ByChannelDescriptionJSONSchema(
-    swarmMessageChannelDescriptionFormatSchema as JSONSchema7,
-    validateUsersList
+    swarmMessageChannelDescriptionFormatSchema as JSONSchema7
   );
   const validatorsDefault: ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>['validators'] = {
     swarmMessagesChannelDescriptionFormatValidator: swarmMessagesChannelDescriptionFormatValidator,
@@ -66,6 +76,7 @@ export function getSwarmMessagesChannelsListVersionOneConstructorOptionsDefault<
       jsonSchemaForChannelsListDescriptionV1 as JSONSchema7
     ),
     swamChannelsListDatabaseOptionsValidator: getValidatorSwarmChannelsListDatabaseOptions(validateGrantAccessCallback),
+    ...optionsPartial.validators,
   };
   const options = {
     ...optionsPartial,

@@ -5,7 +5,7 @@
     "GUID": {
       "type": "string",
       "$comment": "GUID random - uuidv4",
-      "pattern": "^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$"
+      "pattern": "^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$"
     },
     "ISwarmMessagesChannelsDescriptionsListDescription": {
       "type": "object",

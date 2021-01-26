@@ -23,7 +23,6 @@ export abstract class AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<
   CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>
 > {
   protected abstract readonly _connectorType: P;
-  protected abstract readonly _serializer: CARGS['serializer'];
 
   protected abstract readonly _channelsListDescription: Readonly<CARGS['description']>;
 
@@ -33,7 +32,7 @@ export abstract class AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<
 
   protected abstract readonly _validators: Readonly<CARGS['validators']>;
 
-  protected abstract _getSerializer(): CARGS['serializer'];
+  protected abstract _getSerializer(): CARGS['utilities']['serializer'];
 
   protected abstract _getChannelsListDescription(): Readonly<CARGS['description']>;
 
@@ -44,7 +43,7 @@ export abstract class AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<
   protected abstract _getValidators(): Readonly<CARGS['validators']>;
 
   // TODO - move it into a separate class
-  protected abstract _validateChannelDescription(
+  protected abstract _validateChannelDescriptionFormat(
     channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>
   ): Promise<void>;
 

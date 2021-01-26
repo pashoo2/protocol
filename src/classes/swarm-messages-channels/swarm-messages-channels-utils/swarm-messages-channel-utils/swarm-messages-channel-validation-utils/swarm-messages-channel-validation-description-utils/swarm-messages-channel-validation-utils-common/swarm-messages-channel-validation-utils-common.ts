@@ -1,6 +1,3 @@
-import { validateVerboseBySchema } from '../../../../../../../utils/validation-utils/validation-utils';
-import { JSONSchema7 } from 'json-schema';
-import { ISwarmMessageChannelDescriptionRaw } from '../../../../../types/swarm-messages-channel.types';
 /**
  * Validates users identities sequently.
  * Because any of user id can be invalid
@@ -23,17 +20,4 @@ export const validateUsersList = async (
     }
     currentlyValidatingUserIdx += 1;
   }
-};
-
-export const createValidatorOfChannelDescriptionObjectStructureByJsonSchema = (
-  jsonSchema: JSONSchema7
-): ((channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<any, any, any, any>) => Promise<boolean>) => {
-  return (channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<any, any, any, any>): Promise<boolean> => {
-    const channelDescriptionValidationResult = validateVerboseBySchema(jsonSchema, channelDescriptionRaw);
-
-    if (channelDescriptionValidationResult instanceof Error) {
-      throw channelDescriptionValidationResult;
-    }
-    return Promise.resolve(true);
-  };
 };

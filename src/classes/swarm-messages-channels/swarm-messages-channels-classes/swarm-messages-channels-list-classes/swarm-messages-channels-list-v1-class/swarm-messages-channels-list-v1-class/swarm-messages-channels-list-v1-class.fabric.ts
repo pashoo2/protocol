@@ -50,7 +50,7 @@ export function getSwarmMessagesChannelsListVersionOneClass<
     }
 
     public async addChannel(channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>): Promise<void> {
-      await this._validateChannelDescription(channelDescriptionRaw);
+      await this._validateChannelDescriptionFormat(channelDescriptionRaw);
       await this._addChannelDescriptionRawInSwarmDatabase(channelDescriptionRaw);
     }
 

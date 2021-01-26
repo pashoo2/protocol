@@ -20,6 +20,7 @@ import {
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../swarm-messages-database/swarm-messages-database.messages-collector.types';
+import { JSONSchema7 } from 'json-schema';
 import {
   ISwarmMessagesDatabaseCacheOptions,
   ISwarmMessagesDatabaseCache,
@@ -227,6 +228,16 @@ export interface ISwarmMessagesChannelsDescriptionsListConstructorArgumentsValid
   DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 > {
   /**
+   * Validates a value by a json jsonSchema
+   * passed in props.
+   *
+   * @param {JSONSchema7} jsonSchema
+   * @param {*} valueToValidate
+   * @returns {Promise<void>}
+   * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArgumentsValidators
+   */
+  jsonSchemaValidator(jsonSchema: JSONSchema7, valueToValidate: any): Promise<void>;
+  /**
    * Validator of channel description format
    *
    * @type {ISwarmMessagesChannelDescriptionFormatValidator<P, T, any, any>}
@@ -276,6 +287,13 @@ export interface ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils
   DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
   CF extends ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<P, T, MD, CTX, DBO>
 > {
+  /**
+   * Used for channels descriptions serialization
+   *
+   * @type {ISerializer}
+   * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArguments
+   */
+  serializer: ISerializer;
   /**
    * Fabric which creates a connection to the swarm messages database by a database options
    *
@@ -357,13 +375,6 @@ export interface ISwarmMessagesChannelsDescriptionsListConstructorArguments<
    * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArguments
    */
   connectionOptions: Readonly<ISwarmMessagesChannelsDescriptionsListConnectionOptions<P, T, MD, CTX, DBO>>;
-  /**
-   * Used for channels descriptions serialization
-   *
-   * @type {ISerializer}
-   * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArguments
-   */
-  serializer: ISerializer;
 
   /**
    * Utilities used by the swarm messages channels list instance constucted

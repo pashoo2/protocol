@@ -37,7 +37,8 @@ import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../classes/swarm-sto
 import { getSwarmMessagesChannelsListVersionOneInstanceWithDefaultParameters } from '../../classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-instance-fabrics/swarm-messages-channels-list-v1-instance-fabric-default';
 import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
 import { TSwarmStoreDatabaseType } from '../../classes/swarm-store-class/swarm-store-class.types';
-import { generateUUID } from '../../utils/identity-utils/identity-utils';
+import { ISwarmMessageChannelDescriptionRaw } from '../../classes/swarm-messages-channels/types/swarm-messages-channel.types';
+import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../../classes/swarm-messages-channels/const/swarm-messages-channels-main.const';
 import {
   ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric,
   ISwarmMessagesChannelsListDescription,
@@ -50,7 +51,28 @@ import {
 type EXTPROPS = {
   description: ISwarmMessagesChannelsListDescription;
 };
-
+/**
+ *
+ *
+ * @export
+ * @class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaWithDBO
+ * @extends {ConnectToSwarmWithAdditionalMetaWithDBO<DbType, T, DBO, CD, ConnectorBasic, ConnectorMain, SMS, SSDPLF, CBO, MI, MD, SMSM, DCO, DCCRT, SMDCC>}
+ * @template T
+ * @template DbType
+ * @template DBO
+ * @template CD
+ * @template ConnectorBasic
+ * @template ConnectorMain
+ * @template SMS
+ * @template SSDPLF
+ * @template CBO
+ * @template MI
+ * @template MD
+ * @template SMSM
+ * @template DCO
+ * @template DCCRT
+ * @template SMDCC
+ */
 export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaWithDBO<
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P> & ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
@@ -197,7 +219,7 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
     > = TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, ISwarmStoreDBOGrandAccessCallbackBaseContext, DBO>
   >(): Pick<
     ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, ISwarmStoreDBOGrandAccessCallbackBaseContext, DBCL, CF>,
-    'description' | 'serializer'
+    'description'
   > &
     Pick<
       ISwarmMessagesChannelsDescriptionsListConstructorArguments<
@@ -208,21 +230,28 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
         DBCL,
         CF
       >,
-      'description' | 'serializer' | 'connectionOptions'
+      'description' | 'connectionOptions'
     > {
     const description = {
       version: '1',
-      id: generateUUID(),
+      id: 'eff9f522-3a63-46f7-8d5f-ad76765c3779',
       name: 'channelsList',
     };
     const { dbo, connectionBridgeOptions } = this.props;
-    const { serializer } = connectionBridgeOptions;
+    const { serializer, jsonSchemaValidator } = connectionBridgeOptions;
+    // TODO --
+    debugger;
     return {
-      serializer,
       description,
       connectionOptions: {
         connectorType: ESwarmStoreConnector.OrbitDB,
         dbOptions: (dbo as unknown) as DBCL, // TODO - avoid type cast as unknown
+      },
+      utilities: {
+        serializer,
+      },
+      validators: {
+        jsonSchemaValidator,
       },
     };
   }
@@ -259,7 +288,42 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
     const { userCredentialsToConnectImmediate } = this.props;
     if (userCredentialsToConnectImmediate) {
       await this.connectToSwarm(userCredentialsToConnectImmediate);
-      this._createSwarmMessagesChannelsList();
+      const channelsListInstance = this._createSwarmMessagesChannelsList();
+      const { connectionBridge } = this.state;
+      if (!connectionBridge) {
+        throw new Error('A connection bridge instance is not initialized');
+      }
+      const currentUserId = connectionBridge.centralAuthorityConnection?.getUserIdentity();
+      if (!currentUserId) {
+        throw new Error('An identity of the current user should be provided');
+      }
+      if (currentUserId instanceof Error) {
+        throw currentUserId;
+      }
+      const swarmMessageChannelDescription: ISwarmMessageChannelDescriptionRaw<
+        P,
+        TSwarmMessageSerialized,
+        ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
+        TSwarmStoreDatabaseOptions<P, TSwarmMessageSerialized, ESwarmStoreConnectorOrbitDbDatabaseType.FEED>
+      > = {
+        id: '40accad4-7941-41aa-95db-7954e80a73b8',
+        dbType: ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
+        version: '1',
+        tags: ['test', 'swarm_channel'],
+        name: 'test swarm channel',
+        admins: [currentUserId],
+        description: 'This is a swarm channel for test purposes',
+        messageEncryption: SWARM_MESSAGES_CHANNEL_ENCRYPION.PUBLIC,
+        dbOptions: {
+          write: [currentUserId],
+          grantAccess: async () => {
+            debugger;
+            return true;
+          },
+        },
+      };
+      debugger;
+      await channelsListInstance.addChannel(swarmMessageChannelDescription);
     }
   }
 }

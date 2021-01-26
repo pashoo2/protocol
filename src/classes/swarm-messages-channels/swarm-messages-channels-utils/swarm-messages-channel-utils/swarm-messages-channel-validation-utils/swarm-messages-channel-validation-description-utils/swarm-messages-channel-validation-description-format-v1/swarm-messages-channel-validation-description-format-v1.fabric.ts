@@ -3,32 +3,19 @@ import { ESwarmStoreConnector } from '../../../../../../swarm-store-class/swarm-
 import { TSwarmMessageSerialized } from '../../../../../../swarm-message/swarm-message-constructor.types';
 import { TSwarmStoreDatabaseOptions } from '../../../../../../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageChannelDescriptionRaw } from '../../../../../types/swarm-messages-channel.types';
-import { createValidatorOfChannelDescriptionObjectStructureByJsonSchema } from '../swarm-messages-channel-validation-utils-common/swarm-messages-channel-validation-utils-common';
 import { swarmMessagesChannelValidationDescriptionFormatV1 } from './swarm-messages-channel-validation-description-format-v1';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmMessagesChannelDescriptionFormatValidator } from '../../../../../types/swarm-messages-channels-validation.types';
 
 export function createSwarmMessagesChannelValidationDescriptionFormatV1ByChannelDescriptionJSONSchema<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  DBO extends TSwarmStoreDatabaseOptions<P, T, any>,
-  CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext
->(
-  channelDescriptionJSONSchema: JSONSchema7,
-  validatorUserList: (usersIdsList: string[], isValidUserId: (userId: string) => Promise<boolean>) => Promise<void>
-): (this: CTX, swarmMessagesChannelDescriptionRawV1Format: ISwarmMessageChannelDescriptionRaw<P, T, any, DBO>) => Promise<void> {
-  const jsonSchemaValidator = createValidatorOfChannelDescriptionObjectStructureByJsonSchema(channelDescriptionJSONSchema);
-  const externalUtilsForSwarmMessagesChannelValidationDescriptionValidator = {
-    validateUsersList: validatorUserList,
-    validateChannelDescriptionObjectStructure: jsonSchemaValidator,
-  };
-  return function (
-    this: CTX,
-    swarmMessagesChannelDescriptionRawV1Format: ISwarmMessageChannelDescriptionRaw<P, T, any, DBO>
-  ): Promise<void> {
-    return swarmMessagesChannelValidationDescriptionFormatV1.call(
-      this,
-      swarmMessagesChannelDescriptionRawV1Format,
-      externalUtilsForSwarmMessagesChannelValidationDescriptionValidator
-    );
+  DBO extends TSwarmStoreDatabaseOptions<P, T, any>
+>(channelDescriptionJSONSchema: JSONSchema7): ISwarmMessagesChannelDescriptionFormatValidator<P, T, any, DBO> {
+  return async (
+    swarmMessagesChannelDescriptionRawV1Format: ISwarmMessageChannelDescriptionRaw<P, T, any, DBO>,
+    jsonSchemaValidator: (jsonSchema: JSONSchema7, valueToValidate: any) => Promise<void>
+  ) => {
+    await jsonSchemaValidator(channelDescriptionJSONSchema, swarmMessagesChannelDescriptionRawV1Format);
+    swarmMessagesChannelValidationDescriptionFormatV1<P, T, DBO>(swarmMessagesChannelDescriptionRawV1Format);
   };
 }

@@ -8,6 +8,7 @@ import {
 import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from '../../swarm-message';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { ISwarmMessageChannelDescriptionRaw } from './swarm-messages-channel.types';
+import { JSONSchema7 } from 'json-schema';
 import {
   IGetDatabaseKeyForChannelDescription,
   IGetSwarmMessageWithChannelDescriptionIssuerByChannelListDescription,
@@ -35,7 +36,10 @@ export interface ISwarmMessagesChannelDescriptionFormatValidator<
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>
 > {
-  (channelDescription: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>): Promise<void>;
+  (
+    channelDescription: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>,
+    jsonSchemaValidator: (jsonSchema: JSONSchema7, valueToValidate: any) => Promise<void>
+  ): Promise<void>;
 }
 
 /**

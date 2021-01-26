@@ -53,12 +53,22 @@ export function getSwarmMessagesChannelsListVersionOneInstanceWithDefaultParamet
   CF extends ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<P, T, MD, CTX, DBO>,
   OFCAF extends Pick<
     ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>,
-    'description' | 'serializer'
-  > &
-    Pick<
-      ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>,
-      'description' | 'serializer' | 'connectionOptions'
-    >
+    'description' | 'connectionOptions'
+  > & {
+    utilities: {
+      serializer: ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>['utilities']['serializer'];
+    };
+    validators: {
+      jsonSchemaValidator: ISwarmMessagesChannelsDescriptionsListConstructorArguments<
+        P,
+        T,
+        MD,
+        CTX,
+        DBO,
+        CF
+      >['validators']['jsonSchemaValidator'];
+    };
+  }
 >(
   // This one can be used for creation of the datbaase conneciton fabric
   // src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-constructor-arguments-fabrics/swarm-messages-channels-list-v1-database-connection-fabric.ts
@@ -98,7 +108,9 @@ export function getSwarmMessagesChannelsListVersionOneInstanceWithDefaultParamet
     ...optionsForConstructorArgumentsFabric,
     databaseConnectionFabric,
   };
-  const constructorArguments = getSwarmMessagesChannelsListVersionOneConstructorOptionsDefault<P, T, MD, CTX, DBO, CF>(options);
+  const constructorArguments = getSwarmMessagesChannelsListVersionOneConstructorOptionsDefault<P, T, MD, CTX, DBO, CF, OFCAF>(
+    options
+  );
   const swarmMessagesChannelsListV1Instance = getSwarmMessagesChannelsListVersionOneInstance<
     P,
     T,
