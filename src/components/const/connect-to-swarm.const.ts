@@ -44,6 +44,9 @@ import {
 import { connectorBasicFabricOrbitDBWithEntriesCount } from '../../classes/connection-bridge/connection-bridge-utils-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-store-to-swarm-database-fabrics';
 import { swarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsSerializer } from '../../classes/connection-bridge/connection-bridge-utils-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-swarm-store-fabrics';
 import { validateVerboseBySchemaWithVoidResult } from '../../utils/validation-utils/validation-utils';
+import { IConnectionBridgeOptions } from '../../classes/connection-bridge/types/connection-bridge.types';
+import { TSwarmMessageSerialized } from '../../classes/swarm-message/swarm-message-constructor.types';
+import { IConnectionBridgeOptionsByStorageOptions } from '../../classes/connection-bridge/types/connection-bridge.types-helpers/connection-bridge-storage-options.types.helpers';
 
 export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY = 'key';
 
@@ -260,14 +263,26 @@ export const CONNECT_TO_SWARM_CONNECTION_OPTIONS: IConnectionBridgeOptionsDefaul
   nativeConnection: CONNECT_TO_SWARM_CONNECTION_NATIVE_CONNECTION_OPTIONS, // use the default value
 };
 
-export const CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS = {
-  serializer: new SerializerClass(),
-  jsonSchemaValidator: validateVerboseBySchemaWithVoidResult,
+export const CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS: IConnectionBridgeOptionsByStorageOptions<
+  typeof CONNECT_TO_SWARM_STORAGE_PROVIDER_DEFAULT,
+  TSwarmMessageSerialized,
+  false,
+  InstanceType<typeof SerializerClass>,
+  ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
+  TSwarmStoreDatabaseOptions<
+    typeof CONNECT_TO_SWARM_STORAGE_PROVIDER_DEFAULT,
+    TSwarmMessageSerialized,
+    ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED
+  >,
+  typeof CONNECT_TO_SWARM_CONNECTION_STORAGE_WITH_STORE_META_OPTIONS
+> = {
   swarmStoreConnectorType: CONNECT_TO_SWARM_STORAGE_PROVIDER_DEFAULT,
   user: CONNECT_TO_SWARM_CONNECTION_USER_OPTIONS,
   auth: CONNECT_TO_SWARM_CONNECTION_AUTH_OPTOINS,
   storage: CONNECT_TO_SWARM_CONNECTION_STORAGE_WITH_STORE_META_OPTIONS,
   nativeConnection: CONNECT_TO_SWARM_CONNECTION_NATIVE_CONNECTION_OPTIONS, // use the default value
+  serializer: new SerializerClass(),
+  jsonSchemaValidator: validateVerboseBySchemaWithVoidResult,
 };
 
 const SWARM_MESSAGES_DATABASE_CACHE_CONSTRUCTOR_INSTANCE = SwarmMessagesDatabaseCache as ISwarmMessagesDatabaseCacheConstructor<

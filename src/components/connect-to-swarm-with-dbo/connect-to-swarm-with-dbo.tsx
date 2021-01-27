@@ -37,17 +37,17 @@ import { IConnectionBridge } from '../../classes/connection-bridge/types/connect
 import {
   TConnectionBridgeOptionsAccessControlOptions,
   TConnectionBridgeOptionsSwarmMessageStoreOptionsWithConnectorFabric,
-} from '../../classes/connection-bridge/connection-bridge.types-helpers';
+} from '../../classes/connection-bridge/types/connection-bridge.types-helpers/connection-bridge-options.types-helpers';
 import {
   TConnectionBridgeOptionsConnectorFabricOptions,
   TConnectionBridgeOptionsSwarmMessageStoreInstance,
-} from '../../classes/connection-bridge/connection-bridge.types-helpers';
+} from '../../classes/connection-bridge/types/connection-bridge.types-helpers/connection-bridge-options.types-helpers';
 import {
   TConnectionBridgeOptionsConnectorMain,
   TConnectionBridgeOptionsConstructorWithEncryptedCacheFabric,
   TConnectionBridgeOptionsGrandAccessCallback,
-} from '../../classes/connection-bridge/connection-bridge.types-helpers';
-import { TConnectionBridgeOptionsProviderOptions } from '../../classes/connection-bridge/connection-bridge.types-helpers';
+} from '../../classes/connection-bridge/types/connection-bridge.types-helpers/connection-bridge-options.types-helpers';
+import { TConnectionBridgeOptionsProviderOptions } from '../../classes/connection-bridge/types/connection-bridge.types-helpers/connection-bridge-options.types-helpers';
 import {
   ISwarmMessagesDatabaseCacheOptions,
   ISwarmMessagesDatabaseCache,
@@ -56,7 +56,7 @@ import {
 import {
   TConnectionBridgeOptionsConnectorBasic,
   TConnectionBridgeOptionsConnectorConnectionOptions,
-} from '../../classes/connection-bridge/connection-bridge.types-helpers';
+} from '../../classes/connection-bridge/types/connection-bridge.types-helpers/connection-bridge-options.types-helpers';
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../classes/swarm-messages-database/swarm-messages-database.messages-collector.types';
 import { ISerializer } from '../../types/serialization.types';
 

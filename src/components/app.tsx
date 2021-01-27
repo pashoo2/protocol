@@ -120,7 +120,12 @@ export class App extends React.Component {
     //   />
     // );
     return (
-      <ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaWithDBO
+      <ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaWithDBO<
+        ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
+        typeof CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_SWARM_CHANNELS_LIST,
+        typeof CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS,
+        false
+      >
         dbo={CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_SWARM_CHANNELS_LIST}
         connectionBridgeOptions={CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS}
         userCredentialsList={[userToConnectWithCredentials]}

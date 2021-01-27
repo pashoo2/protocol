@@ -6,16 +6,16 @@ import {
   TSwarmStoreConnectorBasicFabric,
   TSwarmStoreConnectorConnectionOptions,
   TSwarmStoreDatabaseOptions,
-} from '../swarm-store-class';
+} from '../../../swarm-store-class';
 import {
   ISwarmMessageStoreAccessControlOptions,
   ISwarmMessageStoreOptionsWithConnectorFabric,
   TSwarmMessagesStoreGrantAccessCallback,
   ISwarmMessageStore,
-} from '../swarm-message-store';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-message-encrypted-cache';
-import { IConnectionBridgeOptions, ISwarmStoreDatabasesPersistentListFabric } from './types/connection-bridge.types';
-import { ISerializer } from '../../types/serialization.types';
+} from '../../../swarm-message-store';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-message-encrypted-cache';
+import { IConnectionBridgeOptions, ISwarmStoreDatabasesPersistentListFabric } from '../connection-bridge.types';
+import { ISerializer } from '../../../../types/serialization.types';
 
 export type TConnectionBridgeOptionsDatabaseOptions<
   T extends IConnectionBridgeOptions<

@@ -11,24 +11,24 @@ import {
   TConnectionBridgeOptionsConnectorFabricOptions,
   TConnectionBridgeOptionsSwarmMessageStoreOptionsWithConnectorFabric,
   TConnectionBridgeOptionsSwarmMessageStoreInstance,
-} from '../../../classes/connection-bridge/connection-bridge.types-helpers';
+} from '../../../classes/connection-bridge/types/connection-bridge.types-helpers/connection-bridge-options.types-helpers';
 import {
   TConnectionBridgeOptionsConnectorConnectionOptions,
   TConnectionBridgeOptionsProviderOptions,
-} from '../../../classes/connection-bridge/connection-bridge.types-helpers';
+} from '../../../classes/connection-bridge/types/connection-bridge.types-helpers/connection-bridge-options.types-helpers';
 import {
   TConnectionBridgeOptionsConnectorBasic,
   TConnectionBridgeOptionsConnectorBasicFabric,
-} from '../../../classes/connection-bridge/connection-bridge.types-helpers';
+} from '../../../classes/connection-bridge/types/connection-bridge.types-helpers/connection-bridge-options.types-helpers';
 import {
   TConnectionBridgeOptionsGrandAccessCallback,
   TConnectionBridgeOptionsAccessControlOptions,
-} from '../../../classes/connection-bridge/connection-bridge.types-helpers';
+} from '../../../classes/connection-bridge/types/connection-bridge.types-helpers/connection-bridge-options.types-helpers';
 import {
   TConnectionBridgeOptionsDatabaseOptions,
   TConnectionBridgeOptionsSwarmMessageInstance,
   TConnectionBridgeOptionsConstructorWithEncryptedCacheFabric,
-} from '../../../classes/connection-bridge/connection-bridge.types-helpers';
+} from '../../../classes/connection-bridge/types/connection-bridge.types-helpers/connection-bridge-options.types-helpers';
 
 export async function connectToSwarmUtil<
   P extends ESwarmStoreConnector,

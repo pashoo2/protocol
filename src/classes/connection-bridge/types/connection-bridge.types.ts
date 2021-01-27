@@ -32,6 +32,7 @@ import { IPFS } from 'types/ipfs.types';
 import { ISerializer } from '../../../types/serialization.types';
 import { ISwarmMessageInstanceEncrypted } from '../../swarm-message/swarm-message-constructor.types';
 import { JSONSchema7 } from 'json-schema';
+import { ConnectorBasic } from './connection-bridge.types-helpers/connection-bridge-storage-options.types.helpers';
 import {
   ISwarmStoreConnectorDatabasesPersistentListConstructorParams,
   ISwarmStoreConnectorDatabasesPersistentList,
