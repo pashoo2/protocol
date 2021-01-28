@@ -1,9 +1,9 @@
 import {
-    ISwarmStoreConnectorDatabaseAccessControlleGrantCallback,
-    ISwarmStoreDatabaseBaseOptionsWithWriteAccess,
-    TSwarmStoreValueTypes
+  ISwarmStoreConnectorDatabaseAccessControlleGrantCallback,
+  ISwarmStoreDatabaseBaseOptionsWithWriteAccess,
+  TSwarmStoreValueTypes,
 } from '../../../../swarm-store-class.types';
-import {ESwarmStoreConnector} from '../../../../swarm-store-class.const';
+import { ESwarmStoreConnector } from '../../../../swarm-store-class.const';
 
 export interface ISwarmStoreConnectorOrbitDbDatabaseAccessControllerManifest {
   /**

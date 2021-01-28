@@ -53,6 +53,7 @@ import { ISwarmStoreConnectorBasic } from '../../../../swarm-store-class.types';
 import { createPromisePending, resolvePromisePending } from '../../../../../../utils/common-utils/commom-utils.promies';
 import { isDbOptionsWithGrandAccess } from '../../../../../swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-message-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-context/swarm-store-conector-db-options-grand-access-context-binder-to-database-options/swarm-store-conector-db-options-grand-access-context-binder-to-database-options';
 import { ISwarmMessageInstanceDecrypted } from '../../../../../swarm-message/swarm-message-constructor.types';
+import { validateOrbitDBDatabaseOptionsV1 } from '../../swarm-store-connector-orbit-db-validators/swarm-store-connector-orbit-db-validators-db-options';
 import {
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_EMIT_BATCH_INT_MS,
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_EMIT_BATCH_SIZE,
@@ -138,8 +139,16 @@ export class SwarmStoreConnectorOrbitDBDatabase<
 
   constructor(options: ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType, DbType>, orbitDb: orbitDbModule.OrbitDB) {
     super();
+    this._validateOptions(options);
     this.setOptions(options);
     this.setOrbitDbInstance(orbitDb);
+  }
+
+  protected _validateOptions(options: ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType, DbType>): void {
+    if (!options) {
+      throw new Error('Options must be specified');
+    }
+    validateOrbitDBDatabaseOptionsV1(options);
   }
 
   public async connect(): Promise<Error | void> {
@@ -1190,10 +1199,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   };
 
   private setOptions(options: ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType, DbType>): void {
-    if (!options) {
-      throw new Error('Options must be specified');
-    }
-
     const { dbName, preloadCount, dbType } = options;
 
     if (typeof dbName !== 'string') {

@@ -11,7 +11,7 @@ import {
   SWARM_STORE_CONNECTOR_ORBITDB_IDENTITY_TYPE,
   SWARM_STORE_CONNECTOR_ORBITDB_KEYSTORE_DEFAULT_DBNAME,
   SWARM_STORE_CONNECTOR_ORBITDB_KEYSTORE_DEFAULT_DIRECTORY,
-} from './swarm-store-connector-orbit-db.const';
+} from './const/swarm-store-connector-orbit-db.const';
 import { IPFS } from 'types/ipfs.types';
 import { SwarmStoreConnectorOrbitDBSubclassIdentityProvider } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-identity-provider/swarm-store-connector-orbit-db-subclass-identity-provider';
 import { SwarmStoreConnectorOrbitDBSubclassAccessController } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller';

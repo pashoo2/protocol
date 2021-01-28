@@ -4,6 +4,8 @@ import { TSwarmMessageSerialized } from '../../../../../../swarm-message/swarm-m
 import { TSwarmStoreDatabaseOptions } from '../../../../../../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageChannelDescriptionRaw } from '../../../../../types/swarm-messages-channel.types';
 import { isArrowFunction, isNativeFunction } from '../../../../../../../utils/common-utils/common-utils.functions';
+import { validateGrantAccessCallbackWithContext } from 'classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-grant-access-callback';
+import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../../../../../const/swarm-messages-channels-main.const';
 
 /**
  * Used for validation the swarm channel description format
@@ -17,33 +19,43 @@ export function swarmMessagesChannelValidationDescriptionFormatV1<
   T extends TSwarmMessageSerialized,
   DBO extends TSwarmStoreDatabaseOptions<P, T, any>
 >(swarmMessagesChannelDescriptionRawV1Format: ISwarmMessageChannelDescriptionRaw<P, T, any, DBO>): void {
-  const { admins, dbOptions } = swarmMessagesChannelDescriptionRawV1Format;
   debugger;
+  const { admins, dbOptions, messageEncryption } = swarmMessagesChannelDescriptionRawV1Format;
+
   assert(dbOptions, 'Database options for the swarm channel should be defined');
   assert(typeof dbOptions === 'object', 'Database options should be an object');
+
+  if (dbOptions.isPublic) {
+    assert(
+      messageEncryption === SWARM_MESSAGES_CHANNEL_ENCRYPION.PUBLIC,
+      'For a public database there should no be any message encryption specified'
+    );
+  }
+  if (messageEncryption === SWARM_MESSAGES_CHANNEL_ENCRYPION.PRIVATE) {
+    assert(dbOptions.write?.length === 2, 'For a private message channel only two users should be specified');
+  }
+  if (messageEncryption === SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD) {
+    assert(
+      Number(dbOptions.write?.length) > 1,
+      'For a password encrypted channels at least a 2 users should be specified as users who have a the write access'
+    );
+  }
 
   assert(Array.isArray(admins), 'List with admins userd identities must be an array');
   assert(admins.length, 'List with admins must must contain at least one user identity');
 
   const { write: usersIdsWithWriteAccess, grantAccess, isPublic } = dbOptions;
-  debugger;
+
   if (isPublic) {
     assert(Boolean(usersIdsWithWriteAccess), 'Public channels should not have the "write" property in database options');
   }
-  if (grantAccess) {
-    assert(typeof grantAccess === 'function', 'Grant access function must be a function');
-    // TODO may be call the function to validate the behaviour
-    assert(grantAccess.length === 4, 'The grant access callback function must handle 4 arguments');
-    assert(grantAccess.name, 'The grant access callback must be a named function');
-    assert(!isNativeFunction(grantAccess as () => unknown), 'The grant access callback must not be a native function');
-    assert(!isArrowFunction(grantAccess as () => unknown), 'The grant access callback must not be an arrow function');
-  }
-
+  debugger;
+  assert(validateGrantAccessCallbackWithContext(grantAccess), 'Grant access callback is not valid');
   if (usersIdsWithWriteAccess) {
+    assert(Array.isArray(usersIdsWithWriteAccess), 'A list with users which have a write access to the channel must be an array');
     assert(
       admins.every((adminUserId) => usersIdsWithWriteAccess.includes(adminUserId)),
       'Each admin user should has the write access to the channel'
     );
-    assert(Array.isArray(usersIdsWithWriteAccess), 'A list with users which have a write access to the channel must be an array');
   }
 }

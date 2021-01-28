@@ -36,7 +36,7 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseOptions<
    * @type {ESwarmStoreConnectorOrbitDbDatabaseType}
    * @memberof ISwarmStoreConnectorOrbitDbDatabaseOptions
    */
-  dbType?: DbType;
+  dbType: DbType;
   cache?: ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore;
 }
 

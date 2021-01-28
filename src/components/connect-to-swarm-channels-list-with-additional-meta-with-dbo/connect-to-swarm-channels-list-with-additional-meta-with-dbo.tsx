@@ -201,14 +201,21 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
         messageEncryption: SWARM_MESSAGES_CHANNEL_ENCRYPION.PUBLIC,
         dbOptions: {
           write: [currentUserId],
-          grantAccess: function grantAccess() {
+          grantAccess: async function grantAccess(): Promise<boolean> {
             debugger;
             return true;
           },
         },
       };
       debugger;
-      await channelsListInstance.addChannel(swarmMessageChannelDescription);
+      try {
+        await channelsListInstance.addChannel(swarmMessageChannelDescription);
+      } catch (err) {
+        console.error(err);
+        debugger;
+      }
+      const existingChannels = await channelsListInstance.getAllChannelsDescriptions();
+      debugger;
     }
   }
 }

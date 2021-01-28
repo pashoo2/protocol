@@ -1,7 +1,6 @@
 import { ESwarmStoreConnector } from 'classes/swarm-store-class/swarm-store-class.const';
 import {
   ISwarmMessageBodyDeserialized,
-  TSwarmMessageSerialized,
   ISwarmMessageInstanceDecrypted,
 } from '../../classes/swarm-message/swarm-message-constructor.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
@@ -43,7 +42,7 @@ import {
 } from '../../classes/swarm-store-class/swarm-store-class.types';
 import { connectorBasicFabricOrbitDBWithEntriesCount } from '../../classes/connection-bridge/connection-bridge-utils-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-store-to-swarm-database-fabrics';
 import { swarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsSerializer } from '../../classes/connection-bridge/connection-bridge-utils-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-swarm-store-fabrics';
-import { validateVerboseBySchemaWithVoidResult } from '../../utils/validation-utils/validation-utils';
+import { asyncValidateVerboseBySchemaWithVoidResult } from '../../utils/validation-utils/validation-utils';
 import { IConnectionBridgeOptions } from '../../classes/connection-bridge/types/connection-bridge.types';
 import { TSwarmMessageSerialized } from '../../classes/swarm-message/swarm-message-constructor.types';
 import { IConnectionBridgeOptionsByStorageOptions } from '../../classes/connection-bridge/types/connection-bridge.types-helpers/connection-bridge-storage-options.types.helpers';
@@ -255,7 +254,7 @@ export const CONNECT_TO_SWARM_CONNECTION_OPTIONS: IConnectionBridgeOptionsDefaul
   false
 > = {
   serializer: new SerializerClass(),
-  jsonSchemaValidator: validateVerboseBySchemaWithVoidResult,
+  jsonSchemaValidator: asyncValidateVerboseBySchemaWithVoidResult,
   swarmStoreConnectorType: CONNECT_TO_SWARM_STORAGE_PROVIDER_DEFAULT,
   user: CONNECT_TO_SWARM_CONNECTION_USER_OPTIONS,
   auth: CONNECT_TO_SWARM_CONNECTION_AUTH_OPTOINS,
@@ -282,7 +281,7 @@ export const CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS: IConnectionBri
   storage: CONNECT_TO_SWARM_CONNECTION_STORAGE_WITH_STORE_META_OPTIONS,
   nativeConnection: CONNECT_TO_SWARM_CONNECTION_NATIVE_CONNECTION_OPTIONS, // use the default value
   serializer: new SerializerClass(),
-  jsonSchemaValidator: validateVerboseBySchemaWithVoidResult,
+  jsonSchemaValidator: asyncValidateVerboseBySchemaWithVoidResult,
 };
 
 const SWARM_MESSAGES_DATABASE_CACHE_CONSTRUCTOR_INSTANCE = SwarmMessagesDatabaseCache as ISwarmMessagesDatabaseCacheConstructor<

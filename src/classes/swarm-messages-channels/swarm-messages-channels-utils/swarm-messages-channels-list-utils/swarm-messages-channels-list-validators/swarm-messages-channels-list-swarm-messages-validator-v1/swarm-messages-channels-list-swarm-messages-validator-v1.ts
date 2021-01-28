@@ -117,7 +117,6 @@ export async function validatorOfSwrmMessageWithChannelDescription<
     await channelDescriptionFormatValidator(channelDescriptionRaw, jsonSchemaValidator);
 
     const { admins, dbOptions } = channelDescriptionRaw;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const { write: usersIdsWithWriteAccess } = dbOptions;
 
     // validate users presented in the channel description

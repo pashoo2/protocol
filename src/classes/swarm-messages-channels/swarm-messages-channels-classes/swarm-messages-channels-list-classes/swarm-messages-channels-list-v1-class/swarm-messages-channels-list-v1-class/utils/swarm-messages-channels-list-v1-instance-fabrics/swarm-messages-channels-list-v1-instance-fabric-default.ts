@@ -17,6 +17,7 @@ import {
 import { getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandlerClass } from '../../subclasses/swarm-messages-channels-list-v1-db-connection-initializer-and-handler/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.fabric';
 import { getSwarmMessagesChannelsListVersionOneConstructorOptionsDefault } from '../swarm-messages-channels-list-v1-constructor-arguments-fabrics/swarm-messages-channels-list-v1-constructor-arguments-fabric';
 import { getIConstructorAbstactSwarmMessagesChannelsListVersionOneOptionsSetUp } from '../../subclasses/swarm-messages-channels-list-v1-class-options-setup/swarm-messages-channels-list-v1-class-options-setup';
+import { ICreateGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidator } from '../../types/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.types';
 import {
   getVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidator,
   getArgumentsForSwarmMessageWithChannelDescriptionValidator,
@@ -75,6 +76,14 @@ export function getSwarmMessagesChannelsListVersionOneInstanceWithDefaultParamet
   databaseConnectionFabric: CF,
   optionsForConstructorArgumentsFabric: OFCAF
 ): ISwarmMessagesChannelsDescriptionsList<ESwarmStoreConnector, T, MD> {
+  // this constant is added to have the reference to it's type
+  const createGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidatorUtil = createGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidator as ICreateGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidator<
+    P,
+    T,
+    MD,
+    CTX,
+    DBO
+  >;
   const additionalUtils: IAdditionalUtils<P, T, MD, CTX, DBO> = {
     getVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidator: getVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidator as IGetVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidatorCreator<
       P,
@@ -84,7 +93,7 @@ export function getSwarmMessagesChannelsListVersionOneInstanceWithDefaultParamet
       DBO
     >,
     getArgumentsForSwarmMessageWithChannelDescriptionValidator: getArgumentsForSwarmMessageWithChannelDescriptionValidator,
-    createGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidator,
+    createGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidator: createGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidatorUtil,
   };
   const SwarmMessagesChannelsListVersionOneOptionsSetUp = getIConstructorAbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<
     P,

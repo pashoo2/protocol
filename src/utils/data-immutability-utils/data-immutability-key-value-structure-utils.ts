@@ -13,6 +13,7 @@ export const createImmutableObjectClone = <T extends Record<string | number, any
       value: isSimpleObject(value) ? createImmutableObjectClone(value) : value,
       writable: false,
       configurable: false,
+      enumerable: true,
     };
   });
   Object.defineProperties(objectClone, objectPropsDescriptors);

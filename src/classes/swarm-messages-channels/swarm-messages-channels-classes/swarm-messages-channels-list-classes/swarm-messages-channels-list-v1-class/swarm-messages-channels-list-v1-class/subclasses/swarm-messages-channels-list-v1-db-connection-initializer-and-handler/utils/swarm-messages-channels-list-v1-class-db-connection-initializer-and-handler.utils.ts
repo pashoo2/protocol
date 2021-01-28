@@ -102,6 +102,7 @@ export function createGrantAccessCallbackByConstantArgumentsAndMessageWithChanne
     // operation which is processed (like delete, add or something else)
     operation?: TSwarmStoreDatabaseEntryOperation<P>
   ): Promise<boolean> {
+    debugger;
     if (!key) {
       throw new Error('Key should be provided for a message with a swarm messages channel description');
     }

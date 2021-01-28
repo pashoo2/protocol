@@ -35,7 +35,7 @@ export const validateBySchema = (schema: object, value: any): boolean => {
 
 export const getVerboseValidatorForJSONSchema = memoize((schema: object): ValidateFunction => ajvVerbose.compile(schema));
 
-export const validateVerboseBySchema = (schema: object, value: any): Error | void => {
+export const validateVerboseBySchema = (schema: object, value: any): Error | undefined => {
   const validator = getVerboseValidatorForJSONSchema(schema);
   const validationResult = validator(value);
 
@@ -53,7 +53,23 @@ export const validateVerboseBySchema = (schema: object, value: any): Error | voi
  * @returns {Promise<void>} - promise will be resolved after validation
  * @throws
  */
-export async function validateVerboseBySchemaWithVoidResult(schema: JSONSchema7, value: any): Promise<void> {
+export function validateVerboseBySchemaWithVoidResult(schema: JSONSchema7, value: any): void {
+  const validationError = validateVerboseBySchema(schema, value);
+  if (validationError) {
+    throw validationError;
+  }
+}
+
+/**
+ * Validate object by the schema and throw an error
+ *
+ * @export
+ * @param {JSONSchema7} schema - schema to validate by
+ * @param {*} value - a value to validate
+ * @returns {Promise<void>} - promise will be resolved after validation
+ * @throws
+ */
+export async function asyncValidateVerboseBySchemaWithVoidResult(schema: JSONSchema7, value: any): Promise<void> {
   const validationError = validateVerboseBySchema(schema, value);
   if (validationError) {
     throw validationError;

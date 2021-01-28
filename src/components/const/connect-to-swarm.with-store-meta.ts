@@ -43,6 +43,7 @@ import { connectorBasicFabricOrbitDBWithEntriesCount } from '../../classes/conne
 import { SerializerClass } from '../../classes/basic-classes/serializer-class/serializer-class';
 import { swarmStoreOptionsClassFabric } from '../../classes/swarm-store-class/swarm-store-class-helpers/swarm-store-options-helpers/swarm-store-options-class-fabric/swarm-store-options-class-fabric';
 import { swarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsSerializer } from '../../classes/connection-bridge/connection-bridge-utils-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-swarm-store-fabrics';
+import { asyncValidateVerboseBySchemaWithVoidResult } from 'utils';
 
 export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_SESSION_STORAGE_KEY = 'key';
 
@@ -263,6 +264,7 @@ export const CONNECT_TO_SWARM_CONNECTION_OPTIONS: IConnectionBridgeOptionsDefaul
   auth: CONNECT_TO_SWARM_CONNECTION_AUTH_OPTOINS,
   storage: CONNECT_TO_SWARM_CONNECTION_STORAGE_OPTIONS,
   nativeConnection: CONNECT_TO_SWARM_CONNECTION_NATIVE_CONNECTION_OPTIONS, // use the default value
+  jsonSchemaValidator: asyncValidateVerboseBySchemaWithVoidResult,
 };
 
 export const CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS: IConnectionBridgeOptionsDefault<
@@ -339,6 +341,7 @@ export const CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS: IConnectionBri
   auth: CONNECT_TO_SWARM_CONNECTION_AUTH_OPTOINS,
   storage: CONNECT_TO_SWARM_CONNECTION_STORAGE_WITH_STORE_META_OPTIONS,
   nativeConnection: CONNECT_TO_SWARM_CONNECTION_NATIVE_CONNECTION_OPTIONS, // use the default value
+  jsonSchemaValidator: asyncValidateVerboseBySchemaWithVoidResult,
 };
 
 const SWARM_MESSAGES_DATABASE_CACHE_CONSTRUCTOR_INSTANCE = SwarmMessagesDatabaseCache as ISwarmMessagesDatabaseCacheConstructor<

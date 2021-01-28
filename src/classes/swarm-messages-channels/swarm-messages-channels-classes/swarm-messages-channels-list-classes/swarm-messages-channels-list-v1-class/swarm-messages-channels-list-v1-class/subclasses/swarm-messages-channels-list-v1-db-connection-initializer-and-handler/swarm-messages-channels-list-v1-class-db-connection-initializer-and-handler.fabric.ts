@@ -353,6 +353,11 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
         dbName: databaseName,
         grantAccess: databaseGrantAccessCallback,
       } as unknown) as DBOFULL<P, T, MD, CTX, DBO>;
+      return (Object.assign({}, dbOptions, {
+        dbType: ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
+        dbName: databaseName,
+        grantAccess: databaseGrantAccessCallback,
+      }) as unknown) as DBOFULL<P, T, MD, CTX, DBO>;
     }
 
     protected async _createActiveConnectionToChannelsListDatabase(): Promise<

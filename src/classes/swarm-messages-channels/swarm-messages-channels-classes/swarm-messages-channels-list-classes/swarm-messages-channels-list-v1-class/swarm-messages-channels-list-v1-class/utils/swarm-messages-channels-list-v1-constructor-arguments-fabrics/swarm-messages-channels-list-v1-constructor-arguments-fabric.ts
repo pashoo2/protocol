@@ -16,7 +16,7 @@ import {
   ISwarmMessagesChannelsDescriptionsListConstructorArguments,
   TSwrmMessagesChannelsListDBOWithGrantAccess,
 } from '../../../../../../types/swarm-messages-channels-list.types';
-import swarmMessageChannelDescriptionFormatSchema from 'classes/swarm-messages-channels/const/swarm-messages-channel/swarm-messages-channel-description/schemas/swarm-message-channel-description-v1-format-schema.json';
+import swarmMessageChannelDescriptionFormatSchema from 'classes/swarm-messages-channels/const/validation/swarm-messages-channel/swarm-messages-channel-description/schemas/swarm-message-channel-description-v1-format-schema.json';
 import jsonSchemaForChannelsListDescriptionV1 from 'classes/swarm-messages-channels/const/swarm-messages-channels-list/swarm-messages-channels-list-description/schemas/swarm-messages-channels-list-description-v1-format-schema.json';
 import { validatorOfSwrmMessageWithChannelDescription } from 'classes/swarm-messages-channels/swarm-messages-channels-utils/swarm-messages-channels-list-utils/swarm-messages-channels-list-validators/swarm-messages-channels-list-swarm-messages-validator-v1';
 import { getSwarmMessagesChannelDescriptionFormatValidatorISwarmMessagesChannelDescriptionFormatValidator } from '../../../../../../swarm-messages-channels-utils/swarm-messages-channels-list-utils/swarm-messages-channels-list-validators/swarm-messages-channels-list-description-validator-v1/swarm-messages-channels-list-description-validator-v1';

@@ -31,9 +31,6 @@ import {
   CONNECT_TO_SWARM_AUTH_CREDENTIALS_1,
   CONNECT_TO_SWARM_AUTH_CREDENTIALS_2,
 } from './const/connect-to-swarm.const';
-import swarmChannelsListDescription from 'classes/swarm-messages-channels/const/swarm-messages-channels-list/swarm-messages-channels-list-description/schemas/swarm-messages-channels-list-description-v1-format-schema.json';
-import swarmChannelDescription from 'classes/swarm-messages-channels/const/swarm-messages-channel/swarm-messages-channel-description/schemas/swarm-message-channel-description-v1-format-schema.json';
-import { validateBySchema } from '../utils/validation-utils/validation-utils';
 
 export class App extends React.Component {
   render() {
