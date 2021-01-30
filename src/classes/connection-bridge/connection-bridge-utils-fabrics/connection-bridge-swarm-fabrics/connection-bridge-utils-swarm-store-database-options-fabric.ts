@@ -26,7 +26,7 @@ import {
   swarmStoreConnectorDbOptionsValidatorsWithGACValidationClassFabric,
   SwarmStoreConnectorDbOptionsValidators,
 } from '../../../swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-message-store-connector-db-options-validators';
-import { validateGrantAccessCallbackWithContext } from '../../../swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-grant-access-callback';
+import { validateGrantAccessCallbackWithContextSerializable } from '../../../swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-grant-access-callback';
 import { IDatabaseOptionsClass } from '../../../swarm-store-class/swarm-store-class.types';
 import { SwarmMessageStoreDBOptionsClass } from '../../../swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-message-store-connector-db-options-class/swarm-message-store-connector-db-options-class';
 import { ISwarmStoreDBOSerializerValidator } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
@@ -112,7 +112,7 @@ export function getSwarmMessageStoreConnectorDBOClassFabric<
       DBO,
       DBOS
     >,
-    validateGrantAccessCallbackWithContext
+    validateGrantAccessCallbackWithContextSerializable
   );
   const dboFabric = (
     ContextBaseClass: CTXC,

@@ -154,11 +154,11 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       );
       await this._validateChannelDescriptionFormat(swarmMessagesChannelDescriptionDeserialized);
       assert(
-        this._createChannelDescriptionMessageIssuer(swarmMessagesChannelDescriptionDeserialized) !== iss,
+        this._createChannelDescriptionMessageIssuer(swarmMessagesChannelDescriptionDeserialized) === iss,
         '"Issuer" of the swarm message with the swarm messages channel description is not valid'
       );
       assert(
-        this._createChannelDescriptionMessageTyp(swarmMessagesChannelDescriptionDeserialized) !== typ,
+        this._createChannelDescriptionMessageTyp(swarmMessagesChannelDescriptionDeserialized) === typ,
         '"Typ" of the swarm message with the swarm messages channel description is not valid'
       );
       return swarmMessagesChannelDescriptionDeserialized;
@@ -253,8 +253,8 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
     protected async _readAllChannelsDescriptionsWithMeta(): Promise<
       ISwarmMessagesChannelDescriptionWithMetadata<P, T, MD, any, any>[]
     > {
-      const optionsForReadingAllValues = this._createOptionsForCollectingAllDatabaseValues();
-      const messagesReadFromDatabase = await this._requestDatabase(optionsForReadingAllValues);
+      const optionsForReadingAllValuesStored = this._createOptionsForCollectingAllDatabaseValues();
+      const messagesReadFromDatabase = await this._requestDatabase(optionsForReadingAllValuesStored);
       const swarmMessagesChannelsDescriptionsOrErrors = await this._convertDatabaseRequestResultIntoSwarmChannelsDescriptionsWithMeta(
         messagesReadFromDatabase
       );
@@ -353,11 +353,6 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
         dbName: databaseName,
         grantAccess: databaseGrantAccessCallback,
       } as unknown) as DBOFULL<P, T, MD, CTX, DBO>;
-      return (Object.assign({}, dbOptions, {
-        dbType: ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
-        dbName: databaseName,
-        grantAccess: databaseGrantAccessCallback,
-      }) as unknown) as DBOFULL<P, T, MD, CTX, DBO>;
     }
 
     protected async _createActiveConnectionToChannelsListDatabase(): Promise<

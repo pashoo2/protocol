@@ -28,7 +28,7 @@ import {
   ISwarmMessagesDatabaseConnector,
   ISwarmMessagesDatabaseMessagesCollector,
 } from '../../../../../../../swarm-messages-database';
-import { swarmMessagesDatabaseConnectedFabric } from '../../../../../../../swarm-messages-database/swarm-messages-database-fabric';
+import { swarmMessagesDatabaseConnectedFabric as swarmMessagesDatabaseConnectedInstanceFabric } from '../../../../../../../swarm-messages-database/swarm-messages-database-fabric';
 
 type DbType = ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE;
 
@@ -223,7 +223,7 @@ export function getDatabaseConnectionByDatabaseOptionsFabric<
       ...options,
       dbOptions: databaseOptions,
     } as OPT;
-    return await swarmMessagesDatabaseConnectedFabric<
+    return await swarmMessagesDatabaseConnectedInstanceFabric<
       P,
       T,
       DbType,

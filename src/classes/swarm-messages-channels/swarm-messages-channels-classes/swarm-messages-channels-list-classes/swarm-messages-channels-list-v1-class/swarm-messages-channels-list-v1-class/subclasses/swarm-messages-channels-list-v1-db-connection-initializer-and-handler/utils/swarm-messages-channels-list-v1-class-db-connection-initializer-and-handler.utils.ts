@@ -6,7 +6,10 @@ import {
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { TSwrmMessagesChannelsListDBOWithGrantAccess } from '../../../../../../../types/swarm-messages-channels-list.types';
 import { TSwarmMessageUserIdentifierSerialized } from '../../../../../../../../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
-import { TSwarmStoreDatabaseEntryOperation } from '../../../../../../../../swarm-store-class/swarm-store-class.types';
+import {
+  TSwarmStoreDatabaseEntryOperation,
+  ISwarmStoreConnectorAccessConrotllerGrantAccessCallbackSerializable,
+} from '../../../../../../../../swarm-store-class/swarm-store-class.types';
 import {
   ISwarmMessagesChannelsListV1GrantAccessVariableArguments,
   ISwarmMessagesChannelsListV1GrantAccessConstantArguments,
@@ -121,5 +124,16 @@ export function createGrantAccessCallbackByConstantArgumentsAndMessageWithChanne
     await channelDescriptionSwarmMessageValidator.call(this, argumentsForChannelDescriptionSwarmMessageValidator);
     return true;
   }
-  return channelsListGrantAccessCallbackFunction as DBO['grantAccess'];
+  (channelsListGrantAccessCallbackFunction as ISwarmStoreConnectorAccessConrotllerGrantAccessCallbackSerializable<
+    P,
+    T,
+    MD
+  >).toString = constantArguments.grandAccessCallbackFromDbOptions.toString.bind(
+    constantArguments.grandAccessCallbackFromDbOptions
+  );
+  return (channelsListGrantAccessCallbackFunction as ISwarmStoreConnectorAccessConrotllerGrantAccessCallbackSerializable<
+    P,
+    T,
+    MD
+  >) as DBO['grantAccess'];
 }

@@ -263,8 +263,8 @@ export class SwarmStoreConnectorPersistentList<
     return this._getSerializer().parse(dbOptionsSerialized);
   }
 
-  protected _serializeDatabaseOptions(dbOptionsSerialized: DBO): string {
-    return this._getSerializer().stringify(dbOptionsSerialized);
+  protected _serializeDatabaseOptions(dbOptionsUnserialized: DBO): string {
+    return this._getSerializer().stringify(dbOptionsUnserialized);
   }
 
   protected async _loadDatabaseOptionsParsedOrUndefinedFromStorage(dbName: DBO['dbName']): Promise<DBO | undefined> {

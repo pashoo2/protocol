@@ -23,7 +23,10 @@ import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../..
 import { PromiseResolveType } from '../../../../../../types/promise.types';
 import assert from 'assert';
 import { TCentralAuthorityUserIdentity } from '../../../../../central-authority-class/central-authority-class-types/central-authority-class-types-common';
-import { TSwarmStoreConnectorAccessConrotllerGrantAccessCallback } from '../../../../../swarm-store-class/swarm-store-class.types';
+import {
+  TSwarmStoreConnectorAccessConrotllerGrantAccessCallback,
+  ISwarmStoreConnectorAccessConrotllerGrantAccessCallbackSerializable,
+} from '../../../../../swarm-store-class/swarm-store-class.types';
 import { isDbOptionsWithGrandAccess } from '../swarm-store-conector-db-options-grand-access-context/swarm-store-conector-db-options-grand-access-context-binder-to-database-options/swarm-store-conector-db-options-grand-access-context-binder-to-database-options';
 import {
   ISwarmMessageInstanceEncrypted,
@@ -130,6 +133,11 @@ function swarmMessageStoreUtilsExtendOrbitDbDatabaseOptionsWithAccessControlOrbi
     options.userId
   );
 
+  (grantAccessCallbackExtendedWithMessageValidation as ISwarmStoreConnectorAccessConrotllerGrantAccessCallbackSerializable<
+    P,
+    T,
+    MD
+  >).toString = grantAccessCallback?.toString.bind(grantAccessCallback) || (() => '');
   return getExtendedDBOptionsWithAccessControlOrbitDB<P, T, DbType, DBO, MD, GAC>(
     dbOptions,
     allowAccessForUsers,

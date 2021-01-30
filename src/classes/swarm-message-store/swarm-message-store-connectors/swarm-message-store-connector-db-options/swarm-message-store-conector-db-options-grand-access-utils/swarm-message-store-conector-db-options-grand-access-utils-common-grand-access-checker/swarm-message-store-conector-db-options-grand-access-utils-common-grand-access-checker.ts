@@ -2,7 +2,10 @@ import {
   ISwarmMessageDatabaseConstructors,
   ISwarmMessageStoreAccessControlGrantAccessCallback,
 } from '../../../../types/swarm-message-store.types';
-import { TSwarmStoreDatabaseEntryOperation } from '../../../../../swarm-store-class/swarm-store-class.types';
+import {
+  TSwarmStoreDatabaseEntryOperation,
+  ISwarmStoreConnectorAccessConrotllerGrantAccessCallbackSerializable,
+} from '../../../../../swarm-store-class/swarm-store-class.types';
 import { TCentralAuthorityUserIdentity } from '../../../../../central-authority-class/central-authority-class-types/central-authority-class-types-common';
 import { ESwarmStoreConnector } from '../../../../../swarm-store-class/swarm-store-class.const';
 import { EOrbitDbFeedStoreOperation } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
@@ -179,7 +182,11 @@ export const getMessageValidatorForGrandAccessCallbackBound = <
     senderUserId: TCentralAuthorityUserIdentity,
     key?: TSwarmStoreDatabaseEntityKey<P>,
     op?: TSwarmStoreDatabaseEntryOperation<P>
-  ): ReturnType<TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, MD>> {
+  ): ReturnType<ISwarmStoreConnectorAccessConrotllerGrantAccessCallbackSerializable<P, T, MD>> {
+    if (!this) {
+      throw new Error('swarmMessageGrantValidatorWithSwarmMessageStoreContext::Context is not available');
+    }
+
     const { currentUserId, dbName, isPublicDb, swarmMessageConstructor, usersIdsWithWriteAccess } = this;
 
     const swarmMessageGrantValidatorContext: ISwarmMessageGrantValidatorContext<P, T, MD, GAC> = {
@@ -199,7 +206,10 @@ export const getMessageValidatorForGrandAccessCallbackBound = <
       this
     );
   }
-  return swarmMessageGrantValidatorWithSwarmMessageStoreContext as TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<
+  swarmMessageGrantValidatorWithSwarmMessageStoreContext.toString = () => {
+    return grantAccessCb ? grantAccessCb.toString() : undefined;
+  };
+  return swarmMessageGrantValidatorWithSwarmMessageStoreContext as ISwarmStoreConnectorAccessConrotllerGrantAccessCallbackSerializable<
     P,
     T,
     MD

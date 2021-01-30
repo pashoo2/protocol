@@ -201,7 +201,8 @@ export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
   protected _serializeChannelDescriptionRaw(channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>): string {
     // TODO - may be it is necessary to serialize channelDescriptionRaw.dbOptions
     // separately because the channelDescriptionRaw.dbOptions.grandAccess is a function
-    return this._getSerializer().stringify(channelDescriptionRaw);
+    const serializer = this._getSerializer();
+    return serializer.stringify(channelDescriptionRaw);
   }
 
   protected _deserializeChannelDescriptionRaw(
@@ -209,7 +210,8 @@ export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
   ): ISwarmMessageChannelDescriptionRaw<P, T, any, any> {
     // TODO - may be it is necessary to deserialize channelDescriptionRaw.dbOptions
     // separately because the channelDescriptionRaw.dbOptions.grandAccess is a function
-    return this._getSerializer().parse(channelDescriptionSerialized);
+    const serializer = this._getSerializer();
+    return serializer.parse(channelDescriptionSerialized);
   }
 
   /**

@@ -16,10 +16,8 @@ import {
   serializerClassUtilReviverCallbackDefault,
   serializerClassUtilCreateReviverArgumentForJSONParse,
 } from './serializer-class.utils';
-import {
-  serializerClassUtilIsFunctionSerialziedDefault,
-  serializerClassUtilFunctionParserDefault,
-} from './serializer-class.utils';
+import { serializerClassUtilIsFunctionSerialziedDefault } from './serializer-class.utils';
+import { createFunctionFromSerializedFunction } from '../../../utils/common-utils/common-utils.functions';
 
 /**
  * Used a replace of the JSON for values
@@ -44,7 +42,7 @@ export class SerializerClass<T = any> implements ISerializer {
   }
 
   protected get _defaultFunctionSerializedParser(): IFunctionParser {
-    return serializerClassUtilFunctionParserDefault;
+    return createFunctionFromSerializedFunction;
   }
 
   protected get _defaultFunctionReviverCallback(): ISerializerClassReviverCallback {

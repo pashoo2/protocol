@@ -3,9 +3,8 @@ import { ESwarmStoreConnector } from '../../../../../../swarm-store-class/swarm-
 import { TSwarmMessageSerialized } from '../../../../../../swarm-message/swarm-message-constructor.types';
 import { TSwarmStoreDatabaseOptions } from '../../../../../../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageChannelDescriptionRaw } from '../../../../../types/swarm-messages-channel.types';
-import { isArrowFunction, isNativeFunction } from '../../../../../../../utils/common-utils/common-utils.functions';
-import { validateGrantAccessCallbackWithContext } from 'classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-grant-access-callback';
 import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../../../../../const/swarm-messages-channels-main.const';
+import { validateGrantAccessCallbackWithContextSerializable } from '../../../../../../swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-grant-access-callback';
 
 /**
  * Used for validation the swarm channel description format
@@ -19,7 +18,6 @@ export function swarmMessagesChannelValidationDescriptionFormatV1<
   T extends TSwarmMessageSerialized,
   DBO extends TSwarmStoreDatabaseOptions<P, T, any>
 >(swarmMessagesChannelDescriptionRawV1Format: ISwarmMessageChannelDescriptionRaw<P, T, any, DBO>): void {
-  debugger;
   const { admins, dbOptions, messageEncryption } = swarmMessagesChannelDescriptionRawV1Format;
 
   assert(dbOptions, 'Database options for the swarm channel should be defined');
@@ -49,8 +47,7 @@ export function swarmMessagesChannelValidationDescriptionFormatV1<
   if (isPublic) {
     assert(Boolean(usersIdsWithWriteAccess), 'Public channels should not have the "write" property in database options');
   }
-  debugger;
-  assert(validateGrantAccessCallbackWithContext(grantAccess), 'Grant access callback is not valid');
+  assert(validateGrantAccessCallbackWithContextSerializable(grantAccess), 'Grant access callback is not valid');
   if (usersIdsWithWriteAccess) {
     assert(Array.isArray(usersIdsWithWriteAccess), 'A list with users which have a write access to the channel must be an array');
     assert(

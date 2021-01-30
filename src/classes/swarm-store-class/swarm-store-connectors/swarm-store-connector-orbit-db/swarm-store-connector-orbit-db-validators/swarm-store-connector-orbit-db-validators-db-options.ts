@@ -13,10 +13,5 @@ import jsonSchemaDbOptions from '../const/validation/schemas/orbit-db-options-sh
  * @throws
  */
 export function validateOrbitDBDatabaseOptionsV1(value: ISwarmStoreConnectorOrbitDbDatabaseOptions<any, any>): void {
-  try {
-    validateVerboseBySchemaWithVoidResult(jsonSchemaDbOptions as JSONSchema7, value);
-  } catch (err) {
-    console.error(err);
-    debugger;
-  }
+  validateVerboseBySchemaWithVoidResult(jsonSchemaDbOptions as JSONSchema7, value);
 }

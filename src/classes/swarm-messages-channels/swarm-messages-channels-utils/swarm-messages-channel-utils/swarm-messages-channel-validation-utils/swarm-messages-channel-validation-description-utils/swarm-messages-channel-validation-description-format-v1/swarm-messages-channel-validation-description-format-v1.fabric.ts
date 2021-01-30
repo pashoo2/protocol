@@ -13,7 +13,7 @@ export function createSwarmMessagesChannelValidationDescriptionFormatV1ByChannel
 >(channelDescriptionJSONSchema: JSONSchema7): ISwarmMessagesChannelDescriptionFormatValidator<P, T, any, DBO> {
   return async (
     swarmMessagesChannelDescriptionRawV1Format: ISwarmMessageChannelDescriptionRaw<P, T, any, DBO>,
-    jsonSchemaValidator: (jsonSchema: JSONSchema7, valueToValidate: any) => Promise<void>
+    jsonSchemaValidator: (jsonSchema: JSONSchema7, channelDescription: any) => Promise<void>
   ) => {
     await jsonSchemaValidator(channelDescriptionJSONSchema, swarmMessagesChannelDescriptionRawV1Format);
     swarmMessagesChannelValidationDescriptionFormatV1<P, T, DBO>(swarmMessagesChannelDescriptionRawV1Format);

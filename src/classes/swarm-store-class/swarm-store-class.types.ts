@@ -714,6 +714,21 @@ export type TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<
   operation?: TSwarmStoreDatabaseEntryOperation<P>
 ) => Promise<boolean>;
 
+export interface ISwarmStoreConnectorAccessConrotllerGrantAccessCallbackSerializable<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmStoreValueTypes<P>,
+  I extends unknown | never = never
+> extends TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, I> {
+  /**
+   * Fumction should be serializable to make it possible to
+   * save it in a persistent storage
+   *
+   * @returns {string}
+   * @memberof ISwarmStoreConnectorAccessConrotllerGrantAccessCallbackSerializable
+   */
+  toString(): string;
+}
+
 export interface ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<
   P extends ESwarmStoreConnector,
   T extends TSwarmStoreValueTypes<P>,

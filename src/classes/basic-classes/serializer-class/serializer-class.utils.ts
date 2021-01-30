@@ -6,11 +6,7 @@ import {
   ISerializerClassReplacerCallback,
   ISerializerClassReviverCallback,
 } from './serializer-class.types';
-import {
-  isArrowFunctionSerialized,
-  isNamedFunctionSerialized,
-  isUnnamedFunctionSerialized,
-} from '../../../utils/common-utils/common-utils.functions';
+import { isNonArrowFunctionStringified, isArrowFunctionStringified } from '../../../utils/common-utils/common-utils.functions';
 
 export function serializerClassUtilFunctionSerializer(fn: (...args: any[]) => any): string {
   if (isNativeFunction(fn)) {
@@ -36,16 +32,22 @@ export function serializerClassUtilIsFunctionSerialziedDefault(value: any): bool
     return false;
   }
   const valueTrimmed = value.trim();
-  return (
-    isUnnamedFunctionSerialized(valueTrimmed) ||
-    isNamedFunctionSerialized(valueTrimmed) ||
-    isArrowFunctionSerialized(valueTrimmed)
-  );
+  const isFunctionAnyTypeStringified = isNonArrowFunctionStringified(valueTrimmed) || isArrowFunctionStringified(valueTrimmed);
+  return isFunctionAnyTypeStringified;
 }
 
 export function serializerClassUtilFunctionParserDefault(functionSerialized: string): (...args: any[]) => any {
   // eslint-disable-next-line no-eval
-  return eval(`(${functionSerialized})`);
+  try {
+    // TODO - ReDoS attacks and make it create function in a sandbox
+    const funcitonCreatedFromString = eval(`(${functionSerialized})`);
+    if (!funcitonCreatedFromString) {
+      throw new Error('Failed to create function by it body');
+    }
+    return funcitonCreatedFromString;
+  } catch (err) {
+    throw new Error(`Faild parse the function ${functionSerialized}`);
+  }
 }
 
 export function serializerClassUtilReviverCallbackDefault(

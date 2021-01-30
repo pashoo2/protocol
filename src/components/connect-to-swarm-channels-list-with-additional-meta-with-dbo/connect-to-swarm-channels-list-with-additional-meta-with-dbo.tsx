@@ -124,8 +124,6 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
     };
     const { dbo, connectionBridgeOptions } = this.props;
     const { serializer, jsonSchemaValidator } = connectionBridgeOptions as CBO;
-    // TODO --
-    debugger;
     return {
       description,
       connectionOptions: {
@@ -207,7 +205,6 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
           },
         },
       };
-      debugger;
       try {
         await channelsListInstance.addChannel(swarmMessageChannelDescription);
       } catch (err) {
