@@ -56,33 +56,32 @@ export function getSwarmMessagesChannelsListVersionOneConstructorOptionsDefault<
       'databaseConnectionFabric'
     >
 ): ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF> {
-  const utilsDefault: Omit<
-    ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>['utilities'],
-    'databaseConnectionFabric'
-  > = {
+  const utilsDefault = {
     databaseNameGenerator: getSwarmMessagesListDatbaseNameByChannelDescription,
     getIssuerForSwarmMessageWithChannelDescriptionByChannelDescription: getSwarmMessageWithChannelDescriptionIssuerByChannelListDescription,
     getTypeForSwarmMessageWithChannelDescriptionByChannelDescription: getSwarmMessageWithChannelDescriptionTypeByChannelListDescription,
     getDatabaseKeyForChannelDescription: getChannelsListDatabaseKeyForChannelDescription,
-    ...optionsPartial.utilities,
   };
   const swarmMessagesChannelDescriptionFormatValidator = createSwarmMessagesChannelValidationDescriptionFormatV1ByChannelDescriptionJSONSchema(
     swarmMessageChannelDescriptionFormatSchema as JSONSchema7
   );
-  const validatorsDefault: ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>['validators'] = {
+  const validatorsDefault = {
     swarmMessagesChannelDescriptionFormatValidator: swarmMessagesChannelDescriptionFormatValidator,
     channelDescriptionSwarmMessageValidator: validatorOfSwrmMessageWithChannelDescription,
     channelsListDescriptionValidator: getSwarmMessagesChannelDescriptionFormatValidatorISwarmMessagesChannelDescriptionFormatValidator(
       jsonSchemaForChannelsListDescriptionV1 as JSONSchema7
     ),
     swamChannelsListDatabaseOptionsValidator: getValidatorSwarmChannelsListDatabaseOptions(validateGrantAccessCallback),
-    ...optionsPartial.validators,
   };
   const options = {
     ...optionsPartial,
-    validators: validatorsDefault,
+    validators: {
+      ...validatorsDefault,
+      ...optionsPartial.validators,
+    },
     utilities: {
       ...utilsDefault,
+      ...optionsPartial.utilities,
       databaseConnectionFabric: optionsPartial.databaseConnectionFabric,
     },
   };

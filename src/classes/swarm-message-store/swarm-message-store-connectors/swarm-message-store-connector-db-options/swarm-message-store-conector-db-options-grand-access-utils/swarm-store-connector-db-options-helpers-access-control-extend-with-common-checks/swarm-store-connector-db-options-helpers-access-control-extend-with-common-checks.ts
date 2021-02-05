@@ -1,3 +1,4 @@
+import assert from 'assert';
 import {
   ESwarmStoreConnector,
   ISwarmStoreConnector,
@@ -21,13 +22,7 @@ import {
 } from '../../../../types/swarm-message-store.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../swarm-message-encrypted-cache';
 import { PromiseResolveType } from '../../../../../../types/promise.types';
-import assert from 'assert';
 import { TCentralAuthorityUserIdentity } from '../../../../../central-authority-class/central-authority-class-types/central-authority-class-types-common';
-import {
-  TSwarmStoreConnectorAccessConrotllerGrantAccessCallback,
-  ISwarmStoreConnectorAccessConrotllerGrantAccessCallbackSerializable,
-} from '../../../../../swarm-store-class/swarm-store-class.types';
-import { isDbOptionsWithGrandAccess } from '../swarm-store-conector-db-options-grand-access-context/swarm-store-conector-db-options-grand-access-context-binder-to-database-options/swarm-store-conector-db-options-grand-access-context-binder-to-database-options';
 import {
   ISwarmMessageInstanceEncrypted,
   ISwarmMessageInstanceDecrypted,
@@ -86,7 +81,9 @@ function swarmMessageStoreUtilsExtendOrbitDbDatabaseOptionsWithAccessControlOrbi
   P extends ESwarmStoreConnector.OrbitDB,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType> & {
+    grantAccess: GAC;
+  },
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO>,
   PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
   CO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, PO>,
@@ -116,13 +113,13 @@ function swarmMessageStoreUtilsExtendOrbitDbDatabaseOptionsWithAccessControlOrbi
   dbOptions: DBO,
   messageConstructor: PromiseResolveType<ReturnType<NonNullable<MCF>>>,
   allowAccessForUsers: string[] | undefined,
-  grantAccessCallback: GAC | undefined,
+  grantAccessCallback: GAC,
   swarmMessageValidatorFabric: (
     dboptions: DBO,
     messageConstructor: PromiseResolveType<ReturnType<NonNullable<MCF>>>,
-    grantAccessCb: GAC | undefined,
+    grantAccessCb: GAC,
     currentUserId: TCentralAuthorityUserIdentity
-  ) => TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, MD>
+  ) => GAC
 ): TSwarmStoreDatabaseOptions<ESwarmStoreConnector.OrbitDB, T, DbType> &
   ISwarmStoreDatabaseBaseOptions & { provider: ESwarmStoreConnector.OrbitDB } {
   const grantAccessCallbackExtendedWithMessageValidation = swarmMessageValidatorFabric(
@@ -133,15 +130,13 @@ function swarmMessageStoreUtilsExtendOrbitDbDatabaseOptionsWithAccessControlOrbi
     options.userId
   );
 
-  (grantAccessCallbackExtendedWithMessageValidation as ISwarmStoreConnectorAccessConrotllerGrantAccessCallbackSerializable<
-    P,
-    T,
-    MD
-  >).toString = grantAccessCallback?.toString.bind(grantAccessCallback) || (() => '');
+  grantAccessCallbackExtendedWithMessageValidation.toString =
+    grantAccessCallback?.toString.bind(grantAccessCallback) || (() => '');
   return getExtendedDBOptionsWithAccessControlOrbitDB<P, T, DbType, DBO, MD, GAC>(
     dbOptions,
     allowAccessForUsers,
-    grantAccessCallbackExtendedWithMessageValidation as GAC
+    // TODO
+    grantAccessCallbackExtendedWithMessageValidation
   );
 }
 
@@ -169,7 +164,7 @@ function swarmMessageStoreUtilsCreateSwarmMessageGrandAccessCommonAndExtendOrbit
   dbOptions: DBO,
   allowAccessForUsers: string[] | undefined,
   grantAccessCallback: GAC,
-  swarmMessageValidatorFabric: (grantAccessCb: GAC) => TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, MD>
+  swarmMessageValidatorFabric: (grantAccessCb: GAC) => GAC
 ): TSwarmStoreDatabaseOptions<ESwarmStoreConnector.OrbitDB, T, DbType> &
   ISwarmStoreDatabaseBaseOptions & { provider: ESwarmStoreConnector.OrbitDB } {
   const grantAccessCallbackExtendedWithMessageValidation = swarmMessageValidatorFabric(grantAccessCallback);
@@ -177,7 +172,7 @@ function swarmMessageStoreUtilsCreateSwarmMessageGrandAccessCommonAndExtendOrbit
   return getExtendedDBOptionsWithAccessControlOrbitDB<P, T, DbType, DBO, MD, GAC>(
     dbOptions,
     allowAccessForUsers,
-    grantAccessCallbackExtendedWithMessageValidation as GAC
+    grantAccessCallbackExtendedWithMessageValidation
   );
 }
 
@@ -185,7 +180,9 @@ export const returnGACAndUsersWithWriteAccessForOrbitDbDatabase = <
   P extends ESwarmStoreConnector.OrbitDB,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType> & {
+    grantAccess: GAC;
+  },
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO>,
   PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
   CO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, PO>,
@@ -212,7 +209,10 @@ export const returnGACAndUsersWithWriteAccessForOrbitDbDatabase = <
   >
 >(
   swarmMessageStoreOptions: O,
-  dbOptions: DBO
+  dbOptions: {
+    grantAccess: DBO['grantAccess'];
+    write?: string[];
+  }
 ): {
   grantAccessCallback: GAC;
   allowAccessForUsers: TSwarmMessageUserIdentifierSerialized[] | undefined;
@@ -220,8 +220,8 @@ export const returnGACAndUsersWithWriteAccessForOrbitDbDatabase = <
   const { accessControl: swarmMessageStoreOptionsAccessControl } = swarmMessageStoreOptions;
   let grantAccessCallback: GAC | undefined = swarmMessageStoreOptionsAccessControl?.grantAccess;
 
-  if (isDbOptionsWithGrandAccess<P, T, DbType, Exclude<Exclude<MSI, ISwarmMessageInstanceEncrypted>, T>, DBO>(dbOptions)) {
-    grantAccessCallback = dbOptions.grantAccess as GAC;
+  if (typeof dbOptions.grantAccess === 'function') {
+    grantAccessCallback = dbOptions.grantAccess;
   }
   const allowAccessForUsers: TSwarmMessageUserIdentifierSerialized[] | undefined =
     dbOptions.write ?? swarmMessageStoreOptionsAccessControl?.allowAccessFor;
@@ -254,7 +254,9 @@ export const createSwarmMessageStoreUtilsExtenderOrbitDBDatabaseOptionsWithAcces
   P extends ESwarmStoreConnector.OrbitDB,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType> & {
+    grantAccess: GAC;
+  },
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO>,
   PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
   CO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, PO>,
@@ -284,9 +286,9 @@ export const createSwarmMessageStoreUtilsExtenderOrbitDBDatabaseOptionsWithAcces
   swarmMessageValidatorFabric: (
     dboptions: DBO,
     messageConstructor: PromiseResolveType<ReturnType<NonNullable<MCF>>>,
-    grantAccessCb: GAC | undefined,
+    grantAccessCb: GAC,
     currentUserId: TCentralAuthorityUserIdentity
-  ) => TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, MD>
+  ) => GAC
 ) => (
   dbOptions: DBO,
   messageConstructor: PromiseResolveType<ReturnType<NonNullable<MCF>>>
@@ -344,7 +346,9 @@ export const createSwarmMessageStoreUtilsExtenderOrbitDBDatabaseOptionsWithAcces
   P extends ESwarmStoreConnector.OrbitDB,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType> & {
+    grantAccess: GAC;
+  },
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO>,
   PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
   CO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, PO>,
@@ -371,10 +375,12 @@ export const createSwarmMessageStoreUtilsExtenderOrbitDBDatabaseOptionsWithAcces
   >
 >(
   swarmMessageStoreOptions: O,
-  swarmMessageValidatorFabricForGrandAccessCallbackBoundToContext: (
-    grantAccessCb: GAC
-  ) => TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, MD>
-) => (dbOptions: DBO): DBO & ISwarmStoreDatabaseBaseOptions & { provider: P } => {
+  swarmMessageValidatorFabricForGrandAccessCallbackBoundToContext: (grantAccessCb: GAC) => GAC
+) => (
+  dbOptions: DBO & {
+    grantAccess: GAC;
+  }
+): DBO & ISwarmStoreDatabaseBaseOptions & { provider: P } => {
   const { grantAccessCallback, allowAccessForUsers } = returnGACAndUsersWithWriteAccessForOrbitDbDatabase<
     P,
     T,

@@ -241,19 +241,22 @@ export class SwarmStoreConnectorOrbitDB<
     const databaseOpenResult = await this.waitDatabaseOpened(database);
 
     if (databaseOpenResult instanceof Error) {
-      await this.closeDb(database, false); // close the connection to the database
-      await delay(300);
-      if (openAttempt > SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_RECONNECTION_ATTEMPTS_MAX) {
-        return await this.handleErrorOnDbOpen(database, 'The max nunmber of connection attempts has reached');
-      }
+      try {
+        await this.closeDb(database, false); // close the connection to the database
+        await delay(300);
+        if (openAttempt > SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_RECONNECTION_ATTEMPTS_MAX) {
+          return await this.handleErrorOnDbOpen(database, 'The max nunmber of connection attempts has reached');
+        }
 
-      const openDatabaseResult = await this.openDatabase(dbOptions, (openAttempt += 1));
+        const openDatabaseResult = await this.openDatabase(dbOptions, (openAttempt += 1));
 
-      if (openDatabaseResult instanceof Error) {
-        return await this.handleErrorOnDbOpen(database, openDatabaseResult);
+        if (openDatabaseResult instanceof Error) {
+          return await this.handleErrorOnDbOpen(database, openDatabaseResult);
+        }
+      } catch (err) {
+        return await this.handleErrorOnDbOpen(database, err);
       }
     }
-    console.log('openDatabase', dbName);
     this.databases.push(database);
     this.emit(ESwarmStoreEventNames.READY, dbOptions.dbName);
   }
@@ -1086,12 +1089,12 @@ export class SwarmStoreConnectorOrbitDB<
     }
   }
 
-  private waitDatabaseOpened(
+  private async waitDatabaseOpened(
     database: ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, ItemType, DbType, DBO>
   ): Promise<Error | boolean> {
-    return new Promise<Error | boolean>(async (res) => {
-      let timeout: NodeJS.Timer | undefined = undefined;
-
+    let timeout: NodeJS.Timer | undefined = undefined;
+    let unsetListenersFunction: (() => void) | undefined = undefined;
+    const promiseWaitingReadyEvent = new Promise<Error | boolean>((res) => {
       function usetListeners() {
         database.removeListener(ESwarmStoreEventNames.READY, res);
         database.removeListener(ESwarmStoreEventNames.CLOSE, res);
@@ -1102,40 +1105,40 @@ export class SwarmStoreConnectorOrbitDB<
         timeout = undefined;
       }
 
-      timeout = setTimeout(async () => {
+      unsetListenersFunction = usetListeners;
+      timeout = setTimeout(() => {
         usetListeners();
         res(new Error('Failed to open the database cause the timeout has reached'));
       }, SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_CONNECTION_TIMEOUT_MS);
-      try {
-        database.once(ESwarmStoreEventNames.CLOSE, () => {
-          usetListeners();
-          res(new Error('Database was closed'));
-        });
-        database.once(ESwarmStoreEventNames.FATAL, () => {
-          usetListeners();
-          res(new Error('A fatal error has occurred while open the database'));
-        });
-        database.once(ESwarmStoreEventNames.READY, () => {
-          usetListeners();
-          console.log('dbReady', database.dbName);
-          res(true);
-        });
-
-        //connect to the database
-        // and wait for an events from it
-        const connectResult = await database.connect();
-
-        if (connectResult instanceof Error) {
-          usetListeners();
-          console.error(connectResult);
-          return this.emitError('The database.connect method was failed');
-        }
-      } catch (err) {
-        console.error(err);
+      database.once(ESwarmStoreEventNames.CLOSE, () => {
         usetListeners();
-        res(err);
-      }
+        res(new Error('Database was closed'));
+      });
+      database.once(ESwarmStoreEventNames.FATAL, () => {
+        usetListeners();
+        res(new Error('A fatal error has occurred while open the database'));
+      });
+      database.once(ESwarmStoreEventNames.READY, () => {
+        usetListeners();
+        res(true);
+      });
     });
+
+    try {
+      // connect to the database and wait for an events from it
+      const [connectResult] = await Promise.all([database.connect(), promiseWaitingReadyEvent]);
+
+      if (connectResult instanceof Error) {
+        console.error(connectResult);
+        return this.emitError('The database.connect method was failed');
+      }
+    } catch (err) {
+      console.error(err);
+      return this.emitError(`Failed to connect with the database: ${err.message}`);
+    } finally {
+      (unsetListenersFunction as (() => void) | undefined)?.();
+    }
+    return true;
   }
 
   private async openDatabases(): Promise<Error | void> {

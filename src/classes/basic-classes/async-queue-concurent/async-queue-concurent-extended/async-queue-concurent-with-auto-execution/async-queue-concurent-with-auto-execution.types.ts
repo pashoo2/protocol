@@ -11,5 +11,5 @@ export interface IAsyncQueueConcurentWithAutoExecution<T, E extends MaybeError> 
    * @returns {Promise<TE>}
    * @memberof IAsyncQueueConcurentWithAutoExecution
    */
-  executeQueued<TE extends T = T>(jobCreator: () => Promise<TE>): Promise<TE>;
+  executeQueued<TE extends T = T>(jobCreator: () => Promise<TE>, timeoutMs?: number, jobName?: string): Promise<TE>;
 }

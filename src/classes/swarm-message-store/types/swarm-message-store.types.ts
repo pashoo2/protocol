@@ -7,7 +7,6 @@ import {
   ISwarmStoreOptionsConnectorFabric,
   ISwarmStoreOptionsWithConnectorFabric,
   ISwarmStoreProviderOptions,
-  TSwarmStoreConnectorAccessConrotllerGrantAccessCallback,
   TSwarmStoreConnectorConnectionOptions,
   TSwarmStoreDatabaseEntityAddress,
   TSwarmStoreDatabaseEntityKey,
@@ -67,7 +66,9 @@ export type TSwarmMessagesStoreGrantAccessCallback<
   P extends ESwarmStoreConnector,
   TI extends TSwarmMessageSerialized | ISwarmMessageInstanceDecrypted,
   CTX extends Record<string, unknown> = Record<string, unknown>
-> = ISwarmMessageStoreAccessControlGrantAccessCallback<P, TI, CTX>;
+> = ISwarmMessageStoreAccessControlGrantAccessCallback<P, TI, CTX> & {
+  toString(): string;
+};
 
 export interface ISwarmMessageStoreEvents<
   P extends ESwarmStoreConnector,
@@ -115,13 +116,21 @@ export interface ISwarmMessageStoreAccessControlGrantAccessCallback<
     // identifier of the user sender of the message
     userId: TCentralAuthorityUserIdentity,
     // a name of the database from where the message is comming from
-    // TODO - can it be gotten from the database entry??
-    dbName: string,
+    databaseName: string,
     // key for the value in the database
-    key?: TSwarmStoreDatabaseEntityKey<P>,
+    key: TSwarmStoreDatabaseEntityKey<P> | undefined,
     // operation on the database
-    op?: TSwarmStoreDatabaseEntryOperation<P>
+    op: TSwarmStoreDatabaseEntryOperation<P> | undefined,
+    // Real or an abstract time when the message was added
+    entryAddedTime: number
   ): Promise<boolean>;
+  /**
+   * Must be serializable because it can be stored in a persistant
+   * storage in serialized format
+   *
+   * @returns {string}
+   * @memberof ISwarmMessageStoreAccessControlGrantAccessCallback
+   */
   toString(): string;
 }
 

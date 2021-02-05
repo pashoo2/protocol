@@ -91,9 +91,11 @@ export interface ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<
     payload: T,
     userId: TSwarmMessageUserIdentifierSerialized,
     // key of the value
-    key?: string,
+    key: string | undefined,
     // operation which is processed (like delete, add or something else)
-    operation?: TSwarmStoreDatabaseEntryOperation<P>
+    operation: TSwarmStoreDatabaseEntryOperation<P> | undefined,
+    // a real or an abstract clock time when the entry was added
+    time: number
   ): Promise<boolean>;
 }
 

@@ -9,19 +9,7 @@ import { ISwarmMessageInstanceDecrypted } from 'classes/swarm-message/swarm-mess
 import { ISwarmMessageStoreConnectorDatabaseAccessControlleGrantCallbackBound } from '../../../swarm-store-connector-db-options.types';
 import { ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder } from '../../../swarm-store-connector-db-options.types';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
-
-export function isDbOptionsWithGrandAccess<
-  P extends ESwarmStoreConnector,
-  ItemType extends TSwarmStoreValueTypes<P>,
-  DbType extends TSwarmStoreDatabaseType<P>,
-  MD extends ISwarmMessageInstanceDecrypted,
-  DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>
->(dbo: DBO): dbo is DBO & Required<ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<P, ItemType, MD>> {
-  return (
-    typeof (dbo as DBO & Required<ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<P, ItemType, MD>>).grantAccess ===
-    'function'
-  );
-}
+import { TSwarmStoreConnectorAccessConrotllerGrantAccessCallback } from '../../../../../../swarm-store-class/swarm-store-class.types';
 
 export function swarmStoreConectorDbOptionsGrandAccessContextBinderToDatabaseOptions<
   P extends ESwarmStoreConnector,
@@ -31,13 +19,15 @@ export function swarmStoreConectorDbOptionsGrandAccessContextBinderToDatabaseOpt
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>
 >(
-  dbo: DBO,
+  dbo: DBO & {
+    grantAccess?: TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, ItemType, MD>;
+  },
   grandAccessCallbackBinder: ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder<P, ItemType, MD, CTX>
 ): DBO extends Required<ISwarmStoreConnectorDatabaseAccessControlleGrantCallback<P, ItemType, MD>>
   ? DBO & ISwarmMessageStoreConnectorDatabaseAccessControlleGrantCallbackBound<P, ItemType, MD, CTX>
   : DBO {
-  if (isDbOptionsWithGrandAccess<P, ItemType, DbType, MD, DBO>(dbo)) {
-    const { grantAccess } = dbo;
+  const { grantAccess } = dbo;
+  if (typeof grantAccess === 'function') {
     return {
       ...dbo,
       grantAccess: grandAccessCallbackBinder(grantAccess),

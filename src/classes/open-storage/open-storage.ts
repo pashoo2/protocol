@@ -43,7 +43,7 @@ export class OpenStorage implements OpenStorageClass {
   public connect = async (configuration?: IOpenStorageConfiguration): Promise<void | Error> => {
     const { connectingPromise } = this;
     if (connectingPromise) {
-      return connectingPromise;
+      return await connectingPromise;
     }
     try {
       const connectToStorePromise = this.connectToStore(configuration);
@@ -81,7 +81,7 @@ export class OpenStorage implements OpenStorageClass {
     if (!isActive || !storageProvider) {
       return new Error('There is no connection to a StorageProvider');
     }
-    return storageProvider.set(this.keyNameInStorage(key), value);
+    return await storageProvider.set(this.keyNameInStorage(key), value);
   };
 
   public setUInt8Array = async (key: string, value: Uint8Array): Promise<boolean | Error> => {
@@ -94,7 +94,7 @@ export class OpenStorage implements OpenStorageClass {
     if (!isBufferSupported || typeof storageProvider.setUInt8Array !== 'function') {
       return new Error('The storage provider is not support this operation');
     }
-    return storageProvider.setUInt8Array(this.keyNameInStorage(key), value);
+    return await storageProvider.setUInt8Array(this.keyNameInStorage(key), value);
   };
 
   public get = async (key: string): Promise<string | undefined | Error> => {
@@ -104,7 +104,7 @@ export class OpenStorage implements OpenStorageClass {
     if (!isActive || !storageProvider) {
       return new Error('There is no connection to a StorageProvider');
     }
-    return storageProvider.get(this.keyNameInStorage(key));
+    return await storageProvider.get(this.keyNameInStorage(key));
   };
 
   public getUInt8Array = async (key: string): Promise<Uint8Array | undefined | Error> => {
@@ -117,7 +117,7 @@ export class OpenStorage implements OpenStorageClass {
     if (!isBufferSupported || typeof storageProvider.getUInt8Array !== 'function') {
       return new Error('The storage provider is not support this operation');
     }
-    return storageProvider.getUInt8Array(this.keyNameInStorage(key));
+    return await storageProvider.getUInt8Array(this.keyNameInStorage(key));
   };
 
   public clearDb = async (): Promise<boolean | Error> => {

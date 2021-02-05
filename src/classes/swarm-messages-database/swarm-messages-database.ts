@@ -363,7 +363,7 @@ export class SwarmMessagesDatabase<
   protected _setDbOptions(dbOptions: DBO): void {
     this._dbOptions = dbOptions;
     this._dbName = dbOptions.dbName;
-    this._dbType = dbOptions.dbType as DbType;
+    this._dbType = dbOptions.dbType;
   }
 
   protected _setUserOptions(optionsUser: ISwarmMessagesDatabaseConnectCurrentUserOptions): void {
@@ -779,7 +779,8 @@ export class SwarmMessagesDatabase<
     const result = await this._swarmMessageStore.openDatabase(this._dbOptions);
 
     if (result instanceof Error) {
-      throw new Error(`Failed top open the database: ${result.message}`);
+      console.log('Failed to open the database');
+      throw result;
     }
   }
 

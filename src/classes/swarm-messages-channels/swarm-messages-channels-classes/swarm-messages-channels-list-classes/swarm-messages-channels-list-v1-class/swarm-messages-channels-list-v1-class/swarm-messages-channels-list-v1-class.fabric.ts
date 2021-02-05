@@ -49,7 +49,7 @@ export function getSwarmMessagesChannelsListVersionOneClass<
       return this._getChannelsListDescription();
     }
 
-    public async addChannel(channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>): Promise<void> {
+    public async upsertChannel(channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>): Promise<void> {
       await this._validateChannelDescriptionFormat(channelDescriptionRaw);
       await this._addChannelDescriptionRawInSwarmDatabase(channelDescriptionRaw);
     }
@@ -71,8 +71,8 @@ export function getSwarmMessagesChannelsListVersionOneClass<
     protected _createMessageBodyForChannelDescription(
       channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>
     ): TSwarmMessageConstructorBodyMessage {
-      const messageTyp = this._createChannelDescriptionMessageTyp(channelDescriptionRaw);
-      const messageIss = this._createChannelDescriptionMessageIssuer(channelDescriptionRaw);
+      const messageTyp = this._createChannelDescriptionMessageTyp();
+      const messageIss = this._createChannelDescriptionMessageIssuer();
       const messagePayload = this._serializeChannelDescriptionRaw(channelDescriptionRaw);
 
       return {

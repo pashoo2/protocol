@@ -31,10 +31,8 @@ export const CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_SWARM_CHANNELS_LIST: TS
   preloadCount: 0,
   dbType: ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
   grantAccess: async function grantAccess(...args: any[]) {
-    console.log('grantAccess');
-    console.log(...args);
-    console.log(this);
-    debugger;
+    console.log('grantAccess', ...args);
+    console.log('grantAccess', this);
     return true;
   },
 };

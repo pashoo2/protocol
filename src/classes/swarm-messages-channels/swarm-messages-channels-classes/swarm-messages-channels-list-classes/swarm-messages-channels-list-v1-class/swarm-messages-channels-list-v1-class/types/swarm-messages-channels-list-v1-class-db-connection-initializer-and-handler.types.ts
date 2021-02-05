@@ -41,13 +41,15 @@ export interface IGetVariableArgumentsWithoutExistingChannelDescriptionForGrantA
     userId,
     key,
     operation,
+    time,
   }: {
     payload: T | MD;
     userId: TSwarmMessageUserIdentifierSerialized;
     // key of the value
-    key?: string;
+    key: string | undefined;
     // operation which is processed (like delete, add or something else)
-    operation?: TSwarmStoreDatabaseEntryOperation<P>;
+    operation?: TSwarmStoreDatabaseEntryOperation<P> | undefined;
+    time: number;
   }): Omit<Required<ISwarmMessagesChannelsListV1GrantAccessVariableArguments<P, T, MD, CTX, DBO>>, 'channelExistingDescription'>;
 }
 
@@ -153,6 +155,8 @@ export abstract class AbstractSwarmMessagesChannelsListVersionOneDatabaseConnect
   CF extends ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<P, T, MD, CTX, DBO>,
   CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>
 > extends AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<P, T, MD, CTX, DBO, CF, CARGS> {
+  protected abstract readonly _isDatabaseOpened: boolean;
+
   protected abstract async _readSwarmMessagesChannelDescriptionOrUndefinedForDbKey(
     dbbKey: TSwarmStoreDatabaseEntityKey<P>
   ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any> | undefined>;

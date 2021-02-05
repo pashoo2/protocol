@@ -120,12 +120,14 @@ export const CONNECT_TO_SWARM_CONNECTION_STORAGE_OPTIONS: TConnectionBridgeStora
 > = {
   accessControl: {
     grantAccess: function grandAccess(
+      this: unknown,
       message: unknown,
       userId: TCentralAuthorityUserIdentity,
       dbName: string,
-      key?: TSwarmStoreDatabaseEntityKey<ESwarmStoreConnector.OrbitDB>,
+      key: TSwarmStoreDatabaseEntityKey<ESwarmStoreConnector.OrbitDB> | undefined,
       // operation on the database
-      op?: TSwarmStoreDatabaseEntryOperation<ESwarmStoreConnector.OrbitDB>
+      op: TSwarmStoreDatabaseEntryOperation<ESwarmStoreConnector.OrbitDB> | undefined,
+      time: number
     ) {
       console.log(this);
       debugger;

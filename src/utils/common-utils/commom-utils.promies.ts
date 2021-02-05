@@ -71,3 +71,21 @@ export const createPromisePending = <T, E extends MaybeError = void>(
 export const resolvePromisePending = <T>(promisePending: IPromisePending<T>, value: T): void => {
   promisePending.resolve(value);
 };
+
+/**
+ * Creates promise cancellable by a native promise.
+ *
+ * @export
+ * @template T
+ * @template E
+ * @param {Promise<T>} nativePromise
+ * @returns {IPromisePendingRejectable<T, E>} - promise which flow can be stopped
+ */
+export function createCancellablePromiseByNativePromise<T, E extends MaybeError = void>(
+  nativePromise: Promise<T>
+): IPromisePendingRejectable<T, E> {
+  const rejectablePromise = createPromisePendingRejectable<T, E>();
+  const promiseRace = Promise.race([nativePromise, rejectablePromise]);
+  (promiseRace as IPromisePendingRejectable<T, E>).reject = rejectablePromise.reject;
+  return promiseRace as IPromisePendingRejectable<T, E>;
+}

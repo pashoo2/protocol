@@ -11,6 +11,7 @@ import { ArgumentTypes } from 'types/helper.types';
 import { ISwarmStoreConnectorBasic } from '../../../../../../swarm-store-class.types';
 import { ConcurentAsyncQueueWithAutoExecution } from '../../../../../../../basic-classes/async-queue-concurent/async-queue-concurent-extended/async-queue-concurent-with-auto-execution/async-queue-concurent-with-auto-execution';
 import { IAsyncQueueConcurentWithAutoExecution } from '../../../../../../../basic-classes/async-queue-concurent/async-queue-concurent-extended/async-queue-concurent-with-auto-execution/async-queue-concurent-with-auto-execution.types';
+import { ISwarmStoreConnectorOrbitDbDatabaseIteratorOptionsRequired } from '../../swarm-store-connector-orbit-db-subclass-database.types';
 
 export class SwarmStoreConnectorOrbitDBDatabaseQueued<
     ItemType extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>,
@@ -32,51 +33,61 @@ export class SwarmStoreConnectorOrbitDBDatabaseQueued<
     ...args: ArgumentTypes<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['connect']>
   ): ReturnType<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['close']> => {
     await this._rejectAllPendingOperationsOnDbOpen();
-    return super.connect(...args);
+    return await super.connect(...args);
   };
 
   public close = async (
     ...args: ArgumentTypes<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['close']>
   ): ReturnType<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['close']> => {
     await this._rejectAllPendingOperationsOnDbClose();
-    return super.close(...args);
+    return await super.close(...args);
   };
 
   public drop = async (
     ...args: ArgumentTypes<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['drop']>
   ): ReturnType<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['drop']> => {
     await this._rejectAllPendingOperationsOnDbDrop();
-    return super.drop(...args);
+    return await super.drop(...args);
   };
 
   public load = async (
     ...args: ArgumentTypes<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['load']>
   ): ReturnType<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['load']> => {
-    return this._runAsJob(() => super.load(...args));
+    return await this._runAsJob(() => super.load(...args), 'load');
   };
 
   public add = async (
     ...args: ArgumentTypes<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['add']>
   ): ReturnType<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['add']> => {
-    return this._runAsJob(() => super.add(...args));
+    return await this._runAsJob(() => super.add(...args), 'add');
   };
 
   public get = async (
     ...args: ArgumentTypes<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['get']>
   ): ReturnType<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['get']> => {
-    return this._runAsJob(() => super.get(...args));
+    return await this._runAsJob(() => super.get(...args), 'get');
   };
 
   public remove = async (
     ...args: ArgumentTypes<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['remove']>
   ): ReturnType<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['remove']> => {
-    return this._runAsJob(() => super.remove(...args));
+    return await this._runAsJob(() => super.remove(...args), 'remove');
   };
 
   public iterator = async (
     ...args: ArgumentTypes<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['iterator']>
   ): ReturnType<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['iterator']> => {
-    return this._runAsJob(() => super.iterator(...args));
+    if ((args[0] as ISwarmStoreConnectorOrbitDbDatabaseIteratorOptionsRequired<DbType>)?.fromCache) {
+      // if read value from the cache, read it outside of the main queue
+      // e.g. because it may be neccessary within a grant access callback
+      // function, what will cause all queue halt, because the callback
+      // is performing within the main call and reading a value from inside
+      // the callback will be waiting will the current operation will be performed
+      // but it will never be performed because it's waiting for the grant access
+      // callback.
+      return await super.iterator(...args);
+    }
+    return await this._runAsJob(() => super.iterator(...args), 'iterator');
   };
 
   protected _initializeAsyncQueue() {
@@ -109,8 +120,8 @@ export class SwarmStoreConnectorOrbitDBDatabaseQueued<
     return this._rejectAllPendingOperations(new Error('Datatabase dropped'));
   }
 
-  protected _runAsJob = async <F extends () => any>(func: F): Promise<ReturnType<F>> => {
+  protected _runAsJob = async <F extends () => any>(func: F, jobName: string): Promise<ReturnType<F>> => {
     // eslint-disable-next-line @typescript-eslint/return-await
-    return await this._getAsyncOperationsQueue().executeQueued(func);
+    return await this._getAsyncOperationsQueue().executeQueued(func, 20000, jobName);
   };
 }

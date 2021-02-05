@@ -45,7 +45,9 @@ export function swarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsSer
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType> & {
+    grantAccess: GAC;
+  },
   ConnectorBasic extends ISwarmStoreConnectorBasicWithEntriesCount<P, T, DbType, DBO>,
   CO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
   PO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, CO>,
@@ -99,7 +101,9 @@ export function getSwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptions
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType> & {
+    grantAccess: GAC;
+  },
   DBOE extends DBO & ISwarmStoreDatabaseBaseOptions & { provider: P },
   ConnectorBasic extends ISwarmStoreConnectorBasicWithEntriesCount<P, T, DbType, DBO>,
   CO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
@@ -214,7 +218,9 @@ export function getSwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptions
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType> & {
+    grantAccess: GAC;
+  },
   ConnectorBasic extends ISwarmStoreConnectorBasicWithEntriesCount<P, T, DbType, DBO>,
   CO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
   PO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, CO>,
@@ -263,9 +269,9 @@ export function getSwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptions
   ContextBaseClass: CTXC,
   swarmMessageStoreDBOGrandAccessCallbackContextFabric: SMSDBOGACF,
   databaseOptionsClassFabric: DBOC,
-  swarmMessageValidatorFabric: (
+  swarmMessageValidatorFabric: (grantAccessCb: GAC) => GAC = getMessageValidatorForGrandAccessCallbackBound as (
     grantAccessCb: GAC
-  ) => TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, MD> = getMessageValidatorForGrandAccessCallbackBound
+  ) => GAC
 ): ISwarmMessageStoreWithEntriesCount<
   P,
   T,

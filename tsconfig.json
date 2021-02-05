@@ -22,12 +22,7 @@
       }
     ],
     "rootDirs": ["src/"],
-    "typeRoots": [
-      "src/types",
-      "**/types",
-      "**/node_modules/types",
-      "**/node_modules/@types"
-    ],
+    "typeRoots": ["src/types", "**/types", "**/node_modules/types", "**/node_modules/@types"],
     "experimentalDecorators": true,
     "resolveJsonModule": true
   },

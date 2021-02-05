@@ -6,16 +6,16 @@ import {
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { TSwrmMessagesChannelsListDBOWithGrantAccess } from '../../../../../../../types/swarm-messages-channels-list.types';
 import { TSwarmMessageUserIdentifierSerialized } from '../../../../../../../../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
-import {
-  TSwarmStoreDatabaseEntryOperation,
-  ISwarmStoreConnectorAccessConrotllerGrantAccessCallbackSerializable,
-} from '../../../../../../../../swarm-store-class/swarm-store-class.types';
+import { TSwarmStoreDatabaseEntryOperation } from '../../../../../../../../swarm-store-class/swarm-store-class.types';
 import {
   ISwarmMessagesChannelsListV1GrantAccessVariableArguments,
   ISwarmMessagesChannelsListV1GrantAccessConstantArguments,
 } from '../../../types/swarm-messages-channels-list-v1-class.types';
 import { IValidatorOfSwarmMessageWithChannelDescriptionArgument } from '../../../../../../../types/swarm-messages-channels-validation.types';
 import { ICreateGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidatorArguments } from '../../../types/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.types';
+import { ISwarmMessageChannelDescriptionRaw } from '../../../../../../../types/swarm-messages-channel.types';
+import { EOrbitDbFeedStoreOperation } from '../../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
+import { ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound } from '../../../../../../../../swarm-message-store/types/swarm-message-store.types';
 
 export function getVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidator<
   P extends ESwarmStoreConnector,
@@ -28,13 +28,16 @@ export function getVariableArgumentsWithoutExistingChannelDescriptionForGrantAcc
   userId,
   key,
   operation,
+  time,
 }: {
   payload: T | MD;
   userId: TSwarmMessageUserIdentifierSerialized;
   // key of the value
-  key?: string;
+  key: string | undefined;
   // operation which is processed (like delete, add or something else)
-  operation?: TSwarmStoreDatabaseEntryOperation<P>;
+  operation: TSwarmStoreDatabaseEntryOperation<P> | undefined;
+  // Clock time (e.g. Lamprod clock time) when was the entry added
+  time: number;
 }): Omit<Required<ISwarmMessagesChannelsListV1GrantAccessVariableArguments<P, T, MD, CTX, DBO>>, 'channelExistingDescription'> {
   if (!key) {
     throw new Error('A key must be provided for swarm messages channel description');
@@ -42,11 +45,13 @@ export function getVariableArgumentsWithoutExistingChannelDescriptionForGrantAcc
   if (!operation) {
     throw new Error('A database operation must be provided for any changing of swarm messages channel description');
   }
+  debugger;
   return {
     keyInDb: key,
     messageOrHash: payload,
     operationInDb: operation,
     senderUserId: userId,
+    timeEntryAdded: time,
   };
 }
 
@@ -100,11 +105,17 @@ export function createGrantAccessCallbackByConstantArgumentsAndMessageWithChanne
     this: CTX,
     payload: T | MD,
     userId: TSwarmMessageUserIdentifierSerialized,
+    // name of the database
+    databaseName: string,
     // key of the value
-    key?: string,
+    key: string | undefined,
     // operation which is processed (like delete, add or something else)
-    operation?: TSwarmStoreDatabaseEntryOperation<P>
+    operation: TSwarmStoreDatabaseEntryOperation<P> | undefined,
+    // a real or an abstract clock time when the entry was added into the database
+    time: number
   ): Promise<boolean> {
+    // TODO - make it possible
+    // to iterate a swarm database with the time
     debugger;
     if (!key) {
       throw new Error('Key should be provided for a message with a swarm messages channel description');
@@ -114,8 +125,23 @@ export function createGrantAccessCallbackByConstantArgumentsAndMessageWithChanne
       userId,
       key,
       operation,
+      time,
     });
-    const swarmMessagesChannelExistingDescription = await getExistingChannelDescriptionByMessageKey(key);
+    let swarmMessagesChannelExistingDescription: Readonly<ISwarmMessageChannelDescriptionRaw<P, T, any, any>> | undefined;
+    if (constantArguments.isDatabaseReady) {
+      /* 
+        existing channel description can be got
+        from a database only when it has been opened
+      */
+      swarmMessagesChannelExistingDescription = await getExistingChannelDescriptionByMessageKey(key);
+      if (operation === EOrbitDbFeedStoreOperation.DELETE) {
+        // TODO - may be it will cause a problems e.g. if the DELETE
+        // message has come before CREATE message
+        if (!swarmMessagesChannelExistingDescription) {
+          throw new Error('This is an unknown channel and can not be deleted');
+        }
+      }
+    }
     const argumentsForChannelDescriptionSwarmMessageValidator = getArgumentsForSwarmMessageWithChannelDescriptionValidator(
       constantArguments,
       variableArguments,
@@ -124,16 +150,18 @@ export function createGrantAccessCallbackByConstantArgumentsAndMessageWithChanne
     await channelDescriptionSwarmMessageValidator.call(this, argumentsForChannelDescriptionSwarmMessageValidator);
     return true;
   }
-  (channelsListGrantAccessCallbackFunction as ISwarmStoreConnectorAccessConrotllerGrantAccessCallbackSerializable<
+  (channelsListGrantAccessCallbackFunction as ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<
     P,
     T,
-    MD
+    MD,
+    CTX
   >).toString = constantArguments.grandAccessCallbackFromDbOptions.toString.bind(
     constantArguments.grandAccessCallbackFromDbOptions
   );
-  return (channelsListGrantAccessCallbackFunction as ISwarmStoreConnectorAccessConrotllerGrantAccessCallbackSerializable<
+  return (channelsListGrantAccessCallbackFunction as ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<
     P,
     T,
-    MD
+    MD,
+    CTX
   >) as DBO['grantAccess'];
 }

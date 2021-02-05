@@ -8,7 +8,7 @@ import {
   ISwarmMessageChannelDescriptionRaw,
   ISwarmMessagesChannelDescriptionWithMetadata,
 } from '../../../../../../types/swarm-messages-channel.types';
-import { PromiseResolveType } from '../../../../../../../../types/promise.types';
+import { PromiseResolveType, IPromisePendingRejectable } from '../../../../../../../../types/promise.types';
 import {
   TSwrmMessagesChannelsListDBOWithGrantAccess,
   DBOFULL,
@@ -32,6 +32,7 @@ import {
 import { TSwarmStoreDatabaseIteratorMethodArgument } from '../../../../../../../swarm-store-class/swarm-store-class.types';
 import { isDefined } from '../../../../../../../../utils/common-utils/common-utils-main';
 import { SwarmMessagesChannelDescriptionWithMeta } from '../../../../../../swarm-messages-channels-subclasses/swarm-messages-channel-description-with-meta/swarm-messages-channel-description-with-meta';
+import { createCancellablePromiseByNativePromise } from '../../../../../../../../utils/common-utils/commom-utils.promies';
 import {
   ISwarmMessageStoreMessagingRequestWithMetaResult,
   ISwarmMessageStoreDeleteMessageArg,
@@ -72,15 +73,52 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       return additionalUtils;
     }
 
-    private _swarmMessagesKeyValueDatabaseConnectionPending: Promise<
-      PromiseResolveType<ReturnType<CARGS['utilities']['databaseConnectionFabric']>>
+    private _swarmMessagesKeyValueDatabaseConnectionPending: IPromisePendingRejectable<
+      PromiseResolveType<ReturnType<CARGS['utilities']['databaseConnectionFabric']>>,
+      Error
     >;
+
+    /**
+     * Whether the channel's database has been opened.
+     *
+     * @private
+     * @type {boolean}
+     * @memberof SwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler
+     */
+    private __isDatabaseOpened: boolean = false;
+
+    /**
+     * Whether the channels list have been closed.
+     *
+     * @private
+     * @type {boolean}
+     * @memberof SwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler
+     */
+    private __isChannelsListClosed: boolean = false;
+
+    protected get _isDatabaseOpened(): boolean {
+      return this.__isDatabaseOpened && !this.__isChannelsListClosed;
+    }
 
     constructor(constructorArguments: CARGS) {
       super(constructorArguments);
       this._validateAdditionalUtils(additionalUtils);
       this.__additionalUtils = createImmutableObjectClone(additionalUtils);
-      this._swarmMessagesKeyValueDatabaseConnectionPending = this._createActiveConnectionToChannelsListDatabase();
+      this._swarmMessagesKeyValueDatabaseConnectionPending = createCancellablePromiseByNativePromise(
+        this._createActiveConnectionToChannelsListDatabase()
+      );
+      this._waitTillDatabaseWillBeOpened();
+    }
+
+    private _waitTillDatabaseWillBeOpened(): void {
+      void this._swarmMessagesKeyValueDatabaseConnectionPending.then(
+        () => {
+          this.__isDatabaseOpened = true;
+        },
+        () => {
+          this.__isDatabaseOpened = false;
+        }
+      );
     }
 
     private _validateAdditionalUtils(additionalUtils: IAdditionalUtils<P, T, MD, CTX, DBO>): void {
@@ -154,11 +192,11 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       );
       await this._validateChannelDescriptionFormat(swarmMessagesChannelDescriptionDeserialized);
       assert(
-        this._createChannelDescriptionMessageIssuer(swarmMessagesChannelDescriptionDeserialized) === iss,
+        this._createChannelDescriptionMessageIssuer() === iss,
         '"Issuer" of the swarm message with the swarm messages channel description is not valid'
       );
       assert(
-        this._createChannelDescriptionMessageTyp(swarmMessagesChannelDescriptionDeserialized) === typ,
+        this._createChannelDescriptionMessageTyp() === typ,
         '"Typ" of the swarm message with the swarm messages channel description is not valid'
       );
       return swarmMessagesChannelDescriptionDeserialized;
@@ -205,7 +243,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       return undefined;
     }
 
-    private async _requestDatabase(
+    private async __requestDatabase(
       options: TSwarmStoreDatabaseIteratorMethodArgument<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>
     ): Promise<(ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined)[]> {
       const dbConnection = await this._getSwarmMessagesKeyValueDatabaseConnection();
@@ -213,16 +251,26 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
     }
 
     private async _requestDatabaseForDbKey(
-      dbbKey: string
+      dbbKey: string,
+      additionalRequestOptions?: Partial<
+        TSwarmStoreDatabaseIteratorMethodArgument<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>
+      >
     ): Promise<(ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined)[]> {
       const optionsForReadingKeyValue = this._createOptionsForCollectingDbKey(dbbKey);
-      return await this._requestDatabase(optionsForReadingKeyValue);
+      const optionsWithAdditional = {
+        ...optionsForReadingKeyValue,
+        ...additionalRequestOptions,
+      };
+      return await this.__requestDatabase(optionsWithAdditional);
     }
 
     private async _readValueStoredInDatabaseByDbKey(
-      dbbKey: string
+      dbbKey: string,
+      additionalRequestOptions?: Partial<
+        TSwarmStoreDatabaseIteratorMethodArgument<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>
+      >
     ): Promise<ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined> {
-      const requestResults = await this._requestDatabaseForDbKey(dbbKey);
+      const requestResults = await this._requestDatabaseForDbKey(dbbKey, additionalRequestOptions);
       const requestResultForDbKey = this._getRequestResultFromAllRequestResultsOnASingleDatabaseKeyRead(requestResults);
       return requestResultForDbKey;
     }
@@ -237,9 +285,12 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
     }
 
     protected async _readSwarmMessagesChannelDescriptionOrUndefinedForDbKey(
-      dbbKey: string
+      dbbKey: string,
+      additionalRequestOptions?: Partial<
+        TSwarmStoreDatabaseIteratorMethodArgument<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>
+      >
     ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any> | undefined> {
-      const requestResultForDbKey = await this._readValueStoredInDatabaseByDbKey(dbbKey);
+      const requestResultForDbKey = await this._readValueStoredInDatabaseByDbKey(dbbKey, additionalRequestOptions);
 
       if (!requestResultForDbKey) {
         return undefined;
@@ -254,7 +305,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       ISwarmMessagesChannelDescriptionWithMetadata<P, T, MD, any, any>[]
     > {
       const optionsForReadingAllValuesStored = this._createOptionsForCollectingAllDatabaseValues();
-      const messagesReadFromDatabase = await this._requestDatabase(optionsForReadingAllValuesStored);
+      const messagesReadFromDatabase = await this.__requestDatabase(optionsForReadingAllValuesStored);
       const swarmMessagesChannelsDescriptionsOrErrors = await this._convertDatabaseRequestResultIntoSwarmChannelsDescriptionsWithMeta(
         messagesReadFromDatabase
       );
@@ -300,21 +351,42 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
         getIssuerForSwarmMessageWithChannelDescriptionByChannelDescription,
       } = this._getUtilities();
       const { swarmMessagesChannelDescriptionFormatValidator: swarmMessagesChannelDescriptionValidator } = this._getValidators();
-
+      const getIsDatabaseOpened = (): boolean => this._isDatabaseOpened;
       return {
+        get isDatabaseReady(): boolean {
+          return getIsDatabaseOpened();
+        },
         channelsListDescription,
         grandAccessCallbackFromDbOptions: grantAccess as NonNullable<DBO['grantAccess']>,
         getIssuerForSwarmMessageWithChannelDescriptionByChannelsListDescription: getIssuerForSwarmMessageWithChannelDescriptionByChannelDescription,
         getTypeForSwarmMessageWithChannelDescriptionByChannelsListDescription: getTypeForSwarmMessageWithChannelDescriptionByChannelDescription,
         getDatabaseKeyForChannelDescription,
         channelDescriptionFormatValidator: swarmMessagesChannelDescriptionValidator,
+        parseChannelDescription: this._deserializeChannelDescriptionRaw.bind(this),
       };
     }
 
     private _getExistingChannelDescriptionByMessageKey = async (
       dbbKey: string
     ): Promise<IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, MD, CTX, DBO>['channelExistingDescription']> => {
-      return await this._readSwarmMessagesChannelDescriptionOrUndefinedForDbKey(dbbKey);
+      const dbIteratorOptionsReadValueFromCache: Partial<TSwarmStoreDatabaseIteratorMethodArgument<
+        ESwarmStoreConnector.OrbitDB,
+        ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+      >> = {
+        // fromCache: true,
+      };
+      if (!this.__isDatabaseOpened) {
+        // if database still not opened OrbitDB implementation
+        // can't read existsing values, bacuse it causes halt.
+        throw new Error('A database should be opened before read a value from it');
+      }
+      return await this._readSwarmMessagesChannelDescriptionOrUndefinedForDbKey(
+        dbbKey,
+        // TODO - resolve this type cast
+        dbIteratorOptionsReadValueFromCache as Partial<
+          TSwarmStoreDatabaseIteratorMethodArgument<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>
+        >
+      );
     };
 
     private _createGrantAccessCallbackForChannelsListDatabase(): DBO['grantAccess'] {
@@ -352,6 +424,9 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
         dbType: ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
         dbName: databaseName,
         grantAccess: databaseGrantAccessCallback,
+        // we need to preload all values in cache to make it possible to read values
+        // cached from grant access callback
+        preloadCount: -1,
       } as unknown) as DBOFULL<P, T, MD, CTX, DBO>;
     }
 

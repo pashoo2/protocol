@@ -16,7 +16,7 @@ import {
 } from '../../types/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.types';
 import { getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandlerClass } from '../../subclasses/swarm-messages-channels-list-v1-db-connection-initializer-and-handler/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.fabric';
 import { getSwarmMessagesChannelsListVersionOneConstructorOptionsDefault } from '../swarm-messages-channels-list-v1-constructor-arguments-fabrics/swarm-messages-channels-list-v1-constructor-arguments-fabric';
-import { getIConstructorAbstactSwarmMessagesChannelsListVersionOneOptionsSetUp } from '../../subclasses/swarm-messages-channels-list-v1-class-options-setup/swarm-messages-channels-list-v1-class-options-setup';
+import { getIConstructorAbstactSwarmMessagesChannelsListVersionOneOptionsSetUp as getConstructorAbstactSwarmMessagesChannelsListVersionOneOptionsSetUp } from '../../subclasses/swarm-messages-channels-list-v1-class-options-setup/swarm-messages-channels-list-v1-class-options-setup';
 import { ICreateGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidator } from '../../types/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.types';
 import {
   getVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidator,
@@ -95,7 +95,7 @@ export function getSwarmMessagesChannelsListVersionOneInstanceWithDefaultParamet
     getArgumentsForSwarmMessageWithChannelDescriptionValidator: getArgumentsForSwarmMessageWithChannelDescriptionValidator,
     createGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidator: createGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidatorUtil,
   };
-  const SwarmMessagesChannelsListVersionOneOptionsSetUp = getIConstructorAbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<
+  const SwarmMessagesChannelsListVersionOneOptionsSetUp = getConstructorAbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<
     P,
     T,
     MD,

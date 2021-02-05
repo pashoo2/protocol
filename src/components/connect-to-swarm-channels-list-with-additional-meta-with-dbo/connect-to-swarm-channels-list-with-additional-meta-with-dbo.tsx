@@ -206,13 +206,28 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
         },
       };
       try {
-        await channelsListInstance.addChannel(swarmMessageChannelDescription);
+        const existingChannels = await channelsListInstance.getAllChannelsDescriptions();
+        debugger;
+        // await channelsListInstance.upsertChannel(swarmMessageChannelDescription);
+        // await channelsListInstance.removeChannelById(swarmMessageChannelDescription.id);
+        // debugger;
+        // await channelsListInstance.upsertChannel({
+        //   ...swarmMessageChannelDescription,
+        //   dbType: ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
+        // });
+        // debugger;
+        // const swarmMessagesChannelListDescription = await channelsListInstance.getChannelDescriptionById(
+        //   swarmMessageChannelDescription.id
+        // );
+        // debugger;
+        // existingChannels = await channelsListInstance.getAllChannelsDescriptions();
+        debugger;
+        console.log('existingChannels', existingChannels);
+        alert('done');
       } catch (err) {
         console.error(err);
         debugger;
       }
-      const existingChannels = await channelsListInstance.getAllChannelsDescriptions();
-      debugger;
     }
   }
 }

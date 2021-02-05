@@ -43,6 +43,27 @@ export interface ISwarmMessagesChannelDescriptionFormatValidator<
 }
 
 /**
+ *Parse the swarm message channel serialized
+ *
+ * @export
+ * @interface ISwarmMessagesChannelDescriptionParser
+ * @template P
+ * @template T
+ * @template DbType
+ * @template DBO
+ */
+export interface ISwarmMessagesChannelDescriptionParser<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>
+> {
+  (channelDescriptionSerialized: string):
+    | Promise<ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>>
+    | ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>;
+}
+
+/**
  * Callback will be called for validation of a swarm message
  * with a swarm messages channel's description validation
  *
@@ -140,6 +161,13 @@ export interface IValidatorOfSwarmMessageWithChannelDescriptionArgument<
    */
   operationInDb: TSwarmStoreDatabaseEntryOperation<P>;
   /**
+   * Time when was the entry added.
+   *
+   * @type {number}
+   * @memberof IValidatorOfSwarmMessageWithChannelDescriptionArgument
+   */
+  timeEntryAdded: number;
+  /**
    * A description of the channel which is already exists in the
    * channels list swarm database cache (!!! only in the cache).
    *
@@ -208,4 +236,11 @@ export interface IValidatorOfSwarmMessageWithChannelDescriptionArgument<
     any,
     TSwarmStoreDatabaseOptions<P, T, any>
   >;
+  /**
+   * Used for parsing the channel description to validate it's format
+   *
+   * @type {ISwarmMessagesChannelDescriptionParser<P, T, any, TSwarmStoreDatabaseOptions<P, T, any>>}
+   * @memberof IValidatorOfSwarmMessageWithChannelDescriptionArgument
+   */
+  parseChannelDescription: ISwarmMessagesChannelDescriptionParser<P, T, any, any>;
 }

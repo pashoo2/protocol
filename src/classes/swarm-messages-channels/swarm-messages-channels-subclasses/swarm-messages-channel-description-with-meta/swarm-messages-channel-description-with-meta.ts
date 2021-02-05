@@ -39,8 +39,14 @@ export class SwarmMessagesChannelDescriptionWithMeta<
     return this.__requestWithMetadata.key;
   }
 
+  /**
+   * TODO - add as constructor params constructor of swarm database connection and swarm messages channels list instance
+   * to make it possible to create connection with the channel swarm database and manipulate with
+   * the description directly from the instance.
+   * Constructor arguments should be an object with props instead multiple arguments
+   */
   constructor(
-    private __requestWithMetadata: ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD>,
-    private __swarmMessagesChannelDescription: Error | ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>
+    private readonly __requestWithMetadata: ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD>,
+    private readonly __swarmMessagesChannelDescription: Error | ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>
   ) {}
 }

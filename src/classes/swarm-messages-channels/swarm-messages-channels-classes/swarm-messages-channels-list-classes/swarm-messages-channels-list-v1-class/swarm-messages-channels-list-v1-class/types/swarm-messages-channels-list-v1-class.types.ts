@@ -12,7 +12,8 @@ export type TSwarmMessagesChannelsListV1GrantAccessVariableArgumentsPropNames =
   | 'senderUserId'
   | 'keyInDb'
   | 'operationInDb'
-  | 'channelExistingDescription';
+  | 'channelExistingDescription'
+  | 'timeEntryAdded';
 
 export interface ISwarmMessagesChannelsListV1GrantAccessConstantArguments<
   P extends ESwarmStoreConnector,
@@ -23,7 +24,15 @@ export interface ISwarmMessagesChannelsListV1GrantAccessConstantArguments<
 > extends Omit<
     IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, MD, CTX, DBO>,
     TSwarmMessagesChannelsListV1GrantAccessVariableArgumentsPropNames
-  > {}
+  > {
+  /**
+   * Whether database is opened and ready to use.
+   *
+   * @type {boolean}
+   * @memberof ISwarmMessagesChannelsListV1GrantAccessConstantArguments
+   */
+  isDatabaseReady: boolean;
+}
 
 export interface ISwarmMessagesChannelsListV1GrantAccessVariableArguments<
   P extends ESwarmStoreConnector,

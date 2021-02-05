@@ -47,6 +47,7 @@ export const getMessageConstructorForDatabase = <SMC extends ISwarmMessageConstr
   return messageConstructors.default;
 };
 
+// TODO add memoization for messages validation
 async function swarmMessageGrantValidatorWithCBContext<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
@@ -60,21 +61,16 @@ async function swarmMessageGrantValidatorWithCBContext<
   this: ISwarmMessageGrantValidatorContext<P, T, MD, CB>,
   value: T | MD | string,
   senderUserId: TCentralAuthorityUserIdentity,
-  key?: TSwarmStoreDatabaseEntityKey<P>,
-  op?: TSwarmStoreDatabaseEntryOperation<P>,
+  key: TSwarmStoreDatabaseEntityKey<P> | undefined,
+  op: TSwarmStoreDatabaseEntryOperation<P> | undefined,
+  time: number,
   callbackContext?: CTX
 ): Promise<boolean> {
-  const { dbName, messageConstructor, grantAccessCb, isPublic, isUserCanWrite, currentUserId } = this;
+  const { dbName, messageConstructor, grantAccessCb, isPublic, isUserCanWrite } = this;
   const isUserHasWriteOrDeletePermissions = isPublic || isUserCanWrite;
 
   if (!isUserHasWriteOrDeletePermissions) {
     return false;
-  }
-  if (isUserHasWriteOrDeletePermissions && senderUserId === currentUserId) {
-    // TODO - may be it's necessary to parse a message and compare
-    // the uid of the message to the currentUserId instead of the
-    // userId === currentUserId
-    return true;
   }
 
   let swarmMessage: undefined | MD;
@@ -97,21 +93,24 @@ async function swarmMessageGrantValidatorWithCBContext<
       if (swarmMessage.uid !== senderUserId) {
         return false;
       }
-      return true;
     } catch (err) {
       console.error(err);
       return false;
     }
   }
   if (grantAccessCb) {
-    return await (grantAccessCb as ISwarmMessageStoreAccessControlGrantAccessCallback<P, MD, any>).call(
+    const isAccessAllowed = await (grantAccessCb as ISwarmMessageStoreAccessControlGrantAccessCallback<P, MD, any>).call(
       callbackContext,
       swarmMessage ?? value,
       senderUserId,
       dbName,
       key,
-      op
+      op,
+      time
     );
+    if (!isAccessAllowed) {
+      return false;
+    }
   }
   return true;
 }
@@ -128,10 +127,11 @@ async function swarmMessageGrantValidator<
   this: ISwarmMessageGrantValidatorContext<P, T, I, CB>,
   value: T,
   senderUserId: TCentralAuthorityUserIdentity,
-  key?: TSwarmStoreDatabaseEntityKey<P>,
-  op?: TSwarmStoreDatabaseEntryOperation<P>
+  key: TSwarmStoreDatabaseEntityKey<P> | undefined,
+  op: TSwarmStoreDatabaseEntryOperation<P> | undefined,
+  time: number
 ): Promise<boolean> {
-  return await swarmMessageGrantValidatorWithCBContext.call(this, value, senderUserId, key, op);
+  return await swarmMessageGrantValidatorWithCBContext.call(this, value, senderUserId, key, op, time);
 }
 
 export const getMessageValidator = <
@@ -143,9 +143,11 @@ export const getMessageValidator = <
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, Exclude<MSI, ISwarmMessageInstanceEncrypted>>,
   SMC extends ISwarmMessageConstructor
 >(
-  dboptions: DBO,
+  dboptions: DBO & {
+    grantAccess: GAC;
+  },
   messageConstructor: SMC,
-  grantAccessCb: GAC | undefined,
+  grantAccessCb: GAC,
   currentUserId: TCentralAuthorityUserIdentity
 ): TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, Exclude<Exclude<MSI, ISwarmMessageInstanceEncrypted>, T>> => {
   const { dbName, isPublic, write } = dboptions;
@@ -175,13 +177,14 @@ export const getMessageValidatorForGrandAccessCallbackBound = <
   SMC extends ISwarmMessageConstructor
 >(
   grantAccessCb: GAC | undefined
-): TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, MD> => {
+): typeof grantAccessCb extends undefined ? TSwarmMessagesStoreGrantAccessCallback<P, MD | T> : GAC => {
   async function swarmMessageGrantValidatorWithSwarmMessageStoreContext(
     this: IGetMessageValidatorUnboundFabricReturnedSwarmMessageGrantValidatorFunctionContext<SMC>,
     payload: T,
     senderUserId: TCentralAuthorityUserIdentity,
-    key?: TSwarmStoreDatabaseEntityKey<P>,
-    op?: TSwarmStoreDatabaseEntryOperation<P>
+    key: TSwarmStoreDatabaseEntityKey<P>,
+    op: TSwarmStoreDatabaseEntryOperation<P>,
+    time: number
   ): ReturnType<ISwarmStoreConnectorAccessConrotllerGrantAccessCallbackSerializable<P, T, MD>> {
     if (!this) {
       throw new Error('swarmMessageGrantValidatorWithSwarmMessageStoreContext::Context is not available');
@@ -203,15 +206,15 @@ export const getMessageValidatorForGrandAccessCallbackBound = <
       senderUserId,
       key,
       op,
+      time,
       this
     );
   }
   swarmMessageGrantValidatorWithSwarmMessageStoreContext.toString = () => {
     return grantAccessCb ? grantAccessCb.toString() : undefined;
   };
-  return swarmMessageGrantValidatorWithSwarmMessageStoreContext as ISwarmStoreConnectorAccessConrotllerGrantAccessCallbackSerializable<
-    P,
-    T,
-    MD
-  >;
+  // TODO - resolve cast to unknown
+  return (swarmMessageGrantValidatorWithSwarmMessageStoreContext as unknown) as typeof grantAccessCb extends undefined
+    ? TSwarmMessagesStoreGrantAccessCallback<P, MD | T>
+    : GAC;
 };

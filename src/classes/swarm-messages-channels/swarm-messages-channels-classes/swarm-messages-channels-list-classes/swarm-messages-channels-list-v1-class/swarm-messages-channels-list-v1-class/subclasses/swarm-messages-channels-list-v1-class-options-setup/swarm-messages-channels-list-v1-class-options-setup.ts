@@ -222,11 +222,10 @@ export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
    * @returns {Pick<TSwarmMessageConstructorBodyMessage, 'typ'>['typ']}
    * @memberof SwarmMessagesChannelsListVersionOne
    */
-  protected _createChannelDescriptionMessageTyp(
-    channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>
-  ): Pick<TSwarmMessageConstructorBodyMessage, 'typ'>['typ'] {
+  protected _createChannelDescriptionMessageTyp(): Pick<TSwarmMessageConstructorBodyMessage, 'typ'>['typ'] {
     const { getTypeForSwarmMessageWithChannelDescriptionByChannelDescription } = this._getUtilities();
-    return getTypeForSwarmMessageWithChannelDescriptionByChannelDescription(channelDescriptionRaw);
+    const channelsListDescription = this._getChannelsListDescription();
+    return getTypeForSwarmMessageWithChannelDescriptionByChannelDescription(channelsListDescription);
   }
 
   /**
@@ -237,11 +236,10 @@ export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
    * @returns {Pick<TSwarmMessageConstructorBodyMessage, 'iss'>['iss']}
    * @memberof SwarmMessagesChannelsListVersionOne
    */
-  protected _createChannelDescriptionMessageIssuer(
-    channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>
-  ): Pick<TSwarmMessageConstructorBodyMessage, 'iss'>['iss'] {
+  protected _createChannelDescriptionMessageIssuer(): Pick<TSwarmMessageConstructorBodyMessage, 'iss'>['iss'] {
     const { getIssuerForSwarmMessageWithChannelDescriptionByChannelDescription } = this._getUtilities();
-    return getIssuerForSwarmMessageWithChannelDescriptionByChannelDescription(channelDescriptionRaw);
+    const channelsListDescription = this._getChannelsListDescription();
+    return getIssuerForSwarmMessageWithChannelDescriptionByChannelDescription(channelsListDescription);
   }
 
   /**
@@ -258,6 +256,12 @@ export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
     const { getDatabaseKeyForChannelDescription } = this._getUtilities();
     return getDatabaseKeyForChannelDescription(channelDescriptionRaw);
   }
+
+  protected _parseSwarmMessagesChannelDescription = (
+    channelDescription: string
+  ): ISwarmMessageChannelDescriptionRaw<P, T, any, any> => {
+    return this._getSerializer().parse(channelDescription);
+  };
 }
 
 export function getIConstructorAbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<

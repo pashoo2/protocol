@@ -65,7 +65,7 @@ export type TSwrmMessagesChannelsListDBOWithGrantAccess<
     T,
     TSwarmMessagesChannelsListDbType
   >
-> = Omit<DBO, 'dbName' | 'dbType' | 'grantAccess'> & {
+> = Omit<DBO, 'dbName' | 'dbType' | 'grantAccess' | 'preloadCount'> & {
   /**
    * Grant access callback supports for validation of a swarm messages decrypted
    *
@@ -174,13 +174,14 @@ export interface ISwarmMessagesChannelsDescriptionsList<
   readonly description: Readonly<ISwarmMessagesChannelsListDescription>;
 
   /**
-   * Add new channel in the list by it's description
+   * Add a new channel byt it's description in the channels list by it's description
+   * or update a description of the existing one.
    *
    * @param {ISwarmMessageChannelDescriptionRaw<P, T, any, any>} channelDescriptionRaw
    * @returns {Promise<void>}
    * @memberof ISwarmMessagesChannelsDescriptionsList
    */
-  addChannel(channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>): Promise<void>;
+  upsertChannel(channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>): Promise<void>;
 
   /**
    * Remove channel description from the list by it's identity

@@ -16,6 +16,13 @@
       "request": "launch",
       "name": "Launch Chrome against localhost",
       "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}"
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Launch Chrome against localhost disable cache, no data save",
+      "url": "http://localhost:3000",
       "webRoot": "${workspaceFolder}",
       "runtimeArgs": ["--disk-cache-dir=/dev/null"]
     }

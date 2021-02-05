@@ -17,5 +17,12 @@ export function swarmStoreConectorDbOptionsGrandAccessContextBinderToDatabaseOpt
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>
 >(): ISwarmMessageStoreConnectorDatabaseOptionsWithAccessControlleGrantCallbackBound<P, ItemType, DbType, MD, CTX, DBO> {
-  return swarmStoreConectorDbOptionsGrandAccessContextBinderToDatabaseOptions;
+  return swarmStoreConectorDbOptionsGrandAccessContextBinderToDatabaseOptions as ISwarmMessageStoreConnectorDatabaseOptionsWithAccessControlleGrantCallbackBound<
+    P,
+    ItemType,
+    DbType,
+    MD,
+    CTX,
+    DBO
+  >;
 }

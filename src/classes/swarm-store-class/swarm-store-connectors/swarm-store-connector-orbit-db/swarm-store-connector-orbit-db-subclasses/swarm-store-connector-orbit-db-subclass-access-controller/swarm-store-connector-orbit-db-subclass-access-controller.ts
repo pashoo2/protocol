@@ -1,13 +1,6 @@
 import OrbitDB from 'orbit-db';
-import AccessController from 'orbit-db-access-controllers/src/access-controller-interface';
-import {
-  SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_ACCESS_CONTROLLER_TYPE,
-  SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_ACCESS_CONTROLLER_LOG_PREFIX,
-} from './swarm-store-connector-orbit-db-subclass-access-controller.const';
-import {
-  ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions,
-  ISwarmStoreConnectorOrbitDbDatabaseAccessControllerManifest,
-} from './swarm-store-connector-orbit-db-subclass-access-controller.types';
+import OrbitDBAccessController from 'orbit-db-access-controllers/src/orbitdb-access-controller';
+import { ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions } from './swarm-store-connector-orbit-db-subclass-access-controller.types';
 import { IdentityProvider } from 'orbit-db-identity-provider';
 import { ESwarmStoreConnector } from '../../../../swarm-store-class.const';
 import { EOrbitDbFeedStoreOperation } from '../swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
@@ -15,10 +8,14 @@ import {
   TSwarmStoreConnectorAccessConrotllerGrantAccessCallback,
   TSwarmStoreValueTypes,
 } from '../../../../swarm-store-class.types';
+import {
+  SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_ACCESS_CONTROLLER_LOG_PREFIX,
+  SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_ACCESS_CONTROLLER_TYPE,
+} from './swarm-store-connector-orbit-db-subclass-access-controller.const';
 
 export class SwarmStoreConnectorOrbitDBSubclassAccessController<
   T extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>
-> extends AccessController {
+> extends OrbitDBAccessController {
   // Returns the type of the access controller
   public static get type(): string {
     return SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_ACCESS_CONTROLLER_TYPE;
@@ -36,25 +33,43 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
    */
   public static async create<T extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>>(
     orbitdb: OrbitDB,
-    options: ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions<T> = {}
-  ): Promise<SwarmStoreConnectorOrbitDBSubclassAccessController<T>> {
-    return new SwarmStoreConnectorOrbitDBSubclassAccessController<T>(orbitdb, options);
+    options: ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions<T> & {
+      address?: string;
+      name?: string;
+    } = {}
+  ) {
+    const ac = new SwarmStoreConnectorOrbitDBSubclassAccessController<T>(orbitdb, options);
+    await ac.load(options.address || options.name || 'default-access-controller');
+
+    // Add write access from options
+    if (options.write && !options.address) {
+      await Promise.all(
+        options.write.map(async (e) => {
+          try {
+            await ac.grant('write', e);
+          } catch (err) {
+            console.error(err);
+          }
+        })
+      );
+    }
+
+    return ac;
   }
 
   // if true then anyone have access
   // to the database
-  protected _isPublic: boolean = false;
+  protected __isPublic: boolean = false;
 
-  protected _grantAccessCallback?: TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<ESwarmStoreConnector.OrbitDB, T>;
+  protected __grantAccessCallback?: TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<ESwarmStoreConnector.OrbitDB, T>;
 
-  protected _orbitdb?: OrbitDB;
+  constructor(orbitdb: OrbitDB, protected __options: ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions<T> = {}) {
+    super(orbitdb, __options);
+    this.__setOptions(__options);
+  }
 
-  protected _options?: ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions<T>;
-
-  constructor(orbitdb: OrbitDB, options: ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions<T> = {}) {
-    super();
-    this._orbitdb = orbitdb;
-    this.setOptions(options);
+  async grant(capability: any, key: string) {
+    return await super.grant(capability, key);
   }
 
   /**
@@ -68,41 +83,35 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
    * @memberof SwarmStoreConnectorOrbitDBSubclassAccessController
    */
   public async canAppend(entry: LogEntry<T>, identityProvider: IdentityProvider): Promise<boolean> {
-    if (!this.verifyEntryFormat(entry)) {
+    debugger;
+    if (!super.canAppend(entry, identityProvider)) {
+      return false;
+    }
+    if (!this.__validateEntryFormat(entry)) {
       console.warn(`${SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_ACCESS_CONTROLLER_LOG_PREFIX}::entry have an unknown format`);
       return false;
     }
 
     // Write keys and admins keys are allowed
-    const { _options, _isPublic } = this;
+    const { __options, __isPublic: _isPublic } = this;
 
     if (_isPublic) {
-      return this.checkAccess(entry, identityProvider);
+      return await this.__verifyAccess(entry);
     }
 
-    if (!_options) {
+    if (!__options) {
       return false;
     }
 
     const { identity } = entry;
     const { id: userPerformedActionOnEntryId } = identity;
-    const { write: accessListForUsers } = _options;
+    const { write: accessListForUsers } = __options;
 
     // If the ACL contains the writer's public key or it contains '*'
-    if (accessListForUsers && accessListForUsers.includes(userPerformedActionOnEntryId)) {
-      return this.checkAccess(entry, identityProvider);
+    if (accessListForUsers && userPerformedActionOnEntryId !== '*' && accessListForUsers.includes(userPerformedActionOnEntryId)) {
+      return await this.__verifyAccess(entry);
     }
     return false;
-  }
-
-  /**
-   *  return manifest params
-   *
-   * @returns
-   * @memberof SwarmStoreConnectorOrbitDBSubclassAccessController
-   */
-  public async save(): Promise<ISwarmStoreConnectorOrbitDbDatabaseAccessControllerManifest> {
-    return {};
   }
 
   /**
@@ -114,7 +123,7 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
    * @returns {entry is LogEntry<T>}
    * @memberof SwarmStoreConnectorOrbitDBSubclassAccessController
    */
-  protected verifyEntryFormat(entry: LogEntry<T>): entry is LogEntry<T> {
+  protected __validateEntryFormat(entry: LogEntry<T>): entry is LogEntry<T> {
     if (!entry || typeof entry !== 'object') {
       return false;
     }
@@ -132,44 +141,6 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
   }
 
   /**
-   * validate the identiry provided by the entity
-   *
-   * @protected
-   * @param {IdentityJson} identity
-   * @returns {Promise<boolean>}
-   * @memberof SwarmStoreConnectorOrbitDBSubclassAccessController
-   */
-  protected async verifyIdentity(identity: IdentityJson, identityProvider: IdentityProvider): Promise<boolean> {
-    return await (identityProvider as any).verifyIdentity(identity);
-  }
-
-  /**
-   * validate the entity format and
-   * check the access on it for the
-   * identity provided
-   *
-   * @protected
-   * @param {LogEntry<T>} entry
-   * @returns {Promise<boolean>}
-   * @memberof SwarmStoreConnectorOrbitDBSubclassAccessController
-   */
-  protected async verifyEntity(entry: LogEntry<T>): Promise<boolean> {
-    if (!this.verifyEntryFormat(entry)) {
-      return false;
-    }
-
-    const { identity, payload } = entry;
-    const { value, key, op } = payload;
-    const { id } = identity;
-    const { _grantAccessCallback } = this;
-
-    if (typeof _grantAccessCallback === 'function') {
-      return _grantAccessCallback(value, id, key, op as EOrbitDbFeedStoreOperation | undefined);
-    }
-    return true;
-  }
-
-  /**
    * validates the enetry and verify the user have
    * the access on it
    *
@@ -179,45 +150,44 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
    * @returns {Promise<boolean>}
    * @memberof SwarmStoreConnectorOrbitDBSubclassAccessController
    */
-  protected async checkAccess(entry: LogEntry<T>, identityProvider: IdentityProvider): Promise<boolean> {
+  protected async __verifyAccess(entry: LogEntry<T>): Promise<boolean> {
     try {
-      if (!this.verifyEntryFormat(entry)) {
-        return false;
+      const { identity, payload, clock } = entry;
+      const { value, key, op } = payload;
+      const { id: userId } = identity;
+      const { __grantAccessCallback } = this;
+      if (typeof __grantAccessCallback === 'function') {
+        debugger;
+        // also should add LamportClock as the last argument value
+        return await __grantAccessCallback(value, userId, key, op as EOrbitDbFeedStoreOperation | undefined, clock.time);
       }
-
-      const { identity } = entry;
-      const validateIdentityResult = await this.verifyIdentity(identity, identityProvider);
-
-      if (validateIdentityResult !== true) {
-        return false;
-      }
-      return await this.verifyEntity(entry);
+      return true;
     } catch (err) {
       console.error(err);
       return false;
     }
   }
 
-  protected setOptions(options: ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions<T>) {
+  protected __setOptions(options: ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions<T>) {
     if (options) {
       const { write, grantAccess } = options;
 
       if (write instanceof Array) {
         if (write.includes('*')) {
-          this._isPublic = true;
+          this.__isPublic = true;
         }
       } else {
         console.warn(`${SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_ACCESS_CONTROLLER_LOG_PREFIX}::Noone have access on the database`);
       }
       if (typeof grantAccess === 'function') {
-        if (grantAccess.length !== 2) {
+        if (grantAccess.length < 2) {
           console.warn(
-            `${SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_ACCESS_CONTROLLER_LOG_PREFIX}::A grant access callback must receives 2 arguments generally, but receives ${grantAccess.length}`
+            `${SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_ACCESS_CONTROLLER_LOG_PREFIX}::A grant access callback must receives at least 2 arguments generally, but receives ${grantAccess.length}`
           );
         }
-        this._grantAccessCallback = grantAccess;
+        this.__grantAccessCallback = grantAccess;
       }
-      this._options = options;
+      this.__options = options;
     }
   }
 }

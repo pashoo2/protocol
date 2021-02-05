@@ -709,9 +709,11 @@ export type TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<
   // user who sent the message
   userId: TSwarmMessageUserIdentifierSerialized,
   // key of the value
-  key?: string,
+  key: string | undefined,
   // operation which is processed (like delete, add or something else)
-  operation?: TSwarmStoreDatabaseEntryOperation<P>
+  operation: TSwarmStoreDatabaseEntryOperation<P> | undefined,
+  // real time or an abstract global clock (e.g. Lamport clock) time when the enry was added in the database
+  time: number
 ) => Promise<boolean>;
 
 export interface ISwarmStoreConnectorAccessConrotllerGrantAccessCallbackSerializable<

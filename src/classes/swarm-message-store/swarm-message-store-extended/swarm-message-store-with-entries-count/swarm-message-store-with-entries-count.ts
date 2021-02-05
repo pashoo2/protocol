@@ -29,7 +29,9 @@ export function getClassSwarmMessageStoreWithEntriesCount<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
-  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType> & {
+    grantAccess: GAC;
+  },
   ConnectorBasic extends ISwarmStoreConnectorBasicWithEntriesCount<P, T, DbType, DBO>,
   CO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
   PO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, CO>,

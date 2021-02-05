@@ -96,6 +96,12 @@ export enum ESwarmStoreConnectorOrbitDbDatabaseIteratorOption {
    * in reverse order
    */
   reverse = 'reverse',
+  /**
+   * operate with data which have been stored
+   * in the cache memory only, do not preload
+   * items from a persistent storage
+   */
+  fromCache = 'fromCache',
 }
 
 export interface ISwarmStoreConnectorOrbitDbDatabaseIteratorOptionsRequired<
@@ -126,6 +132,9 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseIteratorOptionsRequired<
   >;
   [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.limit]: number;
   [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.reverse]: boolean;
+  // read only cached values, which were loaded from a persistent storage
+  // to the memory cache
+  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.fromCache]: boolean;
 }
 
 export interface ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions<

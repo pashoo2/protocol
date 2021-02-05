@@ -13,7 +13,7 @@ import {
 } from '../../../swarm-message-store/types/swarm-message-store.types';
 import { TSwarmStoreDatabaseEntityUniqueIndex } from '../../../swarm-store-class/swarm-store-class.types';
 import { isValidSwarmMessageDecryptedFormat } from '../../../swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-swarm-message';
-import { whetherAllSwarmMessagesDecryptedAreEqual } from '../../../swarm-message/swarm-message-utils/swarm-message-utils-common/swarm-message-utils-common-decrypted';
+import { ifSwarmMessagesDecryptedEqual } from '../../../swarm-message/swarm-message-utils/swarm-message-utils-common/swarm-message-utils-common-decrypted';
 import { ISwarmMessageInstanceDecrypted, ISwarmMessageDecrypted } from '../../../swarm-message/swarm-message-constructor.types';
 
 // TODO - refactor to use a class instead of all the helpers
@@ -204,6 +204,6 @@ export const _checkWhetherSameSwarmMessagesDecrypted = (
   return (
     isValidSwarmMessageDecryptedFormat(first) &&
     isValidSwarmMessageDecryptedFormat(second) &&
-    whetherAllSwarmMessagesDecryptedAreEqual(first, second)
+    ifSwarmMessagesDecryptedEqual(first, second)
   );
 };

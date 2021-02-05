@@ -1,11 +1,10 @@
+import assert from 'assert';
 import { ESwarmStoreConnector } from '../../../../../swarm-store-class/swarm-store-class.const';
 import {
   TSwarmMessageSerialized,
   ISwarmMessageInstanceDecrypted,
 } from '../../../../../swarm-message/swarm-message-constructor.types';
 import { EOrbitDbFeedStoreOperation } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
-import assert from 'assert';
-import { ISwarmMessageChannelDescriptionRaw } from '../../../../types/swarm-messages-channel.types';
 import { isValidSwarmMessageDecryptedFormat } from '../../../../../swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-swarm-message';
 import { IValidatorOfSwarmMessageWithChannelDescriptionArgument } from '../../../../types/swarm-messages-channels-validation.types';
 import { TSwrmMessagesChannelsListDBOWithGrantAccess } from '../../../../types/swarm-messages-channels-list.types';
@@ -13,6 +12,7 @@ import { IValidatorOfSwarmMessageWithChannelDescription } from '../../../../type
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { validateUsersList } from '../../../swarm-messages-channel-utils/swarm-messages-channel-validation-utils/swarm-messages-channel-validation-description-utils/swarm-messages-channel-validation-utils-common/swarm-messages-channel-validation-utils-common';
 
+// TODO - add memoization
 export async function validatorOfSwrmMessageWithChannelDescription<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
@@ -29,6 +29,7 @@ export async function validatorOfSwrmMessageWithChannelDescription<
     senderUserId,
     keyInDb,
     operationInDb,
+    timeEntryAdded,
     channelExistingDescription,
     channelsListDescription,
     grandAccessCallbackFromDbOptions,
@@ -36,6 +37,7 @@ export async function validatorOfSwrmMessageWithChannelDescription<
     getIssuerForSwarmMessageWithChannelDescriptionByChannelsListDescription,
     getTypeForSwarmMessageWithChannelDescriptionByChannelsListDescription,
     channelDescriptionFormatValidator,
+    parseChannelDescription,
   } = argument;
 
   assert(keyInDb, 'Database key should be defined for a swarm message with channel description');
@@ -51,21 +53,11 @@ export async function validatorOfSwrmMessageWithChannelDescription<
       'The user who sends the channel descriptions should be in the list of the channel administrators'
     );
   }
-  // TODO - resolve cast of the type to T
   assert(
-    await grandAccessCallbackFromDbOptions.call(this, messageOrHash as T, senderUserId, keyInDb, operationInDb),
+    // TODO - resolve cas to string type T
+    await grandAccessCallbackFromDbOptions.call(this, messageOrHash as T, senderUserId, keyInDb, operationInDb, timeEntryAdded),
     'Failed to get access by the main grand access function'
   );
-
-  if (operationInDb === EOrbitDbFeedStoreOperation.DELETE) {
-    /**
-     * VALIADATION OF DELETE OPERATION
-     */
-    // TODO - move it in another function
-    if (!channelExistingDescription) {
-      throw new Error('This is an unknown channel and can not be deleted');
-    }
-  }
 
   if (operationInDb !== EOrbitDbFeedStoreOperation.DELETE) {
     /**
@@ -80,10 +72,7 @@ export async function validatorOfSwrmMessageWithChannelDescription<
 
     const { bdy: messageBody } = messageOrHash;
 
-    assert(messageBody.receiverId, 'Message receiver id should be empty');
-    if (typeof messageBody.pld === 'string') {
-      throw new Error('Message payload should be deserialized description of a swarm channel');
-    }
+    assert(!messageBody.receiverId, 'Message receiver id should be empty');
     assert(
       messageBody.iss === getIssuerForSwarmMessageWithChannelDescriptionByChannelsListDescription(channelsListDescription),
       'The issuer of the swarm message with a channel description is not valid'
@@ -93,7 +82,12 @@ export async function validatorOfSwrmMessageWithChannelDescription<
       'The type of the swarm message with a channel description is not valid'
     );
 
-    const channelDescriptionRaw = (messageBody.pld as unknown) as ISwarmMessageChannelDescriptionRaw<P, T, any, any>;
+    // create description from string
+
+    const channelDescriptionRaw = await parseChannelDescription(messageBody.pld);
+    // validate the channel description raw format
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    const { jsonSchemaValidator, isUserValid } = this;
 
     assert(
       getDatabaseKeyForChannelDescription(channelDescriptionRaw) === keyInDb,
@@ -102,18 +96,21 @@ export async function validatorOfSwrmMessageWithChannelDescription<
     if (!channelExistingDescription) {
       // if there is no existing description then the description in the message have to contain
       // the user identity in the list of admin users description
+      const adminUsers = channelDescriptionRaw.admins;
       assert(
-        channelDescriptionRaw.admins.includes(senderUserId),
+        adminUsers.includes(senderUserId),
         'The user who sends the user id should be in the list of the channel administrators'
       );
+      try {
+        await validateUsersList(adminUsers, isUserValid);
+      } catch (err) {
+        throw new Error(`Channel administrator users list is not valid: ${err.message}`);
+      }
     } else {
       assert(channelDescriptionRaw.id === channelExistingDescription.id, 'Identity of the channel cannot be changed');
       assert(channelDescriptionRaw.dbType === channelExistingDescription.dbType, 'Type of channel database cannot be changed');
     }
 
-    // validate the channel description raw format
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    const { jsonSchemaValidator, isUserValid } = this;
     await channelDescriptionFormatValidator(channelDescriptionRaw, jsonSchemaValidator);
 
     const { admins, dbOptions } = channelDescriptionRaw;
@@ -125,6 +122,7 @@ export async function validatorOfSwrmMessageWithChannelDescription<
       try {
         await validateUsersList(usersIdsWithWriteAccess as string[], isUserValid);
       } catch (err) {
+        debugger;
         throw new Error(`Users identifiers list, which have a write access is not valid: ${err.message}`);
       }
     }
@@ -132,6 +130,7 @@ export async function validatorOfSwrmMessageWithChannelDescription<
     try {
       await validateUsersList(admins, isUserValid);
     } catch (err) {
+      debugger;
       throw new Error(`Admin users identities are not valid: ${err.message}`);
     }
   }

@@ -54,7 +54,7 @@ import { TSwarmStoreDatabaseOptions } from '../../../swarm-store-class/swarm-sto
 import { ISwarmMessageInstanceDecrypted } from '../../../swarm-message/swarm-message-constructor.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../swarm-messages-database.messages-collector.types';
 import { commonUtilsArrayUniq } from '../../../../utils/common-utils/common-utils-array';
-import { whetherAllSwarmMessagesDecryptedAreEqual } from '../../../swarm-message/swarm-message-utils/swarm-message-utils-common/swarm-message-utils-common-decrypted';
+import { ifSwarmMessagesDecryptedEqual } from '../../../swarm-message/swarm-message-utils/swarm-message-utils-common/swarm-message-utils-common-decrypted';
 
 export class SwarmMessagesDatabaseCache<
   P extends ESwarmStoreConnector,
@@ -315,7 +315,7 @@ export class SwarmMessagesDatabaseCache<
   }
 
   protected _checkMessagesEqual<MI extends MD>(messageFirst?: MI, messageSecond?: MI): boolean {
-    return (!messageFirst && !messageSecond) || whetherAllSwarmMessagesDecryptedAreEqual(messageFirst, messageSecond);
+    return (!messageFirst && !messageSecond) || ifSwarmMessagesDecryptedEqual(messageFirst, messageSecond);
   }
 
   protected _checkWhetherMessgeWithMetaInstancesEqual(
