@@ -83,7 +83,6 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
    * @memberof SwarmStoreConnectorOrbitDBSubclassAccessController
    */
   public async canAppend(entry: LogEntry<T>, identityProvider: IdentityProvider): Promise<boolean> {
-    debugger;
     if (!super.canAppend(entry, identityProvider)) {
       return false;
     }
@@ -157,7 +156,6 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
       const { id: userId } = identity;
       const { __grantAccessCallback } = this;
       if (typeof __grantAccessCallback === 'function') {
-        debugger;
         // also should add LamportClock as the last argument value
         return await __grantAccessCallback(value, userId, key, op as EOrbitDbFeedStoreOperation | undefined, clock.time);
       }

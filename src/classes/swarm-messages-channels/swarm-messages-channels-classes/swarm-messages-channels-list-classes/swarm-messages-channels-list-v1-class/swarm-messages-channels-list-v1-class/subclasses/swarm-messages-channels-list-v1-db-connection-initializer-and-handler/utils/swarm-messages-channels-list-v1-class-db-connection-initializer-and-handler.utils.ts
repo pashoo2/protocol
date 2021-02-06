@@ -45,7 +45,6 @@ export function getVariableArgumentsWithoutExistingChannelDescriptionForGrantAcc
   if (!operation) {
     throw new Error('A database operation must be provided for any changing of swarm messages channel description');
   }
-  debugger;
   return {
     keyInDb: key,
     messageOrHash: payload,
@@ -114,9 +113,6 @@ export function createGrantAccessCallbackByConstantArgumentsAndMessageWithChanne
     // a real or an abstract clock time when the entry was added into the database
     time: number
   ): Promise<boolean> {
-    // TODO - make it possible
-    // to iterate a swarm database with the time
-    debugger;
     if (!key) {
       throw new Error('Key should be provided for a message with a swarm messages channel description');
     }
@@ -130,17 +126,18 @@ export function createGrantAccessCallbackByConstantArgumentsAndMessageWithChanne
     let swarmMessagesChannelExistingDescription: Readonly<ISwarmMessageChannelDescriptionRaw<P, T, any, any>> | undefined;
     if (constantArguments.isDatabaseReady) {
       /* 
-        existing channel description can be got
-        from a database only when it has been opened
+        TODO  
+        read an entry existsing before the current according 
+        it's time of adding to the database
       */
-      swarmMessagesChannelExistingDescription = await getExistingChannelDescriptionByMessageKey(key);
-      if (operation === EOrbitDbFeedStoreOperation.DELETE) {
-        // TODO - may be it will cause a problems e.g. if the DELETE
-        // message has come before CREATE message
-        if (!swarmMessagesChannelExistingDescription) {
-          throw new Error('This is an unknown channel and can not be deleted');
-        }
-      }
+      // swarmMessagesChannelExistingDescription = await getExistingChannelDescriptionByMessageKey(key);
+      // if (operation === EOrbitDbFeedStoreOperation.DELETE) {
+      //   // TODO - may be it will cause a problems e.g. if the DELETE
+      //   // message has come before CREATE message
+      //   if (!swarmMessagesChannelExistingDescription) {
+      //     throw new Error('This is an unknown channel and can not be deleted');
+      //   }
+      // }
     }
     const argumentsForChannelDescriptionSwarmMessageValidator = getArgumentsForSwarmMessageWithChannelDescriptionValidator(
       constantArguments,

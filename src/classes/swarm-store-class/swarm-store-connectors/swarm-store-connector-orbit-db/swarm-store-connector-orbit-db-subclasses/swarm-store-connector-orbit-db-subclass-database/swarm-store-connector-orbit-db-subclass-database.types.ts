@@ -63,6 +63,17 @@ export type ISwarmStoreConnectorOrbitDbDatabaseKey = string;
 
 export interface ISwarmStoreConnectorOrbitDbDatabaseValue<TStoreValueType> extends LogEntry<TStoreValueType> {}
 
+/**
+ * Operatrors for querying a database.
+ * TODO - make it as class allowing to
+ * compile all of them together, and make
+ * it works directly with database instance.
+ * like:
+ * OP.limit(1, OP.all(OP.gt(2), OP.gtT(2)))(database)
+ *
+ * @export
+ * @enum {number}
+ */
 export enum ESwarmStoreConnectorOrbitDbDatabaseIteratorOption {
   /**
    * not equals to address or key
@@ -102,6 +113,17 @@ export enum ESwarmStoreConnectorOrbitDbDatabaseIteratorOption {
    * items from a persistent storage
    */
   fromCache = 'fromCache',
+  /**
+   * Return all values from the database
+   * with adding time greater than
+   */
+  gtT = 'gtT',
+  /**
+   * Return all values from the database
+   * which have creation time less than
+   * the arguments value.
+   */
+  ltT = 'ltT',
 }
 
 export interface ISwarmStoreConnectorOrbitDbDatabaseIteratorOptionsRequired<
@@ -135,6 +157,8 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseIteratorOptionsRequired<
   // read only cached values, which were loaded from a persistent storage
   // to the memory cache
   [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.fromCache]: boolean;
+  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.gtT]: number;
+  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.ltT]: number;
 }
 
 export interface ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions<

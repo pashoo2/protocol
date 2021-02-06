@@ -122,7 +122,6 @@ export async function validatorOfSwrmMessageWithChannelDescription<
       try {
         await validateUsersList(usersIdsWithWriteAccess as string[], isUserValid);
       } catch (err) {
-        debugger;
         throw new Error(`Users identifiers list, which have a write access is not valid: ${err.message}`);
       }
     }
@@ -130,7 +129,6 @@ export async function validatorOfSwrmMessageWithChannelDescription<
     try {
       await validateUsersList(admins, isUserValid);
     } catch (err) {
-      debugger;
       throw new Error(`Admin users identities are not valid: ${err.message}`);
     }
   }

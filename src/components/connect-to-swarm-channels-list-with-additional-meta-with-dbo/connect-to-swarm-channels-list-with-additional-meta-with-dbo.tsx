@@ -206,9 +206,10 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
         },
       };
       try {
+        debugger;
         const existingChannels = await channelsListInstance.getAllChannelsDescriptions();
         debugger;
-        // await channelsListInstance.upsertChannel(swarmMessageChannelDescription);
+        await channelsListInstance.upsertChannel(swarmMessageChannelDescription);
         // await channelsListInstance.removeChannelById(swarmMessageChannelDescription.id);
         // debugger;
         // await channelsListInstance.upsertChannel({

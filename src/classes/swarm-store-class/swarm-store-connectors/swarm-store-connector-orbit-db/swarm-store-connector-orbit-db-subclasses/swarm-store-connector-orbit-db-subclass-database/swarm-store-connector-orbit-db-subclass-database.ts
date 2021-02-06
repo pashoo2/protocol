@@ -51,7 +51,6 @@ import { ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore } from '../
 import { IPromisePending } from '../../../../../../types/promise.types';
 import { ISwarmStoreConnectorBasic } from '../../../../swarm-store-class.types';
 import { createPromisePending, resolvePromisePending } from '../../../../../../utils/common-utils/commom-utils.promies';
-import { ISwarmMessageInstanceDecrypted } from '../../../../../swarm-message/swarm-message-constructor.types';
 import { validateOrbitDBDatabaseOptionsV1 } from '../../swarm-store-connector-orbit-db-validators/swarm-store-connector-orbit-db-validators-db-options';
 import {
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_EMIT_BATCH_INT_MS,
@@ -581,6 +580,31 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     });
   };
 
+  protected getValuesForEqualOperationValueStore = (
+    keys: string | string[],
+    database: OrbitDbKeyValueStore<ItemType>
+  ): Array<ISwarmStoreConnectorOrbitDbDatabaseValue<ItemType> | Error | undefined> =>
+    (typeof keys === 'string' ? [keys] : keys).map((key) => this.readRawEntry(key, database));
+
+  protected getValuesForEqualOperationFeedStore(
+    hash: string | string[],
+    database: OrbitDbFeedStore<ItemType>
+  ): Array<ISwarmStoreConnectorOrbitDbDatabaseValue<ItemType> | Error | undefined> {
+    const pending = typeof hash === 'string' ? [this._get(hash, database)] : hash.map((h) => this._get(h, database));
+
+    return pending;
+  }
+
+  protected getValuesForEqualOperation(
+    eqOperand: string | string[],
+    database: TSwarmStoreConnectorOrbitDbDatabase<ItemType>
+  ): Array<ISwarmStoreConnectorOrbitDbDatabaseValue<ItemType> | Error | undefined> {
+    if (this.isKVStore) {
+      return this.getValuesForEqualOperationValueStore(eqOperand, database as OrbitDbKeyValueStore<ItemType>);
+    }
+    return this.getValuesForEqualOperationFeedStore(eqOperand, database as OrbitDbFeedStore<ItemType>);
+  }
+
   protected async preloadEntitiesBeforeIterate(count: number): Promise<void> {
     if (count === -1 || Number(count) > this.itemsCurrentlyLoaded) {
       // before to query the database entities must be preloaded in memory
@@ -593,12 +617,13 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     database: OrbitDbFeedStore<ItemType>
   ): Error | Array<ISwarmStoreConnectorOrbitDbDatabaseValue<ItemType> | Error | undefined> {
     const eqOperand = options?.[ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq];
-    // database instance can become another one after load() method call
+    // database instance can become another one instance after load() method call
+    // because it can cuse a closing of the current instance and creation of the new one.
     if (eqOperand) {
       // if the equal operand passed within the argument
       // return just values queried by it and
       // ignore all other operators.
-      return this.getValues(eqOperand, database);
+      return this.getValuesForEqualOperationFeedStore(eqOperand, database);
     }
 
     let result = database.iterator(options).collect();
@@ -613,18 +638,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     options: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions<DbType>,
     database: OrbitDbKeyValueStore<ItemType>
   ): Error | Array<ISwarmStoreConnectorOrbitDbDatabaseValue<ItemType> | Error | undefined> {
-    debugger;
-    const eqOperand = options?.[ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq];
-
-    console.log(this.database);
-    debugger;
-    if (eqOperand) {
-      // if the equal operand passed within the argument
-      // return just values queried by it and
-      // ignore all other operators.
-      return this.getEqual(eqOperand, database);
-    }
-
     const keysInCache = Object.keys(database.all);
     const { reverse } = options as ISwarmStoreConnectorOrbitDbDatabaseIteratorOptionsRequired<DbType>;
     // if the limit is -1 it should return all items stored
@@ -633,21 +646,11 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     if (Number(options.limit) > 0) {
       keysList = keysList.slice(0, options.limit);
     }
-    keysList = this.filterKeys(keysList, options);
-    return this.getValuesForKeys(keysList, database);
+    keysList = this.filterKeysKeyValueStore(keysList, options);
+    return this.getValuesForEqualOperationValueStore(keysList, database);
   }
 
-  protected getEqual = (
-    eqOperand: string | string[],
-    database: OrbitDbKeyValueStore<ItemType>
-  ): Error | Array<ISwarmStoreConnectorOrbitDbDatabaseValue<ItemType> | Error | undefined> => {
-    if (eqOperand instanceof Array) {
-      return eqOperand.map((key) => this._get(key, database));
-    }
-    return [this._get(eqOperand, database)];
-  };
-
-  protected filterKeys = (
+  protected filterKeysKeyValueStore = (
     keysList: string[],
     filterOptions: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions<DbType>
   ): string[] => {
@@ -674,21 +677,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       return false;
     });
   };
-
-  protected getValuesForKeys = (
-    keys: string[],
-    database: OrbitDbKeyValueStore<ItemType>
-  ): Error | Array<ISwarmStoreConnectorOrbitDbDatabaseValue<ItemType> | Error | undefined> =>
-    keys.map((key) => this.readRawEntry(key, database));
-
-  protected getValues(
-    hash: string | string[],
-    database: OrbitDbFeedStore<ItemType>
-  ): Array<ISwarmStoreConnectorOrbitDbDatabaseValue<ItemType> | Error | undefined> {
-    const pending = typeof hash === 'string' ? [this._get(hash, database)] : hash.map((h) => this._get(h, database));
-
-    return pending;
-  }
 
   private getDbStoreInstance(): Error | TSwarmStoreConnectorOrbitDbDatabase<ItemType> {
     const { isReady, database } = this;

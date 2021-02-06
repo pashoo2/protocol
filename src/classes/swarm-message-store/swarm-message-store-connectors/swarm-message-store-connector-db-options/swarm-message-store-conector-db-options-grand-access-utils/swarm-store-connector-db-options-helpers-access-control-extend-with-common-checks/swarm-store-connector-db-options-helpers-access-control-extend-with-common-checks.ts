@@ -135,7 +135,6 @@ function swarmMessageStoreUtilsExtendOrbitDbDatabaseOptionsWithAccessControlOrbi
   return getExtendedDBOptionsWithAccessControlOrbitDB<P, T, DbType, DBO, MD, GAC>(
     dbOptions,
     allowAccessForUsers,
-    // TODO
     grantAccessCallbackExtendedWithMessageValidation
   );
 }
