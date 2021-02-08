@@ -3,7 +3,7 @@ import OrbitDBAccessController from 'orbit-db-access-controllers/src/orbitdb-acc
 import { ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions } from './swarm-store-connector-orbit-db-subclass-access-controller.types';
 import { IdentityProvider } from 'orbit-db-identity-provider';
 import { ESwarmStoreConnector } from '../../../../swarm-store-class.const';
-import { EOrbitDbFeedStoreOperation } from '../swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
+import { EOrbitDbStoreOperation } from '../swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import {
   TSwarmStoreConnectorAccessConrotllerGrantAccessCallback,
   TSwarmStoreValueTypes,
@@ -155,12 +155,14 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
       const { value, key, op } = payload;
       const { id: userId } = identity;
       const { __grantAccessCallback } = this;
+
       if (typeof __grantAccessCallback === 'function') {
         // also should add LamportClock as the last argument value
-        return await __grantAccessCallback(value, userId, key, op as EOrbitDbFeedStoreOperation | undefined, clock.time);
+        return await __grantAccessCallback(value, userId, key, op as EOrbitDbStoreOperation | undefined, clock.time);
       }
       return true;
     } catch (err) {
+      console.error(new Error('SwarmStoreConnectorOrbitDbAccessController::__verifyAccess::throw'));
       console.error(err);
       return false;
     }

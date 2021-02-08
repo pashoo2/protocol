@@ -206,10 +206,27 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
         },
       };
       try {
-        debugger;
         const existingChannels = await channelsListInstance.getAllChannelsDescriptions();
         debugger;
         await channelsListInstance.upsertChannel(swarmMessageChannelDescription);
+        await channelsListInstance.upsertChannel({
+          ...swarmMessageChannelDescription,
+          description: String(Date.now()),
+        });
+        await channelsListInstance.upsertChannel({
+          ...swarmMessageChannelDescription,
+          description: String(Date.now()),
+        });
+        await channelsListInstance.upsertChannel({
+          ...swarmMessageChannelDescription,
+          description: String(Date.now()),
+        });
+        const dateNow = Date.now();
+        console.log('Date.now()', dateNow);
+        await channelsListInstance.upsertChannel({
+          ...swarmMessageChannelDescription,
+          description: String(dateNow),
+        });
         // await channelsListInstance.removeChannelById(swarmMessageChannelDescription.id);
         // debugger;
         // await channelsListInstance.upsertChannel({
@@ -223,7 +240,6 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
         // debugger;
         // existingChannels = await channelsListInstance.getAllChannelsDescriptions();
         debugger;
-        console.log('existingChannels', existingChannels);
         alert('done');
       } catch (err) {
         console.error(err);

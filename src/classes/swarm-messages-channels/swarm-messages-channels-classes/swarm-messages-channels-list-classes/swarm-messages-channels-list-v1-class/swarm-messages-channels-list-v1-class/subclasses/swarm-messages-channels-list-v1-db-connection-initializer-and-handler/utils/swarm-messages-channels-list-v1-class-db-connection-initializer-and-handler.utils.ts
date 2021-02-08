@@ -14,7 +14,7 @@ import {
 import { IValidatorOfSwarmMessageWithChannelDescriptionArgument } from '../../../../../../../types/swarm-messages-channels-validation.types';
 import { ICreateGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidatorArguments } from '../../../types/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.types';
 import { ISwarmMessageChannelDescriptionRaw } from '../../../../../../../types/swarm-messages-channel.types';
-import { EOrbitDbFeedStoreOperation } from '../../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
+import { EOrbitDbStoreOperation } from '../../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound } from '../../../../../../../../swarm-message-store/types/swarm-message-store.types';
 
 export function getVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidator<
@@ -92,7 +92,7 @@ export function createGrantAccessCallbackByConstantArgumentsAndMessageWithChanne
   channelDescriptionSwarmMessageValidator,
   getVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidator,
   getArgumentsForSwarmMessageWithChannelDescriptionValidator,
-  getExistingChannelDescriptionByMessageKey,
+  getPreviousChannelDescriptionByMessageKeyAndAddedTime,
 }: ICreateGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidatorArguments<
   P,
   T,
@@ -130,14 +130,17 @@ export function createGrantAccessCallbackByConstantArgumentsAndMessageWithChanne
         read an entry existsing before the current according 
         it's time of adding to the database
       */
-      // swarmMessagesChannelExistingDescription = await getExistingChannelDescriptionByMessageKey(key);
-      // if (operation === EOrbitDbFeedStoreOperation.DELETE) {
-      //   // TODO - may be it will cause a problems e.g. if the DELETE
-      //   // message has come before CREATE message
-      //   if (!swarmMessagesChannelExistingDescription) {
-      //     throw new Error('This is an unknown channel and can not be deleted');
-      //   }
-      // }
+      swarmMessagesChannelExistingDescription = await getPreviousChannelDescriptionByMessageKeyAndAddedTime(key, time);
+      if (swarmMessagesChannelExistingDescription) {
+        console.log('swarmMessagesChannelExistingDescription', swarmMessagesChannelExistingDescription);
+      }
+      if (operation === EOrbitDbStoreOperation.DELETE) {
+        // TODO - may be it will cause a problems e.g. if the DELETE
+        // message has come before CREATE message
+        if (!swarmMessagesChannelExistingDescription) {
+          throw new Error('This is an unknown channel and can not be deleted');
+        }
+      }
     }
     const argumentsForChannelDescriptionSwarmMessageValidator = getArgumentsForSwarmMessageWithChannelDescriptionValidator(
       constantArguments,

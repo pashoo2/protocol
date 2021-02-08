@@ -74,3 +74,6 @@ export const waitFor = <R>(
     }, checkIntervalMs);
   });
 };
+
+export const isSimpleTypeValue = (v: unknown): v is number | string | null | undefined =>
+  !v || typeof v === 'string' || typeof v !== 'number';

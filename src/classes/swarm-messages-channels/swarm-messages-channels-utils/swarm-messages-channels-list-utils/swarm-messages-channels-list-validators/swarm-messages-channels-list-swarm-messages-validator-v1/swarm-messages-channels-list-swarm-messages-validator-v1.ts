@@ -4,7 +4,7 @@ import {
   TSwarmMessageSerialized,
   ISwarmMessageInstanceDecrypted,
 } from '../../../../../swarm-message/swarm-message-constructor.types';
-import { EOrbitDbFeedStoreOperation } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
+import { EOrbitDbStoreOperation } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { isValidSwarmMessageDecryptedFormat } from '../../../../../swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-swarm-message';
 import { IValidatorOfSwarmMessageWithChannelDescriptionArgument } from '../../../../types/swarm-messages-channels-validation.types';
 import { TSwrmMessagesChannelsListDBOWithGrantAccess } from '../../../../types/swarm-messages-channels-list.types';
@@ -59,7 +59,7 @@ export async function validatorOfSwrmMessageWithChannelDescription<
     'Failed to get access by the main grand access function'
   );
 
-  if (operationInDb !== EOrbitDbFeedStoreOperation.DELETE) {
+  if (operationInDb !== EOrbitDbStoreOperation.DELETE) {
     /**
      * VALIADATION OF OPERATION FIFFERENT FROM DELETE
      */

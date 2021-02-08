@@ -60,7 +60,7 @@ import {
 } from './swarm-message-store-utils/swarm-message-store-utils-messages-cache/swarm-message-store-utils-messages-cache.types';
 import { SwarmMessageStoreUtilsMessagesCache } from './swarm-message-store-utils/swarm-message-store-utils-messages-cache/swarm-message-store-utils-messages-cache';
 import {
-  EOrbitDbFeedStoreOperation,
+  EOrbitDbStoreOperation,
   ESwarmStoreConnectorOrbitDbDatabaseType,
 } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { ESwarmStoreConnectorOrbitDbDatabaseMethodNames } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db';
@@ -743,7 +743,7 @@ export class SwarmMessageStore<
       message,
       messageAddress,
     });
-    if (message?.payload?.op === EOrbitDbFeedStoreOperation.DELETE) {
+    if (message?.payload?.op === EOrbitDbStoreOperation.DELETE) {
       // TODO - remove the message from the cache
       return this.emitMessageDelete(
         dbName,

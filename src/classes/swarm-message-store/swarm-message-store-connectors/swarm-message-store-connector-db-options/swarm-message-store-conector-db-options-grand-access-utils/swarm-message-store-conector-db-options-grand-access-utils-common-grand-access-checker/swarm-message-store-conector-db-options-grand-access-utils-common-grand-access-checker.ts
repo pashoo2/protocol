@@ -8,7 +8,7 @@ import {
 } from '../../../../../swarm-store-class/swarm-store-class.types';
 import { TCentralAuthorityUserIdentity } from '../../../../../central-authority-class/central-authority-class-types/central-authority-class-types-common';
 import { ESwarmStoreConnector } from '../../../../../swarm-store-class/swarm-store-class.const';
-import { EOrbitDbFeedStoreOperation } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
+import { EOrbitDbStoreOperation } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { TSwarmStoreConnectorAccessConrotllerGrantAccessCallback } from '../../../../../swarm-store-class/swarm-store-class.types';
 import {
   TSwarmMessageInstance,
@@ -76,7 +76,7 @@ async function swarmMessageGrantValidatorWithCBContext<
   let swarmMessage: undefined | MD;
 
   // DELETE message have no value or contains a hash of a message deleted
-  if (op !== EOrbitDbFeedStoreOperation.DELETE) {
+  if (op !== EOrbitDbStoreOperation.DELETE) {
     try {
       if (typeof value === 'string') {
         swarmMessage = (await messageConstructor.construct(value)) as MD;

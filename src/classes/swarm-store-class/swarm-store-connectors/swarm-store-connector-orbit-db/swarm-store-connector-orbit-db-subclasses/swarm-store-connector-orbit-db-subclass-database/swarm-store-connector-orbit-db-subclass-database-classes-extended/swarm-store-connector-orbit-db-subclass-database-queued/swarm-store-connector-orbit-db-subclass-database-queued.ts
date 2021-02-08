@@ -12,6 +12,10 @@ import { ISwarmStoreConnectorBasic } from '../../../../../../swarm-store-class.t
 import { ConcurentAsyncQueueWithAutoExecution } from '../../../../../../../basic-classes/async-queue-concurent/async-queue-concurent-extended/async-queue-concurent-with-auto-execution/async-queue-concurent-with-auto-execution';
 import { IAsyncQueueConcurentWithAutoExecution } from '../../../../../../../basic-classes/async-queue-concurent/async-queue-concurent-extended/async-queue-concurent-with-auto-execution/async-queue-concurent-with-auto-execution.types';
 import { ISwarmStoreConnectorOrbitDbDatabaseIteratorOptionsRequired } from '../../swarm-store-connector-orbit-db-subclass-database.types';
+import {
+  SWARM_STORE_CONNECTOR_ORBIT_DB_SUBCLASS_DATABASE_QUEUED_CRUD_OPERATIONS_TIMEOUTS_MS,
+  SWARM_STORE_CONNECTOR_ORBIT_DB_SUBCLASS_DATABASE_QUEUED_OPERATIONS_DEFAULT_TIMEOUT_MS,
+} from './swarm-store-connector-orbit-db-subclass-database-queued.const';
 
 export class SwarmStoreConnectorOrbitDBDatabaseQueued<
     ItemType extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>,
@@ -59,19 +63,31 @@ export class SwarmStoreConnectorOrbitDBDatabaseQueued<
   public add = async (
     ...args: ArgumentTypes<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['add']>
   ): ReturnType<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['add']> => {
-    return await this._runAsJob(() => super.add(...args), 'add');
+    return await this._runAsJob(
+      () => super.add(...args),
+      'add',
+      SWARM_STORE_CONNECTOR_ORBIT_DB_SUBCLASS_DATABASE_QUEUED_CRUD_OPERATIONS_TIMEOUTS_MS.ADD
+    );
   };
 
   public get = async (
     ...args: ArgumentTypes<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['get']>
   ): ReturnType<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['get']> => {
-    return await this._runAsJob(() => super.get(...args), 'get');
+    return await this._runAsJob(
+      () => super.get(...args),
+      'get',
+      SWARM_STORE_CONNECTOR_ORBIT_DB_SUBCLASS_DATABASE_QUEUED_CRUD_OPERATIONS_TIMEOUTS_MS.GET
+    );
   };
 
   public remove = async (
     ...args: ArgumentTypes<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['remove']>
   ): ReturnType<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['remove']> => {
-    return await this._runAsJob(() => super.remove(...args), 'remove');
+    return await this._runAsJob(
+      () => super.remove(...args),
+      'remove',
+      SWARM_STORE_CONNECTOR_ORBIT_DB_SUBCLASS_DATABASE_QUEUED_CRUD_OPERATIONS_TIMEOUTS_MS.REMOVE
+    );
   };
 
   public iterator = async (
@@ -87,7 +103,11 @@ export class SwarmStoreConnectorOrbitDBDatabaseQueued<
       // callback.
       return await super.iterator(...args);
     }
-    return await this._runAsJob(() => super.iterator(...args), 'iterator');
+    return await this._runAsJob(
+      () => super.iterator(...args),
+      'iterator',
+      SWARM_STORE_CONNECTOR_ORBIT_DB_SUBCLASS_DATABASE_QUEUED_CRUD_OPERATIONS_TIMEOUTS_MS.ITERATE
+    );
   };
 
   protected _initializeAsyncQueue() {
@@ -120,8 +140,12 @@ export class SwarmStoreConnectorOrbitDBDatabaseQueued<
     return this._rejectAllPendingOperations(new Error('Datatabase dropped'));
   }
 
-  protected _runAsJob = async <F extends () => any>(func: F, jobName: string): Promise<ReturnType<F>> => {
-    // eslint-disable-next-line @typescript-eslint/return-await
-    return await this._getAsyncOperationsQueue().executeQueued(func, 20000, jobName);
+  protected _runAsJob = async <F extends () => any>(
+    func: F,
+    jobName: string,
+    jobTimeout: number = SWARM_STORE_CONNECTOR_ORBIT_DB_SUBCLASS_DATABASE_QUEUED_OPERATIONS_DEFAULT_TIMEOUT_MS
+  ): Promise<ReturnType<F>> => {
+    // TODO - 300000 => jobTimeout
+    return await this._getAsyncOperationsQueue().executeQueued(func, 300000, jobName);
   };
 }

@@ -6,12 +6,13 @@ import {
   TSwarmStoreValueTypes,
 } from '../../../../swarm-store-class.types';
 import { ESwarmStoreConnector, ESwarmStoreEventNames } from '../../../../swarm-store-class.const';
-import { ESwarmStoreConnectorOrbitDbDatabaseType } from './swarm-store-connector-orbit-db-subclass-database.const';
+import { ESwarmStoreConnectorOrbitDbDatabaseType, ESortFileds } from './swarm-store-connector-orbit-db-subclass-database.const';
 import { ISwarmStoreConnectorOrbitDbDatabaseAccessControlleGrantCallback } from '../swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types';
 import OrbitDbFeedStore from 'orbit-db-feedstore';
 import OrbitDbKeyValueStore from 'orbit-db-kvstore';
 import { ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore } from '../swarm-store-connector-orbit-db-subclasses-cache/swarm-store-connector-orbit-db-subclasses-cache.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseMethodNames } from '../../swarm-store-connector-orbit-db.types';
+import { ISortingOptions } from '../../../../../basic-classes/sorter-class/sorter-class.types';
 
 export type TSwarmStoreConnectorOrbitDbDatabaseStoreHash = string;
 
@@ -124,6 +125,10 @@ export enum ESwarmStoreConnectorOrbitDbDatabaseIteratorOption {
    * the arguments value.
    */
   ltT = 'ltT',
+  /**
+   * Sort results by props
+   */
+  sortBy = 'sortBy',
 }
 
 export interface ISwarmStoreConnectorOrbitDbDatabaseIteratorOptionsRequired<
@@ -159,6 +164,7 @@ export interface ISwarmStoreConnectorOrbitDbDatabaseIteratorOptionsRequired<
   [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.fromCache]: boolean;
   [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.gtT]: number;
   [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.ltT]: number;
+  [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.sortBy]: Partial<ISortingOptions<LogEntry<any>, ESortFileds>>;
 }
 
 export interface ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions<

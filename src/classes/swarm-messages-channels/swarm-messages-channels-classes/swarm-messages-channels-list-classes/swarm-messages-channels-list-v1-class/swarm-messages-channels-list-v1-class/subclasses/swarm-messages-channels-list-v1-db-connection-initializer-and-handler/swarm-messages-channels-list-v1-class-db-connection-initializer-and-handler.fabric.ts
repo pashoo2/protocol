@@ -22,7 +22,10 @@ import { createImmutableObjectClone } from '../../../../../../../../utils/data-i
 import { isNonNativeFunction } from '../../../../../../../../utils/common-utils/common-utils.functions';
 import { IAdditionalUtils } from '../../types/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.types';
 import { ISwarmMessagesChannelsListV1GrantAccessConstantArguments } from '../../types/swarm-messages-channels-list-v1-class.types';
-import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
+import {
+  ESwarmStoreConnectorOrbitDbDatabaseType,
+  ESortFileds,
+} from '../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { IConstructorAbstactSwarmMessagesChannelsListVersionOneOptionsSetUp } from '../../types/swarm-messages-channels-list-v1-class-options-setup.types';
 import { IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler } from '../../types/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.types';
 import {
@@ -41,6 +44,7 @@ import {
   TSwarmStoreDatabaseEntityAddress,
   TSwarmStoreDatabaseEntityKey,
 } from '../../../../../../../swarm-store-class/swarm-store-class.types';
+import { ESortingOrder } from 'classes/basic-classes/sorter-class';
 
 export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandlerClass<
   P extends ESwarmStoreConnector,
@@ -366,14 +370,20 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       };
     }
 
-    private _getExistingChannelDescriptionByMessageKey = async (
-      dbbKey: string
+    private _getPreviousChannelDescriptionByMessageKeyAndAddedTime = async (
+      dbbKey: string,
+      addedTime: number
     ): Promise<IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, MD, CTX, DBO>['channelExistingDescription']> => {
       const dbIteratorOptionsReadValueFromCache: Partial<TSwarmStoreDatabaseIteratorMethodArgument<
         ESwarmStoreConnector.OrbitDB,
         ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
       >> = {
-        // fromCache: true,
+        fromCache: true,
+        ltT: addedTime,
+        limit: 1,
+        sortBy: {
+          [ESortFileds.TIME]: ESortingOrder.DESC,
+        },
       };
       if (!this.__isDatabaseOpened) {
         // if database still not opened OrbitDB implementation
@@ -402,7 +412,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
         channelDescriptionSwarmMessageValidator,
         getArgumentsForSwarmMessageWithChannelDescriptionValidator,
         getVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidator,
-        getExistingChannelDescriptionByMessageKey: this._getExistingChannelDescriptionByMessageKey,
+        getPreviousChannelDescriptionByMessageKeyAndAddedTime: this._getPreviousChannelDescriptionByMessageKeyAndAddedTime,
       };
       return createGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidator(params);
     }

@@ -27,7 +27,7 @@ import {
 } from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import { IStorageCommon } from 'types/storage.types';
 import {
-  EOrbitDbFeedStoreOperation,
+  EOrbitDbStoreOperation,
   ESwarmStoreConnectorOrbitDbDatabaseType,
 } from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { TSwarmMessageSerialized } from '../swarm-message/swarm-message-constructor.types';
@@ -154,7 +154,7 @@ export type TSwarmStoreDatabaseMethodArgument<P extends ESwarmStoreConnector, M,
   | TSwarmStoreDatabaseMethodArgumentBase<P, M, DbType>;
 
 export type TSwarmStoreDatabaseEntryOperation<P extends ESwarmStoreConnector> = P extends ESwarmStoreConnector.OrbitDB
-  ? EOrbitDbFeedStoreOperation
+  ? EOrbitDbStoreOperation
   : never;
 
 // arguments avalilable for a database method

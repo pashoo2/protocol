@@ -141,8 +141,12 @@ export interface ICreateGrantAccessCallbackByConstantArgumentsAndMessageWithChan
     CTX,
     DBO
   >;
-  getExistingChannelDescriptionByMessageKey: (
-    dbbKey: string
+  // get previus existsing entry by entrie's key and added time
+  getPreviousChannelDescriptionByMessageKeyAndAddedTime: (
+    // a database key for the entry
+    entryDbKey: string,
+    // an abstact or real time when the entry was added in the local db
+    timeEntryAdded: number
   ) => Promise<IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, MD, CTX, DBO>['channelExistingDescription']>;
 }
 

@@ -27,31 +27,37 @@ import {
   TSwarmStoreConnectorOrbitDbDatabase,
 } from './swarm-store-connector-orbit-db-subclass-database.types';
 import {
-  EOrbitDbFeedStoreOperation,
+  EOrbitDbStoreOperation,
   ESwarmStoreConnectorOrbitDbDatabaseType,
 } from './swarm-store-connector-orbit-db-subclass-database.const';
 import { ESwarmStoreEventNames, ESwarmStoreConnector } from '../../../../swarm-store-class.const';
-import {
-  TSwarmStoreConnectorOrbitDbDatabaseMethodArgumentDbLoad,
-  ISwarmStoreConnectorOrbitDbDatabaseIteratorOptionsRequired,
-} from './swarm-store-connector-orbit-db-subclass-database.types';
+import { TSwarmStoreConnectorOrbitDbDatabaseMethodArgumentDbLoad } from './swarm-store-connector-orbit-db-subclass-database.types';
 import {
   ISwarmStoreConnectorRequestLoadAnswer,
   TSwarmStoreDatabaseType,
   TSwarmStoreValueTypes,
 } from '../../../../swarm-store-class.types';
-import {
-  TSwarmStoreDatabaseEntityAddress,
-  TSwarmStoreDatabaseEntityKey,
-  TSwarmStoreDatabaseOptions,
-} from '../../../../swarm-store-class.types';
+import { TSwarmStoreDatabaseEntityAddress, TSwarmStoreDatabaseOptions } from '../../../../swarm-store-class.types';
 import { TSwarmStoreConnectorOrbitDbDatabaseStoreHash } from './swarm-store-connector-orbit-db-subclass-database.types';
-import { SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_PRELOAD_COUNT_MIN } from './swarm-store-connector-orbit-db-subclass-database.const';
+import {
+  SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_PRELOAD_COUNT_MIN,
+  SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ITERATOR_FILTER_OPTIONS,
+} from './swarm-store-connector-orbit-db-subclass-database.const';
 import { ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore } from '../swarm-store-connector-orbit-db-subclasses-cache/swarm-store-connector-orbit-db-subclasses-cache.types';
 import { IPromisePending } from '../../../../../../types/promise.types';
 import { ISwarmStoreConnectorBasic } from '../../../../swarm-store-class.types';
 import { createPromisePending, resolvePromisePending } from '../../../../../../utils/common-utils/commom-utils.promies';
 import { validateOrbitDBDatabaseOptionsV1 } from '../../swarm-store-connector-orbit-db-validators/swarm-store-connector-orbit-db-validators-db-options';
+import { isDefined } from '../../../../../../utils/common-utils/common-utils-main';
+import {
+  SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ITERATOR_VALUES_GETTER,
+  ESortFileds,
+} from './swarm-store-connector-orbit-db-subclass-database.const';
+import { PropsByAliasesGetter } from '../../../../../basic-classes/props-by-aliases-getter/props-by-aliases-getter';
+import { Sorter } from '../../../../../basic-classes/sorter-class/sorter-class';
+import { IPropsByAliasesGetter } from '../../../../../basic-classes/props-by-aliases-getter/props-by-aliases-getter.types';
+import { ESortingOrder } from '../../../../../basic-classes/sorter-class';
+import { ISortingOptions } from '../../../../../basic-classes/sorter-class/sorter-class.types';
 import {
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_EMIT_BATCH_INT_MS,
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_EMIT_BATCH_SIZE,
@@ -119,6 +125,16 @@ export class SwarmStoreConnectorOrbitDBDatabase<
    */
   protected creatingNewDBInstancePromise: IPromisePending<Error | TSwarmStoreConnectorOrbitDbDatabase<ItemType>> | undefined;
 
+  protected __iteratorSorter: Sorter<LogEntry<ItemType>, ESortFileds> | undefined;
+
+  protected get _iteratorSorter(): Sorter<LogEntry<ItemType>, ESortFileds> {
+    const sorter = this.__iteratorSorter;
+    if (!sorter) {
+      throw new Error('A sorter is not defined');
+    }
+    return sorter;
+  }
+
   protected get itemsCurrentlyLoaded() {
     return Object.keys(this.entriesReceived).length;
   }
@@ -155,6 +171,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     this._validateOptions(options);
     this.setOptions(options);
     this.setOrbitDbInstance(orbitDb);
+    this.__createSorter();
   }
 
   protected _validateOptions(options: ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType, DbType>): void {
@@ -217,7 +234,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
 
   public async iterator(
     options?: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions<DbType>
-  ): Promise<Error | Array<ISwarmStoreConnectorOrbitDbDatabaseValue<ItemType> | Error | undefined>> {
+  ): Promise<Error | Array<ISwarmStoreConnectorOrbitDbDatabaseValue<ItemType> | undefined | Error>> {
     const messagesToReadCountLimitFromOptions =
       typeof options?.limit !== 'number' || options?.limit < -1 ? undefined : options?.limit;
     const iteratorOptionsRes = {
@@ -229,10 +246,13 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     if (messagesToReadCountLimitFromOptions && !options?.fromCache) {
       await this.preloadEntitiesBeforeIterate(messagesToReadCountLimitFromOptions);
     }
-    const databaseInstanceForQuerying = await this._getDatabaseInstanceForQuering();
-    return this.isKVStore
-      ? this.iteratorKeyValueStore(iteratorOptionsRes, databaseInstanceForQuerying as OrbitDbKeyValueStore<ItemType>)
-      : this.iteratorFeedStore(iteratorOptionsRes, databaseInstanceForQuerying as OrbitDbFeedStore<ItemType>);
+
+    const databaseInstanceForQuerying = options?.fromCache ? this.database : await this._getDatabaseInstanceForQuering();
+
+    if (!databaseInstanceForQuerying) {
+      return new Error('Failed to get a database to read values from');
+    }
+    return this.iteratorDbOplog(iteratorOptionsRes, databaseInstanceForQuerying);
   }
 
   public async drop(): Promise<Error | void> {
@@ -275,7 +295,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     const { payload, identity, hash } = e;
 
     if (payload) {
-      if (payload.op === EOrbitDbFeedStoreOperation.DELETE) {
+      if (payload.op === EOrbitDbStoreOperation.DELETE) {
         return undefined;
       }
       return {
@@ -324,6 +344,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     this.resetEntriesReceived();
     this.unsetEmithBatchInterval();
     this.resetItemsOverall();
+    this.__unsetSorter();
     this.isClosed = true;
 
     let result: undefined | Error;
@@ -460,16 +481,10 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     const itemsLoaded = this.itemsCurrentlyLoaded;
 
     if (count) {
-      const dbInstance = await this._restartCurrentDbSilentInQueue();
-
-      if (dbInstance instanceof Error) {
-        console.error('Failed to restart the database');
-        return dbInstance;
+      const result = await this._restartCurrentDbSilentAndPreloadInQueue(count);
+      if (!result) {
+        throw new Error('Failed to restart and preload the database');
       }
-      if (!dbInstance) {
-        throw new Error('Failed to restart database instance');
-      }
-      await dbInstance.load(count);
     }
     return {
       count: this.itemsCurrentlyLoaded - itemsLoaded,
@@ -478,8 +493,18 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     };
   }
 
-  protected getLodEntryHash(logEntry: LogEntry<ItemType>): TSwarmStoreDatabaseEntityAddress<ESwarmStoreConnector.OrbitDB> {
+  protected getLogEntryHash(logEntry: LogEntry<ItemType>): TSwarmStoreDatabaseEntityAddress<ESwarmStoreConnector.OrbitDB> {
     return logEntry.hash;
+  }
+
+  protected getLogEntryKey(
+    logEntry: LogEntry<ItemType>
+  ): TSwarmStoreDatabaseEntityAddress<ESwarmStoreConnector.OrbitDB> | undefined {
+    return logEntry.payload?.key;
+  }
+
+  protected _getLodEntryAddedTime(logEntry: LogEntry<ItemType>): number {
+    return logEntry.clock.time;
   }
 
   /**
@@ -503,20 +528,44 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     return entryRawOrStoreValue;
   };
 
-  protected findInOplog(
-    key: TSwarmStoreConnectorOrbitDbDatabaseStoreKey,
-    value: ItemType
-  ): LogEntry<ItemType> | undefined | Error {
-    const db = this.getDbStoreInstance();
-
-    if (db instanceof Error) {
-      return db;
+  protected _getAllOplogEntriesOrErrors(database: TSwarmStoreConnectorOrbitDbDatabase<ItemType>): LogEntry<ItemType>[] | Error {
+    try {
+      return (database as any)._oplog.values as LogEntry<ItemType>[];
+    } catch (err) {
+      return err;
     }
+  }
 
-    return ((db as any)._oplog.values as LogEntry<ItemType>[]).find((entry) => {
-      const pld = entry?.payload;
-      return pld?.op === EOrbitDbFeedStoreOperation.PUT && pld?.value === value;
+  protected findAddedEntryForKeyInKeyValueDbOpLog(
+    key: TSwarmStoreConnectorOrbitDbDatabaseStoreKey,
+    entry: ItemType,
+    database: OrbitDbFeedStore<ItemType>
+  ): LogEntry<ItemType> | undefined | Error {
+    const oplogAllValues = this._getAllOplogEntriesOrErrors(database);
+
+    if (oplogAllValues instanceof Error) {
+      return oplogAllValues;
+    }
+    return oplogAllValues.find((rawEntry) => {
+      const pld = rawEntry?.payload;
+      return pld?.op === EOrbitDbStoreOperation.PUT && pld.key === key && (pld?.value as ItemType | undefined) === entry;
     });
+  }
+
+  protected getAllAddedValuesFromOpLogOrError(
+    database: TSwarmStoreConnectorOrbitDbDatabase<ItemType>
+  ): LogEntry<ItemType>[] | Error {
+    const oplogAllValues = this._getAllOplogEntriesOrErrors(database);
+
+    if (oplogAllValues instanceof Error) {
+      return oplogAllValues;
+    }
+    return oplogAllValues
+      .filter((entry) => {
+        const pld = entry?.payload;
+        return pld?.op === EOrbitDbStoreOperation.PUT;
+      })
+      .filter(isDefined);
   }
 
   /**
@@ -535,9 +584,15 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     database: TSwarmStoreConnectorOrbitDbDatabase<ItemType>
   ): LogEntry<ItemType> | Error | undefined => {
     try {
+      // read LogEntry by hash in feed store or by key for KeyValue store
       const entryRawOrStoreValue = this.readRawValueFromStorage(keyOrHash, database);
       const entryRaw = (entryRawOrStoreValue && this.isKVStore
-        ? this.findInOplog(keyOrHash, entryRawOrStoreValue as ItemType)
+        ? // for a key value store db type read all oplog to find the full log entry into it
+          this.findAddedEntryForKeyInKeyValueDbOpLog(
+            keyOrHash,
+            entryRawOrStoreValue as ItemType,
+            database as OrbitDbFeedStore<ItemType>
+          )
         : entryRawOrStoreValue) as LogEntry<ItemType> | Error | undefined;
 
       if (entryRaw instanceof Error) {
@@ -549,134 +604,198 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     }
   };
 
-  protected filterRequltsFeedStore = (
-    logEntriesList: Array<LogEntry<ItemType>>,
+  protected _filterEntryByIteratorOperationCondition<OP extends ESwarmStoreConnectorOrbitDbDatabaseIteratorOption>(
+    logEntry: LogEntry<ItemType>,
+    operationCondition: OP,
+    operationConditionValue: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions<DbType>[OP]
+  ): boolean {
+    // TODO - create class for filters
+    const logEntryHashOrKey = this.isKVStore ? this.getLogEntryKey(logEntry) : this.getLogEntryHash(logEntry);
+    const logEntryAddedTime = this._getLodEntryAddedTime(logEntry);
+    switch (operationCondition) {
+      case ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq:
+        if (logEntryHashOrKey && operationConditionValue instanceof Array) {
+          return (operationConditionValue as TSwarmStoreDatabaseEntityAddress<ESwarmStoreConnector.OrbitDB>[]).includes(
+            logEntryHashOrKey
+          );
+        }
+        return logEntryHashOrKey === operationConditionValue;
+      case ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.neq:
+        if (logEntryHashOrKey && operationConditionValue instanceof Array) {
+          return !(operationConditionValue as TSwarmStoreDatabaseEntityAddress<ESwarmStoreConnector.OrbitDB>[]).includes(
+            logEntryHashOrKey
+          );
+        }
+        return logEntryHashOrKey !== operationConditionValue;
+      case ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.gt:
+        return !!logEntryHashOrKey && logEntryHashOrKey > operationConditionValue;
+      case ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.gte:
+        return !!logEntryHashOrKey && logEntryHashOrKey >= operationConditionValue;
+      case ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.lt:
+        return !!logEntryHashOrKey && logEntryHashOrKey < operationConditionValue;
+      case ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.lte:
+        return !!logEntryHashOrKey && logEntryHashOrKey <= operationConditionValue;
+      case ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.gtT:
+        return logEntryAddedTime > operationConditionValue;
+      case ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.ltT:
+        return logEntryAddedTime < operationConditionValue;
+      default:
+        // if there is no filters applyed
+        return true;
+    }
+  }
+
+  protected isOplogEntry = (value: any): value is LogEntry<ItemType> => {
+    // TODO - create JSONSchema for validation
+    return Boolean(
+      value &&
+        typeof value === 'object' &&
+        !(value instanceof Error) &&
+        (value as LogEntry<ItemType>).payload &&
+        (value as LogEntry<ItemType>).clock &&
+        (value as LogEntry<ItemType>).identity?.id &&
+        (value as LogEntry<ItemType>).sig
+    );
+  };
+
+  protected _filterOplogValuesByOplogOperationConditions = (
+    logEntriesList: LogEntry<ItemType>[],
     filterOptions: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions<DbType>
   ): Array<LogEntry<ItemType>> => {
-    const { gt, gte, lt, lte, neq } = filterOptions;
-
-    if (!gt && !gte && !lt && !lte && !neq) {
-      return logEntriesList;
-    }
     return logEntriesList.filter((logEntry) => {
-      // TODO - create class for filters
-      const logEntryHash = this.getLodEntryHash(logEntry);
-
-      if (neq) {
-        if (neq instanceof Array) {
-          return !(neq as TSwarmStoreDatabaseEntityAddress<ESwarmStoreConnector.OrbitDB>[]).includes(logEntryHash);
-        }
-        return neq !== logEntryHash;
-      } else if (gte && logEntryHash >= gte) {
-        return true;
-      } else if (gt && logEntryHash > gt) {
-        return true;
-      } else if (lte && logEntryHash <= lte) {
-        return true;
-      } else if (lt && logEntryHash < lt) {
-        return true;
-      }
-      return false;
+      return Object.entries(filterOptions).every(([operationCondition, operationConditionValue]) => {
+        return this._filterEntryByIteratorOperationCondition(
+          logEntry,
+          operationCondition as ESwarmStoreConnectorOrbitDbDatabaseIteratorOption,
+          operationConditionValue
+        );
+      });
     });
   };
 
-  protected getValuesForEqualOperationValueStore = (
-    keys: string | string[],
-    database: OrbitDbKeyValueStore<ItemType>
-  ): Array<ISwarmStoreConnectorOrbitDbDatabaseValue<ItemType> | Error | undefined> =>
-    (typeof keys === 'string' ? [keys] : keys).map((key) => this.readRawEntry(key, database));
+  protected _sortOplogValuesByAddedTime<T extends Array<Error | undefined | LogEntry<ItemType>>>(
+    logEntriesList: T,
+    direction: ESortingOrder
+  ): T {
+    return this._sortIteratedItems<T>(logEntriesList, {
+      [ESortFileds.TIME]: direction,
+    });
+  }
 
-  protected getValuesForEqualOperationFeedStore(
-    hash: string | string[],
-    database: OrbitDbFeedStore<ItemType>
+  protected getValuesForEqualIteratorOption(
+    eqOperand: string | string[],
+    database: TSwarmStoreConnectorOrbitDbDatabase<ItemType>
   ): Array<ISwarmStoreConnectorOrbitDbDatabaseValue<ItemType> | Error | undefined> {
-    const pending = typeof hash === 'string' ? [this._get(hash, database)] : hash.map((h) => this._get(h, database));
+    const pending =
+      typeof eqOperand === 'string' ? [this._get(eqOperand, database)] : eqOperand.map((h) => this._get(h, database));
 
     return pending;
   }
 
-  protected getValuesForEqualOperation(
-    eqOperand: string | string[],
-    database: TSwarmStoreConnectorOrbitDbDatabase<ItemType>
-  ): Array<ISwarmStoreConnectorOrbitDbDatabaseValue<ItemType> | Error | undefined> {
-    if (this.isKVStore) {
-      return this.getValuesForEqualOperationValueStore(eqOperand, database as OrbitDbKeyValueStore<ItemType>);
-    }
-    return this.getValuesForEqualOperationFeedStore(eqOperand, database as OrbitDbFeedStore<ItemType>);
-  }
-
   protected async preloadEntitiesBeforeIterate(count: number): Promise<void> {
+    if (this._isAllItemsLoadedFromPersistentStorageToCache) {
+      return;
+    }
     if (count === -1 || Number(count) > this.itemsCurrentlyLoaded) {
       // before to query the database entities must be preloaded in memory
       await this._load(count);
     }
   }
 
-  protected iteratorFeedStore(
-    options: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions<DbType>,
-    database: OrbitDbFeedStore<ItemType>
-  ): Error | Array<ISwarmStoreConnectorOrbitDbDatabaseValue<ItemType> | Error | undefined> {
-    const eqOperand = options?.[ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq];
-    // database instance can become another one instance after load() method call
-    // because it can cuse a closing of the current instance and creation of the new one.
-    if (eqOperand) {
-      // if the equal operand passed within the argument
-      // return just values queried by it and
-      // ignore all other operators.
-      return this.getValuesForEqualOperationFeedStore(eqOperand, database);
-    }
-
-    let result = database.iterator(options).collect();
-
-    if (options) {
-      result = this.filterRequltsFeedStore(result, options);
-    }
-    return result;
-  }
-
-  protected iteratorKeyValueStore(
-    options: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions<DbType>,
-    database: OrbitDbKeyValueStore<ItemType>
-  ): Error | Array<ISwarmStoreConnectorOrbitDbDatabaseValue<ItemType> | Error | undefined> {
-    const keysInCache = Object.keys(database.all);
-    const { reverse } = options as ISwarmStoreConnectorOrbitDbDatabaseIteratorOptionsRequired<DbType>;
-    // if the limit is -1 it should return all items stored
-    let keysList = reverse ? keysInCache.reverse() : keysInCache;
-
-    if (Number(options.limit) > 0) {
-      keysList = keysList.slice(0, options.limit);
-    }
-    keysList = this.filterKeysKeyValueStore(keysList, options);
-    return this.getValuesForEqualOperationValueStore(keysList, database);
-  }
-
-  protected filterKeysKeyValueStore = (
-    keysList: string[],
-    filterOptions: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions<DbType>
-  ): string[] => {
-    const { gt, gte, lt, lte, neq } = filterOptions;
-
-    if (!gt && !gte && !lt && !lte && !neq) {
-      return keysList;
-    }
-    return keysList.filter((key) => {
-      if (neq) {
-        if (neq instanceof Array) {
-          return !(neq as TSwarmStoreDatabaseEntityKey<ESwarmStoreConnector.OrbitDB>[]).includes(key);
-        }
-        return neq !== key;
-      } else if (gte && key >= gte) {
-        return true;
-      } else if (gt && key > gt) {
-        return true;
-      } else if (lte && key <= lte) {
-        return true;
-      } else if (lt && key < lt) {
-        return true;
-      }
-      return false;
+  protected _getOnlyFilterIteratorOperatorsList(
+    iteratorOptions: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions<DbType>
+  ): ESwarmStoreConnectorOrbitDbDatabaseIteratorOption[] {
+    return (Object.keys(iteratorOptions) as ESwarmStoreConnectorOrbitDbDatabaseIteratorOption[]).filter((option): boolean => {
+      return SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ITERATOR_FILTER_OPTIONS.includes(option);
     });
-  };
+  }
+
+  protected _isExistsFilterByEntryTimeAdded(
+    iteratorOptions: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions<DbType>
+  ): boolean {
+    return Boolean(iteratorOptions.gtT) || Boolean(iteratorOptions.ltT);
+  }
+
+  protected _sortIteratedItems<T extends Array<Error | undefined | LogEntry<ItemType>>>(
+    iteratedItems: T,
+    sortingOptions: Partial<ISortingOptions<LogEntry<any>, ESortFileds>>
+  ): T {
+    const errorsAndNonDefinedEntries = [] as Array<Error | undefined>;
+    const logEntries = [] as Array<LogEntry<ItemType>>;
+
+    for (let index = 0; index < iteratedItems.length; index += 1) {
+      const element = iteratedItems[index];
+
+      if (element == null || element instanceof Error) {
+        errorsAndNonDefinedEntries.push(element);
+      } else {
+        logEntries.push(element);
+      }
+    }
+
+    const orderedItems = this._iteratorSorter.sort(logEntries, sortingOptions);
+
+    // TODO - is it really necessary to merge this arrays
+    return (errorsAndNonDefinedEntries.length ? [...orderedItems, ...errorsAndNonDefinedEntries] : orderedItems) as T;
+  }
+
+  protected iteratorDbOplog(
+    iteratorOptions: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions<DbType>,
+    database: TSwarmStoreConnectorOrbitDbDatabase<ItemType>
+  ): Error | Array<LogEntry<ItemType> | undefined | Error> {
+    const isExistsFilterByEntryAddedTime = this._isExistsFilterByEntryTimeAdded(iteratorOptions);
+    const filterOperatorsList = this._getOnlyFilterIteratorOperatorsList(iteratorOptions);
+    let iteratedValues: Array<LogEntry<ItemType> | undefined | Error> = [];
+    // TODO - refactor it
+    if (iteratorOptions.eq && !isExistsFilterByEntryAddedTime && filterOperatorsList.length === 1) {
+      // if only equals condition, then return values only for the equals
+      const valuesForEqualOperator = this.getValuesForEqualIteratorOption(iteratorOptions.eq, database);
+      if (valuesForEqualOperator instanceof Error) {
+        return valuesForEqualOperator;
+      }
+      iteratedValues = valuesForEqualOperator;
+    } else {
+      let oplogEntriesOrUndefinedOrErrorsToIterate: Array<LogEntry<ItemType> | undefined | Error> = [];
+
+      if (isExistsFilterByEntryAddedTime) {
+        //  use the full oplog instead of .iterator() if we need to filter through all the oplog
+        const oplogAddedEntriesWithErrors = this.getAllAddedValuesFromOpLogOrError(database);
+        if (oplogAddedEntriesWithErrors instanceof Error) {
+          return oplogAddedEntriesWithErrors;
+        }
+        oplogEntriesOrUndefinedOrErrorsToIterate = oplogAddedEntriesWithErrors;
+      } else if (this.isKVStore) {
+        // for key value store read only the existsing keys
+        oplogEntriesOrUndefinedOrErrorsToIterate = this.getValuesForEqualIteratorOption(
+          Object.keys((database as OrbitDbKeyValueStore<ItemType>).all),
+          database
+        );
+      } else {
+        // feed store has it's own iterator method
+        oplogEntriesOrUndefinedOrErrorsToIterate = (database as OrbitDbFeedStore<ItemType>).iterator(iteratorOptions).collect();
+      }
+      iteratedValues = filterOperatorsList.length
+        ? // if filter operators are exists into the options
+          this._filterOplogValuesByOplogOperationConditions(
+            oplogEntriesOrUndefinedOrErrorsToIterate.filter(this.isOplogEntry),
+            iteratorOptions
+          )
+        : // if filer operators are not exists into the options, it means that there is nothing to filter
+          oplogEntriesOrUndefinedOrErrorsToIterate;
+    }
+    if (iteratorOptions.reverse) {
+      iteratedValues = iteratedValues.reverse();
+    }
+    if (iteratorOptions.sortBy) {
+      iteratedValues = this._sortIteratedItems(iteratedValues, iteratorOptions.sortBy);
+      console.log('iteratedValues', iteratedValues);
+      console.log('iteratorOptions.sortBy', iteratorOptions.sortBy);
+    }
+    if (Number(iteratorOptions.limit) > 0) {
+      iteratedValues = iteratedValues.slice(0, iteratorOptions.limit);
+    }
+    return iteratedValues;
+  }
 
   private getDbStoreInstance(): Error | TSwarmStoreConnectorOrbitDbDatabase<ItemType> {
     const { isReady, database } = this;
@@ -799,19 +918,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     }
   }
 
-  protected logStore = () => {
-    // TODO
-    // const database = this.getDbStoreInstance();
-    // const posts = database!.iterator({ limit: -1 }).collect();
-    // console.log('STORE::READY--');
-    // posts.forEach((post: any) => {
-    //   if (post && post.identity) {
-    //     console.log(post.identity.id);
-    //   }
-    // });
-    // console.log('--STORE::READY');
-  };
-
   private emitNewEntry = (address: string, entry: LogEntry<ItemType>, heads: any) => {
     console.log('emit new entry', {
       address,
@@ -868,13 +974,11 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     this.emitFullyLoaded();
     this.setReadyState();
     this.emitEvent(ESwarmStoreEventNames.READY);
-    this.logStore();
     this.emitEmtriesPending();
   };
 
   private handleFeedStoreReadySilent = () => {
     this.setReadyState();
-    this.logStore();
     this.emitEmtriesPending();
   };
 
@@ -913,7 +1017,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     const { dbName } = this;
     console.log('REPLICATED', { dbName });
     this.emitEvent(ESwarmStoreEventNames.UPDATE, dbName);
-    this.logStore();
     this.emitEmtriesPending();
   };
 
@@ -1023,7 +1126,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       hash: ${hash}
       progress: ${progress}
     `);
-    this.logStore();
     this.handleNewEntry(address, entry, {});
   };
 
@@ -1272,17 +1374,26 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     this._currentDatabaseRestartSilent = undefined;
   }
 
-  private async _restartCurrentDbSilentInQueue(): Promise<TSwarmStoreConnectorOrbitDbDatabase<ItemType> | undefined> {
+  private async _restartCurrentDbSilentAndPreloadInQueue(
+    count: TSwarmStoreConnectorOrbitDbDatabaseMethodArgumentDbLoad
+  ): Promise<TSwarmStoreConnectorOrbitDbDatabase<ItemType> | undefined> {
     await this._waitTillCurrentDatabaseIsBeingRestarted();
     let restartDbSilent: Promise<TSwarmStoreConnectorOrbitDbDatabase<ItemType>> | undefined = undefined;
     try {
       restartDbSilent = this.restartDbInstanceSilent()
         .catch((err) => err)
-        .then((result) => {
-          if (result instanceof Error) {
-            throw result;
+        .then(async (dbInstance) => {
+          if (dbInstance instanceof Error) {
+            console.error('Failed to restart the database');
+            return dbInstance;
           }
-          return result;
+          if (!dbInstance) {
+            return;
+          }
+          if (count) {
+            await dbInstance.load(count);
+          }
+          return dbInstance;
         });
       this._setRestartDatabaseSilent(restartDbSilent);
       return await restartDbSilent;
@@ -1291,5 +1402,24 @@ export class SwarmStoreConnectorOrbitDBDatabase<
         this._unsetCurrentRestartDatabaseSilent();
       }
     }
+  }
+
+  private __createLogEntryFieldsValuesGetter(): IPropsByAliasesGetter<LogEntry<ItemType>> {
+    return new PropsByAliasesGetter<LogEntry<ItemType>>(SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ITERATOR_VALUES_GETTER);
+  }
+
+  private __setSorter(sorter: Sorter<LogEntry<ItemType>, ESortFileds>): void {
+    this.__iteratorSorter = sorter;
+  }
+
+  private __unsetSorter(): void {
+    this.__iteratorSorter = undefined;
+  }
+
+  private __createSorter(): void {
+    const logEntryPropsGetter = this.__createLogEntryFieldsValuesGetter();
+    const logEntriesLisetSorter = new Sorter<LogEntry<ItemType>, ESortFileds>(logEntryPropsGetter);
+
+    this.__setSorter(logEntriesLisetSorter);
   }
 }
