@@ -43,7 +43,6 @@ import {
 import { connectorBasicFabricOrbitDBWithEntriesCount } from '../../classes/connection-bridge/connection-bridge-utils-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-store-to-swarm-database-fabrics';
 import { swarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsSerializer } from '../../classes/connection-bridge/connection-bridge-utils-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-swarm-store-fabrics';
 import { asyncValidateVerboseBySchemaWithVoidResult } from '../../utils/validation-utils/validation-utils';
-import { IConnectionBridgeOptions } from '../../classes/connection-bridge/types/connection-bridge.types';
 import { TSwarmMessageSerialized } from '../../classes/swarm-message/swarm-message-constructor.types';
 import { IConnectionBridgeOptionsByStorageOptions } from '../../classes/connection-bridge/types/connection-bridge.types-helpers/connection-bridge-storage-options.types.helpers';
 
@@ -57,22 +56,24 @@ export const CONNECT_TO_SWARM_STORAGE_DEFAULT_MESSAGE_BODY: ISwarmMessageBodyDes
 };
 
 export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_1 = {
-  login: 'mohiwas553@homedepinst.com',
-  password: 'qawsde1234',
+  login: 'tebar13028@hrandod.com',
+  password: 'qwdfrerwd',
 };
 
-export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_1 = '02https://watcha3-191815.firebaseio.com|sgFtcpibSAaMUwNZwR88jLD7uF82';
+export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_1 =
+  '02https://protocol-firebase-default-rtdb.firebaseio.com|dlGUW2tKOjZDYYjE4U25CMbaNCF3';
 
 export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_2 = {
-  login: 'cecaye9745@emailhost99.com',
-  password: 'sdfwmfgjk12kH',
+  login: 'kerzucolta@nedoz.com',
+  password: 'sdfsdf4r',
 };
 
-export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_2 = '02https://watcha3-191815.firebaseio.com|c2wDISuQVBaVANDrTdTWGVi5F0C3';
+export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_2 =
+  '02https://protocol-firebase-default-rtdb.firebaseio.com|f7Yy0au1vuM2e7c9PJSwmrliHyz2';
 
 export enum CONNECT_TO_SWARM_AUTH_PROVIDERS {
-  FIREBASE_WATCHA = 'https://watcha3-191815.firebaseio.com',
-  FIREBASE_PRTOCOL = 'https://protocol-f251b.firebaseio.com',
+  FIREBASE_WATCHA = 'https://protocol-firebase-default-rtdb.firebaseio.com',
+  FIREBASE_PRTOCOL = 'https://protocol-firebase-central-default-rtdb.firebaseio.com',
 }
 
 export const CONNECT_TO_SWARM_STORAGE_PROVIDER_DEFAULT = ESwarmStoreConnector.OrbitDB;

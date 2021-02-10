@@ -131,6 +131,16 @@ export interface IValidatorOfSwarmMessageWithChannelDescriptionArgument<
   DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 > {
   /**
+   * if the databse is not ready it can not return an existing channel description
+   * therefore there should no be any validations related to the existing channel
+   * description. And it means that it's not neccessary to validate users
+   * because all the message have been exists and all of them are not new
+   *
+   * @type {boolean}
+   * @memberof IValidatorOfSwarmMessageWithChannelDescriptionArgument
+   */
+  isDatabaseReady: boolean;
+  /**
    * If operation is DELETE, then it should be a hash of the message deleted.
    * Otherwise it should be swarm message deserialized and decrypted.
    *

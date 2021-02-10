@@ -208,25 +208,15 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
       try {
         const existingChannels = await channelsListInstance.getAllChannelsDescriptions();
         debugger;
-        await channelsListInstance.upsertChannel(swarmMessageChannelDescription);
         await channelsListInstance.upsertChannel({
           ...swarmMessageChannelDescription,
-          description: String(Date.now()),
+          admins: ['02https://protocol-firebase-default-rtdb.firebaseio.com|dlGUW2tKOjZDYYjE4U25CMbaNCF3'],
+          dbOptions: {
+            ...swarmMessageChannelDescription.dbOptions,
+            write: ['02https://protocol-firebase-default-rtdb.firebaseio.com|dlGUW2tKOjZDYYjE4U25CMbaNCF3'],
+          } as any,
         });
-        await channelsListInstance.upsertChannel({
-          ...swarmMessageChannelDescription,
-          description: String(Date.now()),
-        });
-        await channelsListInstance.upsertChannel({
-          ...swarmMessageChannelDescription,
-          description: String(Date.now()),
-        });
-        const dateNow = Date.now();
-        console.log('Date.now()', dateNow);
-        await channelsListInstance.upsertChannel({
-          ...swarmMessageChannelDescription,
-          description: String(dateNow),
-        });
+
         // await channelsListInstance.removeChannelById(swarmMessageChannelDescription.id);
         // debugger;
         // await channelsListInstance.upsertChannel({

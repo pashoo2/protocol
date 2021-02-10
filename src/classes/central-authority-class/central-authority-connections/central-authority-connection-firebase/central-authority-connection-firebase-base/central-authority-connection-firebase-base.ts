@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
+import 'firebase/database';
 import { ICAConnectionSignUpCredentials, ICAConnectionUserAuthorizedResult } from '../../central-authority-connections.types';
 import {
   ICAConnectionConfigurationFirebase,
@@ -428,7 +429,7 @@ export class CAConnectionWithFirebaseBase {
       }
     } catch (err) {
       console.error(err);
-      return new Error('Failed to sign up to the Firebase with the given credentials');
+      return new Error(`Failed to sign up to the Firebase with the given credentials: ${err.message}`);
     }
     return true;
   }

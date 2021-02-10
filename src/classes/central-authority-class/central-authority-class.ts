@@ -550,7 +550,6 @@ export class CentralAuthority implements ICentralAuthority {
     const authorizationResult = await connectionToAuthProvidersPool.authorize(
       ...this.getOptionsToAuthorizeUserOnAuthConnection(optionsUserCredentials)
     );
-
     if (authorizationResult instanceof Error) {
       console.error(authorizationResult);
       return authorizationResult;

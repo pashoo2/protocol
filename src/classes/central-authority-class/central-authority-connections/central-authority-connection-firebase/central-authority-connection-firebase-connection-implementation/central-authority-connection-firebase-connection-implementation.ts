@@ -1,5 +1,6 @@
 import firebase from 'firebase';
 import 'firebase/auth';
+import 'firebase/database';
 import memoize from 'lodash.memoize';
 import CAConnectionWithFirebaseBase from '../central-authority-connection-firebase-base/central-authority-connection-firebase-base';
 import {
@@ -202,7 +203,10 @@ export class CAConnectionWithFirebaseImplementation extends CAConnectionWithFire
     const { isAuthorized } = this;
 
     if (isAuthorized) {
-      authHandleResult = this.valueofCredentialsSignUpOnAuthorizedSuccess!;
+      if (!this.valueofCredentialsSignUpOnAuthorizedSuccess) {
+        throw new Error('a value of the valueofCredentialsSignUpOnAuthorizedSuccess should be defined');
+      }
+      authHandleResult = this.valueofCredentialsSignUpOnAuthorizedSuccess;
     } else {
       // try to sign in with the credentials, then try to sign up
       // const userLoggedPromise = this.waitingUserInit();

@@ -137,7 +137,7 @@ export class CAConnectionsPool implements ICAConnectionPool {
       if (ananymousResult instanceof Error) {
         return ananymousResult;
       }
-      return this.addConectionWithProvider(authProviderUrl, connectionWithAuthProvider);
+      return await this.addConectionWithProvider(authProviderUrl, connectionWithAuthProvider);
     }
     return connectionWithAuthProvider;
   }

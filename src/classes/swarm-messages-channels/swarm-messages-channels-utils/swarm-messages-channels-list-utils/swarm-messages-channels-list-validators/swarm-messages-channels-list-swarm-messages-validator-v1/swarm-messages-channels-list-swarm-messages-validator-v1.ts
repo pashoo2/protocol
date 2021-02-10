@@ -25,6 +25,13 @@ export async function validatorOfSwrmMessageWithChannelDescription<
   }
 
   const {
+    /*
+     * if the databse is not ready it can not return an existing channel description
+     * therefore there should no be any validations related to the existing channel
+     * description. And it means that it's not neccessary to validate users
+     * because all the message have been exists and all of them are not new
+     */
+    isDatabaseReady,
     messageOrHash,
     senderUserId,
     keyInDb,
@@ -41,7 +48,7 @@ export async function validatorOfSwrmMessageWithChannelDescription<
   } = argument;
 
   assert(keyInDb, 'Database key should be defined for a swarm message with channel description');
-  if (channelExistingDescription) {
+  if (isDatabaseReady && channelExistingDescription) {
     assert(
       getDatabaseKeyForChannelDescription(channelExistingDescription) === keyInDb,
       'Key in the database is not equals to the existing channel desciption'
@@ -89,47 +96,50 @@ export async function validatorOfSwrmMessageWithChannelDescription<
     // eslint-disable-next-line @typescript-eslint/unbound-method
     const { jsonSchemaValidator, isUserValid } = this;
 
+    await channelDescriptionFormatValidator(channelDescriptionRaw, jsonSchemaValidator);
     assert(
       getDatabaseKeyForChannelDescription(channelDescriptionRaw) === keyInDb,
       'Key in the database is not equals to the channel desciption'
     );
-    if (!channelExistingDescription) {
-      // if there is no existing description then the description in the message have to contain
-      // the user identity in the list of admin users description
-      const adminUsers = channelDescriptionRaw.admins;
-      assert(
-        adminUsers.includes(senderUserId),
-        'The user who sends the user id should be in the list of the channel administrators'
-      );
-      try {
-        await validateUsersList(adminUsers, isUserValid);
-      } catch (err) {
-        throw new Error(`Channel administrator users list is not valid: ${err.message}`);
-      }
-    } else {
+
+    if (channelExistingDescription) {
       assert(channelDescriptionRaw.id === channelExistingDescription.id, 'Identity of the channel cannot be changed');
       assert(channelDescriptionRaw.dbType === channelExistingDescription.dbType, 'Type of channel database cannot be changed');
-    }
+    } else if (isDatabaseReady) {
+      /**
+       * If there is no existing description then the description in the message have to contain
+       * the user identity in the list of admin users description.
+       * We have checked that the user was one of admins, so the user can change the
+       * admins list and exlude itself from the list, so we don't need to check
+       * whether the user still exists in the admins list
+       * */
 
-    await channelDescriptionFormatValidator(channelDescriptionRaw, jsonSchemaValidator);
+      assert(
+        channelDescriptionRaw.admins.includes(senderUserId),
+        'The user who sends the user id should be in the list of the channel administrators'
+      );
+    }
 
     const { admins, dbOptions } = channelDescriptionRaw;
     const { write: usersIdsWithWriteAccess } = dbOptions;
 
-    // validate users presented in the channel description
+    if (isDatabaseReady) {
+      // validate users only for a new message added, if the database is not ready
+      // it means that the message is old and it's have already been validated
 
-    if (usersIdsWithWriteAccess) {
+      // validate users presented in the channel description
       try {
-        await validateUsersList(usersIdsWithWriteAccess as string[], isUserValid);
+        await validateUsersList(admins, isUserValid);
       } catch (err) {
-        throw new Error(`Users identifiers list, which have a write access is not valid: ${err.message}`);
+        throw new Error(`Admin users identities are not valid: ${err.message}`);
       }
-    }
-
-    try {
-      await validateUsersList(admins, isUserValid);
-    } catch (err) {
-      throw new Error(`Admin users identities are not valid: ${err.message}`);
+      if (usersIdsWithWriteAccess) {
+        try {
+          await validateUsersList(usersIdsWithWriteAccess as string[], isUserValid);
+        } catch (err) {
+          throw new Error(`Users identifiers list, which have a write access is not valid: ${err.message}`);
+        }
+      }
     }
   }
 }

@@ -240,7 +240,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
     private _getRequestResultFromAllRequestResultsOnASingleDatabaseKeyRead(
       requestResults: (ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined)[]
     ): ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined {
-      if (Array.isArray(requestResults)) {
+      if (Array.isArray(requestResults) && requestResults.length) {
         assert(requestResults.length === 1, 'Request result for one datbase key should be an array with the lenght of 1');
         return requestResults[0];
       }

@@ -1,23 +1,23 @@
 import { generateCryptoCredentialsV1 } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
 
 export const CA_CONNECTION_FIREBASE_CONFIG = {
-  apiKey: 'AIzaSyCwmUlVklNmGZ0SD11NKT8gpvmZXbgbBRk',
-  authDomain: 'protocol-f251b.firebaseapp.com',
-  databaseURL: 'https://protocol-f251b.firebaseio.com',
-  projectId: 'protocol-f251b',
-  storageBucket: '',
-  messagingSenderId: '275196342406',
-  appId: '1:275196342406:web:40b79d671c50af57',
+  apiKey: 'AIzaSyA8KU5yA0ot19_LRHOazke2HrZT2Gdv8k4',
+  authDomain: 'protocol-firebase.firebaseapp.com',
+  databaseURL: 'https://protocol-firebase-default-rtdb.firebaseio.com',
+  projectId: 'protocol-firebase',
+  storageBucket: 'protocol-firebase.appspot.com',
+  messagingSenderId: '95355551133',
+  appId: '1:95355551133:web:a14aba0f275224eadd4374',
 };
 
 export const CA_CONNECTION_FIREBASE_CONFIG_WATCHA3 = {
-  apiKey: 'AIzaSyCmjgbWZjUcDYxV2d0DxbiuroFrftW7qrQ',
-  authDomain: 'watcha3-191815.firebaseapp.com',
-  databaseURL: 'https://watcha3-191815.firebaseio.com',
-  projectId: 'watcha3-191815',
-  storageBucket: 'watcha3-191815.appspot.com',
-  messagingSenderId: '271822572791',
-  appId: '1:271822572791:web:2e31bfd34ccabe551597f2',
+  apiKey: 'AIzaSyALm9cCWRpqtn1zxGhQJnt34skvRrmBwmg',
+  authDomain: 'protocol-firebase-central.firebaseapp.com',
+  databaseURL: 'https://protocol-firebase-central-default-rtdb.firebaseio.com',
+  projectId: 'protocol-firebase-central',
+  storageBucket: 'protocol-firebase-central.appspot.com',
+  messagingSenderId: '155785265930',
+  appId: '1:155785265930:web:0013300df655405366b0f3',
 };
 
 export const CA_CONNECTION_FIREBASE_USER_CREDENTIALS = {

@@ -55,8 +55,8 @@ export const CONNECT_TO_SWARM_STORAGE_DEFAULT_MESSAGE_BODY: ISwarmMessageBodyDes
 };
 
 export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_1 = {
-  login: 'mohiwas553@homedepinst.com',
-  password: 'qawsde1234',
+  login: 'tebar13028@hrandod.com',
+  password: 'qwdfrerwd',
 };
 
 export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_1 = '02https://watcha3-191815.firebaseio.com|sgFtcpibSAaMUwNZwR88jLD7uF82';
@@ -69,8 +69,8 @@ export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_2 = {
 export const CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_2 = '02https://watcha3-191815.firebaseio.com|c2wDISuQVBaVANDrTdTWGVi5F0C3';
 
 export enum CONNECT_TO_SWARM_AUTH_PROVIDERS {
-  FIREBASE_WATCHA = 'https://watcha3-191815.firebaseio.com',
-  FIREBASE_PRTOCOL = 'https://protocol-f251b.firebaseio.com',
+  FIREBASE_DEFAULT = 'https://protocol-firebase-default-rtdb.firebaseio.com',
+  FIREBASE_PRTOCOL = 'https://protocol-firebase-central-default-rtdb.firebaseio.com',
 }
 
 export const CONNECT_TO_SWARM_STORAGE_PROVIDER_DEFAULT = ESwarmStoreConnector.OrbitDB;
@@ -246,7 +246,7 @@ export const CONNECT_TO_SWARM_CONNECTION_STORAGE_WITH_STORE_META_OPTIONS: IConne
 };
 
 export const CONNECT_TO_SWARM_CONNECTION_AUTH_OPTOINS: IConnectionBridgeOptionsAuth<false> = {
-  providerUrl: CONNECT_TO_SWARM_AUTH_PROVIDERS.FIREBASE_WATCHA,
+  providerUrl: CONNECT_TO_SWARM_AUTH_PROVIDERS.FIREBASE_DEFAULT,
   // use session persistanse
   session: {},
   credentials: undefined,

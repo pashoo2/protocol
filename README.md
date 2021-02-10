@@ -13,6 +13,8 @@ import '@types/jest';
 
 **FIREBASE DO NOT ALLOW TO USE THE SAME EMAIL, WHEN AUTHORIZED ON A DIFFERENT APPS FOR AN UNKNOWN REASON**
 
+**IT IS NECESSARY TO ENABLE AN AUTOHORIZATION IN THE FIREBASE PROJECT**
+
 **Must be set rules as**
 
 `{ /* Visit https://firebase.google.com/docs/database/security to learn more about security rules. */ "rules": { ".read": true, ".write": true, "credentials": { ".read": true, ".write": "!data.exists()", ".indexOn": "firebase_user_id" } } }`
@@ -25,6 +27,11 @@ on the client:
 
 version of the firebase rules which allowed userId with guid or user login as user id in the user idenitity string
 
+It's for "01" and "02" and version of the user identities.
+This is default rules.
+
+E.G. for the 'https://protocol-firebase-default-rtdb.firebaseio.com/' realtime database
+
 ```
 {
   /* Visit https://firebase.google.com/docs/database/security to learn more about security rules. */
@@ -33,7 +40,7 @@ version of the firebase rules which allowed userId with guid or user login as us
     ".write": "auth != null",
       "credentials": {
         "$userID": {
-          ".validate": "!data.exists() && newData.exists() && ($userID.beginsWith('02https:*_S%ë5nN*_S%ë5nNprotocol-f251b_P%ë5nN*firebaseio_P%ë5nN*com') || $userID.beginsWith('01https:*_S%ë5nN*_S%ë5nNprotocol-f251b_P%ë5nN*firebaseio_P%ë5nN*com')) && newData.hasChildren(['credentials', 'firebase_user_id']) && newData.child('credentials').isString() && newData.child('firebase_user_id').isString() && newData.child('credentials').val().length < 5000 && newData.child('credentials').val().length > 100 && newData.child('firebase_user_id').val() === auth.uid",
+          ".validate": "!data.exists() && newData.exists() && ($userID.beginsWith('02https:*_S%ë5nN*_S%ë5nNprotocol-firebase-default-rtdb_P%ë5nN*firebaseio_P%ë5nN*com') || $userID.beginsWith('01https:*_S%ë5nN*_S%ë5nNprotocol-firebase-default-rtdb_P%ë5nN*firebaseio_P%ë5nN*com')) && newData.hasChildren(['credentials', 'firebase_user_id']) && newData.child('credentials').isString() && newData.child('firebase_user_id').isString() && newData.child('credentials').val().length < 9000 && newData.child('credentials').val().length > 100 && newData.child('firebase_user_id').val() === auth.uid",
           ".indexOn": "firebase_user_id",
         }
       }
@@ -51,7 +58,7 @@ this version of the rules must be used if the user allowed only a one user ident
     ".write": "auth != null",
       "credentials": {
         "$userID": {
-          ".validate": "!data.exists() && newData.exists() && $userID === '02https:*_S%ë5nN*_S%ë5nNwatcha3-191815_P%ë5nN*firebaseio_P%ë5nN*com|' + auth.uid + '_D%5nNë*' && newData.hasChildren(['credentials', 'firebase_user_id']) && newData.child('credentials').isString() && newData.child('firebase_user_id').isString() && newData.child('credentials').val().length < 5000 && newData.child('credentials').val().length > 100 && newData.child('firebase_user_id').val() === auth.uid",
+          ".validate": "!data.exists() && newData.exists() && $userID === '02https:*_S%ë5nN*_S%ë5nNprotocol-firebase-central-default-rtdb_P%ë5nN*firebaseio_P%ë5nN*com|' + auth.uid + '_D%5nNë*' && newData.hasChildren(['credentials', 'firebase_user_id']) && newData.child('credentials').isString() && newData.child('firebase_user_id').isString() && newData.child('credentials').val().length < 5000 && newData.child('credentials').val().length > 100 && newData.child('firebase_user_id').val() === auth.uid",
           ".indexOn": "firebase_user_id"
         }
       }

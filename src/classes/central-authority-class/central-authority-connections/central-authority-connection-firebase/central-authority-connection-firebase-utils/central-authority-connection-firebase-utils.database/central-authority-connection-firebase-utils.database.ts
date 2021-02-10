@@ -131,7 +131,10 @@ export class CAConnectionWithFirebaseUtilDatabase {
     const { database } = this;
 
     try {
-      await database!.ref(key).set(value);
+      if (!database) {
+        throw new Error('An instance of a Realtime databse is not exists');
+      }
+      await database.ref(key).set(value);
     } catch (err) {
       console.error(err);
       return new Error('Failed to store the value in the database');
