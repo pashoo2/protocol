@@ -25,7 +25,20 @@ import {
   ISwarmMessagesDatabaseConnector,
 } from 'classes/swarm-messages-database/swarm-messages-database.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from 'classes/swarm-messages-database/swarm-messages-database.messages-collector.types';
-import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../swarm-message-store/types/swarm-message-store.types';
+import {
+  ISwarmMessageStoreMessagingRequestWithMetaResult,
+  ISwarmMessageStoreDeleteMessageArg,
+} from '../../swarm-message-store/types/swarm-message-store.types';
+import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
+import { ISwarmMessagesChannelsDescriptionsList } from './swarm-messages-channels-list.types';
+import {
+  TSwarmMessageDatabaseMessagesCached,
+  ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions,
+} from '../../swarm-messages-database/swarm-messages-database.types';
+import {
+  TSwarmStoreDatabaseEntityKey,
+  TSwarmStoreDatabaseIteratorMethodArgument,
+} from '../../swarm-store-class/swarm-store-class.types';
 
 export type TSwarmMessagesChannelId = string;
 
@@ -127,7 +140,7 @@ export interface ISwarmMessagesChannelDescriptionWithMetadata<
 }
 
 /**
- * Implementation of the swarm messages channel, which is used for
+ * Swarm messages channel, which is used for
  * messaging between peers.
  *
  * @export
@@ -213,9 +226,280 @@ export interface ISwarmMessagesChannel<
    * @memberof ISwarmMessagesChannel
    */
   readonly channelRawDescription: Readonly<ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>>;
+
   /**
-   * Swarm messages database encrypted related to the channel.
-   * It should be used for messaging
+   * Swarm messges list cached.
+   *
+   * @type {(TSwarmMessageDatabaseMessagesCached<P, DbType, MD> | undefined)}
+   * @memberof ISwarmMessagesChannel
+   */
+  readonly swarmMessgesDatabase: TSwarmMessageDatabaseMessagesCached<P, DbType, MD> | undefined;
+
+  /**
+   * Add swarm message to the channel.
+   *
+   * @param {Parameters<SMS['addMessage']>[1]} message
+   * @param {DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined} key
+   * @returns {Promise<void>}
+   * @memberof ISwarmMessagesChannel
+   */
+  addMessage(
+    message: Parameters<SMS['addMessage']>[1],
+    key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined
+  ): Promise<void>;
+
+  /**
+   * Delete a swarm message from the databsae.
+   *
+   * @param {ISwarmMessageStoreDeleteMessageArg<P, DbType>} messageAddressOrKey
+   * @returns {ReturnType<SMS['deleteMessage']>}
+   * @memberof ISwarmMessagesChannel
+   */
+  deleteMessage(messageAddressOrKey: ISwarmMessageStoreDeleteMessageArg<P, DbType>): ReturnType<SMS['deleteMessage']>;
+
+  /**
+   * Collect messages directly from the storage (not from a cache).
+   *
+   * @param {TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>} options
+   * @returns {ReturnType<SMS['collect']>}
+   * @memberof ISwarmMessagesChannel
+   */
+  collect(options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>): ReturnType<SMS['collect']>;
+
+  /**
+   * Collect messages with metadata from the storage (not from a cache).
+   *
+   * @param {TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>} options
+   * @returns {ReturnType<SMS['collectWithMeta']>}
+   * @memberof ISwarmMessagesChannel
+   */
+  collectWithMeta(options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>): ReturnType<SMS['collectWithMeta']>;
+
+  /**
+   * Set a password for messages encryption.
+   *
+   * @param {string} password
+   * @returns {Promise<void>}
+   * @memberof ISwarmMessagesChannel
+   */
+  setPasswordForMessagesEncryption(password: string): Promise<void>;
+
+  /**
+   * Update channel's description.
+   *
+   * @returns {Promise<void>}
+   * @memberof ISwarmMessagesChannel
+   */
+  updateChannelDescription(channelRawDescription: Readonly<ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>>): Promise<void>;
+
+  /**
+   * Delete the channel.
+   *
+   * @returns {Promise<void>}
+   * @memberof ISwarmMessagesChannel
+   */
+  drop(): Promise<void>;
+}
+
+/**
+ * Constructor of a database connector instance by a database options.
+ *
+ * @export
+ * @interface ISwarmMessagesDatabaseConnectorInstanceByDatabaseOptionsConstructor
+ * @template P
+ * @template T
+ * @template DbType
+ * @template DBO
+ * @template ConnectorBasic
+ * @template PO
+ * @template CO
+ * @template ConnectorMain
+ * @template CFO
+ * @template GAC
+ * @template MCF
+ * @template ACO
+ * @template O
+ * @template SMS
+ * @template MD
+ * @template SMSM
+ * @template DCO
+ * @template DCCRT
+ * @template OPT
+ */
+export interface ISwarmMessagesDatabaseConnectorInstanceByDatabaseOptionsConstructor<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO>,
+  PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
+  CO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, PO>,
+  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, PO>,
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MD | T>,
+  MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MD | T, GAC> | undefined,
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO,
+    CO,
+    ConnectorMain,
+    CFO,
+    MD | T,
+    GAC,
+    MCF,
+    ACO
+  >,
+  SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MD | T, GAC, MCF, ACO, O>,
+  MD extends ISwarmMessageInstanceDecrypted,
+  SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
+  DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>,
+  DCCRT extends ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM>,
+  OPT extends ISwarmMessagesDatabaseConnectOptions<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO,
+    CO,
+    ConnectorMain,
+    CFO,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS,
+    MD,
+    SMSM,
+    DCO,
+    DCCRT
+  >
+> {
+  (dbo: DBO): ISwarmMessagesDatabaseConnector<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO,
+    CO,
+    ConnectorMain,
+    CFO,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS,
+    MD,
+    SMSM,
+    DCO,
+    DCCRT,
+    OPT
+  >;
+}
+
+/**
+ * Options for swarm messages channel instance constructor.
+ *
+ * @export
+ * @interface ISwarmMessagesChannelConstructorOptions
+ * @template P
+ * @template T
+ * @template DbType
+ * @template DBO
+ * @template ConnectorBasic
+ * @template PO
+ * @template CO
+ * @template ConnectorMain
+ * @template CFO
+ * @template GAC
+ * @template MCF
+ * @template ACO
+ * @template O
+ * @template SMS
+ * @template MD
+ * @template SMSM
+ * @template DCO
+ * @template DCCRT
+ * @template OPT
+ */
+export interface ISwarmMessagesChannelConstructorOptions<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO>,
+  PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
+  CO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, PO>,
+  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, PO>,
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MD | T>,
+  MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MD | T, GAC> | undefined,
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO,
+    CO,
+    ConnectorMain,
+    CFO,
+    MD | T,
+    GAC,
+    MCF,
+    ACO
+  >,
+  SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MD | T, GAC, MCF, ACO, O>,
+  MD extends ISwarmMessageInstanceDecrypted,
+  SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
+  DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>,
+  DCCRT extends ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM>,
+  OPT extends ISwarmMessagesDatabaseConnectOptions<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO,
+    CO,
+    ConnectorMain,
+    CFO,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS,
+    MD,
+    SMSM,
+    DCO,
+    DCCRT
+  >
+> {
+  /**
+   * A description of the channel.
+   *
+   * @type {ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>}
+   * @memberof ISwarmMessagesChannelConstructorArguments
+   */
+  swarmMessagesChannelDescription: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>;
+
+  /**
+   * Swarm messages channels list where to add the channel.
+   *
+   * @type {ISwarmMessagesChannelsDescriptionsList<P, T, MD>}
+   * @memberof ISwarmMessagesDatabaseConnectorInstanceByDatabaseOptionsConstructor
+   */
+  swarmMessagesChannelsList: ISwarmMessagesChannelsDescriptionsList<P, T, MD>;
+
+  /**
+   * Constructor of a database instance by a database options.
    *
    * @type {Readonly<
    *     ISwarmMessagesDatabaseConnector<
@@ -242,8 +526,132 @@ export interface ISwarmMessagesChannel<
    *   >}
    * @memberof ISwarmMessagesChannel
    */
-  readonly channelSwarmMessagesDatabase: Readonly<
-    ISwarmMessagesDatabaseConnector<
+  swarmMessagesDatabaseConnectorInstanceConstructor: ISwarmMessagesDatabaseConnectorInstanceByDatabaseOptionsConstructor<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO,
+    CO,
+    ConnectorMain,
+    CFO,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS,
+    MD,
+    SMSM,
+    DCO,
+    DCCRT,
+    OPT
+  >;
+}
+
+/**
+ * Constructor of a swarm messages channel.
+ *
+ * @export
+ * @interface ISwarmMessagesChannelConstructor
+ * @template P
+ * @template T
+ * @template DbType
+ * @template DBO
+ * @template ConnectorBasic
+ * @template PO
+ * @template CO
+ * @template ConnectorMain
+ * @template CFO
+ * @template GAC
+ * @template MCF
+ * @template ACO
+ * @template O
+ * @template SMS
+ * @template MD
+ * @template SMSM
+ * @template DCO
+ * @template DCCRT
+ * @template OPT
+ */
+export interface ISwarmMessagesChannelConstructor<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO>,
+  PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
+  CO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, PO>,
+  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, PO>,
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MD | T>,
+  MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MD | T, GAC> | undefined,
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO,
+    CO,
+    ConnectorMain,
+    CFO,
+    MD | T,
+    GAC,
+    MCF,
+    ACO
+  >,
+  SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MD | T, GAC, MCF, ACO, O>,
+  MD extends ISwarmMessageInstanceDecrypted,
+  SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
+  DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>,
+  DCCRT extends ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM>,
+  OPT extends ISwarmMessagesDatabaseConnectOptions<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO,
+    CO,
+    ConnectorMain,
+    CFO,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS,
+    MD,
+    SMSM,
+    DCO,
+    DCCRT
+  >
+> {
+  new (
+    options: ISwarmMessagesChannelConstructorOptions<
+      P,
+      T,
+      DbType,
+      DBO,
+      ConnectorBasic,
+      PO,
+      CO,
+      ConnectorMain,
+      CFO,
+      GAC,
+      MCF,
+      ACO,
+      O,
+      SMS,
+      MD,
+      SMSM,
+      DCO,
+      DCCRT,
+      OPT
+    >
+  ): Promise<
+    ISwarmMessagesChannel<
       P,
       T,
       DbType,
@@ -265,21 +673,4 @@ export interface ISwarmMessagesChannel<
       OPT
     >
   >;
-  /**
-   * Set a password which will be used for messages encryption
-   * within the channel
-   *
-   * @param {string} password
-   * @returns {Promise<void>}
-   * @memberof ISwarmMessagesChannel
-   */
-  setPasswordForMessagesEncryption(password: string): Promise<void>;
-  /**
-   * Drop the channel and it's database
-   */
-  drop(): Promise<void>;
 }
-
-/**
- * Database options for swarm messages channels list with required grant access callback
- */

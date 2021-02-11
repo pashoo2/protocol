@@ -19,7 +19,6 @@ import {
   TSwarmStoreDatabaseOptions,
   TSwarmStoreDatabaseType,
 } from '../swarm-store-class/swarm-store-class.types';
-import { OmitFirstArg } from '../../types/helper.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import {
   ISwarmMessageInstanceDecrypted,
@@ -37,7 +36,6 @@ import {
   TSwarmStoreDatabaseEntityUniqueIndex,
   TSwarmStoreDatabaseIteratorMethodArgument,
 } from '../swarm-store-class/swarm-store-class.types';
-import { TSwarmMessageConstructorBodyMessage } from '../swarm-message/swarm-message-constructor.types';
 import { ISwarmMessageStoreDeleteMessageArg } from '../swarm-message-store/types/swarm-message-store.types';
 
 export type TSwarmMessageDatabaseMessagesCached<
@@ -213,7 +211,10 @@ export interface ISwarmMessageDatabaseMessagingMethods<
   MI extends TSwarmMessageInstance,
   SMS extends ISwarmMessageStoreMessagingMethods<P, T, DbType, MI>
 > {
-  addMessage(message: Parameters<SMS['addMessage']>[1], key?: TSwarmStoreDatabaseEntityKey<P>): ReturnType<SMS['addMessage']>;
+  addMessage(
+    message: Parameters<SMS['addMessage']>[1],
+    key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined
+  ): ReturnType<SMS['addMessage']>;
   deleteMessage(messageAddressOrKey: ISwarmMessageStoreDeleteMessageArg<P, DbType>): Promise<void>;
   collect(options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>): ReturnType<SMS['collect']>;
   collectWithMeta(options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>): ReturnType<SMS['collectWithMeta']>;

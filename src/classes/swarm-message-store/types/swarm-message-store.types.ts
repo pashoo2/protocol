@@ -357,7 +357,11 @@ export interface ISwarmMessageStoreMessagingMethods<
    * @memberof ISwarmMessageStore
    * @throws
    */
-  addMessage(dbName: string, message: MI, key?: TSwarmStoreDatabaseEntityKey<P>): Promise<TSwarmStoreDatabaseEntityAddress<P>>;
+  addMessage(
+    dbName: string,
+    message: MI,
+    key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined
+  ): Promise<TSwarmStoreDatabaseEntityAddress<P>>;
 
   /**
    * add message serialized to a database with the given name
@@ -368,7 +372,11 @@ export interface ISwarmMessageStoreMessagingMethods<
    * @memberof ISwarmMessageStore
    * @throws
    */
-  addMessage(dbName: string, message: T, key?: TSwarmStoreDatabaseEntityKey<P>): Promise<TSwarmStoreDatabaseEntityAddress<P>>;
+  addMessage(
+    dbName: string,
+    message: T,
+    key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined
+  ): Promise<TSwarmStoreDatabaseEntityAddress<P>>;
 
   /**
    * construct and add message to a database with the given name.
@@ -382,7 +390,7 @@ export interface ISwarmMessageStoreMessagingMethods<
   addMessage(
     dbName: string,
     message: TSwarmMessageConstructorBodyMessage,
-    key?: TSwarmStoreDatabaseEntityKey<P>
+    key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined
   ): Promise<TSwarmStoreDatabaseEntityAddress<P>>;
 
   /**

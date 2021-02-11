@@ -45,7 +45,6 @@ import {
   ISwarmStoreOptionsConnectorFabric,
 } from '../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
-import { OmitFirstArg } from '../../types/helper.types';
 import { ISwarmMessagesDatabaseConnector } from './swarm-messages-database.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from './swarm-messages-database.messages-collector.types';
 import { TSwarmStoreDatabaseIteratorMethodArgument } from '../swarm-store-class/swarm-store-class.types';
@@ -273,7 +272,7 @@ export class SwarmMessagesDatabase<
   // eslint-disable-next-line @typescript-eslint/member-ordering
   addMessage = (
     message: Parameters<SMS['addMessage']>[1],
-    key?: TSwarmStoreDatabaseEntityKey<P>
+    key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined
   ): ReturnType<SMS['addMessage']> => {
     if (!this._checkIsReady()) {
       throw new Error('The instance is not ready to use');
