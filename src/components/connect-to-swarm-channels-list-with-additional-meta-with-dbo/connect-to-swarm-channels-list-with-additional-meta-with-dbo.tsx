@@ -206,29 +206,14 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
         },
       };
       try {
-        const existingChannels = await channelsListInstance.getAllChannelsDescriptions();
+        let existingChannels = await channelsListInstance.getAllChannelsDescriptions();
+        await channelsListInstance.upsertChannel(swarmMessageChannelDescription);
         debugger;
-        await channelsListInstance.upsertChannel({
-          ...swarmMessageChannelDescription,
-          admins: ['02https://protocol-firebase-default-rtdb.firebaseio.com|dlGUW2tKOjZDYYjE4U25CMbaNCF3'],
-          dbOptions: {
-            ...swarmMessageChannelDescription.dbOptions,
-            write: ['02https://protocol-firebase-default-rtdb.firebaseio.com|dlGUW2tKOjZDYYjE4U25CMbaNCF3'],
-          } as any,
-        });
-
-        // await channelsListInstance.removeChannelById(swarmMessageChannelDescription.id);
-        // debugger;
-        // await channelsListInstance.upsertChannel({
-        //   ...swarmMessageChannelDescription,
-        //   dbType: ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
-        // });
-        // debugger;
-        // const swarmMessagesChannelListDescription = await channelsListInstance.getChannelDescriptionById(
-        //   swarmMessageChannelDescription.id
-        // );
-        // debugger;
-        // existingChannels = await channelsListInstance.getAllChannelsDescriptions();
+        const swarmMessagesChannelListDescription = await channelsListInstance.getChannelDescriptionById(
+          swarmMessageChannelDescription.id
+        );
+        debugger;
+        existingChannels = await channelsListInstance.getAllChannelsDescriptions();
         debugger;
         alert('done');
       } catch (err) {
