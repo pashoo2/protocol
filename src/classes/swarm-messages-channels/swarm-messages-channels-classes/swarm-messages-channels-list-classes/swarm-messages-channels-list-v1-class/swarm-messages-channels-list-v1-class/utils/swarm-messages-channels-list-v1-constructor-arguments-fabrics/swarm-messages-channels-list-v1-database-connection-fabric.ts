@@ -28,7 +28,7 @@ import {
   ISwarmMessagesDatabaseConnector,
   ISwarmMessagesDatabaseMessagesCollector,
 } from '../../../../../../../swarm-messages-database';
-import { swarmMessagesDatabaseConnectedFabric as swarmMessagesDatabaseConnectedInstanceFabric } from '../../../../../../../swarm-messages-database/swarm-messages-database-fabric';
+import { swarmMessagesDatabaseConnectedFabricMain as swarmMessagesDatabaseConnectedInstanceFabric } from '../../../../../../../swarm-messages-database/swarm-messages-database-fabrics/swarm-messages-database-intstance-fabric-main';
 
 type DbType = ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE;
 

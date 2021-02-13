@@ -1,7 +1,8 @@
 import { bytesInInteger } from './common-utils-number';
 import { isDefined } from './common-utils-main';
 
-export const commonUtilsIsInstanceOfArray = (a: any): a is Array<any> => !a || typeof a !== 'object' || a instanceof Array;
+export const commonUtilsIsArray = (a: unknown): a is Array<unknown> => a instanceof Array || Array.isArray(a);
+
 /**
  * Checks whether two array items are equal
  *
@@ -9,6 +10,13 @@ export const commonUtilsIsInstanceOfArray = (a: any): a is Array<any> => !a || t
  * @param {Array<any>} secondArray
  * @returns {boolean}
  */
+
+export const isArraysUnsortedSwallowEqual = <T extends unknown[]>(array1: unknown[], array2: T): array1 is T => {
+  if (array1.length !== array2.length) {
+    return false;
+  }
+  return array1.every((item): boolean => array2.includes(item));
+};
 
 /**
  * Checks whether two arrays have the same items.
@@ -18,35 +26,13 @@ export const commonUtilsIsInstanceOfArray = (a: any): a is Array<any> => !a || t
  * @param {Array<any>} secondArray
  * @returns {boolean}
  */
-export const commonUtilsIsTwoArraysHaveSameItems = (firstArray: Array<any>, secondArray: Array<any>): boolean => {
+export const isArraysSwallowEqual = (firstArray: Array<any>, secondArray: Array<any>): boolean => {
   if (firstArray === secondArray) {
     return true;
   }
-  if (firstArray.length !== secondArray.length) {
-    return false;
-  }
-  return !firstArray.some((firstArrayItem) => {
-    return !secondArray.includes(firstArrayItem);
-  }, true);
+  return isArraysUnsortedSwallowEqual(firstArray, secondArray);
 };
-/**
- * Checks whether two array items are equal and all items in the same order
- *
- * @param {Array<any>} firstArray
- * @param {Array<any>} secondArray
- * @returns {boolean}
- */
-export const commonUtilsIsTwoArraysEquals = (firstArray: Array<any>, secondArray: Array<any>): boolean => {
-  if (firstArray === secondArray) {
-    return true;
-  }
-  if (firstArray.length !== secondArray.length) {
-    return false;
-  }
-  return !firstArray.some((firstArrayItem, firstArrayItemIndex) => {
-    return firstArrayItem !== secondArray[firstArrayItemIndex];
-  }, true);
-};
+
 /**
  * Checks whether two items are arrays and the two array items are equal and all items in the same order and return the second
  * one if equals.
@@ -58,27 +44,46 @@ export const commonUtilsIsTwoArraysEquals = (firstArray: Array<any>, secondArray
  * @param {S} secondArray
  * @returns {S | false}
  */
-export const commonUtilsReturnArrayIfTwoArraysEquals = <S>(firstArray: any, secondArray: S): S extends Array<any> ? S : false =>
-  (commonUtilsIsInstanceOfArray(firstArray) &&
-  commonUtilsIsInstanceOfArray(secondArray) &&
-  commonUtilsIsTwoArraysEquals(firstArray, secondArray)
-    ? secondArray
-    : false) as S extends Array<any> ? S : false;
+export const commonUtilsReturnArrayIfTwoArraysEquals = (firstArray: any, secondArray: any): boolean =>
+  commonUtilsIsArray(firstArray) && commonUtilsIsArray(secondArray) && isArraysSwallowEqual(firstArray, secondArray);
+
+/**
+ * .
+ *
+ * @template S
+ * @template F
+ * @param {F} firstArray
+ * @param {S} secondArray
+ * @returns {S | false}
+ */
+export const commonUtilsReturnArrayIfTwoArraysEqualsOrNotDefinedAndReturnArrayIfEquals = <S>(
+  firstArray: unknown,
+  secondArray: S
+): S extends Array<unknown> ? S : false => {
+  if (!firstArray && !secondArray) {
+    return secondArray as S extends Array<unknown> ? S : false;
+  }
+  if (commonUtilsReturnArrayIfTwoArraysEquals(firstArray, secondArray)) {
+    return secondArray as S extends Array<unknown> ? S : false;
+  }
+  return false as S extends Array<unknown> ? S : false;
+};
 
 /**
  * Checks whether all arrays has the same items in the same order
+ * or undefined or null.
  *
  * @param {...Array<Array<any>>} arrays
  * @returns {boolean}
  */
-export const commonUtilsAreAllArraysEqual = (...arrays: Array<Array<any>>): boolean => {
+export const commonUtilsAreAllArraysEqualOrNotDefined = (...arrays: Array<Array<unknown>>): boolean => {
   if (!arrays.length) {
     return true;
   }
   if (arrays.length === 1) {
-    return commonUtilsIsInstanceOfArray(arrays[0]);
+    return true;
   }
-  return !!arrays.reduce(commonUtilsReturnArrayIfTwoArraysEquals, arrays[0]);
+  return !!arrays.reduce(commonUtilsReturnArrayIfTwoArraysEquals, arrays[0] as Array<unknown> | boolean);
 };
 
 export const commonUtilsArrayOrderByDecComparationFunction = <T>(a: T, b: T): number => Number(b) - Number(a);

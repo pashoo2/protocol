@@ -18,6 +18,8 @@ export function swarmMessagesChannelValidationDescriptionFormatV1<
   T extends TSwarmMessageSerialized,
   DBO extends TSwarmStoreDatabaseOptions<P, T, any>
 >(swarmMessagesChannelDescriptionRawV1Format: ISwarmMessageChannelDescriptionRaw<P, T, any, DBO>): void {
+  assert(swarmMessagesChannelDescriptionRawV1Format, 'Channel description should be defined');
+
   const { admins, dbOptions, messageEncryption } = swarmMessagesChannelDescriptionRawV1Format;
 
   assert(dbOptions, 'Database options for the swarm channel should be defined');

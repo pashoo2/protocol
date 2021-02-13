@@ -76,4 +76,4 @@ export const waitFor = <R>(
 };
 
 export const isSimpleTypeValue = (v: unknown): v is number | string | null | undefined =>
-  !v || typeof v === 'string' || typeof v !== 'number';
+  v === null || (typeof v !== 'object' && (v === undefined || typeof v === 'string' || typeof v === 'number'));

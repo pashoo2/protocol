@@ -17,7 +17,7 @@ export function isNativeFunction(f: Function): boolean {
   );
 }
 
-export function isArrowFunction(fn: (...args: any[]) => any): boolean {
+export function isArrowFunction(fn: (...args: unknown[]) => unknown): boolean {
   if (typeof fn !== 'function') return false;
   if (isNativeFunction(fn)) {
     return false;
@@ -48,4 +48,25 @@ export function createFunctionFromSerializedFunction(functionSerialized: string)
   } catch (err) {
     throw new Error(`Faild parse the function ${functionSerialized}`);
   }
+}
+
+export function isEqualFunctions(fn1: Function, fn2: Function): boolean {
+  if (fn1 === fn2) {
+    return true;
+  }
+  if (fn1.length !== fn2.length) {
+    return false;
+  }
+  if (fn1.name !== fn2.name) {
+    return false;
+  }
+  if (isArrowFunction(fn1) !== isArrowFunction(fn2)) {
+    return false;
+  }
+  if (isNativeFunction(fn1) || isNativeFunction(fn2)) {
+    // native functions which not equal each other not equal at all
+    return false;
+  }
+  // compare them stringified
+  return String(fn1).trim() === String(fn2).trim();
 }

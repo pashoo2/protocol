@@ -17,7 +17,7 @@ import { ifSwarmMessagesDecryptedEqual } from '../../../../../swarm-message/swar
 import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../../../swarm-message-store/types/swarm-message-store.types';
 import { isValidSwarmMessageDecryptedFormat } from '../../../../../swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-swarm-message';
 import { ISwarmMessageInstanceDecrypted } from '../../../../../swarm-message/swarm-message-constructor.types';
-import { commonUtilsIsTwoArraysHaveSameItems } from '../../../../../../utils/common-utils/common-utils-array';
+import { isArraysSwallowEqual } from '../../../../../../utils/common-utils/common-utils-array';
 
 export class SwarmMessagesDatabaseMessagesCachedStore<
     P extends ESwarmStoreConnector,
@@ -184,7 +184,7 @@ export class SwarmMessagesDatabaseMessagesCachedStore<
     if (!linkedStorageKeys) {
       return false;
     }
-    return commonUtilsIsTwoArraysHaveSameItems(Array.from(mainStorageKeys), Array.from(linkedStorageKeys));
+    return isArraysSwallowEqual(Array.from(mainStorageKeys), Array.from(linkedStorageKeys));
   }
 
   protected _validateTempCacheStore(tempCacheStore: ISwarmMessagesDatabaseMessagesCacheStoreTemp<P, DbType, MD, true>): void {

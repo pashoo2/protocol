@@ -1,27 +1,23 @@
-import { ISwarmMessagesDatabaseConnector, ISwarmMessagesDatabaseConnectOptions } from '../swarm-messages-database.types';
+import { ISwarmMessagesDatabaseConnector, ISwarmMessagesDatabaseConnectOptions } from '../../swarm-messages-database.types';
 import {
   ISwarmMessageStore,
   TSwarmMessagesStoreGrantAccessCallback,
   ISwarmMessageStoreAccessControlOptions,
   ISwarmMessageStoreOptionsWithConnectorFabric,
-} from '../../swarm-message-store/types/swarm-message-store.types';
-import {
-  TSwarmMessageSerialized,
-  TSwarmMessageInstance,
-  ISwarmMessageInstanceDecrypted,
-} from '../../swarm-message/swarm-message-constructor.types';
-import { TSwarmStoreDatabaseOptions, TSwarmStoreDatabaseType } from '../../swarm-store-class/swarm-store-class.types';
+} from '../../../swarm-message-store/types/swarm-message-store.types';
+import { TSwarmMessageSerialized, ISwarmMessageInstanceDecrypted } from '../../../swarm-message/swarm-message-constructor.types';
+import { TSwarmStoreDatabaseOptions, TSwarmStoreDatabaseType } from '../../../swarm-store-class/swarm-store-class.types';
 import {
   ISwarmStoreConnectorBasic,
   ISwarmStoreConnector,
   TSwarmStoreConnectorConnectionOptions,
   ISwarmStoreProviderOptions,
   ISwarmStoreOptionsConnectorFabric,
-} from '../../swarm-store-class/swarm-store-class.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+} from '../../../swarm-store-class/swarm-store-class.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { ESwarmStoreConnector } from 'classes/swarm-store-class/swarm-store-class.const';
-import { ISwarmMessagesDatabaseCacheOptions, ISwarmMessagesDatabaseCache } from '../swarm-messages-database.types';
-import { ISwarmMessagesDatabaseMessagesCollector } from '../swarm-messages-database.messages-collector.types';
+import { ISwarmMessagesDatabaseCacheOptions, ISwarmMessagesDatabaseCache } from '../../swarm-messages-database.types';
+import { ISwarmMessagesDatabaseMessagesCollector } from '../../swarm-messages-database.messages-collector.types';
 
 export type TConnectToSwarmMessagesDatabaseReturnType<
   P extends ESwarmStoreConnector,
@@ -186,7 +182,7 @@ export type TConnectToSwarmMessagesDatabaseReturnType<
  * and returns the instance connected to the swarm.
  *
  * @export
- * @interface ISwarmMessagesDatabaseConnectedFabric
+ * @interface ISwarmMessagesDatabaseConnectedFabricMain
  * @template P
  * @template T
  * @template DbType
@@ -205,7 +201,7 @@ export type TConnectToSwarmMessagesDatabaseReturnType<
  * @template SMS
  * @template SMSM
  */
-export interface ISwarmMessagesDatabaseConnectedFabric<
+export interface ISwarmMessagesDatabaseConnectedFabricMain<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
@@ -380,7 +376,7 @@ export interface ISwarmMessagesDatabaseConnectedFabric<
 }
 
 export type TSwarmMessagesDatabaseConnectedFabricOptions<
-  IF extends ISwarmMessagesDatabaseConnectedFabric<
+  IF extends ISwarmMessagesDatabaseConnectedFabricMain<
     any,
     any,
     any,
@@ -402,7 +398,7 @@ export type TSwarmMessagesDatabaseConnectedFabricOptions<
     any,
     any
   >
-> = IF extends ISwarmMessagesDatabaseConnectedFabric<
+> = IF extends ISwarmMessagesDatabaseConnectedFabricMain<
   any,
   any,
   any,

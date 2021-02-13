@@ -1,5 +1,3 @@
-export * from './common-utils';
-
 export * from './common-utils-array';
 
 export * from './common-utils-check-value';
@@ -18,4 +16,4 @@ export * from './common-utils-timer';
 
 export * from './common-utils-url';
 
-export * from '../data-cache-utils';
+export * from './common-utils-equality';

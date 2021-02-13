@@ -1,5 +1,5 @@
-import { TObjectKeys, TDictionary } from 'types/common.types';
-import { isDefined } from './common-utils-main';
+import { TDictionary, TObjectKeys } from 'types/common.types';
+import { isDefined, isSimpleTypeValue } from './common-utils-main';
 
 export const isNotEmptyObject = (o: any): o is object => {
   return !!o && typeof o === 'object' && !!Object.keys(o).length;
@@ -14,6 +14,9 @@ export const getObjectKeys = (o: object): Array<TObjectKeys> =>
 
 export const isSimpleObject = (o: unknown): o is Record<string, unknown> =>
   o !== null && typeof o === 'object' && Object.getPrototypeOf(o) === Object.prototype && o !== Object.prototype;
+
+export const isSimpleTypesObject = (o: unknown): o is Record<string, unknown> =>
+  isSimpleObject(o) && Object.keys(o).every((objectKey) => isSimpleTypeValue(o[objectKey]));
 
 /**
  * extends object with another object if the object
@@ -60,3 +63,22 @@ export function extend<T extends TDictionary<any>, E extends TDictionary<any>>(
   }
   return o;
 }
+
+export const isObjectsSwallowEquals = <T>(simpleValuesObject1: any, simpleValuesObject2: T) => {
+  if (
+    simpleValuesObject1 &&
+    simpleValuesObject2 &&
+    typeof simpleValuesObject1 === 'object' &&
+    typeof simpleValuesObject2 === 'object'
+  ) {
+    const simpleValuesObject1Keys = Object.keys(simpleValuesObject1);
+    const simpleValuesObject2Keys = Object.keys(simpleValuesObject2);
+    if (simpleValuesObject1Keys.length !== simpleValuesObject2Keys.length) {
+      return false;
+    }
+    return simpleValuesObject1Keys.every(
+      (simpleObject1Key) => (simpleValuesObject2 as any)[simpleObject1Key] === simpleValuesObject1[simpleObject1Key]
+    );
+  }
+  return false;
+};
