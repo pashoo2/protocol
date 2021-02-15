@@ -2,31 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e70e70e3-e48a-4dfd-91a6-03818e8691f6" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-fabrics/types/index.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utils/common-utils/common-utils-equality.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.eslintrc" beforeDir="false" afterPath="$PROJECT_DIR$/.eslintrc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/node_modules-local/hypervision-browser" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules-local/hypervision-browser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/swarm-messages-channel-v1-class.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/swarm-messages-channel-v1-class.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-constructor-arguments-fabrics/swarm-messages-channels-list-v1-database-connection-fabric.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-constructor-arguments-fabrics/swarm-messages-channels-list-v1-database-connection-fabric.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-utils/swarm-messages-channel-utils/swarm-messages-channel-validation-utils/swarm-messages-channel-validation-description-utils/swarm-messages-channel-validation-description-format-v1/swarm-messages-channel-validation-description-format-v1.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-utils/swarm-messages-channel-utils/swarm-messages-channel-validation-utils/swarm-messages-channel-validation-description-utils/swarm-messages-channel-validation-description-format-v1/swarm-messages-channel-validation-description-format-v1.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/types/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/types/index.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/types/swarm-messages-channel.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/types/swarm-messages-channel.types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-fabric/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-fabrics/swarm-messages-database-intstance-fabric-main/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-fabric/swarm-messages-database-fabric.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-fabrics/swarm-messages-database-intstance-fabric-main/swarm-messages-database-intstance-fabric-main.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-fabric/swarm-messages-database-fabric.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-fabrics/types/swarm-messages-database-intstance-fabric-main.types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-cached-store/abstractions/swarm-messages-database-messages-cached-store/swarm-messages-database-messages-cached-store.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-cached-store/abstractions/swarm-messages-database-messages-cached-store/swarm-messages-database-messages-cached-store.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/connect-to-swarm-with-dbo/connect-to-swarm-with-dbo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/connect-to-swarm-with-dbo/connect-to-swarm-with-dbo.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/connect-to-swarm/connect-to-swarm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/connect-to-swarm/connect-to-swarm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/common-utils/common-utils-array.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/common-utils/common-utils-array.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/common-utils/common-utils-main.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/common-utils/common-utils-main.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/common-utils/common-utils-objects.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/common-utils/common-utils-objects.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/common-utils/common-utils.functions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/common-utils/common-utils.functions.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/common-utils/common-utils.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/common-utils/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/common-utils/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-memoization.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-memoization.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/types/swarm-messages-channels-list.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/types/swarm-messages-channels-list.types.ts" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -42,110 +22,7 @@
     <SUITE FILE_PATH="coverage/protocol$QueuedEncryptionClassBase_tests_constructor_tests.dat" NAME="QueuedEncryptionClassBase tests.constructor tests Coverage Results" MODIFIED="1581185963023" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="JestJavaScriptTestRunnerCoverage" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="swarm-messages-database-instance-fabric-by-database-options.types.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-fabrics/types/swarm-messages-database-instance-fabric-by-database-options.types.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="378">
-              <caret line="51" column="46" selection-start-line="51" selection-start-column="46" selection-end-line="51" selection-end-column="46" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="swarm-messages-database-intstance-fabric-main.types.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-fabrics/types/swarm-messages-database-intstance-fabric-main.types.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2576">
-              <caret line="203" column="58" selection-start-line="203" selection-start-column="17" selection-end-line="203" selection-end-column="58" />
-              <folding>
-                <element signature="e#0#124#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="common-utils-objects.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/utils/common-utils/common-utils-objects.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="224">
-              <caret line="17" column="13" lean-forward="true" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="32" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="common-utils-main.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/utils/common-utils/common-utils-main.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
-              <caret line="77" column="7" selection-start-line="77" selection-start-column="7" selection-end-line="77" selection-end-column="7" />
-              <folding>
-                <element signature="e#0#52#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="common-utils-array.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/utils/common-utils/common-utils-array.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="171">
-              <caret line="17" column="16" selection-start-line="17" selection-start-column="16" selection-end-line="17" selection-end-column="16" />
-              <folding>
-                <element signature="e#0#55#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="index.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/utils/common-utils/index.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="70">
-              <caret line="5" selection-start-line="5" selection-end-line="5" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="common-utils-equality.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/utils/common-utils/common-utils-equality.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="113" column="2" selection-start-line="113" selection-start-column="2" selection-end-line="113" selection-end-column="2" />
-              <folding>
-                <element signature="e#0#57#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="common-utils-equality.test.ts" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/utils/common-utils/common-utils-equality.test.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="14">
-              <caret line="1" lean-forward="true" selection-start-line="1" selection-end-line="1" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="jasmineAsyncInstall.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/node_modules/jest-jasmine2/build/jasmineAsyncInstall.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="147">
-              <caret line="101" column="36" selection-start-line="101" selection-start-column="36" selection-end-line="101" selection-end-column="36" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="queueRunner.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/node_modules/jest-jasmine2/build/queueRunner.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="147">
-              <caret line="42" column="11" selection-start-line="42" selection-start-column="11" selection-end-line="42" selection-end-column="11" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
@@ -279,7 +156,7 @@
       <path value="$PROJECT_DIR$/package.json" />
     </packageJsonPaths>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="y" value="27" />
     <option name="width" value="960" />
     <option name="height" value="1007" />
@@ -632,14 +509,11 @@
       <workItem from="1612555788147" duration="59000" />
       <workItem from="1613077612711" duration="620000" />
       <workItem from="1613162400492" duration="1942000" />
-      <workItem from="1613234817193" duration="5662000" />
+      <workItem from="1613234817193" duration="8877000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="common-utils-equality_isDeepEqual_Compare_arrays_equal_two_arrays_contains_functions_with_a_same_body_must_be_equal - 2021.02.13 at 22h 27m 46s.xml">
-      <configuration name="common-utils-equality.isDeepEqual.Compare arrays.equal.two arrays contains functions with a same body must be equal" configurationId="JavaScriptTestRunnerJest" />
-    </history-entry>
     <history-entry file="common-utils-equality_isDeepEqual_Compare_arrays_equal_two_arrays_contains_functions_with_a_same_body_must_be_equal - 2021.02.13 at 22h 27m 52s.xml">
       <configuration name="common-utils-equality.isDeepEqual.Compare arrays.equal.two arrays contains functions with a same body must be equal" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
@@ -667,21 +541,23 @@
     <history-entry file="common-utils-equality_isDeepEqual_Compare_arrays_not_equal_arrays_contains_a_non_simple_values_different_must_not_be_equal - 2021.02.13 at 22h 34m 48s.xml">
       <configuration name="common-utils-equality.isDeepEqual.Compare arrays.not equal.arrays contains a non simple values different must not be equal" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
+    <history-entry file="common-utils-equality - 2021.02.13 at 22h 34m 59s.xml">
+      <configuration name="common-utils-equality" configurationId="JavaScriptTestRunnerJest" />
+    </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="129299000" />
+    <option name="totallyTimeSpent" value="132514000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="1600" height="873" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TypeScript" order="8" weight="0.32875144" />
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.13062778" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.35447052" side_tool="true" visible="true" weight="0.260573" />
+      <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.37729868" side_tool="true" visible="true" weight="0.260573" />
       <window_info anchor="bottom" id="Version Control" order="10" sideWeight="0.49926794" weight="0.35096154" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.6455295" visible="true" weight="0.260573" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.62270135" weight="0.260573" />
       <window_info id="npm" order="2" side_tool="true" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="9" weight="0.35607675" />
@@ -750,7 +626,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/utils/common-utils/common-utils-equality.ts</url>
-          <line>83</line>
+          <line>76</line>
           <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="39" />
         </line-breakpoint>
@@ -1003,7 +879,7 @@
     <entry file="file://$PROJECT_DIR$/src/utils/common-utils/common-utils-objects.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="224">
-          <caret line="17" column="13" lean-forward="true" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="32" />
+          <caret line="17" column="13" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="32" />
         </state>
       </provider>
     </entry>
@@ -1029,8 +905,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/utils/common-utils/common-utils-equality.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="113" column="2" selection-start-line="113" selection-start-column="2" selection-end-line="113" selection-end-column="2" />
+        <state relative-caret-position="176">
+          <caret line="102" selection-start-line="102" selection-end-line="102" />
           <folding>
             <element signature="e#0#57#0" expanded="true" />
           </folding>
@@ -1040,7 +916,7 @@
     <entry file="file://$PROJECT_DIR$/src/utils/common-utils/common-utils-equality.test.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="14">
-          <caret line="1" lean-forward="true" selection-start-line="1" selection-end-line="1" />
+          <caret line="1" selection-start-line="1" selection-end-line="1" />
         </state>
       </provider>
     </entry>

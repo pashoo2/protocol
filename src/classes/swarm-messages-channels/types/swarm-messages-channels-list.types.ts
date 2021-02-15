@@ -21,6 +21,8 @@ import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../swarm-store-
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../swarm-messages-database/swarm-messages-database.messages-collector.types';
 import { JSONSchema7 } from 'json-schema';
+import { EventEmitter } from '../../basic-classes/event-emitter-class-base/event-emitter-class-base';
+import { ISwarmMessagesChannelsListEmitter } from './swarm-messages-channel-events.types';
 import {
   ISwarmMessagesDatabaseCacheOptions,
   ISwarmMessagesDatabaseCache,
@@ -174,6 +176,15 @@ export interface ISwarmMessagesChannelsDescriptionsList<
   readonly description: Readonly<ISwarmMessagesChannelsListDescription>;
 
   /**
+   * Event emitter which notifies about operations performed
+   * into the list.
+   *
+   * @type {ISwarmMessagesChannelsListEmitter<P, any>}
+   * @memberof ISwarmMessagesChannelsDescriptionsList
+   */
+  readonly emitter: ISwarmMessagesChannelsListEmitter<P, any>;
+
+  /**
    * Add a new channel byt it's description in the channels list by it's description
    * or update a description of the existing one.
    *
@@ -324,7 +335,7 @@ export interface ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils
   /**
    * This utility will be used by the channelDescriptionSwarmMessageValidator validator
    * and till swarm message with a channel description construction
-   * to get issuer value for the message's body.
+   * to get type value for the message's body.
    *
    * @type {IGetSwarmMessageWithChannelDescriptionIssuerByChannelListDescription<
    *     P,
