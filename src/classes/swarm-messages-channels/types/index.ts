@@ -1,6 +1,6 @@
-export * from './swarm-messages-channel.types';
+export * from './swarm-messages-channel-instance.types';
 
-export * from './swarm-messages-channels-list.types';
+export * from './swarm-messages-channels-list-instance.types';
 
 export * from './swarm-messages-channels-utils.types';
 

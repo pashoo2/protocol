@@ -25,31 +25,31 @@ import { ISwarmMessagesDatabaseMessagesCollector } from 'classes/swarm-messages-
 import {
   ISwarmMessagesChannelConstructorOptionsValidators,
   TSwarmMessagesChannelId,
-} from '../../../types/swarm-messages-channel.types';
+} from '../../../../types/swarm-messages-channel.types';
 import assert from 'assert';
-import { ISwarmMessagesChannelsDescriptionsList } from '../../../types/swarm-messages-channels-list.types';
-import { swarmMessagesChannelValidationDescriptionFormatV1 } from '../../../swarm-messages-channels-utils/swarm-messages-channel-utils/swarm-messages-channel-validation-utils/swarm-messages-channel-validation-description-utils/swarm-messages-channel-validation-description-format-v1/swarm-messages-channel-validation-description-format-v1';
+import { ISwarmMessagesChannelsDescriptionsList } from '../../../../types/swarm-messages-channels-list.types';
+import { swarmMessagesChannelValidationDescriptionFormatV1 } from '../../../../swarm-messages-channels-utils/swarm-messages-channel-utils/swarm-messages-channel-validation-utils/swarm-messages-channel-validation-description-utils/swarm-messages-channel-validation-description-format-v1/swarm-messages-channel-validation-description-format-v1';
 import { validateVerboseBySchemaWithVoidResult } from 'utils/validation-utils/validation-utils';
 import {
   ISwarmMessagesChannelConstructorOptions,
   ISwarmMessageChannelDescriptionRaw,
-} from '../../../types/swarm-messages-channel.types';
-import swarmMessagesChannelDescriptionJSONSchema from '../../../const/validation/swarm-messages-channel/swarm-messages-channel-description/schemas/swarm-message-channel-description-v1-format-schema.json';
+} from '../../../../types/swarm-messages-channel.types';
+import swarmMessagesChannelDescriptionJSONSchema from '../../../../const/validation/swarm-messages-channel/swarm-messages-channel-description/schemas/swarm-message-channel-description-v1-format-schema.json';
 import { JSONSchema7 } from 'json-schema';
 import {
   ISwarmMessageChannelDescriptionWithoutDatabaseOptionsRaw,
   ISwarmMessagesChannelConstructorUtils,
-} from '../../../types/swarm-messages-channel.types';
-import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../../../const/swarm-messages-channels-main.const';
-import { TSwarmMessageUserIdentifierSerialized } from '../../../../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
+} from '../../../../types/swarm-messages-channel.types';
+import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../../../../const/swarm-messages-channels-main.const';
+import { TSwarmMessageUserIdentifierSerialized } from '../../../../../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import { isDeepEqual } from 'utils/common-utils/common-utils-equality';
-import { ISwarmMessagesDatabaseConnector } from '../../../../swarm-messages-database/swarm-messages-database.types';
-import { ISwarmMessagesChannel } from '../../../types/swarm-messages-channel.types';
-import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
-import { TSwarmStoreDatabaseEntityKey } from '../../../../swarm-store-class/swarm-store-class.types';
-import { SwarmMessagesChannelV1ClassChannelsListHandler } from './swarm-messages-channel-v1-class-channels-list-handler';
-import { ISwarmMessagesChannelV1ClassChannelsListHandlerConstructorOptions } from './swarm-messages-channel-v1-class.types';
-import { getOptionsForChannelsListHandlerByContstructorOptions } from './swarm-messages-channel-v1-class.utils';
+import { ISwarmMessagesDatabaseConnector } from '../../../../../swarm-messages-database/swarm-messages-database.types';
+import { ISwarmMessagesChannel } from '../../../../types/swarm-messages-channel.types';
+import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
+import { TSwarmStoreDatabaseEntityKey } from '../../../../../swarm-store-class/swarm-store-class.types';
+import { SwarmMessagesChannelV1ClassChannelsListHandler } from '../subclasses/swarm-messages-channel-v1-class-channels-list-handler';
+import { ISwarmMessagesChannelV1ClassChannelsListHandlerConstructorOptions } from '../types/swarm-messages-channel-v1-class.types';
+import { getOptionsForChannelsListHandlerByContstructorOptions } from '../utils/swarm-messages-channel-v1-class.utils';
 
 /**
  * Constructor of a swarm messages channel.
@@ -309,7 +309,9 @@ export class SwarmMessagesChannelV1Class<
     message: Omit<MD['bdy'], 'iss'>,
     key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined
   ): Promise<void> {
-    const channelDatabase = await this._initializeChannelOrWaitTillInitializingAndReturChannelDatabase();
+    const channelDatabase = await this._getChannelDatabaseOrCreateItAndReturn();
+    if (channelDatabase) {
+    }
   }
 
   protected _validateSwarmMessagesChannelsListInstance(
@@ -558,7 +560,15 @@ export class SwarmMessagesChannelV1Class<
     return channelInitializationPromise;
   }
 
-  protected async _initializeChannelOrWaitTillInitializingAndReturChannelDatabase(): Promise<
+  protected async _createAndInitializeChannelDatabaseByCurrentDescription() {
+    await this.promiseChannelDescriptionUpdate;
+    if (this.markedAsRemoved) {
+      throw new Error('Channel is marked as removed, therefore it is not allowed to send messages through it');
+    }
+    return await this._createChannelInitializationPromiseSetAsCurrentAndReturn();
+  }
+
+  protected async _getChannelDatabaseOrCreateItAndReturn(): Promise<
     ISwarmMessagesDatabaseConnector<
       P,
       T,
@@ -584,11 +594,7 @@ export class SwarmMessagesChannelV1Class<
     if (this.__lazyInitializationPromise) {
       return await this.__lazyInitializationPromise;
     }
-    await this.promiseChannelDescriptionUpdate;
-    if (this.markedAsRemoved) {
-      throw new Error('Channel is marked as removed, therefore it is not allowed to send messages through it');
-    }
-    return await this._createChannelInitializationPromiseSetAsCurrentAndReturn();
+    return await this._createAndInitializeChannelDatabaseByCurrentDescription();
   }
 
   protected _getSwarmMessagesIssuerByChannelDescription(

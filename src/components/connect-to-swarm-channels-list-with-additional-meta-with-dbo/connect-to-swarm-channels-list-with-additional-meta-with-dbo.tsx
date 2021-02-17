@@ -10,9 +10,9 @@ import { ConnectToSwarmWithAdditionalMetaWithDBO } from '../connect-to-swarm-wit
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { getSwarmMessagesChannelsListVersionOneInstanceWithDefaultParameters } from '../../classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-instance-fabrics/swarm-messages-channels-list-v1-instance-fabric-default';
 import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
-import { ISwarmMessageChannelDescriptionRaw } from '../../classes/swarm-messages-channels/types/swarm-messages-channel.types';
+import { ISwarmMessageChannelDescriptionRaw } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-instance.types';
 import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../../classes/swarm-messages-channels/const/swarm-messages-channels-main.const';
-import { TSwrmMessagesChannelsListDBOWithGrantAccess } from '../../classes/swarm-messages-channels/types/swarm-messages-channels-list.types';
+import { TSwrmMessagesChannelsListDBOWithGrantAccess } from '../../classes/swarm-messages-channels/types/swarm-messages-channels-list-instance.types';
 import {
   ISwarmMessagesDatabaseCacheOptions,
   ISwarmMessagesDatabaseCache,

@@ -29,7 +29,7 @@ import {
   ISwarmMessageStoreMessagingRequestWithMetaResult,
 } from '../../swarm-message-store/types/swarm-message-store.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
-import { ISwarmMessagesChannelsDescriptionsList } from './swarm-messages-channels-list.types';
+import { ISwarmMessagesChannelsDescriptionsList } from './swarm-messages-channels-list-instance.types';
 import {
   TSwarmStoreDatabaseEntityKey,
   TSwarmStoreDatabaseIteratorMethodArgument,
@@ -39,6 +39,9 @@ import { JSONSchema7 } from 'json-schema';
 import { ISwarmMessagesChannelDescriptionFormatValidator } from './swarm-messages-channels-validation.types';
 import { ISwarmMessagesChannelNotificationEmitter } from './swarm-messages-channel-events.types';
 import { TCentralAuthorityUserIdentity } from '../../central-authority-class/central-authority-class-types/central-authority-class-types-common';
+import { IQueuedEncrypyionClassBase } from '../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
+import { ISwarmMessageDatabaseEvents } from '../../swarm-messages-database/swarm-messages-database.types';
+import { EventEmitter } from '../../basic-classes/event-emitter-class-base/event-emitter-class-base';
 
 export type TSwarmMessagesChannelId = string;
 
@@ -300,6 +303,14 @@ export interface ISwarmMessagesChannel<
    * @memberof ISwarmMessagesChannel
    */
   readonly emitter: ISwarmMessagesChannelNotificationEmitter<P, DbType>;
+
+  /**
+   * Events which emitted by the channel's swarm messages database.
+   *
+   * @type {EventEmitter<ISwarmMessageDatabaseEvents<P, T, DbType, DBO, MD>>}
+   * @memberof ISwarmMessagesChannel
+   */
+  readonly emitterChannelMessagesDatabase: EventEmitter<ISwarmMessageDatabaseEvents<P, T, DbType, DBO, MD>>;
 
   /**
    * Add swarm message to the channel.
@@ -569,6 +580,14 @@ export interface ISwarmMessagesChannelConstructorUtils<
    * @memberof ISwarmMessagesChannelConstructorUtils
    */
   getDatabaseNameByChannelDescription: ISwarmMessagesChannelDatabaseNameGeneratorByChannelDescription<P, T, DbType, DBO>;
+  /**
+   * Utility that creates an encryption queue instance by a password string.
+   *
+   * @param {string} password
+   * @returns {IQueuedEncrypyionClassBase}
+   * @memberof ISwarmMessagesChannelConstructorUtils
+   */
+  getEncryptionQueueByPasswordString(password: string): IQueuedEncrypyionClassBase;
 }
 
 /**

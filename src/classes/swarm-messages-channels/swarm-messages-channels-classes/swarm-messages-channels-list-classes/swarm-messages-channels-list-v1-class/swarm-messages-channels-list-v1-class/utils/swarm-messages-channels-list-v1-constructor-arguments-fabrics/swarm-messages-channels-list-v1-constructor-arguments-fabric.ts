@@ -15,14 +15,14 @@ import {
 import {
   ISwarmMessagesChannelsDescriptionsListConstructorArguments,
   TSwrmMessagesChannelsListDBOWithGrantAccess,
-} from '../../../../../../types/swarm-messages-channels-list.types';
+} from '../../../../../../types/swarm-messages-channels-list-instance.types';
 import swarmMessageChannelDescriptionFormatSchema from 'classes/swarm-messages-channels/const/validation/swarm-messages-channel/swarm-messages-channel-description/schemas/swarm-message-channel-description-v1-format-schema.json';
 import jsonSchemaForChannelsListDescriptionV1 from 'classes/swarm-messages-channels/const/swarm-messages-channels-list/swarm-messages-channels-list-description/schemas/swarm-messages-channels-list-description-v1-format-schema.json';
 import { validatorOfSwrmMessageWithChannelDescription } from 'classes/swarm-messages-channels/swarm-messages-channels-utils/swarm-messages-channels-list-utils/swarm-messages-channels-list-validators/swarm-messages-channels-list-swarm-messages-validator-v1';
 import { getSwarmMessagesChannelDescriptionFormatValidatorISwarmMessagesChannelDescriptionFormatValidator } from '../../../../../../swarm-messages-channels-utils/swarm-messages-channels-list-utils/swarm-messages-channels-list-validators/swarm-messages-channels-list-description-validator-v1/swarm-messages-channels-list-description-validator-v1';
 import { getValidatorSwarmChannelsListDatabaseOptions } from '../../../../../../swarm-messages-channels-utils/swarm-messages-channels-list-utils/swarm-messages-channels-list-validators/swarm-messages-channels-list-dbo-validator-v1/swarm-messages-channels-list-dbo-validator-v1';
 import { validateGrantAccessCallback } from '../../../../../../../swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-grant-access-callback';
-import { ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric } from '../../../../../../types/swarm-messages-channels-list.types';
+import { ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric } from '../../../../../../types/swarm-messages-channels-list-instance.types';
 
 export function getSwarmMessagesChannelsListVersionOneConstructorOptionsDefault<
   P extends ESwarmStoreConnector,

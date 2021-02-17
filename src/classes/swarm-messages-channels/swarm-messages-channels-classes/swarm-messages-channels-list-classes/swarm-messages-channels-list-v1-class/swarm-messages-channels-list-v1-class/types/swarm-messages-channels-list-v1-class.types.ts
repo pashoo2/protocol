@@ -1,7 +1,7 @@
 import { IValidatorOfSwarmMessageWithChannelDescriptionArgument } from '../../../../../types/swarm-messages-channels-validation.types';
 import { ESwarmStoreConnector } from '../../../../../../swarm-store-class/swarm-store-class.const';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
-import { TSwrmMessagesChannelsListDBOWithGrantAccess } from '../../../../../types/swarm-messages-channels-list.types';
+import { TSwrmMessagesChannelsListDBOWithGrantAccess } from '../../../../../types/swarm-messages-channels-list-instance.types';
 import {
   TSwarmMessageSerialized,
   ISwarmMessageInstanceDecrypted,

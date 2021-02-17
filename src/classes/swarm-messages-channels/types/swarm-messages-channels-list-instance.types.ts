@@ -8,7 +8,7 @@ import {
   ISwarmMessageChannelDescriptionRaw,
   TSwarmMessagesChannelId,
   ISwarmMessagesChannelDescriptionWithMetadata,
-} from './swarm-messages-channel.types';
+} from './swarm-messages-channel-instance.types';
 import { ISwarmMessagesDatabaseConnector } from '../../swarm-messages-database';
 import { ISerializer } from '../../../types/serialization.types';
 import { ISwarmMessagesListDatabaseNameByDescriptionGenerator } from './swarm-messages-channels-utils.types';

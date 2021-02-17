@@ -2,7 +2,7 @@ import { JSONSchema7 } from 'json-schema';
 import { ESwarmStoreConnector } from '../../../../../../swarm-store-class/swarm-store-class.const';
 import { TSwarmMessageSerialized } from '../../../../../../swarm-message/swarm-message-constructor.types';
 import { TSwarmStoreDatabaseOptions } from '../../../../../../swarm-store-class/swarm-store-class.types';
-import { ISwarmMessageChannelDescriptionRaw } from '../../../../../types/swarm-messages-channel.types';
+import { ISwarmMessageChannelDescriptionRaw } from '../../../../../types/swarm-messages-channel-instance.types';
 import { swarmMessagesChannelValidationDescriptionFormatV1 } from './swarm-messages-channel-validation-description-format-v1';
 import { ISwarmMessagesChannelDescriptionFormatValidator } from '../../../../../types/swarm-messages-channels-validation.types';
 

@@ -1,27 +1,27 @@
-import { ISwarmMessagesChannel, ISwarmMessageChannelDescriptionRaw } from '../../../types/swarm-messages-channel.types';
-import { ESwarmStoreConnector } from '../../../../swarm-store-class/swarm-store-class.const';
 import {
-  TSwarmMessageSerialized,
-  ISwarmMessageInstanceDecrypted,
-} from '../../../../swarm-message/swarm-message-constructor.types';
-import {
-  TSwarmStoreDatabaseType,
-  TSwarmStoreDatabaseOptions,
-  ISwarmStoreConnectorBasic,
-  TSwarmStoreConnectorConnectionOptions,
-  ISwarmStoreProviderOptions,
+  ESwarmStoreConnector,
   ISwarmStoreConnector,
+  ISwarmStoreConnectorBasic,
   ISwarmStoreOptionsConnectorFabric,
-} from '../../../../swarm-store-class/swarm-store-class.types';
+  ISwarmStoreProviderOptions,
+  TSwarmStoreConnectorConnectionOptions,
+  TSwarmStoreDatabaseOptions,
+  TSwarmStoreDatabaseType,
+} from '../../../../../swarm-store-class';
+import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from '../../../../../swarm-message';
 import {
-  TSwarmMessagesStoreGrantAccessCallback,
+  ISwarmMessageStore,
   ISwarmMessageStoreAccessControlOptions,
   ISwarmMessageStoreOptionsWithConnectorFabric,
-} from '../../../../swarm-message-store/types/swarm-message-store.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
-import { ISwarmMessageStore } from '../../../../swarm-message-store/types/swarm-message-store.types';
-import { ISwarmMessagesChannelsDescriptionsList } from '../../../types/swarm-messages-channels-list.types';
-import { TCentralAuthorityUserIdentity } from '../../../../central-authority-class/central-authority-class-types/central-authority-class-types-common';
+  TSwarmMessagesStoreGrantAccessCallback,
+} from '../../../../../swarm-message-store';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../swarm-message-encrypted-cache';
+import {
+  ISwarmMessageChannelDescriptionRaw,
+  ISwarmMessagesChannel,
+  ISwarmMessagesChannelsDescriptionsList,
+} from '../../../../types';
+import { TCentralAuthorityUserIdentity } from '../../../../../central-authority-class/central-authority-class-types';
 
 /**
  * Class that is related to the channels description

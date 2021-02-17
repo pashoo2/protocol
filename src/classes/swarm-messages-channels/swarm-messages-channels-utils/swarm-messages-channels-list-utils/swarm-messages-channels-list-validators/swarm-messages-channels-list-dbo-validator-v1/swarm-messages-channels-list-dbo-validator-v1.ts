@@ -1,6 +1,5 @@
-import assert from 'assert';
 import { IValidatorSwarmMessagesStoreGrantAccessCallback } from '../../../../../swarm-message-store/types/swarm-message-store-validation.types';
-import { TSwrmMessagesChannelsListDBOWithGrantAccess } from '../../../../types/swarm-messages-channels-list.types';
+import { TSwrmMessagesChannelsListDBOWithGrantAccess } from '../../../../types/swarm-messages-channels-list-instance.types';
 
 export function validateSwamChannelsListDatabaseOptions(
   dbOptions: unknown

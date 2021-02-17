@@ -8,18 +8,18 @@ import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../
 import {
   TSwrmMessagesChannelsListDBOWithGrantAccess,
   ISwarmMessagesChannelsDescriptionsListConstructorArguments,
-} from '../../../../../types/swarm-messages-channels-list.types';
+} from '../../../../../types/swarm-messages-channels-list-instance.types';
 import { AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp } from './swarm-messages-channels-list-v1-class-options-setup.types';
 import {
   ISwarmMessageChannelDescriptionRaw,
   ISwarmMessagesChannelDescriptionWithMetadata,
-} from '../../../../../types/swarm-messages-channel.types';
+} from '../../../../../types/swarm-messages-channel-instance.types';
 import {
   TSwarmStoreDatabaseEntityKey,
   TSwarmStoreDatabaseEntityAddress,
 } from '../../../../../../swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageConstructorBodyMessage } from '../../../../../../swarm-message/swarm-message-constructor.types';
-import { ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric } from '../../../../../types/swarm-messages-channels-list.types';
+import { ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric } from '../../../../../types/swarm-messages-channels-list-instance.types';
 import {
   ISwarmMessagesChannelsListV1GrantAccessConstantArguments,
   ISwarmMessagesChannelsListV1GrantAccessVariableArguments,

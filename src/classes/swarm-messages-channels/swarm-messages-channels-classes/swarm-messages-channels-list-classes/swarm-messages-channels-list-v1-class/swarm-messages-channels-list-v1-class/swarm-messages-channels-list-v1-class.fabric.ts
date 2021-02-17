@@ -7,21 +7,21 @@ import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../swa
 import {
   TSwrmMessagesChannelsListDBOWithGrantAccess,
   ISwarmMessagesChannelsDescriptionsListConstructorArguments,
-} from '../../../../types/swarm-messages-channels-list.types';
+} from '../../../../types/swarm-messages-channels-list-instance.types';
 import { IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler } from './types/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.types';
 import {
   ISwarmMessagesChannelsDescriptionsList,
   ISwarmMessagesChannelsListDescription,
-} from '../../../../types/swarm-messages-channels-list.types';
+} from '../../../../types/swarm-messages-channels-list-instance.types';
 import { ConstructorType } from '../../../../../../types/helper.types';
 import {
   ISwarmMessageChannelDescriptionRaw,
   TSwarmMessagesChannelId,
   ISwarmMessagesChannelDescriptionWithMetadata,
-} from '../../../../types/swarm-messages-channel.types';
+} from '../../../../types/swarm-messages-channel-instance.types';
 import { TSwarmMessageConstructorBodyMessage } from '../../../../../swarm-message/swarm-message-constructor.types';
 import { TSwarmStoreDatabaseEntityKey } from '../../../../../swarm-store-class/swarm-store-class.types';
-import { ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric } from '../../../../types/swarm-messages-channels-list.types';
+import { ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric } from '../../../../types/swarm-messages-channels-list-instance.types';
 
 export function getSwarmMessagesChannelsListVersionOneClass<
   P extends ESwarmStoreConnector,

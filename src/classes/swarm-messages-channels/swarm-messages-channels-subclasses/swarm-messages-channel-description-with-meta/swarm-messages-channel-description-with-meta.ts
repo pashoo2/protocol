@@ -8,7 +8,7 @@ import {
 import {
   ISwarmMessagesChannelDescriptionWithMetadata,
   ISwarmMessageChannelDescriptionRaw,
-} from '../../types/swarm-messages-channel.types';
+} from '../../types/swarm-messages-channel-instance.types';
 import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../swarm-message-store/types/swarm-message-store.types';
 import { TSwarmStoreDatabaseEntityKey } from '../../../swarm-store-class/swarm-store-class.types';
 

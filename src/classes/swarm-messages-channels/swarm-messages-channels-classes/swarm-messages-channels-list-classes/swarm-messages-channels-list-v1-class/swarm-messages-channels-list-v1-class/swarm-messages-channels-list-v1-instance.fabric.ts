@@ -7,12 +7,12 @@ import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../swa
 import {
   TSwrmMessagesChannelsListDBOWithGrantAccess,
   ISwarmMessagesChannelsDescriptionsListConstructorArguments,
-} from '../../../../types/swarm-messages-channels-list.types';
+} from '../../../../types/swarm-messages-channels-list-instance.types';
 import { IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler } from './types/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.types';
 import {
   ISwarmMessagesChannelsDescriptionsList,
   ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric,
-} from '../../../../types/swarm-messages-channels-list.types';
+} from '../../../../types/swarm-messages-channels-list-instance.types';
 
 import { getSwarmMessagesChannelsListVersionOneClass } from './swarm-messages-channels-list-v1-class.fabric';
 

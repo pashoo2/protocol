@@ -1,8 +1,8 @@
 import { TSwarmMessageConstructorBodyMessage } from '../../swarm-message/swarm-message-constructor.types';
 import { ESwarmStoreConnector } from '../../swarm-store-class';
 import { TSwarmMessageSerialized } from '../../swarm-message';
-import { ISwarmMessageChannelDescriptionRaw } from './swarm-messages-channel.types';
-import { ISwarmMessagesChannelsListDescription } from './swarm-messages-channels-list.types';
+import { ISwarmMessageChannelDescriptionRaw } from './swarm-messages-channel-instance.types';
+import { ISwarmMessagesChannelsListDescription } from './swarm-messages-channels-list-instance.types';
 import { TSwarmStoreDatabaseEntityKey } from '../../swarm-store-class/swarm-store-class.types';
 
 /**

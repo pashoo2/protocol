@@ -12,7 +12,7 @@ import {
   TCRYPTO_UTILS_ENCRYPT_DATA_KEY_CONFIG,
   TCRYPTO_UTILS_DATA_WITH_INITIALIZATION_VECTOR,
 } from './crypto-utils.types';
-import { getKeyOfType, exportKey } from './keys.encryption-utils';
+import { getKeyOfType } from './keys.encryption-utils';
 import {
   convertToTypedArray,
   typedArrayToString,

@@ -2,7 +2,7 @@ import assert from 'assert';
 import { ESwarmStoreConnector } from '../../../../../../swarm-store-class/swarm-store-class.const';
 import { TSwarmMessageSerialized } from '../../../../../../swarm-message/swarm-message-constructor.types';
 import { TSwarmStoreDatabaseOptions } from '../../../../../../swarm-store-class/swarm-store-class.types';
-import { ISwarmMessageChannelDescriptionRaw } from '../../../../../types/swarm-messages-channel.types';
+import { ISwarmMessageChannelDescriptionRaw } from '../../../../../types/swarm-messages-channel-instance.types';
 import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../../../../../const/swarm-messages-channels-main.const';
 import { validateGrantAccessCallbackWithContextSerializable } from '../../../../../../swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-grant-access-callback';
 

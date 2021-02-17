@@ -23,7 +23,7 @@ import {
   resolveOnIdleCallback,
   THROTTLING_UTILS_IDLE_CALLBACK_TIME_REMAINING_MAX_MS,
 } from '../../../../utils/throttling-utils/throttling-utils-idle-callback';
-import { getItemsCount, round } from '../../../../utils/common-utils';
+import { round } from '../../../../utils/common-utils';
 import { TTypedEmitter } from '../../../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 import { getEventEmitterInstance } from '../../../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { ISwarmMessageStoreMessageWithMeta } from '../../../swarm-message-store/types/swarm-message-store.types';

@@ -7,17 +7,17 @@ import {
 import {
   ISwarmMessageChannelDescriptionRaw,
   ISwarmMessagesChannelDescriptionWithMetadata,
-} from '../../../../../../types/swarm-messages-channel.types';
+} from '../../../../../../types/swarm-messages-channel-instance.types';
 import { PromiseResolveType, IPromisePendingRejectable } from '../../../../../../../../types/promise.types';
 import {
   TSwrmMessagesChannelsListDBOWithGrantAccess,
   DBOFULL,
   ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric,
-} from '../../../../../../types/swarm-messages-channels-list.types';
+} from '../../../../../../types/swarm-messages-channels-list-instance.types';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { IValidatorOfSwarmMessageWithChannelDescriptionArgument } from '../../../../../../types/swarm-messages-channels-validation.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseIteratorOption } from '../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
-import { ISwarmMessagesChannelsDescriptionsListConstructorArguments } from '../../../../../../types/swarm-messages-channels-list.types';
+import { ISwarmMessagesChannelsDescriptionsListConstructorArguments } from '../../../../../../types/swarm-messages-channels-list-instance.types';
 import { createImmutableObjectClone } from '../../../../../../../../utils/data-immutability-utils/data-immutability-key-value-structure-utils';
 import { isNonNativeFunction } from '../../../../../../../../utils/common-utils/common-utils.functions';
 import { IAdditionalUtils } from '../../types/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.types';

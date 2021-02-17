@@ -1,4 +1,4 @@
-import { ISwarmMessagesChannelsListDescription } from '../../../../types/swarm-messages-channels-list.types';
+import { ISwarmMessagesChannelsListDescription } from '../../../../types/swarm-messages-channels-list-instance.types';
 import { validateVerboseBySchema } from '../../../../../../utils/validation-utils/validation-utils';
 import { IValidatorOfSwarmMessagesChannelsListDescription } from '../../../../types/swarm-messages-channels-validation.types';
 import { JSONSchema7 } from 'json-schema';

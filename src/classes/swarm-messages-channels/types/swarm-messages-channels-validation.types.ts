@@ -7,7 +7,7 @@ import {
 } from '../../swarm-store-class';
 import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from '../../swarm-message';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
-import { ISwarmMessageChannelDescriptionRaw } from './swarm-messages-channel.types';
+import { ISwarmMessageChannelDescriptionRaw } from './swarm-messages-channel-instance.types';
 import { JSONSchema7 } from 'json-schema';
 import {
   IGetDatabaseKeyForChannelDescription,
@@ -17,7 +17,7 @@ import {
 import {
   ISwarmMessagesChannelsListDescription,
   TSwrmMessagesChannelsListDBOWithGrantAccess,
-} from './swarm-messages-channels-list.types';
+} from './swarm-messages-channels-list-instance.types';
 
 /**
  * Validate the swarm messages channel description format

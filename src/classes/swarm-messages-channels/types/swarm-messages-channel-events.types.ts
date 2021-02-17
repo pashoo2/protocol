@@ -5,7 +5,7 @@ import { TSwarmStoreDatabaseType } from '../../swarm-store-class/swarm-store-cla
 import {
   ISwarmMessageChannelDescriptionWithoutDatabaseOptionsRaw,
   TSwarmMessagesChannelId,
-} from './swarm-messages-channel.types';
+} from './swarm-messages-channel-instance.types';
 
 /**
  * Notification events names emitted by a channels list
@@ -65,3 +65,5 @@ export interface ISwarmMessagesChannelNotificationEmitter<
   P extends ESwarmStoreConnector,
   DbType extends TSwarmStoreDatabaseType<P>
 > extends EventEmitter<ISwarmMessagesChannelsListEvents<P, DbType>> {}
+
+export interface ISwarmMessagesChannelDatabaseConnectorEmitter {}

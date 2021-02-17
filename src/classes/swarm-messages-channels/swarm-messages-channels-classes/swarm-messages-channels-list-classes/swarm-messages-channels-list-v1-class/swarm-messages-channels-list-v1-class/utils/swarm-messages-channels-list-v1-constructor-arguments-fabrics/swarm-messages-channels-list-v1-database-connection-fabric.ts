@@ -13,7 +13,7 @@ import {
   ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric,
   TSwrmMessagesChannelsListDBOWithGrantAccess,
   DBOFULL,
-} from '../../../../../../types/swarm-messages-channels-list.types';
+} from '../../../../../../types/swarm-messages-channels-list-instance.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../../../swarm-message-encrypted-cache';
 import {
   ISwarmMessageStore,

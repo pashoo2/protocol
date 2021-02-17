@@ -1,8 +1,8 @@
-import { ESwarmStoreConnector } from '../../../../swarm-store-class/swarm-store-class.const';
+import { ESwarmStoreConnector } from '../../../../../swarm-store-class/swarm-store-class.const';
 import {
   TSwarmMessageSerialized,
   ISwarmMessageInstanceDecrypted,
-} from '../../../../swarm-message/swarm-message-constructor.types';
+} from '../../../../../swarm-message/swarm-message-constructor.types';
 import {
   TSwarmStoreDatabaseType,
   TSwarmStoreDatabaseOptions,
@@ -11,22 +11,22 @@ import {
   ISwarmStoreProviderOptions,
   ISwarmStoreConnector,
   ISwarmStoreOptionsConnectorFabric,
-} from '../../../../swarm-store-class/swarm-store-class.types';
+} from '../../../../../swarm-store-class/swarm-store-class.types';
 import {
   TSwarmMessagesStoreGrantAccessCallback,
   ISwarmMessageStoreAccessControlOptions,
   ISwarmMessageStoreOptionsWithConnectorFabric,
-} from '../../../../swarm-message-store/types/swarm-message-store.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
-import { ISwarmMessageStore } from '../../../../swarm-message-store/types/swarm-message-store.types';
-import { ISwarmMessagesDatabaseMessagesCollector } from '../../../../swarm-messages-database/swarm-messages-database.messages-collector.types';
-import { ISwarmMessagesChannelConstructorOptions } from '../../../types/swarm-messages-channel.types';
-import { ISwarmMessagesChannelV1ClassChannelsListHandlerConstructorOptions } from './swarm-messages-channel-v1-class.types';
+} from '../../../../../swarm-message-store/types/swarm-message-store.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageStore } from '../../../../../swarm-message-store/types/swarm-message-store.types';
+import { ISwarmMessagesDatabaseMessagesCollector } from '../../../../../swarm-messages-database/swarm-messages-database.messages-collector.types';
+import { ISwarmMessagesChannelConstructorOptions } from '../../../../types/swarm-messages-channel.types';
+import { ISwarmMessagesChannelV1ClassChannelsListHandlerConstructorOptions } from '../types/swarm-messages-channel-v1-class.types';
 import {
   ISwarmMessagesDatabaseCacheOptions,
   ISwarmMessagesDatabaseCache,
   ISwarmMessagesDatabaseConnectOptions,
-} from '../../../../swarm-messages-database/swarm-messages-database.types';
+} from '../../../../../swarm-messages-database/swarm-messages-database.types';
 
 export function getOptionsForChannelsListHandlerByContstructorOptions<
   P extends ESwarmStoreConnector,

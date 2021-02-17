@@ -16,21 +16,21 @@ import {
   TSwarmMessagesStoreGrantAccessCallback,
 } from 'classes/swarm-message-store/types/swarm-message-store.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from 'classes/swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
-import { TSwarmMessagesChannelId } from '../../../types/swarm-messages-channel.types';
-import { ISwarmMessagesChannelsDescriptionsList } from '../../../types/swarm-messages-channels-list.types';
-import { ISwarmMessageChannelDescriptionRaw } from '../../../types/swarm-messages-channel.types';
+import { TSwarmMessagesChannelId } from '../../../../types/swarm-messages-channel.types';
+import { ISwarmMessagesChannelsDescriptionsList } from '../../../../types/swarm-messages-channels-list.types';
+import { ISwarmMessageChannelDescriptionRaw } from '../../../../types/swarm-messages-channel.types';
 import { isDeepEqual } from 'utils/common-utils/common-utils-equality';
-import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
+import { getEventEmitterInstance } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
 import {
   ISwarmMessagesChannelV1ClassChannelsListHandler,
   ISwarmMessagesChannelV1ClassChannelsListHandlerConstructorOptions,
-} from './swarm-messages-channel-v1-class.types';
-import { ESwarmMessagesChannelsListEventName } from '../../../types/swarm-messages-channel-events.types';
-import { TCentralAuthorityUserIdentity } from '../../../../central-authority-class/central-authority-class-types/central-authority-class-types-common';
+} from '../types/swarm-messages-channel-v1-class.types';
+import { ESwarmMessagesChannelsListEventName } from '../../../../types/swarm-messages-channel-events.types';
+import { TCentralAuthorityUserIdentity } from '../../../../../central-authority-class/central-authority-class-types/central-authority-class-types-common';
 import {
   ISwarmMessagesChannelNotificationEmitter,
   ISwarmMessagesChannelsListEvents,
-} from '../../../types/swarm-messages-channel-events.types';
+} from '../../../../types/swarm-messages-channel-events.types';
 
 export class SwarmMessagesChannelV1ClassChannelsListHandler<
   P extends ESwarmStoreConnector,
@@ -81,7 +81,7 @@ export class SwarmMessagesChannelV1ClassChannelsListHandler<
       MD
     > {
   public get emitter(): ISwarmMessagesChannelNotificationEmitter<P, DbType> {
-    return this.emitter;
+    return this.__emitter;
   }
 
   public get id(): TSwarmMessagesChannelId {
@@ -104,7 +104,7 @@ export class SwarmMessagesChannelV1ClassChannelsListHandler<
     return this.__actualChannelDescription.admins.includes(this.__currentUserId);
   }
 
-  private __emitter = new EventEmitter<ISwarmMessagesChannelsListEvents<P, DbType>>();
+  private __emitter = getEventEmitterInstance<ISwarmMessagesChannelsListEvents<P, DbType>>();
 
   /**
    * Asynchronous process of adding this channel's description
@@ -209,7 +209,7 @@ export class SwarmMessagesChannelV1ClassChannelsListHandler<
     id: TSwarmMessagesChannelId,
     swarmMessagesChannelsListInstance: ISwarmMessagesChannelsDescriptionsList<P, T, MD>
   ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO> | undefined> {
-    return await swarmMessagesChannelsListInstance.getChannelDescriptionById(id);
+    return swarmMessagesChannelsListInstance.getChannelDescriptionById(id);
   }
 
   /**
