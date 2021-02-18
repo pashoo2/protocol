@@ -184,6 +184,13 @@ export interface ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions<
   >
 > {
   /**
+   * Database's opitons which must be created.
+   *
+   * @type {DBO}
+   * @memberof ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions
+   */
+  databaseOptions: DBO;
+  /**
    * Encryption key which will be used for encryption and decription
    * of all messages passed through the channel for messages channel
    * which uses a passwor encryption type.

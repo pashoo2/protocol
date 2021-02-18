@@ -19,3 +19,24 @@ export interface IPromisePendingRejectableCreator<T, E extends MaybeError> {
 }
 
 export type PromiseResolveType<P extends Promise<unknown>> = P extends Promise<infer T> ? T : never;
+
+/**
+ * Promise which can be cancelled from outside
+ * of it.
+ *
+ * @export
+ * @interface IPromiseCancellable
+ * @extends {(Promise<T | E>)}
+ * @template T
+ * @template E
+ */
+export interface IPromiseCancellable<T, E extends Error = Error> extends Promise<T | E> {
+  /**
+   * Cancells the promise with error provided
+   * or a default error.
+   *
+   * @param {E} error - error with which the promise will be resolved
+   * @memberof IPromiseCancellable
+   */
+  cancel(error?: E): void;
+}

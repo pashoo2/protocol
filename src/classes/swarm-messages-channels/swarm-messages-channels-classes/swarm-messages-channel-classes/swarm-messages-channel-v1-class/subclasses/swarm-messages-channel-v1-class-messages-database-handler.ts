@@ -38,6 +38,11 @@ import {
 import { getEventEmitterInstance, EventEmitter } from 'classes/basic-classes/event-emitter-class-base';
 import { ISwarmMessageDatabaseEvents } from '../../../../../swarm-messages-database/swarm-messages-database.types';
 import {
+  createRejectablePromiseByNativePromise,
+  createCancellablePromiseByNativePromise,
+} from '../../../../../../utils/common-utils/commom-utils.promies';
+import { IPromisePendingRejectable, IPromiseCancellable } from '../../../../../../types/promise.types';
+import {
   stopForwardEvents,
   forwardEvents,
 } from '../../../../../basic-classes/event-emitter-class-base/event-emitter-class-with-forwarding.utils';
@@ -225,7 +230,25 @@ export class SwarmMessagesChannelV1DatabaseHandler<
 
   private readonly __emitter = getEventEmitterInstance<ISwarmMessageDatabaseEvents<P, T, DbType, DBO, MD>>();
 
+  /**
+   * Database has been dropped at all
+   * and can't be used anymore.
+   *
+   * @private
+   * @type {boolean}
+   * @memberof SwarmMessagesChannelV1DatabaseHandler
+   */
   private __hasDatabaseBeenDropped: boolean = false;
+
+  /**
+   * Promise which represents a previuos connection
+   * to a swarm messages database.
+   *
+   * @private
+   * @type {Promise<void>}
+   * @memberof SwarmMessagesChannelV1DatabaseHandler
+   */
+  private __swarmMessagesDatabaseConnectorConnectingPromise: IPromiseCancellable<void, Error> | undefined;
 
   constructor(
     private ___options: ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions<
@@ -251,6 +274,9 @@ export class SwarmMessagesChannelV1DatabaseHandler<
     >
   ) {
     this._validateConstructorOptions(___options);
+    this.__swarmMessagesDatabaseConnectorConnectingPromise = this._createNewActualDatabaseConnectorAndSetCancellablePromise(
+      ___options.databaseOptions
+    );
   }
 
   /**
@@ -285,23 +311,29 @@ export class SwarmMessagesChannelV1DatabaseHandler<
    * @memberof ISwarmMessagesChannelV1DatabaseHandler
    */
   public async restartDatabaseConnectorInstanceWithDbOptions(databaseOptions: DBO): Promise<void> {
-    this._validateDatabseIsNotDropped();
-
-    const actualSwarmMessagesDatabaseConnector = this.__actualSwarmMessagesDatabaseConnector;
-
-    if (
-      actualSwarmMessagesDatabaseConnector &&
-      this.__actualSwarmMessagesDatabaseOptions &&
-      isDeepEqual(databaseOptions, this.__actualSwarmMessagesDatabaseOptions)
-    ) {
-      return;
+    this._makeSureDatabseIsNotDropped();
+    if (this._whetherActualDatabaseConnectorHaveTheSameOptions(databaseOptions)) {
+      return await this._waitPreviousDatabaseCreationPromise();
     }
-    if (actualSwarmMessagesDatabaseConnector) {
-      // TODO - maybe it should be wrapped in try catch block to make it dont afftect creation of a new connector
-      await this._closeAndUnsetActualInstanceOfDatabaseConnector(actualSwarmMessagesDatabaseConnector);
+
+    let errorOccuredOnClosingPreviousDatabaseConenctor: Error | undefined;
+
+    try {
+      this._unsetActualSwarmMessagesDatabaseOptions();
+      this._cancelPreviousDatabaseCreationPromise();
+      await this._closeAndUnsetActualInstanceOfDatabaseConnector();
+    } catch (err) {
+      errorOccuredOnClosingPreviousDatabaseConenctor = new Error(
+        `Failed to close the previous instance of database connector. ${err.message}`
+      );
     }
-    await this._createAndSetNewActualSwarmMessagesDatabaseConenctor(databaseOptions);
+    await this._createNewActualDatabaseConnectorAndSetCancellablePromise(databaseOptions);
+    if (errorOccuredOnClosingPreviousDatabaseConenctor) {
+      throw errorOccuredOnClosingPreviousDatabaseConenctor;
+    }
   }
+
+  public async addMessage() {}
 
   protected _validateConstructorOptions(
     options: ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions<
@@ -342,9 +374,13 @@ export class SwarmMessagesChannelV1DatabaseHandler<
       typeof options.swarmMessagesDatabaseConnectorInstanceByDBOFabric === 'function',
       'Database connector instance fabric must be provided in the constructor options swarmMessagesDatabaseConnectorInstanceByDBOFabric'
     );
+    assert(options.databaseOptions, 'A database options must be provided for creation of the database');
+    assert(typeof options.databaseOptions === 'object', 'A database options must be an object');
   }
 
-  protected _validateDatabseIsNotDropped(): void {
+  protected _waitForTheFirstDatabaseConnection() {}
+
+  protected _makeSureDatabseIsNotDropped(): void {
     if (this.__hasDatabaseBeenDropped) {
       throw new Error(
         'Database for the channel has been dropped, therefore the swam messages channel cannot be used for performing any operations'
@@ -354,6 +390,19 @@ export class SwarmMessagesChannelV1DatabaseHandler<
 
   protected _setDatabaseHasBeenDropped(): void {
     this.__hasDatabaseBeenDropped = true;
+  }
+
+  protected _whetherActualDatabaseConnectorHaveTheSameOptions(databaseOptions: DBO): boolean {
+    const actualSwarmMessagesDatabaseConnector = this.__actualSwarmMessagesDatabaseConnector;
+
+    if (
+      actualSwarmMessagesDatabaseConnector &&
+      this.__actualSwarmMessagesDatabaseOptions &&
+      isDeepEqual(databaseOptions, this.__actualSwarmMessagesDatabaseOptions)
+    ) {
+      return false;
+    }
+    return true;
   }
 
   protected _getActualSwarmMessagesDatabaseConnector(): ISwarmMessagesDatabaseConnector<
@@ -410,8 +459,16 @@ export class SwarmMessagesChannelV1DatabaseHandler<
     this.__actualSwarmMessagesDatabaseConnector = databaseConenctor;
   }
 
+  protected _setDatabaseActualOptions(databaseOptions: DBO): void {
+    this.__actualSwarmMessagesDatabaseOptions = databaseOptions;
+  }
+
   protected _unsetActualSwarmMessagesDatabaseConnector(): void {
     this.__actualSwarmMessagesDatabaseConnector = undefined;
+  }
+
+  protected _unsetActualSwarmMessagesDatabaseOptions() {
+    this.__actualSwarmMessagesDatabaseOptions = undefined;
   }
 
   protected async _createNewSwarmMessagesDatabaseConenctorByDatabaseOptions(
@@ -443,11 +500,37 @@ export class SwarmMessagesChannelV1DatabaseHandler<
   }
 
   protected async _createAndSetNewActualSwarmMessagesDatabaseConenctor(databaseOptions: DBO): Promise<void> {
+    this._setDatabaseActualOptions(databaseOptions);
     const newDatabaseConnector = await this._createNewSwarmMessagesDatabaseConenctorByDatabaseOptions(databaseOptions);
 
     this._setActualSwarmMessagesDatabaseConnector(newDatabaseConnector);
     this._startForwardingDatabaseConnectorEvents(newDatabaseConnector);
     this._startListeningDatabaseConnectorEvents(newDatabaseConnector);
+  }
+
+  protected _cancelPreviousDatabaseCreationPromise(): void {
+    this.__swarmMessagesDatabaseConnectorConnectingPromise?.cancel();
+    this._unsetPreviousDatabaseCreationPromise();
+  }
+
+  protected _unsetPreviousDatabaseCreationPromise(): void {
+    this.__swarmMessagesDatabaseConnectorConnectingPromise = undefined;
+  }
+
+  protected async _waitPreviousDatabaseCreationPromise(): Promise<void> {
+    const result = await this.__swarmMessagesDatabaseConnectorConnectingPromise;
+    if (result instanceof Error) {
+      throw result;
+    }
+  }
+
+  protected _createNewActualDatabaseConnectorAndSetCancellablePromise(databaseOptions: DBO): IPromiseCancellable<void, Error> {
+    const creationOfNewDatabaseConnectorInstanceCancellablePromise = createCancellablePromiseByNativePromise(
+      this._createAndSetNewActualSwarmMessagesDatabaseConenctor(databaseOptions)
+    );
+
+    this.__swarmMessagesDatabaseConnectorConnectingPromise = creationOfNewDatabaseConnectorInstanceCancellablePromise;
+    return creationOfNewDatabaseConnectorInstanceCancellablePromise;
   }
 
   protected _startForwardingDatabaseConnectorEvents(
@@ -478,15 +561,11 @@ export class SwarmMessagesChannelV1DatabaseHandler<
 
   protected _handleDatabaseConnectorDatabaseClosed = async (): Promise<void> => {
     console.log('Database for the channel was suddenly closed');
-    // TODO - listen for the close event in the Channel class itself
-    // and set channel as inactive
     await this._close();
   };
 
   protected _handleDatabaseConnectorDatabaseDropped = async (): Promise<void> => {
     console.log('Database for the channel was suddenly dropped');
-    // TODO - listen for the close event in the Channel class itself
-    // and set channel as inactive
     this._setDatabaseHasBeenDropped();
     await this._close();
   };
@@ -601,40 +680,19 @@ export class SwarmMessagesChannelV1DatabaseHandler<
     stopForwardEvents(swarmMessagesDatabaseConnector.emitter, this.__emitter);
   }
 
-  protected async _closeAndUnsetActualInstanceOfDatabaseConnector(
-    actualSwarmMessagesDatabaseConnector: ISwarmMessagesDatabaseConnector<
-      P,
-      T,
-      DbType,
-      DBO,
-      ConnectorBasic,
-      CO,
-      PO,
-      ConnectorMain,
-      CFO,
-      GAC,
-      MCF,
-      ACO,
-      O,
-      SMS,
-      MD,
-      SMSM,
-      DCO,
-      DCCRT,
-      OPT
-    >
-  ): Promise<void> {
-    this._stopForwardingDatabaseConnectorEvents(actualSwarmMessagesDatabaseConnector);
-    await actualSwarmMessagesDatabaseConnector.close();
-    if (this.__actualSwarmMessagesDatabaseConnector === actualSwarmMessagesDatabaseConnector) {
+  protected async _closeAndUnsetActualInstanceOfDatabaseConnector(): Promise<void> {
+    const actualSwarmMessagesDatabaseConnector = this.__actualSwarmMessagesDatabaseConnector;
+
+    if (actualSwarmMessagesDatabaseConnector) {
       this._unsetActualSwarmMessagesDatabaseConnector();
+      this._stopForwardingDatabaseConnectorEvents(actualSwarmMessagesDatabaseConnector);
+      await actualSwarmMessagesDatabaseConnector.close();
     }
   }
 
   protected async _close(): Promise<void> {
-    const actualDatabseConnector = this.__actualSwarmMessagesDatabaseConnector;
-    if (actualDatabseConnector) {
-      await this._closeAndUnsetActualInstanceOfDatabaseConnector(actualDatabseConnector);
-    }
+    await this._closeAndUnsetActualInstanceOfDatabaseConnector();
+    this._cancelPreviousDatabaseCreationPromise();
+    this._unsetActualSwarmMessagesDatabaseOptions();
   }
 }

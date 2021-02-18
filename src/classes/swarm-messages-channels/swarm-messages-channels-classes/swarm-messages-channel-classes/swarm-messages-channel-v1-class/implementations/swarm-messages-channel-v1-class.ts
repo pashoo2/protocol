@@ -219,6 +219,11 @@ export class SwarmMessagesChannelV1Class<
     return this.__options.utils;
   }
 
+  // TODO - !!!! handle database close events coming from a messages database handler instance.
+
+  // TODO - listen for the close event in the Channel class itself
+  // and set channel as inactive
+
   protected get _actualSwarmMessagesIssuer(): string {
     const { getSwarmMessageIssuerByChannelDescription } = this._constructorOptionsUtils;
     const messagesIssuer = getSwarmMessageIssuerByChannelDescription(this.actualChannelDescription);

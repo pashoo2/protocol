@@ -1,4 +1,5 @@
 import { MaybeError } from 'types/common.types';
+import { IPromiseCancellable } from '../../types/promise.types';
 import {
   IPromisePendingRejectable,
   IPromisePending,
@@ -73,7 +74,7 @@ export const resolvePromisePending = <T>(promisePending: IPromisePending<T>, val
 };
 
 /**
- * Creates promise cancellable by a native promise.
+ * By a native promise it creates a rejectable promise.
  *
  * @export
  * @template T
@@ -81,11 +82,30 @@ export const resolvePromisePending = <T>(promisePending: IPromisePending<T>, val
  * @param {Promise<T>} nativePromise
  * @returns {IPromisePendingRejectable<T, E>} - promise which flow can be stopped
  */
-export function createCancellablePromiseByNativePromise<T, E extends MaybeError = void>(
+export function createRejectablePromiseByNativePromise<T, E extends MaybeError = void>(
   nativePromise: Promise<T>
 ): IPromisePendingRejectable<T, E> {
   const rejectablePromise = createPromisePendingRejectable<T, E>();
   const promiseRace = Promise.race([nativePromise, rejectablePromise]);
   (promiseRace as IPromisePendingRejectable<T, E>).reject = rejectablePromise.reject;
   return promiseRace as IPromisePendingRejectable<T, E>;
+}
+
+/**
+ * By a native promise it creates a cancellable promise.
+ *
+ * @export
+ * @template T
+ * @template E
+ * @param {Promise<T>} nativePromise
+ * @returns {IPromiseCancellable<T, E>} - promise which flow can be stopped
+ */
+export function createCancellablePromiseByNativePromise<T, E extends Error = Error>(
+  nativePromise: Promise<T>
+): IPromiseCancellable<T, E> {
+  const rejectablePromise = createPromisePendingRejectable<E, any>();
+  const promiseRace = Promise.race([nativePromise, rejectablePromise]);
+  (promiseRace as IPromiseCancellable<T, E>).cancel = (err: E | Error = new Error('The promise is cancelled')) =>
+    rejectablePromise.resolve;
+  return promiseRace as IPromiseCancellable<T, E>;
 }

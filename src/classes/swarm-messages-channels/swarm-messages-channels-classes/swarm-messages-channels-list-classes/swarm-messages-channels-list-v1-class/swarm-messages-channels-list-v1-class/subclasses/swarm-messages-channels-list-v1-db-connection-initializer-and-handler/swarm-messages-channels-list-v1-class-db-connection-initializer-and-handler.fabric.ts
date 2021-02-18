@@ -35,7 +35,7 @@ import {
 import { TSwarmStoreDatabaseIteratorMethodArgument } from '../../../../../../../swarm-store-class/swarm-store-class.types';
 import { isDefined } from '../../../../../../../../utils/common-utils/common-utils-main';
 import { SwarmMessagesChannelDescriptionWithMeta } from '../../../../../../swarm-messages-channels-subclasses/swarm-messages-channel-description-with-meta/swarm-messages-channel-description-with-meta';
-import { createCancellablePromiseByNativePromise } from '../../../../../../../../utils/common-utils/commom-utils.promies';
+import { createRejectablePromiseByNativePromise } from '../../../../../../../../utils/common-utils/commom-utils.promies';
 import {
   ISwarmMessageStoreMessagingRequestWithMetaResult,
   ISwarmMessageStoreDeleteMessageArg,
@@ -108,7 +108,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       super(constructorArguments);
       this._validateAdditionalUtils(additionalUtils);
       this.__additionalUtils = createImmutableObjectClone(additionalUtils);
-      this._swarmMessagesKeyValueDatabaseConnectionPending = createCancellablePromiseByNativePromise(
+      this._swarmMessagesKeyValueDatabaseConnectionPending = createRejectablePromiseByNativePromise(
         this._createActiveConnectionToChannelsListDatabase()
       );
       this._waitTillDatabaseWillBeOpened();
