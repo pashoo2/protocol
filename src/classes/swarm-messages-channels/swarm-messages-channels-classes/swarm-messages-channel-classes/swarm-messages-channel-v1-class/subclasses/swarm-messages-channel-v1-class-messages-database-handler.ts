@@ -37,11 +37,10 @@ import {
 } from '../types/swarm-messages-channel-v1-class-messages-database-handler.types';
 import { getEventEmitterInstance, EventEmitter } from 'classes/basic-classes/event-emitter-class-base';
 import { ISwarmMessageDatabaseEvents } from '../../../../../swarm-messages-database/swarm-messages-database.types';
-import {
-  createRejectablePromiseByNativePromise,
-  createCancellablePromiseByNativePromise,
-} from '../../../../../../utils/common-utils/commom-utils.promies';
-import { IPromisePendingRejectable, IPromiseCancellable } from '../../../../../../types/promise.types';
+import { createCancellablePromiseByNativePromise } from '../../../../../../utils/common-utils/commom-utils.promies';
+import { IPromiseCancellable } from '../../../../../../types/promise.types';
+import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
+import { TSwarmStoreDatabaseEntityKey } from '../../../../../swarm-store-class/swarm-store-class.types';
 import {
   stopForwardEvents,
   forwardEvents,
@@ -143,7 +142,11 @@ export class SwarmMessagesChannelV1DatabaseHandler<
       ACO,
       O,
       SMS,
-      MD
+      MD,
+      SMSM,
+      DCO,
+      DCCRT,
+      OPT
     > {
   /**
    * Emitter that emits events related to the database connector.
@@ -154,6 +157,54 @@ export class SwarmMessagesChannelV1DatabaseHandler<
   public get emitter(): EventEmitter<ISwarmMessageDatabaseEvents<P, T, DbType, DBO, MD>> {
     return this.__emitter;
   }
+
+  /**
+   * An instance which used for encryption of swarm messages body.
+   *
+   * @readonly
+   * @protected
+   * @type {(IQueuedEncrypyionClassBase | undefined)}
+   * @memberof SwarmMessagesChannelV1DatabaseHandler
+   */
+  protected get _messagesEncryptionQueueOrUndefined(): IQueuedEncrypyionClassBase | undefined {
+    return this.___options.messagesEncryptionQueue;
+  }
+
+  protected get _isPasswordEncryptedChannel(): boolean {
+    return this.___options.messageEncryptionType === SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD;
+  }
+
+  /**
+   * A database options used to construct the
+   * "actualSwarmMessagesDatabaseConnector" instance.
+   *
+   * @private
+   * @type {DBO}
+   * @memberof SwarmMessagesChannelV1DatabaseHandler
+   */
+  private __actualSwarmMessagesDatabaseOptions: DBO | undefined;
+
+  private readonly __emitter = getEventEmitterInstance<ISwarmMessageDatabaseEvents<P, T, DbType, DBO, MD>>();
+
+  /**
+   * Database has been dropped at all
+   * and can't be used anymore.
+   *
+   * @private
+   * @type {boolean}
+   * @memberof SwarmMessagesChannelV1DatabaseHandler
+   */
+  private __hasDatabaseBeenDropped: boolean = false;
+
+  /**
+   * Promise which represents a previuos connection
+   * to a swarm messages database.
+   *
+   * @private
+   * @type {Promise<void>}
+   * @memberof SwarmMessagesChannelV1DatabaseHandler
+   */
+  private __swarmMessagesDatabaseConnectorConnectingPromise: IPromiseCancellable<void, Error> | undefined;
 
   /**
    * Connector instance to use.
@@ -205,50 +256,6 @@ export class SwarmMessagesChannelV1DatabaseHandler<
         OPT
       >
     | undefined;
-
-  /**
-   * An instance which used for encryption of swarm messages body.
-   *
-   * @readonly
-   * @protected
-   * @type {(IQueuedEncrypyionClassBase | undefined)}
-   * @memberof SwarmMessagesChannelV1DatabaseHandler
-   */
-  protected get _messagesEncryptionQueueOrUndefined(): IQueuedEncrypyionClassBase | undefined {
-    return this.___options.messagesEncryptionQueue;
-  }
-
-  /**
-   * A database options used to construct the
-   * "actualSwarmMessagesDatabaseConnector" instance.
-   *
-   * @private
-   * @type {DBO}
-   * @memberof SwarmMessagesChannelV1DatabaseHandler
-   */
-  private __actualSwarmMessagesDatabaseOptions: DBO | undefined;
-
-  private readonly __emitter = getEventEmitterInstance<ISwarmMessageDatabaseEvents<P, T, DbType, DBO, MD>>();
-
-  /**
-   * Database has been dropped at all
-   * and can't be used anymore.
-   *
-   * @private
-   * @type {boolean}
-   * @memberof SwarmMessagesChannelV1DatabaseHandler
-   */
-  private __hasDatabaseBeenDropped: boolean = false;
-
-  /**
-   * Promise which represents a previuos connection
-   * to a swarm messages database.
-   *
-   * @private
-   * @type {Promise<void>}
-   * @memberof SwarmMessagesChannelV1DatabaseHandler
-   */
-  private __swarmMessagesDatabaseConnectorConnectingPromise: IPromiseCancellable<void, Error> | undefined;
 
   constructor(
     private ___options: ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions<
@@ -313,7 +320,7 @@ export class SwarmMessagesChannelV1DatabaseHandler<
   public async restartDatabaseConnectorInstanceWithDbOptions(databaseOptions: DBO): Promise<void> {
     this._makeSureDatabseIsNotDropped();
     if (this._whetherActualDatabaseConnectorHaveTheSameOptions(databaseOptions)) {
-      return await this._waitPreviousDatabaseCreationPromise();
+      return await this._waitDatabaseCreationPromise();
     }
 
     let errorOccuredOnClosingPreviousDatabaseConenctor: Error | undefined;
@@ -333,7 +340,14 @@ export class SwarmMessagesChannelV1DatabaseHandler<
     }
   }
 
-  public async addMessage() {}
+  async addMessage(
+    message: Omit<MD['bdy'], 'iss'>,
+    key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined
+  ): Promise<void> {
+    const databaseConnector = await this._getActiveDatabaseConnector();
+    const swarmMessageBody = await this._prepareSwarmMessageBodyBeforeSending(message);
+    await databaseConnector.addMessage(swarmMessageBody, key);
+  }
 
   protected _validateConstructorOptions(
     options: ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions<
@@ -377,8 +391,6 @@ export class SwarmMessagesChannelV1DatabaseHandler<
     assert(options.databaseOptions, 'A database options must be provided for creation of the database');
     assert(typeof options.databaseOptions === 'object', 'A database options must be an object');
   }
-
-  protected _waitForTheFirstDatabaseConnection() {}
 
   protected _makeSureDatabseIsNotDropped(): void {
     if (this.__hasDatabaseBeenDropped) {
@@ -499,8 +511,9 @@ export class SwarmMessagesChannelV1DatabaseHandler<
     return await this.___options.swarmMessagesDatabaseConnectorInstanceByDBOFabric(databaseOptions);
   }
 
-  protected async _createAndSetNewActualSwarmMessagesDatabaseConenctor(databaseOptions: DBO): Promise<void> {
+  protected async _createAndHandleActualSwarmMessagesDatabaseConenctor(databaseOptions: DBO): Promise<void> {
     this._setDatabaseActualOptions(databaseOptions);
+
     const newDatabaseConnector = await this._createNewSwarmMessagesDatabaseConenctorByDatabaseOptions(databaseOptions);
 
     this._setActualSwarmMessagesDatabaseConnector(newDatabaseConnector);
@@ -517,7 +530,7 @@ export class SwarmMessagesChannelV1DatabaseHandler<
     this.__swarmMessagesDatabaseConnectorConnectingPromise = undefined;
   }
 
-  protected async _waitPreviousDatabaseCreationPromise(): Promise<void> {
+  protected async _waitDatabaseCreationPromise(): Promise<void> {
     const result = await this.__swarmMessagesDatabaseConnectorConnectingPromise;
     if (result instanceof Error) {
       throw result;
@@ -526,7 +539,7 @@ export class SwarmMessagesChannelV1DatabaseHandler<
 
   protected _createNewActualDatabaseConnectorAndSetCancellablePromise(databaseOptions: DBO): IPromiseCancellable<void, Error> {
     const creationOfNewDatabaseConnectorInstanceCancellablePromise = createCancellablePromiseByNativePromise(
-      this._createAndSetNewActualSwarmMessagesDatabaseConenctor(databaseOptions)
+      this._createAndHandleActualSwarmMessagesDatabaseConenctor(databaseOptions)
     );
 
     this.__swarmMessagesDatabaseConnectorConnectingPromise = creationOfNewDatabaseConnectorInstanceCancellablePromise;
@@ -691,8 +704,72 @@ export class SwarmMessagesChannelV1DatabaseHandler<
   }
 
   protected async _close(): Promise<void> {
-    await this._closeAndUnsetActualInstanceOfDatabaseConnector();
     this._cancelPreviousDatabaseCreationPromise();
     this._unsetActualSwarmMessagesDatabaseOptions();
+    await this._closeAndUnsetActualInstanceOfDatabaseConnector();
+  }
+
+  protected async _getActiveDatabaseConnector(): Promise<
+    ISwarmMessagesDatabaseConnector<
+      P,
+      T,
+      DbType,
+      DBO,
+      ConnectorBasic,
+      CO,
+      PO,
+      ConnectorMain,
+      CFO,
+      GAC,
+      MCF,
+      ACO,
+      O,
+      SMS,
+      MD,
+      SMSM,
+      DCO,
+      DCCRT,
+      OPT
+    >
+  > {
+    this._makeSureDatabseIsNotDropped();
+    await this._waitDatabaseCreationPromise();
+    return this._getActualSwarmMessagesDatabaseConnector();
+  }
+
+  protected _getMessagesEncryptionQueue(): IQueuedEncrypyionClassBase {
+    const { messagesEncryptionQueue } = this.___options;
+    if (!messagesEncryptionQueue) {
+      throw new Error('An encryption queue is not exists');
+    }
+    return messagesEncryptionQueue;
+  }
+
+  protected async _decryptMessageBodyIfEncryptedChannel(messageBody: MD['bdy']): Promise<MD['bdy']> {
+    const decryptedMessagePayload = await this._getMessagesEncryptionQueue().decryptData(messageBody.pld);
+    return {
+      ...messageBody,
+      pld: decryptedMessagePayload,
+    };
+  }
+
+  protected async _encryptMessageBodyIfEncryptedChannel(messageBody: MD['bdy']): Promise<MD['bdy']> {
+    const encryptedMessagePayload = await this._getMessagesEncryptionQueue().encryptData(messageBody.pld);
+    return {
+      ...messageBody,
+      pld: encryptedMessagePayload,
+    };
+  }
+
+  protected async _prepareSwarmMessageBodyBeforeSending(messageBodyWithoutIssuer: Omit<MD['bdy'], 'iss'>): Promise<MD['bdy']> {
+    const messageIssuer = this.___options.messagesIssuer;
+    const messageBodyWithIssuer: MD['bdy'] = {
+      ...messageBodyWithoutIssuer,
+      iss: messageIssuer,
+    };
+    if (this._isPasswordEncryptedChannel) {
+      return await this._encryptMessageBodyIfEncryptedChannel(messageBodyWithIssuer);
+    }
+    return messageBodyWithIssuer;
   }
 }

@@ -1,4 +1,22 @@
+import { IQueuedEncrypyionClassBase } from '../../../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import {
+  ISwarmMessageStore,
+  ISwarmMessageStoreAccessControlOptions,
+  ISwarmMessageStoreOptionsWithConnectorFabric,
+  TSwarmMessagesStoreGrantAccessCallback,
+} from '../../../../../swarm-message-store/types/swarm-message-store.types';
+import {
+  ISwarmMessageInstanceDecrypted,
+  TSwarmMessageSerialized,
+} from '../../../../../swarm-message/swarm-message-constructor.types';
+import { ISwarmMessagesDatabaseConnectedInstanceFabricByDatabaseOptions } from '../../../../../swarm-messages-database/swarm-messages-database-fabrics/types/swarm-messages-database-instance-fabric-by-database-options.types';
+import { ISwarmMessagesDatabaseMessagesCollector } from '../../../../../swarm-messages-database/swarm-messages-database.messages-collector.types';
+import {
+  ISwarmMessagesDatabaseCache,
+  ISwarmMessagesDatabaseCacheOptions,
+  ISwarmMessagesDatabaseConnectOptions,
+} from '../../../../../swarm-messages-database/swarm-messages-database.types';
 import { ESwarmStoreConnector } from '../../../../../swarm-store-class/swarm-store-class.const';
 import {
   ISwarmStoreConnector,
@@ -9,26 +27,8 @@ import {
   TSwarmStoreDatabaseOptions,
   TSwarmStoreDatabaseType,
 } from '../../../../../swarm-store-class/swarm-store-class.types';
-import {
-  ISwarmMessageInstanceDecrypted,
-  TSwarmMessageSerialized,
-} from '../../../../../swarm-message/swarm-message-constructor.types';
-import {
-  ISwarmMessageStore,
-  ISwarmMessageStoreAccessControlOptions,
-  ISwarmMessageStoreOptionsWithConnectorFabric,
-  TSwarmMessagesStoreGrantAccessCallback,
-} from '../../../../../swarm-message-store/types/swarm-message-store.types';
-import { ISwarmMessagesChannel } from '../../../../types/swarm-messages-channel-instance.types';
-import {
-  ISwarmMessagesDatabaseCacheOptions,
-  ISwarmMessagesDatabaseCache,
-  ISwarmMessagesDatabaseConnectOptions,
-} from '../../../../../swarm-messages-database/swarm-messages-database.types';
-import { ISwarmMessagesDatabaseMessagesCollector } from '../../../../../swarm-messages-database/swarm-messages-database.messages-collector.types';
-import { ISwarmMessagesDatabaseConnectedInstanceFabricByDatabaseOptions } from '../../../../../swarm-messages-database/swarm-messages-database-fabrics/types/swarm-messages-database-instance-fabric-by-database-options.types';
 import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../../../../const/swarm-messages-channels-main.const';
-import { IQueuedEncrypyionClassBase } from '../../../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
+import { ISwarmMessagesChannel } from '../../../../types/swarm-messages-channel-instance.types';
 
 /**
  * Helper class that helps in maintaining
@@ -42,8 +42,8 @@ import { IQueuedEncrypyionClassBase } from '../../../../../basic-classes/queued-
  * @template DbType
  * @template DBO
  * @template ConnectorBasic
- * @template PO
  * @template CO
+ * @template PO
  * @template ConnectorMain
  * @template CFO
  * @template GAC
@@ -63,10 +63,10 @@ export interface ISwarmMessagesChannelV1DatabaseHandler<
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO>,
-  PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
-  CO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, PO>,
-  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, PO>,
-  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
+  CO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
+  PO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, CO>,
+  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, CO>,
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain>,
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MD | T>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
   ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MD | T, GAC> | undefined,
@@ -76,8 +76,8 @@ export interface ISwarmMessagesChannelV1DatabaseHandler<
     DbType,
     DBO,
     ConnectorBasic,
-    PO,
     CO,
+    PO,
     ConnectorMain,
     CFO,
     MD | T,
@@ -85,10 +85,10 @@ export interface ISwarmMessagesChannelV1DatabaseHandler<
     MCF,
     ACO
   >,
-  SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MD | T, GAC, MCF, ACO, O>,
+  SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, MD | T, GAC, MCF, ACO, O>,
   MD extends ISwarmMessageInstanceDecrypted
 > extends Pick<
-    ISwarmMessagesChannel<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, GAC, MCF, ACO, O, SMS, MD>,
+    ISwarmMessagesChannel<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, GAC, MCF, ACO, O, SMS, MD>,
     'addMessage' | 'deleteMessage' | 'collect' | 'collectWithMeta'
   > {
   /**

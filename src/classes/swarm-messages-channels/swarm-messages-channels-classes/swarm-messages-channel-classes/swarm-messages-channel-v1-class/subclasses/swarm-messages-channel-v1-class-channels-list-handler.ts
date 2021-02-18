@@ -16,17 +16,19 @@ import {
   TSwarmMessagesStoreGrantAccessCallback,
 } from 'classes/swarm-message-store/types/swarm-message-store.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from 'classes/swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
-import { TSwarmMessagesChannelId } from '../../../../types/swarm-messages-channel.types';
-import { ISwarmMessagesChannelsDescriptionsList } from '../../../../types/swarm-messages-channels-list.types';
-import { ISwarmMessageChannelDescriptionRaw } from '../../../../types/swarm-messages-channel.types';
 import { isDeepEqual } from 'utils/common-utils/common-utils-equality';
 import { getEventEmitterInstance } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
+import { ESwarmMessagesChannelsListEventName } from '../../../../types/swarm-messages-channel-events.types';
+import { TCentralAuthorityUserIdentity } from '../../../../../central-authority-class/central-authority-class-types/central-authority-class-types-common';
+import {
+  TSwarmMessagesChannelId,
+  ISwarmMessageChannelDescriptionRaw,
+} from '../../../../types/swarm-messages-channel-instance.types';
+import { ISwarmMessagesChannelsDescriptionsList } from '../../../../types/swarm-messages-channels-list-instance.types';
 import {
   ISwarmMessagesChannelV1ClassChannelsListHandler,
   ISwarmMessagesChannelV1ClassChannelsListHandlerConstructorOptions,
-} from '../types/swarm-messages-channel-v1-class.types';
-import { ESwarmMessagesChannelsListEventName } from '../../../../types/swarm-messages-channel-events.types';
-import { TCentralAuthorityUserIdentity } from '../../../../../central-authority-class/central-authority-class-types/central-authority-class-types-common';
+} from '../types/swarm-messages-channel-v1-class-channels-list-handler.types';
 import {
   ISwarmMessagesChannelNotificationEmitter,
   ISwarmMessagesChannelsListEvents,
@@ -209,7 +211,7 @@ export class SwarmMessagesChannelV1ClassChannelsListHandler<
     id: TSwarmMessagesChannelId,
     swarmMessagesChannelsListInstance: ISwarmMessagesChannelsDescriptionsList<P, T, MD>
   ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO> | undefined> {
-    return swarmMessagesChannelsListInstance.getChannelDescriptionById(id);
+    return await swarmMessagesChannelsListInstance.getChannelDescriptionById(id);
   }
 
   /**

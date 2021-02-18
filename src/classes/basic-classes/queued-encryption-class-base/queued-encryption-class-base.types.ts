@@ -45,7 +45,7 @@ export interface IQueuedEncrypyionClassBase {
    * @returns {Promise<string | Error>}
    * @memberof IQueuedEncrypyionClassBase
    */
-  encryptData(data: TCRYPTO_UTIL_ENCRYPT_DATA_TYPES, key: CryptoKey): Promise<string | Error>;
+  encryptData(data: TCRYPTO_UTIL_ENCRYPT_DATA_TYPES, key?: CryptoKey): Promise<string | Error>;
   /**
    * decrypt the data with the
    * private crypto key. If no key
