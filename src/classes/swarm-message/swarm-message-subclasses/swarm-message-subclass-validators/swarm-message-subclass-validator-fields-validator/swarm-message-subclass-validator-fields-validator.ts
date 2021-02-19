@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { commonUtilsArrayDeleteFromArray, commonUtilsArrayDoCallbackTillNoError } from 'utils/common-utils/common-utils';
+import { commonUtilsArrayDeleteFromArray, commonUtilsArrayDoCallbackTillNoError } from 'utils/common-utils';
 import { TSwarmMessageUserIdentifierVersion } from '../swarm-message-subclass-validator.types';
 import { validateIssuerDesirizlizedFormat } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-issuer-deserizlied/swarm-message-subclass-validator-fields-validator-validator-issuer-deserizlied';
 import validateIssuerSerializedFormat from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-issuer-serialized/swarm-message-subclass-validator-fields-validator-validator-issuer-serialized';

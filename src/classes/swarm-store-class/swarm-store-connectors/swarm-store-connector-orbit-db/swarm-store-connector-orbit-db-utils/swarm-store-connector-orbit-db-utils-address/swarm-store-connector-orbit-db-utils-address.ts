@@ -59,7 +59,7 @@ export async function swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForPath
 
 export async function swarmStoreConnectorOrbitDbUtilsAddresGetHashPathFull(fullPath: string): Promise<string> {
   assert(typeof fullPath === 'string', 'Full path shoult be a string');
-  return swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForPathPart(
+  return await swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForPathPart(
     fullPath,
     SWARM_STORE_CONNECTOR_ORITDB_UTILS_ADDRESS_FULL_PSATH_HASH_CALC_METHOD
   );
@@ -67,7 +67,7 @@ export async function swarmStoreConnectorOrbitDbUtilsAddresGetHashPathFull(fullP
 
 export async function swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForUserId(userId: string): Promise<string> {
   assert(typeof userId === 'string', 'User id should be a string');
-  return swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForPathPart(
+  return await swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForPathPart(
     userId,
     SWARM_STORE_CONNECTOR_ORITDB_UTILS_ADDRESS_USER_ID_HASH_CALC_METHOD
   );
@@ -75,7 +75,7 @@ export async function swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForUser
 
 export async function swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForDirectory(directory: string): Promise<string> {
   assert(typeof directory === 'string', 'Directory shoult be a string');
-  return swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForPathPart(
+  return await swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForPathPart(
     directory,
     SWARM_STORE_CONNECTOR_ORITDB_UTILS_ADDRESS_DIRECTORY_HASH_CALC_METHOD
   );
@@ -83,7 +83,7 @@ export async function swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForDire
 
 export async function swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForDb(dbName: string): Promise<string> {
   assert(typeof dbName === 'string', 'Database name shoult be a string');
-  return swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForPathPart(
+  return await swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForPathPart(
     dbName,
     SWARM_STORE_CONNECTOR_ORITDB_UTILS_ADDRESS_DBNAME_HASH_CALC_METHOD
   );

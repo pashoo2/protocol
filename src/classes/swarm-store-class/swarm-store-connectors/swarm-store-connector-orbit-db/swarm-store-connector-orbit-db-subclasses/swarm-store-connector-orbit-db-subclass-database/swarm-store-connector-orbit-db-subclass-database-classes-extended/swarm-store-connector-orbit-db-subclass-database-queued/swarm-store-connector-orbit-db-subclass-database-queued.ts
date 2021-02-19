@@ -12,6 +12,7 @@ import { ISwarmStoreConnectorBasic } from '../../../../../../swarm-store-class.t
 import { ConcurentAsyncQueueWithAutoExecution } from '../../../../../../../basic-classes/async-queue-concurent/async-queue-concurent-extended/async-queue-concurent-with-auto-execution/async-queue-concurent-with-auto-execution';
 import { IAsyncQueueConcurentWithAutoExecution } from '../../../../../../../basic-classes/async-queue-concurent/async-queue-concurent-extended/async-queue-concurent-with-auto-execution/async-queue-concurent-with-auto-execution.types';
 import { ISwarmStoreConnectorOrbitDbDatabaseIteratorOptionsRequired } from '../../swarm-store-connector-orbit-db-subclass-database.types';
+import { asyncQueueConcurentMixinDefault } from 'classes/basic-classes/async-queue-concurent/async-queue-concurent-mixins/async-queue-concurent-mixin-default';
 import {
   SWARM_STORE_CONNECTOR_ORBIT_DB_SUBCLASS_DATABASE_QUEUED_CRUD_OPERATIONS_TIMEOUTS_MS,
   SWARM_STORE_CONNECTOR_ORBIT_DB_SUBCLASS_DATABASE_QUEUED_OPERATIONS_DEFAULT_TIMEOUT_MS,
@@ -22,7 +23,10 @@ export class SwarmStoreConnectorOrbitDBDatabaseQueued<
     DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>,
     DBO extends TSwarmStoreDatabaseOptions<ESwarmStoreConnector.OrbitDB, ItemType, DbType>
   >
-  extends SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>
+  extends asyncQueueConcurentMixinDefault(
+    SwarmStoreConnectorOrbitDBDatabase,
+    SWARM_STORE_CONNECTOR_ORBIT_DB_SUBCLASS_DATABASE_QUEUED_OPERATIONS_DEFAULT_TIMEOUT_MS
+  )<ItemType, DbType, DBO>
   implements ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, ItemType, DbType, DBO> {
   /**
    * All async operations with the database, excluding datbase
@@ -110,24 +114,6 @@ export class SwarmStoreConnectorOrbitDBDatabaseQueued<
     );
   };
 
-  protected _initializeAsyncQueue() {
-    this._asyncOperationsQueue = new ConcurentAsyncQueueWithAutoExecution<void, Error>(createPromisePendingRejectable);
-  }
-
-  protected _getAsyncOperationsQueue(): IAsyncQueueConcurentWithAutoExecution<void, Error> {
-    if (!this._asyncOperationsQueue) {
-      this._initializeAsyncQueue();
-    }
-    if (!this._asyncOperationsQueue) {
-      throw new Error('Failed to initialize the async queue instance');
-    }
-    return this._asyncOperationsQueue;
-  }
-
-  protected _rejectAllPendingOperations(err: Error): Promise<void> {
-    return this._getAsyncOperationsQueue().destroy(err);
-  }
-
   protected _rejectAllPendingOperationsOnDbClose(): Promise<void> {
     return this._rejectAllPendingOperations(new Error('Datatabase closed'));
   }
@@ -139,13 +125,4 @@ export class SwarmStoreConnectorOrbitDBDatabaseQueued<
   protected _rejectAllPendingOperationsOnDbDrop(): Promise<void> {
     return this._rejectAllPendingOperations(new Error('Datatabase dropped'));
   }
-
-  protected _runAsJob = async <F extends () => any>(
-    func: F,
-    jobName: string,
-    jobTimeout: number = SWARM_STORE_CONNECTOR_ORBIT_DB_SUBCLASS_DATABASE_QUEUED_OPERATIONS_DEFAULT_TIMEOUT_MS
-  ): Promise<ReturnType<F>> => {
-    // TODO - 300000 => jobTimeout
-    return await this._getAsyncOperationsQueue().executeQueued(func, 300000, jobName);
-  };
 }

@@ -332,16 +332,16 @@ export interface ISwarmMessagesChannel<
    * @returns {ReturnType<SMS['deleteMessage']>}
    * @memberof ISwarmMessagesChannel
    */
-  deleteMessage(messageAddressOrKey: ISwarmMessageStoreDeleteMessageArg<P, DbType>): ReturnType<SMS['deleteMessage']>;
+  deleteMessage(messageAddressOrKey: ISwarmMessageStoreDeleteMessageArg<P, DbType>): Promise<void>;
 
   /**
    * Collect messages directly from the storage (not from a cache).
    *
    * @param {TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>} options
-   * @returns {ReturnType<SMS['collect']>}
+   * @returns {Array<Error | MD>}
    * @memberof ISwarmMessagesChannel
    */
-  collect(options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>): ReturnType<SMS['collect']>;
+  collect(options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>): Promise<Array<Error | MD>>;
 
   /**
    * Collect messages with metadata from the storage (not from a cache).
@@ -350,7 +350,9 @@ export interface ISwarmMessagesChannel<
    * @returns {ReturnType<SMS['collectWithMeta']>}
    * @memberof ISwarmMessagesChannel
    */
-  collectWithMeta(options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>): ReturnType<SMS['collectWithMeta']>;
+  collectWithMeta(
+    options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>
+  ): Promise<Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined>>;
 
   /**
    * Set a password for messages encryption.

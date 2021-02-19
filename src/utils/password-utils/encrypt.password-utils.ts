@@ -4,7 +4,7 @@ import {
   generateInitializationVectorNativeArrayBuffer,
   encryptToTypedArray,
   concatDataWithInitializationVector,
-} from 'utils/encryption-utils/encryption-utils';
+} from 'utils/encryption-utils';
 import { TCRYPTO_UTIL_ENCRYPT_DATA_TYPES } from 'utils/encryption-utils/crypto-utils.types';
 import { encodeArrayBufferToDOMString } from 'utils/string-encoding-utils';
 import { importPasswordKeyFromString, generatePasswordKeyByPasswordString } from './derive-key.password-utils';

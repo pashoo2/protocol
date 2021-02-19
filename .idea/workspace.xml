@@ -3,11 +3,31 @@
   <component name="ChangeListManager">
     <list default="true" id="e70e70e3-e48a-4dfd-91a6-03818e8691f6" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jest.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/jest.config.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/node_modules-local/hypervision-browser" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules-local/hypervision-browser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/subclasses/swarm-messages-channel-v1-class-channels-list-handler.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/subclasses/swarm-messages-channel-v1-class-channels-list-handler.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/subclasses/swarm-messages-channel-v1-class-messages-database-handler-queued.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/async-queue-concurent/async-queue-concurent.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/async-queue-concurent/async-queue-concurent.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/subclasses/swarm-messages-channel-v1-class-messages-database-handler-queued.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/subclasses/swarm-messages-channel-v1-class-messages-database-handler-queued.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/subclasses/swarm-messages-channel-v1-class-messages-database-handler.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/subclasses/swarm-messages-channel-v1-class-messages-database-handler.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/types/swarm-messages-channel-v1-class-messages-database-handler.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/types/swarm-messages-channel-v1-class-messages-database-handler.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/types/swarm-messages-channel-instance.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/types/swarm-messages-channel-instance.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache/swarm-messages-database-cache.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache/swarm-messages-database-cache.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database-classes-extended/swarm-store-connector-orbit-db-subclass-database-queued/swarm-store-connector-orbit-db-subclass-database-queued.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database-classes-extended/swarm-store-connector-orbit-db-subclass-database-queued/swarm-store-connector-orbit-db-subclass-database-queued.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-utils/swarm-store-connector-orbit-db-utils-address/swarm-store-connector-orbit-db-utils-address.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-utils/swarm-store-connector-orbit-db-utils-address/swarm-store-connector-orbit-db-utils-address.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/types/common.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/common.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/types/ipfs.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/ipfs.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/data-compression-utils/data-compression-utils.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/data-compression-utils/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/data-compression-utils/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/data-sign-utils/data-sign-utils.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/data-sign-utils/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/data-sign-utils/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/data-validators-utils/data-validators-utils.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/data-validators-utils/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/data-validators-utils/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/encryption-utils/encryption-utils.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/encryption-utils/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/encryption-utils/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/ipfs-utils/ipfs-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/ipfs-utils/ipfs-utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/password-utils/decrypt.password-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/password-utils/decrypt.password-utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/password-utils/encrypt.password-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/password-utils/encrypt.password-utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -24,21 +44,16 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="index.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/index.ts">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
       <file leaf-file-name="swarm-messages-channel-v1-class-channels-list-handler.types.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/types/swarm-messages-channel-v1-class-channels-list-handler.types.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="14">
+            <state relative-caret-position="518">
               <caret line="60" column="4" selection-start-line="60" selection-start-column="4" selection-end-line="60" selection-end-column="4" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="commom-utils.promies.ts" pinned="false" current-in-tab="true">
+      <file leaf-file-name="commom-utils.promies.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/utils/common-utils/commom-utils.promies.ts">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="337">
@@ -50,39 +65,76 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="swarm-messages-channel-instance.types.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-channels/types/swarm-messages-channel-instance.types.ts">
+      <file leaf-file-name="async-queue-concurent-mixin-default-decorator.test.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/async-queue-concurent/async-queue-concurent-mixins/async-queue-concurent-mixin-default/async-queue-concurent-mixin-default-decorator.test.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3038">
-              <caret line="257" column="17" selection-start-line="257" selection-start-column="17" selection-end-line="257" selection-end-column="17" />
+            <state relative-caret-position="112">
+              <caret line="8" column="50" selection-start-line="8" selection-start-column="50" selection-end-line="8" selection-end-column="50" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="swarm-messages-channels-list-instance.types.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-channels/types/swarm-messages-channels-list-instance.types.ts">
+      <file leaf-file-name="async-queue-concurent-mixin-default.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/async-queue-concurent/async-queue-concurent-mixins/async-queue-concurent-mixin-default/async-queue-concurent-mixin-default.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5236">
-              <caret line="429" column="124" selection-start-line="429" selection-start-column="99" selection-end-line="429" selection-end-column="124" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="swarm-messages-channel-events.types.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-channels/types/swarm-messages-channel-events.types.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="126">
-              <caret line="16" column="49" selection-start-line="16" selection-start-column="49" selection-end-line="16" selection-end-column="49" />
+            <state relative-caret-position="-126">
               <folding>
-                <element signature="e#0#78#0" expanded="true" />
+                <element signature="e#0#183#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="swarm-messages-channel-v1-class.types.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/types/swarm-messages-channel-v1-class.types.ts">
+      <file leaf-file-name="async-queue-concurent-mixin-default-decorator.ts" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/async-queue-concurent/async-queue-concurent-mixins/async-queue-concurent-mixin-default/async-queue-concurent-mixin-default-decorator.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="210">
+              <caret line="15" column="22" selection-start-line="15" selection-start-column="18" selection-end-line="15" selection-end-column="22" />
+              <folding>
+                <element signature="e#0#52#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="index.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/utils/data-sign-utils/index.ts">
           <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file leaf-file-name="index.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/utils/data-validators-utils/index.ts">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
+      <file leaf-file-name="index.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/utils/encryption-utils/index.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="168">
+              <caret line="12" selection-start-line="12" selection-end-line="12" selection-end-column="29" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="index.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/utils/data-compression-utils/index.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="14">
+              <caret line="1" selection-start-line="1" selection-end-line="1" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="data-cache-utils-caching-decorator.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="47">
+              <caret line="6" lean-forward="true" selection-start-line="6" selection-end-line="6" />
+              <folding>
+                <element signature="e#0#139#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
         </entry>
       </file>
     </leaf>
@@ -138,12 +190,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-utils/connection-bridge-utils-store-database-list-storage-fabrics.ts" />
-        <option value="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-utils/index.ts" />
-        <option value="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider.ts" />
-        <option value="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-store-connector-db-options/swarm-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-common/swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks/swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks.ts" />
-        <option value="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-options/swarm-messsage-store-connector-options-utils/swarm-messsage-store-connector-options-extender/swarm-message-store-utils-connector-options-provider.ts" />
-        <option value="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-options/swarm-messsage-store-connector-options-utils/swarm-messsage-store-connector-options-extender/swarm-messsage-store-connector-options-extender.ts" />
         <option value="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store.ts" />
         <option value="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connection-options/swarm-message-store-connection-options-utils/swarm-message-store-connection-options-extender/swarm-message-store-connection-options-extender.ts" />
         <option value="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-message-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-context/swarm-store-conector-db-options-grand-access-context-classes/swarm-store-conector-db-options-grand-access-context-base-class/swarm-store-conector-db-options-grand-access-context-class.ts" />
@@ -189,6 +235,12 @@
         <option value="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/types/swarm-messages-channel-v1-class-channels-list-handler.types.ts" />
         <option value="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/types/swarm-messages-channel-v1-class-messages-database-handler.types.ts" />
         <option value="$PROJECT_DIR$/src/utils/common-utils/commom-utils.promies.ts" />
+        <option value="$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.ts" />
+        <option value="$PROJECT_DIR$/src/utils/data-sign-utils/index.ts" />
+        <option value="$PROJECT_DIR$/src/utils/data-validators-utils/index.ts" />
+        <option value="$PROJECT_DIR$/src/utils/encryption-utils/index.ts" />
+        <option value="$PROJECT_DIR$/src/classes/basic-classes/async-queue-concurent/async-queue-concurent-mixins/async-queue-concurent-mixin-default/async-queue-concurent-mixin-default-decorator.test.ts" />
+        <option value="$PROJECT_DIR$/src/classes/basic-classes/async-queue-concurent/async-queue-concurent-mixins/async-queue-concurent-mixin-default/async-queue-concurent-mixin-default-decorator.ts" />
       </list>
     </option>
   </component>
@@ -248,6 +300,40 @@
               <item name="protocol" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="classes" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
+              <item name="protocol" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="classes" type="462c0819:PsiDirectoryNode" />
+              <item name="basic-classes" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
+              <item name="protocol" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="classes" type="462c0819:PsiDirectoryNode" />
+              <item name="basic-classes" type="462c0819:PsiDirectoryNode" />
+              <item name="async-queue-concurent" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
+              <item name="protocol" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="classes" type="462c0819:PsiDirectoryNode" />
+              <item name="basic-classes" type="462c0819:PsiDirectoryNode" />
+              <item name="async-queue-concurent" type="462c0819:PsiDirectoryNode" />
+              <item name="async-queue-concurent-mixins" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
+              <item name="protocol" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="classes" type="462c0819:PsiDirectoryNode" />
+              <item name="basic-classes" type="462c0819:PsiDirectoryNode" />
+              <item name="async-queue-concurent" type="462c0819:PsiDirectoryNode" />
+              <item name="async-queue-concurent-mixins" type="462c0819:PsiDirectoryNode" />
+              <item name="async-queue-concurent-mixin-default" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
@@ -368,7 +454,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="SearchEverywhereHistoryKey" value="src/classes/swarm-messages-channels/types/swarm-messages-channel.types.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-messages-channels/types/swarm-messages-channel.types.ts&#10;src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-constructor-arguments-fabrics/swarm-messages-channels-list-v1-constructor-arguments-fabric.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-constructor-arguments-fabrics/swarm-messages-channels-list-v1-constructor-arguments-fabric.ts&#10;src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.utils.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.utils.ts&#10;/home/paul/projects/protocol/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types.ts&#10;src/classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider.ts&#10;src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector.ts&#10;src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter.ts&#10;src/classes/open-storage/open-storage.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/open-storage/open-storage.ts&#10;src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.ts" />
+    <property name="SearchEverywhereHistoryKey" value="src/classes/basic-classes/async-queue-concurent/async-queue-concurent-mixins/async-queue-concurent-mixin-default/async-queue-concurent-mixin-default-decorator.test.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/basic-classes/async-queue-concurent/async-queue-concurent-mixins/async-queue-concurent-mixin-default/async-queue-concurent-mixin-default-decorator.test.ts&#10;src/classes/swarm-messages-channels/types/swarm-messages-channel.types.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-messages-channels/types/swarm-messages-channel.types.ts&#10;src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-constructor-arguments-fabrics/swarm-messages-channels-list-v1-constructor-arguments-fabric.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-constructor-arguments-fabrics/swarm-messages-channels-list-v1-constructor-arguments-fabric.ts&#10;src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.utils.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.utils.ts&#10;/home/paul/projects/protocol/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types.ts&#10;src/classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider.ts&#10;src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector.ts&#10;src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter.ts&#10;src/classes/open-storage/open-storage.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/open-storage/open-storage.ts&#10;src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.ts" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/types/swarm-messages-channel-v1-class-channels-list-handler.types.ts" />
     <property name="node.js.detected.package.eslint" value="true" />
@@ -411,7 +497,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Jest.common-utils-equality">
+  <component name="RunManager" selected="Jest.decoratorAsyncQueueConcurentMixinDefault.Should decorate class with async method">
     <configuration name="common-utils-equality" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <node-options value="" />
@@ -453,21 +539,6 @@
         <test-name value="two arrays contains different functions must not be equal" />
       </test-names>
     </configuration>
-    <configuration name="common-utils-equality.isDeepEqual.Compare arrays.not equal.two arrays with different length must not be equal" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
-      <node-interpreter value="project" />
-      <node-options value="" />
-      <working-dir value="$PROJECT_DIR$" />
-      <envs />
-      <scope-kind value="TEST" />
-      <test-file value="$PROJECT_DIR$/src/utils/common-utils/common-utils-equality.test.ts" />
-      <test-names>
-        <test-name value="common-utils-equality" />
-        <test-name value="isDeepEqual" />
-        <test-name value="Compare arrays" />
-        <test-name value="not equal" />
-        <test-name value="two arrays with different length must not be equal" />
-      </test-names>
-    </configuration>
     <configuration name="common-utils-equality.isDeepEqual.Compare arrays.not equal.two arrays with simple types different values must not be equal" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <node-options value="" />
@@ -483,6 +554,18 @@
         <test-name value="two arrays with simple types different values must not be equal" />
       </test-names>
     </configuration>
+    <configuration name="decoratorAsyncQueueConcurentMixinDefault.Should decorate class with async method" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
+      <node-interpreter value="project" />
+      <node-options value="" />
+      <working-dir value="$PROJECT_DIR$" />
+      <envs />
+      <scope-kind value="TEST" />
+      <test-file value="$PROJECT_DIR$/src/classes/basic-classes/async-queue-concurent/async-queue-concurent-mixins/async-queue-concurent-mixin-default/async-queue-concurent-mixin-default-decorator.test.ts" />
+      <test-names>
+        <test-name value="decoratorAsyncQueueConcurentMixinDefault" />
+        <test-name value="Should decorate class with async method" />
+      </test-names>
+    </configuration>
     <configuration name="swarm-message-subclass-validator-fields-validator-validator-user-identifier.test.ts" type="JavaScriptTestRunnerJest" factoryName="Jest" nameIsGenerated="true">
       <config-file value="$PROJECT_DIR$/jest.config.js" />
       <node-interpreter value="project" />
@@ -494,19 +577,19 @@
     </configuration>
     <list>
       <item itemvalue="Jest.swarm-message-subclass-validator-fields-validator-validator-user-identifier.test.ts" />
-      <item itemvalue="Jest.common-utils-equality.isDeepEqual.Compare arrays.not equal.two arrays with different length must not be equal" />
       <item itemvalue="Jest.common-utils-equality.isDeepEqual.Compare arrays.not equal.two arrays with simple types different values must not be equal" />
       <item itemvalue="Jest.common-utils-equality.isDeepEqual.Compare arrays.not equal.two arrays contains different functions must not be equal" />
       <item itemvalue="Jest.common-utils-equality.isDeepEqual.Compare arrays.not equal.arrays contains a non simple values different must not be equal" />
       <item itemvalue="Jest.common-utils-equality" />
+      <item itemvalue="Jest.decoratorAsyncQueueConcurentMixinDefault.Should decorate class with async method" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Jest.decoratorAsyncQueueConcurentMixinDefault.Should decorate class with async method" />
         <item itemvalue="Jest.common-utils-equality" />
         <item itemvalue="Jest.common-utils-equality.isDeepEqual.Compare arrays.not equal.arrays contains a non simple values different must not be equal" />
         <item itemvalue="Jest.common-utils-equality.isDeepEqual.Compare arrays.not equal.two arrays contains different functions must not be equal" />
         <item itemvalue="Jest.common-utils-equality.isDeepEqual.Compare arrays.not equal.two arrays with simple types different values must not be equal" />
-        <item itemvalue="Jest.common-utils-equality.isDeepEqual.Compare arrays.not equal.two arrays with different length must not be equal" />
       </list>
     </recent_temporary>
   </component>
@@ -598,61 +681,61 @@
       <workItem from="1613162400492" duration="1942000" />
       <workItem from="1613234817193" duration="8877000" />
       <workItem from="1613500728938" duration="1485000" />
-      <workItem from="1613675877669" duration="1264000" />
+      <workItem from="1613675877669" duration="1863000" />
+      <workItem from="1613770919060" duration="1988000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="common-utils-equality_isDeepEqual_Compare_arrays_equal_two_arrays_contains_functions_with_a_same_body_must_be_equal - 2021.02.13 at 22h 27m 52s.xml">
-      <configuration name="common-utils-equality.isDeepEqual.Compare arrays.equal.two arrays contains functions with a same body must be equal" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="decoratorAsyncQueueConcurentMixinDefault_Should_decorate_class_with_async_method - 2021.02.20 at 01h 44m 47s.xml">
+      <configuration name="decoratorAsyncQueueConcurentMixinDefault.Should decorate class with async method" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="common-utils-equality_isDeepEqual_Compare_arrays_equal_two_arrays_contains_functions_with_a_same_body_must_be_equal - 2021.02.13 at 22h 29m 53s.xml">
-      <configuration name="common-utils-equality.isDeepEqual.Compare arrays.equal.two arrays contains functions with a same body must be equal" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="decoratorAsyncQueueConcurentMixinDefault_Should_decorate_class_with_async_method - 2021.02.20 at 01h 45m 12s.xml">
+      <configuration name="decoratorAsyncQueueConcurentMixinDefault.Should decorate class with async method" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="common-utils-equality_isDeepEqual_Compare_arrays_equal_two_arrays_contains_functions_with_a_same_body_must_be_equal - 2021.02.13 at 22h 30m 06s.xml">
-      <configuration name="common-utils-equality.isDeepEqual.Compare arrays.equal.two arrays contains functions with a same body must be equal" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="decoratorAsyncQueueConcurentMixinDefault_Should_decorate_class_with_async_method - 2021.02.20 at 01h 45m 31s.xml">
+      <configuration name="decoratorAsyncQueueConcurentMixinDefault.Should decorate class with async method" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="common-utils-equality_isDeepEqual_Compare_arrays_equal_two_arrays_with_simple_types_equal_values_must_be_equal - 2021.02.13 at 22h 30m 14s.xml">
-      <configuration name="common-utils-equality.isDeepEqual.Compare arrays.equal.two arrays with simple types equal values must be equal" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="decoratorAsyncQueueConcurentMixinDefault_Should_decorate_class_with_async_method - 2021.02.20 at 01h 55m 54s.xml">
+      <configuration name="decoratorAsyncQueueConcurentMixinDefault.Should decorate class with async method" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="common-utils-equality_isDeepEqual_Compare_arrays_equal_arrays_contains_a_non_simple_value - 2021.02.13 at 22h 30m 19s.xml">
-      <configuration name="common-utils-equality.isDeepEqual.Compare arrays.equal.arrays contains a non simple value" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="decoratorAsyncQueueConcurentMixinDefault_Should_decorate_class_with_async_method - 2021.02.20 at 02h 07m 41s.xml">
+      <configuration name="decoratorAsyncQueueConcurentMixinDefault.Should decorate class with async method" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="common-utils-equality_isDeepEqual_Compare_arrays_not_equal_two_arrays_with_different_length_must_not_be_equal - 2021.02.13 at 22h 34m 35s.xml">
-      <configuration name="common-utils-equality.isDeepEqual.Compare arrays.not equal.two arrays with different length must not be equal" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="decoratorAsyncQueueConcurentMixinDefault_Should_decorate_class_with_async_method - 2021.02.20 at 02h 08m 23s.xml">
+      <configuration name="decoratorAsyncQueueConcurentMixinDefault.Should decorate class with async method" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="common-utils-equality_isDeepEqual_Compare_arrays_not_equal_two_arrays_with_simple_types_different_values_must_not_be_equal - 2021.02.13 at 22h 34m 38s.xml">
-      <configuration name="common-utils-equality.isDeepEqual.Compare arrays.not equal.two arrays with simple types different values must not be equal" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="decoratorAsyncQueueConcurentMixinDefault_Should_decorate_class_with_async_method - 2021.02.20 at 02h 13m 33s.xml">
+      <configuration name="decoratorAsyncQueueConcurentMixinDefault.Should decorate class with async method" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="common-utils-equality_isDeepEqual_Compare_arrays_not_equal_two_arrays_contains_different_functions_must_not_be_equal - 2021.02.13 at 22h 34m 41s.xml">
-      <configuration name="common-utils-equality.isDeepEqual.Compare arrays.not equal.two arrays contains different functions must not be equal" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="decoratorAsyncQueueConcurentMixinDefault_Should_decorate_class_with_async_method - 2021.02.20 at 02h 13m 38s.xml">
+      <configuration name="decoratorAsyncQueueConcurentMixinDefault.Should decorate class with async method" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="common-utils-equality_isDeepEqual_Compare_arrays_not_equal_arrays_contains_a_non_simple_values_different_must_not_be_equal - 2021.02.13 at 22h 34m 48s.xml">
-      <configuration name="common-utils-equality.isDeepEqual.Compare arrays.not equal.arrays contains a non simple values different must not be equal" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="decoratorAsyncQueueConcurentMixinDefault_Should_decorate_class_with_async_method - 2021.02.20 at 02h 14m 08s.xml">
+      <configuration name="decoratorAsyncQueueConcurentMixinDefault.Should decorate class with async method" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="common-utils-equality - 2021.02.13 at 22h 34m 59s.xml">
-      <configuration name="common-utils-equality" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="decoratorAsyncQueueConcurentMixinDefault_Should_decorate_class_with_async_method - 2021.02.20 at 02h 14m 34s.xml">
+      <configuration name="decoratorAsyncQueueConcurentMixinDefault.Should decorate class with async method" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="135263000" />
+    <option name="totallyTimeSpent" value="137850000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="1600" height="873" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TypeScript" order="8" weight="0.32875144" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.4362714" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.3506658" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.37729868" side_tool="true" visible="true" weight="0.21691678" />
+      <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.3658846" side_tool="true" visible="true" weight="0.32060027" />
       <window_info anchor="bottom" id="Version Control" order="10" sideWeight="0.49926794" weight="0.35096154" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.62270135" weight="0.260573" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.6214331" weight="0.52251023" />
       <window_info id="npm" order="2" side_tool="true" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="9" weight="0.35607675" />
       <window_info id="Favorites" order="3" side_tool="true" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.63538367" weight="0.3533424" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.6341154" weight="0.32060027" />
       <window_info anchor="bottom" id="Thumbnails" order="12" weight="0.32852563" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -720,7 +803,7 @@
           <option name="timeStamp" value="39" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="44" />
+      <option name="time" value="45" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="JavaScriptTestRunnerJest">
@@ -755,33 +838,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/serializer-class/serializer-class.utils.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="28">
-          <caret line="14" selection-start-line="14" selection-end-line="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-channel/swarm-messages-channels-utils/swarm-messages-channel-utils/swarm-messages-channel-validation-utils/swarm-messages-channel-validation-description-utils/swarm-messages-channel-validation-utils-common/index.ts" />
-    <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-channel/swarm-messages-channels-utils/swarm-messages-channel-utils/swarm-messages-channel-validation-utils/swarm-messages-channel-validation-description-utils/swarm-messages-channel-validation-description-format-v1/index.ts" />
-    <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-channel/swarm-messages-channels-utils/swarm-messages-channel-utils/swarm-messages-channel-validation-utils/swarm-messages-channel-validation-description-utils/swarm-messages-channel-validation-description-format-v1/swarm-messages-channel-validation-description-format-v1.fabric.ts" />
-    <entry file="file://$PROJECT_DIR$/src/utils/common-utils/common-utils.functions.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="532">
-          <caret line="38" column="9" selection-start-line="38" selection-start-column="9" selection-end-line="38" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-channels/const/swarm-messages-channel/swarm-messages-channel-description/schemas/swarm-message-channel-description-v1-format-schema.json" />
-    <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-channels/const/swarm-messages-channels-list/swarm-messages-channels-list-description/schemas/swarm-messages-channels-list-description-v1-format-schema.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="18" column="17" selection-start-line="18" selection-start-column="17" selection-end-line="18" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-utils/swarm-messages-channels-list-utils/swarm-messages-channels-list-swarm-messages-validators/swarm-messages-channels-list-swarm-messages-validator-v1/swarm-messages-channels-list-swarm-messages-validator-v1.ts" />
-    <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/swarm-messages-channels-list-v1-class.ts" />
     <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-channels/types/swarm-messages-channels-validation.types.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3052">
@@ -984,7 +1040,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-channels/types/swarm-messages-channel-instance.types.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3038">
+        <state relative-caret-position="2996">
           <caret line="257" column="17" selection-start-line="257" selection-start-column="17" selection-end-line="257" selection-end-column="17" />
         </state>
       </provider>
@@ -998,7 +1054,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/types/swarm-messages-channel-v1-class-channels-list-handler.types.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="14">
+        <state relative-caret-position="518">
           <caret line="60" column="4" selection-start-line="60" selection-start-column="4" selection-end-line="60" selection-end-column="4" />
         </state>
       </provider>
@@ -1009,6 +1065,65 @@
           <caret line="84" column="32" selection-start-line="84" selection-start-column="32" selection-end-line="84" selection-end-column="32" />
           <folding>
             <element signature="e#0#48#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="47">
+          <caret line="6" lean-forward="true" selection-start-line="6" selection-end-line="6" />
+          <folding>
+            <element signature="e#0#139#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/data-compression-utils/index.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="14">
+          <caret line="1" selection-start-line="1" selection-end-line="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/data-validators-utils/index.ts">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/encryption-utils/encryption-utils.ts">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/encryption-utils/index.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="168">
+          <caret line="12" selection-start-line="12" selection-end-line="12" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/data-sign-utils/index.ts">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/async-queue-concurent/async-queue-concurent-mixins/async-queue-concurent-mixin-default/async-queue-concurent-mixin-default-decorator.test.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="112">
+          <caret line="8" column="50" selection-start-line="8" selection-start-column="50" selection-end-line="8" selection-end-column="50" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/async-queue-concurent/async-queue-concurent-mixins/async-queue-concurent-mixin-default/async-queue-concurent-mixin-default.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-126">
+          <folding>
+            <element signature="e#0#183#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/async-queue-concurent/async-queue-concurent-mixins/async-queue-concurent-mixin-default/async-queue-concurent-mixin-default-decorator.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="15" column="22" selection-start-line="15" selection-start-column="18" selection-end-line="15" selection-end-column="22" />
+          <folding>
+            <element signature="e#0#52#0" expanded="true" />
           </folding>
         </state>
       </provider>

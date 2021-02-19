@@ -1208,7 +1208,7 @@ export class SwarmMessagesDatabaseCache<
     if (!this._checkIsReady()) {
       return false;
     }
-    return this._runDefferedPartialCacheUpdateForCachedMessagesStore(
+    return await this._runDefferedPartialCacheUpdateForCachedMessagesStore(
       messagesMetaToUpdate,
       this._messagesCachedStore,
       this._dbType
@@ -1223,7 +1223,7 @@ export class SwarmMessagesDatabaseCache<
     const messagesUpdate = this._getAndResetDefferedUpdateAfterCacheUpdateProcess();
 
     if (messagesUpdate?.size) {
-      return this._runDefferedPartialCacheUpdate(messagesUpdate);
+      return await this._runDefferedPartialCacheUpdate(messagesUpdate);
     }
     return false;
   }

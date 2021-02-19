@@ -28,3 +28,15 @@ export interface IAsyncQueueConcurent<T, E extends MaybeError> {
    */
   destroy(err: E): Promise<void>;
 }
+
+/**
+ * Helper mixin for simplicity making of classes
+ * whose methods executed in async queue.
+ *
+ * @export
+ * @interface IAsyncQueueConcurentMixinDefault
+ */
+export interface IAsyncQueueConcurentMixinDefault {
+  _runAsJob<F extends () => any>(func: F, jobName: string, jobTimeout?: number): Promise<ReturnType<F>>;
+  _rejectAllPendingOperations(err: Error): Promise<void>;
+}

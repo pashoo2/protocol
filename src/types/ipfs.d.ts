@@ -1,1 +1,1 @@
-declare module 'ipfs';
+declare module 'ipfs' {}

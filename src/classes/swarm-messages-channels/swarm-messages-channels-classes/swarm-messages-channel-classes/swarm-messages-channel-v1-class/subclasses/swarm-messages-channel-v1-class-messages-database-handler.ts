@@ -38,9 +38,18 @@ import {
 import { getEventEmitterInstance, EventEmitter } from 'classes/basic-classes/event-emitter-class-base';
 import { ISwarmMessageDatabaseEvents } from '../../../../../swarm-messages-database/swarm-messages-database.types';
 import { createCancellablePromiseByNativePromise } from '../../../../../../utils/common-utils/commom-utils.promies';
-import { IPromiseCancellable } from '../../../../../../types/promise.types';
+import { IPromiseCancellable, PromiseResolveType } from '../../../../../../types/promise.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
-import { TSwarmStoreDatabaseEntityKey } from '../../../../../swarm-store-class/swarm-store-class.types';
+import {
+  TSwarmStoreDatabaseEntityKey,
+  TSwarmStoreDatabaseIteratorMethodArgument,
+} from '../../../../../swarm-store-class/swarm-store-class.types';
+import {
+  ISwarmMessageStoreDeleteMessageArg,
+  ISwarmMessageStoreMessagingRequestWithMetaResult,
+} from '../../../../../swarm-message-store/types/swarm-message-store.types';
+import { isValidSwarmMessageDecryptedFormat } from '../../../../../swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-swarm-message';
+import { ISwarmMessageInstanceEncrypted } from '../../../../../swarm-message/swarm-message-constructor.types';
 import {
   stopForwardEvents,
   forwardEvents,
@@ -142,11 +151,7 @@ export class SwarmMessagesChannelV1DatabaseHandler<
       ACO,
       O,
       SMS,
-      MD,
-      SMSM,
-      DCO,
-      DCCRT,
-      OPT
+      MD
     > {
   /**
    * Emitter that emits events related to the database connector.
@@ -340,13 +345,56 @@ export class SwarmMessagesChannelV1DatabaseHandler<
     }
   }
 
-  async addMessage(
+  public async addMessage(
     message: Omit<MD['bdy'], 'iss'>,
     key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined
   ): Promise<void> {
     const databaseConnector = await this._getActiveDatabaseConnector();
     const swarmMessageBody = await this._prepareSwarmMessageBodyBeforeSending(message);
     await databaseConnector.addMessage(swarmMessageBody, key);
+  }
+
+  public async deleteMessage(messageAddressOrKey: ISwarmMessageStoreDeleteMessageArg<P, DbType>): Promise<void> {
+    const databaseConnector = await this._getActiveDatabaseConnector();
+    await databaseConnector.deleteMessage(messageAddressOrKey);
+  }
+
+  /**
+   * Collect messages directly from the storage (not from a cache).
+   *
+   * @param {TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>} options
+   * @returns {Promise<Array<Error | MD>>}
+   * @memberof ISwarmMessagesChannel
+   */
+  public async collect(options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>): Promise<Array<Error | MD>> {
+    const databaseConnector = await this._getActiveDatabaseConnector();
+    const messagesCollected = await databaseConnector.collect(options);
+    const messagesCollectedFiltered = this._replaceMessagesEncryptedWithErrors(messagesCollected);
+    if (this._isPasswordEncryptedChannel) {
+      return await this._decryptPasswordEncryptedMessagesCollected(messagesCollectedFiltered);
+    }
+    return messagesCollectedFiltered as Array<Error | MD>;
+  }
+
+  /**
+   * Collect messages with metadata from the storage (not from a cache).
+   *
+   * @param {TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>} options
+   * @returns {Promise<Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined>>}
+   * @memberof ISwarmMessagesChannel
+   */
+  public async collectWithMeta(
+    options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>
+  ): Promise<Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined>> {
+    const databaseConnector = await this._getActiveDatabaseConnector();
+    const messagesCollected: Array<
+      ISwarmMessageStoreMessagingRequestWithMetaResult<P, ISwarmMessageInstanceDecrypted> | undefined
+    > = await databaseConnector.collectWithMeta(options);
+
+    if (this._isPasswordEncryptedChannel) {
+      return await this._decryptPasswordEncryptedMessagesCollectedWithMeta(messagesCollected);
+    }
+    return messagesCollected as Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined>;
   }
 
   protected _validateConstructorOptions(
@@ -771,5 +819,84 @@ export class SwarmMessagesChannelV1DatabaseHandler<
       return await this._encryptMessageBodyIfEncryptedChannel(messageBodyWithIssuer);
     }
     return messageBodyWithIssuer;
+  }
+
+  protected _whetherMessageDecryptedOrError(collectedResult: any): collectedResult is ISwarmMessageInstanceDecrypted | Error {
+    return collectedResult instanceof Error || isValidSwarmMessageDecryptedFormat(collectedResult);
+  }
+
+  private __replaceMessageEncryptedWithError = (
+    collectedResult: ISwarmMessageInstanceDecrypted | ISwarmMessageInstanceEncrypted | Error
+  ): Error | ISwarmMessageInstanceDecrypted =>
+    this._whetherMessageDecryptedOrError(collectedResult)
+      ? collectedResult
+      : new Error('An encrypted message has been collected');
+
+  protected _replaceMessagesEncryptedWithErrors(
+    resultCollected: Array<ISwarmMessageInstanceDecrypted | ISwarmMessageInstanceEncrypted | Error>
+  ): Array<ISwarmMessageInstanceDecrypted | Error> {
+    return resultCollected.map(this.__replaceMessageEncryptedWithError);
+  }
+
+  protected async _decryptSwarmMessageByPassword(swarmMessage: ISwarmMessageInstanceDecrypted): Promise<MD> {
+    const swarmMessagePayloadDecrypted = await this._getMessagesEncryptionQueue().decryptData(swarmMessage.bdy.pld);
+    return {
+      ...swarmMessage,
+      bdy: {
+        ...swarmMessage.bdy,
+        pld: swarmMessagePayloadDecrypted,
+      },
+    } as MD;
+  }
+
+  private __decryptPasswordEncryptedMessageCollectedOrReturnError = async (
+    swarmMessageOrError: Error | ISwarmMessageInstanceDecrypted
+  ): Promise<Error | MD> => {
+    if (swarmMessageOrError instanceof Error) {
+      return swarmMessageOrError;
+    }
+    try {
+      return await this._decryptSwarmMessageByPassword(swarmMessageOrError);
+    } catch (err) {
+      return err;
+    }
+  };
+
+  protected async _decryptPasswordEncryptedMessagesCollected(
+    swarmMessagesAndErrors: Array<ISwarmMessageInstanceDecrypted | Error>
+  ): Promise<Array<MD | Error>> {
+    const promises = swarmMessagesAndErrors.map(this.__decryptPasswordEncryptedMessageCollectedOrReturnError);
+    return await Promise.all(promises);
+  }
+
+  protected async _decryptSwarmMessageWithMeta(
+    swarmMessageWithMeta: ISwarmMessageStoreMessagingRequestWithMetaResult<P, ISwarmMessageInstanceDecrypted>
+  ): Promise<ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD>> {
+    const swarmMessageOrError = swarmMessageWithMeta.message;
+    const swarmMessageDecryptedOrError: MD | Error = await this.__decryptPasswordEncryptedMessageCollectedOrReturnError(
+      swarmMessageOrError
+    );
+    return {
+      ...swarmMessageWithMeta,
+      message: swarmMessageDecryptedOrError,
+    };
+  }
+
+  private __decryptPasswordEncryptedMessageWithMetaCollected = async (
+    encryptedMessageWithMeta: ISwarmMessageStoreMessagingRequestWithMetaResult<P, ISwarmMessageInstanceDecrypted> | undefined
+  ): Promise<ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined> => {
+    if (!encryptedMessageWithMeta) {
+      return encryptedMessageWithMeta;
+    }
+    return await this._decryptSwarmMessageWithMeta(encryptedMessageWithMeta);
+  };
+
+  protected async _decryptPasswordEncryptedMessagesCollectedWithMeta(
+    collectMessagesWithMetaResult: Array<
+      ISwarmMessageStoreMessagingRequestWithMetaResult<P, ISwarmMessageInstanceDecrypted> | undefined
+    >
+  ): Promise<Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined>> {
+    const promises = collectMessagesWithMetaResult.map(this.__decryptPasswordEncryptedMessageWithMetaCollected);
+    return await Promise.all(promises);
   }
 }

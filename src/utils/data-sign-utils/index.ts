@@ -1,5 +1,3 @@
-export * from './data-sign-utils';
-
 export * from './data-sign-utils.const';
 
 export * from './data-sign-utils.types';

@@ -2,8 +2,8 @@ import {
   IDataCachingDecoratorDecoratedFunction,
   IDataCachingDecoratorCachedValue,
 } from './data-cache-utils-caching-decorator.types';
-import { commonUtilsArrayOrderByDec } from 'utils/common-utils/common-utils';
 import { DATA_CACHING_DECORATOR_DEFAULT_CACHE_CAPACITY } from './data-cache-utils-caching-decorator.const';
+import { commonUtilsArrayOrderByDec } from '../../common-utils';
 
 /**
  * decorator for a method, will be wrapped for

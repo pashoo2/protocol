@@ -1,8 +1,8 @@
 import { TSaltUtilsSaltType } from './../encryption-utils/salt-utils.types';
 import { importPasswordKeyFromString, generatePasswordKeyByPasswordString } from './derive-key.password-utils';
-import { getInitializationVectorFromData, decryptDataFromString } from 'utils/encryption-utils/encryption-utils';
 import { PASSWORD_ENCRYPTION_UTILS_DECRYPTION_PARAMS } from './password-utils.const';
 import { decodeDOMStringToArrayBuffer, encodeArrayBufferToDOMString } from 'utils/string-encoding-utils';
+import { getInitializationVectorFromData, decryptDataFromString } from 'utils/encryption-utils';
 
 export const decryptDataWithKeyNative = async (
   key: string | CryptoKey,

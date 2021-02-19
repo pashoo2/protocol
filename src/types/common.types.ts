@@ -8,6 +8,8 @@ export interface IConstructorSimple<T> {
   new (): T;
 }
 
+export type AnyConstructor<A = object> = new (...input: any[]) => A;
+
 export type MaybeError = Error | void;
 
 export interface IResolvable<T> {
