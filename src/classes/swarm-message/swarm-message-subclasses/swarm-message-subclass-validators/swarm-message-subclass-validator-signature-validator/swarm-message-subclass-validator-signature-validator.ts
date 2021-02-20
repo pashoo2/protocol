@@ -5,7 +5,7 @@ import { ICentralAuthority } from '../../../../central-authority-class/central-a
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 import { isCryptoKeyDataVerify } from '../../../../../utils/encryption-keys-utils/encryption-keys-utils';
 import { QueuedEncryptionClassBase } from '../../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base';
-import { IQueuedEncrypyionClassBase } from '../../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
+import { IQueuedEncryptionClassBase } from '../../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
 import { swarmMessageUtilSignatureGetStringForSignByMessageRaw } from '../../../swarm-message-utils/swarm-message-utils-signature/swarm-message-utils-signature';
 import { ISwarmMessageUtilSignatureGetStringForSignByMessageRaw } from '../../../swarm-message-utils/swarm-message-utils-signature/swarm-message-utils-signature.types';
 
@@ -16,7 +16,7 @@ export class SwarmMessgeSubclassSignatureValidator {
 
   protected caConnection?: ICentralAuthority;
 
-  protected signVerificationQueue?: IQueuedEncrypyionClassBase;
+  protected signVerificationQueue?: IQueuedEncryptionClassBase;
 
   protected getDataToSignBySwarmMsg?: ISwarmMessageUtilSignatureGetStringForSignByMessageRaw;
 

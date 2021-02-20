@@ -15,10 +15,10 @@ import {
 import { isCryptoKeyDataSign, isCryptoKeyDataVerify } from '../../../utils/encryption-keys-utils/encryption-keys-utils';
 import { signToString } from '../../../utils/data-sign-utils/sign-data.encryption-utils';
 import { verifyData } from '../../../utils/data-sign-utils/verify-data.encryption-utils';
-import { IQueuedEncrypyionClassBase } from './queued-encryption-class-base.types';
+import { IQueuedEncryptionClassBase } from './queued-encryption-class-base.types';
 import { IQueuedEncrypyionClassBaseOptions } from './queued-encryption-class-base.types';
 
-export class QueuedEncryptionClassBase implements IQueuedEncrypyionClassBase {
+export class QueuedEncryptionClassBase implements IQueuedEncryptionClassBase {
   protected defaultKeys: Required<IQueuedEncrypyionClassBaseOptions>['keys'] = {};
 
   protected asyncQueue = new AsyncQueueClassBase();

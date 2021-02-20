@@ -35,11 +35,9 @@ import {
   TSwarmStoreDatabaseIteratorMethodArgument,
 } from '../../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessagesDatabaseConnectedInstanceFabricByDatabaseOptions } from '../../swarm-messages-database/swarm-messages-database-fabrics/types/swarm-messages-database-instance-fabric-by-database-options.types';
-import { JSONSchema7 } from 'json-schema';
-import { ISwarmMessagesChannelDescriptionFormatValidator } from './swarm-messages-channels-validation.types';
 import { ISwarmMessagesChannelNotificationEmitter } from './swarm-messages-channel-events.types';
 import { TCentralAuthorityUserIdentity } from '../../central-authority-class/central-authority-class-types/central-authority-class-types-common';
-import { IQueuedEncrypyionClassBase } from '../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
+import { IQueuedEncryptionClassBase } from '../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
 import { ISwarmMessageDatabaseEvents } from '../../swarm-messages-database/swarm-messages-database.types';
 import { EventEmitter } from '../../basic-classes/event-emitter-class-base/event-emitter-class-base';
 
@@ -302,7 +300,7 @@ export interface ISwarmMessagesChannel<
    * @type {ISwarmMessagesChannelNotificationEmitter<P, DbType>}
    * @memberof ISwarmMessagesChannel
    */
-  readonly emitter: ISwarmMessagesChannelNotificationEmitter<P, DbType>;
+  readonly emitterChannelState: ISwarmMessagesChannelNotificationEmitter<P, DbType>;
 
   /**
    * Events which emitted by the channel's swarm messages database.
@@ -311,6 +309,23 @@ export interface ISwarmMessagesChannel<
    * @memberof ISwarmMessagesChannel
    */
   readonly emitterChannelMessagesDatabase: EventEmitter<ISwarmMessageDatabaseEvents<P, T, DbType, DBO, MD>>;
+
+  /**
+   * Error describes a reason why the channel is inactive.
+   * If channel is active then it's empty.
+   *
+   * @type {(Error | undefined)}
+   * @memberof ISwarmMessagesChannel
+   */
+  readonly channelInactiveReasonError: Error | undefined;
+
+  /**
+   * Close the instance and a swarm messages database related.
+   *
+   * @returns {Promise<void>}
+   * @memberof ISwarmMessagesChannel
+   */
+  close(): Promise<void>;
 
   /**
    * Add swarm message to the channel.
@@ -355,15 +370,6 @@ export interface ISwarmMessagesChannel<
   ): Promise<Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined>>;
 
   /**
-   * Set a password for messages encryption.
-   *
-   * @param {string} password
-   * @returns {Promise<void>}
-   * @memberof ISwarmMessagesChannel
-   */
-  setPasswordForMessagesEncryption(password: string): Promise<void>;
-
-  /**
    * Update channel's description.
    *
    * @returns {Promise<void>}
@@ -388,31 +394,6 @@ export interface ISwarmMessagesChannel<
    * @memberof ISwarmMessagesChannel
    */
   dropDescriptionAndDeleteRemotely(): Promise<void>;
-}
-
-export interface ISwarmMessagesChannelConstructorOptionsValidators<
-  P extends ESwarmStoreConnector,
-  T extends TSwarmMessageSerialized,
-  DbType extends TSwarmStoreDatabaseType<P>,
-  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>
-> {
-  /**
-   * Validates a value by a json jsonSchema
-   * passed in props.
-   *
-   * @param {JSONSchema7} jsonSchema
-   * @param {*} valueToValidate
-   * @returns {Promise<void>}
-   * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArgumentsValidators
-   */
-  jsonSchemaValidator(jsonSchema: JSONSchema7, valueToValidate: any): Promise<void>;
-  /**
-   * Validator of channel description format
-   *
-   * @type {ISwarmMessagesChannelDescriptionFormatValidator<P, T, any, any>}
-   * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArguments
-   */
-  swarmMessagesChannelDescriptionFormatValidator: ISwarmMessagesChannelDescriptionFormatValidator<P, T, DbType, DBO>;
 }
 
 /**
@@ -582,14 +563,6 @@ export interface ISwarmMessagesChannelConstructorUtils<
    * @memberof ISwarmMessagesChannelConstructorUtils
    */
   getDatabaseNameByChannelDescription: ISwarmMessagesChannelDatabaseNameGeneratorByChannelDescription<P, T, DbType, DBO>;
-  /**
-   * Utility that creates an encryption queue instance by a password string.
-   *
-   * @param {string} password
-   * @returns {IQueuedEncrypyionClassBase}
-   * @memberof ISwarmMessagesChannelConstructorUtils
-   */
-  getEncryptionQueueByPasswordString(password: string): IQueuedEncrypyionClassBase;
 }
 
 /**
@@ -669,7 +642,8 @@ export interface ISwarmMessagesChannelConstructorOptions<
     SMSM,
     DCO,
     DCCRT
-  >
+  >,
+  CHD extends ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO> = ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>
 > {
   /**
    * A description of the channel.
@@ -677,7 +651,7 @@ export interface ISwarmMessagesChannelConstructorOptions<
    * @type {ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>}
    * @memberof ISwarmMessagesChannelConstructorArguments
    */
-  swarmMessagesChannelDescription: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>;
+  swarmMessagesChannelDescription: CHD;
 
   /**
    * Swarm messages channels list where to add the channel.
@@ -688,6 +662,16 @@ export interface ISwarmMessagesChannelConstructorOptions<
   swarmMessagesChannelsListInstance: ISwarmMessagesChannelsDescriptionsList<P, T, MD>;
 
   /**
+   * Encryption queue if the channel's messages must be encrypted by a password.
+   * @type {IQueuedEncryptionClassBase}
+   *
+   * @memberof ISwarmMessagesChannelConstructorOptions
+   */
+  passwordEncryptedChannelEncryptionQueue: CHD['messageEncryption'] extends SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD
+    ? IQueuedEncryptionClassBase
+    : undefined;
+
+  /**
    * Identity of the current user.
    *
    * @type {TCentralAuthorityUserIdentity}
@@ -695,13 +679,6 @@ export interface ISwarmMessagesChannelConstructorOptions<
    */
   currentUserId: TCentralAuthorityUserIdentity;
 
-  /**
-   * Validators used for formats validations.
-   *
-   * @type {ISwarmMessagesChannelConstructorOptionsValidators<P, T, DbType, DBO>}
-   * @memberof ISwarmMessagesChannelConstructorOptions
-   */
-  validators: ISwarmMessagesChannelConstructorOptionsValidators<P, T, DbType, DBO>;
   /**
    * Various utilities which will be used by the swarm messages channel during it's work
    * or initialization.

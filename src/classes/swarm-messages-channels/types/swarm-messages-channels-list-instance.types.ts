@@ -21,8 +21,7 @@ import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../swarm-store-
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../swarm-messages-database/swarm-messages-database.messages-collector.types';
 import { JSONSchema7 } from 'json-schema';
-import { EventEmitter } from '../../basic-classes/event-emitter-class-base/event-emitter-class-base';
-import { ISwarmMessagesChannelsListEmitter } from './swarm-messages-channel-events.types';
+import { ISwarmMessagesChannelNotificationEmitter } from './swarm-messages-channel-events.types';
 import {
   ISwarmMessagesDatabaseCacheOptions,
   ISwarmMessagesDatabaseCache,
@@ -182,7 +181,7 @@ export interface ISwarmMessagesChannelsDescriptionsList<
    * @type {ISwarmMessagesChannelsListEmitter<P, any>}
    * @memberof ISwarmMessagesChannelsDescriptionsList
    */
-  readonly emitter: ISwarmMessagesChannelsListEmitter<P, any>;
+  readonly emitter: ISwarmMessagesChannelNotificationEmitter<P, any>;
 
   /**
    * Add a new channel byt it's description in the channels list by it's description

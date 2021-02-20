@@ -30,7 +30,7 @@ import { isDeepEqual } from '../../../../../../utils/common-utils/common-utils-e
 import assert from 'assert';
 import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../../../../const/swarm-messages-channels-main.const';
 import { isCryptoKeyDataEncryption } from '../../../../../../utils/encryption-keys-utils/encryption-keys-utils';
-import { IQueuedEncrypyionClassBase } from '../../../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
+import { IQueuedEncryptionClassBase } from '../../../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
 import {
   ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions,
   ISwarmMessagesChannelV1DatabaseHandler,
@@ -168,10 +168,10 @@ export class SwarmMessagesChannelV1DatabaseHandler<
    *
    * @readonly
    * @protected
-   * @type {(IQueuedEncrypyionClassBase | undefined)}
+   * @type {(IQueuedEncryptionClassBase | undefined)}
    * @memberof SwarmMessagesChannelV1DatabaseHandler
    */
-  protected get _messagesEncryptionQueueOrUndefined(): IQueuedEncrypyionClassBase | undefined {
+  protected get _messagesEncryptionQueueOrUndefined(): IQueuedEncryptionClassBase | undefined {
     return this.___options.messagesEncryptionQueue;
   }
 
@@ -343,6 +343,10 @@ export class SwarmMessagesChannelV1DatabaseHandler<
     if (errorOccuredOnClosingPreviousDatabaseConenctor) {
       throw errorOccuredOnClosingPreviousDatabaseConenctor;
     }
+  }
+
+  public async close(): Promise<void> {
+    return await this._close();
   }
 
   public async addMessage(
@@ -785,7 +789,7 @@ export class SwarmMessagesChannelV1DatabaseHandler<
     return this._getActualSwarmMessagesDatabaseConnector();
   }
 
-  protected _getMessagesEncryptionQueue(): IQueuedEncrypyionClassBase {
+  protected _getMessagesEncryptionQueue(): IQueuedEncryptionClassBase {
     const { messagesEncryptionQueue } = this.___options;
     if (!messagesEncryptionQueue) {
       throw new Error('An encryption queue is not exists');

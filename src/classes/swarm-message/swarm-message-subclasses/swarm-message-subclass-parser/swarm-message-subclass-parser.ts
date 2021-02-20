@@ -9,7 +9,7 @@ import { QueuedEncryptionClassBase } from '../../../basic-classes/queued-encrypt
 import { ISwarmMessageEncryptedCache } from '../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import {
   IQueuedEncrypyionClassBaseOptions,
-  IQueuedEncrypyionClassBase,
+  IQueuedEncryptionClassBase,
 } from '../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
 import { ISwarmMessageRaw, TSwarmMessage, TSwarmMessageSerialized } from '../../swarm-message-constructor.types';
 import { ISwarmMessageSubclassParserOptions, ISwarmMessageSubclassParser } from './swarm-message-subclass-parser.types';
@@ -17,7 +17,7 @@ import { ISwarmMessageSubclassParserOptions, ISwarmMessageSubclassParser } from 
 export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
   protected constructorOptions?: ISwarmMessageSubclassParserOptions;
 
-  protected msgDecryptQueue?: IQueuedEncrypyionClassBase;
+  protected msgDecryptQueue?: IQueuedEncryptionClassBase;
 
   protected encryptedCache?: ISwarmMessageEncryptedCache;
 

@@ -1,3 +1,5 @@
+import assert from 'assert';
+import { JSONSchema7 } from 'json-schema';
 import { ESwarmStoreConnector } from 'classes/swarm-store-class/swarm-store-class.const';
 import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from 'classes/swarm-message/swarm-message-constructor.types';
 import {
@@ -22,34 +24,38 @@ import {
   ISwarmMessagesDatabaseConnectOptions,
 } from 'classes/swarm-messages-database/swarm-messages-database.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from 'classes/swarm-messages-database/swarm-messages-database.messages-collector.types';
-import {
-  ISwarmMessagesChannelConstructorOptionsValidators,
-  TSwarmMessagesChannelId,
-} from '../../../../types/swarm-messages-channel.types';
-import assert from 'assert';
-import { ISwarmMessagesChannelsDescriptionsList } from '../../../../types/swarm-messages-channels-list.types';
 import { swarmMessagesChannelValidationDescriptionFormatV1 } from '../../../../swarm-messages-channels-utils/swarm-messages-channel-utils/swarm-messages-channel-validation-utils/swarm-messages-channel-validation-description-utils/swarm-messages-channel-validation-description-format-v1/swarm-messages-channel-validation-description-format-v1';
 import { validateVerboseBySchemaWithVoidResult } from 'utils/validation-utils/validation-utils';
-import {
-  ISwarmMessagesChannelConstructorOptions,
-  ISwarmMessageChannelDescriptionRaw,
-} from '../../../../types/swarm-messages-channel.types';
 import swarmMessagesChannelDescriptionJSONSchema from '../../../../const/validation/swarm-messages-channel/swarm-messages-channel-description/schemas/swarm-message-channel-description-v1-format-schema.json';
-import { JSONSchema7 } from 'json-schema';
+import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../../../../const/swarm-messages-channels-main.const';
+import { TSwarmMessageUserIdentifierSerialized } from '../../../../../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
+import { ISwarmMessagesDatabaseConnector } from '../../../../../swarm-messages-database/swarm-messages-database.types';
+import { getOptionsForChannelsListHandlerByContstructorOptions } from '../utils/swarm-messages-channel-v1-class.utils';
 import {
   ISwarmMessageChannelDescriptionWithoutDatabaseOptionsRaw,
   ISwarmMessagesChannelConstructorUtils,
-} from '../../../../types/swarm-messages-channel.types';
-import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../../../../const/swarm-messages-channels-main.const';
-import { TSwarmMessageUserIdentifierSerialized } from '../../../../../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
-import { isDeepEqual } from 'utils/common-utils/common-utils-equality';
-import { ISwarmMessagesDatabaseConnector } from '../../../../../swarm-messages-database/swarm-messages-database.types';
-import { ISwarmMessagesChannel } from '../../../../types/swarm-messages-channel.types';
-import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
-import { TSwarmStoreDatabaseEntityKey } from '../../../../../swarm-store-class/swarm-store-class.types';
-import { SwarmMessagesChannelV1ClassChannelsListHandler } from '../subclasses/swarm-messages-channel-v1-class-channels-list-handler';
-import { ISwarmMessagesChannelV1ClassChannelsListHandlerConstructorOptions } from '../types/swarm-messages-channel-v1-class.types';
-import { getOptionsForChannelsListHandlerByContstructorOptions } from '../utils/swarm-messages-channel-v1-class.utils';
+} from '../../../../types/swarm-messages-channel-instance.types';
+import {
+  TSwarmMessagesChannelId,
+  ISwarmMessagesChannel,
+  ISwarmMessagesChannelConstructorOptions,
+  ISwarmMessageChannelDescriptionRaw,
+} from '../../../../types/swarm-messages-channel-instance.types';
+import { ISwarmMessagesChannelsDescriptionsList } from '../../../../types/swarm-messages-channels-list-instance.types';
+import { ESwarmMessagesChannelsListEventName } from '../../../../types/swarm-messages-channel-events.types';
+import { isDeepEqual } from '../../../../../../utils/common-utils/common-utils-equality';
+import { ISwarmMessagesChannelV1ClassChannelsListHandlerConstructorOptions } from '../types/swarm-messages-channel-v1-class-channels-list-handler.types';
+import { ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions } from '../types/swarm-messages-channel-v1-class-messages-database-handler.types';
+import { IQueuedEncryptionClassBase } from '../../../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
+import { ESwarmStoreEventNames } from '../../../../../swarm-store-class/swarm-store-class.const';
+import {
+  ISwarmMessagesChannelV1ClassChannelsListHandler,
+  ISwarmMessagesChannelV1ClassChannelsListHandlerConstructor,
+} from '../types/swarm-messages-channel-v1-class-channels-list-handler.types';
+import {
+  ISwarmMessagesChannelV1DatabaseHandler,
+  ISwarmMessagesChannelV1DatabaseHandlerConstructor,
+} from '../types/swarm-messages-channel-v1-class-messages-database-handler.types';
 
 /**
  * Constructor of a swarm messages channel.
@@ -61,8 +67,8 @@ import { getOptionsForChannelsListHandlerByContstructorOptions } from '../utils/
  * @template DbType
  * @template DBO
  * @template ConnectorBasic
- * @template PO
  * @template CO
+ * @template PO
  * @template ConnectorMain
  * @template CFO
  * @template GAC
@@ -77,67 +83,46 @@ import { getOptionsForChannelsListHandlerByContstructorOptions } from '../utils/
  * @template OPT
  */
 export class SwarmMessagesChannelV1Class<
-    P extends ESwarmStoreConnector,
-    T extends TSwarmMessageSerialized,
-    DbType extends TSwarmStoreDatabaseType<P>,
-    DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
-    ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO>,
-    PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
-    CO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, PO>,
-    ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, PO>,
-    CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
-    GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MD | T>,
-    MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
-    ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MD | T, GAC> | undefined,
-    O extends ISwarmMessageStoreOptionsWithConnectorFabric<
-      P,
-      T,
-      DbType,
-      DBO,
-      ConnectorBasic,
-      PO,
-      CO,
-      ConnectorMain,
-      CFO,
-      MD | T,
-      GAC,
-      MCF,
-      ACO
-    >,
-    SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MD | T, GAC, MCF, ACO, O>,
-    MD extends ISwarmMessageInstanceDecrypted,
-    SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
-    DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>,
-    DCCRT extends ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM>,
-    OPT extends ISwarmMessagesDatabaseConnectOptions<
-      P,
-      T,
-      DbType,
-      DBO,
-      ConnectorBasic,
-      PO,
-      CO,
-      ConnectorMain,
-      CFO,
-      GAC,
-      MCF,
-      ACO,
-      O,
-      SMS,
-      MD,
-      SMSM,
-      DCO,
-      DCCRT
-    >
-  >
-  extends SwarmMessagesChannelV1ClassChannelsListHandler<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
+  ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO>,
+  CO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
+  PO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, CO>,
+  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, CO>,
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain>,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MD | T>,
+  MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
+  ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MD | T, GAC> | undefined,
+  O extends ISwarmMessageStoreOptionsWithConnectorFabric<
     P,
     T,
     DbType,
     DBO,
     ConnectorBasic,
-    PO,
     CO,
+    PO,
+    ConnectorMain,
+    CFO,
+    MD | T,
+    GAC,
+    MCF,
+    ACO
+  >,
+  SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, MD | T, GAC, MCF, ACO, O>,
+  MD extends ISwarmMessageInstanceDecrypted,
+  SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
+  DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>,
+  DCCRT extends ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM>,
+  OPT extends ISwarmMessagesDatabaseConnectOptions<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    CO,
+    PO,
     ConnectorMain,
     CFO,
     GAC,
@@ -145,9 +130,13 @@ export class SwarmMessagesChannelV1Class<
     ACO,
     O,
     SMS,
-    MD
-  >
-  implements ISwarmMessagesChannel<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, GAC, MCF, ACO, O, SMS, MD> {
+    MD,
+    SMSM,
+    DCO,
+    DCCRT
+  >,
+  CHD extends ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO> = ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>
+> implements ISwarmMessagesChannel<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, GAC, MCF, ACO, O, SMS, MD> {
   public get id(): TSwarmMessagesChannelId {
     return this._swarmMessagesChannelDescriptionWODatabaseOptions.id;
   }
@@ -180,19 +169,19 @@ export class SwarmMessagesChannelV1Class<
     return this._swarmMessagesChannelDescriptionWODatabaseOptions.admins;
   }
 
+  public get channelInactiveReasonError(): Error | undefined {
+    return this.__channelInactiveReasonError;
+  }
+
   protected get _swarmMessagesChannelDescriptionWODatabaseOptions(): ISwarmMessageChannelDescriptionWithoutDatabaseOptionsRaw<
     P,
     DbType
   > {
-    return this._swarmMessagesChannelDescriptionFromConstructorOptions;
+    return this._swarmMessagesChannelDescriptionActual;
   }
 
-  protected get _swarmMessagesChannelDescriptionFromConstructorOptions(): ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO> {
-    return this.__options.swarmMessagesChannelDescription;
-  }
-
-  protected get _databaseOptionsPartial(): Pick<DBO, 'isPublic' | 'grantAccess' | 'write'> {
-    return this.__options.swarmMessagesChannelDescription.dbOptions;
+  protected get _swarmMessagesChannelDescriptionActual(): CHD {
+    return this.__swarmMessagesChannelDescriptionActual;
   }
 
   protected get _constructorOptionsUtils(): ISwarmMessagesChannelConstructorUtils<
@@ -201,8 +190,8 @@ export class SwarmMessagesChannelV1Class<
     DbType,
     DBO,
     ConnectorBasic,
-    PO,
     CO,
+    PO,
     ConnectorMain,
     CFO,
     GAC,
@@ -219,22 +208,33 @@ export class SwarmMessagesChannelV1Class<
     return this.__options.utils;
   }
 
-  // TODO - !!!! handle database close events coming from a messages database handler instance.
-
-  // TODO - listen for the close event in the Channel class itself
-  // and set channel as inactive
+  /**
+   * Whether the channel is active or not.
+   *
+   * @readonly
+   * @protected
+   * @type {boolean}
+   * @memberof SwarmMessagesChannelV1Class
+   */
+  protected get _whetherChannelIsActive(): boolean {
+    return !this.__channelInactiveReasonError;
+  }
 
   protected get _actualSwarmMessagesIssuer(): string {
     const { getSwarmMessageIssuerByChannelDescription } = this._constructorOptionsUtils;
-    const messagesIssuer = getSwarmMessageIssuerByChannelDescription(this.actualChannelDescription);
+    const messagesIssuer = getSwarmMessageIssuerByChannelDescription(this.__swarmMessagesChannelDescriptionActual);
 
     if (!messagesIssuer) {
       throw new Error('An issuer for swarm messages which sent throught the channel is not defined');
     }
     return messagesIssuer;
   }
+  // TODO - !!!! handle database close events coming from a messages database handler instance.
 
-  private __lazyInitializationPromise:
+  // TODO - listen for the close event in the Channel class itself
+  // and set channel as inactive
+
+  protected _initializationPromise:
     | Promise<
         ISwarmMessagesDatabaseConnector<
           P,
@@ -242,8 +242,8 @@ export class SwarmMessagesChannelV1Class<
           DbType,
           DBO,
           ConnectorBasic,
-          PO,
           CO,
+          PO,
           ConnectorMain,
           CFO,
           GAC,
@@ -260,6 +260,71 @@ export class SwarmMessagesChannelV1Class<
       >
     | undefined;
 
+  /**
+   * This channel's descriptions is gotten from the options
+   * and the updated from the channel's list.
+   *
+   * @private
+   * @type {ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>}
+   * @memberof SwarmMessagesChannelV1Class
+   */
+  private __swarmMessagesChannelDescriptionActual: CHD;
+
+  /**
+   * If the channel is inactive the reason should be
+   * set as an error.
+   *
+   * @private
+   * @type {(Error | undefined)}
+   * @memberof SwarmMessagesChannelV1Class
+   */
+  private __channelInactiveReasonError: Error | undefined;
+
+  /**
+   * Whether channel marked as removed
+   *
+   * @private
+   * @type {boolean}
+   * @memberof SwarmMessagesChannelV1Class
+   */
+  private __markedAsRemoved: boolean = false;
+
+  private __swarmMessagesChannelsListHandlerInstance: ISwarmMessagesChannelV1ClassChannelsListHandler<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    CO,
+    PO,
+    ConnectorMain,
+    CFO,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS,
+    MD
+  >;
+
+  private __swarmMessagesChannelDatabaseHandlerInstance: ISwarmMessagesChannelV1DatabaseHandler<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    CO,
+    PO,
+    ConnectorMain,
+    CFO,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS,
+    MD
+  >;
+
   constructor(
     private __options: ISwarmMessagesChannelConstructorOptions<
       P,
@@ -267,8 +332,8 @@ export class SwarmMessagesChannelV1Class<
       DbType,
       DBO,
       ConnectorBasic,
-      PO,
       CO,
+      PO,
       ConnectorMain,
       CFO,
       GAC,
@@ -280,43 +345,67 @@ export class SwarmMessagesChannelV1Class<
       SMSM,
       DCO,
       DCCRT,
-      OPT
+      OPT,
+      CHD
+    >,
+    private __swarmMessagesChannelV1ClassChannelsListHandlerConstructor: ISwarmMessagesChannelV1ClassChannelsListHandlerConstructor<
+      P,
+      T,
+      DbType,
+      DBO,
+      ConnectorBasic,
+      CO,
+      PO,
+      ConnectorMain,
+      CFO,
+      GAC,
+      MCF,
+      ACO,
+      O,
+      SMS,
+      MD
+    >,
+    private __swarmMessagesChannelV1DatabaseHandlerConstructor: ISwarmMessagesChannelV1DatabaseHandlerConstructor<
+      P,
+      T,
+      DbType,
+      DBO,
+      ConnectorBasic,
+      CO,
+      PO,
+      ConnectorMain,
+      CFO,
+      GAC,
+      MCF,
+      ACO,
+      O,
+      SMS,
+      MD,
+      SMSM,
+      DCO,
+      DCCRT,
+      OPT,
+      CHD['messageEncryption']
     >
   ) {
-    super(
-      getOptionsForChannelsListHandlerByContstructorOptions<
-        P,
-        T,
-        DbType,
-        DBO,
-        ConnectorBasic,
-        PO,
-        CO,
-        ConnectorMain,
-        CFO,
-        GAC,
-        MCF,
-        ACO,
-        O,
-        SMS,
-        MD,
-        SMSM,
-        DCO,
-        DCCRT,
-        OPT
-      >(__options)
-    );
     this._validateOptions(__options);
-    this._setActualChannelDescriptionAndCreateActurlSwarmMessagesIssuer(__options.swarmMessagesChannelDescription);
+    this.__swarmMessagesChannelDescriptionActual = __options.swarmMessagesChannelDescription;
+
+    const swarmMessagesChannelsListHandler = this._createSwarmMessagesChannelsListHandlerInstance();
+
+    this.__swarmMessagesChannelsListHandlerInstance = swarmMessagesChannelsListHandler;
+    this._setListenersSwarmMessagesChannelsListHandlerInstance(swarmMessagesChannelsListHandler);
+
+    const swarmMessagesChannelDatabaseHandler = this._createSwarmMessagesChannelDatabaseHandler();
+
+    this.__swarmMessagesChannelDatabaseHandlerInstance = swarmMessagesChannelDatabaseHandler;
+    this._setListenersSwarmMessagesChannelDatabaseHandlerInstance(swarmMessagesChannelDatabaseHandler);
   }
 
-  public async addMessage(
-    message: Omit<MD['bdy'], 'iss'>,
-    key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined
-  ): Promise<void> {
-    const channelDatabase = await this._getChannelDatabaseOrCreateItAndReturn();
-    if (channelDatabase) {
-    }
+  public async close(): Promise<void> {
+    this._unsetAllListenersOfInstancesRelated();
+    await this._closeChannelDatabaseHandlerInstance();
+    this._resetState();
   }
 
   protected _validateSwarmMessagesChannelsListInstance(
@@ -332,15 +421,6 @@ export class SwarmMessagesChannelV1Class<
     assert(
       typeof swarmMessagesChannelsListInstance.removeChannelById === 'function',
       'swarmMessagesChannelsListInstance have an unknown implementation because the method "removeChannelById" is not a function'
-    );
-  }
-
-  protected _validateValidatorsOption(validators: ISwarmMessagesChannelConstructorOptionsValidators<P, T, DbType, DBO>): void {
-    assert(validators, 'Validators must be an object');
-    assert(typeof validators.jsonSchemaValidator === 'function', 'jsonSchemaValidator validator should be a function');
-    assert(
-      typeof validators.swarmMessagesChannelDescriptionFormatValidator === 'function',
-      'swarmMessagesChannelDescriptionFormatValidator must be a function'
     );
   }
 
@@ -361,8 +441,8 @@ export class SwarmMessagesChannelV1Class<
       DbType,
       DBO,
       ConnectorBasic,
-      PO,
       CO,
+      PO,
       ConnectorMain,
       CFO,
       GAC,
@@ -380,32 +460,144 @@ export class SwarmMessagesChannelV1Class<
     assert(options, 'Options must be provided');
     assert(typeof options === 'object', 'Options must be an object');
 
-    const { swarmMessagesChannelDescription, swarmMessagesChannelsListInstance, validators } = options;
+    const {
+      swarmMessagesChannelDescription,
+      swarmMessagesChannelsListInstance,
+      passwordEncryptedChannelEncryptionQueue,
+    } = options;
 
     this._validateSwarmMessagesChannelsListInstance(swarmMessagesChannelsListInstance);
-    this._validateValidatorsOption(validators);
     this._validateSwarmChannelDescription(swarmMessagesChannelDescription);
+
+    if (swarmMessagesChannelDescription.messageEncryption === SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD) {
+      assert(
+        passwordEncryptedChannelEncryptionQueue,
+        'Encryption queue must be provided in constructor options for channel with password encryption'
+      );
+    }
   }
 
-  protected async _validateChannelDescriptionWithValidatorFromOptions(
-    channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>,
-    validators: ISwarmMessagesChannelConstructorOptionsValidators<P, T, DbType, DBO>
-  ): Promise<void> {
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    const { jsonSchemaValidator, swarmMessagesChannelDescriptionFormatValidator } = validators;
-
-    await swarmMessagesChannelDescriptionFormatValidator(channelDescriptionRaw, jsonSchemaValidator);
+  protected _getOptionsForSwarmMessagesChannelsListConstructor(): ISwarmMessagesChannelV1ClassChannelsListHandlerConstructorOptions<
+    P,
+    T,
+    DbType,
+    DBO,
+    MD
+  > {
+    return getOptionsForChannelsListHandlerByContstructorOptions<
+      P,
+      T,
+      DbType,
+      DBO,
+      ConnectorBasic,
+      CO,
+      PO,
+      ConnectorMain,
+      CFO,
+      GAC,
+      MCF,
+      ACO,
+      O,
+      SMS,
+      MD,
+      SMSM,
+      DCO,
+      DCCRT,
+      OPT
+    >(this.__options);
   }
 
-  protected async _validateCurrentChannelDescriptionByValidatorFromOptions(): Promise<void> {
-    const { swarmMessagesChannelDescription, validators } = this.__options;
-    return await this._validateChannelDescriptionWithValidatorFromOptions(swarmMessagesChannelDescription, validators);
+  protected _createSwarmMessagesChannelsListHandlerInstance(): ISwarmMessagesChannelV1ClassChannelsListHandler<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    CO,
+    PO,
+    ConnectorMain,
+    CFO,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS,
+    MD
+  > {
+    const SwarmMessagesChannelV1ClassChannelsListHandlerConstructor = this
+      .__swarmMessagesChannelV1ClassChannelsListHandlerConstructor;
+    const constructorOptions = this._getOptionsForSwarmMessagesChannelsListConstructor();
+    const swarmMessagesChannelsListInstance = new SwarmMessagesChannelV1ClassChannelsListHandlerConstructor(constructorOptions);
+
+    return swarmMessagesChannelsListInstance;
   }
 
-  protected _getChannelDatabaseOptions(): DBO {
+  protected _setChannelInactiveReasonError(channelInactivityResonError: Error): void {
+    this.__channelInactiveReasonError = channelInactivityResonError;
+  }
+
+  protected _unsetChannelInactiveReasonError(): void {
+    this.__channelInactiveReasonError = undefined;
+  }
+
+  protected _setChannelMarkedAsRemoved(): void {
+    this.__markedAsRemoved = true;
+  }
+
+  protected _unsetChannelMarkedAsRemoved(): void {
+    this.__markedAsRemoved = false;
+  }
+
+  protected _unsetInstancesRelated(): void {
+    (this as any).__swarmMessagesChannelsListHandlerInstance = undefined;
+    (this as any).__swarmMessagesChannelDatabaseHandlerInstance = undefined;
+  }
+
+  protected _setListenersSwarmMessagesChannelsListHandlerInstance(
+    swarmMessagesChannelsListInstance: ISwarmMessagesChannelV1ClassChannelsListHandler<
+      P,
+      T,
+      DbType,
+      DBO,
+      ConnectorBasic,
+      CO,
+      PO,
+      ConnectorMain,
+      CFO,
+      GAC,
+      MCF,
+      ACO,
+      O,
+      SMS,
+      MD
+    >,
+    isAddListeners: boolean = true
+  ): void {
+    const emitter = swarmMessagesChannelsListInstance.emitter;
+    const methodName = isAddListeners ? 'addListener' : 'removeListener';
+
+    emitter[methodName](
+      ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_UPDATE,
+      this.handleChannelsListHandlerEventChannelDescriptionUpdate
+    );
+    emitter[methodName](
+      ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_REMOVED,
+      this.__handleChannelsListHandlerEventChannelDescriptionRemoved
+    );
+  }
+
+  protected _setChannelDescriptionActual(channelDescriptionUpdated: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>) {
+    this.__swarmMessagesChannelDescriptionActual = channelDescriptionUpdated as CHD;
+  }
+
+  protected _restartChannelDatabaseConnectorWithDatabaseHandler() {
+    this._restartActualSwarmMessagesChannelDatabaseHandlerInstanceByActualChannelDescription();
+  }
+
+  protected _getChannelDatabaseOptionsByChannelDescriptionActual(): DBO {
     const { swarmMessagesChannelDescription } = this.__options;
     const { getDatabaseNameByChannelDescription } = this._constructorOptionsUtils;
-    const channelDatabaseOptionsPartial = this._databaseOptionsPartial;
+    const channelDatabaseOptionsPartial = this._swarmMessagesChannelDescriptionActual.dbOptions;
     const dbName = getDatabaseNameByChannelDescription(swarmMessagesChannelDescription);
 
     return {
@@ -415,173 +607,92 @@ export class SwarmMessagesChannelV1Class<
     } as DBO;
   }
 
-  protected async _createChannelDatabaseByDatabaseOptions(
-    databaseOptions: DBO
-  ): Promise<
-    ISwarmMessagesDatabaseConnector<
-      P,
-      T,
-      DbType,
-      DBO,
-      ConnectorBasic,
-      PO,
-      CO,
-      ConnectorMain,
-      CFO,
-      GAC,
-      MCF,
-      ACO,
-      O,
-      SMS,
-      MD,
-      SMSM,
-      DCO,
-      DCCRT,
-      OPT
-    >
-  > {
-    const { swarmMessagesDatabaseConnectorInstanceByDBOFabric } = this._constructorOptionsUtils;
-    return await swarmMessagesDatabaseConnectorInstanceByDBOFabric(databaseOptions);
-  }
-
-  protected async _createAndReturnChannelSwarmMessagesDatabaseByConsctuctorOptions(): Promise<
-    ISwarmMessagesDatabaseConnector<
-      P,
-      T,
-      DbType,
-      DBO,
-      ConnectorBasic,
-      PO,
-      CO,
-      ConnectorMain,
-      CFO,
-      GAC,
-      MCF,
-      ACO,
-      O,
-      SMS,
-      MD,
-      SMSM,
-      DCO,
-      DCCRT,
-      OPT
-    >
-  > {
-    const channelDatabaseOptions = this._getChannelDatabaseOptions();
-    const channelDatabaseConnected = await this._createChannelDatabaseByDatabaseOptions(channelDatabaseOptions);
-    return channelDatabaseConnected;
-  }
-
-  /**
-   * Wait till channel description will be added to the list related
-   * and then creates swarm messages database for the channel and
-   * wait till it is opening.
-   *
-   * @protected
-   * @returns {Promise<void>}
-   * @memberof SwarmMessagesChannelV1Class
-   */
-  protected async _initializeChannel(): Promise<
-    ISwarmMessagesDatabaseConnector<
-      P,
-      T,
-      DbType,
-      DBO,
-      ConnectorBasic,
-      PO,
-      CO,
-      ConnectorMain,
-      CFO,
-      GAC,
-      MCF,
-      ACO,
-      O,
-      SMS,
-      MD,
-      SMSM,
-      DCO,
-      DCCRT,
-      OPT
-    >
-  > {
-    await this.promiseChannelDescriptionUpdate;
-    return await this._createAndReturnChannelSwarmMessagesDatabaseByConsctuctorOptions();
-  }
-
-  protected _setLazyInitializationPromise(
-    channelLazyInitializationPromise: Promise<
-      ISwarmMessagesDatabaseConnector<
-        P,
-        T,
-        DbType,
-        DBO,
-        ConnectorBasic,
-        PO,
-        CO,
-        ConnectorMain,
-        CFO,
-        GAC,
-        MCF,
-        ACO,
-        O,
-        SMS,
-        MD,
-        SMSM,
-        DCO,
-        DCCRT,
-        OPT
-      >
-    >
-  ): void {
-    this.__lazyInitializationPromise = channelLazyInitializationPromise;
-  }
-
-  protected _createChannelInitializationPromiseSetAsCurrentAndReturn(): Promise<
-    ISwarmMessagesDatabaseConnector<
-      P,
-      T,
-      DbType,
-      DBO,
-      ConnectorBasic,
-      PO,
-      CO,
-      ConnectorMain,
-      CFO,
-      GAC,
-      MCF,
-      ACO,
-      O,
-      SMS,
-      MD,
-      SMSM,
-      DCO,
-      DCCRT,
-      OPT
-    >
-  > {
-    const channelInitializationPromise = this._initializeChannel();
-
-    this._setLazyInitializationPromise(channelInitializationPromise);
-    return channelInitializationPromise;
-  }
-
-  protected async _createAndInitializeChannelDatabaseByCurrentDescription() {
-    await this.promiseChannelDescriptionUpdate;
-    if (this.markedAsRemoved) {
-      throw new Error('Channel is marked as removed, therefore it is not allowed to send messages through it');
+  protected _getMessagesEncryptionQueueOrUndefinedIfChannelNotEncryptedByPassword(
+    messageEncryption: CHD['messageEncryption']
+  ): CHD['messageEncryption'] extends SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD ? IQueuedEncryptionClassBase : undefined {
+    if (messageEncryption === SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD) {
+      const { passwordEncryptedChannelEncryptionQueue } = this.__options;
+      if (!passwordEncryptedChannelEncryptionQueue) {
+        throw new Error('An encryption queue instance should be set');
+      }
+      return passwordEncryptedChannelEncryptionQueue;
     }
-    return await this._createChannelInitializationPromiseSetAsCurrentAndReturn();
+    return undefined as CHD['messageEncryption'] extends SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD
+      ? IQueuedEncryptionClassBase
+      : undefined;
   }
 
-  protected async _getChannelDatabaseOrCreateItAndReturn(): Promise<
-    ISwarmMessagesDatabaseConnector<
+  protected _getOptionsForChannelDatabaseHandlerConstructor(): ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    CO,
+    PO,
+    ConnectorMain,
+    CFO,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS,
+    MD,
+    SMSM,
+    DCO,
+    DCCRT,
+    OPT,
+    CHD['messageEncryption']
+  > {
+    const messagesIssuer = this._actualSwarmMessagesIssuer;
+    const messageEncryptionType: CHD['messageEncryption'] = this._swarmMessagesChannelDescriptionActual.messageEncryption;
+    const databaseOptions = this._getChannelDatabaseOptionsByChannelDescriptionActual();
+    const messagesEncryptionQueue = this._getMessagesEncryptionQueueOrUndefinedIfChannelNotEncryptedByPassword(
+      messageEncryptionType
+    );
+    const swarmMessagesDatabaseConnectorInstanceByDBOFabric = this.__options.utils
+      .swarmMessagesDatabaseConnectorInstanceByDBOFabric;
+    return {
+      databaseOptions,
+      messagesEncryptionQueue,
+      messageEncryptionType,
+      messagesIssuer,
+      swarmMessagesDatabaseConnectorInstanceByDBOFabric,
+    };
+  }
+
+  protected _createSwarmMessagesChannelDatabaseHandler(): ISwarmMessagesChannelV1DatabaseHandler<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    CO,
+    PO,
+    ConnectorMain,
+    CFO,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS,
+    MD
+  > {
+    const ChannelDatabaseHandlerConstructor = this.__swarmMessagesChannelV1DatabaseHandlerConstructor;
+    const constructorOptions = this._getOptionsForChannelDatabaseHandlerConstructor();
+    const channelDatabaseHandlerInstance = new ChannelDatabaseHandlerConstructor(constructorOptions);
+    return channelDatabaseHandlerInstance;
+  }
+
+  protected _setListenersSwarmMessagesChannelDatabaseHandlerInstance(
+    swarmMessagesChannelDatabaseHandlerInstance: ISwarmMessagesChannelV1DatabaseHandler<
       P,
       T,
       DbType,
       DBO,
       ConnectorBasic,
-      PO,
       CO,
+      PO,
       ConnectorMain,
       CFO,
       GAC,
@@ -589,39 +700,52 @@ export class SwarmMessagesChannelV1Class<
       ACO,
       O,
       SMS,
-      MD,
-      SMSM,
-      DCO,
-      DCCRT,
-      OPT
-    >
-  > {
-    if (this.__lazyInitializationPromise) {
-      return await this.__lazyInitializationPromise;
-    }
-    return await this._createAndInitializeChannelDatabaseByCurrentDescription();
-  }
-
-  protected _getSwarmMessagesIssuerByChannelDescription(
-    channelDescription: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>
-  ): string {
-    const { getSwarmMessageIssuerByChannelDescription } = this._constructorOptionsUtils;
-    return getSwarmMessageIssuerByChannelDescription(channelDescription);
-  }
-
-  protected _setActualChannelDescription(channelDescription: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>): void {
-    this.__actualChannelDescription = channelDescription;
-  }
-
-  protected _setActualSwarmMessagesIssuer(issuer: string): void {
-    this.__actualSwarmMessagesIssuer = issuer;
-  }
-
-  protected _setActualChannelDescriptionAndCreateActurlSwarmMessagesIssuer(
-    channelDescription: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>
+      MD
+    >,
+    isAddListeners: boolean = true
   ): void {
-    this._setActualChannelDescription(channelDescription);
-    const messagesIssuer = this._getSwarmMessagesIssuerByChannelDescription(channelDescription);
-    this._setActualSwarmMessagesIssuer(messagesIssuer);
+    const emitter = swarmMessagesChannelDatabaseHandlerInstance.emitter;
+    const methodName = isAddListeners ? 'addListener' : 'removeListener';
+
+    emitter[methodName](ESwarmStoreEventNames.CLOSE_DATABASE, this.__handleChannelDatabaseHandlerEventDatabaseClosed);
+    emitter[methodName](ESwarmStoreEventNames.DROP_DATABASE, this.__handleChannelDatabaseHandlerEventDatabaseDropped);
   }
+
+  protected _unsetAllListenersOfInstancesRelated(): void {
+    this._setListenersSwarmMessagesChannelsListHandlerInstance(this.__swarmMessagesChannelsListHandlerInstance, false);
+    this._setListenersSwarmMessagesChannelDatabaseHandlerInstance(this.__swarmMessagesChannelDatabaseHandlerInstance, false);
+  }
+
+  protected async _closeChannelDatabaseHandlerInstance(): Promise<void> {
+    return await this.__swarmMessagesChannelDatabaseHandlerInstance.close();
+  }
+
+  protected _resetState(): void {
+    this._unsetChannelMarkedAsRemoved();
+    this._unsetChannelInactiveReasonError();
+    this._unsetInstancesRelated();
+  }
+
+  private handleChannelsListHandlerEventChannelDescriptionUpdate = (
+    channelDescriptionUpdated: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>
+  ) => {
+    if (!isDeepEqual(channelDescriptionUpdated, this.__swarmMessagesChannelDescriptionActual)) {
+      this._setChannelDescriptionActual(channelDescriptionUpdated);
+      this._restartChannelDatabaseConnectorWithDatabaseHandler();
+    }
+    this._unsetChannelMarkedAsRemoved();
+  };
+
+  private __handleChannelsListHandlerEventChannelDescriptionRemoved = (): void => {
+    this._setChannelInactiveReasonError(new Error('Channel description has been removed from the channels list'));
+    this._setChannelMarkedAsRemoved();
+  };
+
+  private __handleChannelDatabaseHandlerEventDatabaseClosed = (): void => {
+    this._setChannelInactiveReasonError(new Error('Channel database closed unexpectedly'));
+  };
+
+  private __handleChannelDatabaseHandlerEventDatabaseDropped = (): void => {
+    this._setChannelInactiveReasonError(new Error('Channel database dropped unexpectedly'));
+  };
 }

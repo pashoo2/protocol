@@ -35,7 +35,7 @@ export interface IQueuedEncrypyionClassBaseOptions {
  * @export
  * @interface IQueuedEncrypyionClassBase
  */
-export interface IQueuedEncrypyionClassBase {
+export interface IQueuedEncryptionClassBase {
   /**
    * encrypt data provided with the public
    * crypto key provided

@@ -1,4 +1,4 @@
-import { IQueuedEncrypyionClassBase } from '../../../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
+import { IQueuedEncryptionClassBase } from '../../../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import {
   ISwarmMessageStore,
@@ -92,6 +92,19 @@ export interface ISwarmMessagesChannelV1DatabaseHandler<
     'addMessage' | 'deleteMessage' | 'collect' | 'collectWithMeta'
   > {
   /**
+   * Emit events related to swarm messages database status
+   *
+   * @type {Pick<
+   *     ISwarmMessagesChannel<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, GAC, MCF, ACO, O, SMS, MD>,
+   *     'emitterChannelMessagesDatabase'
+   *   >}
+   * @memberof ISwarmMessagesChannelV1DatabaseHandler
+   */
+  readonly emitter: Pick<
+    ISwarmMessagesChannel<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, GAC, MCF, ACO, O, SMS, MD>,
+    'emitterChannelMessagesDatabase'
+  >;
+  /**
    * Create new swarm messages database connector instance
    * for future usage in such operations as "addMessage", removeMessage"
    * and so on.
@@ -101,6 +114,14 @@ export interface ISwarmMessagesChannelV1DatabaseHandler<
    * @memberof ISwarmMessagesChannelV1DatabaseHandler
    */
   restartDatabaseConnectorInstanceWithDbOptions(databaseOptions: DBO): Promise<void>;
+
+  /**
+   * Close the instance and database connection.
+   *
+   * @returns {Promise<void>}
+   * @memberof ISwarmMessagesChannelV1DatabaseHandler
+   */
+  close(): Promise<void>;
 }
 
 /**
@@ -181,7 +202,8 @@ export interface ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions<
     SMSM,
     DCO,
     DCCRT
-  >
+  >,
+  ET extends SWARM_MESSAGES_CHANNEL_ENCRYPION = SWARM_MESSAGES_CHANNEL_ENCRYPION.PUBLIC
 > {
   /**
    * Database's opitons which must be created.
@@ -198,14 +220,14 @@ export interface ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions<
    * @type {CryptoKey}
    * @memberof ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions
    */
-  messagesEncryptionQueue: IQueuedEncrypyionClassBase | undefined;
+  messagesEncryptionQueue: ET extends SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD ? IQueuedEncryptionClassBase : undefined;
   /**
    * Encryption type used for messaging
    *
-   * @type {SWARM_MESSAGES_CHANNEL_ENCRYPION}
+   * @type {ET}
    * @memberof ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions
    */
-  messageEncryptionType: SWARM_MESSAGES_CHANNEL_ENCRYPION;
+  messageEncryptionType: ET;
   /**
    * Swarm messages issuer string, which will be used as
    * a value for the 'iss' property of a swarm message.
@@ -344,7 +366,8 @@ export interface ISwarmMessagesChannelV1DatabaseHandlerConstructor<
     SMSM,
     DCO,
     DCCRT
-  >
+  >,
+  ET extends SWARM_MESSAGES_CHANNEL_ENCRYPION = SWARM_MESSAGES_CHANNEL_ENCRYPION.PUBLIC
 > {
   new (
     options: ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions<
@@ -366,7 +389,8 @@ export interface ISwarmMessagesChannelV1DatabaseHandlerConstructor<
       SMSM,
       DCO,
       DCCRT,
-      OPT
+      OPT,
+      ET
     >
   ): ISwarmMessagesChannelV1DatabaseHandler<
     P,

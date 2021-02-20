@@ -87,22 +87,6 @@ export class SwarmMessagesChannelV1ClassChannelsListHandler<
     return this.__emitter;
   }
 
-  public get id(): TSwarmMessagesChannelId {
-    return this.__actualChannelDescription.id;
-  }
-
-  public get actualChannelDescription(): ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO> {
-    return this.__actualChannelDescription;
-  }
-
-  public get promiseChannelDescriptionUpdate(): Promise<void> {
-    return this.__channelDescriptionUpdatePromise;
-  }
-
-  public get markedAsRemoved(): boolean {
-    return this.__channelMarkedAsRemoved;
-  }
-
   protected get _whetherUserIsChannelAdmin(): boolean {
     return this.__actualChannelDescription.admins.includes(this.__currentUserId);
   }
@@ -198,7 +182,7 @@ export class SwarmMessagesChannelV1ClassChannelsListHandler<
   }
 
   protected async _dropChannelDescriptionFromTheChannelsList(): Promise<void> {
-    await this.__chanelsListInstance.removeChannelById(this.id);
+    await this.__chanelsListInstance.removeChannelById(this.__actualChannelDescription.id);
   }
 
   protected _isTwoChannelsDescriptionsEqual(
@@ -243,7 +227,7 @@ export class SwarmMessagesChannelV1ClassChannelsListHandler<
   protected async _readActualChannelDescriptionFromCurrentChannelsList(): Promise<
     ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO> | undefined
   > {
-    return await this._readChannelDescriptionFromChannelsList(this.id, this.__chanelsListInstance);
+    return await this._readChannelDescriptionFromChannelsList(this.__actualChannelDescription.id, this.__chanelsListInstance);
   }
 
   protected _setActualChannelDescription(channelDescription: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>): void {
@@ -273,7 +257,7 @@ export class SwarmMessagesChannelV1ClassChannelsListHandler<
   protected _handleChannelDescriptionUpdateListener = (
     channelDescription: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>
   ): void => {
-    if (channelDescription.id === this.id) {
+    if (channelDescription.id === this.__actualChannelDescription.id) {
       // if incoming description is not an updated description of the channel
       return;
     }
@@ -297,7 +281,7 @@ export class SwarmMessagesChannelV1ClassChannelsListHandler<
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   protected _handleChannelDescriptionDeleteListener = async (channelDeletedId: TSwarmMessagesChannelId): Promise<void> => {
-    if (channelDeletedId !== this.id || this.markedAsRemoved) {
+    if (channelDeletedId !== this.__actualChannelDescription.id || this.__channelMarkedAsRemoved) {
       // if incoming description is not an updated description of the channel
       return;
     }
@@ -305,7 +289,7 @@ export class SwarmMessagesChannelV1ClassChannelsListHandler<
     const actualChannelDescription = await this._readActualChannelDescriptionFromCurrentChannelsList();
 
     if (!actualChannelDescription) {
-      this._emitChannelDescriptionRemoved(this.id);
+      this._emitChannelDescriptionRemoved(this.__actualChannelDescription.id);
       /**
        * in the upper scope handler of this event should unsubscribes
        * from all channel database updates
@@ -323,13 +307,13 @@ export class SwarmMessagesChannelV1ClassChannelsListHandler<
     ifSubscription: boolean = true
   ) {
     const methodName = ifSubscription ? 'addListener' : 'removeListener';
-    const { emitter: channelEmitter } = swarmMessagesChannelsListInstance;
+    const channelsListEmitter = swarmMessagesChannelsListInstance.emitter;
 
-    channelEmitter[methodName](
+    channelsListEmitter[methodName](
       ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_UPDATE,
       this._handleChannelDescriptionUpdateListener
     );
-    channelEmitter[methodName](
+    channelsListEmitter[methodName](
       ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_REMOVED,
       this._handleChannelDescriptionDeleteListener
     );

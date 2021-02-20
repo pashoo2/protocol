@@ -79,28 +79,25 @@ export interface ISwarmMessagesChannelV1ClassChannelsListHandler<
   MD extends ISwarmMessageInstanceDecrypted
 > extends Pick<
     ISwarmMessagesChannel<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, GAC, MCF, ACO, O, SMS, MD>,
-    'emitter' | 'updateChannelDescription' | 'id' | 'markedAsRemoved'
+    'updateChannelDescription'
   > {
-  /**
-   * Channel description updated from the related channels list.
-   *
-   * @type {ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>}
-   * @memberof ISwarmMessagesChannelV1ClassChannelsListHandler
-   */
-  readonly actualChannelDescription: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>;
-
-  /**
-   * Synchronous process of adding this channel's description
-   * to a channels list.
-   * At first an existing channel description will be gotten
-   * and verified for deep equality to the channel description
-   * from the options.
-   *
-   * @type {Promise<void>}
-   * @memberof ISwarmMessagesChannelV1ClassChannelsListHandler
-   */
-  readonly promiseChannelDescriptionUpdate: Promise<void>;
-
+  readonly emitter: ISwarmMessagesChannel<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    PO,
+    CO,
+    ConnectorMain,
+    CFO,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS,
+    MD
+  >['emitterChannelState'];
   /**
    * Delete the channel's description from the related channels list.
    *

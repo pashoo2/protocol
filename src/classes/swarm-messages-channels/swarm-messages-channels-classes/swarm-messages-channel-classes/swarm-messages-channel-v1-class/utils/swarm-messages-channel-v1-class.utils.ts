@@ -20,8 +20,8 @@ import {
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { ISwarmMessageStore } from '../../../../../swarm-message-store/types/swarm-message-store.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../../../../swarm-messages-database/swarm-messages-database.messages-collector.types';
-import { ISwarmMessagesChannelConstructorOptions } from '../../../../types/swarm-messages-channel.types';
-import { ISwarmMessagesChannelV1ClassChannelsListHandlerConstructorOptions } from '../types/swarm-messages-channel-v1-class.types';
+import { ISwarmMessagesChannelConstructorOptions } from '../../../../types/swarm-messages-channel-instance.types';
+import { ISwarmMessagesChannelV1ClassChannelsListHandlerConstructorOptions } from '../types/swarm-messages-channel-v1-class-channels-list-handler.types';
 import {
   ISwarmMessagesDatabaseCacheOptions,
   ISwarmMessagesDatabaseCache,
@@ -82,7 +82,7 @@ export function getOptionsForChannelsListHandlerByContstructorOptions<
     DCCRT
   >
 >(
-  constructorOptions: ISwarmMessagesChannelConstructorOptions<
+  swarmMessagesChannelconstructorOptions: ISwarmMessagesChannelConstructorOptions<
     P,
     T,
     DbType,
@@ -104,7 +104,12 @@ export function getOptionsForChannelsListHandlerByContstructorOptions<
     OPT
   >
 ): ISwarmMessagesChannelV1ClassChannelsListHandlerConstructorOptions<P, T, DbType, DBO, MD> {
-  const { swarmMessagesChannelsListInstance, currentUserId, swarmMessagesChannelDescription } = constructorOptions;
+  const {
+    currentUserId,
+    swarmMessagesChannelsListInstance,
+    swarmMessagesChannelDescription,
+  } = swarmMessagesChannelconstructorOptions;
+
   return {
     currentUserId,
     chanelsListInstance: swarmMessagesChannelsListInstance,

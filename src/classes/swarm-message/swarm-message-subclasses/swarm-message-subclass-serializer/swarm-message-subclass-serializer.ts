@@ -9,14 +9,14 @@ import { TSwarmMessageInstance, TDeserializedSwarmMessageSerializedPayload } fro
 import { TSwarmMessageBodyRaw, ISwarmMessageRaw } from '../../swarm-message-constructor.types';
 import { ISwarmMessageBodyDeserialized } from '../../swarm-message-constructor.types';
 import {
-  IQueuedEncrypyionClassBase,
+  IQueuedEncryptionClassBase,
   IQueuedEncrypyionClassBaseOptions,
 } from '../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
 import { ISwarmMessageSerializerConstructorOptions, ISwarmMessageSerializer } from './swarm-message-subclass-serializer.types';
 import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
 
 export class SwarmMessageSerializer implements ISwarmMessageSerializer {
-  protected msgSignEncryptQueue?: IQueuedEncrypyionClassBase;
+  protected msgSignEncryptQueue?: IQueuedEncryptionClassBase;
 
   protected constructorOptions?: ISwarmMessageSerializerConstructorOptions;
 
