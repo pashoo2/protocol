@@ -40,16 +40,17 @@ export interface ISwarmMessagesChannelsListEvents<P extends ESwarmStoreConnector
    * @type {ISwarmMessageChannelDescriptionWithoutDatabaseOptionsRaw<P, DbType>} - new channel description
    * @memberof ISwarmMessagesChannelsListEvents
    */
-  [ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_UPDATE]: [
-    ISwarmMessageChannelDescriptionWithoutDatabaseOptionsRaw<P, DbType>
-  ];
+  [ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_UPDATE]: ISwarmMessageChannelDescriptionWithoutDatabaseOptionsRaw<
+    P,
+    DbType
+  >;
   /**
    * Description of a channel has been removed from the channels list.
    *
    * @type {[string]} - identity of the channel
    * @memberof ISwarmMessagesChannelsListEvents
    */
-  [ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_REMOVED]: [TSwarmMessagesChannelId, number];
+  [ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_REMOVED]: TSwarmMessagesChannelId;
 }
 
 /**

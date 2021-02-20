@@ -25,6 +25,7 @@ import {
   ISwarmMessageChannelDescriptionRaw,
 } from '../../../../types/swarm-messages-channel-instance.types';
 import { ISwarmMessagesChannelsDescriptionsList } from '../../../../types/swarm-messages-channels-list-instance.types';
+import { ISwarmMessageChannelDescriptionWithoutDatabaseOptionsRaw } from '../../../../types/swarm-messages-channel-instance.types';
 import {
   ISwarmMessagesChannelV1ClassChannelsListHandler,
   ISwarmMessagesChannelV1ClassChannelsListHandlerConstructorOptions,
@@ -250,11 +251,14 @@ export class SwarmMessagesChannelV1ClassChannelsListHandler<
   }
 
   protected _emitChannelUpdatedDescription(channelDescription: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>): void {
-    this.__emitter.emit(ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_UPDATE, channelDescription);
+    this.__emitter.emit(
+      ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_UPDATE,
+      channelDescription as ISwarmMessageChannelDescriptionWithoutDatabaseOptionsRaw<P, DbType>
+    );
   }
 
   protected _emitChannelDescriptionRemoved(channelId: TSwarmMessagesChannelId): void {
-    this.__emitter.emit(ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_REMOVED);
+    this.__emitter.emit(ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_REMOVED, channelId);
   }
 
   protected async _updateThisInstanceChannelDescription(): Promise<void> {
@@ -319,7 +323,7 @@ export class SwarmMessagesChannelV1ClassChannelsListHandler<
     ifSubscription: boolean = true
   ) {
     const methodName = ifSubscription ? 'addListener' : 'removeListener';
-    const channelEmitter = swarmMessagesChannelsListInstance.emitter;
+    const { emitter: channelEmitter } = swarmMessagesChannelsListInstance;
 
     channelEmitter[methodName](
       ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_UPDATE,
