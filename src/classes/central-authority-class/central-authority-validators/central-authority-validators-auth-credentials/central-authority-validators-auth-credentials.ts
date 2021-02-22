@@ -16,7 +16,7 @@ import {
 } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 import { CA_USER_IDENTITY_VERSIONS_LIST } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
 import { TUserIdentityVersion } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types';
-import { dataValidatorUtilSafeLogin } from 'utils/data-validators-utils/data-validators-utils';
+import { dataValidatorUtilSafeLogin } from 'utils/data-validators-utils';
 
 export const validateUserIdentityType = (v: any): boolean => typeof v === CA_USER_IDENTITY_TYPE;
 

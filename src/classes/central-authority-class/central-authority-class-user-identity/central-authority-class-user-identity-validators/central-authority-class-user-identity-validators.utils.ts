@@ -7,7 +7,7 @@ import {
   CA_USER_IDENTITY_PARSER_VERSIONS_SUPPORTED,
 } from '../central-authority-class-user-identity.const';
 import { ICAUserUniqueIdentifierMetadata } from '../central-authority-class-user-identity.types';
-import { dataValidatorUtilURL } from 'utils/data-validators-utils/data-validators-utils';
+import { dataValidatorUtilURL } from 'utils/data-validators-utils';
 
 export const validateIdentityDescriptionVersion = (version: any): version is string => {
   if (typeof version !== 'string') {

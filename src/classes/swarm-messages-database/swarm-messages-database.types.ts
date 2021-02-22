@@ -213,7 +213,7 @@ export interface ISwarmMessageDatabaseMessagingMethods<
 > {
   addMessage(
     message: Parameters<SMS['addMessage']>[1],
-    key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined
+    key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : never
   ): ReturnType<SMS['addMessage']>;
   deleteMessage(messageAddressOrKey: ISwarmMessageStoreDeleteMessageArg<P, DbType>): Promise<void>;
   collect(options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>): ReturnType<SMS['collect']>;

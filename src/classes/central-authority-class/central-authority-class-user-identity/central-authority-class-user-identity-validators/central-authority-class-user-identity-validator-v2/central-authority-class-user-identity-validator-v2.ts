@@ -1,5 +1,5 @@
 import { validateAuthProviderIdentity } from './../../../central-authority-validators/central-authority-validators-auth-credentials/central-authority-validators-auth-credentials';
-import { dataValidatorUtilSafeLogin } from 'utils/data-validators-utils/data-validators-utils';
+import { dataValidatorUtilSafeLogin } from 'utils/data-validators-utils';
 import {
   CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME,
   CA_USER_IDENTITY_VERSION_PROP_NAME,

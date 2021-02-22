@@ -313,7 +313,7 @@ export class SwarmMessagesDatabaseComponent<
               ...CONNECT_TO_SWARM_STORAGE_DEFAULT_MESSAGE_BODY,
               pld: String(new Date()) || '',
             },
-            key
+            key as DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : never
           );
           await new Promise((res) => setTimeout(res, 300));
         }

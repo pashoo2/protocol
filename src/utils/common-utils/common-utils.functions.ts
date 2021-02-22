@@ -17,7 +17,7 @@ export function isNativeFunction(f: Function): boolean {
   );
 }
 
-export function isArrowFunction(fn: (...args: unknown[]) => unknown): boolean {
+export function isArrowFunction(fn: Function): boolean {
   if (typeof fn !== 'function') return false;
   if (isNativeFunction(fn)) {
     return false;

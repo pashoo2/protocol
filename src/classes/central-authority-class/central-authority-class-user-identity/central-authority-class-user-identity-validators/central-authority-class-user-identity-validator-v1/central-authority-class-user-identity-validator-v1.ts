@@ -1,5 +1,4 @@
 import { validateAuthProviderIdentity } from './../../../central-authority-validators/central-authority-validators-auth-credentials/central-authority-validators-auth-credentials';
-import { dataValidatorUtilUUIDV4 } from 'utils/data-validators-utils/data-validators-utils';
 import {
   CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME,
   CA_USER_IDENTITY_VERSION_PROP_NAME,
@@ -7,6 +6,7 @@ import {
   CA_USER_IDENTITY_VERSION_CHARACTERS_COUNT,
 } from '../../central-authority-class-user-identity.const';
 import { ICAUserUniqueIdentifierDescription } from '../../central-authority-class-user-identity.types';
+import { dataValidatorUtilUUIDV4 } from 'utils/data-validators-utils/data-validators-utils-common';
 
 export const validatorV1 = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

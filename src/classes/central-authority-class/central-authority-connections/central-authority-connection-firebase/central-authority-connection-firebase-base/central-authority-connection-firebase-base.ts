@@ -14,7 +14,7 @@ import {
 } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
 import { isEmptyObject } from 'utils/common-utils/common-utils-objects';
 import { validateUserProfileData } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-user/central-authority-validators-user';
-import { dataValidatorUtilEmail, dataValidatorUtilURL } from 'utils/data-validators-utils/data-validators-utils';
+import { dataValidatorUtilEmail, dataValidatorUtilURL } from 'utils/data-validators-utils';
 import { checkIsValidCryptoCredentials } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
 import { generateCryptoCredentialsWithUserIdentityV1 } from 'classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys';
 import CentralAuthorityIdentity from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';

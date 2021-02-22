@@ -573,7 +573,7 @@ export class ConnectToSwarmWithDBO<
   }
 
   protected _getOptionsForSwarmMessagesDatabaseConnectedWithoutDatabaseOptionsFabric = (): Omit<
-    TSwarmMessagesDatabaseConnectedFabricOptions<typeof swarmMessagesDatabaseConnectedFabric>,
+    TSwarmMessagesDatabaseConnectedFabricOptions<typeof swarmMessagesDatabaseConnectedFabricMain>,
     'dbOptions'
   > => {
     const { connectionBridge, userId } = this.state;
@@ -604,7 +604,7 @@ export class ConnectToSwarmWithDBO<
 
   protected getOptionsForSwarmMessagesDatabaseConnectedFabric = (
     dbsOptions: DBO
-  ): TSwarmMessagesDatabaseConnectedFabricOptions<typeof swarmMessagesDatabaseConnectedFabric> => {
+  ): TSwarmMessagesDatabaseConnectedFabricOptions<typeof swarmMessagesDatabaseConnectedFabricMain> => {
     const options = this._getOptionsForSwarmMessagesDatabaseConnectedWithoutDatabaseOptionsFabric();
     return {
       ...options,
@@ -613,7 +613,7 @@ export class ConnectToSwarmWithDBO<
   };
 
   protected createDatabaseConnector = async (dbOptions: DBO) => {
-    return await swarmMessagesDatabaseConnectedFabric<
+    return await swarmMessagesDatabaseConnectedFabricMain<
       P,
       T,
       DbType,

@@ -26,7 +26,7 @@ import {
   TSwarmStoreConnectorOrbitDbDatabaseMethodNames,
   TSwarmStoreConnectorOrbitDbDatabaseMethodArgument,
 } from './swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
-import { commonUtilsArrayDeleteFromArray } from 'utils/common-utils/common-utils';
+import { commonUtilsArrayDeleteFromArray } from 'utils/common-utils';
 import {
   COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_ON,
   COMMON_VALUE_EVENT_EMITTER_METHOD_NAME_OFF,

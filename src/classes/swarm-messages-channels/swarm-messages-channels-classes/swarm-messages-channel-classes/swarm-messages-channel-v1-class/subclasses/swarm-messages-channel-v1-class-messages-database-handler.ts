@@ -380,7 +380,7 @@ export class SwarmMessagesChannelV1DatabaseHandler<
 
   public async addMessage(
     message: Omit<MD['bdy'], 'iss'>,
-    key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined
+    key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : never
   ): Promise<void> {
     const databaseConnector = await this._getActiveDatabaseConnector();
     const swarmMessageBody = await this._prepareSwarmMessageBodyBeforeSending(message);

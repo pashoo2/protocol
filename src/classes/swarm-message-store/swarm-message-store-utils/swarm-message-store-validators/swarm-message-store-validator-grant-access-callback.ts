@@ -46,7 +46,7 @@ export function validateGrantAccessCallbackWithContext(
     throw new Error('The function is not a valid grand access callback');
   }
   assert(Boolean(grantAccess.name), 'Grant access callback function should have a name');
-  assert(!isArrowFunction(grantAccess), 'Grant access callback should not be an arrow function');
+  assert(!isArrowFunction(grantAccess as any), 'Grant access callback should not be an arrow function');
   return true;
 }
 
