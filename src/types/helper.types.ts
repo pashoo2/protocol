@@ -1,3 +1,5 @@
+import { type } from 'os';
+
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type TPrototypeKeys = keyof Object;
 
@@ -38,3 +40,7 @@ export type ConstructorOptionsType<T extends new (...args: any[]) => unknown> = 
   : never;
 
 export type ConstructorArgumentType<T extends new (arg: any) => unknown> = T extends new (arg: infer I) => unknown ? I : never;
+
+export type PromiseReturnType<T extends (...args: any[]) => any> = T extends (...args: any[]) => Promise<infer R>
+  ? Promise<R>
+  : never;

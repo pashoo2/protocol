@@ -29,7 +29,10 @@ import { validateVerboseBySchemaWithVoidResult } from 'utils/validation-utils/va
 import swarmMessagesChannelDescriptionJSONSchema from '../../../../const/validation/swarm-messages-channel/swarm-messages-channel-description/schemas/swarm-message-channel-description-v1-format-schema.json';
 import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../../../../const/swarm-messages-channels-main.const';
 import { TSwarmMessageUserIdentifierSerialized } from '../../../../../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
-import { ISwarmMessagesDatabaseConnector } from '../../../../../swarm-messages-database/swarm-messages-database.types';
+import {
+  ISwarmMessagesDatabaseConnector,
+  ISwarmMessageDatabaseEvents,
+} from '../../../../../swarm-messages-database/swarm-messages-database.types';
 import { getOptionsForChannelsListHandlerByContstructorOptions } from '../utils/swarm-messages-channel-v1-class.utils';
 import {
   ISwarmMessageChannelDescriptionWithoutDatabaseOptionsRaw,
@@ -42,12 +45,25 @@ import {
   ISwarmMessageChannelDescriptionRaw,
 } from '../../../../types/swarm-messages-channel-instance.types';
 import { ISwarmMessagesChannelsDescriptionsList } from '../../../../types/swarm-messages-channels-list-instance.types';
-import { ESwarmMessagesChannelsListEventName } from '../../../../types/swarm-messages-channel-events.types';
+import {
+  ESwarmMessagesChannelsListEventName,
+  ISwarmMessagesChannelNotificationEmitter,
+} from '../../../../types/swarm-messages-channel-events.types';
 import { isDeepEqual } from '../../../../../../utils/common-utils/common-utils-equality';
 import { ISwarmMessagesChannelV1ClassChannelsListHandlerConstructorOptions } from '../types/swarm-messages-channel-v1-class-channels-list-handler.types';
 import { ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions } from '../types/swarm-messages-channel-v1-class-messages-database-handler.types';
 import { IQueuedEncryptionClassBase } from '../../../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
 import { ESwarmStoreEventNames } from '../../../../../swarm-store-class/swarm-store-class.const';
+import { EventEmitter } from '../../../../../basic-classes/event-emitter-class-base/event-emitter-class-base';
+import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
+import {
+  TSwarmStoreDatabaseEntityKey,
+  TSwarmStoreDatabaseIteratorMethodArgument,
+} from '../../../../../swarm-store-class/swarm-store-class.types';
+import {
+  ISwarmMessageStoreDeleteMessageArg,
+  ISwarmMessageStoreMessagingRequestWithMetaResult,
+} from '../../../../../swarm-message-store/types/swarm-message-store.types';
 import {
   ISwarmMessagesChannelV1ClassChannelsListHandler,
   ISwarmMessagesChannelV1ClassChannelsListHandlerConstructor,
@@ -173,6 +189,18 @@ export class SwarmMessagesChannelV1Class<
     return this.__channelInactiveReasonError;
   }
 
+  public get emitterChannelState(): ISwarmMessagesChannelNotificationEmitter<P, DbType> {
+    return this.__swarmMessagesChannelsListHandlerInstance.emitter;
+  }
+
+  public get emitterChannelMessagesDatabase(): EventEmitter<ISwarmMessageDatabaseEvents<P, T, DbType, DBO, MD>> {
+    return this.__swarmMessagesChannelDatabaseHandlerInstance.emitter;
+  }
+
+  public get markedAsRemoved(): boolean {
+    return this.__markedAsRemoved;
+  }
+
   protected get _swarmMessagesChannelDescriptionWODatabaseOptions(): ISwarmMessageChannelDescriptionWithoutDatabaseOptionsRaw<
     P,
     DbType
@@ -289,6 +317,15 @@ export class SwarmMessagesChannelV1Class<
    */
   private __markedAsRemoved: boolean = false;
 
+  /**
+   * Whether the channel has been closed before
+   *
+   * @private
+   * @type {boolean}
+   * @memberof SwarmMessagesChannelV1Class
+   */
+  private __isClosed: boolean = false;
+
   private __swarmMessagesChannelsListHandlerInstance: ISwarmMessagesChannelV1ClassChannelsListHandler<
     P,
     T,
@@ -402,10 +439,71 @@ export class SwarmMessagesChannelV1Class<
     this._setListenersSwarmMessagesChannelDatabaseHandlerInstance(swarmMessagesChannelDatabaseHandler);
   }
 
+  public async addMessage(
+    message: Omit<MD['bdy'], 'iss'>,
+    key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined
+  ): Promise<void> {
+    await this._getActiveSwarmMessagesChannelDatabaseHandlerInstance().addMessage(message, key);
+  }
+
+  public async deleteMessage(messageAddressOrKey: ISwarmMessageStoreDeleteMessageArg<P, DbType>): Promise<void> {
+    await this._getActiveSwarmMessagesChannelDatabaseHandlerInstance().deleteMessage(messageAddressOrKey);
+  }
+
+  public async collect(options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>): Promise<Array<Error | MD>> {
+    const collectedMessagesResult = await this._getActiveSwarmMessagesChannelDatabaseHandlerInstance().collect(options);
+    return collectedMessagesResult;
+  }
+
+  public async collectWithMeta(
+    options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>
+  ): Promise<Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined>> {
+    const swarmMessagesWithMetaCollected = await this._getActiveSwarmMessagesChannelDatabaseHandlerInstance().collectWithMeta(
+      options
+    );
+    return swarmMessagesWithMetaCollected;
+  }
+
+  public async updateChannelDescription(
+    channelRawDescription: Readonly<ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>>
+  ): Promise<void> {
+    this._verifyChannelIsReadyForChannelListOperations();
+    await this._getActiveSwarmMessagesChannelsListHandlerInstance().updateChannelDescription(channelRawDescription);
+  }
+
   public async close(): Promise<void> {
+    if (this.__isClosed) {
+      return;
+    }
     this._unsetAllListenersOfInstancesRelated();
     await this._closeChannelDatabaseHandlerInstance();
     this._resetState();
+  }
+
+  public async deleteLocally(): Promise<void> {
+    this._unsetListenersSwarmMessagesChannelDatabaseHandlerInstance();
+
+    const activeSwarmMessagesChannelDatabaseHandlerInstance = this._getActiveSwarmMessagesChannelDatabaseHandlerInstance();
+
+    try {
+      await activeSwarmMessagesChannelDatabaseHandlerInstance.dropDatabaseLocally();
+    } finally {
+      await this.close();
+    }
+  }
+
+  public async dropDescriptionAndDeleteRemotely(): Promise<void> {
+    this._unsetAllListenersOfInstancesRelated();
+
+    const activeSwarmMessagesChannelDatabaseHandlerInstance = this._getActiveSwarmMessagesChannelDatabaseHandlerInstance();
+    const activeSwarmMessagesChannelsListHandlerInstance = this._getActiveSwarmMessagesChannelsListHandlerInstance();
+
+    try {
+      await activeSwarmMessagesChannelsListHandlerInstance.dropChannelDescriptionFromList();
+      await activeSwarmMessagesChannelDatabaseHandlerInstance.dropDatabaseLocally();
+    } finally {
+      await this.close();
+    }
   }
 
   protected _validateSwarmMessagesChannelsListInstance(
@@ -590,8 +688,15 @@ export class SwarmMessagesChannelV1Class<
     this.__swarmMessagesChannelDescriptionActual = channelDescriptionUpdated as CHD;
   }
 
-  protected _restartChannelDatabaseConnectorWithDatabaseHandler() {
-    this._restartActualSwarmMessagesChannelDatabaseHandlerInstanceByActualChannelDescription();
+  protected async _restartActualSwarmMessagesChannelDatabaseHandlerInstanceByActualChannelDescription(): Promise<void> {
+    const swarmMessagesChannelDatabaseHandlerActive = this._getActiveSwarmMessagesChannelDatabaseHandlerInstance();
+    const channelDatabaseOptionsActual = this._getChannelDatabaseOptionsByChannelDescriptionActual();
+
+    await swarmMessagesChannelDatabaseHandlerActive.restartDatabaseConnectorInstanceWithDbOptions(channelDatabaseOptionsActual);
+  }
+
+  protected async _restartChannelDatabaseConnectorWithDatabaseHandler(): Promise<void> {
+    await this._restartActualSwarmMessagesChannelDatabaseHandlerInstanceByActualChannelDescription();
   }
 
   protected _getChannelDatabaseOptionsByChannelDescriptionActual(): DBO {
@@ -711,9 +816,17 @@ export class SwarmMessagesChannelV1Class<
     emitter[methodName](ESwarmStoreEventNames.DROP_DATABASE, this.__handleChannelDatabaseHandlerEventDatabaseDropped);
   }
 
-  protected _unsetAllListenersOfInstancesRelated(): void {
-    this._setListenersSwarmMessagesChannelsListHandlerInstance(this.__swarmMessagesChannelsListHandlerInstance, false);
+  protected _unsetListenersSwarmMessagesChannelDatabaseHandlerInstance() {
     this._setListenersSwarmMessagesChannelDatabaseHandlerInstance(this.__swarmMessagesChannelDatabaseHandlerInstance, false);
+  }
+
+  protected _unsetListenersSwarmMessagesChannelsListHandlerInstance() {
+    this._setListenersSwarmMessagesChannelsListHandlerInstance(this.__swarmMessagesChannelsListHandlerInstance, false);
+  }
+
+  protected _unsetAllListenersOfInstancesRelated(): void {
+    this._unsetListenersSwarmMessagesChannelsListHandlerInstance();
+    this._unsetListenersSwarmMessagesChannelDatabaseHandlerInstance();
   }
 
   protected async _closeChannelDatabaseHandlerInstance(): Promise<void> {
@@ -726,12 +839,76 @@ export class SwarmMessagesChannelV1Class<
     this._unsetInstancesRelated();
   }
 
-  private handleChannelsListHandlerEventChannelDescriptionUpdate = (
+  protected _verifyChannelIsNotClosed(): void {
+    assert(!this.__isClosed, 'The channel has already been closed');
+  }
+
+  protected _verifyChannelIsReadyForMessaging(): void {
+    this._verifyChannelIsNotClosed();
+    assert(!this.__markedAsRemoved, 'The channel has already been marked as removed');
+  }
+
+  protected _verifyChannelIsReadyForChannelListOperations(): void {
+    this._verifyChannelIsNotClosed();
+    if (this.__markedAsRemoved) {
+      // TODO - might be better to prohibit channel description updates if the channel has alreadybeen closed
+      console.warn('The channel is closed, better not to update its description');
+    }
+  }
+
+  protected _getActiveSwarmMessagesChannelDatabaseHandlerInstance(): ISwarmMessagesChannelV1DatabaseHandler<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    CO,
+    PO,
+    ConnectorMain,
+    CFO,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS,
+    MD
+  > {
+    this._verifyChannelIsReadyForMessaging();
+    return this.__swarmMessagesChannelDatabaseHandlerInstance;
+  }
+
+  protected _getActiveSwarmMessagesChannelsListHandlerInstance(): ISwarmMessagesChannelV1ClassChannelsListHandler<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    CO,
+    PO,
+    ConnectorMain,
+    CFO,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS,
+    MD
+  > {
+    this._verifyChannelIsReadyForChannelListOperations();
+    return this.__swarmMessagesChannelsListHandlerInstance;
+  }
+
+  private handleChannelsListHandlerEventChannelDescriptionUpdate = async (
     channelDescriptionUpdated: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>
-  ) => {
+  ): Promise<void> => {
     if (!isDeepEqual(channelDescriptionUpdated, this.__swarmMessagesChannelDescriptionActual)) {
       this._setChannelDescriptionActual(channelDescriptionUpdated);
-      this._restartChannelDatabaseConnectorWithDatabaseHandler();
+      try {
+        await this._restartChannelDatabaseConnectorWithDatabaseHandler();
+      } catch (err) {
+        this._setChannelInactiveReasonError(err);
+        return;
+      }
     }
     this._unsetChannelMarkedAsRemoved();
   };

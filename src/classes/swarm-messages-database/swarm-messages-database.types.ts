@@ -693,5 +693,18 @@ export interface ISwarmMessagesDatabaseConnector<
    * @memberof ISwarmMessagesDatabaseConnector
    */
   connect(options: OPT): Promise<void>;
+  /**
+   * Drop database only locally, not in swarm.
+   *
+   * @returns {Promise<void>}
+   * @memberof ISwarmMessagesDatabaseConnector
+   */
+  drop(): Promise<void>;
+  /**
+   * Close the connector instance
+   *
+   * @returns {Promise<void>}
+   * @memberof ISwarmMessagesDatabaseConnector
+   */
   close(): Promise<void>;
 }

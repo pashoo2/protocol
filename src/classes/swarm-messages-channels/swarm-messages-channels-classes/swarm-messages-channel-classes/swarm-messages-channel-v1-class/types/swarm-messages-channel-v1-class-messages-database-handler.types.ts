@@ -29,6 +29,8 @@ import {
 } from '../../../../../swarm-store-class/swarm-store-class.types';
 import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../../../../const/swarm-messages-channels-main.const';
 import { ISwarmMessagesChannel } from '../../../../types/swarm-messages-channel-instance.types';
+import { ISwarmMessageDatabaseEvents } from '../../../../../swarm-messages-database/swarm-messages-database.types';
+import { EventEmitter } from '../../../../../basic-classes/event-emitter-class-base/event-emitter-class-base';
 
 /**
  * Helper class that helps in maintaining
@@ -100,10 +102,7 @@ export interface ISwarmMessagesChannelV1DatabaseHandler<
    *   >}
    * @memberof ISwarmMessagesChannelV1DatabaseHandler
    */
-  readonly emitter: Pick<
-    ISwarmMessagesChannel<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, GAC, MCF, ACO, O, SMS, MD>,
-    'emitterChannelMessagesDatabase'
-  >;
+  readonly emitter: EventEmitter<ISwarmMessageDatabaseEvents<P, T, DbType, DBO, MD>>;
   /**
    * Create new swarm messages database connector instance
    * for future usage in such operations as "addMessage", removeMessage"
@@ -122,6 +121,11 @@ export interface ISwarmMessagesChannelV1DatabaseHandler<
    * @memberof ISwarmMessagesChannelV1DatabaseHandler
    */
   close(): Promise<void>;
+
+  /**
+   * Drop the database locally and close the instance.
+   */
+  dropDatabaseLocally(): Promise<void>;
 }
 
 /**
@@ -203,7 +207,7 @@ export interface ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions<
     DCO,
     DCCRT
   >,
-  ET extends SWARM_MESSAGES_CHANNEL_ENCRYPION = SWARM_MESSAGES_CHANNEL_ENCRYPION.PUBLIC
+  CHE extends SWARM_MESSAGES_CHANNEL_ENCRYPION = SWARM_MESSAGES_CHANNEL_ENCRYPION.PUBLIC
 > {
   /**
    * Database's opitons which must be created.
@@ -220,14 +224,14 @@ export interface ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions<
    * @type {CryptoKey}
    * @memberof ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions
    */
-  messagesEncryptionQueue: ET extends SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD ? IQueuedEncryptionClassBase : undefined;
+  messagesEncryptionQueue: CHE extends SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD ? IQueuedEncryptionClassBase : undefined;
   /**
    * Encryption type used for messaging
    *
-   * @type {ET}
+   * @type {CHE}
    * @memberof ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions
    */
-  messageEncryptionType: ET;
+  messageEncryptionType: CHE;
   /**
    * Swarm messages issuer string, which will be used as
    * a value for the 'iss' property of a swarm message.
@@ -367,7 +371,7 @@ export interface ISwarmMessagesChannelV1DatabaseHandlerConstructor<
     DCO,
     DCCRT
   >,
-  ET extends SWARM_MESSAGES_CHANNEL_ENCRYPION = SWARM_MESSAGES_CHANNEL_ENCRYPION.PUBLIC
+  CHE extends SWARM_MESSAGES_CHANNEL_ENCRYPION = SWARM_MESSAGES_CHANNEL_ENCRYPION.PUBLIC
 > {
   new (
     options: ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions<
@@ -390,7 +394,7 @@ export interface ISwarmMessagesChannelV1DatabaseHandlerConstructor<
       DCO,
       DCCRT,
       OPT,
-      ET
+      CHE
     >
   ): ISwarmMessagesChannelV1DatabaseHandler<
     P,

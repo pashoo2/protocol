@@ -246,7 +246,7 @@ export class SwarmMessagesDatabase<
     this._updateMessagesCache();
   }
 
-  close = async (): Promise<void> => {
+  async close(): Promise<void> {
     if (!this.isReady) {
       console.warn('SwarmMessageDatabase instance was already closed');
       return;
@@ -256,9 +256,9 @@ export class SwarmMessagesDatabase<
     await this._closeSwarmMessagesCahceInstance();
     this._emitInstanceClosed();
     await this._handleDatabaseClosed();
-  };
+  }
 
-  drop = async (): Promise<void> => {
+  async drop(): Promise<void> {
     if (!this.isReady) {
       console.warn('SwarmMessageDatabase instance was already closed');
       return;
@@ -267,43 +267,42 @@ export class SwarmMessagesDatabase<
     await this._dropSwarmDatabaseInstance();
     this._emitDatabaseDropped();
     await this._handleDatabaseClosed();
-  };
+  }
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  addMessage = (
+  addMessage(
     message: Parameters<SMS['addMessage']>[1],
     key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined
-  ): ReturnType<SMS['addMessage']> => {
+  ): ReturnType<SMS['addMessage']> {
     if (!this._checkIsReady()) {
       throw new Error('The instance is not ready to use');
     }
     return this._swarmMessageStore.addMessage(this._dbName, message, key) as ReturnType<SMS['addMessage']>;
-  };
+  }
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  deleteMessage = (messageAddressOrKey: ISwarmMessageStoreDeleteMessageArg<P, DbType>): ReturnType<SMS['deleteMessage']> => {
+  deleteMessage(messageAddressOrKey: ISwarmMessageStoreDeleteMessageArg<P, DbType>): ReturnType<SMS['deleteMessage']> {
     if (!this._checkIsReady()) {
       throw new Error('The instance is not ready to use');
     }
     return this._swarmMessageStore.deleteMessage(this._dbName, messageAddressOrKey) as ReturnType<SMS['deleteMessage']>;
-  };
+  }
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  collect = (options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>): ReturnType<SMS['collect']> => {
+  collect(options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>): ReturnType<SMS['collect']> {
     if (!this._checkIsReady()) {
       throw new Error('The instance is not ready to use');
     }
     return this._swarmMessageStore.collect(this._dbName, options) as ReturnType<SMS['collect']>;
-  };
+  }
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  collectWithMeta = (options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>): ReturnType<SMS['collectWithMeta']> => {
+  collectWithMeta(options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>): ReturnType<SMS['collectWithMeta']> {
     if (!this._checkIsReady()) {
       throw new Error('The instance is not ready to use');
     }
-    // TODO - remove cast to any https://github.com/microsoft/TypeScript/issues/28010
     return this._swarmMessageStore.collectWithMeta(this._dbName, options) as ReturnType<SMS['collectWithMeta']>;
-  };
+  }
 
   /**
    * Checks if the instance is ready to use

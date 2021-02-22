@@ -387,7 +387,7 @@ export interface ISwarmMessagesChannel<
   deleteLocally(): Promise<void>;
 
   /**
-   * Delete the channel's description from channels list,
+   * Delete the channel's description from channels list remotely,
    * all messages from the channel locally and remotely also.
    *
    * @returns {Promise<void>}

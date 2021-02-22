@@ -38,7 +38,7 @@ import {
 import { getEventEmitterInstance, EventEmitter } from 'classes/basic-classes/event-emitter-class-base';
 import { ISwarmMessageDatabaseEvents } from '../../../../../swarm-messages-database/swarm-messages-database.types';
 import { createCancellablePromiseByNativePromise } from '../../../../../../utils/common-utils/commom-utils.promies';
-import { IPromiseCancellable, PromiseResolveType } from '../../../../../../types/promise.types';
+import { IPromiseCancellable } from '../../../../../../types/promise.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import {
   TSwarmStoreDatabaseEntityKey,
@@ -134,6 +134,50 @@ export class SwarmMessagesChannelV1DatabaseHandler<
     SMSM,
     DCO,
     DCCRT
+  >,
+  CHE extends SWARM_MESSAGES_CHANNEL_ENCRYPION = SWARM_MESSAGES_CHANNEL_ENCRYPION.PUBLIC,
+  COPTS extends ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    CO,
+    PO,
+    ConnectorMain,
+    CFO,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS,
+    MD,
+    SMSM,
+    DCO,
+    DCCRT,
+    OPT,
+    CHE
+  > = ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions<
+    P,
+    T,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    CO,
+    PO,
+    ConnectorMain,
+    CFO,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS,
+    MD,
+    SMSM,
+    DCO,
+    DCCRT,
+    OPT,
+    CHE
   >
 > implements
     ISwarmMessagesChannelV1DatabaseHandler<
@@ -189,7 +233,9 @@ export class SwarmMessagesChannelV1DatabaseHandler<
    */
   private __actualSwarmMessagesDatabaseOptions: DBO | undefined;
 
-  private readonly __emitter = getEventEmitterInstance<ISwarmMessageDatabaseEvents<P, T, DbType, DBO, MD>>();
+  private readonly __emitter: EventEmitter<ISwarmMessageDatabaseEvents<P, T, DbType, DBO, MD>> = getEventEmitterInstance<
+    ISwarmMessageDatabaseEvents<P, T, DbType, DBO, MD>
+  >();
 
   /**
    * Database has been dropped at all
@@ -262,29 +308,7 @@ export class SwarmMessagesChannelV1DatabaseHandler<
       >
     | undefined;
 
-  constructor(
-    private ___options: ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions<
-      P,
-      T,
-      DbType,
-      DBO,
-      ConnectorBasic,
-      CO,
-      PO,
-      ConnectorMain,
-      CFO,
-      GAC,
-      MCF,
-      ACO,
-      O,
-      SMS,
-      MD,
-      SMSM,
-      DCO,
-      DCCRT,
-      OPT
-    >
-  ) {
+  constructor(private ___options: COPTS) {
     this._validateConstructorOptions(___options);
     this.__swarmMessagesDatabaseConnectorConnectingPromise = this._createNewActualDatabaseConnectorAndSetCancellablePromise(
       ___options.databaseOptions
@@ -349,6 +373,11 @@ export class SwarmMessagesChannelV1DatabaseHandler<
     return await this._close();
   }
 
+  public async dropDatabaseLocally(): Promise<void> {
+    await this.__dropDatabaseLocally();
+    await this._close();
+  }
+
   public async addMessage(
     message: Omit<MD['bdy'], 'iss'>,
     key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined
@@ -401,29 +430,7 @@ export class SwarmMessagesChannelV1DatabaseHandler<
     return messagesCollected as Array<ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined>;
   }
 
-  protected _validateConstructorOptions(
-    options: ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions<
-      P,
-      T,
-      DbType,
-      DBO,
-      ConnectorBasic,
-      CO,
-      PO,
-      ConnectorMain,
-      CFO,
-      GAC,
-      MCF,
-      ACO,
-      O,
-      SMS,
-      MD,
-      SMSM,
-      DCO,
-      DCCRT,
-      OPT
-    >
-  ): void {
+  protected _validateConstructorOptions(options: COPTS): void {
     assert(options, 'Options must be provided for constructor');
     assert(typeof options === 'object', 'Constructor options must be an object');
     if (options.messageEncryptionType === SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD) {
@@ -761,6 +768,16 @@ export class SwarmMessagesChannelV1DatabaseHandler<
     await this._closeAndUnsetActualInstanceOfDatabaseConnector();
   }
 
+  protected async __dropDatabaseLocally(): Promise<void> {
+    const actualSwarmMessagesDatabaseConnector = this.__actualSwarmMessagesDatabaseConnector;
+
+    if (actualSwarmMessagesDatabaseConnector) {
+      this._stopForwardingDatabaseConnectorEvents(actualSwarmMessagesDatabaseConnector);
+      return await actualSwarmMessagesDatabaseConnector.drop();
+    }
+    throw new Error('There is no an instance of the database connector that can be used to drop the database locally');
+  }
+
   protected async _getActiveDatabaseConnector(): Promise<
     ISwarmMessagesDatabaseConnector<
       P,
@@ -791,10 +808,10 @@ export class SwarmMessagesChannelV1DatabaseHandler<
 
   protected _getMessagesEncryptionQueue(): IQueuedEncryptionClassBase {
     const { messagesEncryptionQueue } = this.___options;
-    if (!messagesEncryptionQueue) {
-      throw new Error('An encryption queue is not exists');
+    if (messagesEncryptionQueue) {
+      return messagesEncryptionQueue as IQueuedEncryptionClassBase;
     }
-    return messagesEncryptionQueue;
+    throw new Error('An encryption queue is not exists');
   }
 
   protected async _decryptMessageBodyIfEncryptedChannel(messageBody: MD['bdy']): Promise<MD['bdy']> {
