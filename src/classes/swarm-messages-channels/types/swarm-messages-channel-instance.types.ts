@@ -663,6 +663,9 @@ export interface ISwarmMessagesChannelConstructorOptions<
 
   /**
    * Encryption queue if the channel's messages must be encrypted by a password.
+   * As a salt for the password that is used for messages encryption within the channel
+   * the channel's id must be used.
+   *
    * @type {IQueuedEncryptionClassBase}
    *
    * @memberof ISwarmMessagesChannelConstructorOptions
@@ -806,7 +809,8 @@ export interface ISwarmMessagesChannelConstructor<
     SMSM,
     DCO,
     DCCRT
-  >
+  >,
+  ADDT extends Array<any> = never
 > {
   new (
     options: ISwarmMessagesChannelConstructorOptions<
@@ -829,6 +833,7 @@ export interface ISwarmMessagesChannelConstructor<
       DCO,
       DCCRT,
       OPT
-    >
+    >,
+    ...additionalParameter: ADDT
   ): ISwarmMessagesChannel<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, GAC, MCF, ACO, O, SMS, MD>;
 }

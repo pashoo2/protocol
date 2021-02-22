@@ -33,7 +33,7 @@ import {
   ISwarmMessagesDatabaseConnector,
   ISwarmMessageDatabaseEvents,
 } from '../../../../../swarm-messages-database/swarm-messages-database.types';
-import { getOptionsForChannelsListHandlerByContstructorOptions } from '../utils/swarm-messages-channel-v1-class.utils';
+import { getOptionsForChannelsListHandlerByContstructorOptions } from '../utils/swarm-messages-channel-v1-class-common.utils';
 import {
   ISwarmMessageChannelDescriptionWithoutDatabaseOptionsRaw,
   ISwarmMessagesChannelConstructorUtils,

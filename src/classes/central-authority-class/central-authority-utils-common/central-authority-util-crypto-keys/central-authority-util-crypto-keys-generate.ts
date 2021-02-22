@@ -25,7 +25,7 @@ import {
 } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
 import CentralAuthorityIdentity from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
 import validator from 'validator';
-import { dataValidatorUtilSafeLogin } from 'utils/data-validators-utils/data-validators-utils';
+import { dataValidatorUtilSafeLogin } from 'utils/data-validators-utils/data-validators-utils-common';
 
 /**
  * generate a key pair, used for data encryption

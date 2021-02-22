@@ -28,11 +28,17 @@ export class QueuedEncryptionClassBase implements IQueuedEncryptionClassBase {
     return this;
   }
 
-  public encryptData = (data: TCRYPTO_UTIL_ENCRYPT_DATA_TYPES, key: CryptoKey): Promise<string | Error> => {
-    if (!isCryptoKeyDataEncryption(key)) {
+  public encryptData = (data: TCRYPTO_UTIL_ENCRYPT_DATA_TYPES, key?: CryptoKey): Promise<string | Error> => {
+    if (key && !isCryptoKeyDataEncryption(key)) {
       return Promise.resolve(new Error('Crypto key is not the valid key for data encryption'));
     }
-    return this.addInQueue(() => encryptToString(key, data));
+
+    const keyToUse = key || this.defaultKeys.encryptKey;
+
+    if (!keyToUse) {
+      return Promise.resolve(new Error('A key must be provided because there is no default key defined for the instance'));
+    }
+    return this.addInQueue(() => encryptToString(keyToUse, data));
   };
 
   public decryptData = (data: TCRYPTO_UTIL_DECRYPT_DATA_TYPES, key?: CryptoKey): Promise<string | Error> => {
@@ -92,7 +98,7 @@ export class QueuedEncryptionClassBase implements IQueuedEncryptionClassBase {
           throw new Error('Keys must be an object');
         }
 
-        const { decryptKey, signKey } = keys;
+        const { decryptKey, encryptKey, signKey } = keys;
 
         if (decryptKey) {
           // verify key for data decryption
@@ -100,6 +106,12 @@ export class QueuedEncryptionClassBase implements IQueuedEncryptionClassBase {
             throw new Error('The decryptKey option must be a CryptoKey');
           }
           this.defaultKeys.decryptKey = decryptKey;
+        }
+        if (encryptKey) {
+          if (!isCryptoKeyDataEncryption(encryptKey)) {
+            throw new Error('Crypto key is not the valid key for data encryption');
+          }
+          this.defaultKeys.encryptKey = encryptKey;
         }
         if (signKey) {
           // verify key for data decryption

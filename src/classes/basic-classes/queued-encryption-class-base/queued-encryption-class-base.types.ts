@@ -24,6 +24,12 @@ export interface IQueuedEncrypyionClassBaseOptions {
      * @memberof IQueuedEncrypyionClassBaseOptions
      */
     decryptKey?: CryptoKey;
+    /**
+     * Encryption key which will be used for data encryption.
+     *
+     * @type {CryptoKey}
+     */
+    encryptKey?: CryptoKey;
   };
   queueOptions?: IAsyncQueueBaseClassOptions;
 }

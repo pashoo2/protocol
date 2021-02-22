@@ -54,7 +54,7 @@ export const exportKeyAsString = async (key: CryptoKey): Promise<Error | string>
 };
 
 export const exportPublicKey = async (keyPair: CryptoKeyPair) => {
-  return exportKey(keyPair.publicKey);
+  return await exportKey(keyPair.publicKey);
 };
 
 export const exportPublicKeyAsString = async (keyPair: CryptoKeyPair) => {
