@@ -44,6 +44,7 @@ import {
   ISwarmMessagesChannel,
 } from '../../../../../types/swarm-messages-channel-instance.types';
 import { getQueuedEncryptionClassByPasswordStringAndSalt } from 'classes/basic-classes/queued-encryption-class-base/fabrics/queued-encryption-class-base-fabric-by-password';
+import { getSwarmMessagesChannelV1DefaultConstructorOptionsUtils } from '../../utils/swarm-messages-channel-v1-constructor-options-default-utils';
 
 /**
  * Creates instance of swarm channel
@@ -123,9 +124,8 @@ export async function swarmMessagesChannelV1Fabric<
     DCO,
     DCCRT
   >,
-  CHD extends ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO> = ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>
->(options: {
-  channelConstructorOptions: MarkOptional<
+  CHD extends ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO> = ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>,
+  CHCO extends MarkOptional<
     ISwarmMessagesChannelConstructorOptions<
       P,
       T,
@@ -148,8 +148,35 @@ export async function swarmMessagesChannelV1Fabric<
       OPT,
       CHD
     >,
-    'passwordEncryptedChannelEncryptionQueue'
-  >;
+    'passwordEncryptedChannelEncryptionQueue' | 'utils'
+  > = MarkOptional<
+    ISwarmMessagesChannelConstructorOptions<
+      P,
+      T,
+      DbType,
+      DBO,
+      ConnectorBasic,
+      CO,
+      PO,
+      ConnectorMain,
+      CFO,
+      GAC,
+      MCF,
+      ACO,
+      O,
+      SMS,
+      MD,
+      SMSM,
+      DCO,
+      DCCRT,
+      OPT,
+      CHD
+    >,
+    'passwordEncryptedChannelEncryptionQueue' | 'utils'
+  >
+>(options: {
+  channelConstructorMainOptions: CHCO;
+  channeDatabaseConnectorOptions: CHCO['utils'] extends never ? Omit<OPT, 'dbOptions' | 'user'> : never;
   SwarmMessagesChannelConstructorWithHelperConstuctorsSupport:
     | ISwarmMessagesChannelConstructor<
         P,
@@ -254,7 +281,7 @@ export async function swarmMessagesChannelV1Fabric<
         SMS,
         MD
       >
-    | undefined;
+    | never;
   /**
    * Constructor of swarm messages channel databse handler helper class.
    *
@@ -304,7 +331,7 @@ export async function swarmMessagesChannelV1Fabric<
         OPT,
         CHD['messageEncryption']
       >
-    | undefined;
+    | never;
   /**
    * A password string will be used for messages encryption and decryption.
    *
@@ -333,7 +360,8 @@ export async function swarmMessagesChannelV1Fabric<
     : InstanceType<typeof options['SwarmMessagesChannelConstructorWithHelperConstuctorsSupport']>
 > {
   const {
-    channelConstructorOptions,
+    channelConstructorMainOptions: channelConstructorOptions,
+    channeDatabaseConnectorOptions,
     SwarmMessagesChannelConstructorWithHelperConstuctorsSupport,
     SwarmMessagesChannelV1ClassChannelsListHandlerConstructor,
     SwarmMessagesChannelV1DatabaseHandlerConstructor,
@@ -346,8 +374,43 @@ export async function swarmMessagesChannelV1Fabric<
     SwarmMessagesChannelConstructorWithHelperConstuctorsSupport || SwarmMessagesChannelV1Class;
   const SwarmMessagesChannelV1ClassChannelsListHandlerConstructorToUse =
     SwarmMessagesChannelV1ClassChannelsListHandlerConstructor || SwarmMessagesChannelV1ClassChannelsListHandler;
-  const SwarmMessagesChannelV1DatabaseHandlerConstructorToUse = (SwarmMessagesChannelV1DatabaseHandlerConstructor ||
-    SwarmMessagesChannelV1DatabaseHandlerQueued) as ISwarmMessagesChannelV1DatabaseHandlerConstructor<
+  const SwarmMessagesChannelV1DatabaseHandlerConstructorToUse =
+    SwarmMessagesChannelV1DatabaseHandlerConstructor || SwarmMessagesChannelV1DatabaseHandlerQueued;
+  const encryptionQueueFabricByPasswordAndSaltToUse =
+    encryptionQueueFabricByPasswordAndSalt || getQueuedEncryptionClassByPasswordStringAndSalt;
+
+  const constructorUtilsToUse =
+    channelConstructorOptions.utils ||
+    getSwarmMessagesChannelV1DefaultConstructorOptionsUtils<
+      P,
+      T,
+      DbType,
+      DBO,
+      ConnectorBasic,
+      CO,
+      PO,
+      ConnectorMain,
+      CFO,
+      GAC,
+      MCF,
+      ACO,
+      O,
+      SMS,
+      MD,
+      SMSM,
+      DCO,
+      DCCRT,
+      OPT
+    >({
+      ...channeDatabaseConnectorOptions,
+      user: {
+        userId: channelConstructorOptions.currentUserId,
+      },
+    } as Omit<OPT, 'dbOptions'>);
+  let channelConstructorOptionsResulted = {
+    ...channelConstructorOptions,
+    utils: constructorUtilsToUse,
+  } as ISwarmMessagesChannelConstructorOptions<
     P,
     T,
     DbType,
@@ -367,10 +430,8 @@ export async function swarmMessagesChannelV1Fabric<
     DCO,
     DCCRT,
     OPT,
-    CHD['messageEncryption']
+    CHD
   >;
-  const encryptionQueueFabricByPasswordAndSaltToUse =
-    encryptionQueueFabricByPasswordAndSalt || getQueuedEncryptionClassByPasswordStringAndSalt;
 
   if (swarmMessagesChannelDescription.messageEncryption === SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD) {
     assert(passwordForMessagesEncryption, 'A password string must be provided for channels with messages encryption by password');
@@ -381,61 +442,14 @@ export async function swarmMessagesChannelV1Fabric<
         passwordForMessagesEncryption,
         salt,
         encryptionQueueOptions
-      )) as CHD['messageEncryption'] extends SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD ? IQueuedEncryptionClassBase : undefined);
-    const channelConstructorOptionsResulted: ISwarmMessagesChannelConstructorOptions<
-      P,
-      T,
-      DbType,
-      DBO,
-      ConnectorBasic,
-      CO,
-      PO,
-      ConnectorMain,
-      CFO,
-      GAC,
-      MCF,
-      ACO,
-      O,
-      SMS,
-      MD,
-      SMSM,
-      DCO,
-      DCCRT,
-      OPT,
-      CHD
-    > = {
-      ...channelConstructorOptions,
+      )) as CHD['messageEncryption'] extends SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD ? IQueuedEncryptionClassBase : never);
+    channelConstructorOptionsResulted = {
+      ...channelConstructorOptionsResulted,
       passwordEncryptedChannelEncryptionQueue: encryptionQueueForMessagesEncryption,
     };
-    return new SwarmMessagesChannelConstructorWithHelperConstuctorsSupportToUse(
-      channelConstructorOptionsResulted,
-      SwarmMessagesChannelV1ClassChannelsListHandlerConstructorToUse,
-      SwarmMessagesChannelV1DatabaseHandlerConstructorToUse
-    );
   }
   return new SwarmMessagesChannelConstructorWithHelperConstuctorsSupportToUse(
-    channelConstructorOptions as ISwarmMessagesChannelConstructorOptions<
-      P,
-      T,
-      DbType,
-      DBO,
-      ConnectorBasic,
-      CO,
-      PO,
-      ConnectorMain,
-      CFO,
-      GAC,
-      MCF,
-      ACO,
-      O,
-      SMS,
-      MD,
-      SMSM,
-      DCO,
-      DCCRT,
-      OPT,
-      CHD
-    >,
+    channelConstructorOptionsResulted,
     SwarmMessagesChannelV1ClassChannelsListHandlerConstructorToUse,
     SwarmMessagesChannelV1DatabaseHandlerConstructorToUse
   );

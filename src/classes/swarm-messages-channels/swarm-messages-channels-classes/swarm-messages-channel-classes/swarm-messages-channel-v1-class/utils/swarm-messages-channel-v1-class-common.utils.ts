@@ -22,6 +22,8 @@ import { ISwarmMessageStore } from '../../../../../swarm-message-store/types/swa
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../../../../swarm-messages-database/swarm-messages-database.messages-collector.types';
 import { ISwarmMessagesChannelConstructorOptions } from '../../../../types/swarm-messages-channel-instance.types';
 import { ISwarmMessagesChannelV1ClassChannelsListHandlerConstructorOptions } from '../types/swarm-messages-channel-v1-class-channels-list-handler.types';
+import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../../../../const/swarm-messages-channels-main.const';
+import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import {
   ISwarmMessagesDatabaseCacheOptions,
   ISwarmMessagesDatabaseCache,
@@ -115,4 +117,49 @@ export function getOptionsForChannelsListHandlerByContstructorOptions<
     chanelsListInstance: swarmMessagesChannelsListInstance,
     channelDescription: swarmMessagesChannelDescription,
   };
+}
+
+/**
+ * Returns a code to use it as the swarm messages "issuer" property's part
+ * by swarm channel encryption type.
+ *
+ * @export
+ * @param {SWARM_MESSAGES_CHANNEL_ENCRYPION} channelEncryptionType
+ * @returns {string}
+ */
+export function getSwarmMessagesIssuerCodeBySwarmMessagesChannelEncryptionType(
+  channelEncryptionType: SWARM_MESSAGES_CHANNEL_ENCRYPION
+): string {
+  switch (channelEncryptionType) {
+    case SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD:
+      return 'pwd';
+    case SWARM_MESSAGES_CHANNEL_ENCRYPION.PRIVATE:
+      return 'pri';
+    case SWARM_MESSAGES_CHANNEL_ENCRYPION.PUBLIC:
+      return 'pub';
+    default:
+      throw new Error(`An unknown swarm messages channel encryption type: ${channelEncryptionType}`);
+  }
+}
+
+/**
+ * Returns a code to use as a part of a swarm messages issuer string
+ * by swarm messages databse type.
+ *
+ * @export
+ * @template P
+ * @param {TSwarmStoreDatabaseType<P>} channelDatabaseType
+ * @returns {string}
+ */
+export function getSwarmMessagesIssuerCodeBySwarmMessagesChannelDatabaseType<P extends ESwarmStoreConnector>(
+  channelDatabaseType: TSwarmStoreDatabaseType<P>
+): string {
+  switch (channelDatabaseType) {
+    case ESwarmStoreConnectorOrbitDbDatabaseType.FEED:
+      return 'fd';
+    case ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE:
+      return 'kv';
+    default:
+      throw new Error(`An unknown swarm messages channel database type: ${channelDatabaseType}`);
+  }
 }

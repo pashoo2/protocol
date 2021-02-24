@@ -2,32 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e70e70e3-e48a-4dfd-91a6-03818e8691f6" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jest.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/jest.config.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/node_modules-local/hypervision-browser" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules-local/hypervision-browser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/async-queue-concurent/async-queue-concurent.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/async-queue-concurent/async-queue-concurent.types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/subclasses/swarm-messages-channel-v1-class-messages-database-handler-queued.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/subclasses/swarm-messages-channel-v1-class-messages-database-handler-queued.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/subclasses/swarm-messages-channel-v1-class-messages-database-handler.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/subclasses/swarm-messages-channel-v1-class-messages-database-handler.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/types/swarm-messages-channel-instance.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/types/swarm-messages-channel-instance.types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache/swarm-messages-database-cache.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache/swarm-messages-database-cache.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database-classes-extended/swarm-store-connector-orbit-db-subclass-database-queued/swarm-store-connector-orbit-db-subclass-database-queued.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database-classes-extended/swarm-store-connector-orbit-db-subclass-database-queued/swarm-store-connector-orbit-db-subclass-database-queued.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-utils/swarm-store-connector-orbit-db-utils-address/swarm-store-connector-orbit-db-utils-address.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-utils/swarm-store-connector-orbit-db-utils-address/swarm-store-connector-orbit-db-utils-address.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/types/common.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/common.types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/types/ipfs.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/ipfs.d.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/data-compression-utils/data-compression-utils.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/data-compression-utils/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/data-compression-utils/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/data-sign-utils/data-sign-utils.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/data-sign-utils/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/data-sign-utils/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/data-validators-utils/data-validators-utils.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/data-validators-utils/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/data-validators-utils/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/encryption-utils/encryption-utils.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/encryption-utils/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/encryption-utils/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/ipfs-utils/ipfs-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/ipfs-utils/ipfs-utils.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/password-utils/decrypt.password-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/password-utils/decrypt.password-utils.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/password-utils/encrypt.password-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/password-utils/encrypt.password-utils.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -44,19 +19,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="swarm-messages-channel-v1-class-channels-list-handler.types.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/types/swarm-messages-channel-v1-class-channels-list-handler.types.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="518">
-              <caret line="60" column="4" selection-start-line="60" selection-start-column="4" selection-end-line="60" selection-end-column="4" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="commom-utils.promies.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/utils/common-utils/commom-utils.promies.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="337">
+            <state relative-caret-position="1050">
               <caret line="84" column="32" selection-start-line="84" selection-start-column="32" selection-end-line="84" selection-end-column="32" />
               <folding>
                 <element signature="e#0#48#0" expanded="true" />
@@ -77,7 +43,7 @@
       <file leaf-file-name="async-queue-concurent-mixin-default.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/async-queue-concurent/async-queue-concurent-mixins/async-queue-concurent-mixin-default/async-queue-concurent-mixin-default.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-126">
+            <state>
               <folding>
                 <element signature="e#0#183#0" expanded="true" />
               </folding>
@@ -85,14 +51,23 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="async-queue-concurent-mixin-default-decorator.ts" pinned="false" current-in-tab="true">
+      <file leaf-file-name="async-queue-concurent-mixin-default-decorator.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/async-queue-concurent/async-queue-concurent-mixins/async-queue-concurent-mixin-default/async-queue-concurent-mixin-default-decorator.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="15" column="22" selection-start-line="15" selection-start-column="18" selection-end-line="15" selection-end-column="22" />
+            <state relative-caret-position="126">
+              <caret line="9" column="30" selection-start-line="9" selection-start-column="30" selection-end-line="9" selection-end-column="30" />
               <folding>
                 <element signature="e#0#52#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="connect-to-swarm.tsx" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/components/connect-to-swarm/connect-to-swarm.tsx">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="429">
+              <caret line="529" column="13" selection-start-line="529" selection-start-column="13" selection-end-line="529" selection-end-column="13" />
             </state>
           </provider>
         </entry>
@@ -128,8 +103,8 @@
       <file leaf-file-name="data-cache-utils-caching-decorator.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="47">
-              <caret line="6" lean-forward="true" selection-start-line="6" selection-end-line="6" />
+            <state>
+              <caret line="5" column="64" selection-start-line="5" selection-start-column="64" selection-end-line="5" selection-end-column="64" />
               <folding>
                 <element signature="e#0#139#0" expanded="true" />
               </folding>
@@ -271,7 +246,7 @@
       <path value="$PROJECT_DIR$/package.json" />
     </packageJsonPaths>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="y" value="27" />
     <option name="width" value="960" />
     <option name="height" value="1007" />
@@ -282,7 +257,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -451,6 +425,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -683,6 +658,7 @@
       <workItem from="1613500728938" duration="1485000" />
       <workItem from="1613675877669" duration="1863000" />
       <workItem from="1613770919060" duration="1988000" />
+      <workItem from="1614024744491" duration="556000" />
     </task>
     <servers />
   </component>
@@ -719,7 +695,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="137850000" />
+    <option name="totallyTimeSpent" value="138406000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="1600" height="873" extended-state="6" />
@@ -942,13 +918,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/components/connect-to-swarm/connect-to-swarm.tsx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6566">
-          <caret line="528" column="62" selection-start-line="528" selection-start-column="62" selection-end-line="528" selection-end-column="62" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-cached-store/abstractions/swarm-messages-database-messages-cached-store/swarm-messages-database-messages-cached-store.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="574">
@@ -1022,9 +991,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="126">
           <caret line="16" column="49" selection-start-line="16" selection-start-column="49" selection-end-line="16" selection-end-column="49" />
-          <folding>
-            <element signature="e#0#78#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1061,7 +1027,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/utils/common-utils/commom-utils.promies.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="337">
+        <state relative-caret-position="1050">
           <caret line="84" column="32" selection-start-line="84" selection-start-column="32" selection-end-line="84" selection-end-column="32" />
           <folding>
             <element signature="e#0#48#0" expanded="true" />
@@ -1071,8 +1037,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="47">
-          <caret line="6" lean-forward="true" selection-start-line="6" selection-end-line="6" />
+        <state>
+          <caret line="5" column="64" selection-start-line="5" selection-start-column="64" selection-end-line="5" selection-end-column="64" />
           <folding>
             <element signature="e#0#139#0" expanded="true" />
           </folding>
@@ -1089,9 +1055,7 @@
     <entry file="file://$PROJECT_DIR$/src/utils/data-validators-utils/index.ts">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/utils/encryption-utils/encryption-utils.ts">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/encryption-utils/encryption-utils.ts" />
     <entry file="file://$PROJECT_DIR$/src/utils/encryption-utils/index.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="168">
@@ -1111,7 +1075,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/async-queue-concurent/async-queue-concurent-mixins/async-queue-concurent-mixin-default/async-queue-concurent-mixin-default.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-126">
+        <state>
           <folding>
             <element signature="e#0#183#0" expanded="true" />
           </folding>
@@ -1120,11 +1084,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/async-queue-concurent/async-queue-concurent-mixins/async-queue-concurent-mixin-default/async-queue-concurent-mixin-default-decorator.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="15" column="22" selection-start-line="15" selection-start-column="18" selection-end-line="15" selection-end-column="22" />
+        <state relative-caret-position="126">
+          <caret line="9" column="30" selection-start-line="9" selection-start-column="30" selection-end-line="9" selection-end-column="30" />
           <folding>
             <element signature="e#0#52#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/components/connect-to-swarm/connect-to-swarm.tsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="429">
+          <caret line="529" column="13" selection-start-line="529" selection-start-column="13" selection-end-line="529" selection-end-column="13" />
         </state>
       </provider>
     </entry>

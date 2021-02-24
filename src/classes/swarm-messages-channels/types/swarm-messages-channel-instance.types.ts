@@ -452,10 +452,10 @@ export interface ISwarmMessagesChannelConstructorUtils<
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO>,
-  PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
-  CO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, PO>,
-  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, PO>,
-  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
+  CO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
+  PO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, CO>,
+  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, CO>,
+  CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain>,
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MD | T>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined,
   ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MD | T, GAC> | undefined,
@@ -465,8 +465,8 @@ export interface ISwarmMessagesChannelConstructorUtils<
     DbType,
     DBO,
     ConnectorBasic,
-    PO,
     CO,
+    PO,
     ConnectorMain,
     CFO,
     MD | T,
@@ -474,7 +474,7 @@ export interface ISwarmMessagesChannelConstructorUtils<
     MCF,
     ACO
   >,
-  SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MD | T, GAC, MCF, ACO, O>,
+  SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, MD | T, GAC, MCF, ACO, O>,
   MD extends ISwarmMessageInstanceDecrypted,
   SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
   DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>,
@@ -485,8 +485,8 @@ export interface ISwarmMessagesChannelConstructorUtils<
     DbType,
     DBO,
     ConnectorBasic,
-    PO,
     CO,
+    PO,
     ConnectorMain,
     CFO,
     GAC,
@@ -510,8 +510,8 @@ export interface ISwarmMessagesChannelConstructorUtils<
    *       DbType,
    *       DBO,
    *       ConnectorBasic,
-   *       PO,
-   *       CO,
+   CO,
+   PO,
    *       ConnectorMain,
    *       CFO,
    *       GAC,
@@ -534,8 +534,8 @@ export interface ISwarmMessagesChannelConstructorUtils<
     DbType,
     DBO,
     ConnectorBasic,
-    PO,
     CO,
+    PO,
     ConnectorMain,
     CFO,
     GAC,
@@ -646,6 +646,14 @@ export interface ISwarmMessagesChannelConstructorOptions<
   CHD extends ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO> = ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>
 > {
   /**
+   * Identity of the current user.
+   *
+   * @type {TCentralAuthorityUserIdentity}
+   * @memberof ISwarmMessagesChannelConstructorOptions
+   */
+  currentUserId: TCentralAuthorityUserIdentity;
+
+  /**
    * A description of the channel.
    *
    * @type {ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>}
@@ -672,15 +680,7 @@ export interface ISwarmMessagesChannelConstructorOptions<
    */
   passwordEncryptedChannelEncryptionQueue: CHD['messageEncryption'] extends SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD
     ? IQueuedEncryptionClassBase
-    : undefined;
-
-  /**
-   * Identity of the current user.
-   *
-   * @type {TCentralAuthorityUserIdentity}
-   * @memberof ISwarmMessagesChannelConstructorOptions
-   */
-  currentUserId: TCentralAuthorityUserIdentity;
+    : never;
 
   /**
    * Various utilities which will be used by the swarm messages channel during it's work
