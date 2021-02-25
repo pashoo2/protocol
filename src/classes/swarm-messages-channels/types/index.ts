@@ -7,3 +7,5 @@ export * from './swarm-messages-channels-utils.types';
 export * from './swarm-messages-channels-validation.types';
 
 export * from './swarm-messages-channel-events.types';
+
+export * from './swarm-messages-channel-instance.helpers.types';

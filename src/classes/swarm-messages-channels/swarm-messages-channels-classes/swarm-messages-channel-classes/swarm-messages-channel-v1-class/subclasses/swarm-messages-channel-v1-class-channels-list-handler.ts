@@ -305,7 +305,7 @@ export class SwarmMessagesChannelV1ClassChannelsListHandler<
   private __subscribeOrUnsubscribeFromChannelDescriptionUpdates(
     swarmMessagesChannelsListInstance: ISwarmMessagesChannelsDescriptionsList<P, T, MD>,
     ifSubscription: boolean = true
-  ) {
+  ): void {
     const methodName = ifSubscription ? 'addListener' : 'removeListener';
     const channelsListEmitter = swarmMessagesChannelsListInstance.emitter;
 

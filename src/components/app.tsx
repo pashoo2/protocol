@@ -20,6 +20,7 @@ import { ConnectToSwarmWithDBO } from './connect-to-swarm-with-dbo/connect-to-sw
 import { ConnectToSwarmWithAdditionalMetaWithDBO } from './connect-to-swarm-with-additional-meta-with-dbo/connect-to-swarm-with-additional-meta';
 import { ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaWithDBO } from './connect-to-swarm-channels-list-with-additional-meta-with-dbo/connect-to-swarm-channels-list-with-additional-meta-with-dbo';
 import { CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_SWARM_CHANNELS_LIST } from './const/connect-to-swarm-immediate.const';
+import { ConnectToSwarmAndCreateSwarmMessagesChannelsListWithChannelInstanceSupport } from './connect-to-swarm-channels-list-with-channels-instance/connect-to-swarm-channels-list-with-channels-instance';
 import {
   TSwarmMessageSerialized,
   TSwarmMessageInstance,
@@ -116,8 +117,23 @@ export class App extends React.Component {
     //     swarmMessagesDatabaseCacheOptions={CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_WITH_STORE_META_OPTIONS}
     //   />
     // );
+    // return (
+    //   <ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaWithDBO<
+    //     ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
+    //     typeof CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_SWARM_CHANNELS_LIST,
+    //     typeof CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS,
+    //     false
+    //   >
+    //     dbo={CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_SWARM_CHANNELS_LIST}
+    //     connectionBridgeOptions={CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS}
+    //     userCredentialsList={[userToConnectWithCredentials]}
+    //     userCredentialsToConnectImmediate={userToConnectWithCredentials}
+    //     userIdReceiverSwarmMessages={userIdReceiverMessages}
+    //     swarmMessagesDatabaseCacheOptions={CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_WITH_STORE_META_OPTIONS}
+    //   />
+    // );
     return (
-      <ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaWithDBO<
+      <ConnectToSwarmAndCreateSwarmMessagesChannelsListWithChannelInstanceSupport<
         ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
         typeof CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_SWARM_CHANNELS_LIST,
         typeof CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS,

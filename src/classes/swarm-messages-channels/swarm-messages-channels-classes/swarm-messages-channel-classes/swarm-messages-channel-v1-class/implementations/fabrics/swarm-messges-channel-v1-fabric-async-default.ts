@@ -71,7 +71,7 @@ import { getSwarmMessagesChannelV1DefaultConstructorOptionsUtils } from '../../u
  * @template OPT
  * @template CHD
  */
-export async function swarmMessagesChannelV1Fabric<
+export async function getSwarmMessagesChannelV1InstanveWithDefaults<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,

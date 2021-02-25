@@ -1,7 +1,7 @@
 import React from 'react';
 import { TSwarmMessageSerialized } from '../../classes/swarm-message/swarm-message-constructor.types';
 import { ISwarmMessageInstanceDecrypted } from '../../classes/swarm-message/swarm-message-constructor.types';
-import { TSwarmStoreDatabaseOptions } from '../../classes/swarm-store-class/swarm-store-class.types';
+import { TSwarmStoreDatabaseOptions, TSwarmStoreDatabaseType } from '../../classes/swarm-store-class/swarm-store-class.types';
 import { IConnectionBridgeOptionsDefault } from '../../classes/connection-bridge/types/connection-bridge.types';
 import { P } from '../connect-to-swarm-with-dbo/connect-to-swarm-with-dbo';
 import { getDatabaseConnectionByDatabaseOptionsFabric } from '../../classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-constructor-arguments-fabrics/swarm-messages-channels-list-v1-database-connection-fabric';
@@ -12,7 +12,11 @@ import { getSwarmMessagesChannelsListVersionOneInstanceWithDefaultParameters } f
 import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
 import { ISwarmMessageChannelDescriptionRaw } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-instance.types';
 import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../../classes/swarm-messages-channels/const/swarm-messages-channels-main.const';
-import { TSwrmMessagesChannelsListDBOWithGrantAccess } from '../../classes/swarm-messages-channels/types/swarm-messages-channels-list-instance.types';
+import {
+  TSwrmMessagesChannelsListDBOWithGrantAccess,
+  ISwarmMessagesChannelsDescriptionsList,
+} from '../../classes/swarm-messages-channels/types/swarm-messages-channels-list-instance.types';
+import { IUserCredentialsCommon } from '../../types/credentials.types';
 import {
   ISwarmMessagesDatabaseCacheOptions,
   ISwarmMessagesDatabaseCache,
@@ -107,11 +111,33 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
   >
 > {
   public async componentDidMount() {
-    await this._connectToSwarmAndCreateSwarmMessagesChannelsList();
+    const { userCredentialsToConnectImmediate } = this.props;
+    if (userCredentialsToConnectImmediate) {
+      const swarmMessagesList = await this._connectToSwarmAndCreateSwarmMessagesChannelsList(userCredentialsToConnectImmediate);
+      const currentUserId = this.getCurrentUserId();
+      const swarmMessageChannelDescription = this.getSwarmMessagesChannelDescriptionDefault(currentUserId);
+      await this.addChannelDescriptionToChannelsList(swarmMessagesList, swarmMessageChannelDescription);
+      await this._onChannelAdded(swarmMessagesList, swarmMessageChannelDescription);
+    }
   }
 
   public render() {
     return <div>Swarm messages channels list</div>;
+  }
+
+  protected getCurrentUserId(): string {
+    const { connectionBridge } = this.state;
+    if (!connectionBridge) {
+      throw new Error('A connection bridge instance is not initialized');
+    }
+    const currentUserId = connectionBridge.centralAuthorityConnection?.getUserIdentity();
+    if (!currentUserId) {
+      throw new Error('An identity of the current user should be provided');
+    }
+    if (currentUserId instanceof Error) {
+      throw currentUserId;
+    }
+    return currentUserId;
   }
 
   protected _getOptionsForConstructorArgumentsFabric(): Parameters<
@@ -167,59 +193,79 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
     return swarmMessageChannelsList;
   }
 
-  protected async _connectToSwarmAndCreateSwarmMessagesChannelsList() {
-    const { userCredentialsToConnectImmediate } = this.props;
-    if (userCredentialsToConnectImmediate) {
-      await this.connectToSwarm(userCredentialsToConnectImmediate);
-      const channelsListInstance = this._createSwarmMessagesChannelsList();
-      const { connectionBridge } = this.state;
-      if (!connectionBridge) {
-        throw new Error('A connection bridge instance is not initialized');
-      }
-      const currentUserId = connectionBridge.centralAuthorityConnection?.getUserIdentity();
-      if (!currentUserId) {
-        throw new Error('An identity of the current user should be provided');
-      }
-      if (currentUserId instanceof Error) {
-        throw currentUserId;
-      }
-      const swarmMessageChannelDescription: ISwarmMessageChannelDescriptionRaw<
-        P,
-        TSwarmMessageSerialized,
-        ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
-        TSwarmStoreDatabaseOptions<P, TSwarmMessageSerialized, ESwarmStoreConnectorOrbitDbDatabaseType.FEED>
-      > = {
-        id: '40accad4-7941-41aa-95db-7954e80a73b8',
-        dbType: ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
-        version: '1',
-        tags: ['test', 'swarm_channel'],
-        name: 'test swarm channel',
-        admins: [currentUserId],
-        description: 'This is a swarm channel for test purposes',
-        messageEncryption: SWARM_MESSAGES_CHANNEL_ENCRYPION.PUBLIC,
-        dbOptions: {
-          write: [currentUserId],
-          grantAccess: async function grantAccess(): Promise<boolean> {
-            debugger;
-            return true;
-          },
+  protected getSwarmMessagesChannelDescriptionDefault<
+    DT extends ESwarmStoreConnectorOrbitDbDatabaseType = ESwarmStoreConnectorOrbitDbDatabaseType.FEED
+  >(
+    currentUserId: string,
+    dbType: DT = ESwarmStoreConnectorOrbitDbDatabaseType.FEED as DT
+  ): ISwarmMessageChannelDescriptionRaw<
+    P,
+    TSwarmMessageSerialized,
+    DT,
+    TSwarmStoreDatabaseOptions<P, TSwarmMessageSerialized, DT>
+  > {
+    const swarmMessageChannelDescription = {
+      id: '40accad4-7941-41aa-95db-7954e80a73b8',
+      dbType: dbType,
+      version: '1',
+      tags: ['test', 'swarm_channel'],
+      name: 'test swarm channel',
+      admins: [currentUserId],
+      description: 'This is a swarm channel for test purposes',
+      messageEncryption: SWARM_MESSAGES_CHANNEL_ENCRYPION.PUBLIC,
+      dbOptions: {
+        write: [currentUserId],
+        grantAccess: async function grantAccess(): Promise<boolean> {
+          debugger;
+          return true;
         },
-      };
-      try {
-        let existingChannels = await channelsListInstance.getAllChannelsDescriptions();
-        await channelsListInstance.upsertChannel(swarmMessageChannelDescription);
-        debugger;
-        const swarmMessagesChannelListDescription = await channelsListInstance.getChannelDescriptionById(
-          swarmMessageChannelDescription.id
-        );
-        debugger;
-        existingChannels = await channelsListInstance.getAllChannelsDescriptions();
-        debugger;
-        alert('done');
-      } catch (err) {
-        console.error(err);
-        debugger;
-      }
+      },
+    };
+    return swarmMessageChannelDescription;
+  }
+
+  protected async _connectToSwarmAndCreateSwarmMessagesChannelsList(
+    userCredentialsToConnectImmediate: IUserCredentialsCommon
+  ): Promise<ISwarmMessagesChannelsDescriptionsList<ESwarmStoreConnector, T, MD>> {
+    await this.connectToSwarm(userCredentialsToConnectImmediate);
+    const channelsListInstance = this._createSwarmMessagesChannelsList();
+    return channelsListInstance;
+  }
+
+  protected async addChannelDescriptionToChannelsList(
+    channelsListInstance: ISwarmMessagesChannelsDescriptionsList<ESwarmStoreConnector, T, MD>,
+    swarmMessageChannelDescription: ISwarmMessageChannelDescriptionRaw<
+      P,
+      TSwarmMessageSerialized,
+      TSwarmStoreDatabaseType<P>,
+      TSwarmStoreDatabaseOptions<P, TSwarmMessageSerialized, TSwarmStoreDatabaseType<P>>
+    >
+  ): Promise<void> {
+    await channelsListInstance.upsertChannel(swarmMessageChannelDescription);
+  }
+
+  protected async _onChannelAdded(
+    channelsListInstance: ISwarmMessagesChannelsDescriptionsList<ESwarmStoreConnector, T, MD>,
+    swarmMessageChannelDescription: ISwarmMessageChannelDescriptionRaw<
+      P,
+      TSwarmMessageSerialized,
+      TSwarmStoreDatabaseType<P>,
+      TSwarmStoreDatabaseOptions<P, TSwarmMessageSerialized, TSwarmStoreDatabaseType<P>>
+    >
+  ): Promise<void> {
+    try {
+      let existingChannels = await channelsListInstance.getAllChannelsDescriptions();
+      console.log('existingChannels:before:', existingChannels);
+      await channelsListInstance.upsertChannel(swarmMessageChannelDescription);
+      const swarmMessagesChannelListDescription = await channelsListInstance.getChannelDescriptionById(
+        swarmMessageChannelDescription.id
+      );
+      console.log('swarmMessagesChannelListDescription:', swarmMessagesChannelListDescription);
+      existingChannels = await channelsListInstance.getAllChannelsDescriptions();
+      console.log('existingChannels:after', existingChannels);
+    } catch (err) {
+      console.error(err);
+      alert(`The error has occurred: ${err.message}`);
     }
   }
 }

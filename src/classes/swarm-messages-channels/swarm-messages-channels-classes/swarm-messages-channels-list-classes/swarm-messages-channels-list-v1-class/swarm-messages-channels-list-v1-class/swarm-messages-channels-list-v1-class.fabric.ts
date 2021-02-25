@@ -46,7 +46,7 @@ export function getSwarmMessagesChannelsListVersionOneClass<
   abstract class SwarmMessagesChannelsListVersionOne
     extends ClassSwarmMessagesChannelsListVersionOneOptionsSetUp
     implements ISwarmMessagesChannelsDescriptionsList<P, T, MD> {
-    abstract readonly emitter: ISwarmMessagesChannelNotificationEmitter<P, any>;
+    readonly emitter: ISwarmMessagesChannelNotificationEmitter<P, any>;
 
     public get description(): Readonly<ISwarmMessagesChannelsListDescription> {
       return this._getChannelsListDescription();

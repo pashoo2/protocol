@@ -1,1 +1,3 @@
-export { SwarmMessagesChannelV1Class } from './implementations/swarm-messages-channel-v1-class';
+export * from './implementations';
+
+export * from './types';
