@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { ESwarmStoreConnector } from '../../../../../../../swarm-store-class/swarm-store-class.const';
+import { ESwarmStoreConnector, ESwarmStoreEventNames } from '../../../../../../../swarm-store-class/swarm-store-class.const';
 import {
   TSwarmMessageSerialized,
   ISwarmMessageInstanceDecrypted,
@@ -45,6 +45,22 @@ import {
   TSwarmStoreDatabaseEntityKey,
 } from '../../../../../../../swarm-store-class/swarm-store-class.types';
 import { ESortingOrder } from 'classes/basic-classes/sorter-class';
+import {
+  ISwarmMessagesChannelsListNotificationEmitter,
+  ISwarmMessagesChannelsListEvents,
+} from '../../../../../../types/swarm-messages-channels-list-events.types';
+import {
+  ISwarmMessagesChannelNotificationEmitter,
+  ISwarmMessagesChannelEvents,
+} from '../../../../../../types/swarm-messages-channel-events.types';
+import {
+  getEventEmitterInstance,
+  EventEmitter,
+} from '../../../../../../../basic-classes/event-emitter-class-base/event-emitter-class-base';
+import { ESwarmMessageStoreEventNames } from '../../../../../../../swarm-message-store/swarm-message-store.const';
+import { TSwarmMessageUserIdentifierSerialized } from '../../../../../../../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
+import { ESwarmMessagesChannelsListEventName } from '../../../../../../types/swarm-messages-channels-list-events.types';
+import { TSwarmChannelId } from '../../../../../../../../../.ignored/swarm-channel/swarm-channel.types';
 
 export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandlerClass<
   P extends ESwarmStoreConnector,
@@ -67,6 +83,23 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
   additionalUtils: IAdditionalUtils<P, T, MD, CTX, DBO>
 ): IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler<P, T, MD, CTX, DBO, CF, CARGS> {
   abstract class SwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler extends ClassSwarmMessagesChannelsListVersionOneOptionsSetUp {
+    protected get _emitter(): ISwarmMessagesChannelsListNotificationEmitter<P, any> {
+      return this.__emitter;
+    }
+
+    protected get _databaseConnection(): PromiseResolveType<ReturnType<CARGS['utilities']['databaseConnectionFabric']>> {
+      const databaseConnection = this.__databaseConnectionOrUndefined;
+
+      if (!databaseConnection) {
+        throw new Error('There is no active database connection instance');
+      }
+      return databaseConnection;
+    }
+
+    protected get _isDatabaseOpened(): boolean {
+      return Boolean(this.__databaseConnectionOrUndefined);
+    }
+
     private readonly __additionalUtils: Readonly<IAdditionalUtils<P, T, MD, CTX, DBO>>;
 
     private get _additionalUtils(): Readonly<IAdditionalUtils<P, T, MD, CTX, DBO>> {
@@ -77,52 +110,119 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       return additionalUtils;
     }
 
-    private _swarmMessagesKeyValueDatabaseConnectionPending: IPromisePendingRejectable<
+    private readonly __emitter: ISwarmMessagesChannelNotificationEmitter<P, any> = getEventEmitterInstance<
+      ISwarmMessagesChannelEvents<P, any>
+    >();
+
+    private __swarmMessagesKeyValueDatabaseConnectionPending: IPromisePendingRejectable<
       PromiseResolveType<ReturnType<CARGS['utilities']['databaseConnectionFabric']>>,
       Error
     >;
 
     /**
-     * Whether the channel's database has been opened.
+     * Connection to a swarm messages database related to the channel.
      *
      * @private
-     * @type {boolean}
+     * @type {(PromiseResolveType<ReturnType<CARGS['utilities']['databaseConnectionFabric']>> | undefined)}
      * @memberof SwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler
      */
-    private __isDatabaseOpened: boolean = false;
-
-    /**
-     * Whether the channels list have been closed.
-     *
-     * @private
-     * @type {boolean}
-     * @memberof SwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler
-     */
-    private __isChannelsListClosed: boolean = false;
-
-    protected get _isDatabaseOpened(): boolean {
-      return this.__isDatabaseOpened && !this.__isChannelsListClosed;
-    }
+    private __databaseConnectionOrUndefined:
+      | PromiseResolveType<ReturnType<CARGS['utilities']['databaseConnectionFabric']>>
+      | undefined;
 
     constructor(constructorArguments: CARGS) {
       super(constructorArguments);
       this._validateAdditionalUtils(additionalUtils);
       this.__additionalUtils = createImmutableObjectClone(additionalUtils);
-      this._swarmMessagesKeyValueDatabaseConnectionPending = createRejectablePromiseByNativePromise(
+      this.__swarmMessagesKeyValueDatabaseConnectionPending = createRejectablePromiseByNativePromise(
         this._createActiveConnectionToChannelsListDatabase()
       );
-      this._waitTillDatabaseWillBeOpened();
+      this.__waitDatabaseWillBeOpenedSetListenersAndOpenedStatus();
     }
 
-    private _waitTillDatabaseWillBeOpened(): void {
-      void this._swarmMessagesKeyValueDatabaseConnectionPending.then(
-        () => {
-          this.__isDatabaseOpened = true;
-        },
-        () => {
-          this.__isDatabaseOpened = false;
-        }
+    protected async _close(): Promise<void> {
+      this.__unsetCurrentDatabaseConnectionListeners();
+      this.__stopConnectionPendingToACurrentDatabase();
+
+      const promiseCloseCurrentDatabaseConnection = this.__closeCurrentDatabaseConnection();
+
+      this.__unsetDatabaseConnection();
+      await promiseCloseCurrentDatabaseConnection;
+    }
+
+    protected async _drop(): Promise<void> {
+      this.__unsetCurrentDatabaseConnectionListeners();
+
+      const databaseConnection = await this._getSwarmMessagesKeyValueDatabaseConnection();
+
+      this.__stopConnectionPendingToACurrentDatabase();
+      this.__unsetDatabaseConnection();
+      await databaseConnection.drop();
+    }
+
+    protected async _readSwarmMessagesChannelDescriptionOrUndefinedForDbKey(
+      dbbKey: string,
+      additionalRequestOptions?: Partial<
+        TSwarmStoreDatabaseIteratorMethodArgument<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>
+      >
+    ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any> | undefined> {
+      const requestResultForDbKey = await this._readValueStoredInDatabaseByDbKey(dbbKey, additionalRequestOptions);
+
+      if (!requestResultForDbKey) {
+        return undefined;
+      }
+
+      const messageForDbKey = await this._getSwarmChannelDescriptionRawBySwarmDbRequestResult(requestResultForDbKey);
+
+      return messageForDbKey;
+    }
+
+    protected async _readAllChannelsDescriptionsWithMeta(): Promise<
+      ISwarmMessagesChannelDescriptionWithMetadata<P, T, MD, any, any>[]
+    > {
+      const optionsForReadingAllValuesStored = this._createOptionsForCollectingAllDatabaseValues();
+      const messagesReadFromDatabase = await this.__requestDatabase(optionsForReadingAllValuesStored);
+      const swarmMessagesChannelsDescriptionsOrErrors = await this._convertDatabaseRequestResultIntoSwarmChannelsDescriptionsWithMeta(
+        messagesReadFromDatabase
       );
+      return swarmMessagesChannelsDescriptionsOrErrors;
+    }
+
+    protected async _addSwarmMessageBodyInDatabase(
+      dbKey: TSwarmStoreDatabaseEntityKey<P>,
+      messageBody: TSwarmMessageConstructorBodyMessage
+    ): Promise<TSwarmStoreDatabaseEntityAddress<P>> {
+      const dbConnection = await this._getSwarmMessagesKeyValueDatabaseConnection();
+      const swarmMessageAddress = await dbConnection.addMessage(messageBody, dbKey);
+      return swarmMessageAddress;
+    }
+
+    protected async _removeValueForDbKey(dbKey: TSwarmStoreDatabaseEntityKey<P>): Promise<void> {
+      const dbConnection = await this._getSwarmMessagesKeyValueDatabaseConnection();
+      const argumentForDeleteValueForKeyFromDb = this._getArgumentForDeleteFromDbSwarmDbMethodByDbKey(dbKey);
+      await dbConnection.deleteMessage(argumentForDeleteValueForKeyFromDb);
+    }
+
+    protected async _createActiveConnectionToChannelsListDatabase(): Promise<
+      PromiseResolveType<ReturnType<CARGS['utilities']['databaseConnectionFabric']>>
+    > {
+      const optionsForDatabase = this._getChannelsListDatabaseOptions();
+      const { databaseConnectionFabric } = this._getUtilities();
+      const connectionToDatabase = await databaseConnectionFabric(optionsForDatabase);
+      return connectionToDatabase as PromiseResolveType<ReturnType<CARGS['utilities']['databaseConnectionFabric']>>;
+    }
+
+    protected async _convertDatabaseRequestResultIntoSwarmChannelsDescriptionsWithMeta(
+      swarmMessagesFromDatabase: (ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined)[]
+    ): Promise<ISwarmMessagesChannelDescriptionWithMetadata<P, T, MD, any, any>[]> {
+      const nonNullableSwarmMessagesFromDatabase = swarmMessagesFromDatabase.filter(isDefined);
+      return await Promise.all(
+        nonNullableSwarmMessagesFromDatabase.map(this._getSwarmChannelDescriptionWithMetadataBySwarmDbRequestResultWithMetadata)
+      );
+    }
+
+    protected _getErrorForRejectingSwarmMessagesKeyValueDatabaseConnectionPendingOnCloseInstance(): Error {
+      return new Error('The instance has been closed');
     }
 
     private _validateAdditionalUtils(additionalUtils: IAdditionalUtils<P, T, MD, CTX, DBO>): void {
@@ -152,10 +252,71 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       );
     }
 
+    protected _restartDatabaseConnection(): void {
+      this.__swarmMessagesKeyValueDatabaseConnectionPending = createRejectablePromiseByNativePromise(
+        this._createActiveConnectionToChannelsListDatabase()
+      );
+      this.__waitDatabaseWillBeOpenedSetListenersAndOpenedStatus();
+    }
+
+    protected _emitEvent<E extends ESwarmMessagesChannelsListEventName>(
+      eventName: E,
+      ...args: Parameters<ISwarmMessagesChannelsListEvents<P, any>[E]>
+    ): void {
+      // TODO - resolve cast to any
+      (this.__emitter as EventEmitter<ISwarmMessagesChannelsListEvents<P, any>>).emit(eventName, ...args);
+    }
+
+    protected _getChannelIdByDatabaseKey(key: TSwarmStoreDatabaseEntityKey<P>): TSwarmChannelId {
+      const { getChannelIdByDatabaseKey } = this._getUtilities();
+      return getChannelIdByDatabaseKey(key);
+    }
+
+    private __waitDatabaseWillBeOpenedSetListenersAndOpenedStatus(): void {
+      void this.__swarmMessagesKeyValueDatabaseConnectionPending.then(
+        (databaseConnection: PromiseResolveType<ReturnType<CARGS['utilities']['databaseConnectionFabric']>>) => {
+          this.__setDatabaseConnection(databaseConnection);
+          this.__setCurrentDatabaseConnectionListeners();
+        }
+      );
+    }
+
+    private __rejectWithErrorSwarmMessagesKeyValueDatabaseConnectionPending(error: Error): void {
+      this.__swarmMessagesKeyValueDatabaseConnectionPending.reject(error);
+    }
+
+    private async __closeCurrentDatabaseConnection(): Promise<void> {
+      await this._databaseConnection.close();
+    }
+
+    private __setDatabaseConnection(
+      databaseConnection: PromiseResolveType<ReturnType<CARGS['utilities']['databaseConnectionFabric']>>
+    ): void {
+      this.__databaseConnectionOrUndefined = databaseConnection;
+    }
+
+    private __unsetDatabaseConnection(): void {
+      this.__databaseConnectionOrUndefined = undefined;
+    }
+
+    private __setCurrentDatabaseConnectionListeners(): void {
+      this.__setOrUnsetDatabaseEventsListeners(this._databaseConnection, true);
+    }
+
+    private __unsetCurrentDatabaseConnectionListeners(): void {
+      this.__setOrUnsetDatabaseEventsListeners(this._databaseConnection, false);
+    }
+
+    private __stopConnectionPendingToACurrentDatabase(): void {
+      this.__rejectWithErrorSwarmMessagesKeyValueDatabaseConnectionPending(
+        this._getErrorForRejectingSwarmMessagesKeyValueDatabaseConnectionPendingOnCloseInstance()
+      );
+    }
+
     private async _getSwarmMessagesKeyValueDatabaseConnection(): Promise<
       PromiseResolveType<ReturnType<CARGS['utilities']['databaseConnectionFabric']>>
     > {
-      const swarmMessagesKeyValueDatabaseConnection = this._swarmMessagesKeyValueDatabaseConnectionPending;
+      const swarmMessagesKeyValueDatabaseConnection = this.__swarmMessagesKeyValueDatabaseConnectionPending;
       if (!swarmMessagesKeyValueDatabaseConnection) {
         throw new Error('There is no an active connection with the swarm messages databse');
       }
@@ -288,49 +449,6 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       throw new Error('Swarm connector type is not supported');
     }
 
-    protected async _readSwarmMessagesChannelDescriptionOrUndefinedForDbKey(
-      dbbKey: string,
-      additionalRequestOptions?: Partial<
-        TSwarmStoreDatabaseIteratorMethodArgument<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>
-      >
-    ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any> | undefined> {
-      const requestResultForDbKey = await this._readValueStoredInDatabaseByDbKey(dbbKey, additionalRequestOptions);
-
-      if (!requestResultForDbKey) {
-        return undefined;
-      }
-
-      const messageForDbKey = await this._getSwarmChannelDescriptionRawBySwarmDbRequestResult(requestResultForDbKey);
-
-      return messageForDbKey;
-    }
-
-    protected async _readAllChannelsDescriptionsWithMeta(): Promise<
-      ISwarmMessagesChannelDescriptionWithMetadata<P, T, MD, any, any>[]
-    > {
-      const optionsForReadingAllValuesStored = this._createOptionsForCollectingAllDatabaseValues();
-      const messagesReadFromDatabase = await this.__requestDatabase(optionsForReadingAllValuesStored);
-      const swarmMessagesChannelsDescriptionsOrErrors = await this._convertDatabaseRequestResultIntoSwarmChannelsDescriptionsWithMeta(
-        messagesReadFromDatabase
-      );
-      return swarmMessagesChannelsDescriptionsOrErrors;
-    }
-
-    protected async _addSwarmMessageBodyInDatabase(
-      dbKey: TSwarmStoreDatabaseEntityKey<P>,
-      messageBody: TSwarmMessageConstructorBodyMessage
-    ): Promise<TSwarmStoreDatabaseEntityAddress<P>> {
-      const dbConnection = await this._getSwarmMessagesKeyValueDatabaseConnection();
-      const swarmMessageAddress = await dbConnection.addMessage(messageBody, dbKey);
-      return swarmMessageAddress;
-    }
-
-    protected async _removeValueForDbKey(dbKey: TSwarmStoreDatabaseEntityKey<P>): Promise<void> {
-      const dbConnection = await this._getSwarmMessagesKeyValueDatabaseConnection();
-      const argumentForDeleteValueForKeyFromDb = this._getArgumentForDeleteFromDbSwarmDbMethodByDbKey(dbKey);
-      await dbConnection.deleteMessage(argumentForDeleteValueForKeyFromDb);
-    }
-
     private _getChannelsListDatabaseName(): string {
       const channelListDescription = this._getChannelsListDescription();
       const { databaseNameGenerator } = this._getUtilities();
@@ -385,7 +503,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
           [ESortFileds.TIME]: ESortingOrder.DESC,
         },
       };
-      if (!this.__isDatabaseOpened) {
+      if (!this._isDatabaseOpened) {
         // if database still not opened OrbitDB implementation
         // can't read existsing values, bacuse it causes halt.
         throw new Error('A database should be opened before read a value from it');
@@ -440,21 +558,77 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       } as unknown) as DBOFULL<P, T, MD, CTX, DBO>;
     }
 
-    protected async _createActiveConnectionToChannelsListDatabase(): Promise<
-      PromiseResolveType<ReturnType<CARGS['utilities']['databaseConnectionFabric']>>
-    > {
-      const optionsForDatabase = this._getChannelsListDatabaseOptions();
-      const { databaseConnectionFabric } = this._getUtilities();
-      const connectionToDatabase = await databaseConnectionFabric(optionsForDatabase);
-      return connectionToDatabase as PromiseResolveType<ReturnType<CARGS['utilities']['databaseConnectionFabric']>>;
-    }
+    private __handleDatabaseReadyToUse = (): void => {
+      this._emitEvent(ESwarmMessagesChannelsListEventName.CHANNELS_LIST_DATABASE_OPENED);
+    };
 
-    protected async _convertDatabaseRequestResultIntoSwarmChannelsDescriptionsWithMeta(
-      swarmMessagesFromDatabase: (ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined)[]
-    ): Promise<ISwarmMessagesChannelDescriptionWithMetadata<P, T, MD, any, any>[]> {
-      const nonNullableSwarmMessagesFromDatabase = swarmMessagesFromDatabase.filter(isDefined);
-      return await Promise.all(
-        nonNullableSwarmMessagesFromDatabase.map(this._getSwarmChannelDescriptionWithMetadataBySwarmDbRequestResultWithMetadata)
+    private __handleDatabaseClosedUnexpected = (): void => {
+      this.__unsetCurrentDatabaseConnectionListeners();
+      this.__unsetDatabaseConnection();
+      this._restartDatabaseConnection();
+    };
+
+    private __handleDatabaseDroppedUnexpected = (): void => {
+      this.__handleDatabaseClosedUnexpected();
+    };
+
+    private __handleMessageAddedInDatabase = async (
+      dbName: string,
+      message: MD,
+      // the global unique address (hash) of the message in the swarm
+      messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
+      // for key-value store it will be the key
+      key?: TSwarmStoreDatabaseEntityKey<P>
+    ): Promise<void> => {
+      try {
+        const channelDescription = await this._getValidSwarmMessagesChannelDescriptionFromSwarmMessageBody(message.bdy);
+        this._emitEvent(ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_UPDATE, channelDescription);
+      } catch (err) {
+        console.error(`__handleMessageAddedInDatabase`, err);
+        throw err;
+      }
+    };
+
+    private __handleMessageRemovedFromDatabase = (
+      dbName: string,
+      // the user who removed the message
+      userId: TSwarmMessageUserIdentifierSerialized,
+      // the global unique address (hash) of the DELETE message in the swarm
+      messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
+      // the global unique address (hash) of the DELETED message in the swarm
+      messageDeletedAddress: TSwarmStoreDatabaseEntityAddress<P> | undefined,
+      // for key-value store it will be the key for the value,
+      // for feed store it will be hash of the message which deleted by this one.
+      key: TSwarmStoreDatabaseEntityKey<P>
+    ): void => {
+      this._emitEvent(ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_REMOVED, this._getChannelIdByDatabaseKey(key));
+    };
+
+    private __setOrUnsetDatabaseEventsListeners(
+      databaseConnection: PromiseResolveType<ReturnType<CARGS['utilities']['databaseConnectionFabric']>>,
+      isSetListeners: boolean
+    ): void {
+      const eventEmitterMethodName = isSetListeners ? 'addListener' : 'removeListener';
+
+      databaseConnection.emitter[eventEmitterMethodName as 'addListener'](
+        ESwarmStoreEventNames.READY,
+        this.__handleDatabaseReadyToUse
+      );
+      databaseConnection.emitter[eventEmitterMethodName as 'addListener'](
+        ESwarmStoreEventNames.CLOSE_DATABASE,
+        this.__handleDatabaseClosedUnexpected
+      );
+      databaseConnection.emitter[eventEmitterMethodName as 'addListener'](
+        ESwarmStoreEventNames.DROP_DATABASE,
+        this.__handleDatabaseDroppedUnexpected
+      );
+      databaseConnection.emitter[eventEmitterMethodName as 'addListener'](
+        ESwarmMessageStoreEventNames.DELETE_MESSAGE,
+        this.__handleMessageRemovedFromDatabase
+      );
+      databaseConnection.emitter[eventEmitterMethodName as 'addListener'](
+        ESwarmMessageStoreEventNames.NEW_MESSAGE,
+        this.__handleMessageAddedInDatabase
       );
     }
   }

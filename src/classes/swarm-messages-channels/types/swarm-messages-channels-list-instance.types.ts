@@ -11,7 +11,10 @@ import {
 } from './swarm-messages-channel-instance.types';
 import { ISwarmMessagesDatabaseConnector } from '../../swarm-messages-database';
 import { ISerializer } from '../../../types/serialization.types';
-import { ISwarmMessagesListDatabaseNameByDescriptionGenerator } from './swarm-messages-channels-utils.types';
+import {
+  ISwarmMessagesListDatabaseNameByDescriptionGenerator,
+  IGetChannelIdByDatabaseKey,
+} from './swarm-messages-channels-utils.types';
 import {
   ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound,
   TSwarmMessagesStoreGrantAccessCallback,
@@ -21,7 +24,7 @@ import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../swarm-store-
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../swarm-messages-database/swarm-messages-database.messages-collector.types';
 import { JSONSchema7 } from 'json-schema';
-import { ISwarmMessagesChannelNotificationEmitter } from './swarm-messages-channel-events.types';
+import { ISwarmMessagesChannelsListNotificationEmitter } from './swarm-messages-channels-list-events.types';
 import {
   ISwarmMessagesDatabaseCacheOptions,
   ISwarmMessagesDatabaseCache,
@@ -181,7 +184,7 @@ export interface ISwarmMessagesChannelsDescriptionsList<
    * @type {ISwarmMessagesChannelsListEmitter<P, any>}
    * @memberof ISwarmMessagesChannelsDescriptionsList
    */
-  readonly emitter: ISwarmMessagesChannelNotificationEmitter<P, any>;
+  readonly emitter: ISwarmMessagesChannelsListNotificationEmitter<P, any>;
 
   /**
    * Add a new channel byt it's description in the channels list by it's description
@@ -220,6 +223,22 @@ export interface ISwarmMessagesChannelsDescriptionsList<
    * @memberof ISwarmMessagesChannelsDescriptionsList
    */
   getAllChannelsDescriptions(): Promise<ISwarmMessagesChannelDescriptionWithMetadata<P, T, MD, any, any>[]>;
+
+  /**
+   * Close channel.
+   *
+   * @returns {Promise<void>}
+   * @memberof ISwarmMessagesChannelsDescriptionsList
+   */
+  close(): Promise<void>;
+
+  /**
+   * Drop channels list database locally.
+   *
+   * @returns {Promise<void>}
+   * @memberof ISwarmMessagesChannelsDescriptionsList
+   */
+  drop(): Promise<void>;
 }
 
 /**
@@ -352,6 +371,16 @@ export interface ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils
    * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils
    */
   getDatabaseKeyForChannelDescription: IGetDatabaseKeyForChannelDescription<P, T>;
+  /**
+   * Returns swarm channel identity by a database KEY for a
+   * channel description stored in the database, related to a
+   * swarm messages channels list, where the swarm messages channel
+   * desription is stored.
+   *
+   * @type {IGetChannelIdByDatabaseKey<P>}
+   * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils
+   */
+  getChannelIdByDatabaseKey: IGetChannelIdByDatabaseKey<P>;
 }
 
 /**

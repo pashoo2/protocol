@@ -4,6 +4,7 @@ import { TSwarmMessageSerialized } from '../../swarm-message';
 import { ISwarmMessageChannelDescriptionRaw } from './swarm-messages-channel-instance.types';
 import { ISwarmMessagesChannelsListDescription } from './swarm-messages-channels-list-instance.types';
 import { TSwarmStoreDatabaseEntityKey } from '../../swarm-store-class/swarm-store-class.types';
+import { TSwarmChannelId } from '../../../../.ignored/swarm-channel/swarm-channel.types';
 
 /**
  * Interface for utility which have to return type ("typ" property)
@@ -45,6 +46,20 @@ export interface IGetSwarmMessageWithChannelDescriptionIssuerByChannelListDescri
  */
 export interface IGetDatabaseKeyForChannelDescription<P extends ESwarmStoreConnector, T extends TSwarmMessageSerialized> {
   (channelDescription: Readonly<ISwarmMessageChannelDescriptionRaw<P, T, any, any>>): TSwarmStoreDatabaseEntityKey<P>;
+}
+
+/**
+ * Returns swarm channel identity by a database KEY for a
+ * channel description stored in the database, related to a
+ * swarm messages channels list, where the swarm messages channel
+ * desription is stored.
+ *
+ * @export
+ * @interface IGetChannelIdByDatabaseKey
+ * @template P
+ */
+export interface IGetChannelIdByDatabaseKey<P extends ESwarmStoreConnector> {
+  (databaseKey: TSwarmStoreDatabaseEntityKey<P>): TSwarmChannelId;
 }
 
 /**

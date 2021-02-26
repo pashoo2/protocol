@@ -1,56 +1,54 @@
-import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base';
-
-import { ESwarmStoreConnector } from '../../swarm-store-class/swarm-store-class.const';
-import { TSwarmStoreDatabaseType } from '../../swarm-store-class/swarm-store-class.types';
+import { ESwarmStoreConnector, TSwarmStoreDatabaseType } from '../../swarm-store-class';
+import {
+  ESwarmMessagesChannelsListEventName,
+  ISwarmMessagesChannelsListEvents,
+} from './swarm-messages-channels-list-events.types';
 import {
   ISwarmMessageChannelDescriptionWithoutDatabaseOptionsRaw,
   TSwarmMessagesChannelId,
 } from './swarm-messages-channel-instance.types';
+import { TTypedEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 
-/**
- * Notification events names emitted by a channels list
- * or a channel itself.
- *
- * @export
- * @enum {number}
- */
-export enum ESwarmMessagesChannelsListEventName {
+export enum ESwarmMessagesChannelEventName {
   /**
-   * Channel description was updated or a new one has been added
+   * Channel instance has initialized and can be used.
    */
-  CHANNEL_DESCRIPTION_UPDATE = 'CHANNEL_DESCRIPTION_UPDATE',
+  CHANNEL_OPEN = 'CHANNEL_OPEN',
   /**
-   * Channel description was removed from the list
+   * Channel instance has closed and cannot be used anymore.
    */
-  CHANNEL_DESCRIPTION_REMOVED = 'CHANNEL_DESCRIPTION_REMOVED',
+  CHANNEL_CLOSED = 'CHANNEL_CLOSED',
 }
 
-/**
- * Events which can be emitted by a channel list or by a channel itself.
- *
- * @export
- * @interface ISwarmMessagesChannelsListEvents
- * @template P
- * @template DbType
- */
-export interface ISwarmMessagesChannelsListEvents<P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>> {
+export interface ISwarmMessagesChannelEvents<P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>>
+  extends ISwarmMessagesChannelsListEvents<P, DbType> {
+  /**
+   * Channel and it's swarm messages database have been initialized
+   * and operations can be performed with this channel instance.
+   *
+   * @memberof ISwarmMessagesChannelEvents
+   */
+  [ESwarmMessagesChannelEventName.CHANNEL_OPEN]: (channelId: TSwarmMessagesChannelId) => unknown;
+  /**
+   * Channel has been closed and cannot be used anymore to perform operations.
+   *
+   * @memberof ISwarmMessagesChannelEvents
+   */
+  [ESwarmMessagesChannelEventName.CHANNEL_CLOSED]: (channelId: TSwarmMessagesChannelId) => unknown;
   /**
    * Channel description has been updated
    *
-   * @type {ISwarmMessageChannelDescriptionWithoutDatabaseOptionsRaw<P, DbType>} - new channel description
-   * @memberof ISwarmMessagesChannelsListEvents
+   * @memberof ISwarmMessagesChannelEvents
    */
-  [ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_UPDATE]: ISwarmMessageChannelDescriptionWithoutDatabaseOptionsRaw<
-    P,
-    DbType
-  >;
+  [ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_UPDATE]: (
+    channelDescription: ISwarmMessageChannelDescriptionWithoutDatabaseOptionsRaw<P, DbType>
+  ) => unknown;
   /**
    * Description of a channel has been removed from the channels list.
    *
-   * @type {[string]} - identity of the channel
-   * @memberof ISwarmMessagesChannelsListEvents
+   * @memberof ISwarmMessagesChannelEvents
    */
-  [ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_REMOVED]: TSwarmMessagesChannelId;
+  [ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_REMOVED]: (channelId: TSwarmMessagesChannelId) => unknown;
 }
 
 /**
@@ -62,9 +60,7 @@ export interface ISwarmMessagesChannelsListEvents<P extends ESwarmStoreConnector
  * @template P
  * @template DbType
  */
-export interface ISwarmMessagesChannelNotificationEmitter<
+export type ISwarmMessagesChannelNotificationEmitter<
   P extends ESwarmStoreConnector,
   DbType extends TSwarmStoreDatabaseType<P>
-> extends EventEmitter<ISwarmMessagesChannelsListEvents<P, DbType>> {}
-
-export interface ISwarmMessagesChannelDatabaseConnectorEmitter {}
+> = TTypedEmitter<ISwarmMessagesChannelEvents<P, DbType>>;

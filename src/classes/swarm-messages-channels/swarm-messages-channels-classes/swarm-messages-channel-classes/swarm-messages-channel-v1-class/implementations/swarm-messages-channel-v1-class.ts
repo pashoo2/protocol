@@ -45,10 +45,7 @@ import {
   ISwarmMessageChannelDescriptionRaw,
 } from '../../../../types/swarm-messages-channel-instance.types';
 import { ISwarmMessagesChannelsDescriptionsList } from '../../../../types/swarm-messages-channels-list-instance.types';
-import {
-  ESwarmMessagesChannelsListEventName,
-  ISwarmMessagesChannelNotificationEmitter,
-} from '../../../../types/swarm-messages-channel-events.types';
+import { ESwarmMessagesChannelsListEventName } from '../../../../types/swarm-messages-channels-list-events.types';
 import { isDeepEqual } from '../../../../../../utils/common-utils/common-utils-equality';
 import { ISwarmMessagesChannelV1ClassChannelsListHandlerConstructorOptions } from '../types/swarm-messages-channel-v1-class-channels-list-handler.types';
 import { ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions } from '../types/swarm-messages-channel-v1-class-messages-database-handler.types';
@@ -72,6 +69,7 @@ import {
   ISwarmMessagesChannelV1DatabaseHandler,
   ISwarmMessagesChannelV1DatabaseHandlerConstructor,
 } from '../types/swarm-messages-channel-v1-class-messages-database-handler.types';
+import { ISwarmMessagesChannelNotificationEmitter } from '../../../../types/swarm-messages-channel-events.types';
 
 /**
  * Constructor of a swarm messages channel.

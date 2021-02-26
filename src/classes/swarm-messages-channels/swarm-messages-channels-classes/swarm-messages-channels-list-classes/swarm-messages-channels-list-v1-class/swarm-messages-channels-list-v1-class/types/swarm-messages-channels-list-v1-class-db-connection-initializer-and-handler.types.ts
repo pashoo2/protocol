@@ -20,6 +20,7 @@ import {
 } from '../../../../../../swarm-store-class/swarm-store-class.types';
 import { TSwarmMessageConstructorBodyMessage } from '../../../../../../swarm-message/swarm-message-constructor.types';
 import { ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric } from '../../../../../types/swarm-messages-channels-list-instance.types';
+import { ISwarmMessagesChannelsListNotificationEmitter } from '../../../../../types/swarm-messages-channels-list-events.types';
 import {
   ISwarmMessagesChannelsListV1GrantAccessConstantArguments,
   ISwarmMessagesChannelsListV1GrantAccessVariableArguments,
@@ -159,6 +160,8 @@ export abstract class AbstractSwarmMessagesChannelsListVersionOneDatabaseConnect
   CF extends ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<P, T, MD, CTX, DBO>,
   CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>
 > extends AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<P, T, MD, CTX, DBO, CF, CARGS> {
+  protected abstract readonly _emitter: ISwarmMessagesChannelsListNotificationEmitter<P, any>;
+
   protected abstract readonly _isDatabaseOpened: boolean;
 
   protected abstract async _readSwarmMessagesChannelDescriptionOrUndefinedForDbKey(
@@ -175,6 +178,26 @@ export abstract class AbstractSwarmMessagesChannelsListVersionOneDatabaseConnect
   protected abstract _readAllChannelsDescriptionsWithMeta(): Promise<
     ISwarmMessagesChannelDescriptionWithMetadata<P, T, MD, any, any>[]
   >;
+
+  /**
+   * Close database connection
+   *
+   * @protected
+   * @abstract
+   * @returns {Promise<void>}
+   * @memberof AbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler
+   */
+  protected abstract _close(): Promise<void>;
+
+  /**
+   * Close database connection and drop a database related locally.
+   *
+   * @protected
+   * @abstract
+   * @returns {Promise<void>}
+   * @memberof AbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler
+   */
+  protected abstract _drop(): Promise<void>;
 }
 
 export interface IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler<

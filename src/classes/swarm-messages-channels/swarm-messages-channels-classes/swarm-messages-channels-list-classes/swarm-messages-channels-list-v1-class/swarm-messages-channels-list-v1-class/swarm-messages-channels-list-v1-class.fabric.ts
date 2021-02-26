@@ -22,7 +22,6 @@ import {
 import { TSwarmMessageConstructorBodyMessage } from '../../../../../swarm-message/swarm-message-constructor.types';
 import { TSwarmStoreDatabaseEntityKey } from '../../../../../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric } from '../../../../types/swarm-messages-channels-list-instance.types';
-import { ISwarmMessagesChannelNotificationEmitter } from '../../../../types/swarm-messages-channel-events.types';
 
 export function getSwarmMessagesChannelsListVersionOneClass<
   P extends ESwarmStoreConnector,
@@ -46,8 +45,6 @@ export function getSwarmMessagesChannelsListVersionOneClass<
   abstract class SwarmMessagesChannelsListVersionOne
     extends ClassSwarmMessagesChannelsListVersionOneOptionsSetUp
     implements ISwarmMessagesChannelsDescriptionsList<P, T, MD> {
-    readonly emitter: ISwarmMessagesChannelNotificationEmitter<P, any>;
-
     public get description(): Readonly<ISwarmMessagesChannelsListDescription> {
       return this._getChannelsListDescription();
     }

@@ -188,7 +188,7 @@ export interface ISwarmMessageDatabaseEvents<
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // the global unique address (hash) of the DELETED message in the swarm
     messageDeletedAddress: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
-      ? TSwarmStoreDatabaseEntityAddress<P> | undefined
+      ? TSwarmStoreDatabaseEntityAddress<P>
       : TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key for the value,
     // for feed store it will be hash of the message which deleted by this one.
