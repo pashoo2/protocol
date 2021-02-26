@@ -883,6 +883,12 @@ export class SwarmMessagesChannelV1Class<
     return this.__swarmMessagesChannelDatabaseHandlerInstance;
   }
 
+  protected async __closeChannelWithReasonError(error: Error): Promise<void> {
+    this._setChannelInactiveReasonError(new Error('Channel database dropped unexpectedly'));
+    this.__emitChannelClosed();
+    await this.close();
+  }
+
   protected _getActiveSwarmMessagesChannelsListHandlerInstance(): ISwarmMessagesChannelV1ClassChannelsListHandler<
     P,
     T,
@@ -944,13 +950,21 @@ export class SwarmMessagesChannelV1Class<
     this.__emitChannelOpened();
   };
 
-  private __handleChannelDatabaseHandlerEventDatabaseClosed = (): void => {
-    this._setChannelInactiveReasonError(new Error('Channel database closed unexpectedly'));
-    this.__emitChannelClosed();
+  private __handleChannelDatabaseHandlerEventDatabaseClosed = async (): Promise<void> => {
+    try {
+      await this.__closeChannelWithReasonError(new Error('Channel database closed unexpectedly'));
+    } catch (err) {
+      console.error('__handleChannelDatabaseHandlerEventDatabaseClosed', err);
+      throw err;
+    }
   };
 
-  private __handleChannelDatabaseHandlerEventDatabaseDropped = (): void => {
-    this._setChannelInactiveReasonError(new Error('Channel database dropped unexpectedly'));
-    this.__emitChannelClosed();
+  private __handleChannelDatabaseHandlerEventDatabaseDropped = async (): Promise<void> => {
+    try {
+      await this.__closeChannelWithReasonError(new Error('Channel database dropped unexpectedly'));
+    } catch (err) {
+      console.error('__handleChannelDatabaseHandlerEventDatabaseDropped', err);
+      throw err;
+    }
   };
 }
