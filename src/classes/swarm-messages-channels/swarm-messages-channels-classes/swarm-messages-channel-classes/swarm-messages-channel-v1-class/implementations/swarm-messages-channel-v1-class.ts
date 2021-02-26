@@ -53,6 +53,7 @@ import { IQueuedEncryptionClassBase } from '../../../../../basic-classes/queued-
 import { ESwarmStoreEventNames } from '../../../../../swarm-store-class/swarm-store-class.const';
 import { EventEmitter } from '../../../../../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
+import { ISwarmMessagesChannelEvents } from '../../../../types/swarm-messages-channel-events.types';
 import {
   TSwarmStoreDatabaseEntityKey,
   TSwarmStoreDatabaseIteratorMethodArgument,
@@ -69,7 +70,10 @@ import {
   ISwarmMessagesChannelV1DatabaseHandler,
   ISwarmMessagesChannelV1DatabaseHandlerConstructor,
 } from '../types/swarm-messages-channel-v1-class-messages-database-handler.types';
-import { ISwarmMessagesChannelNotificationEmitter } from '../../../../types/swarm-messages-channel-events.types';
+import {
+  ISwarmMessagesChannelNotificationEmitter,
+  ESwarmMessagesChannelEventName,
+} from '../../../../types/swarm-messages-channel-events.types';
 
 /**
  * Constructor of a swarm messages channel.
@@ -475,6 +479,9 @@ export class SwarmMessagesChannelV1Class<
     }
     this._unsetAllListenersOfInstancesRelated();
     await this._closeChannelDatabaseHandlerInstance();
+    this.__emitChannelClosed();
+    // reset state after the event will be emitted to allow for the event
+    // handlers to read the channel's state
     this._resetState();
   }
 
@@ -669,14 +676,14 @@ export class SwarmMessagesChannelV1Class<
     >,
     isAddListeners: boolean = true
   ): void {
-    const emitter = swarmMessagesChannelsListInstance.emitter;
+    const emitter = swarmMessagesChannelsListInstance.emitter as EventEmitter<ISwarmMessagesChannelEvents<P, DbType>>;
     const methodName = isAddListeners ? 'addListener' : 'removeListener';
 
-    emitter[methodName](
+    emitter[methodName as 'addListener'](
       ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_UPDATE,
       this.handleChannelsListHandlerEventChannelDescriptionUpdate
     );
-    emitter[methodName](
+    emitter[methodName as 'addListener'](
       ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_REMOVED,
       this.__handleChannelsListHandlerEventChannelDescriptionRemoved
     );
@@ -810,6 +817,7 @@ export class SwarmMessagesChannelV1Class<
     const emitter = swarmMessagesChannelDatabaseHandlerInstance.emitter;
     const methodName = isAddListeners ? 'addListener' : 'removeListener';
 
+    emitter[methodName](ESwarmStoreEventNames.READY, this.__handleChannelDatabaseHandlerEventDatabaseReady);
     emitter[methodName](ESwarmStoreEventNames.CLOSE_DATABASE, this.__handleChannelDatabaseHandlerEventDatabaseClosed);
     emitter[methodName](ESwarmStoreEventNames.DROP_DATABASE, this.__handleChannelDatabaseHandlerEventDatabaseDropped);
   }
@@ -896,6 +904,20 @@ export class SwarmMessagesChannelV1Class<
     return this.__swarmMessagesChannelsListHandlerInstance;
   }
 
+  private __emitChannelOpened(): void {
+    (this.emitterChannelState as EventEmitter<ISwarmMessagesChannelEvents<P, DbType>>).emit(
+      ESwarmMessagesChannelEventName.CHANNEL_OPEN,
+      this.id
+    );
+  }
+
+  private __emitChannelClosed(): void {
+    (this.emitterChannelState as EventEmitter<ISwarmMessagesChannelEvents<P, DbType>>).emit(
+      ESwarmMessagesChannelEventName.CHANNEL_CLOSED,
+      this.id
+    );
+  }
+
   private handleChannelsListHandlerEventChannelDescriptionUpdate = async (
     channelDescriptionUpdated: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>
   ): Promise<void> => {
@@ -909,18 +931,26 @@ export class SwarmMessagesChannelV1Class<
       }
     }
     this._unsetChannelMarkedAsRemoved();
+    this.__emitChannelOpened();
   };
 
   private __handleChannelsListHandlerEventChannelDescriptionRemoved = (): void => {
     this._setChannelInactiveReasonError(new Error('Channel description has been removed from the channels list'));
     this._setChannelMarkedAsRemoved();
+    this.__emitChannelClosed();
+  };
+
+  private __handleChannelDatabaseHandlerEventDatabaseReady = (): void => {
+    this.__emitChannelOpened();
   };
 
   private __handleChannelDatabaseHandlerEventDatabaseClosed = (): void => {
     this._setChannelInactiveReasonError(new Error('Channel database closed unexpectedly'));
+    this.__emitChannelClosed();
   };
 
   private __handleChannelDatabaseHandlerEventDatabaseDropped = (): void => {
     this._setChannelInactiveReasonError(new Error('Channel database dropped unexpectedly'));
+    this.__emitChannelClosed();
   };
 }
