@@ -160,7 +160,7 @@ export abstract class AbstractSwarmMessagesChannelsListVersionOneDatabaseConnect
   CF extends ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<P, T, MD, CTX, DBO>,
   CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>
 > extends AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<P, T, MD, CTX, DBO, CF, CARGS> {
-  protected abstract readonly _emitter: ISwarmMessagesChannelsListNotificationEmitter<P, any>;
+  protected abstract readonly _emitterDatabaseHandler: ISwarmMessagesChannelsListNotificationEmitter<P, any>;
 
   protected abstract readonly _isDatabaseOpened: boolean;
 
@@ -187,7 +187,7 @@ export abstract class AbstractSwarmMessagesChannelsListVersionOneDatabaseConnect
    * @returns {Promise<void>}
    * @memberof AbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler
    */
-  protected abstract _close(): Promise<void>;
+  protected abstract _closeDatabase(): Promise<void>;
 
   /**
    * Close database connection and drop a database related locally.
@@ -197,7 +197,7 @@ export abstract class AbstractSwarmMessagesChannelsListVersionOneDatabaseConnect
    * @returns {Promise<void>}
    * @memberof AbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler
    */
-  protected abstract _drop(): Promise<void>;
+  protected abstract _dropDatabase(): Promise<void>;
 }
 
 export interface IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler<

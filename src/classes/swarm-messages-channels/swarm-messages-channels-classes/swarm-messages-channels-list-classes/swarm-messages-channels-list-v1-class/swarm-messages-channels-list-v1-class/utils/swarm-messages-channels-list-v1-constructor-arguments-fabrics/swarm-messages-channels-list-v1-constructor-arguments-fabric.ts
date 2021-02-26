@@ -23,6 +23,7 @@ import { getSwarmMessagesChannelDescriptionFormatValidatorISwarmMessagesChannelD
 import { getValidatorSwarmChannelsListDatabaseOptions } from '../../../../../../swarm-messages-channels-utils/swarm-messages-channels-list-utils/swarm-messages-channels-list-validators/swarm-messages-channels-list-dbo-validator-v1/swarm-messages-channels-list-dbo-validator-v1';
 import { validateGrantAccessCallback } from '../../../../../../../swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-grant-access-callback';
 import { ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric } from '../../../../../../types/swarm-messages-channels-list-instance.types';
+import { getSwarmMessagesChannelIdByChannelsListDatabaseKey } from '../../../../../../swarm-messages-channels-utils/swarm-messages-channels-list-utils/swarm-messages-channels-list-swarm-messages-params-utils/swarm-messages-channels-list-swarm-messages-params-utils';
 
 export function getSwarmMessagesChannelsListVersionOneConstructorOptionsDefault<
   P extends ESwarmStoreConnector,
@@ -56,11 +57,15 @@ export function getSwarmMessagesChannelsListVersionOneConstructorOptionsDefault<
       'databaseConnectionFabric'
     >
 ): ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF> {
-  const utilsDefault = {
+  const utilsDefault: Omit<
+    ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>['utilities'],
+    'databaseConnectionFabric' | 'serializer'
+  > = {
     databaseNameGenerator: getSwarmMessagesListDatbaseNameByChannelDescription,
     getIssuerForSwarmMessageWithChannelDescriptionByChannelDescription: getSwarmMessageWithChannelDescriptionIssuerByChannelListDescription,
     getTypeForSwarmMessageWithChannelDescriptionByChannelDescription: getSwarmMessageWithChannelDescriptionTypeByChannelListDescription,
     getDatabaseKeyForChannelDescription: getChannelsListDatabaseKeyForChannelDescription,
+    getChannelIdByDatabaseKey: getSwarmMessagesChannelIdByChannelsListDatabaseKey,
   };
   const swarmMessagesChannelDescriptionFormatValidator = createSwarmMessagesChannelValidationDescriptionFormatV1ByChannelDescriptionJSONSchema(
     swarmMessageChannelDescriptionFormatSchema as JSONSchema7

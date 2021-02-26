@@ -50,10 +50,6 @@ import {
   ISwarmMessagesChannelsListEvents,
 } from '../../../../../../types/swarm-messages-channels-list-events.types';
 import {
-  ISwarmMessagesChannelNotificationEmitter,
-  ISwarmMessagesChannelEvents,
-} from '../../../../../../types/swarm-messages-channel-events.types';
-import {
   getEventEmitterInstance,
   EventEmitter,
 } from '../../../../../../../basic-classes/event-emitter-class-base/event-emitter-class-base';
@@ -83,7 +79,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
   additionalUtils: IAdditionalUtils<P, T, MD, CTX, DBO>
 ): IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler<P, T, MD, CTX, DBO, CF, CARGS> {
   abstract class SwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler extends ClassSwarmMessagesChannelsListVersionOneOptionsSetUp {
-    protected get _emitter(): ISwarmMessagesChannelsListNotificationEmitter<P, any> {
+    protected get _emitterDatabaseHandler(): ISwarmMessagesChannelsListNotificationEmitter<P, any> {
       return this.__emitter;
     }
 
@@ -110,8 +106,8 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       return additionalUtils;
     }
 
-    private readonly __emitter: ISwarmMessagesChannelNotificationEmitter<P, any> = getEventEmitterInstance<
-      ISwarmMessagesChannelEvents<P, any>
+    private readonly __emitter: ISwarmMessagesChannelsListNotificationEmitter<P, any> = getEventEmitterInstance<
+      ISwarmMessagesChannelsListEvents<P, any>
     >();
 
     private __swarmMessagesKeyValueDatabaseConnectionPending: IPromisePendingRejectable<
@@ -140,7 +136,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       this.__waitDatabaseWillBeOpenedSetListenersAndOpenedStatus();
     }
 
-    protected async _close(): Promise<void> {
+    protected async _closeDatabase(): Promise<void> {
       this.__unsetCurrentDatabaseConnectionListeners();
       this.__stopConnectionPendingToACurrentDatabase();
 
@@ -150,7 +146,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       await promiseCloseCurrentDatabaseConnection;
     }
 
-    protected async _drop(): Promise<void> {
+    protected async _dropDatabase(): Promise<void> {
       this.__unsetCurrentDatabaseConnectionListeners();
 
       const databaseConnection = await this._getSwarmMessagesKeyValueDatabaseConnection();
@@ -259,7 +255,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       this.__waitDatabaseWillBeOpenedSetListenersAndOpenedStatus();
     }
 
-    protected _emitEvent<E extends ESwarmMessagesChannelsListEventName>(
+    protected _emitEventDbHandler<E extends ESwarmMessagesChannelsListEventName>(
       eventName: E,
       ...args: Parameters<ISwarmMessagesChannelsListEvents<P, any>[E]>
     ): void {
@@ -559,7 +555,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
     }
 
     private __handleDatabaseReadyToUse = (): void => {
-      this._emitEvent(ESwarmMessagesChannelsListEventName.CHANNELS_LIST_DATABASE_OPENED);
+      this._emitEventDbHandler(ESwarmMessagesChannelsListEventName.CHANNELS_LIST_DATABASE_OPENED);
     };
 
     private __handleDatabaseClosedUnexpected = (): void => {
@@ -582,7 +578,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
     ): Promise<void> => {
       try {
         const channelDescription = await this._getValidSwarmMessagesChannelDescriptionFromSwarmMessageBody(message.bdy);
-        this._emitEvent(ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_UPDATE, channelDescription);
+        this._emitEventDbHandler(ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_UPDATE, channelDescription);
       } catch (err) {
         console.error(`__handleMessageAddedInDatabase`, err);
         throw err;
@@ -601,7 +597,10 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       // for feed store it will be hash of the message which deleted by this one.
       key: TSwarmStoreDatabaseEntityKey<P>
     ): void => {
-      this._emitEvent(ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_REMOVED, this._getChannelIdByDatabaseKey(key));
+      this._emitEventDbHandler(
+        ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_REMOVED,
+        this._getChannelIdByDatabaseKey(key)
+      );
     };
 
     private __setOrUnsetDatabaseEventsListeners(

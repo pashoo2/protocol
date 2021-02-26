@@ -42,6 +42,8 @@ export abstract class AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<
 
   protected abstract _getValidators(): Readonly<CARGS['validators']>;
 
+  protected abstract __resetOptionsSetup(): void;
+
   // TODO - move it into a separate class
   protected abstract _validateChannelDescriptionFormat(
     channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>

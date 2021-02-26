@@ -3,7 +3,10 @@ import {
   TSwarmMessageSerialized,
   TSwarmMessageConstructorBodyMessage,
 } from '../../../../swarm-message/swarm-message-constructor.types';
-import { ISwarmMessageChannelDescriptionRaw } from '../../../types/swarm-messages-channel-instance.types';
+import {
+  ISwarmMessageChannelDescriptionRaw,
+  TSwarmMessagesChannelId,
+} from '../../../types/swarm-messages-channel-instance.types';
 import { ISwarmMessagesChannelsListDescription } from '../../../types/swarm-messages-channels-list-instance.types';
 import { TSwarmStoreDatabaseEntityKey } from '../../../../swarm-store-class/swarm-store-class.types';
 
@@ -21,6 +24,21 @@ export function getChannelsListDatabaseKeyForChannelDescription<
   T extends TSwarmMessageSerialized
 >(channelDescription: Readonly<ISwarmMessageChannelDescriptionRaw<P, T, any, any>>): TSwarmStoreDatabaseEntityKey<P> {
   return channelDescription.id as TSwarmStoreDatabaseEntityKey<P>;
+}
+
+/**
+ * Returns channel identifier by swarm messages database KEY for
+ * the channel description value.
+ *
+ * @export
+ * @template P
+ * @param {TSwarmStoreDatabaseEntityKey<P>} keyForChannelDescriptionInDatabase
+ * @returns {TSwarmMessagesChannelId}
+ */
+export function getSwarmMessagesChannelIdByChannelsListDatabaseKey<P extends ESwarmStoreConnector>(
+  keyForChannelDescriptionInDatabase: TSwarmStoreDatabaseEntityKey<P>
+): TSwarmMessagesChannelId {
+  return keyForChannelDescriptionInDatabase;
 }
 
 /**

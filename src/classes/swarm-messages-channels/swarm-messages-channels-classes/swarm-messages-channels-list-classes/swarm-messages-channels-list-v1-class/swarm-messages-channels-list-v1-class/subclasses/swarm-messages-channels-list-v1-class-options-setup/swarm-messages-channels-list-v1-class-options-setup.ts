@@ -56,6 +56,14 @@ export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
     this._connectorType = connectionOptions.connectorType;
   }
 
+  protected __resetOptionsSetup(): void {
+    (this as any)._channelsListDescription = undefined;
+    (this as any)._connectionOptions = undefined;
+    (this as any)._utilities = undefined;
+    (this as any)._validators = undefined;
+    (this as any)._connectorType = undefined;
+  }
+
   protected _validateConstructorArgumentsConnectionOptions(
     connectionOptions: Readonly<ISwarmMessagesChannelsDescriptionsListConnectionOptions<P, T, MD, CTX, DBO>>
   ): void {
