@@ -94,7 +94,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
     }
 
     protected get _isDatabaseReady(): boolean {
-      return Boolean(this.__databaseConnectionOrUndefined) && this._databaseConnection.isReady;
+      return Boolean(this.__databaseConnectionOrUndefined?.isReady);
     }
 
     private readonly __additionalUtils: Readonly<IAdditionalUtils<P, T, MD, CTX, DBO>>;

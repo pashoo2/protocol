@@ -117,23 +117,8 @@ export class App extends React.Component {
     //     swarmMessagesDatabaseCacheOptions={CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_WITH_STORE_META_OPTIONS}
     //   />
     // );
-    // return (
-    //   <ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaWithDBO<
-    //     ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
-    //     typeof CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_SWARM_CHANNELS_LIST,
-    //     typeof CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS,
-    //     false
-    //   >
-    //     dbo={CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_SWARM_CHANNELS_LIST}
-    //     connectionBridgeOptions={CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS}
-    //     userCredentialsList={[userToConnectWithCredentials]}
-    //     userCredentialsToConnectImmediate={userToConnectWithCredentials}
-    //     userIdReceiverSwarmMessages={userIdReceiverMessages}
-    //     swarmMessagesDatabaseCacheOptions={CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_WITH_STORE_META_OPTIONS}
-    //   />
-    // );
     return (
-      <ConnectToSwarmAndCreateSwarmMessagesChannelsListWithChannelInstanceSupport<
+      <ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaWithDBO<
         ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
         typeof CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_SWARM_CHANNELS_LIST,
         typeof CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS,
@@ -147,6 +132,21 @@ export class App extends React.Component {
         swarmMessagesDatabaseCacheOptions={CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_WITH_STORE_META_OPTIONS}
       />
     );
+    // return (
+    //   <ConnectToSwarmAndCreateSwarmMessagesChannelsListWithChannelInstanceSupport<
+    //     ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
+    //     typeof CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_SWARM_CHANNELS_LIST,
+    //     typeof CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS,
+    //     false
+    //   >
+    //     dbo={CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_SWARM_CHANNELS_LIST}
+    //     connectionBridgeOptions={CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS}
+    //     userCredentialsList={[userToConnectWithCredentials]}
+    //     userCredentialsToConnectImmediate={userToConnectWithCredentials}
+    //     userIdReceiverSwarmMessages={userIdReceiverMessages}
+    //     swarmMessagesDatabaseCacheOptions={CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_WITH_STORE_META_OPTIONS}
+    //   />
+    // );
   }
 }
 

@@ -73,7 +73,7 @@ export function getSwarmMessagesChannelsListVersionOneClass<
     private __emitterChannelsList = getEventEmitterInstance<ISwarmMessagesChannelsListEvents<P, any>>();
 
     /**
-     * Whether the channels list closed.
+     * Whether the channels list instance is closed and can not be used anymore.
      *
      * @private
      * @type {boolean}
