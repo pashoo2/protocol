@@ -3,12 +3,7 @@ import { TUesrIdentity } from '../../src/types/users.types';
 import { ISwarmMessageConstructor } from '../../src/classes/swarm-message/swarm-message-constructor.types';
 import { ISecretStorage } from '../../src/classes/secret-storage-class/secret-storage-class.types';
 import { ESwarmStoreConnector } from '../../src/classes/swarm-store-class/swarm-store-class.const';
-import { ISwarmMessageStore } from '../../src/classes/swarm-message-store/swarm-message-store.types';
-import {
-  SwarmChannelType,
-  SwarmChannelStatus,
-  SwarmChannelEvents,
-} from './swarm-channel.const';
+import { SwarmChannelType, SwarmChannelStatus, SwarmChannelEvents } from './swarm-channel.const';
 import {
   ISwarmMessageInstanceDecrypted,
   TSwarmMessageConstructorBodyMessage,
@@ -55,8 +50,7 @@ export interface ISwarmChannelDescriptionFieldsMain {
  * @export
  * @interface ISwarmChannelLocalMeta
  */
-export interface ISwarmChannelLocalMeta
-  extends ISwarmChannelDescriptionFieldsMain {
+export interface ISwarmChannelLocalMeta extends ISwarmChannelDescriptionFieldsMain {
   /**
    * A full name of the channel.
    *
@@ -88,8 +82,7 @@ export interface ISwarmChannelLocalMeta
  * @export
  * @interface ISwarmChannelSharedMeta
  */
-export interface ISwarmChannelSharedMeta
-  extends ISwarmChannelDescriptionFieldsMain {
+export interface ISwarmChannelSharedMeta extends ISwarmChannelDescriptionFieldsMain {
   /**
    * Channel's name
    *
@@ -143,8 +136,7 @@ export interface ISwarmChannelSharedMeta
  * @export
  * @interface ISwarmChannel
  */
-export interface ISwarmChannelDescriptionFieldsBase
-  extends ISwarmChannelDescriptionFieldsMain {
+export interface ISwarmChannelDescriptionFieldsBase extends ISwarmChannelDescriptionFieldsMain {
   /**
    * Meta information about the channel
    * which stored locally.
@@ -208,9 +200,7 @@ export interface ISwarmChannelStateFields<
  * @interface ISwarmChannelInitializationOptions
  * @template P
  */
-export interface ISwarmChannelInitializationOptions<
-  P extends ESwarmStoreConnector = ESwarmStoreConnector.OrbitDB
-> {
+export interface ISwarmChannelInitializationOptions<P extends ESwarmStoreConnector = ESwarmStoreConnector.OrbitDB> {
   /**
    * For messages construction
    *
@@ -234,7 +224,7 @@ export interface ISwarmChannelInitializationOptions<
    * @type {ISwarmMessageStore<P>}
    * @memberof ISwarmChannelInitializationOptions
    */
-  swarmMessageStoreConnector: ISwarmMessageStore<P>;
+  swarmMessageStoreConnector: any; // ISwarmMessageStore<P>;
 }
 
 export interface ISwarmChannelMethodsBase {
@@ -284,10 +274,7 @@ export interface ISwarmChannelMethodsBase {
    * @returns {Promise<void>}
    * @memberof ISwarmChannelBaseMethods
    */
-  addMessage(
-    swarmMessage: TSwarmMessageConstructorBodyMessage,
-    key?: string
-  ): Promise<void>;
+  addMessage(swarmMessage: TSwarmMessageConstructorBodyMessage, key?: string): Promise<void>;
   /**
    * Close the channel and stop listening all of it's
    * events.
@@ -321,10 +308,7 @@ export interface ISwarmChannelMethodsBase {
    * @returns {Promise<void>}
    * @memberof ISwarmChannelMethodsBase
    */
-  addNewChannel?(
-    channelId: string,
-    meta: Partial<ISwarmChannelSharedMeta>
-  ): Promise<void>;
+  addNewChannel?(channelId: string, meta: Partial<ISwarmChannelSharedMeta>): Promise<void>;
   /**
    * Remove channel from the list of a channels.
    * Specific for the channels list channel type.
@@ -357,10 +341,7 @@ export type TSwarmChannelConstructorOptions =
  * @template ET - types available as arguments for events
  * @template E - description of messages and their arguments
  */
-export interface ISwarmChannel<
-  ET = any,
-  E extends TSwarmChannelEvents<ET> = TSwarmChannelEvents
->
+export interface ISwarmChannel<ET = any, E extends TSwarmChannelEvents<ET> = TSwarmChannelEvents>
   extends ISwarmChannelMethodsBase,
     ISwarmChannelDescriptionFieldsBase,
     ISwarmChannelStateFields<ET, E> {
@@ -368,16 +349,11 @@ export interface ISwarmChannel<
    * Create a new channel which wasn't initialized in the past and not exists in the swarm.
    * On ititialization it will create a new desctiptions in the swarm and locally.
    */
-  new (
-    description: Required<ISwarmChannelDescriptionFieldsBase>
-  ): ISwarmChannel<ET, E>;
+  new (description: Required<ISwarmChannelDescriptionFieldsBase>): ISwarmChannel<ET, E>;
   /**
    * If a password is used for messages encryption within the channel.
    */
-  new (
-    description: Required<ISwarmChannelDescriptionFieldsBase>,
-    password: string
-  ): ISwarmChannel<ET, E>;
+  new (description: Required<ISwarmChannelDescriptionFieldsBase>, password: string): ISwarmChannel<ET, E>;
   /**
    * Create a channel which was initialized in the past and have
    * some metadata stored locally or in the swarm.
@@ -395,9 +371,5 @@ export interface ISwarmChannel<
    * If the channel was opened before a crypto key for the password
    * will be stored locally and is not neccessary to be provided.
    */
-  new (
-    id: TSwarmChannelId,
-    type: SwarmChannelType,
-    password: string
-  ): ISwarmChannel<ET, E>;
+  new (id: TSwarmChannelId, type: SwarmChannelType, password: string): ISwarmChannel<ET, E>;
 }

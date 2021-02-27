@@ -187,6 +187,15 @@ export interface ISwarmMessagesChannelsDescriptionsList<
   readonly emitter: ISwarmMessagesChannelsListNotificationEmitter<P, any>;
 
   /**
+   * Whether the channels database has opened and the channels list
+   * is ready to be used.
+   *
+   * @type {boolean}
+   * @memberof ISwarmMessagesChannelsDescriptionsList
+   */
+  readonly isReady: boolean;
+
+  /**
    * Add a new channel byt it's description in the channels list by it's description
    * or update a description of the existing one.
    *

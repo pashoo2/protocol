@@ -208,6 +208,18 @@ export class SwarmMessagesChannelV1DatabaseHandler<
   }
 
   /**
+   * Is database for the channel has been opened and now ready to
+   * be used.
+   *
+   * @readonly
+   * @type {boolean}
+   * @memberof SwarmMessagesChannelV1DatabaseHandler
+   */
+  public get isDatabaseReady(): boolean {
+    return Boolean(this.__actualSwarmMessagesDatabaseConnector?.isReady);
+  }
+
+  /**
    * An instance which used for encryption of swarm messages body.
    *
    * @readonly
@@ -578,6 +590,7 @@ export class SwarmMessagesChannelV1DatabaseHandler<
     this._setActualSwarmMessagesDatabaseConnector(newDatabaseConnector);
     this._startForwardingDatabaseConnectorEvents(newDatabaseConnector);
     this._startListeningDatabaseConnectorEvents(newDatabaseConnector);
+    this._emitReadyEventIfDatatbaseConnector(newDatabaseConnector);
   }
 
   protected _cancelPreviousDatabaseCreationPromise(): void {
@@ -697,6 +710,38 @@ export class SwarmMessagesChannelV1DatabaseHandler<
     >
   ) {
     this._startOrStopListeningDatabaseConnectorEvents(swarmMessagesDatabaseConnector, true);
+  }
+
+  protected _emitReadyEvent(): void {
+    this.__emitter.emit(ESwarmStoreEventNames.READY, this.__actualSwarmMessagesDatabaseOptions?.dbName);
+  }
+
+  protected _emitReadyEventIfDatatbaseConnector(
+    swarmMessagesDatabaseConnector: ISwarmMessagesDatabaseConnector<
+      P,
+      T,
+      DbType,
+      DBO,
+      ConnectorBasic,
+      CO,
+      PO,
+      ConnectorMain,
+      CFO,
+      GAC,
+      MCF,
+      ACO,
+      O,
+      SMS,
+      MD,
+      SMSM,
+      DCO,
+      DCCRT,
+      OPT
+    >
+  ): void {
+    if (swarmMessagesDatabaseConnector.isReady) {
+      this._emitReadyEvent();
+    }
   }
 
   protected _stopListeningDatabaseConnectorEvents(

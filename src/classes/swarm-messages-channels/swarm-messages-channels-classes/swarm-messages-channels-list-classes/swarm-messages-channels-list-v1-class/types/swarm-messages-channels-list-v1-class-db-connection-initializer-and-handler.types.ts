@@ -1,26 +1,30 @@
-import { ESwarmStoreConnector, TSwarmStoreDatabaseEntryOperation } from '../../../../../../swarm-store-class';
+import { ESwarmStoreConnector, TSwarmStoreDatabaseEntryOperation } from '../../../../../swarm-store-class/index';
 import {
   ISwarmMessageInstanceDecrypted,
   TSwarmMessageSerialized,
   TSwarmMessageUserIdentifierSerialized,
-} from '../../../../../../swarm-message';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+} from '../../../../../swarm-message/index';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import {
   TSwrmMessagesChannelsListDBOWithGrantAccess,
   ISwarmMessagesChannelsDescriptionsListConstructorArguments,
-} from '../../../../../types/swarm-messages-channels-list-instance.types';
+} from '../../../../types/swarm-messages-channels-list-instance.types';
 import { AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp } from './swarm-messages-channels-list-v1-class-options-setup.types';
 import {
   ISwarmMessageChannelDescriptionRaw,
   ISwarmMessagesChannelDescriptionWithMetadata,
-} from '../../../../../types/swarm-messages-channel-instance.types';
+} from '../../../../types/swarm-messages-channel-instance.types';
 import {
   TSwarmStoreDatabaseEntityKey,
   TSwarmStoreDatabaseEntityAddress,
-} from '../../../../../../swarm-store-class/swarm-store-class.types';
-import { TSwarmMessageConstructorBodyMessage } from '../../../../../../swarm-message/swarm-message-constructor.types';
-import { ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric } from '../../../../../types/swarm-messages-channels-list-instance.types';
-import { ISwarmMessagesChannelsListNotificationEmitter } from '../../../../../types/swarm-messages-channels-list-events.types';
+} from '../../../../../swarm-store-class/swarm-store-class.types';
+import { TSwarmMessageConstructorBodyMessage } from '../../../../../swarm-message/swarm-message-constructor.types';
+import { ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric } from '../../../../types/swarm-messages-channels-list-instance.types';
+import { TTypedEmitter } from '../../../../../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
+import {
+  ISwarmMessagesChannelsListNotificationEmitter,
+  ISwarmMessagesChannelsListDatabaseEvents,
+} from '../../../../types/swarm-messages-channels-list-events.types';
 import {
   ISwarmMessagesChannelsListV1GrantAccessConstantArguments,
   ISwarmMessagesChannelsListV1GrantAccessVariableArguments,
@@ -28,7 +32,7 @@ import {
 import {
   IValidatorOfSwarmMessageWithChannelDescription,
   IValidatorOfSwarmMessageWithChannelDescriptionArgument,
-} from '../../../../../types/swarm-messages-channels-validation.types';
+} from '../../../../types/swarm-messages-channels-validation.types';
 
 export interface IGetVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidatorCreator<
   P extends ESwarmStoreConnector,
@@ -160,9 +164,9 @@ export abstract class AbstractSwarmMessagesChannelsListVersionOneDatabaseConnect
   CF extends ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<P, T, MD, CTX, DBO>,
   CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>
 > extends AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<P, T, MD, CTX, DBO, CF, CARGS> {
-  protected abstract readonly _emitterDatabaseHandler: ISwarmMessagesChannelsListNotificationEmitter<P, any>;
+  protected abstract readonly _emitterDatabaseHandler: TTypedEmitter<ISwarmMessagesChannelsListDatabaseEvents<P, any>>;
 
-  protected abstract readonly _isDatabaseOpened: boolean;
+  protected abstract readonly _isDatabaseReady: boolean;
 
   protected abstract async _readSwarmMessagesChannelDescriptionOrUndefinedForDbKey(
     dbbKey: TSwarmStoreDatabaseEntityKey<P>

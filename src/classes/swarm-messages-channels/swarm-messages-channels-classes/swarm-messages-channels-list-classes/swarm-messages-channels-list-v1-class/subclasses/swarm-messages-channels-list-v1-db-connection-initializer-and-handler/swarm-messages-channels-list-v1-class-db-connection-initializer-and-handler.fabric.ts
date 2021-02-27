@@ -1,62 +1,63 @@
 import assert from 'assert';
-import { ESwarmStoreConnector, ESwarmStoreEventNames } from '../../../../../../../swarm-store-class/swarm-store-class.const';
+import { ESwarmStoreConnector, ESwarmStoreEventNames } from '../../../../../../swarm-store-class/swarm-store-class.const';
 import {
   TSwarmMessageSerialized,
   ISwarmMessageInstanceDecrypted,
-} from '../../../../../../../swarm-message/swarm-message-constructor.types';
+} from '../../../../../../swarm-message/swarm-message-constructor.types';
 import {
   ISwarmMessageChannelDescriptionRaw,
   ISwarmMessagesChannelDescriptionWithMetadata,
-} from '../../../../../../types/swarm-messages-channel-instance.types';
-import { PromiseResolveType, IPromisePendingRejectable } from '../../../../../../../../types/promise.types';
+} from '../../../../../types/swarm-messages-channel-instance.types';
+import { PromiseResolveType, IPromisePendingRejectable } from '../../../../../../../types/promise.types';
 import {
   TSwrmMessagesChannelsListDBOWithGrantAccess,
   DBOFULL,
   ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric,
-} from '../../../../../../types/swarm-messages-channels-list-instance.types';
+} from '../../../../../types/swarm-messages-channels-list-instance.types';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
-import { IValidatorOfSwarmMessageWithChannelDescriptionArgument } from '../../../../../../types/swarm-messages-channels-validation.types';
-import { ESwarmStoreConnectorOrbitDbDatabaseIteratorOption } from '../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
-import { ISwarmMessagesChannelsDescriptionsListConstructorArguments } from '../../../../../../types/swarm-messages-channels-list-instance.types';
-import { createImmutableObjectClone } from '../../../../../../../../utils/data-immutability-utils/data-immutability-key-value-structure-utils';
-import { isNonNativeFunction } from '../../../../../../../../utils/common-utils/common-utils.functions';
+import { IValidatorOfSwarmMessageWithChannelDescriptionArgument } from '../../../../../types/swarm-messages-channels-validation.types';
+import { ESwarmStoreConnectorOrbitDbDatabaseIteratorOption } from '../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
+import { ISwarmMessagesChannelsDescriptionsListConstructorArguments } from '../../../../../types/swarm-messages-channels-list-instance.types';
+import { createImmutableObjectClone } from '../../../../../../../utils/data-immutability-utils/data-immutability-key-value-structure-utils';
+import { isNonNativeFunction } from '../../../../../../../utils/common-utils/common-utils.functions';
 import { IAdditionalUtils } from '../../types/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.types';
 import { ISwarmMessagesChannelsListV1GrantAccessConstantArguments } from '../../types/swarm-messages-channels-list-v1-class.types';
 import {
   ESwarmStoreConnectorOrbitDbDatabaseType,
   ESortFileds,
-} from '../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
+} from '../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { IConstructorAbstactSwarmMessagesChannelsListVersionOneOptionsSetUp } from '../../types/swarm-messages-channels-list-v1-class-options-setup.types';
 import { IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler } from '../../types/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.types';
 import {
   TSwarmMessageConstructorBodyMessage,
   ISwarmMessageBody,
-} from '../../../../../../../swarm-message/swarm-message-constructor.types';
-import { TSwarmStoreDatabaseIteratorMethodArgument } from '../../../../../../../swarm-store-class/swarm-store-class.types';
-import { isDefined } from '../../../../../../../../utils/common-utils/common-utils-main';
-import { SwarmMessagesChannelDescriptionWithMeta } from '../../../../../../swarm-messages-channels-subclasses/swarm-messages-channel-description-with-meta/swarm-messages-channel-description-with-meta';
-import { createRejectablePromiseByNativePromise } from '../../../../../../../../utils/common-utils/commom-utils.promies';
+} from '../../../../../../swarm-message/swarm-message-constructor.types';
+import { TSwarmStoreDatabaseIteratorMethodArgument } from '../../../../../../swarm-store-class/swarm-store-class.types';
+import { isDefined } from '../../../../../../../utils/common-utils/common-utils-main';
+import { SwarmMessagesChannelDescriptionWithMeta } from '../../../../../swarm-messages-channels-subclasses/swarm-messages-channel-description-with-meta/swarm-messages-channel-description-with-meta';
+import { createRejectablePromiseByNativePromise } from '../../../../../../../utils/common-utils/commom-utils.promies';
 import {
   ISwarmMessageStoreMessagingRequestWithMetaResult,
   ISwarmMessageStoreDeleteMessageArg,
-} from '../../../../../../../swarm-message-store/types/swarm-message-store.types';
+} from '../../../../../../swarm-message-store/types/swarm-message-store.types';
 import {
   TSwarmStoreDatabaseEntityAddress,
   TSwarmStoreDatabaseEntityKey,
-} from '../../../../../../../swarm-store-class/swarm-store-class.types';
+} from '../../../../../../swarm-store-class/swarm-store-class.types';
 import { ESortingOrder } from 'classes/basic-classes/sorter-class';
-import {
-  ISwarmMessagesChannelsListNotificationEmitter,
-  ISwarmMessagesChannelsListEvents,
-} from '../../../../../../types/swarm-messages-channels-list-events.types';
 import {
   getEventEmitterInstance,
   EventEmitter,
-} from '../../../../../../../basic-classes/event-emitter-class-base/event-emitter-class-base';
-import { ESwarmMessageStoreEventNames } from '../../../../../../../swarm-message-store/swarm-message-store.const';
-import { TSwarmMessageUserIdentifierSerialized } from '../../../../../../../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
-import { ESwarmMessagesChannelsListEventName } from '../../../../../../types/swarm-messages-channels-list-events.types';
-import { TSwarmChannelId } from '../../../../../../../../../.ignored/swarm-channel/swarm-channel.types';
+} from '../../../../../../basic-classes/event-emitter-class-base/event-emitter-class-base';
+import { ESwarmMessageStoreEventNames } from '../../../../../../swarm-message-store/swarm-message-store.const';
+import { TSwarmMessageUserIdentifierSerialized } from '../../../../../../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
+import {
+  ESwarmMessagesChannelsListEventName,
+  ISwarmMessagesChannelsListEvents,
+} from '../../../../../types/swarm-messages-channels-list-events.types';
+import { TSwarmChannelId } from '../../../../../../../../.ignored/swarm-channel/swarm-channel.types';
+import { TTypedEmitter } from '../../../../../../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
+import { ISwarmMessagesChannelsListDatabaseEvents } from '../../../../../types/swarm-messages-channels-list-events.types';
 
 export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandlerClass<
   P extends ESwarmStoreConnector,
@@ -79,7 +80,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
   additionalUtils: IAdditionalUtils<P, T, MD, CTX, DBO>
 ): IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler<P, T, MD, CTX, DBO, CF, CARGS> {
   abstract class SwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler extends ClassSwarmMessagesChannelsListVersionOneOptionsSetUp {
-    protected get _emitterDatabaseHandler(): ISwarmMessagesChannelsListNotificationEmitter<P, any> {
+    protected get _emitterDatabaseHandler(): TTypedEmitter<ISwarmMessagesChannelsListDatabaseEvents<P, any>> {
       return this.__emitter;
     }
 
@@ -92,8 +93,8 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       return databaseConnection;
     }
 
-    protected get _isDatabaseOpened(): boolean {
-      return Boolean(this.__databaseConnectionOrUndefined);
+    protected get _isDatabaseReady(): boolean {
+      return Boolean(this.__databaseConnectionOrUndefined) && this._databaseConnection.isReady;
     }
 
     private readonly __additionalUtils: Readonly<IAdditionalUtils<P, T, MD, CTX, DBO>>;
@@ -106,7 +107,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       return additionalUtils;
     }
 
-    private readonly __emitter: ISwarmMessagesChannelsListNotificationEmitter<P, any> = getEventEmitterInstance<
+    private readonly __emitter: TTypedEmitter<ISwarmMessagesChannelsListDatabaseEvents<P, any>> = getEventEmitterInstance<
       ISwarmMessagesChannelsListEvents<P, any>
     >();
 
@@ -255,12 +256,12 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       this.__waitDatabaseWillBeOpenedSetListenersAndOpenedStatus();
     }
 
-    protected _emitEventDbHandler<E extends ESwarmMessagesChannelsListEventName>(
+    protected _emitEventDbHandler<E extends keyof ISwarmMessagesChannelsListDatabaseEvents<P, any>>(
       eventName: E,
-      ...args: Parameters<ISwarmMessagesChannelsListEvents<P, any>[E]>
+      ...args: Parameters<ISwarmMessagesChannelsListDatabaseEvents<P, any>[E]>
     ): void {
       // TODO - resolve cast to any
-      (this.__emitter as EventEmitter<ISwarmMessagesChannelsListEvents<P, any>>).emit(eventName, ...args);
+      (this.__emitter as EventEmitter<ISwarmMessagesChannelsListDatabaseEvents<P, any>>).emit(eventName, ...args);
     }
 
     protected _getChannelIdByDatabaseKey(key: TSwarmStoreDatabaseEntityKey<P>): TSwarmChannelId {
@@ -270,9 +271,10 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
 
     private __waitDatabaseWillBeOpenedSetListenersAndOpenedStatus(): void {
       void this.__swarmMessagesKeyValueDatabaseConnectionPending.then(
-        (databaseConnection: PromiseResolveType<ReturnType<CARGS['utilities']['databaseConnectionFabric']>>) => {
-          this.__setDatabaseConnection(databaseConnection);
+        (swarmMessagesDatabaseConnector: PromiseResolveType<ReturnType<CARGS['utilities']['databaseConnectionFabric']>>) => {
+          this.__setDatabaseConnection(swarmMessagesDatabaseConnector);
           this.__setCurrentDatabaseConnectionListeners();
+          this.__emitDatabaseIsOpenedIfCurrentDatabaseConnectorIsReady();
         }
       );
     }
@@ -307,6 +309,16 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       this.__rejectWithErrorSwarmMessagesKeyValueDatabaseConnectionPending(
         this._getErrorForRejectingSwarmMessagesKeyValueDatabaseConnectionPendingOnCloseInstance()
       );
+    }
+
+    private __emitDatabaseConnectorIsReady() {
+      this._emitEventDbHandler(ESwarmMessagesChannelsListEventName.CHANNELS_LIST_DATABASE_READY);
+    }
+
+    private __emitDatabaseIsOpenedIfCurrentDatabaseConnectorIsReady(): void {
+      if (this.__databaseConnectionOrUndefined?.isReady) {
+        this.__emitDatabaseConnectorIsReady();
+      }
     }
 
     private async _getSwarmMessagesKeyValueDatabaseConnection(): Promise<
@@ -351,6 +363,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       const swarmMessagesChannelDescriptionDeserialized = this._deserializeChannelDescriptionRaw(
         swarmMessagesChannelDescriptionSerialized
       );
+
       await this._validateChannelDescriptionFormat(swarmMessagesChannelDescriptionDeserialized);
       assert(
         this._createChannelDescriptionMessageIssuer() === iss,
@@ -469,7 +482,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
         getIssuerForSwarmMessageWithChannelDescriptionByChannelDescription,
       } = this._getUtilities();
       const { swarmMessagesChannelDescriptionFormatValidator: swarmMessagesChannelDescriptionValidator } = this._getValidators();
-      const getIsDatabaseOpened = (): boolean => this._isDatabaseOpened;
+      const getIsDatabaseOpened = (): boolean => this._isDatabaseReady;
       return {
         get isDatabaseReady(): boolean {
           return getIsDatabaseOpened();
@@ -499,7 +512,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
           [ESortFileds.TIME]: ESortingOrder.DESC,
         },
       };
-      if (!this._isDatabaseOpened) {
+      if (!this._isDatabaseReady) {
         // if database still not opened OrbitDB implementation
         // can't read existsing values, bacuse it causes halt.
         throw new Error('A database should be opened before read a value from it');
@@ -555,9 +568,8 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
     }
 
     private __handleDatabaseReadyToUse = (): void => {
-      this._emitEventDbHandler(ESwarmMessagesChannelsListEventName.CHANNELS_LIST_DATABASE_OPENED);
+      this.__emitDatabaseConnectorIsReady();
     };
-
     private __handleDatabaseClosedUnexpected = (): void => {
       this.__unsetCurrentDatabaseConnectionListeners();
       this.__unsetDatabaseConnection();

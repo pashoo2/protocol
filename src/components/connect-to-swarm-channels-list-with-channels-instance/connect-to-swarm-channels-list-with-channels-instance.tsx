@@ -16,8 +16,8 @@ import { P } from '../connect-to-swarm-with-dbo/connect-to-swarm-with-dbo';
 import { ISwarmMessagesDatabaseConnectOptions } from '../../classes/swarm-messages-database/swarm-messages-database.types';
 import { CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_WITH_STORE_META_OPTIONS } from '../const/connect-to-swarm.const';
 import { createSwarmMessagesDatabaseMessagesCollectorInstance } from '../../classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector';
-import { ISwarmMessagesChannel } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-instance.types';
 import { TDatabaseOptionsTypeByChannelDescriptionRaw } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-instance.helpers.types';
+import { ESwarmMessagesChannelEventName } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-events.types';
 
 /**
  * Swarm messages channels list
@@ -68,9 +68,19 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithChannelInstance
   MD extends ISwarmMessageInstanceDecrypted = ISwarmMessageInstanceDecrypted,
   T extends TSwarmMessageSerialized = TSwarmMessageSerialized
 > extends ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaWithDBO<DbType, DBO, CBO, CD, MD, T> {
-  protected _swarmMessagesChannelInstance:
-    | ISwarmMessagesChannel<P, T, any, any, any, any, any, any, any, any, any, any, any, any, MD>
-    | undefined;
+  public render() {
+    const renderResult = super.render();
+    const { isChannelReady, swarmMessagesChannelInstance } = this.state as any;
+    return (
+      <div>
+        {renderResult}
+        <br />
+        {Boolean(swarmMessagesChannelInstance) ? 'Swarm messages channel is exists' : 'Channel is not exists'}
+        <br />
+        {isChannelReady ? 'channel database is ready' : 'channel database is not ready'}
+      </div>
+    );
+  }
 
   protected _getConnectionBridgeInstance() {
     const connectionBridge = this.state.connectionBridge;
@@ -117,7 +127,7 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithChannelInstance
       >,
       'dbOptions' | 'user'
     > = {
-      swarmMessageStore: swarmMessageStore,
+      swarmMessageStore,
       cacheOptions: CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_WITH_STORE_META_OPTIONS,
       swarmMessagesCollector,
     };
@@ -249,9 +259,20 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithChannelInstance
         typeof swarmMessageChannelDescription
       >((optionsForChannelFabric as unknown) as any);
 
-      this._swarmMessagesChannelInstance = swarmMessagesChannelInstance;
-      this.forceUpdate();
-      alert('Swarm message channel instance was created');
+      const isChannelReady = swarmMessagesChannelInstance.isReady;
+
+      if (!isChannelReady) {
+        swarmMessagesChannelInstance.emitterChannelState.once(ESwarmMessagesChannelEventName.CHANNEL_OPEN, () => {
+          this.setState({
+            isChannelReady: true,
+          });
+        });
+      }
+
+      this.setState({
+        swarmMessagesChannelInstance,
+        isChannelReady,
+      });
     } catch (err) {
       console.error(err);
       alert(`The error has occurred: ${err.message}`);

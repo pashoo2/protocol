@@ -6,29 +6,29 @@ import {
   ISwarmStoreOptionsConnectorFabric,
   ISwarmStoreProviderOptions,
   TSwarmStoreConnectorConnectionOptions,
-} from '../../../../../../../swarm-store-class';
-import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from '../../../../../../../swarm-message';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+} from '../../../../../../swarm-store-class/index';
+import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from '../../../../../../swarm-message/index';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import {
   ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric,
   TSwrmMessagesChannelsListDBOWithGrantAccess,
   DBOFULL,
-} from '../../../../../../types/swarm-messages-channels-list-instance.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../../../swarm-message-encrypted-cache';
+} from '../../../../../types/swarm-messages-channels-list-instance.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../../swarm-message-encrypted-cache/index';
 import {
   ISwarmMessageStore,
   ISwarmMessageStoreAccessControlOptions,
   ISwarmMessageStoreOptionsWithConnectorFabric,
   TSwarmMessagesStoreGrantAccessCallback,
-} from '../../../../../../../swarm-message-store';
+} from '../../../../../../swarm-message-store/index';
 import {
   ISwarmMessagesDatabaseCache,
   ISwarmMessagesDatabaseCacheOptions,
   ISwarmMessagesDatabaseConnectOptions,
   ISwarmMessagesDatabaseConnector,
   ISwarmMessagesDatabaseMessagesCollector,
-} from '../../../../../../../swarm-messages-database';
-import { swarmMessagesDatabaseConnectedFabricMain as swarmMessagesDatabaseConnectedInstanceFabric } from '../../../../../../../swarm-messages-database/swarm-messages-database-fabrics/swarm-messages-database-intstance-fabric-main';
+} from '../../../../../../swarm-messages-database/index';
+import { swarmMessagesDatabaseConnectedFabricMain as swarmMessagesDatabaseConnectedInstanceFabric } from '../../../../../../swarm-messages-database/swarm-messages-database-fabrics/swarm-messages-database-intstance-fabric-main/index';
 
 type DbType = ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE;
 

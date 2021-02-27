@@ -39,7 +39,7 @@ import { ISwarmMessagesChannelNotificationEmitter } from './swarm-messages-chann
 import { TCentralAuthorityUserIdentity } from '../../central-authority-class/central-authority-class-types/central-authority-class-types-common';
 import { IQueuedEncryptionClassBase } from '../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
 import { ISwarmMessageDatabaseEvents } from '../../swarm-messages-database/swarm-messages-database.types';
-import { EventEmitter } from '../../basic-classes/event-emitter-class-base/event-emitter-class-base';
+import { TTypedEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 
 export type TSwarmMessagesChannelId = string;
 
@@ -285,6 +285,16 @@ export interface ISwarmMessagesChannel<
   MD extends ISwarmMessageInstanceDecrypted
 > extends ISwarmMessageChannelDescriptionWithoutDatabaseOptionsRaw<P, DbType> {
   /**
+   * Whether channel database has been opened and
+   * now channel is ready to be used for performing
+   * operations.
+   *
+   * @type {boolean}
+   * @memberof ISwarmMessagesChannel
+   */
+  readonly isReady: boolean;
+
+  /**
    * Channel's desciption was removed from a channels list
    * related.
    * Channel becomes inactive - couldn't receive or send
@@ -308,7 +318,7 @@ export interface ISwarmMessagesChannel<
    * @type {EventEmitter<ISwarmMessageDatabaseEvents<P, T, DbType, DBO, MD>>}
    * @memberof ISwarmMessagesChannel
    */
-  readonly emitterChannelMessagesDatabase: EventEmitter<ISwarmMessageDatabaseEvents<P, T, DbType, DBO, MD>>;
+  readonly emitterChannelMessagesDatabase: TTypedEmitter<ISwarmMessageDatabaseEvents<P, T, DbType, DBO, MD>>;
 
   /**
    * Error describes a reason why the channel is inactive.

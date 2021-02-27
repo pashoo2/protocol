@@ -4,11 +4,11 @@ import { ISwarmMessageInstanceDecrypted } from '../../classes/swarm-message/swar
 import { TSwarmStoreDatabaseOptions, TSwarmStoreDatabaseType } from '../../classes/swarm-store-class/swarm-store-class.types';
 import { IConnectionBridgeOptionsDefault } from '../../classes/connection-bridge/types/connection-bridge.types';
 import { P } from '../connect-to-swarm-with-dbo/connect-to-swarm-with-dbo';
-import { getDatabaseConnectionByDatabaseOptionsFabric } from '../../classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-constructor-arguments-fabrics/swarm-messages-channels-list-v1-database-connection-fabric';
+import { getDatabaseConnectionByDatabaseOptionsFabric } from '../../classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-classes/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-constructor-arguments-fabrics/swarm-messages-channels-list-v1-database-connection-fabric';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { ConnectToSwarmWithAdditionalMetaWithDBO } from '../connect-to-swarm-with-additional-meta-with-dbo';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
-import { getSwarmMessagesChannelsListVersionOneInstanceWithDefaultParameters } from '../../classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-instance-fabrics/swarm-messages-channels-list-v1-instance-fabric-default';
+import { getSwarmMessagesChannelsListVersionOneInstanceWithDefaultParameters } from '../../classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-classes/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-instance-fabrics/swarm-messages-channels-list-v1-instance-fabric-default';
 import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
 import { ISwarmMessageChannelDescriptionRaw } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-instance.types';
 import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../../classes/swarm-messages-channels/const/swarm-messages-channels-main.const';
@@ -244,6 +244,13 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
     await channelsListInstance.upsertChannel(swarmMessageChannelDescription);
   }
 
+  protected listenEventsOfChannelsListInstance(
+    channelsListInstance: ISwarmMessagesChannelsDescriptionsList<ESwarmStoreConnector, T, MD>
+  ): void {
+    const channelsListEventsEmitter = channelsListInstance.emitter;
+    channelsListEventsEmitter.addListener();
+  }
+
   protected async _onChannelAdded(
     channelsListInstance: ISwarmMessagesChannelsDescriptionsList<ESwarmStoreConnector, T, MD>,
     swarmMessageChannelDescription: ISwarmMessageChannelDescriptionRaw<
@@ -254,15 +261,8 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
     >
   ): Promise<void> {
     try {
-      let existingChannels = await channelsListInstance.getAllChannelsDescriptions();
-      console.log('existingChannels:before:', existingChannels);
       await channelsListInstance.upsertChannel(swarmMessageChannelDescription);
-      const swarmMessagesChannelListDescription = await channelsListInstance.getChannelDescriptionById(
-        swarmMessageChannelDescription.id
-      );
-      console.log('swarmMessagesChannelListDescription:', swarmMessagesChannelListDescription);
-      existingChannels = await channelsListInstance.getAllChannelsDescriptions();
-      console.log('existingChannels:after', existingChannels);
+      const existingChannels = await channelsListInstance.getAllChannelsDescriptions();
     } catch (err) {
       console.error(err);
       alert(`The error has occurred: ${err.message}`);

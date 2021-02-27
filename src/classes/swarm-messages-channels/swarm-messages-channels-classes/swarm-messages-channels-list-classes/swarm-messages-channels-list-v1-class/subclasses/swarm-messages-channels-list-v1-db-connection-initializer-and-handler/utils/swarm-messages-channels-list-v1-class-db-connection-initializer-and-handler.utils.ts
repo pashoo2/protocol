@@ -1,21 +1,21 @@
-import { ESwarmStoreConnector } from '../../../../../../../../swarm-store-class/swarm-store-class.const';
+import { ESwarmStoreConnector } from '../../../../../../../swarm-store-class/swarm-store-class.const';
 import {
   TSwarmMessageSerialized,
   ISwarmMessageInstanceDecrypted,
-} from '../../../../../../../../swarm-message/swarm-message-constructor.types';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
-import { TSwrmMessagesChannelsListDBOWithGrantAccess } from '../../../../../../../types/swarm-messages-channels-list-instance.types';
-import { TSwarmMessageUserIdentifierSerialized } from '../../../../../../../../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
-import { TSwarmStoreDatabaseEntryOperation } from '../../../../../../../../swarm-store-class/swarm-store-class.types';
+} from '../../../../../../../swarm-message/swarm-message-constructor.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { TSwrmMessagesChannelsListDBOWithGrantAccess } from '../../../../../../types/swarm-messages-channels-list-instance.types';
+import { TSwarmMessageUserIdentifierSerialized } from '../../../../../../../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
+import { TSwarmStoreDatabaseEntryOperation } from '../../../../../../../swarm-store-class/swarm-store-class.types';
 import {
   ISwarmMessagesChannelsListV1GrantAccessVariableArguments,
   ISwarmMessagesChannelsListV1GrantAccessConstantArguments,
 } from '../../../types/swarm-messages-channels-list-v1-class.types';
-import { IValidatorOfSwarmMessageWithChannelDescriptionArgument } from '../../../../../../../types/swarm-messages-channels-validation.types';
+import { IValidatorOfSwarmMessageWithChannelDescriptionArgument } from '../../../../../../types/swarm-messages-channels-validation.types';
 import { ICreateGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidatorArguments } from '../../../types/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.types';
-import { ISwarmMessageChannelDescriptionRaw } from '../../../../../../../types/swarm-messages-channel-instance.types';
-import { EOrbitDbStoreOperation } from '../../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
-import { ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound } from '../../../../../../../../swarm-message-store/types/swarm-message-store.types';
+import { ISwarmMessageChannelDescriptionRaw } from '../../../../../../types/swarm-messages-channel-instance.types';
+import { EOrbitDbStoreOperation } from '../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
+import { ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound } from '../../../../../../../swarm-message-store/types/swarm-message-store.types';
 
 export function getVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidator<
   P extends ESwarmStoreConnector,

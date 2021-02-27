@@ -18,7 +18,10 @@ import {
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from 'classes/swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { isDeepEqual } from 'utils/common-utils/common-utils-equality';
 import { getEventEmitterInstance } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
-import { ESwarmMessagesChannelsListEventName } from '../../../../types/swarm-messages-channels-list-events.types';
+import {
+  ESwarmMessagesChannelsListEventName,
+  ISwarmMessagesChannelsListEvents,
+} from '../../../../types/swarm-messages-channels-list-events.types';
 import { TCentralAuthorityUserIdentity } from '../../../../../central-authority-class/central-authority-class-types/central-authority-class-types-common';
 import {
   TSwarmMessagesChannelId,
@@ -26,6 +29,7 @@ import {
 } from '../../../../types/swarm-messages-channel-instance.types';
 import { ISwarmMessagesChannelsDescriptionsList } from '../../../../types/swarm-messages-channels-list-instance.types';
 import { ISwarmMessageChannelDescriptionWithoutDatabaseOptionsRaw } from '../../../../types/swarm-messages-channel-instance.types';
+import { EventEmitter } from '../../../../../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import {
   ISwarmMessagesChannelV1ClassChannelsListHandler,
   ISwarmMessagesChannelV1ClassChannelsListHandlerConstructorOptions,
@@ -307,7 +311,8 @@ export class SwarmMessagesChannelV1ClassChannelsListHandler<
     ifSubscription: boolean = true
   ): void {
     const methodName = ifSubscription ? 'addListener' : 'removeListener';
-    const channelsListEmitter = swarmMessagesChannelsListInstance.emitter;
+    const channelsListEmitter: EventEmitter<ISwarmMessagesChannelsListEvents<P, DbType>> =
+      swarmMessagesChannelsListInstance.emitter;
 
     channelsListEmitter[methodName](
       ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_UPDATE,

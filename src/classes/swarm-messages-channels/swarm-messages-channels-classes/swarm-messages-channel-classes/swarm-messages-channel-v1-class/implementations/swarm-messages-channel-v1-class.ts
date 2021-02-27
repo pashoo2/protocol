@@ -203,6 +203,15 @@ export class SwarmMessagesChannelV1Class<
     return this.__markedAsRemoved;
   }
 
+  public get isReady(): boolean {
+    return (
+      !this.__isClosed &&
+      !this.__markedAsRemoved &&
+      this._whetherChannelIsActive &&
+      Boolean(this.__swarmMessagesChannelDatabaseHandlerInstance.isDatabaseReady)
+    );
+  }
+
   protected get _swarmMessagesChannelDescriptionWODatabaseOptions(): ISwarmMessageChannelDescriptionWithoutDatabaseOptionsRaw<
     P,
     DbType
@@ -477,6 +486,7 @@ export class SwarmMessagesChannelV1Class<
     if (this.__isClosed) {
       return;
     }
+    this._setChannelClosed();
     this._unsetAllListenersOfInstancesRelated();
     await this._closeChannelDatabaseHandlerInstance();
     this.__emitChannelClosed();
@@ -641,6 +651,10 @@ export class SwarmMessagesChannelV1Class<
 
   protected _unsetChannelInactiveReasonError(): void {
     this.__channelInactiveReasonError = undefined;
+  }
+
+  protected _setChannelClosed(): void {
+    this.__isClosed = true;
   }
 
   protected _setChannelMarkedAsRemoved(): void {
@@ -937,7 +951,6 @@ export class SwarmMessagesChannelV1Class<
       }
     }
     this._unsetChannelMarkedAsRemoved();
-    this.__emitChannelOpened();
   };
 
   private __handleChannelsListHandlerEventChannelDescriptionRemoved = (): void => {
@@ -947,7 +960,9 @@ export class SwarmMessagesChannelV1Class<
   };
 
   private __handleChannelDatabaseHandlerEventDatabaseReady = (): void => {
-    this.__emitChannelOpened();
+    if (this.isReady) {
+      this.__emitChannelOpened();
+    }
   };
 
   private __handleChannelDatabaseHandlerEventDatabaseClosed = async (): Promise<void> => {

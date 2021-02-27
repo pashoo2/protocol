@@ -1,27 +1,27 @@
-import { ESwarmStoreConnector } from '../../../../../../../swarm-store-class/swarm-store-class.const';
+import { ESwarmStoreConnector } from '../../../../../../swarm-store-class/swarm-store-class.const';
 import {
   TSwarmMessageSerialized,
   ISwarmMessageInstanceDecrypted,
-} from '../../../../../../../swarm-message/swarm-message-constructor.types';
-import { createImmutableObjectClone } from '../../../../../../../../utils/data-immutability-utils/data-immutability-key-value-structure-utils';
+} from '../../../../../../swarm-message/swarm-message-constructor.types';
+import { createImmutableObjectClone } from '../../../../../../../utils/data-immutability-utils/data-immutability-key-value-structure-utils';
 import assert from 'assert';
 import {
   ISwarmMessagesChannelsDescriptionsListConnectionOptions,
   TSwrmMessagesChannelsListDBOWithGrantAccess,
-} from '../../../../../../types/swarm-messages-channels-list-instance.types';
-import { isNonNativeFunction } from '../../../../../../../../utils/common-utils/common-utils.functions';
+} from '../../../../../types/swarm-messages-channels-list-instance.types';
+import { isNonNativeFunction } from '../../../../../../../utils/common-utils/common-utils.functions';
 import {
   ISwarmMessagesChannelsDescriptionsListConstructorArguments,
   ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric,
-} from '../../../../../../types/swarm-messages-channels-list-instance.types';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+} from '../../../../../types/swarm-messages-channels-list-instance.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import {
   AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp,
   IConstructorAbstactSwarmMessagesChannelsListVersionOneOptionsSetUp,
 } from '../../types/swarm-messages-channels-list-v1-class-options-setup.types';
-import { ISwarmMessageChannelDescriptionRaw } from '../../../../../../types/swarm-messages-channel-instance.types';
-import { TSwarmMessageConstructorBodyMessage } from '../../../../../../../swarm-message/swarm-message-constructor.types';
-import { TSwarmStoreDatabaseEntityKey } from '../../../../../../../swarm-store-class/swarm-store-class.types';
+import { ISwarmMessageChannelDescriptionRaw } from '../../../../../types/swarm-messages-channel-instance.types';
+import { TSwarmMessageConstructorBodyMessage } from '../../../../../../swarm-message/swarm-message-constructor.types';
+import { TSwarmStoreDatabaseEntityKey } from '../../../../../../swarm-store-class/swarm-store-class.types';
 
 export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
   P extends ESwarmStoreConnector,

@@ -15,13 +15,18 @@ import { TTypedEmitter } from 'classes/basic-classes/event-emitter-class-base/ev
  */
 export enum ESwarmMessagesChannelsListEventName {
   /**
-   * Swarm messages database related to the channels list has opened.
+   * Swarm messages database related to the channels list has opened
+   * so the channels list is ready to be used.
    */
-  CHANNELS_LIST_DATABASE_OPENED = 'CHANNELS_LIST_DATABASE_OPENED',
+  CHANNELS_LIST_READY = 'CHANNELS_LIST_READY',
   /**
    * Swarm messages database related to the channels list has closed.
    */
-  CHANNELS_LIST_DATABASE_CLOSED = 'CHANNELS_LIST_DATABASE_CLOSED',
+  CHANNELS_LIST_CLOSED = 'CHANNELS_LIST_CLOSED',
+  /**
+   * Channels list database is ready to be used.
+   */
+  CHANNELS_LIST_DATABASE_READY = 'CHANNELS_LIST_DATABASE_READY',
   /**
    * Channel description was updated or a new one has been added
    */
@@ -40,23 +45,16 @@ export enum ESwarmMessagesChannelsListEventName {
  * @template P
  * @template DbType
  */
-export interface ISwarmMessagesChannelsListEvents<P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>> {
+export interface ISwarmMessagesChannelsListDatabaseEvents<
+  P extends ESwarmStoreConnector,
+  DbType extends TSwarmStoreDatabaseType<P>
+> {
   /**
-   * Swarm messages datatabase related to the channels list
-   * has opened and the channels list is ready to be used.
+   * Channels database connector is ready.
    *
-   * @type {void}
-   * @memberof ISwarmMessagesChannelsListEvents
+   * @memberof ISwarmMessagesChannelsListDatabaseEvents
    */
-  [ESwarmMessagesChannelsListEventName.CHANNELS_LIST_DATABASE_OPENED]: () => unknown;
-  /**
-   * Swarm messages database related to the channels list has closed, therefore
-   * the channels list can not be used anymore.
-   *
-   * @type {void}
-   * @memberof ISwarmMessagesChannelsListEvents
-   */
-  [ESwarmMessagesChannelsListEventName.CHANNELS_LIST_DATABASE_CLOSED]: () => unknown;
+  [ESwarmMessagesChannelsListEventName.CHANNELS_LIST_DATABASE_READY]: () => unknown;
   /**
    * Channel description has been updated
    *
@@ -74,6 +72,45 @@ export interface ISwarmMessagesChannelsListEvents<P extends ESwarmStoreConnector
    */
   [ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_REMOVED]: (channelRemovedId: TSwarmMessagesChannelId) => unknown;
 }
+
+/**
+ * Events which can be emitted by a channel list or by a channel itself.
+ *
+ * @export
+ * @interface ISwarmMessagesChannelsListEvents
+ * @template P
+ * @template DbType
+ */
+export interface ISwarmMessagesChannelsListStatusEvents {
+  /**
+   * Swarm messages datatabase related to the channels list
+   * has opened and the channels list is ready to be used.
+   *
+   * @type {void}
+   * @memberof ISwarmMessagesChannelsListEvents
+   */
+  [ESwarmMessagesChannelsListEventName.CHANNELS_LIST_READY]: () => unknown;
+  /**
+   * Swarm messages database related to the channels list has closed, therefore
+   * the channels list can not be used anymore.
+   *
+   * @type {void}
+   * @memberof ISwarmMessagesChannelsListEvents
+   */
+  [ESwarmMessagesChannelsListEventName.CHANNELS_LIST_CLOSED]: () => unknown;
+}
+
+/**
+ * Events which can be emitted by a channel list or by a channel itself.
+ *
+ * @export
+ * @interface ISwarmMessagesChannelsListEvents
+ * @template P
+ * @template DbType
+ */
+export interface ISwarmMessagesChannelsListEvents<P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>>
+  extends ISwarmMessagesChannelsListStatusEvents,
+    ISwarmMessagesChannelsListDatabaseEvents<P, DbType> {}
 
 /**
  * Event emitter notifies about a swarm messages channels list

@@ -1,14 +1,14 @@
-import { ESwarmStoreConnector } from '../../../../../../../swarm-store-class';
-import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from '../../../../../../../swarm-message';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ESwarmStoreConnector } from '../../../../../../swarm-store-class/index';
+import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from '../../../../../../swarm-message/index';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import {
   TSwrmMessagesChannelsListDBOWithGrantAccess,
   ISwarmMessagesChannelsDescriptionsListConstructorArguments,
-} from '../../../../../../types/swarm-messages-channels-list-instance.types';
+} from '../../../../../types/swarm-messages-channels-list-instance.types';
 import {
   ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric,
   ISwarmMessagesChannelsDescriptionsList,
-} from '../../../../../../types/swarm-messages-channels-list-instance.types';
+} from '../../../../../types/swarm-messages-channels-list-instance.types';
 import { getSwarmMessagesChannelsListVersionOneInstance } from '../../swarm-messages-channels-list-v1-instance.fabric';
 import {
   IAdditionalUtils,
@@ -72,7 +72,7 @@ export function getSwarmMessagesChannelsListVersionOneInstanceWithDefaultParamet
   }
 >(
   // This one can be used for creation of the datbaase conneciton fabric
-  // src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-constructor-arguments-fabrics/swarm-messages-channels-list-v1-database-connection-fabric.ts
+  // src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-classes/swarm-messages-channels-list-v1-classes/utils/swarm-messages-channels-list-v1-constructor-arguments-fabrics/swarm-messages-channels-list-v1-database-connection-fabric.ts
   databaseConnectionFabric: CF,
   optionsForConstructorArgumentsFabric: OFCAF
 ): ISwarmMessagesChannelsDescriptionsList<ESwarmStoreConnector, T, MD> {

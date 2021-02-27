@@ -103,6 +103,15 @@ export interface ISwarmMessagesChannelV1DatabaseHandler<
    * @memberof ISwarmMessagesChannelV1DatabaseHandler
    */
   readonly emitter: EventEmitter<ISwarmMessageDatabaseEvents<P, T, DbType, DBO, MD>>;
+
+  /**
+   * Whether database connector is ready to be used for performing database operations.
+   *
+   * @type {boolean}
+   * @memberof ISwarmMessagesChannelV1DatabaseHandler
+   */
+  readonly isDatabaseReady: boolean;
+
   /**
    * Create new swarm messages database connector instance
    * for future usage in such operations as "addMessage", removeMessage"

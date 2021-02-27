@@ -1,40 +1,40 @@
-import { ESwarmStoreConnector } from '../../../../../swarm-store-class/swarm-store-class.const';
+import { ESwarmStoreConnector } from '../../../../swarm-store-class/swarm-store-class.const';
 import {
   TSwarmMessageSerialized,
   ISwarmMessageInstanceDecrypted,
-} from '../../../../../swarm-message/swarm-message-constructor.types';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+} from '../../../../swarm-message/swarm-message-constructor.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import {
   TSwrmMessagesChannelsListDBOWithGrantAccess,
   ISwarmMessagesChannelsDescriptionsListConstructorArguments,
-} from '../../../../types/swarm-messages-channels-list-instance.types';
+} from '../../../types/swarm-messages-channels-list-instance.types';
 import { IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler } from './types/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.types';
 import {
   ISwarmMessagesChannelsDescriptionsList,
   ISwarmMessagesChannelsListDescription,
-} from '../../../../types/swarm-messages-channels-list-instance.types';
-import { ConstructorType } from '../../../../../../types/helper.types';
+} from '../../../types/swarm-messages-channels-list-instance.types';
+import { ConstructorType } from '../../../../../types/helper.types';
 import {
   ISwarmMessageChannelDescriptionRaw,
   TSwarmMessagesChannelId,
   ISwarmMessagesChannelDescriptionWithMetadata,
-} from '../../../../types/swarm-messages-channel-instance.types';
-import { TSwarmMessageConstructorBodyMessage } from '../../../../../swarm-message/swarm-message-constructor.types';
-import { TSwarmStoreDatabaseEntityKey } from '../../../../../swarm-store-class/swarm-store-class.types';
-import { ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric } from '../../../../types/swarm-messages-channels-list-instance.types';
+} from '../../../types/swarm-messages-channel-instance.types';
+import { TSwarmMessageConstructorBodyMessage } from '../../../../swarm-message/swarm-message-constructor.types';
+import { TSwarmStoreDatabaseEntityKey } from '../../../../swarm-store-class/swarm-store-class.types';
+import { ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric } from '../../../types/swarm-messages-channels-list-instance.types';
 import {
   ISwarmMessagesChannelsListNotificationEmitter,
   ISwarmMessagesChannelsListEvents,
-} from '../../../../types/swarm-messages-channels-list-events.types';
+} from '../../../types/swarm-messages-channels-list-events.types';
 import {
   getEventEmitterInstance,
   EventEmitter,
-} from '../../../../../basic-classes/event-emitter-class-base/event-emitter-class-base';
-import { ESwarmMessagesChannelsListEventName } from '../../../../types/swarm-messages-channels-list-events.types';
+} from '../../../../basic-classes/event-emitter-class-base/event-emitter-class-base';
+import { ESwarmMessagesChannelsListEventName } from '../../../types/swarm-messages-channels-list-events.types';
 import {
   forwardEvents,
   stopForwardEvents,
-} from '../../../../../basic-classes/event-emitter-class-base/event-emitter-class-with-forwarding.utils';
+} from '../../../../basic-classes/event-emitter-class-base/event-emitter-class-with-forwarding.utils';
 
 export function getSwarmMessagesChannelsListVersionOneClass<
   P extends ESwarmStoreConnector,
@@ -66,44 +66,67 @@ export function getSwarmMessagesChannelsListVersionOneClass<
       return this.__emitterChannelsList;
     }
 
+    public get isReady(): boolean {
+      return !this.__isChannelsListClosed && this._isDatabaseReady;
+    }
+
     private __emitterChannelsList = getEventEmitterInstance<ISwarmMessagesChannelsListEvents<P, any>>();
+
+    /**
+     * Whether the channels list closed.
+     *
+     * @private
+     * @type {boolean}
+     * @memberof SwarmMessagesChannelsListVersionOne
+     */
+    private __isChannelsListClosed: boolean = false;
 
     constructor(args: CARGS) {
       super(args);
       this._startEventsForwarding();
+      this._startListeningForChannelsListDatabaseEvents();
     }
 
     public async upsertChannel(channelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<P, T, any, any>): Promise<void> {
+      this.__validateChannelIsNotClosed();
       await this._validateChannelDescriptionFormat(channelDescriptionRaw);
       await this._addChannelDescriptionRawInSwarmDatabase(channelDescriptionRaw);
     }
 
     public async removeChannelById(channelId: TSwarmMessagesChannelId): Promise<void> {
+      this.__validateChannelIsNotClosed();
       await this._removeValueForDbKey(channelId as TSwarmStoreDatabaseEntityKey<P>);
     }
 
     public async getAllChannelsDescriptions(): Promise<ISwarmMessagesChannelDescriptionWithMetadata<P, T, MD, any, any>[]> {
+      this.__validateChannelIsNotClosed();
       return await this._readAllChannelsDescriptionsWithMeta();
     }
 
     public async getChannelDescriptionById(
       channelId: TSwarmMessagesChannelId
     ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any> | undefined> {
+      this.__validateChannelIsNotClosed();
       return await this._readSwarmMessagesChannelDescriptionOrUndefinedForDbKey(channelId as TSwarmStoreDatabaseEntityKey<P>);
     }
 
     public async close(): Promise<void> {
+      if (this.__isChannelsListClosed) {
+        return;
+      }
       this._stopEventsForwarding();
+      this.__setChannelsListIsClosed();
       await this._closeDatabase();
-      this._emitChannelsListEvent(ESwarmMessagesChannelsListEventName.CHANNELS_LIST_DATABASE_CLOSED);
+      this._emitChannelsListEvent(ESwarmMessagesChannelsListEventName.CHANNELS_LIST_CLOSED);
       // reset options only after the event emitted to allow read it for event handlers
       this.__resetOptionsSetup();
     }
 
     public async drop(): Promise<void> {
+      this.__validateChannelIsNotClosed();
       this._stopEventsForwarding();
       await this._dropDatabase();
-      this._emitChannelsListEvent(ESwarmMessagesChannelsListEventName.CHANNELS_LIST_DATABASE_CLOSED);
+      this._emitChannelsListEvent(ESwarmMessagesChannelsListEventName.CHANNELS_LIST_CLOSED);
       // reset options only after the event emitted to allow read it for event handlers
       this.__resetOptionsSetup();
     }
@@ -122,6 +145,13 @@ export function getSwarmMessagesChannelsListVersionOneClass<
 
     protected _stopEventsForwarding() {
       stopForwardEvents(this._emitterDatabaseHandler, this.__emitterChannelsList);
+    }
+
+    protected _startListeningForChannelsListDatabaseEvents() {
+      this._emitterDatabaseHandler.addListener(
+        ESwarmMessagesChannelsListEventName.CHANNELS_LIST_DATABASE_READY,
+        this.__handleChannelsListDatabaseConnetorReadyToUse
+      );
     }
 
     protected _createMessageBodyForChannelDescription(
@@ -150,6 +180,22 @@ export function getSwarmMessagesChannelsListVersionOneClass<
       channelId: TSwarmMessagesChannelId
     ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any> | undefined> {
       return await this._readSwarmMessagesChannelDescriptionOrUndefinedForDbKey(channelId as TSwarmStoreDatabaseEntityKey<P>);
+    }
+
+    private __handleChannelsListDatabaseConnetorReadyToUse = (): void => {
+      if (this.isReady) {
+        this._emitChannelsListEvent(ESwarmMessagesChannelsListEventName.CHANNELS_LIST_READY);
+      }
+    };
+
+    private __setChannelsListIsClosed(): void {
+      this.__isChannelsListClosed = true;
+    }
+
+    private __validateChannelIsNotClosed(): void {
+      if (this.__isChannelsListClosed) {
+        throw new Error('The channel is closed and cannot perform any operations');
+      }
     }
   }
 
