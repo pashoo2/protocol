@@ -21,10 +21,7 @@ import {
 import { TSwarmMessageConstructorBodyMessage } from '../../../../../swarm-message/swarm-message-constructor.types';
 import { ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric } from '../../../../types/swarm-messages-channels-list-instance.types';
 import { TTypedEmitter } from '../../../../../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
-import {
-  ISwarmMessagesChannelsListNotificationEmitter,
-  ISwarmMessagesChannelsListDatabaseEvents,
-} from '../../../../types/swarm-messages-channels-list-events.types';
+import { ISwarmMessagesChannelsListDatabaseEvents } from '../../../../types/swarm-messages-channels-list-events.types';
 import {
   ISwarmMessagesChannelsListV1GrantAccessConstantArguments,
   ISwarmMessagesChannelsListV1GrantAccessVariableArguments,
@@ -164,7 +161,7 @@ export abstract class AbstractSwarmMessagesChannelsListVersionOneDatabaseConnect
   CF extends ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<P, T, MD, CTX, DBO>,
   CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>
 > extends AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<P, T, MD, CTX, DBO, CF, CARGS> {
-  protected abstract readonly _emitterDatabaseHandler: TTypedEmitter<ISwarmMessagesChannelsListDatabaseEvents<P, any>>;
+  protected abstract readonly _emitterDatabaseHandler: TTypedEmitter<ISwarmMessagesChannelsListDatabaseEvents<P, T, any>>;
 
   protected abstract readonly _isDatabaseReady: boolean;
 

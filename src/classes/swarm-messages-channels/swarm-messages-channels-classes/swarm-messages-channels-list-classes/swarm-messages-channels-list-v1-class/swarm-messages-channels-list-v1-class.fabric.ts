@@ -62,7 +62,7 @@ export function getSwarmMessagesChannelsListVersionOneClass<
       return this._getChannelsListDescription();
     }
 
-    public get emitter(): ISwarmMessagesChannelsListNotificationEmitter<P, any> {
+    public get emitter(): ISwarmMessagesChannelsListNotificationEmitter<P, T, any> {
       return this.__emitterChannelsList;
     }
 
@@ -70,7 +70,7 @@ export function getSwarmMessagesChannelsListVersionOneClass<
       return !this.__isChannelsListClosed && this._isDatabaseReady;
     }
 
-    private __emitterChannelsList = getEventEmitterInstance<ISwarmMessagesChannelsListEvents<P, any>>();
+    private __emitterChannelsList = getEventEmitterInstance<ISwarmMessagesChannelsListEvents<P, T, any>>();
 
     /**
      * Whether the channels list instance is closed and can not be used anymore.
@@ -133,10 +133,10 @@ export function getSwarmMessagesChannelsListVersionOneClass<
 
     protected _emitChannelsListEvent<E extends ESwarmMessagesChannelsListEventName>(
       eventName: E,
-      ...args: Parameters<ISwarmMessagesChannelsListEvents<P, any>[E]>
+      ...args: Parameters<ISwarmMessagesChannelsListEvents<P, T, any>[E]>
     ): void {
       // TODO - resolve cast to any
-      (this.__emitterChannelsList as EventEmitter<ISwarmMessagesChannelsListEvents<P, any>>).emit(eventName, ...args);
+      (this.__emitterChannelsList as EventEmitter<ISwarmMessagesChannelsListEvents<P, T, any>>).emit(eventName, ...args);
     }
 
     protected _startEventsForwarding() {

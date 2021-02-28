@@ -310,7 +310,7 @@ export interface ISwarmMessagesChannel<
    * @type {ISwarmMessagesChannelNotificationEmitter<P, DbType>}
    * @memberof ISwarmMessagesChannel
    */
-  readonly emitterChannelState: ISwarmMessagesChannelNotificationEmitter<P, DbType>;
+  readonly emitterChannelState: ISwarmMessagesChannelNotificationEmitter<P, T, DbType>;
 
   /**
    * Events which emitted by the channel's swarm messages database.

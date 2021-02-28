@@ -8,6 +8,7 @@ import {
   TSwarmMessagesChannelId,
 } from './swarm-messages-channel-instance.types';
 import { TTypedEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base.types';
+import { TSwarmMessageSerialized } from '../../swarm-message/swarm-message-constructor.types';
 
 export enum ESwarmMessagesChannelEventName {
   /**
@@ -20,8 +21,11 @@ export enum ESwarmMessagesChannelEventName {
   CHANNEL_CLOSED = 'CHANNEL_CLOSED',
 }
 
-export interface ISwarmMessagesChannelEvents<P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>>
-  extends ISwarmMessagesChannelsListEvents<P, DbType> {
+export interface ISwarmMessagesChannelEvents<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<P>
+> extends ISwarmMessagesChannelsListEvents<P, T, DbType> {
   /**
    * Channel and it's swarm messages database have been initialized
    * and operations can be performed with this channel instance.
@@ -62,5 +66,6 @@ export interface ISwarmMessagesChannelEvents<P extends ESwarmStoreConnector, DbT
  */
 export type ISwarmMessagesChannelNotificationEmitter<
   P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>
-> = TTypedEmitter<ISwarmMessagesChannelEvents<P, DbType>>;
+> = TTypedEmitter<ISwarmMessagesChannelEvents<P, T, DbType>>;

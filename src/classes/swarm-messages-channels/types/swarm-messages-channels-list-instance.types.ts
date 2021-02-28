@@ -184,7 +184,7 @@ export interface ISwarmMessagesChannelsDescriptionsList<
    * @type {ISwarmMessagesChannelsListEmitter<P, any>}
    * @memberof ISwarmMessagesChannelsDescriptionsList
    */
-  readonly emitter: ISwarmMessagesChannelsListNotificationEmitter<P, any>;
+  readonly emitter: ISwarmMessagesChannelsListNotificationEmitter<P, T, any>;
 
   /**
    * Whether the channels database has opened and the channels list

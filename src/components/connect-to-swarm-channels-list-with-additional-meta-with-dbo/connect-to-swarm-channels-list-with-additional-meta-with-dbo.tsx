@@ -18,6 +18,7 @@ import { IUserCredentialsCommon } from '../../types/credentials.types';
 import { ESwarmMessagesChannelsListEventName } from '../../classes/swarm-messages-channels/types/swarm-messages-channels-list-events.types';
 import { getSwarmMessagesChannelsListVersionOneInstanceWithDefaultParameters } from '../../classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-instance-fabrics/swarm-messages-channels-list-v1-instance-fabric-default';
 import { getDatabaseConnectionByDatabaseOptionsFabric } from '../../classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-constructor-arguments-fabrics/swarm-messages-channels-list-v1-database-connection-fabric';
+import { SwarmMessagesChannelsListComponent } from '../swarm-messages-channels-list/swarm-messages-channels-list';
 import {
   ISwarmMessagesDatabaseCacheOptions,
   ISwarmMessagesDatabaseCache,
@@ -128,14 +129,16 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
   }
 
   public render() {
-    const { swarmMessagesChannelsList, channelsListIsReady } = this.state as any;
+    const { swarmMessagesChannelsList } = this.state as any;
     return (
       <div>
         Swarm messages channels list
         <br />
-        {swarmMessagesChannelsList ? 'Channels list instance is exists' : 'channels list instance is not exists'}
-        <br />
-        {channelsListIsReady ? 'Channels list instance is ready' : 'channels list instance is not ready'}
+        {swarmMessagesChannelsList ? (
+          <SwarmMessagesChannelsListComponent channelsList={swarmMessagesChannelsList} />
+        ) : (
+          'channels list instance is not exists'
+        )}
       </div>
     );
   }
@@ -277,9 +280,7 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
       TSwarmStoreDatabaseType<P>,
       TSwarmStoreDatabaseOptions<P, TSwarmMessageSerialized, TSwarmStoreDatabaseType<P>>
     >
-  ): Promise<void> {
-    const existingChannels = await channelsListInstance.getAllChannelsDescriptions();
-  }
+  ): Promise<void> {}
 
   private __handleChannelsListIsReady = async () => {
     const { swarmMessagesChannelsList, swarmMessageChannelDescription } = this.state as any;

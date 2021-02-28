@@ -87,7 +87,7 @@ export class SwarmMessagesChannelV1ClassChannelsListHandler<
       SMS,
       MD
     > {
-  public get emitter(): ISwarmMessagesChannelNotificationEmitter<P, DbType> {
+  public get emitter(): ISwarmMessagesChannelNotificationEmitter<P, T, DbType> {
     return this.__emitter;
   }
 
@@ -95,7 +95,7 @@ export class SwarmMessagesChannelV1ClassChannelsListHandler<
     return this.__actualChannelDescription.admins.includes(this.__currentUserId);
   }
 
-  private __emitter = getEventEmitterInstance<ISwarmMessagesChannelEvents<P, DbType>>();
+  private __emitter = getEventEmitterInstance<ISwarmMessagesChannelEvents<P, T, DbType>>();
 
   /**
    * Asynchronous process of adding this channel's description
@@ -311,7 +311,7 @@ export class SwarmMessagesChannelV1ClassChannelsListHandler<
     ifSubscription: boolean = true
   ): void {
     const methodName = ifSubscription ? 'addListener' : 'removeListener';
-    const channelsListEmitter: EventEmitter<ISwarmMessagesChannelsListEvents<P, DbType>> =
+    const channelsListEmitter: EventEmitter<ISwarmMessagesChannelsListEvents<P, T, DbType>> =
       swarmMessagesChannelsListInstance.emitter;
 
     channelsListEmitter[methodName](

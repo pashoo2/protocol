@@ -1,10 +1,9 @@
 import { ESwarmStoreConnector } from '../../swarm-store-class/swarm-store-class.const';
-import { TSwarmStoreDatabaseType } from '../../swarm-store-class/swarm-store-class.types';
-import {
-  ISwarmMessageChannelDescriptionWithoutDatabaseOptionsRaw,
-  TSwarmMessagesChannelId,
-} from './swarm-messages-channel-instance.types';
+import { TSwarmStoreDatabaseType, TSwarmStoreDatabaseOptions } from '../../swarm-store-class/swarm-store-class.types';
+import { TSwarmMessagesChannelId } from './swarm-messages-channel-instance.types';
 import { TTypedEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base.types';
+import { ISwarmMessageChannelDescriptionRaw } from './swarm-messages-channel-instance.types';
+import { TSwarmMessageSerialized } from '../../swarm-message/swarm-message-constructor.types';
 
 /**
  * Notification events names emitted by a channels list
@@ -47,6 +46,7 @@ export enum ESwarmMessagesChannelsListEventName {
  */
 export interface ISwarmMessagesChannelsListDatabaseEvents<
   P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>
 > {
   /**
@@ -62,7 +62,7 @@ export interface ISwarmMessagesChannelsListDatabaseEvents<
    * @memberof ISwarmMessagesChannelsListEvents
    */
   [ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_UPDATE]: (
-    channelDescriptionUpdatadOrNew: ISwarmMessageChannelDescriptionWithoutDatabaseOptionsRaw<P, DbType>
+    channelDescriptionUpdatadOrNew: ISwarmMessageChannelDescriptionRaw<P, T, DbType, TSwarmStoreDatabaseOptions<P, T, DbType>>
   ) => unknown;
   /**
    * Description of a channel has been removed from the channels list.
@@ -108,9 +108,12 @@ export interface ISwarmMessagesChannelsListStatusEvents {
  * @template P
  * @template DbType
  */
-export interface ISwarmMessagesChannelsListEvents<P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>>
-  extends ISwarmMessagesChannelsListStatusEvents,
-    ISwarmMessagesChannelsListDatabaseEvents<P, DbType> {}
+export interface ISwarmMessagesChannelsListEvents<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<P>
+> extends ISwarmMessagesChannelsListStatusEvents,
+    ISwarmMessagesChannelsListDatabaseEvents<P, T, DbType> {}
 
 /**
  * Event emitter notifies about a swarm messages channels list
@@ -124,5 +127,6 @@ export interface ISwarmMessagesChannelsListEvents<P extends ESwarmStoreConnector
  */
 export type ISwarmMessagesChannelsListNotificationEmitter<
   P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>
-> = TTypedEmitter<ISwarmMessagesChannelsListEvents<P, DbType>>;
+> = TTypedEmitter<ISwarmMessagesChannelsListEvents<P, T, DbType>>;

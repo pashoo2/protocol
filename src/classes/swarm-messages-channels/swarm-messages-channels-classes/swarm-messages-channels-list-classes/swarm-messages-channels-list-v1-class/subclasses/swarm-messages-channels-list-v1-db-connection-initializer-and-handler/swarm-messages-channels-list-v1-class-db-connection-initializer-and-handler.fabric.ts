@@ -80,7 +80,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
   additionalUtils: IAdditionalUtils<P, T, MD, CTX, DBO>
 ): IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler<P, T, MD, CTX, DBO, CF, CARGS> {
   abstract class SwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler extends ClassSwarmMessagesChannelsListVersionOneOptionsSetUp {
-    protected get _emitterDatabaseHandler(): TTypedEmitter<ISwarmMessagesChannelsListDatabaseEvents<P, any>> {
+    protected get _emitterDatabaseHandler(): TTypedEmitter<ISwarmMessagesChannelsListDatabaseEvents<P, T, any>> {
       return this.__emitter;
     }
 
@@ -107,8 +107,8 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       return additionalUtils;
     }
 
-    private readonly __emitter: TTypedEmitter<ISwarmMessagesChannelsListDatabaseEvents<P, any>> = getEventEmitterInstance<
-      ISwarmMessagesChannelsListEvents<P, any>
+    private readonly __emitter: TTypedEmitter<ISwarmMessagesChannelsListDatabaseEvents<P, T, any>> = getEventEmitterInstance<
+      ISwarmMessagesChannelsListEvents<P, T, any>
     >();
 
     private __swarmMessagesKeyValueDatabaseConnectionPending: IPromisePendingRejectable<
@@ -256,12 +256,12 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       this.__waitDatabaseWillBeOpenedSetListenersAndOpenedStatus();
     }
 
-    protected _emitEventDbHandler<E extends keyof ISwarmMessagesChannelsListDatabaseEvents<P, any>>(
+    protected _emitEventDbHandler<E extends keyof ISwarmMessagesChannelsListDatabaseEvents<P, T, any>>(
       eventName: E,
-      ...args: Parameters<ISwarmMessagesChannelsListDatabaseEvents<P, any>[E]>
+      ...args: Parameters<ISwarmMessagesChannelsListDatabaseEvents<P, T, any>[E]>
     ): void {
       // TODO - resolve cast to any
-      (this.__emitter as EventEmitter<ISwarmMessagesChannelsListDatabaseEvents<P, any>>).emit(eventName, ...args);
+      (this.__emitter as EventEmitter<ISwarmMessagesChannelsListDatabaseEvents<P, T, any>>).emit(eventName, ...args);
     }
 
     protected _getChannelIdByDatabaseKey(key: TSwarmStoreDatabaseEntityKey<P>): TSwarmChannelId {

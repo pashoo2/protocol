@@ -191,7 +191,7 @@ export class SwarmMessagesChannelV1Class<
     return this.__channelInactiveReasonError;
   }
 
-  public get emitterChannelState(): ISwarmMessagesChannelNotificationEmitter<P, DbType> {
+  public get emitterChannelState(): ISwarmMessagesChannelNotificationEmitter<P, T, DbType> {
     return this.__swarmMessagesChannelsListHandlerInstance.emitter;
   }
 
@@ -690,7 +690,7 @@ export class SwarmMessagesChannelV1Class<
     >,
     isAddListeners: boolean = true
   ): void {
-    const emitter = swarmMessagesChannelsListInstance.emitter as EventEmitter<ISwarmMessagesChannelEvents<P, DbType>>;
+    const emitter = swarmMessagesChannelsListInstance.emitter as EventEmitter<ISwarmMessagesChannelEvents<P, T, DbType>>;
     const methodName = isAddListeners ? 'addListener' : 'removeListener';
 
     emitter[methodName as 'addListener'](
@@ -925,14 +925,14 @@ export class SwarmMessagesChannelV1Class<
   }
 
   private __emitChannelOpened(): void {
-    (this.emitterChannelState as EventEmitter<ISwarmMessagesChannelEvents<P, DbType>>).emit(
+    (this.emitterChannelState as EventEmitter<ISwarmMessagesChannelEvents<P, T, DbType>>).emit(
       ESwarmMessagesChannelEventName.CHANNEL_OPEN,
       this.id
     );
   }
 
   private __emitChannelClosed(): void {
-    (this.emitterChannelState as EventEmitter<ISwarmMessagesChannelEvents<P, DbType>>).emit(
+    (this.emitterChannelState as EventEmitter<ISwarmMessagesChannelEvents<P, T, DbType>>).emit(
       ESwarmMessagesChannelEventName.CHANNEL_CLOSED,
       this.id
     );
