@@ -8,7 +8,7 @@ import {
   ISwarmMessageChannelDescriptionRaw,
   ISwarmMessagesChannelDescriptionWithMetadata,
 } from '../../../../../types/swarm-messages-channel-instance.types';
-import { PromiseResolveType, IPromisePendingRejectable } from '../../../../../../../types/promise.types';
+import { PromiseResolveType, IPromisePendingRejectable, IPromiseRejectable } from '../../../../../../../types/promise.types';
 import {
   TSwrmMessagesChannelsListDBOWithGrantAccess,
   DBOFULL,
@@ -32,7 +32,10 @@ import {
   TSwarmMessageConstructorBodyMessage,
   ISwarmMessageBody,
 } from '../../../../../../swarm-message/swarm-message-constructor.types';
-import { TSwarmStoreDatabaseIteratorMethodArgument } from '../../../../../../swarm-store-class/swarm-store-class.types';
+import {
+  TSwarmStoreDatabaseIteratorMethodArgument,
+  TSwarmStoreDatabaseEntityUniqueIndex,
+} from '../../../../../../swarm-store-class/swarm-store-class.types';
 import { isDefined } from '../../../../../../../utils/common-utils/common-utils-main';
 import { SwarmMessagesChannelDescriptionWithMeta } from '../../../../../swarm-messages-channels-subclasses/swarm-messages-channel-description-with-meta/swarm-messages-channel-description-with-meta';
 import { createRejectablePromiseByNativePromise } from '../../../../../../../utils/common-utils/commom-utils.promies';
@@ -55,9 +58,14 @@ import {
   ESwarmMessagesChannelsListEventName,
   ISwarmMessagesChannelsListEvents,
 } from '../../../../../types/swarm-messages-channels-list-events.types';
-import { TSwarmChannelId } from '../../../../../../../../.ignored/swarm-channel/swarm-channel.types';
 import { TTypedEmitter } from '../../../../../../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 import { ISwarmMessagesChannelsListDatabaseEvents } from '../../../../../types/swarm-messages-channels-list-events.types';
+import { TSwarmMessageDatabaseMessagesCached } from '../../../../../../swarm-messages-database/swarm-messages-database.types';
+import { TSwarmMessagesChannelId } from '../../../../../types/swarm-messages-channel-instance.types';
+import { ESwarmMessagesDatabaseCacheEventsNames } from '../../../../../../swarm-messages-database/swarm-messages-database.const';
+import { mergeMaps } from 'utils/common-utils/common-utils-maps';
+import { debounce } from 'utils/throttling-utils';
+import { EMIT_CHANNELS_DESCRIPTIONS_MAP_CACHE_UPDATE_EVENT_DEBOUNCE_MS } from './swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.fabric.const';
 
 export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandlerClass<
   P extends ESwarmStoreConnector,
@@ -97,6 +105,12 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       return Boolean(this.__databaseConnectionOrUndefined?.isReady);
     }
 
+    protected get _swarmChannelsDescriptionsCachedMap(): Readonly<
+      Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>
+    > {
+      return this.__swarmChannelsDescriptionsCachedMap;
+    }
+
     private readonly __additionalUtils: Readonly<IAdditionalUtils<P, T, MD, CTX, DBO>>;
 
     private get _additionalUtils(): Readonly<IAdditionalUtils<P, T, MD, CTX, DBO>> {
@@ -127,6 +141,39 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       | PromiseResolveType<ReturnType<CARGS['utilities']['databaseConnectionFabric']>>
       | undefined;
 
+    /**
+     * Immutable cache of swarm messages channels list.
+     * Is updated in realtime by removing/adding event
+     * of a channel's list database.
+     *
+     * Cache must be updated before events aboout adding/removing channel description
+     * will be emitted because of a consistency reasons.
+     *
+     * @private
+     * @type {Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any>>}
+     * @memberof SwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler
+     */
+    private __swarmChannelsDescriptionsCachedMap: Readonly<
+      Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>
+    > = new Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>();
+
+    /**
+     * If an active swarm channels descriptions cached map
+     * update process is in progress then this property will
+     * be set to a promise that is responsible to this update
+     * process.
+     * Before add any description to the cached descriptions map
+     * method must wait for this promise. If this promise will be
+     * cancelled, then adding of the channel description must
+     * be cancelled too, because it means that a newer descriptions
+     * will be set into the cached map.
+     *
+     * @private
+     * @type {(Promise<void> | undefined)}
+     * @memberof SwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler
+     */
+    private __swarmChannelsDescriptionsCachedMapActiveUpdatePromise: IPromiseRejectable<void, Error> | undefined;
+
     constructor(constructorArguments: CARGS) {
       super(constructorArguments);
       this._validateAdditionalUtils(additionalUtils);
@@ -143,7 +190,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
 
       const promiseCloseCurrentDatabaseConnection = this.__closeCurrentDatabaseConnection();
 
-      this.__unsetDatabaseConnection();
+      this.__resetInstanceOnDatabaseClosedExpectedly();
       await promiseCloseCurrentDatabaseConnection;
     }
 
@@ -153,7 +200,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       const databaseConnection = await this._getSwarmMessagesKeyValueDatabaseConnection();
 
       this.__stopConnectionPendingToACurrentDatabase();
-      this.__unsetDatabaseConnection();
+      this.__resetInstanceOnDatabaseClosedExpectedly();
       await databaseConnection.drop();
     }
 
@@ -260,11 +307,10 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       eventName: E,
       ...args: Parameters<ISwarmMessagesChannelsListDatabaseEvents<P, T, any>[E]>
     ): void {
-      // TODO - resolve cast to any
       (this.__emitter as EventEmitter<ISwarmMessagesChannelsListDatabaseEvents<P, T, any>>).emit(eventName, ...args);
     }
 
-    protected _getChannelIdByDatabaseKey(key: TSwarmStoreDatabaseEntityKey<P>): TSwarmChannelId {
+    protected _getChannelIdByDatabaseKey(key: TSwarmStoreDatabaseEntityKey<P>): TSwarmMessagesChannelId {
       const { getChannelIdByDatabaseKey } = this._getUtilities();
       return getChannelIdByDatabaseKey(key);
     }
@@ -319,6 +365,115 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       if (this.__databaseConnectionOrUndefined?.isReady) {
         this.__emitDatabaseConnectorIsReady();
       }
+    }
+
+    private __setCurrentSwarmMessagesChannelsDescriptiopnsCachedMap(
+      swarmChannelsDescriptionsMap: Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>
+    ): void {
+      this.__swarmChannelsDescriptionsCachedMap = swarmChannelsDescriptionsMap;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/member-ordering
+    private __emitChannelsDescriptionsMapCacheUpdateEvent = debounce((): void => {
+      this._emitEventDbHandler(
+        ESwarmMessagesChannelsListEventName.CHANNELS_CACHE_UPDATED,
+        this.__swarmChannelsDescriptionsCachedMap
+      );
+    }, EMIT_CHANNELS_DESCRIPTIONS_MAP_CACHE_UPDATE_EVENT_DEBOUNCE_MS);
+
+    private __setCurrentSwarmMessagesChannelsDescriptiopnsCachedMapAndEmitCacheUpdateEvent(
+      swarmChannelsDescriptionsMap: Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>
+    ): void {
+      this.__setCurrentSwarmMessagesChannelsDescriptiopnsCachedMap(swarmChannelsDescriptionsMap);
+      this.__emitChannelsDescriptionsMapCacheUpdateEvent();
+    }
+
+    private __clearCurrentSwarmMessagesChannelsDescriptiopnsCachedMap(): void {
+      this.__swarmChannelsDescriptionsCachedMap.clear();
+    }
+
+    private __mergeAndSetSwarmMessagesChannelsDescriptiopnsCachedMap(
+      swarmChannelsDescriptionsMapToMerge: Map<
+        TSwarmMessagesChannelId,
+        ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error
+      >
+    ): void {
+      const copyCachedMerged = mergeMaps(
+        this.__getCopyCurrentSwarmMessagesChannelsDescriptionsCachedMap(),
+        swarmChannelsDescriptionsMapToMerge
+      );
+      this.__setCurrentSwarmMessagesChannelsDescriptiopnsCachedMap(copyCachedMerged);
+    }
+
+    private __mergeSetAndEmitSwarmMessagesChannelsDescriptionsCachedMapUpdateEvent(
+      swarmChannelsDescriptionsMapToMerge: Map<
+        TSwarmMessagesChannelId,
+        ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error
+      >
+    ): void {
+      this.__mergeAndSetSwarmMessagesChannelsDescriptiopnsCachedMap(swarmChannelsDescriptionsMapToMerge);
+      this.__emitChannelsDescriptionsMapCacheUpdateEvent();
+    }
+
+    private __setCurrentSwarmMessagesChannelDescriptionsMapCahcedUpdatingPromise(
+      promiseChannelsDescriptionsMapUpdate: Promise<void>
+    ): IPromiseRejectable<void, Error> {
+      this.__swarmChannelsDescriptionsCachedMapActiveUpdatePromise = createRejectablePromiseByNativePromise(
+        promiseChannelsDescriptionsMapUpdate
+      );
+      return this.__swarmChannelsDescriptionsCachedMapActiveUpdatePromise;
+    }
+
+    private __unsetCurrentSwarmMessagesChannelDescriptionsMapCahcedUpdatingPromise(): void {
+      this.__swarmChannelsDescriptionsCachedMapActiveUpdatePromise = undefined;
+    }
+
+    private __setCurrentSwarmMessagesChannelDescriptionsMapCahcedUpdatingPromiseAndUnsetOnFinish(
+      promiseChannelsDescriptionsMapUpdate: Promise<void>
+    ): void {
+      const promiseWaitingFor = this.__setCurrentSwarmMessagesChannelDescriptionsMapCahcedUpdatingPromise(
+        promiseChannelsDescriptionsMapUpdate
+      );
+      promiseWaitingFor.finally(() => {
+        if (this.__swarmChannelsDescriptionsCachedMapActiveUpdatePromise === promiseWaitingFor) {
+          this.__unsetCurrentSwarmMessagesChannelDescriptionsMapCahcedUpdatingPromise();
+        }
+      });
+    }
+
+    private __rejectCurrentSwarmMessagesChannelDescriptionsMapCahcedUpdatingPromise(error?: Error): void {
+      const swarmChannelsDescriptionsCachedMapActiveUpdatePromise = this.__swarmChannelsDescriptionsCachedMapActiveUpdatePromise;
+      if (swarmChannelsDescriptionsCachedMapActiveUpdatePromise) {
+        swarmChannelsDescriptionsCachedMapActiveUpdatePromise.reject(error || new Error('Rejected by unknown reason'));
+      }
+      this.__unsetCurrentSwarmMessagesChannelDescriptionsMapCahcedUpdatingPromise();
+    }
+
+    /**
+     * Helps only only without if a queue of a pending promises
+     * is not neccessary.
+     *
+     * Really queue can be achived only with usage of the pattern into a function
+     * which set the this.__swarmChannelsDescriptionsCachedMapActiveUpdatePromise in the
+     * current event loop, right when the  this.__swarmChannelsDescriptionsCachedMapActiveUpdatePromise
+     * unset.
+     * while (this.__swarmChannelsDescriptionsCachedMapActiveUpdatePromise) {
+     *    await this.__swarmChannelsDescriptionsCachedMapActiveUpdatePromise;
+     *  }
+     *
+     * @private
+     * @returns {Promise<void>}
+     * @memberof SwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler
+     */
+    private async __waitTillCurrentSwarmMessagesChannelDescriptionsMapCahcedUpdating(): Promise<void> {
+      await this.__swarmChannelsDescriptionsCachedMapActiveUpdatePromise;
+    }
+
+    private __resetInstanceOnDatabaseClosedExpectedly(): void {
+      this.__unsetDatabaseConnection();
+      this.__clearCurrentSwarmMessagesChannelsDescriptiopnsCachedMap();
+      this.__rejectWithErrorSwarmMessagesKeyValueDatabaseConnectionPending(new Error('Database connection is closed'));
+      this.__unsetCurrentSwarmMessagesChannelDescriptionsMapCahcedUpdatingPromise();
     }
 
     private async _getSwarmMessagesKeyValueDatabaseConnection(): Promise<
@@ -376,6 +531,12 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       return swarmMessagesChannelDescriptionDeserialized;
     }
 
+    private async __getChannelDescriptionBySwarmMessageDecrypted(
+      swarmMessageDecrypted: MD
+    ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any>> {
+      return await this._getValidSwarmMessagesChannelDescriptionFromSwarmMessageBody(swarmMessageDecrypted.bdy);
+    }
+
     private async _getSwarmChannelDescriptionRawBySwarmDbRequestResult(
       requestResult: ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD>
     ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any>> {
@@ -384,8 +545,8 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       if (messageDecryptedOrError instanceof Error) {
         throw new Error(`${messageDecryptedOrError.message}`);
       }
-      const swarmMessagesChannelDescriptionDeserialized = await this._getValidSwarmMessagesChannelDescriptionFromSwarmMessageBody(
-        messageDecryptedOrError.bdy
+      const swarmMessagesChannelDescriptionDeserialized = await this.__getChannelDescriptionBySwarmMessageDecrypted(
+        messageDecryptedOrError
       );
       return swarmMessagesChannelDescriptionDeserialized;
     }
@@ -567,9 +728,162 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       } as unknown) as DBOFULL<P, T, MD, CTX, DBO>;
     }
 
+    private __getNewSwarmMessagesChannelsDescriptiopnsCachedMap(): Map<
+      TSwarmMessagesChannelId,
+      ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error
+    > {
+      return new Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>();
+    }
+
+    private __getCopyCurrentSwarmMessagesChannelsDescriptionsCachedMap(): Map<
+      TSwarmMessagesChannelId,
+      ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error
+    > {
+      return new Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>(
+        this.__swarmChannelsDescriptionsCachedMap as Map<
+          TSwarmMessagesChannelId,
+          ISwarmMessageChannelDescriptionRaw<P, T, any, any>
+        >
+      );
+    }
+
+    private async __addSwarmChannelDescriptionToSwarmChannelsDescriptionsMapBySwarmMessage(
+      swarmChannelsDescriptionsMap: Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>,
+      swarmMessage: MD,
+      swarmMessageDatabaseKey: TSwarmStoreDatabaseEntityUniqueIndex<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>
+    ): Promise<void> {
+      const swarmChannelDescription = await this.__getChannelDescriptionBySwarmMessageDecrypted(swarmMessage);
+      const swarmChannelId = this._getChannelIdByDatabaseKey(swarmMessageDatabaseKey);
+
+      swarmChannelsDescriptionsMap.set(swarmChannelId, swarmChannelDescription);
+    }
+
+    private __addErrorToSwarmChannelsDescriptionsMap(
+      swarmChannelsDescriptionsMap: Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>,
+      error: Error,
+      swarmMessageDatabaseKey: TSwarmStoreDatabaseEntityUniqueIndex<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>
+    ) {
+      const swarmChannelId = this._getChannelIdByDatabaseKey(swarmMessageDatabaseKey);
+
+      swarmChannelsDescriptionsMap.set(swarmChannelId, error);
+    }
+
+    private async __addSwarmChannelDescriptionOrErrorIfRejectedToSwarmChannelsDescriptionsMapBySwarmMessage(
+      swarmChannelsDescriptionsMap: Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>,
+      swarmMessage: MD,
+      swarmMessageDatabaseKey: TSwarmStoreDatabaseEntityUniqueIndex<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>
+    ): Promise<void> {
+      return await this.__addSwarmChannelDescriptionToSwarmChannelsDescriptionsMapBySwarmMessage(
+        swarmChannelsDescriptionsMap,
+        swarmMessage,
+        swarmMessageDatabaseKey
+      ).catch((errorOccurred) =>
+        this.__addErrorToSwarmChannelsDescriptionsMap(swarmChannelsDescriptionsMap, errorOccurred, swarmMessageDatabaseKey)
+      );
+    }
+
+    private __deleteSwarmChannelDescriptionFromSwarmChannelsDescriptionsMapCachedBySwarmMessage(
+      swarmChannelsDescriptionsMap: Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>,
+      swarmMessageDatabaseKey: TSwarmStoreDatabaseEntityUniqueIndex<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>
+    ) {
+      const swarmChannelId = this._getChannelIdByDatabaseKey(swarmMessageDatabaseKey);
+
+      swarmChannelsDescriptionsMap.delete(swarmChannelId);
+    }
+
+    private async __updateCachedChannelsListByCachedMessages(
+      cachedMessages: TSwarmMessageDatabaseMessagesCached<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE, MD>
+    ): Promise<void> {
+      const updatedChannelsListDescriptionsCached = this.__getNewSwarmMessagesChannelsDescriptiopnsCachedMap();
+      const swarmMessagesUpdates: Promise<void>[] = [];
+
+      cachedMessages.forEach((swarmMessageWithDescription, swarmMessageKeyInKVDatabase) => {
+        const swarmMessage = swarmMessageWithDescription.message;
+
+        if (swarmMessage instanceof Error) {
+          this.__addErrorToSwarmChannelsDescriptionsMap(
+            updatedChannelsListDescriptionsCached,
+            swarmMessage,
+            swarmMessageKeyInKVDatabase
+          );
+          return;
+        }
+        swarmMessagesUpdates.push(
+          this.__addSwarmChannelDescriptionOrErrorIfRejectedToSwarmChannelsDescriptionsMapBySwarmMessage(
+            updatedChannelsListDescriptionsCached,
+            swarmMessage,
+            swarmMessageKeyInKVDatabase
+          )
+        );
+      });
+      await Promise.all(swarmMessagesUpdates);
+      this.__setCurrentSwarmMessagesChannelsDescriptiopnsCachedMapAndEmitCacheUpdateEvent(updatedChannelsListDescriptionsCached);
+    }
+
+    private __updateChannelsMapCachedByCachedMessages(
+      cachedMessages: TSwarmMessageDatabaseMessagesCached<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE, MD>
+    ): void {
+      this.__rejectCurrentSwarmMessagesChannelDescriptionsMapCahcedUpdatingPromise(new Error('Rejected by new inconming update'));
+      this.__setCurrentSwarmMessagesChannelDescriptionsMapCahcedUpdatingPromiseAndUnsetOnFinish(
+        this.__updateCachedChannelsListByCachedMessages(cachedMessages)
+      );
+    }
+
+    private __updateChannelsDescriptionsMapCachedByCurrentDatabaseConnection(): void {
+      const cachedMessages = this.__databaseConnectionOrUndefined?.cachedMessages;
+
+      if (cachedMessages) {
+        this.__updateChannelsMapCachedByCachedMessages(cachedMessages);
+      }
+    }
+
+    private async __addSwarmChannelDescriptionToTheChannelsDescriptionsMapCached(
+      message: MD,
+      key: TSwarmStoreDatabaseEntityKey<P>
+    ): Promise<void> {
+      while (this.__swarmChannelsDescriptionsCachedMapActiveUpdatePromise) {
+        await this.__swarmChannelsDescriptionsCachedMapActiveUpdatePromise;
+      }
+
+      const temporaryMap = new Map();
+      const cahceUpdatingPromise = this.__addSwarmChannelDescriptionOrErrorIfRejectedToSwarmChannelsDescriptionsMapBySwarmMessage(
+        temporaryMap,
+        message,
+        key
+      );
+
+      this.__setCurrentSwarmMessagesChannelDescriptionsMapCahcedUpdatingPromiseAndUnsetOnFinish(cahceUpdatingPromise);
+      await cahceUpdatingPromise;
+      this.__mergeSetAndEmitSwarmMessagesChannelsDescriptionsCachedMapUpdateEvent(temporaryMap);
+    }
+
+    private async __deleteSwarmChannelDescriptionToTheChannelsDescriptionsMapCached(
+      key: TSwarmStoreDatabaseEntityKey<P>
+    ): Promise<void> {
+      await this.__waitTillCurrentSwarmMessagesChannelDescriptionsMapCahcedUpdating();
+
+      const copyChannelsDescriptionsCachedMap = this.__getCopyCurrentSwarmMessagesChannelsDescriptionsCachedMap();
+
+      this.__deleteSwarmChannelDescriptionFromSwarmChannelsDescriptionsMapCachedBySwarmMessage(
+        copyChannelsDescriptionsCachedMap,
+        key
+      );
+      this.__setCurrentSwarmMessagesChannelsDescriptiopnsCachedMapAndEmitCacheUpdateEvent(copyChannelsDescriptionsCachedMap);
+    }
+
     private __handleDatabaseReadyToUse = (): void => {
       this.__emitDatabaseConnectorIsReady();
+      this.__updateChannelsDescriptionsMapCachedByCurrentDatabaseConnection();
     };
+
+    private __handleDatabaseCachedListUpdated = (
+      messagesCached: TSwarmMessageDatabaseMessagesCached<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE, MD> | undefined
+    ): void => {
+      if (messagesCached) {
+        this.__updateChannelsMapCachedByCachedMessages(messagesCached);
+      }
+    };
+
     private __handleDatabaseClosedUnexpected = (): void => {
       this.__unsetCurrentDatabaseConnectionListeners();
       this.__unsetDatabaseConnection();
@@ -588,8 +902,13 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       // for key-value store it will be the key
       key?: TSwarmStoreDatabaseEntityKey<P>
     ): Promise<void> => {
+      if (!key) {
+        throw new Error('A database key must be defined for a message with swarm channel description');
+      }
+      // for consistensy not wrapped in try catch, because if there if no channel in the cahce it should not be emitted.
+      await this.__addSwarmChannelDescriptionToTheChannelsDescriptionsMapCached(message, key);
       try {
-        const channelDescription = await this._getValidSwarmMessagesChannelDescriptionFromSwarmMessageBody(message.bdy);
+        const channelDescription = await this.__getChannelDescriptionBySwarmMessageDecrypted(message);
         this._emitEventDbHandler(ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_UPDATE, channelDescription);
       } catch (err) {
         console.error(`__handleMessageAddedInDatabase`, err);
@@ -597,7 +916,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       }
     };
 
-    private __handleMessageRemovedFromDatabase = (
+    private __handleMessageRemovedFromDatabase = async (
       dbName: string,
       // the user who removed the message
       userId: TSwarmMessageUserIdentifierSerialized,
@@ -608,7 +927,9 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       // for key-value store it will be the key for the value,
       // for feed store it will be hash of the message which deleted by this one.
       key: TSwarmStoreDatabaseEntityKey<P>
-    ): void => {
+    ): Promise<void> => {
+      // for consistensy not wrapped in try catch, because if there if no channel in the cahce it should not be emitted.
+      await this.__deleteSwarmChannelDescriptionToTheChannelsDescriptionsMapCached(key);
       this._emitEventDbHandler(
         ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_REMOVED,
         this._getChannelIdByDatabaseKey(key)
@@ -640,6 +961,10 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       databaseConnection.emitter[eventEmitterMethodName as 'addListener'](
         ESwarmMessageStoreEventNames.NEW_MESSAGE,
         this.__handleMessageAddedInDatabase
+      );
+      databaseConnection.emitter[eventEmitterMethodName as 'addListener'](
+        ESwarmMessagesDatabaseCacheEventsNames.CACHE_UPDATED,
+        this.__handleDatabaseCachedListUpdated
       );
     }
   }

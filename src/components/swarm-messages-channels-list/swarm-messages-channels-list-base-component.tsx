@@ -25,7 +25,7 @@ export interface ISwarmMessagesChannelsListState<
   T extends TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted
 > {
-  channelsList: ISwarmMessagesChannelsDescriptionsList<P, T, MD> | undefined;
+  channelsListInatance: ISwarmMessagesChannelsDescriptionsList<P, T, MD> | undefined;
   isChannelsListReady: boolean;
   isChannelsListClosed: boolean;
   channelsDescriptions: Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any>>;
@@ -35,16 +35,15 @@ export interface ISwarmMessagesChannelsListState<
 export class SwarmMessagesChannelsListComponentBase<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  MD extends ISwarmMessageInstanceDecrypted,
-  STATE extends ISwarmMessagesChannelsListState<P, T, MD> = ISwarmMessagesChannelsListState<P, T, MD>
-> extends React.PureComponent<ISwarmMessagesChannelsListProps<P, T, MD>, STATE> {
-  public state: STATE = ({
-    channelsList: undefined,
+  MD extends ISwarmMessageInstanceDecrypted
+> extends React.PureComponent<ISwarmMessagesChannelsListProps<P, T, MD>, ISwarmMessagesChannelsListState<P, T, MD>> {
+  public state: ISwarmMessagesChannelsListState<P, T, MD> = {
+    channelsListInatance: undefined,
     isChannelsListReady: false,
     isChannelsListClosed: false,
-    channelsDescriptions: new Map(),
+    channelsDescriptions: new Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any>>(),
     errorsList: [],
-  } as unknown) as STATE;
+  };
 
   constructor(props: ISwarmMessagesChannelsListProps<P, T, MD>) {
     super(props);
@@ -52,6 +51,7 @@ export class SwarmMessagesChannelsListComponentBase<
     this._onChannelsListReady = this._onChannelsListReady.bind(this);
     this._onChannelDescriptionUpdate = this._onChannelDescriptionUpdate.bind(this);
     this._onChannelDescriptionRemoved = this._onChannelDescriptionRemoved.bind(this);
+    this._onChannelsListCachedUpdated = this._onChannelsListCachedUpdated.bind(this);
     this._renderChannelDescription = this._renderChannelDescription.bind(this);
   }
 
@@ -63,14 +63,18 @@ export class SwarmMessagesChannelsListComponentBase<
     this._unsetChannelsListEventsListeners();
   }
 
-  public componentDidUpdate(prevProps: ISwarmMessagesChannelsListProps<P, T, MD>, prevState: STATE) {
-    if (this.state.channelsList && prevState.channelsList !== this.state.channelsList) {
+  public componentDidUpdate(
+    prevProps: ISwarmMessagesChannelsListProps<P, T, MD>,
+    prevState: ISwarmMessagesChannelsListState<P, T, MD>
+  ) {
+    if (this.state.channelsListInatance && prevState.channelsListInatance !== this.state.channelsListInatance) {
       this._setChannelsListEventsListeners();
     }
   }
 
   public render() {
-    const { channelsList } = this.state;
+    const { channelsListInatance: channelsList } = this.state;
+    debugger;
     if (!channelsList) {
       return 'Channels list is not ready';
     }
@@ -78,13 +82,17 @@ export class SwarmMessagesChannelsListComponentBase<
       <div>
         {this._renderChannelsListState()}
         <br />
+        Channels list cached:
+        <div>{this.renderChannelsDescriptionsCached()}</div>
+        <br />
+        Channels list:
         <div>{this._renderChannelsDescriptions()}</div>
       </div>
     );
   }
 
   protected _renderChannelsListState(): React.ReactElement {
-    const { channelsList, isChannelsListReady, isChannelsListClosed } = this.state;
+    const { channelsListInatance: channelsList, isChannelsListReady, isChannelsListClosed } = this.state;
     if (!channelsList) {
       return <p>Channels list is not exists</p>;
     }
@@ -100,12 +108,14 @@ export class SwarmMessagesChannelsListComponentBase<
     channelDescription: ISwarmMessageChannelDescriptionRaw<P, T, any, any>
   ): React.ReactElement {
     const { id, name, tags, version, dbType } = channelDescription;
+
     return (
       <div id={id}>
-        Channel {name} ver.{version}.
+        Channel {name}:
         <ul>
+          <li>Description version: {version}</li>
           <li>Id: {id}</li>
-          <li>Type: {dbType}</li>
+          <li>Channel database type: {dbType}</li>
           <li>Tags: {tags.join(',')}</li>
         </ul>
       </div>
@@ -118,8 +128,32 @@ export class SwarmMessagesChannelsListComponentBase<
     return <div>{[...channelsDescriptions.values()].map(this._renderChannelDescription)}</div>;
   }
 
+  protected renderChannelsDescriptionsCached(): React.ReactElement {
+    const channelsDescriptionsMapCached = (this.state as any).channelsListCached as
+      | Readonly<Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>>
+      | undefined;
+
+    if (!channelsDescriptionsMapCached) {
+      return <p>No channels in cached list</p>;
+    }
+    return (
+      <div>
+        {[...channelsDescriptionsMapCached.values()].map((channelDescription, channelId) => {
+          if (channelDescription instanceof Error) {
+            return (
+              <p>
+                Failed to load a channel with id {channelId} because of the error ${channelDescription.message}{' '}
+              </p>
+            );
+          }
+          return this._renderChannelDescription(channelDescription);
+        })}
+      </div>
+    );
+  }
+
   protected _getHandledChannelsList(): ISwarmMessagesChannelsDescriptionsList<P, T, MD> {
-    const { channelsList } = this.state;
+    const { channelsListInatance: channelsList } = this.state;
     if (!channelsList) {
       throw new Error('Channels list is not exists in the component state');
     }
@@ -132,7 +166,10 @@ export class SwarmMessagesChannelsListComponentBase<
     if (!channelsList) {
       throw new Error('There is no active instance of swarm messages channels list');
     }
-    this.setState({ channelsList, isChannelsListReady: channelsList.isReady });
+    this.setState({
+      channelsListInatance: channelsList,
+      isChannelsListReady: channelsList.isReady,
+    });
   }
 
   protected _addChannelDescriptionInMap(
@@ -236,6 +273,9 @@ export class SwarmMessagesChannelsListComponentBase<
   protected _onChannelDescriptionUpdate(
     channelDescriptionUpdatadOrNew: ISwarmMessageChannelDescriptionRaw<P, T, any, any>
   ): void {
+    // TODO - verify that the channelDescriptionUpdatadOrNew contains DbOptions
+    // TODO - add reading cashed descriptions of channel from the database connector
+    // TODO - emit update cached list of channels descriptions by the database connector event
     debugger;
     this._updateChannelDescriptionInDescriptionsList(channelDescriptionUpdatadOrNew);
   }
@@ -267,6 +307,15 @@ export class SwarmMessagesChannelsListComponentBase<
     }
   }
 
+  protected _onChannelsListCachedUpdated(
+    channelsListCached: Readonly<Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>>
+  ): void {
+    debugger;
+    this.setState({
+      channelsListCached,
+    } as any);
+  }
+
   protected _setChannelsListEventsListeners(): void {
     this.__setOrUnsetChannelsListEventsListeners('addListener');
   }
@@ -278,6 +327,8 @@ export class SwarmMessagesChannelsListComponentBase<
   private __setOrUnsetChannelsListEventsListeners(operation: 'addListener' | 'removeListener'): void {
     const channelsList = this._getHandledChannelsList();
     const channelsListEmitter = channelsList.emitter;
+
+    // TODO - seems channel events are not emitted
 
     channelsListEmitter[operation as 'addListener'](
       ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_UPDATE,
@@ -298,6 +349,11 @@ export class SwarmMessagesChannelsListComponentBase<
       ESwarmMessagesChannelsListEventName.CHANNELS_LIST_CLOSED,
       // eslint-disable-next-line @typescript-eslint/unbound-method
       this._onChannelsListClosed
+    );
+    channelsListEmitter[operation as 'addListener'](
+      ESwarmMessagesChannelsListEventName.CHANNELS_CACHE_UPDATED,
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      this._onChannelsListCachedUpdated
     );
   }
 }

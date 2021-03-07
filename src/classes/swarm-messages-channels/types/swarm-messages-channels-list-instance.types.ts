@@ -196,6 +196,20 @@ export interface ISwarmMessagesChannelsDescriptionsList<
   readonly isReady: boolean;
 
   /**
+   * Immutable channels decriptions map cached and read only.
+   * Because the map is immutable an updates of the list
+   * can be lisened with event "ESwarmMessagesChannelsListEventName.CHANNELS_CACHE_UPDATED".
+   *
+   * @type {(Readonly<
+   *     Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>
+   *   >)}
+   * @memberof ISwarmMessagesChannelsDescriptionsList
+   */
+  readonly swarmChannelsDescriptionsCachedMap: Readonly<
+    Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>
+  >;
+
+  /**
    * Add a new channel byt it's description in the channels list by it's description
    * or update a description of the existing one.
    *

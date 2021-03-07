@@ -70,6 +70,12 @@ export function getSwarmMessagesChannelsListVersionOneClass<
       return !this.__isChannelsListClosed && this._isDatabaseReady;
     }
 
+    public get swarmChannelsDescriptionsCachedMap(): Readonly<
+      Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>
+    > {
+      return this._swarmChannelsDescriptionsCachedMap;
+    }
+
     private __emitterChannelsList = getEventEmitterInstance<ISwarmMessagesChannelsListEvents<P, T, any>>();
 
     /**

@@ -22,6 +22,7 @@ import { TSwarmMessageConstructorBodyMessage } from '../../../../../swarm-messag
 import { ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric } from '../../../../types/swarm-messages-channels-list-instance.types';
 import { TTypedEmitter } from '../../../../../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 import { ISwarmMessagesChannelsListDatabaseEvents } from '../../../../types/swarm-messages-channels-list-events.types';
+import { TSwarmMessagesChannelId } from '../../../../types/swarm-messages-channel-instance.types';
 import {
   ISwarmMessagesChannelsListV1GrantAccessConstantArguments,
   ISwarmMessagesChannelsListV1GrantAccessVariableArguments,
@@ -164,6 +165,10 @@ export abstract class AbstractSwarmMessagesChannelsListVersionOneDatabaseConnect
   protected abstract readonly _emitterDatabaseHandler: TTypedEmitter<ISwarmMessagesChannelsListDatabaseEvents<P, T, any>>;
 
   protected abstract readonly _isDatabaseReady: boolean;
+
+  protected abstract readonly _swarmChannelsDescriptionsCachedMap: Readonly<
+    Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>
+  >;
 
   protected abstract async _readSwarmMessagesChannelDescriptionOrUndefinedForDbKey(
     dbbKey: TSwarmStoreDatabaseEntityKey<P>

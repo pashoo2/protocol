@@ -34,6 +34,10 @@ export enum ESwarmMessagesChannelsListEventName {
    * Channel description was removed from the list
    */
   CHANNEL_DESCRIPTION_REMOVED = 'CHANNEL_DESCRIPTION_REMOVED',
+  /**
+   * Emitted each time channels cache is updated.
+   */
+  CHANNELS_CACHE_UPDATED = 'CHANNELS_CACHE_UPDATED',
 }
 
 /**
@@ -71,6 +75,14 @@ export interface ISwarmMessagesChannelsListDatabaseEvents<
    * @memberof ISwarmMessagesChannelsListEvents
    */
   [ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_REMOVED]: (channelRemovedId: TSwarmMessagesChannelId) => unknown;
+  /**
+   * Channels description map cached is updated.
+   *
+   * @memberof ISwarmMessagesChannelsListDatabaseEvents
+   */
+  [ESwarmMessagesChannelsListEventName.CHANNELS_CACHE_UPDATED]: (
+    channelsMapCached: Readonly<Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>>
+  ) => unknown;
 }
 
 /**
