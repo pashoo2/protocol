@@ -24,7 +24,10 @@ import { ifSwarmMessagesDecryptedEqual } from '../../../../../swarm-message/swar
 import { TSwarmMessagesDatabaseMessagesCacheStore } from '../../../swarm-messages-database-cache/swarm-messages-database-cache.types';
 import { ISwarmMessagesDatabaseMessagesCacheStoreExtendedDefferedMethods } from '../../swarm-messages-database-messages-cached-store.types';
 import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../../../swarm-message-store/types/swarm-message-store.types';
-import { _checkWhetherSameSwarmMessagesDecrypted } from '../../../swarm-messages-database-cache/swarm-messages-database-cache.utils';
+import {
+  _whetherSwarmMessagesDecryptedEqual,
+  compareTwoSwarmMessageStoreMessagingRequestWithMetaResults,
+} from '../../../swarm-messages-database-cache/swarm-messages-database-cache.utils';
 import { TSwarmStoreDatabaseEntityUniqueIndex } from '../../../../../swarm-store-class/swarm-store-class.types';
 
 export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
@@ -185,9 +188,9 @@ export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
     return false;
   }
 
-  protected _checkWhetherUpdatValue(
-    source: ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined,
-    target: ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined
+  protected _checkWhetherToUpdateValue<T extends ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD>>(
+    source: T | undefined,
+    target: T | undefined
   ): boolean {
     if (!target && !this._canUpdateWithEmptyValue()) {
       return false;
@@ -198,10 +201,7 @@ export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
     if (!source && target) {
       return true;
     }
-    if (source === target) {
-      return false;
-    }
-    return !source || !_checkWhetherSameSwarmMessagesDecrypted(source, target);
+    return !source || !compareTwoSwarmMessageStoreMessagingRequestWithMetaResults(source, target);
   }
 
   protected _checkWhetherUpdateKey(
@@ -209,7 +209,7 @@ export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
     value: ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD>,
     entriesCached: TSwarmMessageDatabaseMessagesCached<P, DbType, MD>
   ) {
-    return this._checkWhetherUpdatValue(entriesCached.get(key), value);
+    return this._checkWhetherToUpdateValue(entriesCached.get(key), value);
   }
 
   protected _clearEntriesCached(entriesCached: TSwarmMessageDatabaseMessagesCached<P, DbType, MD>) {

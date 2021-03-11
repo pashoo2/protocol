@@ -186,6 +186,7 @@ export const getMessageDescriptionForMessageWithMeta = <
     messageEntry: swarmMessageWithMeta.message,
   };
 };
+
 /**
  * Check whether the arguments are a values have the valid SwarmMessageDecrypted format
  * and the same.
@@ -194,10 +195,10 @@ export const getMessageDescriptionForMessageWithMeta = <
  * @param {ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector>} second
  * @returns {boolean}
  */
-export const _checkWhetherSameSwarmMessagesDecrypted = (
-  first: ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector, ISwarmMessageDecrypted> | undefined,
-  second: ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector, ISwarmMessageDecrypted> | undefined
-): boolean => {
+export function _whetherSwarmMessagesDecryptedEqual<T extends ISwarmMessageDecrypted | Error>(
+  first: T | undefined,
+  second: T | undefined
+): boolean {
   if (!first || !second || first instanceof Error || second instanceof Error) {
     return false;
   }
@@ -206,4 +207,32 @@ export const _checkWhetherSameSwarmMessagesDecrypted = (
     isValidSwarmMessageDecryptedFormat(second) &&
     ifSwarmMessagesDecryptedEqual(first, second)
   );
-};
+}
+
+export function compareTwoSwarmMessageStoreMessagingRequestWithMetaResults<
+  T extends ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector, ISwarmMessageDecrypted>
+>(firstResult: T | undefined, secondResult: T | undefined): boolean {
+  if (firstResult === secondResult) {
+    return true;
+  }
+  if (firstResult == null) {
+    return secondResult == null;
+  }
+  if (secondResult == null) {
+    return firstResult == null;
+  }
+  if (firstResult.dbName !== secondResult.dbName) {
+    return false;
+  }
+
+  const firstResultSwarmMessage = firstResult.message;
+  const secondResultSwarmMessage = secondResult.message;
+
+  if (firstResultSwarmMessage === secondResultSwarmMessage) {
+    return true;
+  }
+  if (firstResultSwarmMessage instanceof Error !== secondResultSwarmMessage instanceof Error) {
+    return false;
+  }
+  return _whetherSwarmMessagesDecryptedEqual(firstResultSwarmMessage, secondResultSwarmMessage);
+}

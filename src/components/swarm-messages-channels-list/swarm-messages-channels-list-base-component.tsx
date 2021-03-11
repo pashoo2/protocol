@@ -11,6 +11,7 @@ import {
   ISwarmMessageChannelDescriptionRaw,
 } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-instance.types';
 import { TSwarmMessagesChannelId } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-instance.types';
+import { cloneMap } from '../../utils/common-utils/common-utils-maps';
 
 export interface ISwarmMessagesChannelsListProps<
   P extends ESwarmStoreConnector,
@@ -28,7 +29,7 @@ export interface ISwarmMessagesChannelsListState<
   channelsListInatance: ISwarmMessagesChannelsDescriptionsList<P, T, MD> | undefined;
   isChannelsListReady: boolean;
   isChannelsListClosed: boolean;
-  channelsDescriptions: Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any>>;
+  channelsDescriptions: Readonly<Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>>;
   errorsList: Error[];
 }
 
@@ -41,7 +42,7 @@ export class SwarmMessagesChannelsListComponentBase<
     channelsListInatance: undefined,
     isChannelsListReady: false,
     isChannelsListClosed: false,
-    channelsDescriptions: new Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any>>(),
+    channelsDescriptions: new Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>(),
     errorsList: [],
   };
 
@@ -52,7 +53,7 @@ export class SwarmMessagesChannelsListComponentBase<
     this._onChannelDescriptionUpdate = this._onChannelDescriptionUpdate.bind(this);
     this._onChannelDescriptionRemoved = this._onChannelDescriptionRemoved.bind(this);
     this._onChannelsListCachedUpdated = this._onChannelsListCachedUpdated.bind(this);
-    this._renderChannelDescription = this._renderChannelDescription.bind(this);
+    this._renderChannelDescriptionOrError = this._renderChannelDescriptionOrError.bind(this);
   }
 
   public componentDidMount() {
@@ -65,9 +66,11 @@ export class SwarmMessagesChannelsListComponentBase<
 
   public componentDidUpdate(
     prevProps: ISwarmMessagesChannelsListProps<P, T, MD>,
-    prevState: ISwarmMessagesChannelsListState<P, T, MD>
+    { channelsListInatance: prevChannelsListInstance }: ISwarmMessagesChannelsListState<P, T, MD>
   ) {
-    if (this.state.channelsListInatance && prevState.channelsListInatance !== this.state.channelsListInatance) {
+    const { channelsListInatance } = this.state;
+    debugger;
+    if (channelsListInatance && prevChannelsListInstance !== channelsListInatance) {
       this._setChannelsListEventsListeners();
     }
   }
@@ -107,17 +110,34 @@ export class SwarmMessagesChannelsListComponentBase<
   protected _renderChannelDescription(
     channelDescription: ISwarmMessageChannelDescriptionRaw<P, T, any, any>
   ): React.ReactElement {
-    const { id, name, tags, version, dbType } = channelDescription;
+    const { name, tags, version, dbType } = channelDescription;
+    return (
+      <ul>
+        <li>Name: ${name}</li>
+        <li>Description version: {version}</li>
+        <li>Channel database type: {dbType}</li>
+        <li>Tags: {tags.join(',')}</li>
+      </ul>
+    );
+  }
+
+  protected _renderChannelDescriptionError(channelDescriptionError: Error): React.ReactElement {
+    return <>Error: {channelDescriptionError.message}</>;
+  }
+
+  protected _renderChannelDescriptionOrError(
+    channelDescription: ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error,
+    channelId: TSwarmMessagesChannelId
+  ): React.ReactElement {
+    const channelDescriptionLayout =
+      channelDescription instanceof Error
+        ? this._renderChannelDescriptionError(channelDescription)
+        : this._renderChannelDescription(channelDescription);
 
     return (
-      <div id={id}>
-        Channel {name}:
-        <ul>
-          <li>Description version: {version}</li>
-          <li>Id: {id}</li>
-          <li>Channel database type: {dbType}</li>
-          <li>Tags: {tags.join(',')}</li>
-        </ul>
+      <div key={channelId}>
+        Channel {channelId}:<br />
+        {channelDescriptionLayout}
       </div>
     );
   }
@@ -125,7 +145,13 @@ export class SwarmMessagesChannelsListComponentBase<
   protected _renderChannelsDescriptions(): React.ReactElement {
     const { channelsDescriptions } = this.state;
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    return <div>{[...channelsDescriptions.values()].map(this._renderChannelDescription)}</div>;
+    return (
+      <div>
+        {[...channelsDescriptions.entries()].map(([channelId, channelDescriptionOrError]) =>
+          this._renderChannelDescriptionOrError(channelDescriptionOrError, channelId)
+        )}
+      </div>
+    );
   }
 
   protected renderChannelsDescriptionsCached(): React.ReactElement {
@@ -138,7 +164,7 @@ export class SwarmMessagesChannelsListComponentBase<
     }
     return (
       <div>
-        {[...channelsDescriptionsMapCached.values()].map((channelDescription, channelId) => {
+        {[...channelsDescriptionsMapCached.entries()].map(([channelId, channelDescription]) => {
           if (channelDescription instanceof Error) {
             return (
               <p>
@@ -146,7 +172,7 @@ export class SwarmMessagesChannelsListComponentBase<
               </p>
             );
           }
-          return this._renderChannelDescription(channelDescription);
+          return this._renderChannelDescriptionOrError(channelDescription, channelId);
         })}
       </div>
     );
@@ -169,12 +195,13 @@ export class SwarmMessagesChannelsListComponentBase<
     this.setState({
       channelsListInatance: channelsList,
       isChannelsListReady: channelsList.isReady,
+      channelsDescriptions: cloneMap(channelsList.swarmChannelsDescriptionsCachedMap),
     });
   }
 
   protected _addChannelDescriptionInMap(
     channelDescriptionRawOrError: ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error,
-    channelsDescriptionsMap: Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any>>
+    channelsDescriptionsMap: Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>
   ): void {
     if (channelDescriptionRawOrError instanceof Error) {
       throw channelDescriptionRawOrError;
@@ -184,13 +211,13 @@ export class SwarmMessagesChannelsListComponentBase<
 
   protected _createCopyOfExistisngChannelsDescriptionsMap(): Map<
     TSwarmMessagesChannelId,
-    ISwarmMessageChannelDescriptionRaw<P, T, any, any>
+    ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error
   > {
-    return new Map(this.state.channelsDescriptions);
+    return cloneMap(this.state.channelsDescriptions);
   }
 
   protected _setChannelsDescriptions(
-    channelsDescriptions: Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any>>
+    channelsDescriptions: Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>
   ): void {
     this.setState({
       channelsDescriptions,
@@ -228,7 +255,7 @@ export class SwarmMessagesChannelsListComponentBase<
 
   protected _updateChannelsDescriptionsMapByDescriptionsWithMetaArray(
     channelsDescriptionsWithMeta: ISwarmMessagesChannelDescriptionWithMetadata<P, T, MD, any, any>[],
-    channelsDescriptionsMap: Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any>>
+    channelsDescriptionsMap: Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>
   ): void {
     const errorsOccuredTillUpdating = [] as Error[];
     channelsDescriptionsWithMeta.forEach((channelDescriptionWithMeta): void => {
@@ -259,7 +286,7 @@ export class SwarmMessagesChannelsListComponentBase<
 
   protected _removeChannelIdFromTheList(
     channelId: TSwarmMessagesChannelId,
-    channelsDescriptionsMap: Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any>>
+    channelsDescriptionsMap: Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>
   ): void {
     channelsDescriptionsMap.delete(channelId);
   }
@@ -299,6 +326,7 @@ export class SwarmMessagesChannelsListComponentBase<
       isChannelsListClosed: false,
     });
     try {
+      debugger;
       void (await this._updateChannelsDescriptionsInState());
     } catch (err) {
       this._addErrorsIntoTheErrorsList([

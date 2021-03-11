@@ -157,6 +157,6 @@ export class SwarmMessagesDatabaseMessagesCachedStoreKeyValue<
     key: TSwarmStoreDatabaseEntityKey<P>,
     value: ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD>
   ) {
-    return this._checkWhetherUpdatValue(this._entriesCached.get(key), value);
+    return this._checkWhetherToUpdateValue(this._entriesCached.get(key), value);
   }
 }
