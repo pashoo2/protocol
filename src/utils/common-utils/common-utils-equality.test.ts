@@ -1,6 +1,168 @@
-import { isDeepEqual } from './common-utils-equality';
+import { isDeepEqual, whetherValuesSimilar, whetherValuesNotShallowSimilar } from './common-utils-equality';
 
 describe('common-utils-equality', () => {
+  describe('whetherValuesSimilar', () => {
+    it('Should return true for NaN values', () => {
+      expect(whetherValuesSimilar(NaN, NaN)).toBe(true);
+    });
+
+    it('Should return true for null and undefined values', () => {
+      expect(whetherValuesSimilar(null, null)).toBe(true);
+      expect(whetherValuesSimilar(undefined, undefined)).toBe(true);
+      expect(whetherValuesSimilar(undefined, null)).toBe(true);
+    });
+
+    it('Should return true for same values', () => {
+      let value1 = 0 as unknown;
+      let value2 = 0 as unknown;
+      expect(whetherValuesSimilar(value1, value2)).toBe(true);
+
+      value1 = 1;
+      value2 = 1;
+      expect(whetherValuesSimilar(value1, value2)).toBe(true);
+
+      value1 = -1;
+      value2 = -1;
+      expect(whetherValuesSimilar(value1, value2)).toBe(true);
+
+      value1 = Infinity;
+      value2 = Infinity;
+      expect(whetherValuesSimilar(value1, value2)).toBe(true);
+
+      value1 = -Infinity;
+      value2 = -Infinity;
+      expect(whetherValuesSimilar(value1, value2)).toBe(true);
+
+      value1 = '';
+      value2 = '';
+      expect(whetherValuesSimilar(value1, value2)).toBe(true);
+
+      value1 = 'string';
+      value2 = 'string';
+      expect(whetherValuesSimilar(value1, value2)).toBe(true);
+
+      value1 = {};
+      value2 = value1;
+      expect(whetherValuesSimilar(value1, value2)).toBe(true);
+
+      value1 = new Error();
+      value2 = value1;
+      expect(whetherValuesSimilar(value1, value2)).toBe(true);
+
+      value1 = [];
+      value2 = value1;
+      expect(whetherValuesSimilar(value1, value2)).toBe(true);
+
+      expect(whetherValuesSimilar(window, window)).toBe(true);
+      expect(whetherValuesSimilar(document, document)).toBe(true);
+    });
+
+    it('Should return false for different values', () => {
+      expect(whetherValuesSimilar({}, {})).toBe(false);
+      expect(whetherValuesSimilar([], [])).toBe(false);
+      expect(whetherValuesSimilar(new Error(), new Error())).toBe(false);
+      expect(whetherValuesSimilar(new Map(), new Map())).toBe(false);
+    });
+
+    it('Should return false for null, undefined compared to zero, empty stirng or NaN', () => {
+      expect(whetherValuesSimilar(null, 0)).toBe(false);
+      expect(whetherValuesSimilar(undefined, 0)).toBe(false);
+
+      expect(whetherValuesSimilar(null, '')).toBe(false);
+      expect(whetherValuesSimilar(undefined, '')).toBe(false);
+
+      expect(whetherValuesSimilar(null, NaN)).toBe(false);
+      expect(whetherValuesSimilar(undefined, NaN)).toBe(false);
+    });
+
+    it('Should return false for zero, empty stirng or NaN in comparition to each other', () => {
+      expect(whetherValuesSimilar('', 0)).toBe(false);
+      expect(whetherValuesSimilar('', NaN)).toBe(false);
+      expect(whetherValuesSimilar(0, NaN)).toBe(false);
+    });
+  });
+
+  describe('whetherValuesNotShallowSimilar', () => {
+    it('Should return false for NaN values', () => {
+      expect(whetherValuesNotShallowSimilar(NaN, NaN)).toBe(false);
+    });
+
+    it('Should return false for null and undefined values', () => {
+      expect(whetherValuesNotShallowSimilar(null, null)).toBe(false);
+      expect(whetherValuesNotShallowSimilar(undefined, undefined)).toBe(false);
+      expect(whetherValuesNotShallowSimilar(undefined, null)).toBe(false);
+    });
+
+    it('Should return false for same values', () => {
+      let value1 = 0 as unknown;
+      let value2 = 0 as unknown;
+      expect(whetherValuesNotShallowSimilar(value1, value2)).toBe(false);
+
+      value1 = 1;
+      value2 = 1;
+      expect(whetherValuesNotShallowSimilar(value1, value2)).toBe(false);
+
+      value1 = -1;
+      value2 = -1;
+      expect(whetherValuesNotShallowSimilar(value1, value2)).toBe(false);
+
+      value1 = Infinity;
+      value2 = Infinity;
+      expect(whetherValuesNotShallowSimilar(value1, value2)).toBe(false);
+
+      value1 = -Infinity;
+      value2 = -Infinity;
+      expect(whetherValuesNotShallowSimilar(value1, value2)).toBe(false);
+
+      value1 = '';
+      value2 = '';
+      expect(whetherValuesNotShallowSimilar(value1, value2)).toBe(false);
+
+      value1 = 'string';
+      value2 = 'string';
+      expect(whetherValuesNotShallowSimilar(value1, value2)).toBe(false);
+
+      value1 = {};
+      value2 = value1;
+      expect(whetherValuesNotShallowSimilar(value1, value2)).toBe(false);
+
+      value1 = new Error();
+      value2 = value1;
+      expect(whetherValuesNotShallowSimilar(value1, value2)).toBe(false);
+
+      value1 = [];
+      value2 = value1;
+      expect(whetherValuesNotShallowSimilar(value1, value2)).toBe(false);
+
+      expect(whetherValuesNotShallowSimilar(window, window)).toBe(false);
+      expect(whetherValuesNotShallowSimilar(document, document)).toBe(false);
+    });
+
+    it('Should return false for different values but which can be simillar by deep comparsion', () => {
+      expect(whetherValuesNotShallowSimilar({}, {})).toBe(false);
+      expect(whetherValuesNotShallowSimilar([], [])).toBe(false);
+      expect(whetherValuesNotShallowSimilar(new Error(), new Error())).toBe(false);
+      expect(whetherValuesNotShallowSimilar(new Map(), new Map())).toBe(false);
+    });
+
+    it('Should return false for null, undefined compared to zero, empty stirng or NaN', () => {
+      expect(whetherValuesNotShallowSimilar(null, 0)).toBe(false);
+      expect(whetherValuesNotShallowSimilar(undefined, 0)).toBe(false);
+
+      expect(whetherValuesNotShallowSimilar(null, '')).toBe(false);
+      expect(whetherValuesNotShallowSimilar(undefined, '')).toBe(false);
+
+      expect(whetherValuesNotShallowSimilar(null, NaN)).toBe(false);
+      expect(whetherValuesNotShallowSimilar(undefined, NaN)).toBe(false);
+    });
+
+    it('Should return false for zero, empty stirng or NaN in comparition to each other', () => {
+      expect(whetherValuesNotShallowSimilar('', 0)).toBe(false);
+      expect(whetherValuesNotShallowSimilar('', NaN)).toBe(false);
+      expect(whetherValuesNotShallowSimilar(0, NaN)).toBe(false);
+    });
+  });
+
   describe('isDeepEqual', () => {
     describe('Compare objects', () => {
       describe('equals', () => {

@@ -1,3 +1,4 @@
+import { whetherValuesSimilar, whetherValuesNotShallowSimilar } from './common-utils-equality';
 export function filterMapKeys<M extends Map<any, any>, F extends Array<any>>(map: M, filterKeys: F): M {
   if (!filterKeys.length) {
     return map;
@@ -48,42 +49,39 @@ export function cloneMap<T extends Map<unknown, unknown>>(map: Readonly<T> | T):
   return new Map((map as unknown) as T) as T;
 }
 
-export function whetherTwoMapsSame<T>(
+export function whetherTwoMapsSimilar<T>(
   firstMap: Map<unknown, T>,
   secondMap: Map<unknown, T>,
-  comparator?: (firstValue: T | undefined, secondValue: T | undefined) => boolean
+  comparator?: (
+    firstValue: T | undefined,
+    secondValue: T | undefined,
+    key: T extends Map<infer K, unknown> ? K : never
+  ) => boolean
 ): boolean {
   if (firstMap === secondMap) {
     return true;
   }
 
-  const firstMapKeys = firstMap.keys();
+  const mapsKeys = new Set([...firstMap.keys(), ...secondMap.keys()]) as Set<T extends Map<infer K, unknown> ? K : never>;
   let firstMapKey;
 
-  for (firstMapKey of firstMapKeys) {
+  for (firstMapKey of mapsKeys) {
     const secondMapValueForKey = secondMap.get(firstMapKey);
-    const firstMapValueForKey = secondMap.get(firstMapKey);
+    const firstMapValueForKey = firstMap.get(firstMapKey);
 
-    if (firstMapValueForKey === secondMapValueForKey) {
-      continue;
-    }
-    if (firstMapValueForKey == null && secondMapValueForKey == null) {
+    if (whetherValuesSimilar(firstMapValueForKey, secondMapValueForKey)) {
       continue;
     }
     if (!comparator) {
       return false;
     }
-    if (Boolean(firstMapValueForKey) !== Boolean(secondMapValueForKey)) {
-      // e.g. firstMapValueForKey = undefined !== secondMapValueForKey = 1
+    if (whetherValuesNotShallowSimilar(firstMapValueForKey, secondMapValueForKey)) {
       return false;
     }
-    if (typeof firstMapValueForKey !== typeof secondMapValueForKey) {
-      // e.g. firstMapValueForKey = {} !== secondMapValueForKey = 'string'
-      return false;
-    }
-    if (comparator(firstMapValueForKey, secondMapValueForKey)) {
+    if (!comparator(firstMapValueForKey, secondMapValueForKey, firstMapKey)) {
       return false;
     }
   }
+
   return true;
 }

@@ -15,7 +15,7 @@ export function forwardEvents<E extends EventEmitterBasic>(eventEmitterSource: E
   if (emittersForwardedToSet) {
     emittersForwardedToSet.add(eventEmitterTarget);
   } else {
-    emittersForwardedToSet = new Set<EventEmitterBasic>();
+    emittersForwardedToSet = new Set<E>([eventEmitterTarget]);
     emittersForwarded.set(eventEmitterSource, emittersForwardedToSet);
     eventEmitterSource.emit = function emit(
       this: {

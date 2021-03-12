@@ -66,7 +66,7 @@ import { ESwarmMessagesDatabaseCacheEventsNames } from '../../../../../../swarm-
 import { mergeMaps } from 'utils/common-utils/common-utils-maps';
 import { debounce } from 'utils/throttling-utils';
 import { EMIT_CHANNELS_DESCRIPTIONS_MAP_CACHE_UPDATE_EVENT_DEBOUNCE_MS } from './swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.fabric.const';
-import { whetherTwoMapsSame } from '../../../../../../../utils/common-utils/common-utils-maps';
+import { whetherTwoMapsSimilar } from '../../../../../../../utils/common-utils/common-utils-maps';
 import { ifSwarmMessagesDecryptedEqual } from '../../../../../../swarm-message/swarm-message-utils/swarm-message-utils-common/swarm-message-utils-common-decrypted';
 import { compareTwoSwarmMessageStoreMessagingRequestWithMetaResults } from '../../../../../../swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache/swarm-messages-database-cache.utils';
 
@@ -406,7 +406,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       if (!swarmMessagesForCurrentUpdateOfDescriptionsCachedMapCurrentList) {
         return false;
       }
-      return whetherTwoMapsSame<ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD>>(
+      return whetherTwoMapsSimilar<ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD>>(
         swarmMessagesForCurrentUpdateOfDescriptionsCachedMapCurrentList,
         cachedMessages,
         compareTwoSwarmMessageStoreMessagingRequestWithMetaResults
@@ -883,6 +883,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
         .catch(
           ((instance, cachedMessagesClosure) =>
             function __updateChannelsMapCachedByPromiseHandleRejection() {
+              debugger;
               instance.__unsetSwarmMessagesForCurrentUpdateOfDescriptionsCachedMapIfEqualsTo(cachedMessagesClosure);
             })(this, cachedMessages)
         );

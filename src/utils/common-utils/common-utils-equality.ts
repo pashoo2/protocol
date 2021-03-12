@@ -4,6 +4,36 @@ import { isSimpleTypeValue } from './common-utils-main';
 import { isArraysUnsortedSwallowEqual, commonUtilsIsArray } from './common-utils-array';
 import { isEqualFunctions } from './common-utils.functions';
 
+export function whetherValuesSimilar(firstValue: unknown, secondValue: unknown): boolean {
+  return (
+    firstValue === secondValue ||
+    (firstValue == null && secondValue == null) ||
+    (typeof firstValue === 'number' && typeof secondValue === 'number' && isNaN(firstValue) && isNaN(secondValue))
+  );
+}
+
+/**
+ * Fast comparison of two values for shallow similarity.
+ * Returns false only for values which can't be decided
+ * as same, e,g, {} !== 0, {} == {}, NaN == 0, Map({ a: undefined, b: undefined }) == Map()
+ *
+ * @export
+ * @param {unknown} firstValue
+ * @param {unknown} secondValue
+ * @returns {boolean}
+ */
+export function whetherValuesNotShallowSimilar(firstValue: unknown, secondValue: unknown): boolean {
+  if (Boolean(firstValue) !== Boolean(secondValue)) {
+    // e.g. firstMapValueForKey = undefined !== secondMapValueForKey = 1
+    return true;
+  }
+  if (firstValue && secondValue && (typeof firstValue === 'object') !== (typeof secondValue === 'object')) {
+    // e.g. firstMapValueForKey = {} !== secondMapValueForKey = 'string'
+    return true;
+  }
+  return false;
+}
+
 export function isObjectsDeepEqual<T extends {}>(object1: unknown, object2: T): object1 is T {
   if (object1 === object2) {
     return true;
