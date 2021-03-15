@@ -69,7 +69,6 @@ export class SwarmMessagesChannelsListComponentBase<
     { channelsListInatance: prevChannelsListInstance }: ISwarmMessagesChannelsListState<P, T, MD>
   ) {
     const { channelsListInatance } = this.state;
-    debugger;
     if (channelsListInatance && prevChannelsListInstance !== channelsListInatance) {
       this._setChannelsListEventsListeners();
     }
@@ -77,7 +76,6 @@ export class SwarmMessagesChannelsListComponentBase<
 
   public render() {
     const { channelsListInatance: channelsList } = this.state;
-    debugger;
     if (!channelsList) {
       return 'Channels list is not ready';
     }
@@ -300,10 +298,6 @@ export class SwarmMessagesChannelsListComponentBase<
   protected _onChannelDescriptionUpdate(
     channelDescriptionUpdatadOrNew: ISwarmMessageChannelDescriptionRaw<P, T, any, any>
   ): void {
-    // TODO - verify that the channelDescriptionUpdatadOrNew contains DbOptions
-    // TODO - add reading cashed descriptions of channel from the database connector
-    // TODO - emit update cached list of channels descriptions by the database connector event
-    debugger;
     this._updateChannelDescriptionInDescriptionsList(channelDescriptionUpdatadOrNew);
   }
 

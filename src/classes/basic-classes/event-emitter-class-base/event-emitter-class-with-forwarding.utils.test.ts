@@ -136,7 +136,7 @@ describe('Event emitter forwarding events utils', () => {
     });
 
     it('Should stop emit events from source emitter to target emitter only', () => {
-      let eventName = 'TEST_EVENT_NAME';
+      const eventName = 'TEST_EVENT_NAME';
       const sourceEventEmitter = getEventEmitterInstance();
       const targetEventEmitter = getEventEmitterInstance();
       const secondTargetEventEmitter = getEventEmitterInstance();

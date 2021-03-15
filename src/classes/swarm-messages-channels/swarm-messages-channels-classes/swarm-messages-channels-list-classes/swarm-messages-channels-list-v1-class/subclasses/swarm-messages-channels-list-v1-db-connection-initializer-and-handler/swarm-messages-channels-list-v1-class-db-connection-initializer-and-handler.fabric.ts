@@ -481,6 +481,14 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       this.__swarmChannelsDescriptionsCachedMapActiveUpdatePromise = undefined;
     }
 
+    private __unsetCurrentSwarmMessagesChannelDescriptionsMapCahcedUpdatingPromiseIfEqualsTo(
+      promiseCancellableWaitingFor: IPromiseRejectable<unknown, Error>
+    ): void {
+      if (this.__swarmChannelsDescriptionsCachedMapActiveUpdatePromise === promiseCancellableWaitingFor) {
+        this.__unsetCurrentSwarmMessagesChannelDescriptionsMapCahcedUpdatingPromise();
+      }
+    }
+
     private __setCurrentSwarmMessagesChannelDescriptionsMapCahcedUpdatingPromiseReturnItAndUnsetOnFinish<T>(
       promiseChannelsDescriptionsMapUpdate: Promise<T>
     ): IPromiseRejectable<T, Error> {
@@ -488,9 +496,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
         promiseChannelsDescriptionsMapUpdate
       );
       promiseCancellableWaitingFor.finally(() => {
-        if (this.__swarmChannelsDescriptionsCachedMapActiveUpdatePromise === promiseCancellableWaitingFor) {
-          this.__unsetCurrentSwarmMessagesChannelDescriptionsMapCahcedUpdatingPromise();
-        }
+        this.__unsetCurrentSwarmMessagesChannelDescriptionsMapCahcedUpdatingPromiseIfEqualsTo(promiseCancellableWaitingFor);
       });
       return promiseCancellableWaitingFor;
     }
@@ -862,13 +868,14 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
           );
           return;
         }
-        swarmMessagesConvertationsToChannelsDescriptionsAndAddingToCachePending.push(
-          this.__addSwarmChannelDescriptionOrErrorIfRejectedToSwarmChannelsDescriptionsMapBySwarmMessage(
-            updatedChannelsListDescriptionsCached,
-            swarmMessageOrError,
-            swarmMessageKeyInKVDatabase
-          )
+
+        const pendingAddChannelDescription = this.__addSwarmChannelDescriptionOrErrorIfRejectedToSwarmChannelsDescriptionsMapBySwarmMessage(
+          updatedChannelsListDescriptionsCached,
+          swarmMessageOrError,
+          swarmMessageKeyInKVDatabase
         );
+
+        swarmMessagesConvertationsToChannelsDescriptionsAndAddingToCachePending.push(pendingAddChannelDescription);
       });
       await Promise.all(swarmMessagesConvertationsToChannelsDescriptionsAndAddingToCachePending);
       return updatedChannelsListDescriptionsCached;
@@ -898,8 +905,9 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       }
       this.__rejectCurrentSwarmMessagesChannelDescriptionsMapCahcedUpdatingPromise(new Error('Rejected by new inconming update'));
 
+      const updateChannelsDescriptionPromiseNative = this.__updateCachedChannelsListByCachedMessages(cachedMessages);
       const promisePendingRejectable = this.__setCurrentSwarmMessagesChannelDescriptionsMapCahcedUpdatingPromiseReturnItAndUnsetOnFinish(
-        this.__updateCachedChannelsListByCachedMessages(cachedMessages)
+        updateChannelsDescriptionPromiseNative
       );
 
       this.__updateChannelsMapCachedByPromisePendingResultOrHandleRejection(cachedMessages, promisePendingRejectable);
