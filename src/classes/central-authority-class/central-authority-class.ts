@@ -845,7 +845,7 @@ export class CentralAuthority implements ICentralAuthority {
     if (!connectionSwarmCredentialsProvider) {
       return new CAError('There is no connection to the swarm credentials provider');
     }
-    return connectionSwarmCredentialsProvider.get(identity);
+    return await connectionSwarmCredentialsProvider.get(identity);
   }
 
   protected getCurrentUserCryptoCredentials(): Error | TCentralAuthorityUserCryptoCredentials {

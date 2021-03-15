@@ -65,10 +65,23 @@ import { TSwarmMessagesChannelId } from '../../../../../types/swarm-messages-cha
 import { ESwarmMessagesDatabaseCacheEventsNames } from '../../../../../../swarm-messages-database/swarm-messages-database.const';
 import { mergeMaps } from 'utils/common-utils/common-utils-maps';
 import { debounce } from 'utils/throttling-utils';
-import { EMIT_CHANNELS_DESCRIPTIONS_MAP_CACHE_UPDATE_EVENT_DEBOUNCE_MS } from './swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.fabric.const';
+import {
+  EMIT_CHANNELS_DESCRIPTIONS_MAP_CACHE_UPDATE_EVENT_DEBOUNCE_MS,
+  GET_SWARM_CHANNEL_DESCRIPTION_RAW_BY_SWARM_DB_REQUEST_RESULT_CACHED_ITEMS_COUNT_LIMIT,
+} from './swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.fabric.const';
 import { whetherTwoMapsSimilar } from '../../../../../../../utils/common-utils/common-utils-maps';
-import { ifSwarmMessagesDecryptedEqual } from '../../../../../../swarm-message/swarm-message-utils/swarm-message-utils-common/swarm-message-utils-common-decrypted';
 import { compareTwoSwarmMessageStoreMessagingRequestWithMetaResults } from '../../../../../../swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache/swarm-messages-database-cache.utils';
+import { dataCachingUtilsCachingDecorator } from '../../../../../../../utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator';
+import { getSwarmMessageUniqueHash } from '../../../../../../swarm-message/swarm-message-utils/swarm-message-utils-common/swarm-message-utils-common-decrypted';
+
+export function getRequestResultMessageUniqueIdOrUndefined(
+  requestResult: ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector, ISwarmMessageInstanceDecrypted>
+) {
+  if (requestResult.message instanceof Error) {
+    return undefined;
+  }
+  return getSwarmMessageUniqueHash(requestResult.message);
+}
 
 export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandlerClass<
   P extends ESwarmStoreConnector,
@@ -597,6 +610,10 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       return await this._getValidSwarmMessagesChannelDescriptionFromSwarmMessageBody(swarmMessageDecrypted.bdy);
     }
 
+    @dataCachingUtilsCachingDecorator(
+      2, // GET_SWARM_CHANNEL_DESCRIPTION_RAW_BY_SWARM_DB_REQUEST_RESULT_CACHED_ITEMS_COUNT_LIMIT,
+      getRequestResultMessageUniqueIdOrUndefined
+    )
     private async _getSwarmChannelDescriptionRawBySwarmDbRequestResult(
       requestResult: ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD>
     ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any>> {
@@ -890,7 +907,6 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
         .catch(
           ((instance, cachedMessagesClosure) =>
             function __updateChannelsMapCachedByPromiseHandleRejection() {
-              debugger;
               instance.__unsetSwarmMessagesForCurrentUpdateOfDescriptionsCachedMapIfEqualsTo(cachedMessagesClosure);
             })(this, cachedMessages)
         );
