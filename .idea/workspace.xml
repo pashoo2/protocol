@@ -2,9 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e70e70e3-e48a-4dfd-91a6-03818e8691f6" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/node_modules-local/hypervision-browser" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules-local/hypervision-browser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/event-emitter-class-base/event-emitter-class-with-forwarding.utils.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/event-emitter-class-base/event-emitter-class-with-forwarding.utils.test.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/swarm-messages-channels-list/swarm-messages-channels-list-base-component.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/swarm-messages-channels-list/swarm-messages-channels-list-base-component.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/subclasses/swarm-messages-channels-list-v1-db-connection-initializer-and-handler/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.fabric.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/subclasses/swarm-messages-channels-list-v1-db-connection-initializer-and-handler/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.fabric.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.types.ts" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -21,24 +23,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.fabric.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/subclasses/swarm-messages-channels-list-v1-db-connection-initializer-and-handler/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.fabric.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1834">
-              <caret line="141" column="22" selection-start-line="141" selection-start-column="22" selection-end-line="141" selection-end-column="22" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="swarm-messages-channel-v1-class-channels-list-handler.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/subclasses/swarm-messages-channel-v1-class-channels-list-handler.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2240">
-              <caret line="199" column="19" selection-start-line="199" selection-start-column="8" selection-end-line="199" selection-end-column="31" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="swarm-messages-channel-instance.types.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-channels/types/swarm-messages-channel-instance.types.ts">
           <provider selected="true" editor-type-id="text-editor">
@@ -51,7 +35,7 @@
       <file leaf-file-name="event-emitter-class-with-forwarding.utils.test.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/event-emitter-class-base/event-emitter-class-with-forwarding.utils.test.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1372">
+            <state relative-caret-position="1358">
               <caret line="98" column="41" selection-start-line="98" selection-start-column="41" selection-end-line="98" selection-end-column="41" />
               <folding>
                 <element signature="e#0#95#0" expanded="true" />
@@ -69,11 +53,41 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="common-utils-equality.test.ts" pinned="false" current-in-tab="true">
+      <file leaf-file-name="common-utils-equality.test.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/utils/common-utils/common-utils-equality.test.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="17" column="33" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="33" />
+            <state relative-caret-position="182">
+              <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="data-cache-utils-caching-decorator.test.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.test.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="789">
+              <caret line="116" column="7" lean-forward="true" selection-start-line="116" selection-start-column="7" selection-end-line="116" selection-end-column="7" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/node_modules/expect/build/index.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="150">
+              <caret line="201" column="19" selection-start-line="201" selection-start-column="19" selection-end-line="201" selection-end-column="19" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="data-cache-utils-caching-decorator.ts" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="366">
+              <caret line="119" column="23" lean-forward="true" selection-start-line="119" selection-start-column="23" selection-end-line="119" selection-end-column="23" />
+              <folding>
+                <element signature="e#0#139#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -81,7 +95,7 @@
       <file leaf-file-name="common-utils-equality.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/utils/common-utils/common-utils-equality.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-90">
+            <state relative-caret-position="280">
               <caret line="24" column="46" selection-start-line="24" selection-start-column="16" selection-end-line="24" selection-end-column="46" />
               <folding>
                 <element signature="e#0#57#0" expanded="true" />
@@ -93,7 +107,7 @@
       <file leaf-file-name="common-utils-maps.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/utils/common-utils/common-utils-maps.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="259">
+            <state relative-caret-position="1176">
               <caret line="84" selection-start-line="84" selection-end-line="84" />
             </state>
           </provider>
@@ -102,17 +116,8 @@
       <file leaf-file-name="event-emitter-class-with-forwarding.utils.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/event-emitter-class-base/event-emitter-class-with-forwarding.utils.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
+            <state relative-caret-position="364">
               <caret line="26" column="46" selection-start-line="26" selection-start-column="46" selection-end-line="26" selection-end-column="46" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="connect-to-swarm-channels-list-with-channels-instance.tsx" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/components/connect-to-swarm-channels-list-with-channels-instance/connect-to-swarm-channels-list-with-channels-instance.tsx">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="742">
-              <caret line="72" column="26" selection-start-line="72" selection-start-column="12" selection-end-line="72" selection-end-column="26" />
             </state>
           </provider>
         </entry>
@@ -170,7 +175,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/classes/swarm-messages-channel/swarm-messages-channels-utils/swarm-messages-channel-utils/swarm-messages-channel-validation-utils/swarm-messages-channel-validation-description-utils/swarm-messages-channel-validation-description-format-v1/swarm-messages-channel-validation-description-format-v1.fabric.ts" />
         <option value="$PROJECT_DIR$/src/classes/swarm-messages-channels/types/swarm-messages-channel.types.ts" />
         <option value="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-utils/swarm-messages-channels-list-utils/swarm-messages-channels-list-swarm-messages-validators/swarm-messages-channels-list-swarm-messages-validator-v1/swarm-messages-channels-list-swarm-messages-validator-v1.ts" />
         <option value="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class.ts" />
@@ -197,7 +201,6 @@
         <option value="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/types/swarm-messages-channel-v1-class-channels-list-handler.types.ts" />
         <option value="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/types/swarm-messages-channel-v1-class-messages-database-handler.types.ts" />
         <option value="$PROJECT_DIR$/src/utils/common-utils/commom-utils.promies.ts" />
-        <option value="$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.ts" />
         <option value="$PROJECT_DIR$/src/utils/data-sign-utils/index.ts" />
         <option value="$PROJECT_DIR$/src/utils/data-validators-utils/index.ts" />
         <option value="$PROJECT_DIR$/src/utils/encryption-utils/index.ts" />
@@ -221,6 +224,8 @@
         <option value="$PROJECT_DIR$/src/utils/common-utils/common-utils-equality.ts" />
         <option value="$PROJECT_DIR$/src/utils/common-utils/common-utils-maps.ts" />
         <option value="$PROJECT_DIR$/src/utils/common-utils/common-utils-maps.test.ts" />
+        <option value="$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.ts" />
+        <option value="$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.test.ts" />
       </list>
     </option>
   </component>
@@ -251,7 +256,7 @@
       <path value="$PROJECT_DIR$/package.json" />
     </packageJsonPaths>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="y" value="27" />
     <option name="width" value="960" />
     <option name="height" value="1007" />
@@ -262,7 +267,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -406,14 +410,30 @@
               <item name="utils" type="462c0819:PsiDirectoryNode" />
               <item name="common-utils" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
+              <item name="protocol" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="utils" type="462c0819:PsiDirectoryNode" />
+              <item name="data-cache-utils" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
+              <item name="protocol" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="utils" type="462c0819:PsiDirectoryNode" />
+              <item name="data-cache-utils" type="462c0819:PsiDirectoryNode" />
+              <item name="data-cache-utils-caching-decorator" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="SearchEverywhereHistoryKey" value="src/utils/common-utils/common-utils-equality.test.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/utils/common-utils/common-utils-equality.test.ts&#10;src/utils/common-utils/common-utils-maps.test.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/utils/common-utils/common-utils-maps.test.ts&#10;src/classes/basic-classes/event-emitter-class-base/event-emitter-class-with-forwarding.utils.test.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/basic-classes/event-emitter-class-base/event-emitter-class-with-forwarding.utils.test.ts&#10;src/components/connect-to-swarm/connect-to-swarm.tsx&#9;FILE&#9;file:///home/paul/projects/protocol/src/components/connect-to-swarm/connect-to-swarm.tsx&#10;src/classes/basic-classes/async-queue-concurent/async-queue-concurent-mixins/async-queue-concurent-mixin-default/async-queue-concurent-mixin-default-decorator.test.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/basic-classes/async-queue-concurent/async-queue-concurent-mixins/async-queue-concurent-mixin-default/async-queue-concurent-mixin-default-decorator.test.ts&#10;src/classes/swarm-messages-channels/types/swarm-messages-channel.types.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-messages-channels/types/swarm-messages-channel.types.ts&#10;src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-constructor-arguments-fabrics/swarm-messages-channels-list-v1-constructor-arguments-fabric.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-constructor-arguments-fabrics/swarm-messages-channels-list-v1-constructor-arguments-fabric.ts&#10;src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.utils.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.utils.ts&#10;/home/paul/projects/protocol/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types.ts&#10;src/classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider.ts&#10;src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector.ts&#10;src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter.ts&#10;src/classes/open-storage/open-storage.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/open-storage/open-storage.ts&#10;src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.ts" />
+    <property name="SearchEverywhereHistoryKey" value="src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.test.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.test.ts&#10;src/utils/common-utils/common-utils-equality.test.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/utils/common-utils/common-utils-equality.test.ts&#10;src/utils/common-utils/common-utils-maps.test.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/utils/common-utils/common-utils-maps.test.ts&#10;src/classes/basic-classes/event-emitter-class-base/event-emitter-class-with-forwarding.utils.test.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/basic-classes/event-emitter-class-base/event-emitter-class-with-forwarding.utils.test.ts&#10;src/components/connect-to-swarm/connect-to-swarm.tsx&#9;FILE&#9;file:///home/paul/projects/protocol/src/components/connect-to-swarm/connect-to-swarm.tsx&#10;src/classes/basic-classes/async-queue-concurent/async-queue-concurent-mixins/async-queue-concurent-mixin-default/async-queue-concurent-mixin-default-decorator.test.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/basic-classes/async-queue-concurent/async-queue-concurent-mixins/async-queue-concurent-mixin-default/async-queue-concurent-mixin-default-decorator.test.ts&#10;src/classes/swarm-messages-channels/types/swarm-messages-channel.types.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-messages-channels/types/swarm-messages-channel.types.ts&#10;src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-constructor-arguments-fabrics/swarm-messages-channels-list-v1-constructor-arguments-fabric.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-constructor-arguments-fabrics/swarm-messages-channels-list-v1-constructor-arguments-fabric.ts&#10;src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.utils.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.utils.ts&#10;/home/paul/projects/protocol/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types.ts&#10;src/classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider.ts&#10;src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector.ts&#10;src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter.ts&#10;src/classes/open-storage/open-storage.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/open-storage/open-storage.ts&#10;src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.ts" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../mobilean/selling-bee-frontend/src" />
     <property name="node.js.detected.package.eslint" value="true" />
@@ -456,66 +476,64 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Jest.common-utils-equality">
-    <configuration name="Common utilities for maps" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Jest.Caching decorator">
+    <configuration name="Caching decorator" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <node-options value="" />
       <working-dir value="$PROJECT_DIR$" />
       <envs />
       <scope-kind value="SUITE" />
-      <test-file value="$PROJECT_DIR$/src/utils/common-utils/common-utils-maps.test.ts" />
+      <test-file value="$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.test.ts" />
       <test-names>
-        <test-name value="Common utilities for maps" />
+        <test-name value="Caching decorator" />
       </test-names>
     </configuration>
-    <configuration name="Common utilities for maps.whetherTwoMapsSimilar.Should call comparator callback for each key both of the Maps that have not a similar values" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
+    <configuration name="Caching decorator.Should call getter function for a value whose rating less than the existing values in cache" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <node-options value="" />
       <working-dir value="$PROJECT_DIR$" />
       <envs />
       <scope-kind value="TEST" />
-      <test-file value="$PROJECT_DIR$/src/utils/common-utils/common-utils-maps.test.ts" />
+      <test-file value="$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.test.ts" />
       <test-names>
-        <test-name value="Common utilities for maps" />
-        <test-name value="whetherTwoMapsSimilar" />
-        <test-name value="Should call comparator callback for each key both of the Maps that have not a similar values" />
+        <test-name value="Caching decorator" />
+        <test-name value="Should call getter function for a value whose rating less than the existing values in cache" />
       </test-names>
     </configuration>
-    <configuration name="Common utilities for maps.whetherTwoMapsSimilar.Should interrupt execution if the comparator callback returns false" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
+    <configuration name="Caching decorator.Should call the getter function every time till it returns undefined" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <node-options value="" />
       <working-dir value="$PROJECT_DIR$" />
       <envs />
       <scope-kind value="TEST" />
-      <test-file value="$PROJECT_DIR$/src/utils/common-utils/common-utils-maps.test.ts" />
+      <test-file value="$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.test.ts" />
       <test-names>
-        <test-name value="Common utilities for maps" />
-        <test-name value="whetherTwoMapsSimilar" />
-        <test-name value="Should interrupt execution if the comparator callback returns false" />
+        <test-name value="Caching decorator" />
+        <test-name value="Should call the getter function every time till it returns undefined" />
       </test-names>
     </configuration>
-    <configuration name="Common utilities for maps.whetherTwoMapsSimilar.Should not call comparator callback if the map has different values" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
+    <configuration name="Caching decorator.Should not use the same cache for all instances of class" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <node-options value="" />
       <working-dir value="$PROJECT_DIR$" />
       <envs />
       <scope-kind value="TEST" />
-      <test-file value="$PROJECT_DIR$/src/utils/common-utils/common-utils-maps.test.ts" />
+      <test-file value="$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.test.ts" />
       <test-names>
-        <test-name value="Common utilities for maps" />
-        <test-name value="whetherTwoMapsSimilar" />
-        <test-name value="Should not call comparator callback if the map has different values" />
+        <test-name value="Caching decorator" />
+        <test-name value="Should not use the same cache for all instances of class" />
       </test-names>
     </configuration>
-    <configuration name="common-utils-equality" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
+    <configuration name="Caching decorator.Should use the same cache for all instances of class" type="JavaScriptTestRunnerJest" factoryName="Jest" temporary="true" nameIsGenerated="true">
       <node-interpreter value="project" />
       <node-options value="" />
       <working-dir value="$PROJECT_DIR$" />
       <envs />
-      <scope-kind value="SUITE" />
-      <test-file value="$PROJECT_DIR$/src/utils/common-utils/common-utils-equality.test.ts" />
+      <scope-kind value="TEST" />
+      <test-file value="$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.test.ts" />
       <test-names>
-        <test-name value="common-utils-equality" />
+        <test-name value="Caching decorator" />
+        <test-name value="Should use the same cache for all instances of class" />
       </test-names>
     </configuration>
     <configuration name="swarm-message-subclass-validator-fields-validator-validator-user-identifier.test.ts" type="JavaScriptTestRunnerJest" factoryName="Jest" nameIsGenerated="true">
@@ -529,19 +547,19 @@
     </configuration>
     <list>
       <item itemvalue="Jest.swarm-message-subclass-validator-fields-validator-validator-user-identifier.test.ts" />
-      <item itemvalue="Jest.Common utilities for maps.whetherTwoMapsSimilar.Should call comparator callback for each key both of the Maps that have not a similar values" />
-      <item itemvalue="Jest.Common utilities for maps.whetherTwoMapsSimilar.Should not call comparator callback if the map has different values" />
-      <item itemvalue="Jest.Common utilities for maps.whetherTwoMapsSimilar.Should interrupt execution if the comparator callback returns false" />
-      <item itemvalue="Jest.Common utilities for maps" />
-      <item itemvalue="Jest.common-utils-equality" />
+      <item itemvalue="Jest.Caching decorator.Should call getter function for a value whose rating less than the existing values in cache" />
+      <item itemvalue="Jest.Caching decorator" />
+      <item itemvalue="Jest.Caching decorator.Should use the same cache for all instances of class" />
+      <item itemvalue="Jest.Caching decorator.Should not use the same cache for all instances of class" />
+      <item itemvalue="Jest.Caching decorator.Should call the getter function every time till it returns undefined" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Jest.common-utils-equality" />
-        <item itemvalue="Jest.Common utilities for maps" />
-        <item itemvalue="Jest.Common utilities for maps.whetherTwoMapsSimilar.Should interrupt execution if the comparator callback returns false" />
-        <item itemvalue="Jest.Common utilities for maps.whetherTwoMapsSimilar.Should call comparator callback for each key both of the Maps that have not a similar values" />
-        <item itemvalue="Jest.Common utilities for maps.whetherTwoMapsSimilar.Should not call comparator callback if the map has different values" />
+        <item itemvalue="Jest.Caching decorator" />
+        <item itemvalue="Jest.Caching decorator.Should call the getter function every time till it returns undefined" />
+        <item itemvalue="Jest.Caching decorator.Should use the same cache for all instances of class" />
+        <item itemvalue="Jest.Caching decorator.Should not use the same cache for all instances of class" />
+        <item itemvalue="Jest.Caching decorator.Should call getter function for a value whose rating less than the existing values in cache" />
       </list>
     </recent_temporary>
   </component>
@@ -643,65 +661,67 @@
       <workItem from="1614961683546" duration="78000" />
       <workItem from="1615057784142" duration="615000" />
       <workItem from="1615569957932" duration="9996000" />
+      <workItem from="1615918968026" duration="7341000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="Common_utilities_for_maps_whetherTwoMapsSimilar_Should_call_comparator_callback_for_each_key_both_of_the_Maps_that_have_not_a_similar_values - 2021.03.13 at 00h 23m 30s.xml">
-      <configuration name="Common utilities for maps.whetherTwoMapsSimilar.Should call comparator callback for each key both of the Maps that have not a similar values" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="Caching_decorator - 2021.03.17 at 00h 50m 19s.xml">
+      <configuration name="Caching decorator" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="Common_utilities_for_maps_whetherTwoMapsSimilar_Should_call_comparator_callback_for_each_key_both_of_the_Maps_that_have_not_a_similar_values - 2021.03.13 at 00h 24m 30s.xml">
-      <configuration name="Common utilities for maps.whetherTwoMapsSimilar.Should call comparator callback for each key both of the Maps that have not a similar values" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="Caching_decorator_Should_use_the_same_cache_for_all_instances_of_class - 2021.03.17 at 00h 54m 35s.xml">
+      <configuration name="Caching decorator.Should use the same cache for all instances of class" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="Common_utilities_for_maps_whetherTwoMapsSimilar_Should_not_call_comparator_callback_if_the_map_has_different_values - 2021.03.13 at 00h 30m 31s.xml">
-      <configuration name="Common utilities for maps.whetherTwoMapsSimilar.Should not call comparator callback if the map has different values" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="Caching_decorator_Should_use_the_same_cache_for_all_instances_of_class - 2021.03.17 at 00h 55m 02s.xml">
+      <configuration name="Caching decorator.Should use the same cache for all instances of class" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="Common_utilities_for_maps_whetherTwoMapsSimilar_Should_call_comparator_callback_for_each_key_both_of_the_Maps_that_have_not_a_similar_values - 2021.03.13 at 00h 30m 37s.xml">
-      <configuration name="Common utilities for maps.whetherTwoMapsSimilar.Should call comparator callback for each key both of the Maps that have not a similar values" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="Caching_decorator_Should_not_use_the_same_cache_for_all_instances_of_class - 2021.03.17 at 00h 55m 57s.xml">
+      <configuration name="Caching decorator.Should not use the same cache for all instances of class" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="Common_utilities_for_maps_whetherTwoMapsSimilar_Should_call_comparator_callback_for_each_key_both_of_the_Maps_that_have_not_a_similar_values - 2021.03.13 at 00h 31m 38s.xml">
-      <configuration name="Common utilities for maps.whetherTwoMapsSimilar.Should call comparator callback for each key both of the Maps that have not a similar values" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="Caching_decorator_Should_not_use_the_same_cache_for_all_instances_of_class - 2021.03.17 at 00h 56m 36s.xml">
+      <configuration name="Caching decorator.Should not use the same cache for all instances of class" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="Common_utilities_for_maps_whetherTwoMapsSimilar_Should_call_comparator_callback_for_each_key_both_of_the_Maps_that_have_not_a_similar_values - 2021.03.13 at 00h 32m 06s.xml">
-      <configuration name="Common utilities for maps.whetherTwoMapsSimilar.Should call comparator callback for each key both of the Maps that have not a similar values" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="Caching_decorator - 2021.03.17 at 00h 56m 52s.xml">
+      <configuration name="Caching decorator" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="Common_utilities_for_maps_whetherTwoMapsSimilar_Should_call_comparator_callback_for_each_key_both_of_the_Maps_that_have_not_a_similar_values - 2021.03.13 at 00h 32m 24s.xml">
-      <configuration name="Common utilities for maps.whetherTwoMapsSimilar.Should call comparator callback for each key both of the Maps that have not a similar values" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="Caching_decorator_Should_use_the_same_cache_for_all_instances_of_class - 2021.03.17 at 00h 57m 32s.xml">
+      <configuration name="Caching decorator.Should use the same cache for all instances of class" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="Common_utilities_for_maps_whetherTwoMapsSimilar_Should_interrupt_execution_if_the_comparator_callback_returns_false - 2021.03.13 at 00h 34m 23s.xml">
-      <configuration name="Common utilities for maps.whetherTwoMapsSimilar.Should interrupt execution if the comparator callback returns false" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="Caching_decorator_Should_use_the_same_cache_for_all_instances_of_class - 2021.03.17 at 00h 58m 34s.xml">
+      <configuration name="Caching decorator.Should use the same cache for all instances of class" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="Common_utilities_for_maps - 2021.03.13 at 00h 34m 33s.xml">
-      <configuration name="Common utilities for maps" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="Caching_decorator_Should_call_the_getter_function_every_time_till_it_returns_undefined - 2021.03.17 at 01h 00m 24s.xml">
+      <configuration name="Caching decorator.Should call the getter function every time till it returns undefined" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
-    <history-entry file="common-utils-equality - 2021.03.13 at 00h 34m 50s.xml">
-      <configuration name="common-utils-equality" configurationId="JavaScriptTestRunnerJest" />
+    <history-entry file="Caching_decorator - 2021.03.17 at 01h 03m 26s.xml">
+      <configuration name="Caching decorator" configurationId="JavaScriptTestRunnerJest" />
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="154616000" />
+    <option name="totallyTimeSpent" value="161957000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="1600" height="873" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TypeScript" order="8" weight="0.32875144" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.26125556" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.26125556" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.10145847" side_tool="true" visible="true" weight="0.34379265" />
+      <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.10589727" side_tool="true" visible="true" weight="0.34652114" />
       <window_info anchor="bottom" id="Version Control" order="10" sideWeight="0.49926794" weight="0.35096154" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.8985415" weight="0.34379265" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.89410275" visible="true" weight="0.34652114" />
       <window_info id="npm" order="2" side_tool="true" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="9" weight="0.35607675" />
       <window_info id="Favorites" order="3" side_tool="true" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.89917564" weight="0.32060027" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.89537096" weight="0.26603" />
       <window_info anchor="bottom" id="Thumbnails" order="12" weight="0.32852563" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Find" order="1" sideWeight="0.6068484" weight="0.64120054" />
       <window_info anchor="right" id="Coverage" order="3" side_tool="true" weight="0.32960597" />
@@ -768,11 +788,12 @@
           <option name="timeStamp" value="39" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="52" />
+      <option name="time" value="56" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="JavaScriptTestRunnerJest">
-        <watch expression="commonUtilsIsArray(value1)" language="TypeScript" />
+        <watch expression="cache" language="TypeScript" />
+        <watch expression="keysSortedByRating" language="TypeScript" />
       </configuration>
     </watches-manager>
   </component>
@@ -785,6 +806,16 @@
       </expression>
     </expressions>
     <expressions id="watch">
+      <expression>
+        <expression-string>cache</expression-string>
+        <language-id>TypeScript</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>keysSortedByRating</expression-string>
+        <language-id>TypeScript</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
       <expression>
         <expression-string>commonUtilsIsArray(value1)</expression-string>
         <language-id>TypeScript</language-id>
@@ -803,16 +834,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache/swarm-messages-database-cache.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="266">
-          <caret line="75" column="29" selection-start-line="75" selection-start-column="29" selection-end-line="75" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-fabrics/types/index.ts">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/components/app.tsx">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="420">
@@ -919,13 +940,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1050">
           <caret line="84" column="32" selection-start-line="84" selection-start-column="32" selection-end-line="84" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="70">
-          <caret line="5" column="64" selection-start-line="5" selection-start-column="64" selection-end-line="5" selection-end-column="64" />
         </state>
       </provider>
     </entry>
@@ -1047,9 +1061,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1484">
           <caret line="148" column="48" selection-start-line="148" selection-start-column="48" selection-end-line="148" selection-end-column="48" />
-          <folding>
-            <element signature="e#0#93#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1062,8 +1073,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/subclasses/swarm-messages-channels-list-v1-db-connection-initializer-and-handler/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.fabric.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1834">
-          <caret line="141" column="22" selection-start-line="141" selection-start-column="22" selection-end-line="141" selection-end-column="22" />
+        <state relative-caret-position="1218">
+          <caret line="154" column="22" selection-start-line="154" selection-start-column="22" selection-end-line="154" selection-end-column="22" />
         </state>
       </provider>
     </entry>
@@ -1083,14 +1094,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/event-emitter-class-base/event-emitter-class-with-forwarding.utils.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
+        <state relative-caret-position="364">
           <caret line="26" column="46" selection-start-line="26" selection-start-column="46" selection-end-line="26" selection-end-column="46" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/event-emitter-class-base/event-emitter-class-with-forwarding.utils.test.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1372">
+        <state relative-caret-position="1358">
           <caret line="98" column="41" selection-start-line="98" selection-start-column="41" selection-end-line="98" selection-end-column="41" />
           <folding>
             <element signature="e#0#95#0" expanded="true" />
@@ -1100,7 +1111,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/utils/common-utils/common-utils-equality.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-90">
+        <state relative-caret-position="280">
           <caret line="24" column="46" selection-start-line="24" selection-start-column="16" selection-end-line="24" selection-end-column="46" />
           <folding>
             <element signature="e#0#57#0" expanded="true" />
@@ -1110,7 +1121,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/utils/common-utils/common-utils-maps.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="259">
+        <state relative-caret-position="1176">
           <caret line="84" selection-start-line="84" selection-end-line="84" />
         </state>
       </provider>
@@ -1124,8 +1135,32 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/utils/common-utils/common-utils-equality.test.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="17" column="33" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="33" />
+        <state relative-caret-position="182">
+          <caret line="13" lean-forward="true" selection-start-line="13" selection-end-line="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/node_modules/expect/build/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="201" column="19" selection-start-line="201" selection-start-column="19" selection-end-line="201" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.test.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="789">
+          <caret line="116" column="7" lean-forward="true" selection-start-line="116" selection-start-column="7" selection-end-line="116" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="366">
+          <caret line="119" column="23" lean-forward="true" selection-start-line="119" selection-start-column="23" selection-end-line="119" selection-end-column="23" />
+          <folding>
+            <element signature="e#0#139#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

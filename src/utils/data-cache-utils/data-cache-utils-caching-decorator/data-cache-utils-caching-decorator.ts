@@ -1,7 +1,4 @@
-import {
-  IDataCachingDecoratorDecoratedFunction,
-  IDataCachingDecoratorCachedValue,
-} from './data-cache-utils-caching-decorator.types';
+import { IDataCachingDecoratorDecoratedFunction } from './data-cache-utils-caching-decorator.types';
 import { DATA_CACHING_DECORATOR_DEFAULT_CACHE_CAPACITY } from './data-cache-utils-caching-decorator.const';
 import { debounce } from '../../throttling-utils/throttling-utils-main';
 
@@ -30,32 +27,54 @@ export const dataCachingUtilsCachingDecorator = <T, V, I extends object>(
   return (target: object, propertyKey: string, descriptor: PropertyDescriptor) => {
     let newDescriptor;
     // the original method, will be wrapped
-    const methodOrigin: IDataCachingDecoratorDecoratedFunction<T, V> = descriptor.value;
+    const methodOrigin: IDataCachingDecoratorDecoratedFunction<T, V> = descriptor.value as IDataCachingDecoratorDecoratedFunction<
+      T,
+      V
+    >;
     // key - rating
-    const keysRaiting = new Map<TMapKey, number>();
-    const cache = new Map<TMapKey, IDataCachingDecoratorCachedValue<V>>();
-    let minimalRaitingOfValueInCache = -Infinity;
+    const keysRating = new Map<TMapKey, number>();
+    const cache = new Map<TMapKey, V>();
+    let minimalRatingOfValueInCache = -Infinity;
 
     if (typeof methodOrigin !== 'function') {
       throw new Error('dataCachingUtilsCachingDecorator failed to decorate a non function property');
     }
 
-    function increaseKeyRaitingAndReturnIt(key: TMapKey): number {
-      const keyRaiting = Number(keysRaiting.get(key) || 0) + 1;
+    function increaseKeyRatingAndReturnIt(key: TMapKey): number {
+      const keyRating = Number(keysRating.get(key) || 0) + 1;
 
-      keysRaiting.set(key, keyRaiting);
-      return keyRaiting;
+      keysRating.set(key, keyRating);
+      return keyRating;
     }
 
-    const removeValuesWithWorstRaitingFromCache = debounce((): void => {
-      let itemsToRemove = cache.size - cacheItemsMaxCapacity;
-      let key;
-      let cachedItem;
-      for ([key, cachedItem] of cache) {
-        if (itemsToRemove && cachedItem.rating < minimalRaitingOfValueInCache) {
-          cache.delete(key);
-          itemsToRemove = Math.min(itemsToRemove--, 0);
-        }
+    const removeValuesWithWorstRatingFromCacheAndUpdateMinimalRating = debounce((): void => {
+      let countItemsToRemove = cache.size - cacheItemsMaxCapacity;
+      const keysSortedByRating: Array<{
+        key: T;
+        rating: number;
+      }> = [];
+      let keyInCache;
+      let keyRating;
+
+      for (keyInCache of cache.keys()) {
+        keyRating = keysRating.get(keyInCache) ?? 0;
+        keysSortedByRating.push({
+          key: keyInCache,
+          rating: keyRating,
+        });
+      }
+
+      keysSortedByRating.sort(
+        (keyWithRaitingFirst, keyWithRaitingSecond) => keyWithRaitingSecond.rating - keyWithRaitingFirst.rating
+      );
+      minimalRatingOfValueInCache = keysSortedByRating[keysSortedByRating.length - countItemsToRemove - 1].rating;
+
+      let keyToRemove;
+
+      while (countItemsToRemove) {
+        keyToRemove = keysSortedByRating[keysSortedByRating.length - countItemsToRemove].key;
+        cache.delete(keyToRemove);
+        countItemsToRemove -= 1;
       }
     }, 500);
 
@@ -67,27 +86,27 @@ export const dataCachingUtilsCachingDecorator = <T, V, I extends object>(
         return await methodOrigin.call(this, parameter);
       }
 
-      const cachedValueForKey = cache.get(key);
-      const valueFromCache = cachedValueForKey?.value;
+      const valueFromCache = cache.get(key);
 
       // check if the value of the
       // key was cached
       if (valueFromCache != null) {
-        increaseKeyRaitingAndReturnIt(key);
+        increaseKeyRatingAndReturnIt(key);
         return valueFromCache;
       }
 
       const resultedValue = await methodOrigin.call(this, parameter);
-      const keyRaiting = increaseKeyRaitingAndReturnIt(key);
+      const keyRatingUpdated = increaseKeyRatingAndReturnIt(key);
+      const whetherCacheOverload = cache.size >= cacheItemsMaxCapacity;
+      const whetherKeyRatingIsGreaterThanMinimal = keyRatingUpdated > minimalRatingOfValueInCache;
 
-      if (minimalRaitingOfValueInCache < keyRaiting) {
-        cache.set(key, {
-          rating: keyRaiting,
-          value: resultedValue,
-        });
-        minimalRaitingOfValueInCache = keyRaiting;
-        if (cache.size > cacheItemsMaxCapacity) {
-          removeValuesWithWorstRaitingFromCache();
+      if (!whetherCacheOverload || whetherKeyRatingIsGreaterThanMinimal) {
+        cache.set(key, resultedValue);
+        if (minimalRatingOfValueInCache === -Infinity) {
+          minimalRatingOfValueInCache = keyRatingUpdated;
+        }
+        if (whetherCacheOverload) {
+          removeValuesWithWorstRatingFromCacheAndUpdateMinimalRating();
         }
       }
       return resultedValue;

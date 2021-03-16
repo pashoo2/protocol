@@ -611,7 +611,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
     }
 
     @dataCachingUtilsCachingDecorator(
-      2, // GET_SWARM_CHANNEL_DESCRIPTION_RAW_BY_SWARM_DB_REQUEST_RESULT_CACHED_ITEMS_COUNT_LIMIT,
+      2, // TODO - after checking GET_SWARM_CHANNEL_DESCRIPTION_RAW_BY_SWARM_DB_REQUEST_RESULT_CACHED_ITEMS_COUNT_LIMIT,
       getRequestResultMessageUniqueIdOrUndefined
     )
     private async _getSwarmChannelDescriptionRawBySwarmDbRequestResult(
