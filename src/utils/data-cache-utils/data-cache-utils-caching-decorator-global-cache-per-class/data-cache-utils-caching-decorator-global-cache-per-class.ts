@@ -1,8 +1,11 @@
-import { IDataCachingDecoratorDecoratedFunction } from './data-cache-utils-caching-decorator.types';
-import { DATA_CACHING_DECORATOR_DEFAULT_CACHE_CAPACITY } from './data-cache-utils-caching-decorator.const';
+import { IDataCachingDecoratorDecoratedFunction } from './data-cache-utils-caching-decorator-global-cache-per-class.types';
+import { DATA_CACHING_DECORATOR_DEFAULT_CACHE_CAPACITY } from './data-cache-utils-caching-decorator-global-cache-per-class.const';
 import { debounce } from '../../throttling-utils/throttling-utils-main';
 
 /**
+ * !WARNING - it used the same cache for all
+ * instances of a class.
+ *
  * decorator for a method, will be wrapped for
  * caching values of a mostly used keys.
  * Must be used only for immutable
@@ -10,7 +13,7 @@ import { debounce } from '../../throttling-utils/throttling-utils-main';
  * @property {number} cachedValuesCount - number
  * of a cached values
  */
-export const dataCachingUtilsCachingDecorator = <T, V, I extends object>(
+export const dataCachingUtilsCachingDecoratorGlobalCachePerClass = <T, V, I extends object>(
   cacheItemsMaxCapacity: number = DATA_CACHING_DECORATOR_DEFAULT_CACHE_CAPACITY,
   getKeyByMethodArgument?: (value: T) => unknown
 ) => {

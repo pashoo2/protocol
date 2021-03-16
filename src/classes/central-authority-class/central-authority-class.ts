@@ -1,5 +1,5 @@
 import { checkIsError } from '../../utils/common-utils/common-utils-check-value';
-import { dataCachingUtilsCachingDecorator } from '../../utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator';
+import { dataCachingUtilsCachingDecoratorGlobalCachePerClass } from '../../utils/data-cache-utils/data-cache-utils-caching-decorator-global-cache-per-class/data-cache-utils-caching-decorator-global-cache-per-class';
 import { validateVerboseBySchema } from './../../utils/validation-utils/validation-utils';
 import { getErrorScopedClass } from './../basic-classes/error-extended-scoped-class-base/error-extended-scoped-class-base';
 import {
@@ -836,7 +836,9 @@ export class CentralAuthority implements ICentralAuthority {
    * @returns {(Promise<TCentralAuthorityUserCryptoCredentials | Error | null>)}
    * @memberof CentralAuthority
    */
-  @dataCachingUtilsCachingDecorator(CENTRAL_AUTHORITY_CLASS_SWARM_CREDENTIALS_SWARM_USERS_CREDENTIALS_CACHE_CAPACITY)
+  @dataCachingUtilsCachingDecoratorGlobalCachePerClass(
+    CENTRAL_AUTHORITY_CLASS_SWARM_CREDENTIALS_SWARM_USERS_CREDENTIALS_CACHE_CAPACITY
+  )
   protected async readSwarmUserCredentials(
     identity: TCAUserIdentityRawTypes
   ): Promise<TCentralAuthorityUserCryptoCredentials | Error | null> {

@@ -1,11 +1,11 @@
-import { dataCachingUtilsCachingDecorator } from './data-cache-utils-caching-decorator';
+import { dataCachingUtilsCachingDecoratorGlobalCachePerClass } from './data-cache-utils-caching-decorator-global-cache-per-class';
 
 describe('Caching decorator', () => {
   let map: Map<string, string>;
   let valueGetter: jest.MockedFunction<(key: string) => Promise<string | undefined>>;
 
   class TestClass {
-    @dataCachingUtilsCachingDecorator(2)
+    @dataCachingUtilsCachingDecoratorGlobalCachePerClass(2)
     getValue(key: string): Promise<string | undefined> {
       return valueGetter(key);
     }
@@ -71,7 +71,7 @@ describe('Caching decorator', () => {
   describe('Run each test with its own cache', () => {
     it('Should read a value for the same key only once', async () => {
       class TestClassIndependent {
-        @dataCachingUtilsCachingDecorator(2)
+        @dataCachingUtilsCachingDecoratorGlobalCachePerClass(2)
         getValue(key: string): Promise<string | undefined> {
           return valueGetter(key);
         }
@@ -90,7 +90,7 @@ describe('Caching decorator', () => {
 
     it('Should not call getter function twice also for the second value', async () => {
       class TestClassIndependent {
-        @dataCachingUtilsCachingDecorator(2)
+        @dataCachingUtilsCachingDecoratorGlobalCachePerClass(2)
         getValue(key: string): Promise<string | undefined> {
           return valueGetter(key);
         }
@@ -117,7 +117,7 @@ describe('Caching decorator', () => {
     it('Should call getter function for a value whose rating less than the existing values in cache', async () => {
       jest.useFakeTimers();
       class TestClassIndependent {
-        @dataCachingUtilsCachingDecorator(2)
+        @dataCachingUtilsCachingDecoratorGlobalCachePerClass(2)
         getValue(key: string): Promise<string | undefined> {
           return valueGetter(key);
         }

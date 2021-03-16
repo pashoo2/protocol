@@ -71,7 +71,7 @@ import {
 } from './swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.fabric.const';
 import { whetherTwoMapsSimilar } from '../../../../../../../utils/common-utils/common-utils-maps';
 import { compareTwoSwarmMessageStoreMessagingRequestWithMetaResults } from '../../../../../../swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache/swarm-messages-database-cache.utils';
-import { dataCachingUtilsCachingDecorator } from '../../../../../../../utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator';
+import { dataCachingUtilsCachingDecoratorGlobalCachePerClass } from '../../../../../../../utils/data-cache-utils/data-cache-utils-caching-decorator-global-cache-per-class/data-cache-utils-caching-decorator-global-cache-per-class';
 import { getSwarmMessageUniqueHash } from '../../../../../../swarm-message/swarm-message-utils/swarm-message-utils-common/swarm-message-utils-common-decrypted';
 
 export function getRequestResultMessageUniqueIdOrUndefined(
@@ -610,7 +610,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       return await this._getValidSwarmMessagesChannelDescriptionFromSwarmMessageBody(swarmMessageDecrypted.bdy);
     }
 
-    @dataCachingUtilsCachingDecorator(
+    @dataCachingUtilsCachingDecoratorGlobalCachePerClass(
       2, // TODO - after checking GET_SWARM_CHANNEL_DESCRIPTION_RAW_BY_SWARM_DB_REQUEST_RESULT_CACHED_ITEMS_COUNT_LIMIT,
       getRequestResultMessageUniqueIdOrUndefined
     )
