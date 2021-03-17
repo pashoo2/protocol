@@ -10,4 +10,6 @@ export class SwarmMessagesChannelsListComponent<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted
-> extends SwarmMessagesChannelsListComponentBase<P, T, MD> {}
+> extends SwarmMessagesChannelsListComponentBase<P, T, MD> {
+  protected async __addChannelToTheList(): Promise<void> {}
+}
