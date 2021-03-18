@@ -12,6 +12,7 @@ import {
 } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-instance.types';
 import { TSwarmMessagesChannelId } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-instance.types';
 import { cloneMap } from '../../utils/common-utils/common-utils-maps';
+import { SwarmChannelDescriptionComponent } from '../swarm-channel-description-component/swarm-channel-description-component';
 
 export interface ISwarmMessagesChannelsListProps<
   P extends ESwarmStoreConnector,
@@ -108,14 +109,11 @@ export class SwarmMessagesChannelsListComponentBase<
   protected _renderChannelDescription(
     channelDescription: ISwarmMessageChannelDescriptionRaw<P, T, any, any>
   ): React.ReactElement {
-    const { name, tags, version, dbType } = channelDescription;
     return (
-      <ul>
-        <li>Name: ${name}</li>
-        <li>Description version: {version}</li>
-        <li>Channel database type: {dbType}</li>
-        <li>Tags: {tags.join(',')}</li>
-      </ul>
+      <SwarmChannelDescriptionComponent
+        channelDescription={channelDescription}
+        updateChannelDescription={this.__updateChannelDescription}
+      />
     );
   }
 
@@ -378,4 +376,11 @@ export class SwarmMessagesChannelsListComponentBase<
       this._onChannelsListCachedUpdated
     );
   }
+
+  private __updateChannelDescription = async (
+    channelDescription: ISwarmMessageChannelDescriptionRaw<P, T, any, any>
+  ): Promise<void> => {
+    const channelsList = this._getHandledChannelsList();
+    await channelsList.upsertChannel(channelDescription);
+  };
 }

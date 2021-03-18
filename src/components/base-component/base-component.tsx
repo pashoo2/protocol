@@ -12,8 +12,8 @@ import {
   TFormFieldProps,
 } from './base-component.types';
 
-export class BaseComponent extends React.PureComponent {
-  protected _renderLabel({ label, children, labelProps }: ILabelProps): React.ReactElement {
+export class BaseComponent {
+  renderLabel({ label, children, labelProps }: ILabelProps): React.ReactElement {
     return (
       <label {...labelProps}>
         {label}
@@ -22,7 +22,16 @@ export class BaseComponent extends React.PureComponent {
     );
   }
 
-  protected _renderInputField({ name, value, onChange, inputFieldProps }: IInputFieldProps): React.ReactElement {
+  renderError(error: Error): React.ReactElement {
+    return (
+      <div>
+        <h4>Error:</h4>
+        <p>{error.message}</p>
+      </div>
+    );
+  }
+
+  renderInputField({ name, value, onChange, inputFieldProps }: IInputFieldProps): React.ReactElement {
     const handleFieldValueChange = (ev: React.SyntheticEvent<HTMLInputElement>): void => {
       const { target } = ev;
       const { value, name } = target as HTMLInputElement;
@@ -31,18 +40,18 @@ export class BaseComponent extends React.PureComponent {
     return <input name={name} value={value} onChange={handleFieldValueChange} {...inputFieldProps} />;
   }
 
-  protected _renderInputFieldWithLabel(
+  renderInputFieldWithLabel(
     labelProps: Omit<ILabelProps, 'children'>,
     inputFieldProps: IInputFieldProps
   ): React.ReactElement<any> {
     const labelPropsResulted: ILabelProps = {
       ...labelProps,
-      children: this._renderInputField(inputFieldProps),
+      children: this.renderInputField(inputFieldProps),
     };
-    return this._renderLabel(labelPropsResulted);
+    return this.renderLabel(labelPropsResulted);
   }
 
-  protected _renderButton({ title, onClick, buttonProps }: IButtonProps): React.ReactElement {
+  renderButton({ title, onClick, buttonProps }: IButtonProps): React.ReactElement {
     return (
       <button onClick={onClick} {...buttonProps}>
         {title}
@@ -50,7 +59,7 @@ export class BaseComponent extends React.PureComponent {
     );
   }
 
-  protected _renderDropdown({ name, options, onChange, selectElementProps }: IDropdownProps): React.ReactElement {
+  renderDropdown({ name, options, onChange, selectElementProps }: IDropdownProps): React.ReactElement {
     const handleValueChange = (ev: React.ChangeEvent<HTMLSelectElement>) => {
       const { target } = ev;
       const { name: optionName, value } = target;
@@ -73,19 +82,16 @@ export class BaseComponent extends React.PureComponent {
     );
   }
 
-  protected _renderDropdownWithLabel(
-    labelProps: Omit<ILabelProps, 'children'>,
-    dropdownProps: IDropdownProps
-  ): React.ReactElement {
-    const dropdownElement = this._renderDropdown(dropdownProps);
+  renderDropdownWithLabel(labelProps: Omit<ILabelProps, 'children'>, dropdownProps: IDropdownProps): React.ReactElement {
+    const dropdownElement = this.renderDropdown(dropdownProps);
     const labelPropsResulted = {
       ...labelProps,
       children: dropdownElement,
     };
-    return this._renderLabel(labelPropsResulted);
+    return this.renderLabel(labelPropsResulted);
   }
 
-  protected _renderForm(formProps: IFormProps, onFormValuesChange: onFormValuesChange): React.ReactElement {
+  renderForm(formProps: IFormProps, onFormValuesChange: onFormValuesChange): React.ReactElement {
     const { formFields, submitButton } = formProps;
     const formFieldsElements = formFields.map((formFieldDescription) => {
       return this.__renderFormFieldByDescription(formFieldDescription, onFormValuesChange);
@@ -95,7 +101,7 @@ export class BaseComponent extends React.PureComponent {
       ...submitButton,
       type: 'submit',
     };
-    const submitButtonElement = this._renderButton(submitButtonPropsResulted);
+    const submitButtonElement = this.renderButton(submitButtonPropsResulted);
     return (
       <form>
         {formFieldsElements}
@@ -104,7 +110,7 @@ export class BaseComponent extends React.PureComponent {
     );
   }
 
-  protected _renderFormElementByTypeAndProps<T extends EFormFieldType>(fieldDescription: {
+  private __renderFormElementByTypeAndProps<T extends EFormFieldType>(fieldDescription: {
     type: T;
     props: TFormFieldProps<T>;
     onChange: onFormValuesChange;
@@ -120,7 +126,7 @@ export class BaseComponent extends React.PureComponent {
           ...(props as IDropdownProps),
           onChange: handleDropdownValueChange,
         };
-        return this._renderDropdown(propsDropdownResulted);
+        return this.renderDropdown(propsDropdownResulted);
       case EFormFieldType.INPUT:
         const handleInputValueChange: IInputFieldProps['onChange'] = (fieldName: string, value: string) => {
           (props as IInputFieldProps).onChange?.(fieldName, value);
@@ -130,9 +136,9 @@ export class BaseComponent extends React.PureComponent {
           ...(props as IInputFieldProps),
           onChange: handleInputValueChange,
         };
-        return this._renderInputField(propsInputResulted);
+        return this.renderInputField(propsInputResulted);
       case EFormFieldType.BUTTON:
-        return this._renderButton(props as IButtonProps);
+        return this.renderButton(props as IButtonProps);
       case EFormFieldType.FORM:
         let formValues: IFormFieldsValues = {};
         const onFormValueChanged = (value: IFormFieldsValues) => {
@@ -147,7 +153,7 @@ export class BaseComponent extends React.PureComponent {
         return (
           <div>
             <hr />
-            {this._renderForm(props as IFormProps, onFormValueChanged)}
+            {this.renderForm(props as IFormProps, onFormValueChanged)}
             <hr />
           </div>
         );
@@ -161,7 +167,7 @@ export class BaseComponent extends React.PureComponent {
     onChange: onFormValuesChange
   ): React.ReactElement => {
     const { type, label, props } = formFieldDescription;
-    let fieldElement = this._renderFormElementByTypeAndProps<T>({
+    let fieldElement = this.__renderFormElementByTypeAndProps<T>({
       type,
       props,
       onChange,
@@ -172,7 +178,7 @@ export class BaseComponent extends React.PureComponent {
         ...label,
         children: fieldElement,
       };
-      fieldElement = this._renderLabel(labelPropsResulted);
+      fieldElement = this.renderLabel(labelPropsResulted);
     }
     return <div key={`${type};${label?.label || ''};${(props as IField)?.name || ''}`}>{fieldElement}</div>;
   };

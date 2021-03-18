@@ -3,6 +3,14 @@ import { ISwarmMessageChannelDescriptionRaw } from '../../classes/swarm-messages
 import { TSwarmMessageSerialized } from '../../classes/swarm-message/swarm-message-constructor.types';
 import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
 import { TSwarmStoreDatabaseType, TSwarmStoreDatabaseOptions } from '../../classes/swarm-store-class/swarm-store-class.types';
+import { BaseComponent } from '../base-component/base-component';
+import {
+  IFieldDescription,
+  EFormFieldType,
+  IButtonProps,
+  onFormValuesChange,
+  IFormFieldsValues,
+} from '../base-component/base-component.types';
 
 export interface ISwarmChannelDescriptionComponentProps<
   P extends ESwarmStoreConnector,
@@ -25,51 +33,60 @@ export interface ISwarmChannelDescriptionComponentState<
   channelDescription: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>;
 }
 
+const SUBMIT_CHANNEL_CHANGES_BUTTON_PROPS: IButtonProps = {
+  title: 'Change channel description',
+};
+
 export class SwarmChannelDescriptionComponent<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>
-> extends React.PureComponent<ISwarmChannelDescriptionComponentProps<P, T, DbType, DBO>> {
-  public state = {
+> extends React.PureComponent<
+  ISwarmChannelDescriptionComponentProps<P, T, DbType, DBO>,
+  ISwarmChannelDescriptionComponentState<P, T, DbType, DBO>
+> {
+  public state: ISwarmChannelDescriptionComponentState<P, T, DbType, DBO> = {
     error: undefined,
     isPending: false,
     channelDescription: this.props.channelDescription,
   };
 
-  public render() {
-    const { isPending } = this.state;
+  private __baseComponent = new BaseComponent();
 
-    if (isPending) {
-      return <div>Channel is updating</div>;
-    }
-  }
-
-  protected _renderError(): React.ReactElement {
-    const { error } = this.state;
+  public render(): React.ReactElement {
+    const { isPending, error } = this.state;
+    const errorElement = error && this.__baseComponent.renderError(error);
+    const channelIsPendingComponent = isPending && this.__baseComponent.renderLabel({ label: 'Channel description is updating' });
+    const channelDescriptionForm = this._renderChannelDescription();
 
     return (
-      error && (
-        <div>
-          <h4>Error:</h4>
-          <p>{error.message}</p>
-        </div>
-      )
+      <div>
+        {errorElement}
+        {channelIsPendingComponent}
+        {channelDescriptionForm}
+      </div>
     );
   }
 
-  protected _renderLabel(label: string): React.ReactElement {
-    return <p>{label}</p>;
+  protected _getFormFieldsForChannelDescription(
+    channelDescription: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>
+  ): IFieldDescription<EFormFieldType>[] {
+    const { name, tags, version, dbType, dbOptions } = channelDescription;
+    return [
+      { type: EFormFieldType.INPUT, props: { name: 'name', value: name }, label: { label: 'Name:' } },
+      { type: EFormFieldType.INPUT, props: { name: 'version', value: version }, label: { label: 'Version' } },
+    ];
   }
-
-  protected _renderInputField(
-    name: string,
-    value: string,
-    onChange: (name: string, value: string) => unknown
-  ): React.ReactElement {}
 
   protected _renderChannelDescription(): React.ReactElement {
     const { channelDescription } = this.state;
+    const formFieldsDescription = this._getFormFieldsForChannelDescription(channelDescription);
+    const formProps = {
+      formFields: formFieldsDescription,
+      submitButton: SUBMIT_CHANNEL_CHANGES_BUTTON_PROPS,
+    };
+    return this.__baseComponent.renderForm(formProps, this.__onChannelDescriptionChange);
   }
 
   protected async __updateChannelDescription(): Promise<void> {
@@ -89,4 +106,6 @@ export class SwarmChannelDescriptionComponent<
       });
     }
   }
+
+  private __onChannelDescriptionChange: onFormValuesChange = (values: IFormFieldsValues): void => {};
 }

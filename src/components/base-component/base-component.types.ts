@@ -50,7 +50,7 @@ export type TFormFieldProps<T extends EFormFieldType> = T extends EFormFieldType
   : T extends EFormFieldType.INPUT
   ? Omit<IInputFieldProps, 'onChange'> & Partial<Pick<IInputFieldProps, 'onChange'>>
   : T extends EFormFieldType.FORM
-  ? Omit<IFormProps, 'submitButton' & 'onChange'> & IField & Partial<Pick<IFormProps, 'onChange'>>
+  ? Omit<IFormProps, 'submitButton' & 'onChange'> & IField
   : never;
 
 export interface IFieldDescription<T extends EFormFieldType> {
@@ -66,5 +66,4 @@ export interface onFormValuesChange {
 export interface IFormProps {
   formFields: IFieldDescription<EFormFieldType>[];
   submitButton: IButtonProps;
-  onChange: onFormValuesChange;
 }
