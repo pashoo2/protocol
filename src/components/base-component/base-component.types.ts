@@ -1,5 +1,10 @@
 import React from 'react';
 
+export interface IFormMethods {
+  readonly updateFormValues: (values: IFormFieldsValues) => void;
+  readonly getFormValues: () => IFormFieldsValues;
+}
+
 export interface ILabelProps {
   label: string;
   children?: React.ReactNode;
@@ -22,7 +27,11 @@ export interface IButtonProps {
   buttonProps?: React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>;
 }
 
-export interface IDropdownProps extends IField {
+export interface IFormButtonProps extends Omit<IButtonProps, 'onClick'> {
+  onClick?: (formMethods: IFormMethods) => unknown;
+}
+
+export interface IDropdownProps<MULTI extends boolean = false> extends IField {
   options: Array<{
     name: string;
     value: string;
@@ -30,10 +39,12 @@ export interface IDropdownProps extends IField {
   }>;
   onChange: (fieldName: string, optionName: string, value: string) => unknown;
   selectElementProps?: React.DetailedHTMLProps<React.SelectHTMLAttributes<HTMLSelectElement>, HTMLSelectElement>;
+  isMultiple: MULTI extends true ? true : never | false;
+  value?: MULTI extends true ? string[] : string | never;
 }
 
 export interface IFormFieldsValues {
-  [key: string]: string | IFormFieldsValues;
+  [key: string]: string | string[] | undefined | IFormFieldsValues;
 }
 
 export enum EFormFieldType {
@@ -44,9 +55,9 @@ export enum EFormFieldType {
 }
 
 export type TFormFieldProps<T extends EFormFieldType> = T extends EFormFieldType.BUTTON
-  ? IButtonProps & IField
+  ? IFormButtonProps & IField
   : T extends EFormFieldType.DROPDOWN
-  ? Omit<IDropdownProps, 'onChange'> & Partial<Pick<IDropdownProps, 'onChange'>>
+  ? Omit<IDropdownProps<boolean>, 'onChange'> & Partial<Pick<IDropdownProps<boolean>, 'onChange'>>
   : T extends EFormFieldType.INPUT
   ? Omit<IInputFieldProps, 'onChange'> & Partial<Pick<IInputFieldProps, 'onChange'>>
   : T extends EFormFieldType.FORM
@@ -66,4 +77,5 @@ export interface onFormValuesChange {
 export interface IFormProps {
   formFields: IFieldDescription<EFormFieldType>[];
   submitButton: IButtonProps;
+  hookGetFormMethods?(formMethods: IFormMethods): void;
 }

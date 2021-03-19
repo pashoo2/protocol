@@ -4,6 +4,8 @@ import { TSwarmMessageSerialized } from '../../classes/swarm-message/swarm-messa
 import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
 import { TSwarmStoreDatabaseType, TSwarmStoreDatabaseOptions } from '../../classes/swarm-store-class/swarm-store-class.types';
 import { BaseComponent } from '../base-component/base-component';
+import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
+import { swarmChannelDescriptionComponentCreateFormFieldsDescriptionForChannelDescription } from './swarm-channel-description-component.utils';
 import {
   IFieldDescription,
   EFormFieldType,
@@ -69,19 +71,15 @@ export class SwarmChannelDescriptionComponent<
     );
   }
 
-  protected _getFormFieldsForChannelDescription(
-    channelDescription: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>
-  ): IFieldDescription<EFormFieldType>[] {
-    const { name, tags, version, dbType, dbOptions } = channelDescription;
-    return [
-      { type: EFormFieldType.INPUT, props: { name: 'name', value: name }, label: { label: 'Name:' } },
-      { type: EFormFieldType.INPUT, props: { name: 'version', value: version }, label: { label: 'Version' } },
-    ];
-  }
-
   protected _renderChannelDescription(): React.ReactElement {
     const { channelDescription } = this.state;
-    const formFieldsDescription = this._getFormFieldsForChannelDescription(channelDescription);
+    const formFieldsDescription = swarmChannelDescriptionComponentCreateFormFieldsDescriptionForChannelDescription<
+      P,
+      T,
+      DbType,
+      DBO,
+      typeof channelDescription
+    >(channelDescription);
     const formProps = {
       formFields: formFieldsDescription,
       submitButton: SUBMIT_CHANNEL_CHANGES_BUTTON_PROPS,
@@ -107,5 +105,14 @@ export class SwarmChannelDescriptionComponent<
     }
   }
 
-  private __onChannelDescriptionChange: onFormValuesChange = (values: IFormFieldsValues): void => {};
+  private __onChannelDescriptionChange: onFormValuesChange = (values: IFormFieldsValues): void => {
+    console.log(values);
+    debugger;
+    this.setState({
+      channelDescription: {
+        ...this.state.channelDescription,
+        ...values,
+      },
+    });
+  };
 }

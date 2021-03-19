@@ -65,10 +65,7 @@ import { TSwarmMessagesChannelId } from '../../../../../types/swarm-messages-cha
 import { ESwarmMessagesDatabaseCacheEventsNames } from '../../../../../../swarm-messages-database/swarm-messages-database.const';
 import { mergeMaps } from 'utils/common-utils/common-utils-maps';
 import { debounce } from 'utils/throttling-utils';
-import {
-  EMIT_CHANNELS_DESCRIPTIONS_MAP_CACHE_UPDATE_EVENT_DEBOUNCE_MS,
-  GET_SWARM_CHANNEL_DESCRIPTION_RAW_BY_SWARM_DB_REQUEST_RESULT_CACHED_ITEMS_COUNT_LIMIT,
-} from './swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.fabric.const';
+import { EMIT_CHANNELS_DESCRIPTIONS_MAP_CACHE_UPDATE_EVENT_DEBOUNCE_MS } from './swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.fabric.const';
 import { whetherTwoMapsSimilar } from '../../../../../../../utils/common-utils/common-utils-maps';
 import { compareTwoSwarmMessageStoreMessagingRequestWithMetaResults } from '../../../../../../swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache/swarm-messages-database-cache.utils';
 import { dataCachingUtilsCachingDecoratorGlobalCachePerClass } from '../../../../../../../utils/data-cache-utils/data-cache-utils-caching-decorator-global-cache-per-class/data-cache-utils-caching-decorator-global-cache-per-class';
