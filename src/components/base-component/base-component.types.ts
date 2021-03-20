@@ -15,6 +15,12 @@ export interface IField {
   name: string;
 }
 
+export interface ICheckboxFieldProps extends IField {
+  value: boolean;
+  onChange: (name: string, value: boolean) => void;
+  checkboxFieldProps?: React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
+}
+
 export interface IInputFieldProps<T extends boolean = false> extends IField {
   value: string;
   isMultiline?: T;
@@ -48,12 +54,13 @@ export interface IDropdownProps<MULTI extends boolean = false> extends IField {
 }
 
 export interface IFormFieldsValues {
-  [key: string]: string | string[] | undefined | IFormFieldsValues;
+  [key: string]: boolean | string | string[] | undefined | IFormFieldsValues;
 }
 
 export enum EFormFieldType {
   DROPDOWN = 'DROPDOWN',
   INPUT = 'INPUT',
+  CHECKBOX = 'CHECKBOX',
   BUTTON = 'BUTTON',
   FORM = 'FORM',
 }
@@ -64,8 +71,10 @@ export type TFormFieldProps<T extends EFormFieldType> = T extends EFormFieldType
   ? Omit<IDropdownProps<boolean>, 'onChange'> & Partial<Pick<IDropdownProps<boolean>, 'onChange'>>
   : T extends EFormFieldType.INPUT
   ? Omit<IInputFieldProps<boolean>, 'onChange'> & Partial<Pick<IInputFieldProps, 'onChange'>>
+  : T extends EFormFieldType.CHECKBOX
+  ? Omit<ICheckboxFieldProps, 'onChange'> & Partial<Pick<ICheckboxFieldProps, 'onChange'>> & IField
   : T extends EFormFieldType.FORM
-  ? Omit<IFormProps, 'submitButton' & 'onChange'> & IField
+  ? Omit<IFormProps, 'submitButton' | 'onChange'> & IField
   : never;
 
 export interface IFieldDescription<T extends EFormFieldType> {
@@ -89,25 +98,27 @@ export interface IBaseComponent {
 
   renderError(error: Error): React.ReactElement;
 
-  renderInputField<T extends boolean>(fieldProps: IInputFieldProps<T>, formFieldsValues?: IFormFieldsValues): React.ReactElement;
+  renderInputField<T extends boolean>(fieldProps: IInputFieldProps<T>): React.ReactElement;
 
   renderInputFieldWithLabel<T extends boolean>(
     labelProps: Omit<ILabelProps, 'children'>,
     inputFieldProps: IInputFieldProps<T>
   ): React.ReactElement<any>;
 
-  renderButton({ title, onClick, buttonProps }: IButtonProps, formMethods?: IFormMethods): React.ReactElement;
+  renderButton({ title, onClick, buttonProps }: IButtonProps): React.ReactElement;
 
-  renderDropdown(
-    { name, options, value: currentValue, isMultiple, selectElementProps, onChange }: IDropdownProps,
-    formFieldsValues?: IFormFieldsValues
-  ): React.ReactElement;
+  renderDropdown({
+    name,
+    options,
+    value: currentValue,
+    isMultiple,
+    selectElementProps,
+    onChange,
+  }: IDropdownProps): React.ReactElement;
 
   renderDropdownWithLabel(labelProps: Omit<ILabelProps, 'children'>, dropdownProps: IDropdownProps): React.ReactElement;
 
-  renderForm(
-    formProps: IFormProps,
-    onFormValuesChange: onFormValuesChange,
-    formFieldsValuesCurrent: IFormFieldsValues
-  ): React.ReactElement;
+  renderCheckbox({ name, value, checkboxFieldProps, onChange }: ICheckboxFieldProps): React.ReactElement<any>;
+
+  renderForm(formProps: IFormProps, onFormValuesChange: onFormValuesChange): React.ReactElement;
 }

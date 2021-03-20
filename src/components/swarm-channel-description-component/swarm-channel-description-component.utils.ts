@@ -6,6 +6,51 @@ import { TSwarmMessageSerialized } from '../../classes/swarm-message/swarm-messa
 import { TSwarmStoreDatabaseType, TSwarmStoreDatabaseOptions } from '../../classes/swarm-store-class/swarm-store-class.types';
 import { commonUtilsArrayUniq } from '../../utils/common-utils/common-utils-array';
 
+export function swarmChannelDescriptionComponentCreateSubformDescriptionForChannelDatabaseOptions<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
+  CHD extends ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO> = ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>
+>(databaseOptions: CHD['dbOptions']): IFieldDescription<EFormFieldType.FORM> {
+  const { isPublic, write } = databaseOptions;
+  const formFields: IFieldDescription<EFormFieldType>[] = [
+    {
+      type: EFormFieldType.CHECKBOX,
+      label: { label: 'Is public channels' },
+      props: {
+        name: 'isPublic',
+        value: Boolean(isPublic),
+      },
+    },
+    {
+      type: EFormFieldType.DROPDOWN,
+      label: { label: 'Users who have the WRITE permission' },
+      props: {
+        name: 'write',
+        value: write,
+        isMultiple: true,
+        canRemove: true,
+        options: write
+          ? write.map((writeUserId) => ({
+              name: writeUserId,
+              value: writeUserId,
+            }))
+          : [],
+      },
+    },
+  ];
+
+  return {
+    type: EFormFieldType.FORM,
+    label: { label: 'Database options' },
+    props: {
+      name: 'dbOptions',
+      formFields,
+    },
+  };
+}
+
 export function swarmChannelDescriptionComponentCreateFormFieldsDescriptionForChannelDescription<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
@@ -117,5 +162,6 @@ export function swarmChannelDescriptionComponentCreateFormFieldsDescriptionForCh
         },
       },
     },
+    swarmChannelDescriptionComponentCreateSubformDescriptionForChannelDatabaseOptions<P, T, DbType, DBO, CHD>(dbOptions),
   ];
 }

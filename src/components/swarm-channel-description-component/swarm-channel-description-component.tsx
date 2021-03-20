@@ -5,13 +5,7 @@ import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-stor
 import { TSwarmStoreDatabaseType, TSwarmStoreDatabaseOptions } from '../../classes/swarm-store-class/swarm-store-class.types';
 import { BaseComponent } from '../base-component/base-component';
 import { swarmChannelDescriptionComponentCreateFormFieldsDescriptionForChannelDescription } from './swarm-channel-description-component.utils';
-import {
-  IFieldDescription,
-  EFormFieldType,
-  IButtonProps,
-  onFormValuesChange,
-  IFormFieldsValues,
-} from '../base-component/base-component.types';
+import { IButtonProps, onFormValuesChange, IFormFieldsValues } from '../base-component/base-component.types';
 
 export interface ISwarmChannelDescriptionComponentProps<
   P extends ESwarmStoreConnector,

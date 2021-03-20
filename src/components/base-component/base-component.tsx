@@ -14,6 +14,7 @@ import {
   ILabelProps,
   onFormValuesChange,
   TFormFieldProps,
+  ICheckboxFieldProps,
 } from './base-component.types';
 
 import styles from './base-component.module.css';
@@ -91,6 +92,22 @@ export class BaseComponent implements IBaseComponent {
     return this.renderLabel(labelPropsResulted);
   }
 
+  renderCheckbox(
+    { name, value, checkboxFieldProps, onChange }: ICheckboxFieldProps,
+    formFieldsValues?: IFormFieldsValues
+  ): React.ReactElement<any> {
+    const handleCheckboxValueChange = (ev: React.SyntheticEvent<HTMLInputElement>): void => {
+      const { target } = ev;
+      const { name, checked } = target as HTMLInputElement;
+      onChange?.(name, checked);
+    };
+
+    if (formFieldsValues) {
+      formFieldsValues[name] = value;
+    }
+    return <input type="checkbox" name={name} checked={value} onChange={handleCheckboxValueChange} {...checkboxFieldProps} />;
+  }
+
   renderButton({ title, onClick, buttonProps }: IButtonProps, formMethods?: IFormMethods): React.ReactElement {
     const handleClick =
       onClick && formMethods
@@ -117,7 +134,6 @@ export class BaseComponent implements IBaseComponent {
       : (ev: React.ChangeEvent<HTMLSelectElement>) => {
           const { target } = ev;
           const { name: optionName, value } = target;
-          debugger;
           onChange(name, optionName, (isMultiple ? getCurrentValues() : value) as T extends boolean ? string[] : string);
         };
     const handleRemoveValue = (ev: React.MouseEvent<HTMLOptionElement, MouseEvent>) => {
@@ -126,7 +142,6 @@ export class BaseComponent implements IBaseComponent {
       }
       const { target } = ev;
       const { title: optionName, value: optionValue } = target as HTMLOptionElement;
-      debugger;
       const valuesUpdated = getCurrentValues().filter((value) => value !== optionValue);
       onChange(name, optionName, valuesUpdated as T extends boolean ? string[] : string);
     };
@@ -182,14 +197,18 @@ export class BaseComponent implements IBaseComponent {
     return this.renderLabel(labelPropsResulted);
   }
 
-  renderForm(
-    formProps: IFormProps,
+  renderForm(formProps: IFormProps, onFormValuesChange: onFormValuesChange): React.ReactElement {
+    return this.renderFormAsField(formProps, onFormValuesChange);
+  }
+
+  renderFormAsField(
+    formProps: IFormProps | TFormFieldProps<EFormFieldType.FORM>,
     onFormValuesChange: onFormValuesChange,
     formFieldsValuesCurrent: IFormFieldsValues = {}
   ): React.ReactElement {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     const currentFormFieldsValues = { ...formFieldsValuesCurrent };
-    const { formFields, submitButton } = formProps;
+    const { formFields, submitButton } = formProps as IFormProps;
     const handleFormValuesChange = (values: IFormFieldsValues): void => {
       const updatedFormFieldsValues = Object.assign({}, currentFormFieldsValues, values);
       onFormValuesChange(updatedFormFieldsValues);
@@ -212,12 +231,14 @@ export class BaseComponent implements IBaseComponent {
         handleFormValuesChange
       );
     });
-    const submitButtonPropsResulted = {
-      label: 'Submit',
-      ...submitButton,
-      type: 'submit',
-    };
-    const submitButtonElement = this.renderButton(submitButtonPropsResulted);
+    const submitButtonPropsResulted = submitButton
+      ? {
+          label: 'Submit',
+          ...submitButton,
+          type: 'submit',
+        }
+      : undefined;
+    const submitButtonElement = submitButtonPropsResulted && this.renderButton(submitButtonPropsResulted);
     return (
       <form>
         {formFieldsElements}
@@ -261,25 +282,48 @@ export class BaseComponent implements IBaseComponent {
         return this.renderInputField(propsInputResulted, currentFormFieldsValues);
       case EFormFieldType.BUTTON:
         return this.renderButton(props as IButtonProps, formMethods);
-      case EFormFieldType.FORM:
-        let formValues: IFormFieldsValues = {};
+      case EFormFieldType.CHECKBOX: {
+        const fieldProps = props as TFormFieldProps<EFormFieldType.CHECKBOX>;
+        const handleCheckboxValueChange: TFormFieldProps<EFormFieldType.CHECKBOX>['onChange'] = (
+          fieldName: string,
+          value: boolean
+        ) => {
+          fieldProps.onChange?.(fieldName, value);
+          onChange({ [fieldName]: value });
+        };
+        const propsInputResulted: ICheckboxFieldProps = {
+          ...fieldProps,
+          onChange: handleCheckboxValueChange,
+        };
+        return this.renderCheckbox(propsInputResulted, currentFormFieldsValues);
+      }
+      case EFormFieldType.FORM: {
+        const formName = (props as IField).name;
+
+        if (currentFormFieldsValues) {
+          currentFormFieldsValues[formName] = {};
+        }
+        let formValues = (currentFormFieldsValues[formName] as IFormFieldsValues) ?? {};
         const onFormValueChanged = (value: IFormFieldsValues) => {
-          debugger;
           formValues = {
             ...formValues,
             ...value,
           };
+          debugger;
           onChange({
             [(props as IField).name]: formValues,
           });
         };
         return (
           <div>
+            <br />
             <hr />
-            {this.renderForm(props as IFormProps, onFormValueChanged, currentFormFieldsValues)}
+            <h3>{props.name}</h3>
+            {this.renderFormAsField(props as TFormFieldProps<EFormFieldType.FORM>, onFormValueChanged, formValues)}
             <hr />
           </div>
         );
+      }
       default:
         throw new Error(`Unknown field type ${type}`);
     }
