@@ -1,9 +1,10 @@
 import { ISwarmMessageChannelDescriptionRaw } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-instance.types';
-import { IFieldDescription, EFormFieldType, IFormMethods, IDropdownProps } from '../base-component/base-component.types';
+import { IFieldDescription, EFormFieldType, IFormMethods } from '../base-component/base-component.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
 import { TSwarmMessageSerialized } from '../../classes/swarm-message/swarm-message-constructor.types';
 import { TSwarmStoreDatabaseType, TSwarmStoreDatabaseOptions } from '../../classes/swarm-store-class/swarm-store-class.types';
+import { commonUtilsArrayUniq } from '../../utils/common-utils/common-utils-array';
 
 export function swarmChannelDescriptionComponentCreateFormFieldsDescriptionForChannelDescription<
   P extends ESwarmStoreConnector,
@@ -12,7 +13,7 @@ export function swarmChannelDescriptionComponentCreateFormFieldsDescriptionForCh
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   CHD extends ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO> = ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>
 >(channelDescription: CHD): IFieldDescription<EFormFieldType>[] {
-  const { name, tags, version, dbType, dbOptions } = channelDescription;
+  const { name, tags, version, dbType, description, messageEncryption, admins, dbOptions } = channelDescription;
   return [
     { type: EFormFieldType.INPUT, props: { name: 'name', value: name }, label: { label: 'Name:' } },
     { type: EFormFieldType.INPUT, props: { name: 'version', value: version }, label: { label: 'Version' } },
@@ -21,6 +22,7 @@ export function swarmChannelDescriptionComponentCreateFormFieldsDescriptionForCh
       props: {
         name: 'dbType',
         value: dbType,
+        selectElementProps: { disabled: true },
         options: Object.keys(
           ESwarmStoreConnectorOrbitDbDatabaseType as Record<string, ESwarmStoreConnectorOrbitDbDatabaseType>
         ).map((databaseTypeName) => {
@@ -38,15 +40,14 @@ export function swarmChannelDescriptionComponentCreateFormFieldsDescriptionForCh
       type: EFormFieldType.DROPDOWN,
       props: {
         name: 'tags',
-        isMultiple: true,
         value: tags,
-        selectElementProps: { disabled: true },
+        isMultiple: true,
         options: tags.map((tag) => ({
           name: tag,
           value: tag,
         })),
       },
-      label: { label: 'Database type' },
+      label: { label: 'Tags for the channel' },
     },
     {
       type: EFormFieldType.BUTTON,
@@ -62,6 +63,56 @@ export function swarmChannelDescriptionComponentCreateFormFieldsDescriptionForCh
           const currentFormValues = formMethods.getFormValues();
           formMethods.updateFormValues({
             tags: [...(currentFormValues.tags as string[]), newTag] as string[],
+          });
+        },
+      },
+    },
+    {
+      type: EFormFieldType.INPUT,
+      label: { label: 'Description' },
+      props: {
+        name: 'description',
+        value: description,
+        isMultiline: true,
+      },
+    },
+    {
+      type: EFormFieldType.INPUT,
+      label: { label: 'Message encryption' },
+      props: {
+        name: 'messageEncryption',
+        value: messageEncryption,
+        inputFieldProps: { disabled: true },
+      },
+    },
+    {
+      type: EFormFieldType.DROPDOWN,
+      label: { label: 'Channel admins' },
+      props: {
+        name: 'admins',
+        value: admins,
+        isMultiple: true,
+        canRemove: true,
+        options: admins.map((admin) => ({
+          name: admin,
+          value: admin,
+        })),
+      },
+    },
+    {
+      type: EFormFieldType.BUTTON,
+      label: {
+        label: 'Add new admin',
+      },
+      props: {
+        name: 'Add new admin',
+        title: 'Add new admin',
+        buttonProps: { type: 'button' },
+        onClick: (formMethods: IFormMethods) => {
+          const newAdminUserId = prompt('Input an admin user id');
+          const currentFormValues = formMethods.getFormValues();
+          formMethods.updateFormValues({
+            admins: commonUtilsArrayUniq([...(currentFormValues.admins as string[]), newAdminUserId]) as string[],
           });
         },
       },

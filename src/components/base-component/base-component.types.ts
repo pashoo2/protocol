@@ -15,10 +15,13 @@ export interface IField {
   name: string;
 }
 
-export interface IInputFieldProps extends IField {
+export interface IInputFieldProps<T extends boolean = false> extends IField {
   value: string;
+  isMultiline?: T;
   onChange: (name: string, value: string) => unknown;
-  inputFieldProps?: React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
+  inputFieldProps?: T extends true
+    ? React.DetailedHTMLProps<React.TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement>
+    : React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
 }
 
 export interface IButtonProps {
@@ -37,9 +40,10 @@ export interface IDropdownProps<MULTI extends boolean = false> extends IField {
     value: string;
     optionElementProps?: React.DetailedHTMLProps<React.OptionHTMLAttributes<HTMLOptionElement>, HTMLOptionElement>;
   }>;
-  onChange: (fieldName: string, optionName: string, value: string) => unknown;
+  onChange: (fieldName: string, optionName: string, value: MULTI extends boolean ? string[] : string) => unknown;
   selectElementProps?: React.DetailedHTMLProps<React.SelectHTMLAttributes<HTMLSelectElement>, HTMLSelectElement>;
   isMultiple: MULTI extends true ? true : never | false;
+  canRemove?: MULTI extends true ? boolean : never | false;
   value?: MULTI extends true ? string[] : string | never;
 }
 
@@ -59,7 +63,7 @@ export type TFormFieldProps<T extends EFormFieldType> = T extends EFormFieldType
   : T extends EFormFieldType.DROPDOWN
   ? Omit<IDropdownProps<boolean>, 'onChange'> & Partial<Pick<IDropdownProps<boolean>, 'onChange'>>
   : T extends EFormFieldType.INPUT
-  ? Omit<IInputFieldProps, 'onChange'> & Partial<Pick<IInputFieldProps, 'onChange'>>
+  ? Omit<IInputFieldProps<boolean>, 'onChange'> & Partial<Pick<IInputFieldProps, 'onChange'>>
   : T extends EFormFieldType.FORM
   ? Omit<IFormProps, 'submitButton' & 'onChange'> & IField
   : never;
@@ -78,4 +82,32 @@ export interface IFormProps {
   formFields: IFieldDescription<EFormFieldType>[];
   submitButton: IButtonProps;
   hookGetFormMethods?(formMethods: IFormMethods): void;
+}
+
+export interface IBaseComponent {
+  renderLabel({ label, children, labelProps }: ILabelProps): React.ReactElement;
+
+  renderError(error: Error): React.ReactElement;
+
+  renderInputField<T extends boolean>(fieldProps: IInputFieldProps<T>, formFieldsValues?: IFormFieldsValues): React.ReactElement;
+
+  renderInputFieldWithLabel<T extends boolean>(
+    labelProps: Omit<ILabelProps, 'children'>,
+    inputFieldProps: IInputFieldProps<T>
+  ): React.ReactElement<any>;
+
+  renderButton({ title, onClick, buttonProps }: IButtonProps, formMethods?: IFormMethods): React.ReactElement;
+
+  renderDropdown(
+    { name, options, value: currentValue, isMultiple, selectElementProps, onChange }: IDropdownProps,
+    formFieldsValues?: IFormFieldsValues
+  ): React.ReactElement;
+
+  renderDropdownWithLabel(labelProps: Omit<ILabelProps, 'children'>, dropdownProps: IDropdownProps): React.ReactElement;
+
+  renderForm(
+    formProps: IFormProps,
+    onFormValuesChange: onFormValuesChange,
+    formFieldsValuesCurrent: IFormFieldsValues
+  ): React.ReactElement;
 }

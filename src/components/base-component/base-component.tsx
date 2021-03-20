@@ -1,20 +1,24 @@
 import React from 'react';
-import { IFormFieldsValues, onFormValuesChange, IFormMethods, IFormButtonProps } from './base-component.types';
 import {
-  IField,
-  ILabelProps,
-  IInputFieldProps,
+  EFormFieldType,
+  IBaseComponent,
   IButtonProps,
   IDropdownProps,
-  IFormProps,
+  IField,
   IFieldDescription,
-  EFormFieldType,
+  IFormButtonProps,
+  IFormFieldsValues,
+  IFormMethods,
+  IFormProps,
+  IInputFieldProps,
+  ILabelProps,
+  onFormValuesChange,
   TFormFieldProps,
 } from './base-component.types';
 
 import styles from './base-component.module.css';
 
-export class BaseComponent {
+export class BaseComponent implements IBaseComponent {
   renderLabel({ label, children, labelProps }: ILabelProps): React.ReactElement {
     return (
       <label className={styles.label} {...labelProps}>
@@ -33,8 +37,28 @@ export class BaseComponent {
     );
   }
 
-  renderInputField(
-    { name, value, onChange, inputFieldProps }: IInputFieldProps,
+  renderTextareaField(
+    { name, value, inputFieldProps, onChange }: IInputFieldProps<true>,
+    formFieldsValues?: IFormFieldsValues
+  ): React.ReactElement {
+    const handleFieldValueChange = (ev: React.SyntheticEvent<HTMLTextAreaElement>): void => {
+      const { target } = ev;
+      const { value, name } = target as HTMLTextAreaElement;
+      onChange(name, value);
+    };
+
+    if (formFieldsValues) {
+      formFieldsValues[name] = value;
+    }
+    return (
+      <textarea name={name} onChange={handleFieldValueChange} {...inputFieldProps}>
+        {value}
+      </textarea>
+    );
+  }
+
+  renderTextInputField(
+    { name, value, inputFieldProps, onChange }: IInputFieldProps<false>,
     formFieldsValues?: IFormFieldsValues
   ): React.ReactElement {
     const handleFieldValueChange = (ev: React.SyntheticEvent<HTMLInputElement>): void => {
@@ -46,16 +70,23 @@ export class BaseComponent {
     if (formFieldsValues) {
       formFieldsValues[name] = value;
     }
-    return <input name={name} value={value} onChange={handleFieldValueChange} {...inputFieldProps} />;
+    return <input type="text" name={name} value={value} onChange={handleFieldValueChange} {...inputFieldProps} />;
   }
 
-  renderInputFieldWithLabel(
+  renderInputField<T extends boolean>(fieldProps: IInputFieldProps<T>, formFieldsValues?: IFormFieldsValues): React.ReactElement {
+    if (fieldProps.isMultiline) {
+      return this.renderTextareaField(fieldProps as IInputFieldProps<true>, formFieldsValues);
+    }
+    return this.renderTextInputField(fieldProps as IInputFieldProps<false>, formFieldsValues);
+  }
+
+  renderInputFieldWithLabel<T extends boolean>(
     labelProps: Omit<ILabelProps, 'children'>,
-    inputFieldProps: IInputFieldProps
+    inputFieldProps: IInputFieldProps<T>
   ): React.ReactElement<any> {
     const labelPropsResulted: ILabelProps = {
       ...labelProps,
-      children: this.renderInputField(inputFieldProps),
+      children: this.renderInputField<T>(inputFieldProps),
     };
     return this.renderLabel(labelPropsResulted);
   }
@@ -74,15 +105,30 @@ export class BaseComponent {
     );
   }
 
-  renderDropdown(
-    { name, options, value: currentValue, isMultiple, selectElementProps, onChange }: IDropdownProps,
+  renderDropdown<T extends boolean = false>(
+    { name, options, value: currentValue, isMultiple, canRemove, selectElementProps, onChange }: IDropdownProps<T>,
     formFieldsValues?: IFormFieldsValues
   ): React.ReactElement {
-    const handleValueChange = (ev: React.ChangeEvent<HTMLSelectElement>) => {
+    const getCurrentValues = (): string[] => {
+      return Array.isArray(currentValue) ? currentValue : options.map(({ value }) => value);
+    };
+    const handleValueChange = isMultiple
+      ? undefined
+      : (ev: React.ChangeEvent<HTMLSelectElement>) => {
+          const { target } = ev;
+          const { name: optionName, value } = target;
+          debugger;
+          onChange(name, optionName, (isMultiple ? getCurrentValues() : value) as T extends boolean ? string[] : string);
+        };
+    const handleRemoveValue = (ev: React.MouseEvent<HTMLOptionElement, MouseEvent>) => {
+      if (!window.confirm('Do you really want to remove the element?')) {
+        return;
+      }
       const { target } = ev;
-      const { name: optionName, value } = target;
+      const { title: optionName, value: optionValue } = target as HTMLOptionElement;
       debugger;
-      onChange(name, optionName, value);
+      const valuesUpdated = getCurrentValues().filter((value) => value !== optionValue);
+      onChange(name, optionName, valuesUpdated as T extends boolean ? string[] : string);
     };
     const optionsElements = options.map(
       ({ name, value, optionElementProps }): React.ReactElement => {
@@ -90,7 +136,13 @@ export class BaseComponent {
           Boolean(currentValue) &&
           (isMultiple && Array.isArray(currentValue) ? (currentValue as string[]).includes(value) : value === currentValue);
         return (
-          <option key={`${name};${value}`} value={value} selected={isSelected} {...optionElementProps}>
+          <option
+            key={`${name};${value}`}
+            value={value}
+            selected={isSelected}
+            onDoubleClick={canRemove ? handleRemoveValue : undefined}
+            {...optionElementProps}
+          >
             {name}
           </option>
         );
@@ -118,8 +170,11 @@ export class BaseComponent {
     return <Form />;
   }
 
-  renderDropdownWithLabel(labelProps: Omit<ILabelProps, 'children'>, dropdownProps: IDropdownProps): React.ReactElement {
-    const dropdownElement = this.renderDropdown(dropdownProps);
+  renderDropdownWithLabel<T extends boolean>(
+    labelProps: Omit<ILabelProps, 'children'>,
+    dropdownProps: IDropdownProps<T>
+  ): React.ReactElement {
+    const dropdownElement = this.renderDropdown<T>(dropdownProps);
     const labelPropsResulted = {
       ...labelProps,
       children: dropdownElement,
@@ -163,7 +218,6 @@ export class BaseComponent {
       type: 'submit',
     };
     const submitButtonElement = this.renderButton(submitButtonPropsResulted);
-    debugger;
     return (
       <form>
         {formFieldsElements}
@@ -182,8 +236,12 @@ export class BaseComponent {
     const { type, props, currentFormFieldsValues, formMethods, onChange } = fieldDescription;
     switch (type) {
       case EFormFieldType.DROPDOWN:
-        const handleDropdownValueChange: IDropdownProps['onChange'] = (fieldName: string, optionName: string, value: string) => {
-          (props as IDropdownProps).onChange?.(fieldName, optionName, value);
+        const handleDropdownValueChange: IDropdownProps<any>['onChange'] = (
+          fieldName: string,
+          optionName: string,
+          value: string | string[]
+        ) => {
+          (props as IDropdownProps<any>).onChange?.(fieldName, optionName, value);
           onChange({ [fieldName]: value });
         };
         const propsDropdownResulted: IDropdownProps = {

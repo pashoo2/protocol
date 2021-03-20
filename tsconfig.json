@@ -27,7 +27,12 @@
     "emitDecoratorMetadata": true,
     "resolveJsonModule": true
   },
-  "include": ["src/**/*.ts", "src/**/*.json", "src/utils/ipfs-utils/ipfs-utils.js"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.json",
+    "src/utils/ipfs-utils/ipfs-utils.js",
+    "src/components/base-component/base-component.types.ts"
+  ],
   "exclude": [
     "node_modules",
     "**/*.spec.ts",
