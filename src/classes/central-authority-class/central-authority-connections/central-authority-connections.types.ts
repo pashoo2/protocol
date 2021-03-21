@@ -6,7 +6,7 @@ import {
 import { ICAConnectionConfigurationFirebase } from './central-authority-connection-firebase/central-authority-connection-firebase.types.configuration';
 import { TUserIdentityVersion } from '../central-authority-class-user-identity/central-authority-class-user-identity.types';
 import { CA_CONNECTION_STATUS } from './central-authority-connections-const/central-authority-connections-const';
-import { TSwarmMessageUserIdentifierSerialized } from '../../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
+import { TSwarmMessageUserIdentifierSerialized } from '../central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier.types';
 
 /**
  * options to connect with

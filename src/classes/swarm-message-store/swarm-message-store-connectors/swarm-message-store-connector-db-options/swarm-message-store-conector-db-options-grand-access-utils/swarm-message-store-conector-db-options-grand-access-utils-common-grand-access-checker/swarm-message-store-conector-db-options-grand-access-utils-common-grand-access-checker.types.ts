@@ -6,7 +6,7 @@ import {
 } from '../../../../../swarm-message/swarm-message-constructor.types';
 import { ESwarmStoreConnector } from '../../../../../swarm-store-class/swarm-store-class.const';
 import { ISwarmMessageStoreAccessControlGrantAccessCallback } from '../../../../types/swarm-message-store.types';
-import { TSwarmMessageUserIdentifierSerialized } from '../../../../../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
+import { TSwarmMessageUserIdentifierSerialized } from '../../../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier.types';
 
 export interface ISwarmMessageGrantValidatorContext<
   P extends ESwarmStoreConnector,

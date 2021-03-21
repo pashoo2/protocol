@@ -1,5 +1,5 @@
 import { ISwarmMessageSubclassFieldsValidator } from '../swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator.types';
-import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
+import { TSwarmMessageUserIdentifierSerialized } from '../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier.types';
 import { ISwarmMessageUtilSignatureGetStringForSignByMessageRaw } from '../../swarm-message-utils/swarm-message-utils-signature/swarm-message-utils-signature.types';
 import { ICentralAuthority } from '../../../central-authority-class/central-authority-class.types';
 import { IQueuedEncrypyionClassBaseOptions } from '../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';

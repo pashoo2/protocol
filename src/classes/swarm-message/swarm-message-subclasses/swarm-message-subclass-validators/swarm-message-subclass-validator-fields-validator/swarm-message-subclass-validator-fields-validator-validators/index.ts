@@ -12,4 +12,4 @@ export * from './swarm-message-subclass-validator-fields-validator-validator-tim
 
 export * from './swarm-message-subclass-validator-fields-validator-validator-type';
 
-export * from './swarm-message-subclass-validator-fields-validator-validator-user-identifier';
+export * from '../../../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier';

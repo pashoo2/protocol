@@ -3,7 +3,7 @@ import { ConstructorType } from 'types/helper.types';
 import { ISwarmMessageStoreDbOptionsGrandAccessCallbackContext } from '../../../../../../types/swarm-message-store-db-options.types';
 import { ISwarmMessageConstructor } from '../../../../../../../swarm-message/swarm-message-constructor.types';
 import { ISwarmMessageStoreConectorDbOptionsGrandAccessContextClassFabricParams } from './swarm-message-store-conector-db-options-grand-access-context-class.types';
-import { TSwarmMessageUserIdentifierSerialized } from '../../../../../../../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
+import { TSwarmMessageUserIdentifierSerialized } from '../../../../../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier.types';
 
 export function getSwarmStoreConectorDbOptionsGrandAccessContextClass<
   SMC extends ISwarmMessageConstructor,

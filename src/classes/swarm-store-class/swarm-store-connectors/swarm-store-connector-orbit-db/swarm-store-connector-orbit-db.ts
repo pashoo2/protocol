@@ -48,7 +48,7 @@ import { ISwarmStoreConnectorOrbitDbConnecectionBasicFabric } from './swarm-stor
 import { TSwarmStoreDatabaseOptions, TSwarmStoreConnectorConnectionOptions } from '../../swarm-store-class.types';
 import { ISwarmStoreConnector, TSwarmStoreValueTypes } from '../../swarm-store-class.types';
 import { ESwarmStoreConnector, ESwarmStoreEventNames } from '../../swarm-store-class.const';
-import { TSwarmMessageUserIdentifierSerialized } from '../../../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
+import { TSwarmMessageUserIdentifierSerialized } from '../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier.types';
 
 export class SwarmStoreConnectorOrbitDB<
     ItemType extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>,

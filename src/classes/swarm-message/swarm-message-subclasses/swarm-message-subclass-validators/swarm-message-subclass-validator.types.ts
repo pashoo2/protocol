@@ -2,10 +2,11 @@ import { IMessageFieldsValidatorOptions } from './swarm-message-subclass-validat
 import { IMessageSignatureValidatorOptions } from './swarm-message-subclass-validator-signature-validator/swarm-message-subclass-validator-signature-validator.types';
 import { TSwarmMessageBodyEncrypted } from '../../swarm-message-constructor.types';
 import { TSwarmMessage, ISwarmMessageRaw, ISwarmMessageBodyDeserialized } from '../../swarm-message-constructor.types';
+import { TCAuthProviderUserIdentifierVersion } from '../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types';
 
 export type TPayload = string | number[] | Uint8Array | ArrayBuffer | SharedArrayBuffer;
 
-export type TSwarmMessageUserIdentifierVersion = string;
+export type TSwarmMessageUserIdentifierVersion = TCAuthProviderUserIdentifierVersion;
 
 export interface IMessageValidatorOptions {
   formatValidatorOpts: IMessageFieldsValidatorOptions;

@@ -5,6 +5,22 @@ import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-stor
 import { TSwarmMessageSerialized } from '../../classes/swarm-message/swarm-message-constructor.types';
 import { TSwarmStoreDatabaseType, TSwarmStoreDatabaseOptions } from '../../classes/swarm-store-class/swarm-store-class.types';
 import { commonUtilsArrayUniq } from '../../utils/common-utils/common-utils-array';
+import { createFunctionFromSerializedFunction } from '../../utils/common-utils/common-utils.functions';
+import validateUserIdentifier from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier';
+
+function openUserIdInputDialogAndReturnValueEntered(dialogMessage: string): string {
+  const newUserId = prompt(dialogMessage);
+  if (newUserId) {
+    try {
+      validateUserIdentifier(newUserId);
+    } catch (err) {
+      alert(err.message);
+      return '';
+    }
+    return newUserId;
+  }
+  return '';
+}
 
 export function swarmChannelDescriptionComponentCreateSubformDescriptionForChannelDatabaseOptions<
   P extends ESwarmStoreConnector,
@@ -13,7 +29,7 @@ export function swarmChannelDescriptionComponentCreateSubformDescriptionForChann
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   CHD extends ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO> = ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>
 >(databaseOptions: CHD['dbOptions']): IFieldDescription<EFormFieldType.FORM> {
-  const { isPublic, write } = databaseOptions;
+  const { isPublic, write, grantAccess } = databaseOptions;
   const formFields: IFieldDescription<EFormFieldType>[] = [
     {
       type: EFormFieldType.CHECKBOX,
@@ -31,12 +47,52 @@ export function swarmChannelDescriptionComponentCreateSubformDescriptionForChann
         value: write,
         isMultiple: true,
         canRemove: true,
+        selectElementProps: { disabled: isPublic },
         options: write
           ? write.map((writeUserId) => ({
               name: writeUserId,
               value: writeUserId,
             }))
           : [],
+      },
+    },
+    {
+      type: EFormFieldType.BUTTON,
+      label: {
+        label: 'Add new user',
+      },
+      props: {
+        name: 'Add new user',
+        title: 'Add new user',
+        buttonProps: { type: 'button' },
+        onClick: (formMethods: IFormMethods) => {
+          const newUserId = openUserIdInputDialogAndReturnValueEntered('Type a new user id who can write to the channel');
+          if (newUserId) {
+            const currentFormValues = formMethods.getFormValues();
+            formMethods.updateFormValues({
+              write: [...(currentFormValues.write as string[]), newUserId] as string[],
+            });
+          }
+        },
+      },
+    },
+    {
+      type: EFormFieldType.INPUT,
+      label: { label: 'Source code of function for grant access' },
+      props: {
+        name: 'grantAccess',
+        isMultiline: true,
+        value: String(grantAccess),
+        validate: (name: string, value: string): string => {
+          debugger;
+          try {
+            createFunctionFromSerializedFunction(value);
+            return '';
+          } catch {
+            return 'Function can not be serialized';
+          }
+        },
+        inputFieldProps: { rows: 10, cols: 100 },
       },
     },
   ];
@@ -154,11 +210,13 @@ export function swarmChannelDescriptionComponentCreateFormFieldsDescriptionForCh
         title: 'Add new admin',
         buttonProps: { type: 'button' },
         onClick: (formMethods: IFormMethods) => {
-          const newAdminUserId = prompt('Input an admin user id');
-          const currentFormValues = formMethods.getFormValues();
-          formMethods.updateFormValues({
-            admins: commonUtilsArrayUniq([...(currentFormValues.admins as string[]), newAdminUserId]) as string[],
-          });
+          const newAdminUserId = openUserIdInputDialogAndReturnValueEntered('Input an admin user id');
+          if (newAdminUserId) {
+            const currentFormValues = formMethods.getFormValues();
+            formMethods.updateFormValues({
+              admins: commonUtilsArrayUniq([...(currentFormValues.admins as string[]), newAdminUserId]),
+            });
+          }
         },
       },
     },

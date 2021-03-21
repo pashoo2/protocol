@@ -2,12 +2,58 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e70e70e3-e48a-4dfd-91a6-03818e8691f6" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/__test__/validation-messaging.test/swarm-message.test/swarm-message-subclass-validator-fields-validator-validator-user-identifier.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/__test__/validation-messaging.test/swarm-message.test/swarm-message-subclass-validator-fields-validator-validator-user-identifier.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/__test__/validation-messaging.test/swarm-message.test/swarm-message.fields-validator.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/__test__/validation-messaging.test/swarm-message.test/swarm-message.fields-validator.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/assets/js/search.js" beforeDir="false" afterPath="$PROJECT_DIR$/docs/assets/js/search.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/node_modules-local/hypervision-browser" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules-local/hypervision-browser" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase-connection-implementation/central-authority-connection-firebase-connection-implementation.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase-connection-implementation/central-authority-connection-firebase-connection-implementation.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase-utils/central-authority-connection-firebase-utils.credentials-storage/central-authority-connection-firebase-utils.credentials-storage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase-utils/central-authority-connection-firebase-utils.credentials-storage/central-authority-connection-firebase-utils.credentials-storage.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase-utils/central-authority-connection-firebase-utils.credentials-storage/central-authority-connection-firebase-utils.credentials-storage.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connection-firebase/central-authority-connection-firebase-utils/central-authority-connection-firebase-utils.credentials-storage/central-authority-connection-firebase-utils.credentials-storage.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connections.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-connections/central-authority-connections.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-utils-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-store-to-swarm-database-grand-access-callbacks-fabrics.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-utils-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-store-to-swarm-database-grand-access-callbacks-fabrics.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-message-store-conector-db-options-grand-access-utils/swarm-message-store-conector-db-options-grand-access-utils-common-grand-access-checker/swarm-message-store-conector-db-options-grand-access-utils-common-grand-access-checker.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-message-store-conector-db-options-grand-access-utils/swarm-message-store-conector-db-options-grand-access-utils-common-grand-access-checker/swarm-message-store-conector-db-options-grand-access-utils-common-grand-access-checker.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-message-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-context/swarm-store-conector-db-options-grand-access-context-classes/swarm-message-store-conector-db-options-grand-access-context-class/swarm-message-store-conector-db-options-grand-access-context-class.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-message-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-context/swarm-store-conector-db-options-grand-access-context-classes/swarm-message-store-conector-db-options-grand-access-context-class/swarm-message-store-conector-db-options-grand-access-context-class.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-message-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-context/swarm-store-conector-db-options-grand-access-context-classes/swarm-message-store-conector-db-options-grand-access-context-class/swarm-message-store-conector-db-options-grand-access-context-class.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-message-store-conector-db-options-grand-access-utils/swarm-store-conector-db-options-grand-access-context/swarm-store-conector-db-options-grand-access-context-classes/swarm-message-store-conector-db-options-grand-access-context-class/swarm-message-store-conector-db-options-grand-access-context-class.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message-store/types/swarm-message-store-db-options.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message-store/types/swarm-message-store-db-options.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message-store/types/swarm-message-store.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message-store/types/swarm-message-store.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-constructor.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-constructor.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-parser/swarm-message-subclass-parser.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-parser/swarm-message-subclass-parser.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-serializer/swarm-message-subclass-serializer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-serializer/swarm-message-subclass-serializer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-serializer/swarm-message-subclass-serializer.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-serializer/swarm-message-subclass-serializer.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.const.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier.const.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-signature-validator/swarm-message-subclass-validator-signature-validator.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-signature-validator/swarm-message-subclass-validator-signature-validator.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/implementations/swarm-messages-channel-v1-class.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/implementations/swarm-messages-channel-v1-class.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/subclasses/swarm-messages-channels-list-v1-db-connection-initializer-and-handler/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.fabric.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/subclasses/swarm-messages-channels-list-v1-db-connection-initializer-and-handler/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.fabric.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/subclasses/swarm-messages-channels-list-v1-db-connection-initializer-and-handler/utils/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/subclasses/swarm-messages-channels-list-v1-db-connection-initializer-and-handler/utils/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/types/swarm-messages-channel-instance.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/types/swarm-messages-channel-instance.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/types/swarm-messages-channels-validation.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/types/swarm-messages-channels-validation.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-class.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-class.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-options/swarm-store-connector-options-grand-access-context/swarm-store-conector-db-options-grand-access-context-base-class/swarm-store-conector-db-options-grand-access-context-class.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-options/swarm-store-connector-options-grand-access-context/swarm-store-conector-db-options-grand-access-context-base-class/swarm-store-conector-db-options-grand-access-context-class.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-options/swarm-store-connector-options-grand-access-context/swarm-store-conector-db-options-grand-access-context-base-class/swarm-store-conector-db-options-grand-access-context-class.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-options/swarm-store-connector-options-grand-access-context/swarm-store-conector-db-options-grand-access-context-base-class/swarm-store-conector-db-options-grand-access-context-class.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-utils/swarm-store-connector-orbit-db-utils-address/swarm-store-connector-orbit-db-utils-address.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-utils/swarm-store-connector-orbit-db-utils-address/swarm-store-connector-orbit-db-utils-address.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/base-component/base-component.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/base-component/base-component.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/base-component/base-component.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/base-component/base-component.types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/swarm-channel-description-component/swarm-channel-description-component.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/swarm-channel-description-component/swarm-channel-description-component.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/connect-to-swarm-immediate/connect-to-swarm-immediate.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/connect-to-swarm-immediate/connect-to-swarm-immediate.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/connect-to-swarm-with-dbo/connect-to-swarm-with-dbo.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/connect-to-swarm-with-dbo/connect-to-swarm-with-dbo.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/connect-to-swarm/connect-to-swarm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/connect-to-swarm/connect-to-swarm.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/swarm-channel-description-component/swarm-channel-description-component.utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/swarm-channel-description-component/swarm-channel-description-component.utils.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/swarm-messages-database-component/swarm-messages-database-component.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/swarm-messages-database-component/swarm-messages-database-component.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/swarm-messages-database-component/swarm-messages-database-component.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/swarm-messages-database-component/swarm-messages-database-component.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/swarm-messages-database-component/swarm-messages-database-component.utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/swarm-messages-database-component/swarm-messages-database-component.utils.ts" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -24,15 +70,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="swarm-messages-channel-instance.types.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-channels/types/swarm-messages-channel-instance.types.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="168">
-              <caret line="53" column="30" selection-start-line="53" selection-start-column="30" selection-end-line="53" selection-end-column="30" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="event-emitter-class-with-forwarding.utils.test.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/event-emitter-class-base/event-emitter-class-with-forwarding.utils.test.ts">
           <provider selected="true" editor-type-id="text-editor">
@@ -66,29 +103,42 @@
       <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/node_modules/expect/build/index.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
+            <state relative-caret-position="2814">
               <caret line="201" column="19" selection-start-line="201" selection-start-column="19" selection-end-line="201" selection-end-column="19" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="base-component.tsx" pinned="false" current-in-tab="true">
+      <file leaf-file-name="base-component.tsx" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/components/base-component/base-component.tsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="70">
-              <caret line="20" selection-start-line="20" selection-end-line="20" />
+            <state relative-caret-position="196">
+              <caret line="34" column="11" selection-start-line="34" selection-start-column="11" selection-end-line="34" selection-end-column="11" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="central-authority-common-validator-user-identifier.ts" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
               <folding>
-                <element signature="e#0#26#0" expanded="true" />
+                <element signature="e#0#147#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="index.ts" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/index.ts">
+          <provider selected="true" editor-type-id="text-editor" />
+        </entry>
+      </file>
       <file leaf-file-name="base-component.types.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/components/base-component/base-component.types.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="155">
-              <caret line="86" column="17" selection-start-line="86" selection-start-column="17" selection-end-line="86" selection-end-column="17" />
+            <state relative-caret-position="1204">
+              <caret line="89" column="17" selection-start-line="89" selection-start-column="17" selection-end-line="89" selection-end-column="17" />
             </state>
           </provider>
         </entry>
@@ -110,15 +160,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="1176">
               <caret line="84" selection-start-line="84" selection-end-line="84" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="event-emitter-class-with-forwarding.utils.ts" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/event-emitter-class-base/event-emitter-class-with-forwarding.utils.ts">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="364">
-              <caret line="26" column="46" selection-start-line="26" selection-start-column="46" selection-end-line="26" selection-end-column="46" />
             </state>
           </provider>
         </entry>
@@ -162,6 +203,7 @@
       <dir>$PROJECT_DIR$</dir>
       <dir>$PROJECT_DIR$/node_modules</dir>
       <dir>$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-connectors/swarm-store-connector-db-options/swarm-store-conector-db-options-grand-access-context-binder</dir>
+      <dir>$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier</dir>
     </dirStrings>
   </component>
   <component name="Git.Settings">
@@ -176,9 +218,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class.ts" />
-        <option value="$PROJECT_DIR$/src/classes/swarm-messages-channels/const/swarm-messages-channel/swarm-messages-channel-description/schemas/swarm-message-channel-description-v1-format-schema.json" />
-        <option value="$PROJECT_DIR$/src/classes/swarm-messages-channels/const/swarm-messages-channels-list/swarm-messages-channels-list-description/schemas/swarm-messages-channels-list-description-v1-format-schema.json" />
         <option value="$PROJECT_DIR$/src/classes/swarm-messages-channels/types/swarm-messages-channels-list.types.ts" />
         <option value="$PROJECT_DIR$/src/classes/swarm-messages-channels/types/swarm-messages-channels-validation.types.ts" />
         <option value="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types.ts" />
@@ -227,6 +266,9 @@
         <option value="$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.test.ts" />
         <option value="$PROJECT_DIR$/src/components/base-component/base-component.tsx" />
         <option value="$PROJECT_DIR$/src/components/base-component/base-component.types.tsx" />
+        <option value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.ts" />
+        <option value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.ts" />
+        <option value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier.ts" />
       </list>
     </option>
   </component>
@@ -285,6 +327,75 @@
               <item name="protocol" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="classes" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
+              <item name="protocol" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="classes" type="462c0819:PsiDirectoryNode" />
+              <item name="central-authority-class" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
+              <item name="protocol" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="classes" type="462c0819:PsiDirectoryNode" />
+              <item name="central-authority-class" type="462c0819:PsiDirectoryNode" />
+              <item name="central-authority-class-user-identity" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
+              <item name="protocol" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="classes" type="462c0819:PsiDirectoryNode" />
+              <item name="central-authority-class" type="462c0819:PsiDirectoryNode" />
+              <item name="central-authority-class-user-identity" type="462c0819:PsiDirectoryNode" />
+              <item name="central-authority-class-user-identity-validators" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
+              <item name="protocol" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="classes" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-message" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
+              <item name="protocol" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="classes" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-message" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-message-subclasses" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
+              <item name="protocol" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="classes" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-message" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-message-subclasses" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-message-subclass-validators" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
+              <item name="protocol" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="classes" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-message" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-message-subclasses" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-message-subclass-validators" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-message-subclass-validator-fields-validator" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
+              <item name="protocol" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="classes" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-message" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-message-subclasses" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-message-subclass-validators" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-message-subclass-validator-fields-validator" type="462c0819:PsiDirectoryNode" />
+              <item name="swarm-message-subclass-validator-fields-validator-validators" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
@@ -433,9 +544,9 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="SearchEverywhereHistoryKey" value="src/components/base-component/base-component.tsx&#9;FILE&#9;file:///home/paul/projects/protocol/src/components/base-component/base-component.tsx&#10;src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.test.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.test.ts&#10;src/utils/common-utils/common-utils-equality.test.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/utils/common-utils/common-utils-equality.test.ts&#10;src/utils/common-utils/common-utils-maps.test.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/utils/common-utils/common-utils-maps.test.ts&#10;src/classes/basic-classes/event-emitter-class-base/event-emitter-class-with-forwarding.utils.test.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/basic-classes/event-emitter-class-base/event-emitter-class-with-forwarding.utils.test.ts&#10;src/components/connect-to-swarm/connect-to-swarm.tsx&#9;FILE&#9;file:///home/paul/projects/protocol/src/components/connect-to-swarm/connect-to-swarm.tsx&#10;src/classes/basic-classes/async-queue-concurent/async-queue-concurent-mixins/async-queue-concurent-mixin-default/async-queue-concurent-mixin-default-decorator.test.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/basic-classes/async-queue-concurent/async-queue-concurent-mixins/async-queue-concurent-mixin-default/async-queue-concurent-mixin-default-decorator.test.ts&#10;src/classes/swarm-messages-channels/types/swarm-messages-channel.types.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-messages-channels/types/swarm-messages-channel.types.ts&#10;src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-constructor-arguments-fabrics/swarm-messages-channels-list-v1-constructor-arguments-fabric.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-constructor-arguments-fabrics/swarm-messages-channels-list-v1-constructor-arguments-fabric.ts&#10;src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.utils.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.utils.ts&#10;/home/paul/projects/protocol/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types.ts&#10;src/classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider.ts&#10;src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector.ts&#10;src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter.ts&#10;src/classes/open-storage/open-storage.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/open-storage/open-storage.ts&#10;src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.ts" />
+    <property name="SearchEverywhereHistoryKey" value="src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.ts&#10;src/components/base-component/base-component.tsx&#9;FILE&#9;file:///home/paul/projects/protocol/src/components/base-component/base-component.tsx&#10;src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.test.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.test.ts&#10;src/utils/common-utils/common-utils-equality.test.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/utils/common-utils/common-utils-equality.test.ts&#10;src/utils/common-utils/common-utils-maps.test.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/utils/common-utils/common-utils-maps.test.ts&#10;src/classes/basic-classes/event-emitter-class-base/event-emitter-class-with-forwarding.utils.test.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/basic-classes/event-emitter-class-base/event-emitter-class-with-forwarding.utils.test.ts&#10;src/components/connect-to-swarm/connect-to-swarm.tsx&#9;FILE&#9;file:///home/paul/projects/protocol/src/components/connect-to-swarm/connect-to-swarm.tsx&#10;src/classes/basic-classes/async-queue-concurent/async-queue-concurent-mixins/async-queue-concurent-mixin-default/async-queue-concurent-mixin-default-decorator.test.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/basic-classes/async-queue-concurent/async-queue-concurent-mixins/async-queue-concurent-mixin-default/async-queue-concurent-mixin-default-decorator.test.ts&#10;src/classes/swarm-messages-channels/types/swarm-messages-channel.types.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-messages-channels/types/swarm-messages-channel.types.ts&#10;src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-constructor-arguments-fabrics/swarm-messages-channels-list-v1-constructor-arguments-fabric.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-constructor-arguments-fabrics/swarm-messages-channels-list-v1-constructor-arguments-fabric.ts&#10;src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.utils.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.utils.ts&#10;/home/paul/projects/protocol/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-access-controller/swarm-store-connector-orbit-db-subclass-access-controller.types.ts&#10;src/classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-utils-connector-options-provider/swarm-message-store-utils-connector-options-provider.ts&#10;src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector.ts&#10;src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-open-storage-adapter.ts&#10;src/classes/open-storage/open-storage.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/open-storage/open-storage.ts&#10;src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.ts&#9;FILE&#9;file:///home/paul/projects/protocol/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.ts" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/components/base-component/base-component.types.tsx" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.standard" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -449,19 +560,19 @@
     <property name="ts.external.directory.path" value="$PROJECT_DIR$/node_modules/typescript/lib" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators" />
+      <recent name="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes" />
+      <recent name="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-fabrics/types" />
+      <recent name="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-fabrics" />
+      <recent name="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/types" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/subclasses/swarm-messages-channels-list-v1-db-connection-initializer-and-handler" />
       <recent name="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge-utils" />
       <recent name="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-cached-store/swarm-messages-database-messages-cached-store-subclasses/swarm-messages-database-messages-cached-store" />
       <recent name="$PROJECT_DIR$/src/components/swarm-messages-database-component" />
       <recent name="$PROJECT_DIR$/src/classes/swarm-channel/swarm-channels-implemantations/swarm-channel-base/utils/swarm-channel-options-factory" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes" />
-      <recent name="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-fabrics/types" />
-      <recent name="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-fabrics" />
-      <recent name="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-implementation/types" />
-      <recent name="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -663,6 +774,7 @@
       <workItem from="1615569957932" duration="9996000" />
       <workItem from="1615918968026" duration="7341000" />
       <workItem from="1616239751719" duration="770000" />
+      <workItem from="1616354036511" duration="678000" />
     </task>
     <servers />
   </component>
@@ -699,31 +811,30 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="162727000" />
+    <option name="totallyTimeSpent" value="163405000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="1600" height="873" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.39378566" side_tool="true" visible="true" weight="0.34515688" />
+      <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.3944198" side_tool="true" visible="true" weight="0.39290586" />
       <window_info anchor="bottom" id="Version Control" order="10" sideWeight="0.49926794" weight="0.35096154" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.89410275" weight="0.34652114" />
       <window_info id="npm" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Terminal" order="9" weight="0.35607675" />
       <window_info anchor="bottom" id="TypeScript" order="8" weight="0.32875144" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.26125556" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.45149016" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.60621434" weight="0.64120054" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.6055802" weight="0.64120054" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="3" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.89537096" weight="0.26603" />
       <window_info anchor="bottom" id="Thumbnails" order="12" weight="0.32852563" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="right" id="Coverage" order="3" side_tool="true" weight="0.32960597" />
     </layout>
@@ -835,20 +946,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-fabrics/types/swarm-messages-database-instance-fabric-by-database-options.types.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="378">
-          <caret line="51" column="46" selection-start-line="51" selection-start-column="46" selection-end-line="51" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-fabrics/types/swarm-messages-database-intstance-fabric-main.types.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2576">
-          <caret line="203" column="58" selection-start-line="203" selection-start-column="17" selection-end-line="203" selection-end-column="58" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/components/connect-to-swarm-immediate/connect-to-swarm-immediate.tsx">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="826">
@@ -1131,27 +1228,36 @@
     <entry file="file://$PROJECT_DIR$/src/utils/data-cache-utils/data-cache-utils-caching-decorator/data-cache-utils-caching-decorator.ts" />
     <entry file="file://$PROJECT_DIR$/node_modules/expect/build/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
+        <state relative-caret-position="2814">
           <caret line="201" column="19" selection-start-line="201" selection-start-column="19" selection-end-line="201" selection-end-column="19" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/components/base-component/base-component.types.ts">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="155">
-          <caret line="86" column="17" selection-start-line="86" selection-start-column="17" selection-end-line="86" selection-end-column="17" />
+        <state relative-caret-position="1204">
+          <caret line="89" column="17" selection-start-line="89" selection-start-column="17" selection-end-line="89" selection-end-column="17" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/components/base-component/base-component.tsx">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="70">
-          <caret line="20" selection-start-line="20" selection-end-line="20" />
+        <state relative-caret-position="196">
+          <caret line="34" column="11" selection-start-line="34" selection-start-column="11" selection-end-line="34" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
           <folding>
-            <element signature="e#0#26#0" expanded="true" />
+            <element signature="e#0#147#0" expanded="true" />
           </folding>
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/index.ts">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
   </component>
 </project>

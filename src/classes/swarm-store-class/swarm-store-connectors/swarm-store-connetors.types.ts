@@ -1,5 +1,5 @@
 import { JSONSchema7 } from 'json-schema';
-import { TSwarmMessageUserIdentifierSerialized } from '../../swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier';
+import { TSwarmMessageUserIdentifierSerialized } from '../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier';
 import { ESwarmStoreConnector } from '../swarm-store-class.const';
 import {
   TSwarmStoreConnectorAccessConrotllerGrantAccessCallback,

@@ -2,7 +2,7 @@ import { IMessageSignatureValidatorOptions } from './swarm-message-subclass-vali
 import assert from 'assert';
 import { ISwarmMessageRaw } from '../../../swarm-message-constructor.types';
 import { ICentralAuthority } from '../../../../central-authority-class/central-authority-class.types';
-import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
+import { TSwarmMessageUserIdentifierSerialized } from '../../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier.types';
 import { isCryptoKeyDataVerify } from '../../../../../utils/encryption-keys-utils/encryption-keys-utils';
 import { QueuedEncryptionClassBase } from '../../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base';
 import { IQueuedEncryptionClassBase } from '../../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';

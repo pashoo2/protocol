@@ -15,6 +15,7 @@ import {
   onFormValuesChange,
   TFormFieldProps,
   ICheckboxFieldProps,
+  TFieldValue,
 } from './base-component.types';
 
 import styles from './base-component.module.css';
@@ -39,12 +40,15 @@ export class BaseComponent implements IBaseComponent {
   }
 
   renderTextareaField(
-    { name, value, inputFieldProps, onChange }: IInputFieldProps<true>,
+    { name, value, inputFieldProps, onChange, validate }: IInputFieldProps<true>,
     formFieldsValues?: IFormFieldsValues
   ): React.ReactElement {
     const handleFieldValueChange = (ev: React.SyntheticEvent<HTMLTextAreaElement>): void => {
       const { target } = ev;
       const { value, name } = target as HTMLTextAreaElement;
+      if (this.__validateField({ name, validate }, value, ev)) {
+        return;
+      }
       onChange(name, value);
     };
 
@@ -52,26 +56,29 @@ export class BaseComponent implements IBaseComponent {
       formFieldsValues[name] = value;
     }
     return (
-      <textarea name={name} onChange={handleFieldValueChange} {...inputFieldProps}>
+      <textarea name={name} onBlur={handleFieldValueChange} {...inputFieldProps}>
         {value}
       </textarea>
     );
   }
 
   renderTextInputField(
-    { name, value, inputFieldProps, onChange }: IInputFieldProps<false>,
+    { name, value, inputFieldProps, onChange, validate }: IInputFieldProps<false>,
     formFieldsValues?: IFormFieldsValues
   ): React.ReactElement {
     const handleFieldValueChange = (ev: React.SyntheticEvent<HTMLInputElement>): void => {
       const { target } = ev;
       const { value, name } = target as HTMLInputElement;
+      if (this.__validateField({ name, validate }, value, ev)) {
+        return;
+      }
       onChange(name, value);
     };
 
     if (formFieldsValues) {
       formFieldsValues[name] = value;
     }
-    return <input type="text" name={name} value={value} onChange={handleFieldValueChange} {...inputFieldProps} />;
+    return <input type="text" name={name} value={value} onBlur={handleFieldValueChange} {...inputFieldProps} />;
   }
 
   renderInputField<T extends boolean>(fieldProps: IInputFieldProps<T>, formFieldsValues?: IFormFieldsValues): React.ReactElement {
@@ -93,12 +100,15 @@ export class BaseComponent implements IBaseComponent {
   }
 
   renderCheckbox(
-    { name, value, checkboxFieldProps, onChange }: ICheckboxFieldProps,
+    { name, value, checkboxFieldProps, validate, onChange }: ICheckboxFieldProps,
     formFieldsValues?: IFormFieldsValues
   ): React.ReactElement<any> {
     const handleCheckboxValueChange = (ev: React.SyntheticEvent<HTMLInputElement>): void => {
       const { target } = ev;
       const { name, checked } = target as HTMLInputElement;
+      if (this.__validateField({ name, validate }, value, ev)) {
+        return;
+      }
       onChange?.(name, checked);
     };
 
@@ -123,7 +133,7 @@ export class BaseComponent implements IBaseComponent {
   }
 
   renderDropdown<T extends boolean = false>(
-    { name, options, value: currentValue, isMultiple, canRemove, selectElementProps, onChange }: IDropdownProps<T>,
+    { name, options, value: currentValue, isMultiple, canRemove, selectElementProps, onChange, validate }: IDropdownProps<T>,
     formFieldsValues?: IFormFieldsValues
   ): React.ReactElement {
     const getCurrentValues = (): string[] => {
@@ -134,6 +144,9 @@ export class BaseComponent implements IBaseComponent {
       : (ev: React.ChangeEvent<HTMLSelectElement>) => {
           const { target } = ev;
           const { name: optionName, value } = target;
+          if (this.__validateField({ name, validate }, value, ev)) {
+            return;
+          }
           onChange(name, optionName, (isMultiple ? getCurrentValues() : value) as T extends boolean ? string[] : string);
         };
     const handleRemoveValue = (ev: React.MouseEvent<HTMLOptionElement, MouseEvent>) => {
@@ -310,8 +323,21 @@ export class BaseComponent implements IBaseComponent {
             ...value,
           };
           debugger;
+          // eslint-disable-next-line @typescript-eslint/unbound-method
+          if (
+            this.__validateField(
+              {
+                name: formName,
+                // eslint-disable-next-line @typescript-eslint/unbound-method
+                validate: (props as IField).validate,
+              },
+              formValues
+            )
+          ) {
+            return;
+          }
           onChange({
-            [(props as IField).name]: formValues,
+            [formName]: formValues,
           });
         };
         return (
@@ -352,5 +378,15 @@ export class BaseComponent implements IBaseComponent {
       fieldElement = this.renderLabel(labelPropsResulted);
     }
     return <div key={`${type};${label?.label || ''};${(props as IField)?.name || ''}`}>{fieldElement}</div>;
+  }
+
+  __validateField(field: IField, value: TFieldValue, ev?: React.SyntheticEvent<any>): string {
+    const errorMessage = field.validate?.(field.name, value);
+    if (errorMessage) {
+      ev?.preventDefault();
+      alert(errorMessage);
+      return errorMessage;
+    }
+    return '';
   }
 }

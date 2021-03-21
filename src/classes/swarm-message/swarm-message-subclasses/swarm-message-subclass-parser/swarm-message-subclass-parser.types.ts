@@ -3,7 +3,7 @@ import { ISwarmMessageUtilsMessageParser } from '../../swarm-message-utils/swarm
 import { ISwarmMessageUtilsBodyParser } from '../../swarm-message-utils/swarm-message-utils-body-parser';
 import { IQueuedEncrypyionClassBaseOptions } from '../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
 import { ISwarmMessageEncryptedCache } from '../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
-import { TSwarmMessageUserIdentifierSerialized } from '../swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-user-identifier/swarm-message-subclass-validator-fields-validator-validator-user-identifier.types';
+import { TSwarmMessageUserIdentifierSerialized } from '../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier.types';
 import { TSwarmMessageSerialized, TSwarmMessageInstance } from '../../swarm-message-constructor.types';
 
 export interface ISwarmMessageSubclassParserUtils {

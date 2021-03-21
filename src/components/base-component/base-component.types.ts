@@ -1,5 +1,7 @@
 import React from 'react';
 
+export type TFieldValue = boolean | string | string[] | undefined | IFormFieldsValues;
+
 export interface IFormMethods {
   readonly updateFormValues: (values: IFormFieldsValues) => void;
   readonly getFormValues: () => IFormFieldsValues;
@@ -13,6 +15,7 @@ export interface ILabelProps {
 
 export interface IField {
   name: string;
+  validate?(fieldName: string, fieldValue: TFieldValue): string;
 }
 
 export interface ICheckboxFieldProps extends IField {
@@ -54,7 +57,7 @@ export interface IDropdownProps<MULTI extends boolean = false> extends IField {
 }
 
 export interface IFormFieldsValues {
-  [key: string]: boolean | string | string[] | undefined | IFormFieldsValues;
+  [key: string]: TFieldValue;
 }
 
 export enum EFormFieldType {

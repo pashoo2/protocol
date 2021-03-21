@@ -18,13 +18,15 @@ export type TCAuthProviderIdentifier = string;
  */
 export type TCAuthProviderUserIdentifier = string;
 
+export type TCAuthProviderUserIdentifierVersion = string;
+
 export interface ICAUserIdentityDescription {
   [CA_USER_IDENTITY_AUTH_PROVIDER_IDENTIFIER_PROP_NAME]: TCAuthProviderIdentifier;
   [CA_USER_IDENTITY_USER_UNIQUE_IDENTFIER_PROP_NAME]: TCAuthProviderUserIdentifier;
 }
 
 export interface ICAUserUniqueIdentifierDescription extends ICAUserIdentityDescription {
-  [CA_USER_IDENTITY_VERSION_PROP_NAME]: string;
+  [CA_USER_IDENTITY_VERSION_PROP_NAME]: TCAuthProviderUserIdentifierVersion;
 }
 
 /**
