@@ -32,6 +32,7 @@ export interface ISwarmMessagesChannelsListState<
   isChannelsListClosed: boolean;
   channelsDescriptions: Readonly<Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>>;
   errorsList: Error[];
+  isChannelsListByEventsOpened: boolean;
 }
 
 export class SwarmMessagesChannelsListComponentBase<
@@ -43,6 +44,7 @@ export class SwarmMessagesChannelsListComponentBase<
     channelsListInatance: undefined,
     isChannelsListReady: false,
     isChannelsListClosed: false,
+    isChannelsListByEventsOpened: false,
     channelsDescriptions: new Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>(),
     errorsList: [],
   };
@@ -76,19 +78,26 @@ export class SwarmMessagesChannelsListComponentBase<
   }
 
   public render() {
-    const { channelsListInatance: channelsList } = this.state;
+    const { channelsListInatance: channelsList, isChannelsListByEventsOpened } = this.state;
     if (!channelsList) {
       return 'Channels list is not ready';
     }
     return (
       <div>
         {this._renderChannelsListState()}
-        <br />
+        <hr />
         Channels list cached:
-        <div>{this.renderChannelsDescriptionsCached()}</div>
-        <br />
-        Channels list:
-        <div>{this._renderChannelsDescriptions()}</div>
+        <div>{this.renderChannelsDescriptionsCachedInChannelsListInstance()}</div>
+        <hr />
+        Channels list by channel description update events:
+        <div>
+          <button
+            onClick={() => this.setState((state) => ({ isChannelsListByEventsOpened: !state.isChannelsListByEventsOpened }))}
+          >
+            Toggle list visibility
+          </button>
+          {isChannelsListByEventsOpened && this._renderChannelsDescriptions()}
+        </div>
       </div>
     );
   }
@@ -150,7 +159,7 @@ export class SwarmMessagesChannelsListComponentBase<
     );
   }
 
-  protected renderChannelsDescriptionsCached(): React.ReactElement {
+  protected renderChannelsDescriptionsCachedInChannelsListInstance(): React.ReactElement {
     const channelsDescriptionsMapCached = (this.state as any).channelsListCached as
       | Readonly<Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>>
       | undefined;
@@ -331,6 +340,9 @@ export class SwarmMessagesChannelsListComponentBase<
     channelsListCached: Readonly<Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>>
   ): void {
     debugger;
+    console.log('_onChannelsListCachedUpdated');
+    console.dir([...channelsListCached.values()].map((v) => ({ ...v })));
+    console.trace();
     this.setState({
       channelsListCached,
     } as any);

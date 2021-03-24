@@ -78,7 +78,7 @@ export class BaseComponent implements IBaseComponent {
     if (formFieldsValues) {
       formFieldsValues[name] = value;
     }
-    return <input type="text" name={name} value={value} onBlur={handleFieldValueChange} {...inputFieldProps} />;
+    return <input type="text" name={name} defaultValue={value} onBlur={handleFieldValueChange} {...inputFieldProps} />;
   }
 
   renderInputField<T extends boolean>(fieldProps: IInputFieldProps<T>, formFieldsValues?: IFormFieldsValues): React.ReactElement {
@@ -121,8 +121,8 @@ export class BaseComponent implements IBaseComponent {
   renderButton({ title, onClick, buttonProps }: IButtonProps, formMethods?: IFormMethods): React.ReactElement {
     const handleClick =
       onClick && formMethods
-        ? () => {
-            (onClick as IFormButtonProps['onClick'])?.(formMethods);
+        ? (ev: React.MouseEvent<HTMLButtonElement>) => {
+            (onClick as IFormButtonProps['onClick'])?.(ev, formMethods);
           }
         : onClick;
     return (
@@ -322,7 +322,6 @@ export class BaseComponent implements IBaseComponent {
             ...formValues,
             ...value,
           };
-          debugger;
           // eslint-disable-next-line @typescript-eslint/unbound-method
           if (
             this.__validateField(

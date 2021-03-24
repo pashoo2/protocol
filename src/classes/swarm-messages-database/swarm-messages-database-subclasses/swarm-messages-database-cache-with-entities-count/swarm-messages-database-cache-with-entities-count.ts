@@ -55,7 +55,7 @@ export class SwarmMessagesDatabaseCacheWithEntitiesCount<
     return expectedMessagesOverallToReadAtTheBatchCount > messagesInStoreCount + this.__itemsToReadCountFault;
   }
 
-  protected _whetherMessagesReadLessThanRequested = async (
+  protected _whetherToStopMessagesReading = async (
     expectedMessagesOverallToReadAtTheBatchCount: number,
     expectedNewMessagesToReadAtTheBatchCount: number,
     resultedNewMessagesReadAtTheBatchCount: number

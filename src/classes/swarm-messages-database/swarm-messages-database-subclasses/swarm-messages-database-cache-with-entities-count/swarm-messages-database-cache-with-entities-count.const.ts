@@ -1,1 +1,6 @@
+/**
+ * An acceptable error in the count of items stored
+ * so we need to read COUNT OF ITEMS STORED + SWARM_MESSAGES_DATABASE_CACHE_WITH_ENTITIES_COUNT_READ_COUNT_FAULT_DEFAULT
+ * count of items.
+ */
 export const SWARM_MESSAGES_DATABASE_CACHE_WITH_ENTITIES_COUNT_READ_COUNT_FAULT_DEFAULT = 20;

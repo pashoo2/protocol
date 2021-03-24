@@ -35,12 +35,12 @@ export interface IInputFieldProps<T extends boolean = false> extends IField {
 
 export interface IButtonProps {
   title: string;
-  onClick?: () => unknown;
+  onClick?: (ev: React.MouseEvent<HTMLButtonElement>) => unknown;
   buttonProps?: React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>;
 }
 
 export interface IFormButtonProps extends Omit<IButtonProps, 'onClick'> {
-  onClick?: (formMethods: IFormMethods) => unknown;
+  onClick?: (ev: React.MouseEvent<HTMLButtonElement>, formMethods: IFormMethods) => unknown;
 }
 
 export interface IDropdownProps<MULTI extends boolean = false> extends IField {

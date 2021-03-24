@@ -59,13 +59,13 @@ export function swarmChannelDescriptionComponentCreateSubformDescriptionForChann
     {
       type: EFormFieldType.BUTTON,
       label: {
-        label: 'Add new user',
+        label: 'Add new user who can write to the channel',
       },
       props: {
         name: 'Add new user',
         title: 'Add new user',
         buttonProps: { type: 'button' },
-        onClick: (formMethods: IFormMethods) => {
+        onClick: (ev: React.MouseEvent<HTMLButtonElement>, formMethods: IFormMethods) => {
           const newUserId = openUserIdInputDialogAndReturnValueEntered('Type a new user id who can write to the channel');
           if (newUserId) {
             const currentFormValues = formMethods.getFormValues();
@@ -159,7 +159,7 @@ export function swarmChannelDescriptionComponentCreateFormFieldsDescriptionForCh
         name: 'Add new tag',
         title: 'Add new tag',
         buttonProps: { type: 'button' },
-        onClick: (formMethods: IFormMethods) => {
+        onClick: (ev: React.MouseEvent<HTMLButtonElement>, formMethods: IFormMethods) => {
           const newTag = prompt('Type a new tag for the channel');
           const currentFormValues = formMethods.getFormValues();
           formMethods.updateFormValues({
@@ -209,7 +209,7 @@ export function swarmChannelDescriptionComponentCreateFormFieldsDescriptionForCh
         name: 'Add new admin',
         title: 'Add new admin',
         buttonProps: { type: 'button' },
-        onClick: (formMethods: IFormMethods) => {
+        onClick: (ev: React.MouseEvent<HTMLButtonElement>, formMethods: IFormMethods) => {
           const newAdminUserId = openUserIdInputDialogAndReturnValueEntered('Input an admin user id');
           if (newAdminUserId) {
             const currentFormValues = formMethods.getFormValues();

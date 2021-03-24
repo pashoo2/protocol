@@ -192,16 +192,7 @@ export abstract class SwarmMessagesDatabaseMessagesCachedStoreCore<
     source: T | undefined,
     target: T | undefined
   ): boolean {
-    if (!target && !this._canUpdateWithEmptyValue()) {
-      return false;
-    }
-    if (!source && !target) {
-      return false;
-    }
-    if (!source && target) {
-      return true;
-    }
-    return !source || !compareTwoSwarmMessageStoreMessagingRequestWithMetaResults(source, target);
+    return !compareTwoSwarmMessageStoreMessagingRequestWithMetaResults(source, target);
   }
 
   protected _checkWhetherUpdateKey(

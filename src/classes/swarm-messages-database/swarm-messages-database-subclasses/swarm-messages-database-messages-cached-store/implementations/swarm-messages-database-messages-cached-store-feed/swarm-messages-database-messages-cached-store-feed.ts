@@ -55,9 +55,12 @@ export class SwarmMessagesDatabaseMessagesCachedStoreFeed<
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   updateWithEntries(entries: TSwarmMessageDatabaseMessagesCached<P, ESwarmStoreConnectorOrbitDbDatabaseType.FEED, MD>): boolean {
+    // TODO - maybe it's better to create a copy of the map and set the new map instead of updating the existing
     const hasUpdatedMessages = this._updateCacheWithEntries(entries, this._entriesCached);
 
-    this._incMessagesInCacheVersion();
+    if (hasUpdatedMessages) {
+      this._incMessagesInCacheVersion();
+    }
     return hasUpdatedMessages;
   }
 

@@ -716,7 +716,7 @@ export class SwarmMessagesDatabaseCache<
    * @param {number} resultedNewMessagesCountReadAtTheBatchCount -
    * @returns {boolean}
    */
-  protected _whetherMessagesReadLessThanRequested = async (
+  protected _whetherToStopMessagesReading = async (
     expectedMessagesOverallToReadAtTheBatchCount: number,
     expectedNewMessagesToReadAtTheBatchCount: number,
     resultedNewMessagesReadAtTheBatchCount: number
@@ -792,10 +792,11 @@ export class SwarmMessagesDatabaseCache<
 
       messagesCachedStoreTemp.update(messagesReadAtBatchMapped);
       messagesReadAtBatchMapped.forEach((value, key) => {
+        console.log('SwarmMessagesDatabaseCache::messagesReadAtBatchMapped', key, value);
         allMessagesRead.set(key, value);
       });
 
-      whetherAllStoredMessagesRead = await this._whetherMessagesReadLessThanRequested(
+      whetherAllStoredMessagesRead = await this._whetherToStopMessagesReading(
         messagesCountToReadAtTheBatch,
         currentPageItemsToReadCount,
         allMessagesRead.size
@@ -965,10 +966,10 @@ export class SwarmMessagesDatabaseCache<
   protected async _updateMessagesCache(): Promise<void> {
     this._checkIsReady();
     if (this._pendingMessagesCacheUpdatePromise) {
-      return this._planNewCacheUpdate();
+      return await this._planNewCacheUpdate();
     }
     this._unsetNewCacheUpdatePlanned();
-    return this._runNewCacheUpdate();
+    return await this._runNewCacheUpdate();
   }
 
   protected _addSwarmMessageWithMetaToCachedStore(swarmMessageWithMeta: ISwarmMessageStoreMessageWithMeta<P, MD>): boolean {

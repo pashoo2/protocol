@@ -94,13 +94,13 @@
       }
     },
     "SwarmDatabaseOptions": {
-      "oneOf": [
+      "anyOf": [
         {
           "type": "object",
           "$comment": "If public channel",
           "properties": {
             "isPublic": {
-              "const": "true"
+              "const": true
             },
             "grantAccess": {
               "$ref": "#/definitions/SwarmDatabaseOptionsGrantAccessCallback"
@@ -114,7 +114,7 @@
           "$comment": "If a private channel only for the few users with write access",
           "properties": {
             "isPublic": {
-              "const": "false"
+              "const": false
             },
             "write": {
               "$ref": "#/definitions/SwarmDatabaseOptionsWriteAccessUsersIdentities"
@@ -131,7 +131,7 @@
           "$comment": "WARNING! Doesnt work for OrdbitDB conector. The write access is fully controled by the grant access callback",
           "properties": {
             "isPublic": {
-              "const": "false"
+              "const": false
             },
             "grantAccess": {
               "$ref": "#/definitions/SwarmDatabaseOptionsGrantAccessCallback"

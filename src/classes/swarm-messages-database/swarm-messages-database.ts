@@ -148,6 +148,14 @@ export class SwarmMessagesDatabase<
     return Boolean(this._swarmMessagesCache?.isUpdating);
   }
 
+  get swarmMessagesCache(): DCCRT {
+    const swarmMessagesCache = this._swarmMessagesCache;
+    if (!swarmMessagesCache) {
+      throw new Error('There is no cache related to the database');
+    }
+    return swarmMessagesCache;
+  }
+
   get cachedMessages(): TSwarmMessageDatabaseMessagesCached<P, DbType, MD> | undefined {
     return this._messagesCached;
   }
@@ -481,6 +489,46 @@ export class SwarmMessagesDatabase<
   }
 
   /**
+   * Add swarm message with some metadata to a cache storage
+   * if it's exists.
+   *
+   * @protected
+   * @param {ISwarmMessageStoreMessageWithMeta<P, MD>} swarmMessageWithMeta
+   * @returns {Promise<void>}
+   * @memberof SwarmMessagesDatabase
+   */
+  protected async _addSwarmMessageWithMetaToMessagesCache(
+    swarmMessageWithMeta: ISwarmMessageStoreMessageWithMeta<P, MD>
+  ): Promise<void> {
+    const swarmMessgesCache = this._swarmMessagesCache;
+    if (!swarmMessgesCache) {
+      throw new Error('Swarm messages cache joint to the database is not exists');
+    }
+    await swarmMessgesCache.addMessage(swarmMessageWithMeta);
+  }
+
+  /**
+   * Add swarm message with some metadata to a cache storage
+   * if it's exists.
+   *
+   * @protected
+   * @param {ISwarmMessageStoreMessageWithMeta<P, MD>} swarmMessageWithMeta
+   * @returns {Promise<void>}
+   * @memberof SwarmMessagesDatabase
+   */
+  protected async _createAndSddSwarmMessageWithMetaToMessagesCacheByMessageAndMetaRelated(
+    dbName: DBO['dbName'],
+    message: MD,
+    // the global unique address (hash) of the message in the swarm
+    messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
+    // for key-value store it will be the key
+    key?: TSwarmStoreDatabaseEntityKey<P>
+  ): Promise<void> {
+    const swarmMessageWithMeta = this._getSwarmMessageWithMeta(dbName, message, messageAddress, key);
+    await this._addSwarmMessageWithMetaToMessagesCache(swarmMessageWithMeta);
+  }
+
+  /**
    * Add message to the cache by it's description.
    *
    * @protected
@@ -491,33 +539,34 @@ export class SwarmMessagesDatabase<
    * @returns {Promise<void>}
    * @memberof SwarmMessagesDatabase
    */
-  protected _addMessageToCache(
+  protected async _addMessageToCache(
     dbName: DBO['dbName'],
     message: MD,
     // the global unique address (hash) of the message in the swarm
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key
     key?: TSwarmStoreDatabaseEntityKey<P>
-  ): Promise<boolean> {
+  ): Promise<void> {
     if (this._checkIsReady()) {
-      return this._swarmMessagesCache.addMessage(this._getSwarmMessageWithMeta(dbName, message, messageAddress, key));
+      await this._createAndSddSwarmMessageWithMetaToMessagesCacheByMessageAndMetaRelated(dbName, message, messageAddress, key);
+      return;
     }
     throw new Error('Swarm messages cache is not ready');
   }
 
-  protected _removeMessageFromCache(
+  protected async _removeMessageFromCache(
     messageAddress: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
       ? TSwarmStoreDatabaseEntityAddress<P> | undefined
       : TSwarmStoreDatabaseEntityAddress<P>,
     key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined
   ): Promise<void> {
-    if (this._checkIsReady()) {
-      if (!messageAddress && !key) {
-        throw new Error('Messages address or message key requered to remove message from the cache');
-      }
-      return this._swarmMessagesCache.deleteMessage(messageAddress, key);
+    if (!this._checkIsReady()) {
+      return;
     }
-    throw new Error('Swarm messages cache is not ready');
+    if (!messageAddress && !key) {
+      throw new Error('Messages address or message key requered to remove message from the cache');
+    }
+    return await this.swarmMessagesCache.deleteMessage(messageAddress, key);
   }
 
   protected _handleDatabaseLoadingEvent = (dbName: DBO['dbName'], percentage: number): void => {

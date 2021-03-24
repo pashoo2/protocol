@@ -6,6 +6,7 @@ import { TSwarmStoreDatabaseType, TSwarmStoreDatabaseOptions } from '../../class
 import { BaseComponent } from '../base-component/base-component';
 import { swarmChannelDescriptionComponentCreateFormFieldsDescriptionForChannelDescription } from './swarm-channel-description-component.utils';
 import { IButtonProps, onFormValuesChange, IFormFieldsValues } from '../base-component/base-component.types';
+import { createFunctionFromSerializedFunction } from '../../utils/common-utils/common-utils.functions';
 
 export interface ISwarmChannelDescriptionComponentProps<
   P extends ESwarmStoreConnector,
@@ -25,7 +26,15 @@ export interface ISwarmChannelDescriptionComponentState<
 > {
   error: Error | undefined;
   isPending: boolean;
+  isEditChannelDesctiptionMode: boolean;
   channelDescription: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>;
+  /**
+   * Channel description edited
+   *
+   * @type {ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>}
+   * @memberof ISwarmChannelDescriptionComponentProps
+   */
+  channelDescriptionEdited: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO> | undefined;
 }
 
 const SUBMIT_CHANNEL_CHANGES_BUTTON_PROPS: IButtonProps = {
@@ -44,10 +53,20 @@ export class SwarmChannelDescriptionComponent<
   public state: ISwarmChannelDescriptionComponentState<P, T, DbType, DBO> = {
     error: undefined,
     isPending: false,
+    isEditChannelDesctiptionMode: false,
     channelDescription: this.props.channelDescription,
+    channelDescriptionEdited: undefined,
   };
 
   private __baseComponent = new BaseComponent();
+
+  private get __channelDescriptionEdited(): ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO> {
+    const { channelDescriptionEdited } = this.state;
+    if (!channelDescriptionEdited) {
+      throw new Error('Channel description is not edited');
+    }
+    return channelDescriptionEdited;
+  }
 
   public render(): React.ReactElement {
     const { isPending, error } = this.state;
@@ -64,20 +83,68 @@ export class SwarmChannelDescriptionComponent<
     );
   }
 
-  protected _renderChannelDescription(): React.ReactElement {
-    const { channelDescription } = this.state;
+  protected _renderChannelDescriptionEditForm(): React.ReactElement {
+    const { channelDescriptionEdited } = this.state;
+
+    if (!channelDescriptionEdited) {
+      return <p>Channel description is not ready to be edited</p>;
+    }
+
     const formFieldsDescription = swarmChannelDescriptionComponentCreateFormFieldsDescriptionForChannelDescription<
       P,
       T,
       DbType,
       DBO,
-      typeof channelDescription
-    >(channelDescription);
+      typeof channelDescriptionEdited
+    >(channelDescriptionEdited);
     const formProps = {
       formFields: formFieldsDescription,
-      submitButton: SUBMIT_CHANNEL_CHANGES_BUTTON_PROPS,
+      submitButton: {
+        ...SUBMIT_CHANNEL_CHANGES_BUTTON_PROPS,
+        onClick: this.__handlePressUpdateChannelDescription,
+      },
     };
     return this.__baseComponent.renderForm(formProps, this.__onChannelDescriptionChange);
+  }
+
+  protected _renderChannelDescriptionMainInfo(): React.ReactElement {
+    const { channelDescription } = this.state;
+    return (
+      <div>
+        <p>Name: {channelDescription.name}</p>
+        <p>Version: {channelDescription.version}</p>
+        <p>Id: {channelDescription.id}</p>
+      </div>
+    );
+  }
+
+  protected _renderButtonEnableEditMode(): React.ReactElement {
+    const { isPending, isEditChannelDesctiptionMode } = this.state;
+    const handleEnableEditMode = () => {
+      this.setState((state) => {
+        return {
+          isEditChannelDesctiptionMode: !state.isEditChannelDesctiptionMode,
+          channelDescriptionEdited: { ...state.channelDescription },
+        };
+      });
+    };
+    return (
+      <button disabled={isPending} onClick={handleEnableEditMode}>
+        {isEditChannelDesctiptionMode ? 'Readonly' : 'Edit'} form
+      </button>
+    );
+  }
+
+  protected _renderChannelDescription(): React.ReactElement {
+    const { isEditChannelDesctiptionMode } = this.state;
+
+    return (
+      <div>
+        {this._renderButtonEnableEditMode()}
+        <hr />
+        {isEditChannelDesctiptionMode ? this._renderChannelDescriptionEditForm() : this._renderChannelDescriptionMainInfo()}
+      </div>
+    );
   }
 
   protected async __updateChannelDescription(): Promise<void> {
@@ -102,10 +169,48 @@ export class SwarmChannelDescriptionComponent<
     console.log(values);
     debugger;
     this.setState({
-      channelDescription: {
-        ...this.state.channelDescription,
+      channelDescriptionEdited: {
+        ...this.__channelDescriptionEdited,
         ...values,
       },
     });
+  };
+
+  private __getNewChannelDescription() {
+    const channelDescriptionEdited = this.__channelDescriptionEdited;
+    const { dbOptions } = channelDescriptionEdited;
+    const { grantAccess } = dbOptions;
+
+    if (typeof grantAccess === 'string') {
+      return {
+        ...channelDescriptionEdited,
+        dbOptions: {
+          ...channelDescriptionEdited.dbOptions,
+          grantAccess: createFunctionFromSerializedFunction(grantAccess),
+        },
+      };
+    }
+    return channelDescriptionEdited;
+  }
+
+  private __handlePressUpdateChannelDescription = async (ev: React.SyntheticEvent) => {
+    debugger;
+    ev.preventDefault();
+    const { updateChannelDescription } = this.props;
+    const channelDescriptionEdited = this.__getNewChannelDescription();
+    const pendingUpdateChannelDescriptionPromise = updateChannelDescription(channelDescriptionEdited);
+    // TODO - dbOptions is empty
+    this.setState({
+      isPending: true,
+    });
+    try {
+      await pendingUpdateChannelDescriptionPromise;
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      this.setState({
+        isPending: false,
+      });
+    }
   };
 }

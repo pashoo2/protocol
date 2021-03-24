@@ -958,7 +958,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       this.__mergeSetAndEmitSwarmMessagesChannelsDescriptionsCachedMapUpdateEvent(temporaryMap);
     }
 
-    private async __deleteSwarmChannelDescriptionToTheChannelsDescriptionsMapCached(
+    private async __deleteSwarmChannelDescriptionFromTheChannelsDescriptionsMapCached(
       key: TSwarmStoreDatabaseEntityKey<P>
     ): Promise<void> {
       await this.__waitTillCurrentSwarmMessagesChannelDescriptionsMapCahcedUpdating();
@@ -1030,7 +1030,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       key: TSwarmStoreDatabaseEntityKey<P>
     ): Promise<void> => {
       // for consistensy not wrapped in try catch, because if there if no channel in the cahce it should not be emitted.
-      await this.__deleteSwarmChannelDescriptionToTheChannelsDescriptionsMapCached(key);
+      await this.__deleteSwarmChannelDescriptionFromTheChannelsDescriptionsMapCached(key);
       this._emitEventDbHandler(
         ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_REMOVED,
         this._getChannelIdByDatabaseKey(key)

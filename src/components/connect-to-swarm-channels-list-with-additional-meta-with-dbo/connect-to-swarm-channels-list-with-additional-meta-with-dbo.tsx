@@ -283,15 +283,15 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
   ): Promise<void> {}
 
   private __handleChannelsListIsReady = async () => {
-    const { swarmMessagesChannelsList, swarmMessageChannelDescription } = this.state as any;
     this.setState({
       channelsListIsReady: true,
     });
-    try {
-      await this.addChannelDescriptionToChannelsList(swarmMessagesChannelsList, swarmMessageChannelDescription);
-      await this._onChannelAdded(swarmMessagesChannelsList, swarmMessageChannelDescription);
-    } catch (err) {
-      console.error(err);
-    }
+    // const { swarmMessagesChannelsList, swarmMessageChannelDescription } = this.state as any;
+    // try {
+    //   await this.addChannelDescriptionToChannelsList(swarmMessagesChannelsList, swarmMessageChannelDescription);
+    //   await this._onChannelAdded(swarmMessagesChannelsList, swarmMessageChannelDescription);
+    // } catch (err) {
+    //   console.error(err);
+    // }
   };
 }

@@ -69,9 +69,15 @@ export class SwarmMessagesDatabaseMessagesCachedStoreKeyValue<
     entries: TSwarmMessageDatabaseMessagesCached<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE, MD>
   ): boolean {
     const entriesSizeDiffers = entries.size !== this._entrieCachedCount;
-    const hasUpdatedMessages = this._updateCacheWithEntries(entries, this._entriesCached);
+    const cachedEntries = new Map(this._entriesCached);
+    const hasUpdatedMessages = this._updateCacheWithEntries(entries, cachedEntries);
 
-    this._incMessagesInCacheVersion();
+    if (hasUpdatedMessages) {
+      console.log('SwarmMessagesDatabaseMessagesCachedStoreKeyvalue::updateWithEntries');
+      console.dir([...cachedEntries.values()].map((v) => ({ ...v })));
+      this._entriesCached = cachedEntries;
+      this._incMessagesInCacheVersion();
+    }
     return entriesSizeDiffers || hasUpdatedMessages;
   }
 
