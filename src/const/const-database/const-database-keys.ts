@@ -1,0 +1,1 @@
+export const CONST_DATABASE_KEY_PARTS_SAFE_DELIMETER = '//';

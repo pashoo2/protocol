@@ -36,7 +36,10 @@ import {
 } from './swarm-messages-database.const';
 import { ISwarmMessageStoreMessageWithMeta } from '../swarm-message-store/types/swarm-message-store.types';
 import { delay } from '../../utils/common-utils/common-utils-timer';
-import { SWARM_MESSAGES_DATABASE_MESSAGES_MAX_ATTEMPTS_CACHE_UPDATE } from './swarm-messages-database.const';
+import {
+  SWARM_MESSAGES_DATABASE_MESSAGES_MAX_ATTEMPTS_CACHE_UPDATE,
+  ESwarmMessagesDatabaseOperation,
+} from './swarm-messages-database.const';
 import {
   ISwarmStoreConnectorBasic,
   ISwarmStoreConnector,
@@ -48,6 +51,7 @@ import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-messa
 import { ISwarmMessagesDatabaseConnector } from './swarm-messages-database.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from './swarm-messages-database.messages-collector.types';
 import { TSwarmStoreDatabaseIteratorMethodArgument } from '../swarm-store-class/swarm-store-class.types';
+import { CONST_DATABASE_KEY_PARTS_SAFE_DELIMETER } from 'const/const-database/const-database-keys';
 
 export class SwarmMessagesDatabase<
   P extends ESwarmStoreConnector,
@@ -234,7 +238,7 @@ export class SwarmMessagesDatabase<
 
   protected _isReady: boolean = false;
 
-  protected _newMessagesEmitted = new Set<string>();
+  protected _newMessagesHandled = new Set<string>();
 
   /**
    * Swarm messages cached
@@ -516,7 +520,7 @@ export class SwarmMessagesDatabase<
    * @returns {Promise<void>}
    * @memberof SwarmMessagesDatabase
    */
-  protected async _createAndSddSwarmMessageWithMetaToMessagesCacheByMessageAndMetaRelated(
+  protected async _createAndAddSwarmMessageWithMetaToMessagesCacheByMessageAndMetaRelatedTo(
     dbName: DBO['dbName'],
     message: MD,
     // the global unique address (hash) of the message in the swarm
@@ -548,7 +552,7 @@ export class SwarmMessagesDatabase<
     key?: TSwarmStoreDatabaseEntityKey<P>
   ): Promise<void> {
     if (this._checkIsReady()) {
-      await this._createAndSddSwarmMessageWithMetaToMessagesCacheByMessageAndMetaRelated(dbName, message, messageAddress, key);
+      await this._createAndAddSwarmMessageWithMetaToMessagesCacheByMessageAndMetaRelatedTo(dbName, message, messageAddress, key);
       return;
     }
     throw new Error('Swarm messages cache is not ready');
@@ -591,7 +595,7 @@ export class SwarmMessagesDatabase<
    * a message object by itself may be not exists.
    * @returns {string}
    */
-  protected _getMessageUniqueIdForEmittedAsNewList = (
+  protected _getUniqueHashForMessageMetaInfo = (
     // the global unique address (hash) of the message in the swarm
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key
@@ -600,6 +604,19 @@ export class SwarmMessagesDatabase<
   ): string => {
     return message ? message.sig : `${SWARM_MESSAGES_DATABASE_MESSAGES_EMITTED_UNIQ_ID_ADDRESS_PREFIX}::${messageAddress}`;
   };
+
+  protected _getUniqueHashForMessageMetaInfoAndDatabaseOperation(
+    databaseOperation: ESwarmMessagesDatabaseOperation,
+    // the global unique address (hash) of the message in the swarm
+    messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
+    // for key-value store it will be the key
+    key?: TSwarmStoreDatabaseEntityKey<P>,
+    message?: MD
+  ): string {
+    const prefix = String(databaseOperation);
+    const postfix = this._getUniqueHashForMessageMetaInfo(messageAddress, key, message);
+    return `${prefix}${CONST_DATABASE_KEY_PARTS_SAFE_DELIMETER}${postfix}`;
+  }
 
   /**
    * Add message to the list of a messages uniq id's which
@@ -610,18 +627,41 @@ export class SwarmMessagesDatabase<
    * @param {MD} [message] - optional cause for DELETE messages
    * a message object by itself may be not exists.
    */
-  protected _addMessageToListOfEmitted = (
+  protected _addOperationUnderMessageToListOfHandled = (
+    databaseOperation: ESwarmMessagesDatabaseOperation,
     // the global unique address (hash) of the message in the swarm
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key
     key?: TSwarmStoreDatabaseEntityKey<P>,
     message?: MD
   ): void => {
-    this._newMessagesEmitted.add(this._getMessageUniqueIdForEmittedAsNewList(messageAddress, key, message));
+    const hash = this._getUniqueHashForMessageMetaInfoAndDatabaseOperation(databaseOperation, messageAddress, key, message);
+    this._newMessagesHandled.add(hash);
   };
 
   /**
-   * Checks whether the message is already been emitted as a new message
+   * Delete message from the list of a messages uniq id's which
+   * were emitted as a new before
+   *
+   * @param {TSwarmStoreDatabaseEntityAddress<P>} messageAddress
+   * @param {TSwarmStoreDatabaseEntityKey<P>} [key]
+   * @param {MD} [message] - optional cause for DELETE messages
+   * a message object by itself may be not exists.
+   */
+  protected _deleteOperationUnderMessageFromListOfHandled = (
+    databaseOperation: ESwarmMessagesDatabaseOperation,
+    // the global unique address (hash) of the message in the swarm
+    messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
+    // for key-value store it will be the key
+    key?: TSwarmStoreDatabaseEntityKey<P>,
+    message?: MD
+  ): void => {
+    const hash = this._getUniqueHashForMessageMetaInfoAndDatabaseOperation(databaseOperation, messageAddress, key, message);
+    this._newMessagesHandled.delete(hash);
+  };
+
+  /**
+   * Checks whether the message is already been handled as a new message
    *
    * @param {TSwarmStoreDatabaseEntityAddress<P>} messageAddress
    * @param {TSwarmStoreDatabaseEntityKey<P>} [key]
@@ -629,15 +669,36 @@ export class SwarmMessagesDatabase<
    * a message object by itself may be not exists.
    * @returns {boolean}
    */
-  protected _isMessageAlreadyEmitted = (
+  protected _hasMessageAlreadyBeenHandled = (
     // the global unique address (hash) of the message in the swarm
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key
     key?: TSwarmStoreDatabaseEntityKey<P>,
     message?: MD
   ): boolean => {
-    return this._newMessagesEmitted.has(this._getMessageUniqueIdForEmittedAsNewList(messageAddress, key, message));
+    return this._newMessagesHandled.has(this._getUniqueHashForMessageMetaInfo(messageAddress, key, message));
   };
+
+  /**
+   * Emit event that a new messsage has been received.
+   *
+   * @protected
+   * @param {DBO['dbName']} dbName
+   * @param {MD} message
+   * @param {TSwarmStoreDatabaseEntityAddress<P>} messageAddress
+   * @param {TSwarmStoreDatabaseEntityKey<P>} [key]
+   * @memberof SwarmMessagesDatabase
+   */
+  protected _emitNewMessageEvent(
+    dbName: DBO['dbName'],
+    message: MD,
+    // the global unique address (hash) of the message in the swarm
+    messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
+    // for key-value store it will be the key
+    key?: TSwarmStoreDatabaseEntityKey<P>
+  ): void {
+    this._emitter.emit(ESwarmMessageStoreEventNames.NEW_MESSAGE, dbName, message, messageAddress, key);
+  }
 
   protected _handleDatabaseNewMessage = async (
     dbName: DBO['dbName'],
@@ -647,16 +708,48 @@ export class SwarmMessagesDatabase<
     // for key-value store it will be the key
     key?: TSwarmStoreDatabaseEntityKey<P>
   ): Promise<void> => {
-    if (this._dbName !== dbName) return;
-
-    if (this._isMessageAlreadyEmitted(messageAddress, key, message)) {
-      return;
-    }
-
-    this._emitter.emit(ESwarmMessageStoreEventNames.NEW_MESSAGE, dbName, message, messageAddress, key);
-    this._addMessageToListOfEmitted(messageAddress, key, message);
+    this._emitNewMessageEvent(dbName, message, messageAddress, key);
+    this._addOperationUnderMessageToListOfHandled(ESwarmMessagesDatabaseOperation.ADD, messageAddress, key, message);
     await this._handleCacheUpdateOnNewMessage(message, messageAddress, key);
   };
+
+  protected _handleDatabaseNewMessageIfHaventBeenHandledBefore = async (
+    dbName: DBO['dbName'],
+    message: MD,
+    // the global unique address (hash) of the message in the swarm
+    messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
+    // for key-value store it will be the key
+    key?: TSwarmStoreDatabaseEntityKey<P>
+  ): Promise<void> => {
+    if (this._dbName !== dbName) return;
+    if (this._hasMessageAlreadyBeenHandled(messageAddress, key, message)) {
+      return;
+    }
+    await this._handleCacheUpdateOnNewMessage(message, messageAddress, key);
+  };
+
+  protected _emitDeleteMessageEvent(
+    dbName: DBO['dbName'],
+    userID: TSwarmMessageUserIdentifierSerialized,
+    // the global unique address (hash) of the DELETE message in the swarm
+    messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
+    // the global unique address (hash) of the DELETED message in the swarm
+    messageDeletedAddress: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+      ? TSwarmStoreDatabaseEntityAddress<P> | undefined
+      : TSwarmStoreDatabaseEntityAddress<P>,
+    // for key-value store it will be the key for the value,
+    // for feed store it will be hash of the message which deleted by this one.
+    keyOrHash: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined
+  ) {
+    this._emitter.emit(
+      ESwarmMessageStoreEventNames.DELETE_MESSAGE,
+      dbName,
+      userID,
+      messageAddress,
+      messageDeletedAddress,
+      keyOrHash
+    );
+  }
 
   protected _handleDatabaseDeleteMessage = async (
     dbName: DBO['dbName'],
@@ -671,24 +764,32 @@ export class SwarmMessagesDatabase<
     // for feed store it will be hash of the message which deleted by this one.
     keyOrHash: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined
   ): Promise<void> => {
+    this._emitDeleteMessageEvent(dbName, userID, messageAddress, messageDeletedAddress, keyOrHash);
+    this._addOperationUnderMessageToListOfHandled(ESwarmMessagesDatabaseOperation.DELETE, messageAddress, keyOrHash);
+    await this._handleCacheUpdateOnMessageDeleteFromKVDatabase(userID, messageAddress, messageDeletedAddress, keyOrHash);
+  };
+
+  protected _handleDatabaseDeleteMessageIfNotHaveBeenHandledBefore = async (
+    dbName: DBO['dbName'],
+    userID: TSwarmMessageUserIdentifierSerialized,
+    // the global unique address (hash) of the DELETE message in the swarm
+    messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
+    // the global unique address (hash) of the DELETED message in the swarm
+    messageDeletedAddress: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+      ? TSwarmStoreDatabaseEntityAddress<P> | undefined
+      : TSwarmStoreDatabaseEntityAddress<P>,
+    // for key-value store it will be the key for the value,
+    // for feed store it will be hash of the message which deleted by this one.
+    keyOrHash: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined
+  ): Promise<void> => {
     if (this._dbName !== dbName) return;
 
-    const keyToCheckAlreadyEmitted = this._isKeyValueDatabase ? keyOrHash : undefined;
+    const keyForValueToCheckAlreadyHandled = this._isKeyValueDatabase ? keyOrHash : undefined;
 
-    if (this._isMessageAlreadyEmitted(messageAddress, keyToCheckAlreadyEmitted)) {
+    if (this._hasMessageAlreadyBeenHandled(messageAddress, keyForValueToCheckAlreadyHandled)) {
       return;
     }
-
-    this._emitter.emit(
-      ESwarmMessageStoreEventNames.DELETE_MESSAGE,
-      dbName,
-      userID,
-      messageAddress,
-      messageDeletedAddress,
-      keyOrHash
-    );
-    this._addMessageToListOfEmitted(messageAddress, keyToCheckAlreadyEmitted);
-    await this._handleCacheUpdateOnDeleteMessage(userID, messageAddress, messageDeletedAddress, keyOrHash);
+    await this._handleDatabaseDeleteMessage(dbName, userID, messageAddress, messageDeletedAddress, keyOrHash);
   };
 
   protected _handleDatabaseMessageError = (
@@ -751,14 +852,21 @@ export class SwarmMessagesDatabase<
    */
   protected _setSwarmMessagesStoreListeners(isSetListeners: boolean = true): void {
     const method = isSetListeners ? 'addListener' : 'removeListener';
+    const swarmMessageStore = this._swarmMessageStore;
 
-    this._swarmMessageStore?.[method](ESwarmStoreEventNames.DB_LOADING, this._handleDatabaseLoadingEvent);
-    this._swarmMessageStore?.[method](ESwarmStoreEventNames.UPDATE, this._handleDatabaseUpdatedEvent);
-    this._swarmMessageStore?.[method](ESwarmMessageStoreEventNames.NEW_MESSAGE, this._handleDatabaseNewMessage);
-    this._swarmMessageStore?.[method](ESwarmMessageStoreEventNames.DELETE_MESSAGE, this._handleDatabaseDeleteMessage);
-    this._swarmMessageStore?.[method](ESwarmStoreEventNames.READY, this._handleDatabaseReadyEvent);
-    this._swarmMessageStore?.[method](ESwarmStoreEventNames.CLOSE_DATABASE, this._handleDatabaseClosedEvent);
-    this._swarmMessageStore?.[method](ESwarmStoreEventNames.DROP_DATABASE, this._handleDatabaseDroppedEvent);
+    if (!swarmMessageStore) {
+      throw new Error('A SwarmMessageStore instance is not exists');
+    }
+    swarmMessageStore[method](ESwarmStoreEventNames.DB_LOADING, this._handleDatabaseLoadingEvent);
+    swarmMessageStore[method](ESwarmStoreEventNames.UPDATE, this._handleDatabaseUpdatedEvent);
+    swarmMessageStore[method](ESwarmMessageStoreEventNames.NEW_MESSAGE, this._handleDatabaseNewMessageIfHaventBeenHandledBefore);
+    swarmMessageStore[method](
+      ESwarmMessageStoreEventNames.DELETE_MESSAGE,
+      this._handleDatabaseDeleteMessageIfNotHaveBeenHandledBefore
+    );
+    swarmMessageStore[method](ESwarmStoreEventNames.READY, this._handleDatabaseReadyEvent);
+    swarmMessageStore[method](ESwarmStoreEventNames.CLOSE_DATABASE, this._handleDatabaseClosedEvent);
+    swarmMessageStore[method](ESwarmStoreEventNames.DROP_DATABASE, this._handleDatabaseDroppedEvent);
   }
 
   protected _handleCacheUpdating = (): void => {
@@ -958,7 +1066,7 @@ export class SwarmMessagesDatabase<
    * @param {string} [keyOrHash]
    * @memberof SwarmMessagesDatabase
    */
-  protected async _handleCacheUpdateOnDeleteMessage(
+  protected async _handleCacheUpdateOnMessageDeleteFromKVDatabase(
     userID: TSwarmMessageUserIdentifierSerialized,
     // the global unique address (hash) of the DELETE message in the swarm
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,

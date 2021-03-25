@@ -1,3 +1,8 @@
+export enum ESwarmMessagesDatabaseOperation {
+  DELETE = 'DELETE',
+  ADD = 'ADD',
+}
+
 export enum ESwarmMessagesDatabaseCacheEventsNames {
   // cache has updated with a message
   CACHE_UPDATED = 'CACHE_UPDATED',
