@@ -238,7 +238,7 @@ export class SwarmMessagesDatabase<
 
   protected _isReady: boolean = false;
 
-  protected _newMessagesHandled = new Set<string>();
+  protected _messagesOperationsHashesHandled = new Set<string>();
 
   /**
    * Swarm messages cached
@@ -636,7 +636,7 @@ export class SwarmMessagesDatabase<
     message?: MD
   ): void => {
     const hash = this._getUniqueHashForMessageMetaInfoAndDatabaseOperation(databaseOperation, messageAddress, key, message);
-    this._newMessagesHandled.add(hash);
+    this._messagesOperationsHashesHandled.add(hash);
   };
 
   /**
@@ -657,7 +657,7 @@ export class SwarmMessagesDatabase<
     message?: MD
   ): void => {
     const hash = this._getUniqueHashForMessageMetaInfoAndDatabaseOperation(databaseOperation, messageAddress, key, message);
-    this._newMessagesHandled.delete(hash);
+    this._messagesOperationsHashesHandled.delete(hash);
   };
 
   /**
@@ -669,14 +669,16 @@ export class SwarmMessagesDatabase<
    * a message object by itself may be not exists.
    * @returns {boolean}
    */
-  protected _hasMessageAlreadyBeenHandled = (
+  protected _hasSwarmMessageOperationAlreadyBeenHandled = (
+    databaseOperation: ESwarmMessagesDatabaseOperation,
     // the global unique address (hash) of the message in the swarm
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key
     key?: TSwarmStoreDatabaseEntityKey<P>,
     message?: MD
   ): boolean => {
-    return this._newMessagesHandled.has(this._getUniqueHashForMessageMetaInfo(messageAddress, key, message));
+    const hash = this._getUniqueHashForMessageMetaInfoAndDatabaseOperation(databaseOperation, messageAddress, key, message);
+    return this._messagesOperationsHashesHandled.has(hash);
   };
 
   /**
@@ -722,10 +724,10 @@ export class SwarmMessagesDatabase<
     key?: TSwarmStoreDatabaseEntityKey<P>
   ): Promise<void> => {
     if (this._dbName !== dbName) return;
-    if (this._hasMessageAlreadyBeenHandled(messageAddress, key, message)) {
+    if (this._hasSwarmMessageOperationAlreadyBeenHandled(ESwarmMessagesDatabaseOperation.ADD, messageAddress, key, message)) {
       return;
     }
-    await this._handleCacheUpdateOnNewMessage(message, messageAddress, key);
+    await this._handleDatabaseNewMessage(dbName, message, messageAddress, key);
   };
 
   protected _emitDeleteMessageEvent(
@@ -786,7 +788,13 @@ export class SwarmMessagesDatabase<
 
     const keyForValueToCheckAlreadyHandled = this._isKeyValueDatabase ? keyOrHash : undefined;
 
-    if (this._hasMessageAlreadyBeenHandled(messageAddress, keyForValueToCheckAlreadyHandled)) {
+    if (
+      this._hasSwarmMessageOperationAlreadyBeenHandled(
+        ESwarmMessagesDatabaseOperation.DELETE,
+        messageAddress,
+        keyForValueToCheckAlreadyHandled
+      )
+    ) {
       return;
     }
     await this._handleDatabaseDeleteMessage(dbName, userID, messageAddress, messageDeletedAddress, keyOrHash);

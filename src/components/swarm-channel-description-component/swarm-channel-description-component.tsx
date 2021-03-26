@@ -166,8 +166,7 @@ export class SwarmChannelDescriptionComponent<
   }
 
   private __onChannelDescriptionChange: onFormValuesChange = (values: IFormFieldsValues): void => {
-    console.log(values);
-    debugger;
+    console.log('__onChannelDescriptionChange', values);
     this.setState({
       channelDescriptionEdited: {
         ...this.__channelDescriptionEdited,

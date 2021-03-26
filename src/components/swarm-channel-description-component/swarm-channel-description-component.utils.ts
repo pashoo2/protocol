@@ -84,7 +84,6 @@ export function swarmChannelDescriptionComponentCreateSubformDescriptionForChann
         isMultiline: true,
         value: String(grantAccess),
         validate: (name: string, value: string): string => {
-          debugger;
           try {
             createFunctionFromSerializedFunction(value);
             return '';

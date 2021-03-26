@@ -309,8 +309,7 @@ export class SwarmMessagesChannelsListComponentBase<
   }
 
   protected _onChannelDescriptionRemoved(channelRemovedId: TSwarmMessagesChannelId): void {
-    console.log(channelRemovedId);
-    debugger;
+    console.log('_onChannelDescriptionRemoved', channelRemovedId);
     this._removeChannelDescriptionFromTheListById(channelRemovedId);
   }
 
@@ -339,7 +338,6 @@ export class SwarmMessagesChannelsListComponentBase<
   protected _onChannelsListCachedUpdated(
     channelsListCached: Readonly<Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>>
   ): void {
-    debugger;
     console.log('_onChannelsListCachedUpdated');
     console.dir([...channelsListCached.values()].map((v) => ({ ...v })));
     console.trace();

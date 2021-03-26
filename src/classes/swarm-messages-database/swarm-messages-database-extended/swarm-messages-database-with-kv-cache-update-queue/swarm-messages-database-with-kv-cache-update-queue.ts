@@ -37,12 +37,12 @@ import {
 } from '../../../swarm-store-class/swarm-store-class.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseIteratorOption } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import { TSwarmStoreDatabaseIteratorMethodArgument } from '../../../swarm-store-class/swarm-store-class.types';
-import { SWARM_MESSAGES_DATABASE_WITH_KV_DB_MESSAGES_UPDATES_QUEUED_INTERVAL_UPDATING_DEFFERED_KEYS_IN_CACHE_MS } from './swarm-messages-database-with-kv-db-messages-updates-queued.const';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { TSwarmMessageUserIdentifierSerialized } from '../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier.types';
 import { ESwarmMessageStoreEventNames } from '../../../swarm-message-store/swarm-message-store.const';
 import { ESwarmMessagesDatabaseOperation } from '../../swarm-messages-database.const';
 import { CONST_DATABASE_KEY_PARTS_SAFE_DELIMETER } from 'const/const-database/const-database-keys';
+import { SWARM_MESSAGES_DATABASE_WITH_KV_DB_MESSAGES_UPDATES_QUEUED_INTERVAL_UPDATING_DEFFERED_KEYS_IN_CACHE_MS } from '../swarm-messages-database-with-kv-db-messages-updates-queued/swarm-messages-database-with-kv-db-messages-updates-queued.const';
 
 // TODO - use this instance intead of swarm-messages-database
 /**
@@ -57,7 +57,7 @@ import { CONST_DATABASE_KEY_PARTS_SAFE_DELIMETER } from 'const/const-database/co
  * And also we need to emit the NEW_MESSAGE event only for
  * messages that are really new.
  */
-export class SwarmMessagesDatabaseWithKvDbMessagesUpdatesQueued<
+export class SwarmMessagesDatabaseWithKVCacheUpdateQueue<
     P extends ESwarmStoreConnector,
     T extends TSwarmMessageSerialized,
     DbType extends TSwarmStoreDatabaseType<P>,
@@ -172,7 +172,7 @@ export class SwarmMessagesDatabaseWithKvDbMessagesUpdatesQueued<
    * Interval deffered keys values updating in the cahce related
    *
    * @private
-   * @memberof SwarmMessagesDatabaseWithKvDbMessagesUpdatesQueued
+   * @memberof SwarmMessagesDatabaseWithKVCacheUpdateQueue
    */
   private __intervalDefferedKeysValuesUpdateInCacheRelatedToStorage: NodeJS.Timeout | undefined;
 
@@ -296,7 +296,7 @@ export class SwarmMessagesDatabaseWithKvDbMessagesUpdatesQueued<
    *
    * @protected
    * @param {TSwarmStoreDatabaseEntityKey<P>} key
-   * @memberof SwarmMessagesDatabaseWithKvDbMessagesUpdatesQueued
+   * @memberof SwarmMessagesDatabaseWithKVCacheUpdateQueue
    */
   protected _addKeyInMessagesDefferedReadQueue(key: TSwarmStoreDatabaseEntityKey<P>): void {
     const dbKeysForDefferedUpdate = this.__dbKeysForDefferedValuesUpdateInCache;
@@ -315,7 +315,7 @@ export class SwarmMessagesDatabaseWithKvDbMessagesUpdatesQueued<
    * exists.
    *
    * @protected
-   * @memberof SwarmMessagesDatabaseWithKvDbMessagesUpdatesQueued
+   * @memberof SwarmMessagesDatabaseWithKVCacheUpdateQueue
    */
   protected _resetKeysQueuedForDefferedCacheUpdate(): void {
     this.__dbKeysForDefferedValuesUpdateInCache = new Set();
@@ -352,7 +352,7 @@ export class SwarmMessagesDatabaseWithKvDbMessagesUpdatesQueued<
    * @param {TSwarmStoreDatabaseEntityKey<P>} [key]
    * @param {MD} [message]
    * @returns {string}
-   * @memberof SwarmMessagesDatabaseWithKvDbMessagesUpdatesQueued
+   * @memberof SwarmMessagesDatabaseWithKVCacheUpdateQueue
    */
   protected _getUniqueHashForTheEventTypeForAMessage(
     eventType: ESwarmMessageStoreEventNames,
@@ -490,7 +490,7 @@ export class SwarmMessagesDatabaseWithKvDbMessagesUpdatesQueued<
    *       | undefined
    *     )[])} requestValuesWithMetadataForKeysResult
    * @returns {Promise<void>}
-   * @memberof SwarmMessagesDatabaseWithKvDbMessagesUpdatesQueued
+   * @memberof SwarmMessagesDatabaseWithKVCacheUpdateQueue
    */
   protected async __emitMessagesUpdatesAndUpdateCacheIfExistsByRequestResult(
     requestValuesWithMetadataForKeysResult: (
@@ -550,11 +550,6 @@ export class SwarmMessagesDatabaseWithKvDbMessagesUpdatesQueued<
 
   protected async _readMessagesByDefferedKeysQueueKVStorage(): Promise<void> {
     const keys = this.__dbKeysForDefferedValuesUpdateInCacheQueue;
-
-    if (!keys.length) {
-      return;
-    }
-
     const databaseQueryForReadingKeys = this._getQueryParamsToReadValueForDbKeys(keys);
 
     this._resetKeysQueuedForDefferedCacheUpdate();

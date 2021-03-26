@@ -296,7 +296,6 @@ export function getSwarmMessagesDatabaseWithKVDbMessagesUpdatesConnectorInstance
   DCCRT,
   OPT
 > {
-  debugger;
   return getSwarmMessagesDatabaseWithKVDbMessagesUpdatesQueuedConnectedInstanceFabricByDatabaseOptions<
     P,
     T,
