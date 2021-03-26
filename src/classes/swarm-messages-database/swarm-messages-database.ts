@@ -700,18 +700,18 @@ export class SwarmMessagesDatabase<
     this._emitter.emit(ESwarmMessageStoreEventNames.NEW_MESSAGE, dbName, message, messageAddress, key);
   }
 
-  protected _handleDatabaseNewMessage = async (
+  protected async _handleDatabaseNewMessage(
     dbName: DBO['dbName'],
     message: MD,
     // the global unique address (hash) of the message in the swarm
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key
     key?: TSwarmStoreDatabaseEntityKey<P>
-  ): Promise<void> => {
+  ): Promise<void> {
     this._emitNewMessageEvent(dbName, message, messageAddress, key);
     this._addOperationUnderMessageToListOfHandled(ESwarmMessagesDatabaseOperation.ADD, messageAddress, key, message);
     await this._handleCacheUpdateOnNewMessage(message, messageAddress, key);
-  };
+  }
 
   protected _handleDatabaseNewMessageIfHaventBeenHandledBefore = async (
     dbName: DBO['dbName'],
@@ -751,7 +751,7 @@ export class SwarmMessagesDatabase<
     );
   }
 
-  protected _handleDatabaseDeleteMessage = async (
+  protected async _handleDatabaseDeleteMessage(
     dbName: DBO['dbName'],
     userID: TSwarmMessageUserIdentifierSerialized,
     // the global unique address (hash) of the DELETE message in the swarm
@@ -763,11 +763,11 @@ export class SwarmMessagesDatabase<
     // for key-value store it will be the key for the value,
     // for feed store it will be hash of the message which deleted by this one.
     keyOrHash: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined
-  ): Promise<void> => {
+  ): Promise<void> {
     this._emitDeleteMessageEvent(dbName, userID, messageAddress, messageDeletedAddress, keyOrHash);
     this._addOperationUnderMessageToListOfHandled(ESwarmMessagesDatabaseOperation.DELETE, messageAddress, keyOrHash);
     await this._handleCacheUpdateOnMessageDeleteFromKVDatabase(userID, messageAddress, messageDeletedAddress, keyOrHash);
-  };
+  }
 
   protected _handleDatabaseDeleteMessageIfNotHaveBeenHandledBefore = async (
     dbName: DBO['dbName'],

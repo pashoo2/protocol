@@ -26,6 +26,7 @@ import {
 
 import { swarmMessagesDatabaseConnectedFabricMain } from '../swarm-messages-database-intstance-fabric-main';
 import { ISwarmMessagesDatabaseConnectedInstanceFabricByDatabaseOptions } from '../types/swarm-messages-database-instance-fabric-by-database-options.types';
+import { SwarmMessagesDatabase } from '../../swarm-messages-database';
 
 /**
  * Construct a constructor of a database messages instance by database options.
@@ -104,9 +105,11 @@ export function getSwarmMessagesDatabaseConnectedInstanceFabricByDatabaseOptions
     SMSM,
     DCO,
     DCCRT
-  >
+  >,
+  SMBC extends typeof SwarmMessagesDatabase = typeof SwarmMessagesDatabase
 >(
-  options: Omit<OPT, 'dbOptions'>
+  options: Omit<OPT, 'dbOptions'>,
+  SwarmMessagesDatabaseClassBase?: SMBC
 ): ISwarmMessagesDatabaseConnectedInstanceFabricByDatabaseOptions<
   P,
   T,
@@ -196,10 +199,14 @@ export function getSwarmMessagesDatabaseConnectedInstanceFabricByDatabaseOptions
       SMSM,
       DCO,
       DCCRT,
-      OPT
-    >({
-      ...options,
-      dbOptions: dbo,
-    } as OPT);
+      OPT,
+      SMBC
+    >(
+      {
+        ...options,
+        dbOptions: dbo,
+      } as OPT,
+      SwarmMessagesDatabaseClassBase
+    );
   };
 }

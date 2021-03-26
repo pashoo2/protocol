@@ -37,7 +37,7 @@ import {
 } from '../../../swarm-store-class/swarm-store-class.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseIteratorOption } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import { TSwarmStoreDatabaseIteratorMethodArgument } from '../../../swarm-store-class/swarm-store-class.types';
-import { SWARM_MESSAGES_DATABASE_WITH_KV_CACHE_UPDATE_QUEUE_INTERVAL_UPDATING_DEFFERED_KEYS_IN_CACHE_MS } from './swarm-messages-database-with-kv-cache-update-queue.const';
+import { SWARM_MESSAGES_DATABASE_WITH_KV_DB_MESSAGES_UPDATES_QUEUED_INTERVAL_UPDATING_DEFFERED_KEYS_IN_CACHE_MS } from './swarm-messages-database-with-kv-db-messages-updates-queued.const';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { TSwarmMessageUserIdentifierSerialized } from '../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier.types';
 import { ESwarmMessageStoreEventNames } from '../../../swarm-message-store/swarm-message-store.const';
@@ -57,7 +57,7 @@ import { CONST_DATABASE_KEY_PARTS_SAFE_DELIMETER } from 'const/const-database/co
  * And also we need to emit the NEW_MESSAGE event only for
  * messages that are really new.
  */
-export class SwarmMessagesDatabaseWithKVCacheUpdateQueue<
+export class SwarmMessagesDatabaseWithKvDbMessagesUpdatesQueued<
     P extends ESwarmStoreConnector,
     T extends TSwarmMessageSerialized,
     DbType extends TSwarmStoreDatabaseType<P>,
@@ -172,7 +172,7 @@ export class SwarmMessagesDatabaseWithKVCacheUpdateQueue<
    * Interval deffered keys values updating in the cahce related
    *
    * @private
-   * @memberof SwarmMessagesDatabaseWithKVCacheUpdateQueue
+   * @memberof SwarmMessagesDatabaseWithKvDbMessagesUpdatesQueued
    */
   private __intervalDefferedKeysValuesUpdateInCacheRelatedToStorage: NodeJS.Timeout | undefined;
 
@@ -191,14 +191,15 @@ export class SwarmMessagesDatabaseWithKVCacheUpdateQueue<
     this.__stopIntervalDefferedKeysValuesUpdateInCacheRelatedToStorage();
   }
 
-  protected _handleDatabaseNewMessage = async (
+  protected async _handleDatabaseNewMessage(
     dbName: DBO['dbName'],
     message: MD,
     // the global unique address (hash) of the message in the swarm
     messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
     // for key-value store it will be the key
     key?: TSwarmStoreDatabaseEntityKey<P>
-  ): Promise<void> => {
+  ): Promise<void> {
+    debugger;
     if (this._isKeyValueDatabase) {
       if (!key) {
         throw new Error('Key should exists for a message in a KV database');
@@ -207,9 +208,24 @@ export class SwarmMessagesDatabaseWithKVCacheUpdateQueue<
       return;
     }
     return await super._handleDatabaseNewMessage(dbName, message, messageAddress, key);
-  };
+  }
 
-  protected _handleDatabaseDeleteMessage = async (
+  protected _handleDatabaseNewMessageInKVDatabase(
+    dbName: DBO['dbName'],
+    message: MD,
+    // the global unique address (hash) of the message in the swarm
+    messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
+    // for key-value store it will be the key
+    key?: TSwarmStoreDatabaseEntityKey<P>
+  ): void {
+    debugger;
+    if (!key) {
+      throw new Error('Key should exists for a message in a KV database');
+    }
+    this._addKeyInMessagesDefferedReadQueue(key);
+  }
+
+  protected async _handleDatabaseDeleteMessage(
     dbName: DBO['dbName'],
     userID: TSwarmMessageUserIdentifierSerialized,
     // the global unique address (hash) of the DELETE message in the swarm
@@ -221,27 +237,45 @@ export class SwarmMessagesDatabaseWithKVCacheUpdateQueue<
     // for key-value store it will be the key for the value,
     // for feed store it will be hash of the message which deleted by this one.
     keyOrHash: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined
-  ): Promise<void> => {
+  ): Promise<void> {
+    debugger;
     if (this._isKeyValueDatabase) {
-      if (!keyOrHash) {
-        throw new Error('Key should exists for a message in a KV database');
-      }
-
-      const dbKey = (keyOrHash as unknown) as TSwarmStoreDatabaseEntityKey<P>;
-
-      this._addOperationUnderMessageToListOfHandled(ESwarmMessagesDatabaseOperation.DELETE, messageAddress, dbKey);
-      try {
-        if (!(await this._whetherAMessageExistsForDbKey(dbKey))) {
-          this._emitDeleteMessageEventIfHaventBeenEmittedBefore(dbName, userID, messageAddress, messageDeletedAddress, dbKey);
-        }
-      } catch (err) {
-        this._deleteOperationUnderMessageFromListOfHandled(ESwarmMessagesDatabaseOperation.DELETE, messageAddress, dbKey);
-        throw err;
-      }
+      await this._handleDatabaseDeleteMessageFromKVDatabase(dbName, userID, messageAddress, messageDeletedAddress, keyOrHash);
       return;
     }
     return await super._handleDatabaseDeleteMessage(dbName, userID, messageAddress, messageDeletedAddress, keyOrHash);
-  };
+  }
+
+  protected async _handleDatabaseDeleteMessageFromKVDatabase(
+    dbName: DBO['dbName'],
+    userID: TSwarmMessageUserIdentifierSerialized,
+    // the global unique address (hash) of the DELETE message in the swarm
+    messageAddress: TSwarmStoreDatabaseEntityAddress<P>,
+    // the global unique address (hash) of the DELETED message in the swarm
+    messageDeletedAddress: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+      ? TSwarmStoreDatabaseEntityAddress<P> | undefined
+      : TSwarmStoreDatabaseEntityAddress<P>,
+    // for key-value store it will be the key for the value,
+    // for feed store it will be hash of the message which deleted by this one.
+    keyOrHash: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined
+  ): Promise<void> {
+    debugger;
+    if (!keyOrHash) {
+      throw new Error('Key should exists for a message in a KV database');
+    }
+
+    const dbKey = (keyOrHash as unknown) as TSwarmStoreDatabaseEntityKey<P>;
+
+    this._addOperationUnderMessageToListOfHandled(ESwarmMessagesDatabaseOperation.DELETE, messageAddress, dbKey);
+    try {
+      if (!(await this._whetherAMessageExistsForDbKey(dbKey))) {
+        this._emitDeleteMessageEventIfHaventBeenEmittedBefore(dbName, userID, messageAddress, messageDeletedAddress, dbKey);
+      }
+    } catch (err) {
+      this._deleteOperationUnderMessageFromListOfHandled(ESwarmMessagesDatabaseOperation.DELETE, messageAddress, dbKey);
+      throw err;
+    }
+  }
 
   /**
    * Returns params for querying the database to read only
@@ -266,7 +300,7 @@ export class SwarmMessagesDatabaseWithKVCacheUpdateQueue<
    *
    * @protected
    * @param {TSwarmStoreDatabaseEntityKey<P>} key
-   * @memberof SwarmMessagesDatabaseWithKVCacheUpdateQueue
+   * @memberof SwarmMessagesDatabaseWithKvDbMessagesUpdatesQueued
    */
   protected _addKeyInMessagesDefferedReadQueue(key: TSwarmStoreDatabaseEntityKey<P>): void {
     const dbKeysForDefferedUpdate = this.__dbKeysForDefferedValuesUpdateInCache;
@@ -285,7 +319,7 @@ export class SwarmMessagesDatabaseWithKVCacheUpdateQueue<
    * exists.
    *
    * @protected
-   * @memberof SwarmMessagesDatabaseWithKVCacheUpdateQueue
+   * @memberof SwarmMessagesDatabaseWithKvDbMessagesUpdatesQueued
    */
   protected _resetKeysQueuedForDefferedCacheUpdate(): void {
     this.__dbKeysForDefferedValuesUpdateInCache = new Set();
@@ -322,7 +356,7 @@ export class SwarmMessagesDatabaseWithKVCacheUpdateQueue<
    * @param {TSwarmStoreDatabaseEntityKey<P>} [key]
    * @param {MD} [message]
    * @returns {string}
-   * @memberof SwarmMessagesDatabaseWithKVCacheUpdateQueue
+   * @memberof SwarmMessagesDatabaseWithKvDbMessagesUpdatesQueued
    */
   protected _getUniqueHashForTheEventTypeForAMessage(
     eventType: ESwarmMessageStoreEventNames,
@@ -460,7 +494,7 @@ export class SwarmMessagesDatabaseWithKVCacheUpdateQueue<
    *       | undefined
    *     )[])} requestValuesWithMetadataForKeysResult
    * @returns {Promise<void>}
-   * @memberof SwarmMessagesDatabaseWithKVCacheUpdateQueue
+   * @memberof SwarmMessagesDatabaseWithKvDbMessagesUpdatesQueued
    */
   protected async __emitMessagesUpdatesAndUpdateCacheIfExistsByRequestResult(
     requestValuesWithMetadataForKeysResult: (
@@ -538,7 +572,7 @@ export class SwarmMessagesDatabaseWithKVCacheUpdateQueue<
   private __startIntervalDefferedKeysValuesUpdateInCacheRelatedToStorage(): void {
     this.__intervalDefferedKeysValuesUpdateInCacheRelatedToStorage = setInterval(
       () => this._readMessagesByDefferedKeysQueueKVStorage(),
-      SWARM_MESSAGES_DATABASE_WITH_KV_CACHE_UPDATE_QUEUE_INTERVAL_UPDATING_DEFFERED_KEYS_IN_CACHE_MS
+      SWARM_MESSAGES_DATABASE_WITH_KV_DB_MESSAGES_UPDATES_QUEUED_INTERVAL_UPDATING_DEFFERED_KEYS_IN_CACHE_MS
     );
   }
 

@@ -220,9 +220,11 @@ export async function swarmMessagesDatabaseConnectedFabricMain<
     SMSM,
     DCO,
     DCCRT
-  >
+  >,
+  SMBC extends typeof SwarmMessagesDatabase = typeof SwarmMessagesDatabase
 >(
-  options: OPT
+  options: OPT,
+  SwarmMessagesDatabaseClassBase: SMBC = SwarmMessagesDatabase as SMBC
 ): Promise<
   TConnectToSwarmMessagesDatabaseReturnType<
     P,
@@ -245,7 +247,7 @@ export async function swarmMessagesDatabaseConnectedFabricMain<
     DCCRT
   >
 > {
-  const db = new SwarmMessagesDatabase<
+  const db = new SwarmMessagesDatabaseClassBase<
     P,
     T,
     DbType,
