@@ -26,7 +26,6 @@ import {
   IConnectionBridgeUnknown,
 } from '../../classes/connection-bridge/types/connection-bridge.types';
 import { TSwarmStoreDatabaseEntityKey } from '../../classes/swarm-store-class/swarm-store-class.types';
-import { TSwarmMessagesDatabaseConnectedFabricOptions } from '../../classes/swarm-messages-database/swarm-messages-database-fabrics/types/swarm-messages-database-intstance-fabric-main.types';
 import { IUserCredentialsCommon } from '../../types/credentials.types';
 import { TSwarmMessageUserIdentifierSerialized } from '../../classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier.types';
 import { ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions } from '../../classes/swarm-messages-database/swarm-messages-database.types';
@@ -58,6 +57,7 @@ import {
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../classes/swarm-messages-database/swarm-messages-database.messages-collector.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseMethodNames } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.types';
 import { swarmMessagesDatabaseConnectedFabricMain } from 'classes/swarm-messages-database/swarm-messages-database-fabrics/swarm-messages-database-intstance-fabric-main/swarm-messages-database-intstance-fabric-main';
+import { TSwarmMessagesDatabaseConnectedFabricOptions } from '../../classes/swarm-messages-database/swarm-messages-database-fabrics/types/swarm-messages-database-intstance-fabric-main.types';
 
 export type P = ESwarmStoreConnector.OrbitDB;
 

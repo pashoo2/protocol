@@ -6,33 +6,34 @@ import {
   ISwarmStoreOptionsConnectorFabric,
   ISwarmStoreProviderOptions,
   TSwarmStoreConnectorConnectionOptions,
-} from '../../../../../../swarm-store-class/index';
-import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from '../../../../../../swarm-message/index';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+} from '../../../../../../../swarm-store-class/index';
+import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from '../../../../../../../swarm-message/index';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import {
   ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric,
   TSwrmMessagesChannelsListDBOWithGrantAccess,
   DBOFULL,
-} from '../../../../../types/swarm-messages-channels-list-instance.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../../swarm-message-encrypted-cache/index';
+} from '../../../../../../types/swarm-messages-channels-list-instance.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../../../swarm-message-encrypted-cache/index';
 import {
   ISwarmMessageStore,
   ISwarmMessageStoreAccessControlOptions,
   ISwarmMessageStoreOptionsWithConnectorFabric,
   TSwarmMessagesStoreGrantAccessCallback,
-} from '../../../../../../swarm-message-store/index';
+} from '../../../../../../../swarm-message-store/index';
 import {
   ISwarmMessagesDatabaseCache,
   ISwarmMessagesDatabaseCacheOptions,
   ISwarmMessagesDatabaseConnectOptions,
-  ISwarmMessagesDatabaseConnector,
   ISwarmMessagesDatabaseMessagesCollector,
-} from '../../../../../../swarm-messages-database/index';
-import { swarmMessagesDatabaseConnectedFabricMain as swarmMessagesDatabaseConnectedInstanceFabric } from '../../../../../../swarm-messages-database/swarm-messages-database-fabrics/swarm-messages-database-intstance-fabric-main/index';
+} from '../../../../../../../swarm-messages-database/index';
+import { getDatabaseConnectionByDatabaseOptionsFabricMain } from './swarm-messages-channels-list-v1-database-connection-fabric-main';
+import { swarmMessagesDatabaseWithKVDbMessagesUpdatesQueuedConnectedFabric } from 'classes/swarm-messages-database/swarm-messages-database-extended/swarm-messages-database-with-kv-db-messages-updates-queued/swarm-messages-database-with-kv-db-messages-updates-queued-fabrics-by-database-options';
+import { ISwarmMessagesDatabaseConnectedFabricMain } from '../../../../../../../swarm-messages-database/swarm-messages-database-fabrics/types/swarm-messages-database-intstance-fabric-main.types';
 
 type DbType = ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE;
 
-export function getDatabaseConnectionByDatabaseOptionsFabric<
+export function getDatabaseConnectionByDatabaseOptionsFabricWithKvMessagesUpdatesQueuedHandling<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted,
@@ -194,55 +195,28 @@ export function getDatabaseConnectionByDatabaseOptionsFabric<
   DCCRT,
   OPT
 > {
-  async function swarmMessagesChannelsListDatabaseConnectionFabric(
-    databaseOptions: DBOF
-  ): Promise<
-    ISwarmMessagesDatabaseConnector<
+  return getDatabaseConnectionByDatabaseOptionsFabricMain(
+    options,
+    swarmMessagesDatabaseWithKVDbMessagesUpdatesQueuedConnectedFabric as ISwarmMessagesDatabaseConnectedFabricMain<
       P,
       T,
       DbType,
       DBOF,
+      MCF,
+      MD,
+      GAC,
+      ACO,
       ConnectorBasic,
       CO,
       PO,
       ConnectorMain,
       CFO,
-      GAC,
-      MCF,
-      ACO,
       O,
       SMS,
-      MD,
       SMSM,
       DCO,
       DCCRT,
       OPT
     >
-  > {
-    const optionsForSwamMessagesDatabaseConnectedFabric = {
-      ...options,
-      dbOptions: databaseOptions,
-    } as OPT;
-    return await swarmMessagesDatabaseConnectedInstanceFabric<
-      P,
-      T,
-      DbType,
-      DBOF,
-      MCF,
-      MD,
-      GAC,
-      ACO,
-      ConnectorBasic,
-      CO,
-      PO,
-      ConnectorMain,
-      CFO,
-      O,
-      SMS,
-      SMSM,
-      DCO,
-      DCCRT
-    >(optionsForSwamMessagesDatabaseConnectedFabric);
-  }
-  return swarmMessagesChannelsListDatabaseConnectionFabric;
+  );
 }

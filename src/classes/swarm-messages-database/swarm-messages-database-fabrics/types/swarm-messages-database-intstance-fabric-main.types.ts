@@ -177,30 +177,7 @@ export type TConnectToSwarmMessagesDatabaseReturnType<
   DCCRT,
   OPT
 >;
-/**
- * Fabric which constructs an instance of the SwarmMessagesDatabase, connect to the database
- * and returns the instance connected to the swarm.
- *
- * @export
- * @interface ISwarmMessagesDatabaseConnectedFabricMain
- * @template P
- * @template T
- * @template DbType
- * @template DBO
- * @template MSI
- * @template MCF
- * @template MD
- * @template GAC
- * @template ACO
- * @template ConnectorBasic
- * @template PO
- * @template CO
- * @template ConnectorMain
- * @template CFO
- * @template O
- * @template SMS
- * @template SMSM
- */
+
 export interface ISwarmMessagesDatabaseConnectedFabricMain<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
@@ -208,41 +185,31 @@ export interface ISwarmMessagesDatabaseConnectedFabricMain<
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType> = TSwarmStoreDatabaseOptions<P, T, DbType>,
   MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined = undefined,
   MD extends ISwarmMessageInstanceDecrypted = ISwarmMessageInstanceDecrypted,
-  SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD> = ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
-  DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM> = ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>,
-  DCCRT extends ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM> = ISwarmMessagesDatabaseCache<
-    P,
-    T,
-    DbType,
-    DBO,
-    MD,
-    SMSM
-  >,
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MD | T> = TSwarmMessagesStoreGrantAccessCallback<P, MD | T>,
   ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MD | T, GAC> | undefined = undefined,
   ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO> = ISwarmStoreConnectorBasic<P, T, DbType, DBO>,
-  PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic> = TSwarmStoreConnectorConnectionOptions<
+  CO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic> = TSwarmStoreConnectorConnectionOptions<
     P,
     T,
     DbType,
     DBO,
     ConnectorBasic
   >,
-  CO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, PO> = ISwarmStoreProviderOptions<
+  PO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, CO> = ISwarmStoreProviderOptions<
     P,
     T,
     DbType,
     DBO,
     ConnectorBasic,
-    PO
+    CO
   >,
-  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, PO> = ISwarmStoreConnector<
+  ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, CO> = ISwarmStoreConnector<
     P,
     T,
     DbType,
     DBO,
     ConnectorBasic,
-    PO
+    CO
   >,
   CFO extends ISwarmStoreOptionsConnectorFabric<
     P,
@@ -250,18 +217,18 @@ export interface ISwarmMessagesDatabaseConnectedFabricMain<
     DbType,
     DBO,
     ConnectorBasic,
-    PO,
     CO,
+    PO,
     ConnectorMain
-  > = ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>,
+  > = ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain>,
   O extends ISwarmMessageStoreOptionsWithConnectorFabric<
     P,
     T,
     DbType,
     DBO,
     ConnectorBasic,
-    PO,
     CO,
+    PO,
     ConnectorMain,
     CFO,
     MD | T,
@@ -274,8 +241,8 @@ export interface ISwarmMessagesDatabaseConnectedFabricMain<
     DbType,
     DBO,
     ConnectorBasic,
-    PO,
     CO,
+    PO,
     ConnectorMain,
     CFO,
     MD | T,
@@ -289,8 +256,8 @@ export interface ISwarmMessagesDatabaseConnectedFabricMain<
     DbType,
     DBO,
     ConnectorBasic,
-    PO,
     CO,
+    PO,
     ConnectorMain,
     CFO,
     MD | T,
@@ -298,15 +265,25 @@ export interface ISwarmMessagesDatabaseConnectedFabricMain<
     MCF,
     ACO,
     O
-  > = ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MD | T, GAC, MCF, ACO, O>,
-  ODC extends ISwarmMessagesDatabaseConnectOptions<
+  > = ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, MD | T, GAC, MCF, ACO, O>,
+  SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD> = ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
+  DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM> = ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>,
+  DCCRT extends ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM> = ISwarmMessagesDatabaseCache<
+    P,
+    T,
+    DbType,
+    DBO,
+    MD,
+    SMSM
+  >,
+  OPT extends ISwarmMessagesDatabaseConnectOptions<
     P,
     T,
     DbType,
     DBO,
     ConnectorBasic,
-    PO,
     CO,
+    PO,
     ConnectorMain,
     CFO,
     GAC,
@@ -324,8 +301,8 @@ export interface ISwarmMessagesDatabaseConnectedFabricMain<
     DbType,
     DBO,
     ConnectorBasic,
-    PO,
     CO,
+    PO,
     ConnectorMain,
     CFO,
     GAC,
@@ -337,47 +314,34 @@ export interface ISwarmMessagesDatabaseConnectedFabricMain<
     SMSM,
     DCO,
     DCCRT
-  >,
-  RT extends TConnectToSwarmMessagesDatabaseReturnType<
-    P,
-    T,
-    DbType,
-    DBO,
-    MCF,
-    MD,
-    GAC,
-    ACO,
-    ConnectorBasic,
-    PO,
-    CO,
-    ConnectorMain,
-    CFO,
-    O,
-    SMS
-  > = TConnectToSwarmMessagesDatabaseReturnType<
-    P,
-    T,
-    DbType,
-    DBO,
-    MCF,
-    MD,
-    GAC,
-    ACO,
-    ConnectorBasic,
-    PO,
-    CO,
-    ConnectorMain,
-    CFO,
-    O,
-    SMS
   >
 > {
-  (options: ODC): Promise<RT>;
+  (options: OPT): Promise<
+    TConnectToSwarmMessagesDatabaseReturnType<
+      P,
+      T,
+      DbType,
+      DBO,
+      MCF,
+      MD,
+      GAC,
+      ACO,
+      ConnectorBasic,
+      CO,
+      PO,
+      ConnectorMain,
+      CFO,
+      O,
+      SMS,
+      SMSM,
+      DCO,
+      DCCRT
+    >
+  >;
 }
 
 export type TSwarmMessagesDatabaseConnectedFabricOptions<
   IF extends ISwarmMessagesDatabaseConnectedFabricMain<
-    any,
     any,
     any,
     any,
@@ -417,8 +381,7 @@ export type TSwarmMessagesDatabaseConnectedFabricOptions<
   any,
   any,
   any,
-  infer ODC,
-  any
+  infer OPTS
 >
-  ? ODC
+  ? OPTS
   : never;

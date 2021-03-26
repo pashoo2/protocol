@@ -44,7 +44,8 @@ import {
   ISwarmMessagesChannel,
 } from '../../../../../types/swarm-messages-channel-instance.types';
 import { getQueuedEncryptionClassByPasswordStringAndSalt } from 'classes/basic-classes/queued-encryption-class-base/fabrics/queued-encryption-class-base-fabric-by-password';
-import { getSwarmMessagesChannelV1DefaultConstructorOptionsUtils } from '../../utils/swarm-messages-channel-v1-constructor-options-default-utils';
+import { getSwarmMessagesChannelV1DefaultConstructorOptionsUtils } from '../../utils/swarm-messages-channel-v1-constructor-options-default-utils/swarm-messages-channel-v1-constructor-options-default-utils';
+import { ISwarmMessagesChannelV1ConstructorOptionsDefaultUtilsDefaultConnectionUtils } from '../../utils/swarm-messages-channel-v1-constructor-options-default-utils/types/swarm-messages-channel-v1-constructor-options-default-utils.types';
 
 /**
  * Creates instance of swarm channel
@@ -354,6 +355,29 @@ export async function getSwarmMessagesChannelV1InstanveWithDefaults<
   encryptionQueueOptions?: CHD['messageEncryption'] extends SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD
     ? IAsyncQueueBaseClassOptions
     : never;
+  defaultConnectionUtils?: Partial<
+    ISwarmMessagesChannelV1ConstructorOptionsDefaultUtilsDefaultConnectionUtils<
+      P,
+      T,
+      DbType,
+      DBO,
+      ConnectorBasic,
+      CO,
+      PO,
+      ConnectorMain,
+      CFO,
+      GAC,
+      MCF,
+      ACO,
+      O,
+      SMS,
+      MD,
+      SMSM,
+      DCO,
+      DCCRT,
+      OPT
+    >
+  >;
 }): Promise<
   typeof options['SwarmMessagesChannelConstructorWithHelperConstuctorsSupport'] extends never
     ? ISwarmMessagesChannel<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, GAC, MCF, ACO, O, SMS, MD>
@@ -368,6 +392,7 @@ export async function getSwarmMessagesChannelV1InstanveWithDefaults<
     encryptionQueueFabricByPasswordAndSalt,
     passwordForMessagesEncryption,
     encryptionQueueOptions,
+    defaultConnectionUtils,
   } = options;
   const { swarmMessagesChannelDescription, passwordEncryptedChannelEncryptionQueue } = channelConstructorOptions;
   const SwarmMessagesChannelConstructorWithHelperConstuctorsSupportToUse =
@@ -401,12 +426,15 @@ export async function getSwarmMessagesChannelV1InstanveWithDefaults<
       DCO,
       DCCRT,
       OPT
-    >({
-      ...channeDatabaseConnectorOptions,
-      user: {
-        userId: channelConstructorOptions.currentUserId,
-      },
-    } as Omit<OPT, 'dbOptions'>);
+    >(
+      {
+        ...channeDatabaseConnectorOptions,
+        user: {
+          userId: channelConstructorOptions.currentUserId,
+        },
+      } as Omit<OPT, 'dbOptions'>,
+      defaultConnectionUtils
+    );
   let channelConstructorOptionsResulted = {
     ...channelConstructorOptions,
     utils: constructorUtilsToUse,

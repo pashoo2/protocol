@@ -18,6 +18,7 @@ import { CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_WITH_STORE_META
 import { createSwarmMessagesDatabaseMessagesCollectorInstance } from '../../classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector';
 import { TDatabaseOptionsTypeByChannelDescriptionRaw } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-instance.helpers.types';
 import { ESwarmMessagesChannelEventName } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-events.types';
+import { getSwarmMessagesDatabaseWithKVDbMessagesUpdatesConnectorInstanceFabric } from '../../classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/utils/swarm-messages-channel-v1-constructor-options-default-utils/utils/swarm-messages-channel-v1-constructor-options-default-utils-database-connector-fabrics';
 
 /**
  * Swarm messages channels list
@@ -208,10 +209,13 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithChannelInstance
       swarmMessageChannelDescription
     );
     const swarmMessagesDatabaseConnectorOptions = this._getSwarmMessagesDatabaseConnectorOptions();
-
+    debugger;
     return {
       channelConstructorMainOptions: swarmMessagesChannelConstructorOptions,
       channeDatabaseConnectorOptions: swarmMessagesDatabaseConnectorOptions,
+      defaultConnectionUtils: {
+        getSwarmMessagesDatabaseWithKVDbMessagesUpdatesConnectorInstanceFabric,
+      },
     };
   }
 
