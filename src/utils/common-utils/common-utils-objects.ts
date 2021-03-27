@@ -1,4 +1,4 @@
-import { TDictionary, TObjectKeys } from 'types/common.types';
+import { TDictionary, TObjectKeys, TSimpleTypes } from 'types/common.types';
 import { isDefined, isSimpleTypeValue } from './common-utils-main';
 
 export const isNotEmptyObject = (o: any): o is object => {
@@ -82,3 +82,21 @@ export const isObjectsSwallowEquals = <T>(simpleValuesObject1: any, simpleValues
   }
   return false;
 };
+
+export function deepCloneObject<T extends Record<string, any> | TSimpleTypes | Array<TSimpleTypes | Record<string, any>>>(
+  value: T
+): T {
+  if (!value || typeof value !== 'object') {
+    return value;
+  }
+  if (Array.isArray(value)) {
+    return value.map(deepCloneObject) as T;
+  }
+
+  const clone = {} as Record<string, unknown>;
+
+  Object.keys(value as Record<string, any>).forEach((key: string): void => {
+    clone[key] = deepCloneObject((value as Record<string, any>)[key]);
+  });
+  return clone as T;
+}

@@ -35,6 +35,8 @@ import {
   TConnectionBridgeOptionsConnectorBasic,
   TConnectionBridgeOptionsConnectorMain,
 } from '../../classes/connection-bridge/types/connection-bridge.types-helpers/connection-bridge-options.types-helpers';
+import { SWARM_MESSAGES_CHANNEL_VERSION } from 'classes/swarm-messages-channels/swarm-messages-channels-classes/const/swarm-messages-channel-classes-params.const';
+import { SWARM_CHANNELS_LIST_VERSION } from '../../classes/swarm-messages-channels/swarm-messages-channels-classes/const/swarm-messages-channels-list-classes-params.const';
 
 /**
  * Swarm messages channels list
@@ -130,17 +132,24 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
 
   public render() {
     const { swarmMessagesChannelsList } = this.state as any;
+    const whetherConnectionBridgeInstanceInitialized = this.isConnectionBridgeInstanceInitialized();
     return (
       <div>
         Swarm messages channels list
         <br />
-        {swarmMessagesChannelsList ? (
-          <SwarmMessagesChannelsListComponent channelsList={swarmMessagesChannelsList} />
+        {swarmMessagesChannelsList && whetherConnectionBridgeInstanceInitialized ? (
+          <SwarmMessagesChannelsListComponent currentUserId={this.getCurrentUserId()} channelsList={swarmMessagesChannelsList} />
         ) : (
           'channels list instance is not exists'
         )}
       </div>
     );
+  }
+
+  protected isConnectionBridgeInstanceInitialized(): boolean {
+    const { connectionBridge } = this.state;
+
+    return Boolean(connectionBridge);
   }
 
   protected getCurrentUserId(): string {
@@ -162,7 +171,7 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
     typeof getSwarmMessagesChannelsListVersionOneInstanceWithDefaultParameters
   >[1] {
     const description = {
-      version: '1',
+      version: SWARM_CHANNELS_LIST_VERSION.FIRST,
       id: 'eff9f522-3a63-46f7-8d5f-ad76765c3779',
       name: 'channelsList',
     };
@@ -225,7 +234,7 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
     const swarmMessageChannelDescription = {
       id: '40accad4-7941-41aa-95db-7954e80a73b8',
       dbType: dbType,
-      version: '1',
+      version: SWARM_MESSAGES_CHANNEL_VERSION.FIRST,
       tags: ['test', 'swarm_channel'],
       name: 'test swarm channel',
       admins: [currentUserId],

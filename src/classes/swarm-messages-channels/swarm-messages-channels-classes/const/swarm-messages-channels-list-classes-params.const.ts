@@ -1,0 +1,3 @@
+export enum SWARM_CHANNELS_LIST_VERSION {
+  FIRST = '1',
+}

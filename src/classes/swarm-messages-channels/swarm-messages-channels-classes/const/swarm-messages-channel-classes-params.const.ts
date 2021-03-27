@@ -1,0 +1,3 @@
+export enum SWARM_MESSAGES_CHANNEL_VERSION {
+  FIRST = '1',
+}

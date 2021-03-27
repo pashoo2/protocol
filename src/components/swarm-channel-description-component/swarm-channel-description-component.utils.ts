@@ -30,6 +30,7 @@ export function swarmChannelDescriptionComponentCreateSubformDescriptionForChann
   CHD extends ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO> = ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>
 >(databaseOptions: CHD['dbOptions']): IFieldDescription<EFormFieldType.FORM> {
   const { isPublic, write, grantAccess } = databaseOptions;
+  debugger;
   const formFields: IFieldDescription<EFormFieldType>[] = [
     {
       type: EFormFieldType.CHECKBOX,
@@ -112,7 +113,7 @@ export function swarmChannelDescriptionComponentCreateFormFieldsDescriptionForCh
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   CHD extends ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO> = ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>
->(channelDescription: CHD): IFieldDescription<EFormFieldType>[] {
+>(channelDescription: CHD, ifAllFieldsEditable: boolean = false): IFieldDescription<EFormFieldType>[] {
   const { name, tags, version, dbType, description, messageEncryption, admins, dbOptions } = channelDescription;
   return [
     { type: EFormFieldType.INPUT, props: { name: 'name', value: name }, label: { label: 'Name:' } },
@@ -122,7 +123,7 @@ export function swarmChannelDescriptionComponentCreateFormFieldsDescriptionForCh
       props: {
         name: 'dbType',
         value: dbType,
-        selectElementProps: { disabled: true },
+        selectElementProps: { disabled: !ifAllFieldsEditable },
         options: Object.keys(
           ESwarmStoreConnectorOrbitDbDatabaseType as Record<string, ESwarmStoreConnectorOrbitDbDatabaseType>
         ).map((databaseTypeName) => {
@@ -182,7 +183,7 @@ export function swarmChannelDescriptionComponentCreateFormFieldsDescriptionForCh
       props: {
         name: 'messageEncryption',
         value: messageEncryption,
-        inputFieldProps: { disabled: true },
+        inputFieldProps: { disabled: !ifAllFieldsEditable },
       },
     },
     {

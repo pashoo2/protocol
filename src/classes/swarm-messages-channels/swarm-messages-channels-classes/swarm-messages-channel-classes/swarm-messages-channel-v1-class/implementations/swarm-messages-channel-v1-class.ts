@@ -54,6 +54,7 @@ import { ESwarmStoreEventNames } from '../../../../../swarm-store-class/swarm-st
 import { EventEmitter } from '../../../../../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { ISwarmMessagesChannelEvents } from '../../../../types/swarm-messages-channel-events.types';
+import { SWARM_MESSAGES_CHANNEL_VERSION } from '../../../const/swarm-messages-channel-classes-params.const';
 import {
   TSwarmStoreDatabaseEntityKey,
   TSwarmStoreDatabaseIteratorMethodArgument,
@@ -159,7 +160,7 @@ export class SwarmMessagesChannelV1Class<
     return this._swarmMessagesChannelDescriptionWODatabaseOptions.id;
   }
 
-  public get version(): string {
+  public get version(): SWARM_MESSAGES_CHANNEL_VERSION {
     return this._swarmMessagesChannelDescriptionWODatabaseOptions.version;
   }
 

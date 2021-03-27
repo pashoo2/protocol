@@ -1,3 +1,4 @@
+import { SWARM_CHANNELS_LIST_VERSION } from './../swarm-messages-channels-classes/const/swarm-messages-channels-list-classes-params.const';
 import {
   ESwarmStoreConnector,
   ESwarmStoreConnectorOrbitDbDatabaseType,
@@ -111,7 +112,7 @@ export interface ISwarmMessagesChannelsListDescription {
    * @type {string}
    * @memberof ISwarmMessagesChannelsListDescription
    */
-  version: string;
+  version: SWARM_CHANNELS_LIST_VERSION;
   /**
    * Identifier
    *

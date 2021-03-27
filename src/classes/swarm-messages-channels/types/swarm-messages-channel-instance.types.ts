@@ -1,3 +1,4 @@
+import { SWARM_MESSAGES_CHANNEL_VERSION } from './../swarm-messages-channels-classes/const/swarm-messages-channel-classes-params.const';
 import { ESwarmStoreConnector } from 'classes/swarm-store-class/swarm-store-class.const';
 import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from 'classes/swarm-message/swarm-message-constructor.types';
 import {
@@ -78,7 +79,7 @@ export interface ISwarmMessageChannelDescriptionWithoutDatabaseOptionsRaw<
    * @type {string}
    * @memberof ISwarmMessageChannelDescriptionRaw
    */
-  readonly version: string;
+  readonly version: SWARM_MESSAGES_CHANNEL_VERSION;
   /**
    * Channel name
    *
@@ -168,7 +169,7 @@ export interface ISwarmMessageChannelDescriptionRaw<
    * @type {string}
    * @memberof ISwarmMessageChannelDescriptionRaw
    */
-  version: string;
+  version: SWARM_MESSAGES_CHANNEL_VERSION;
   /**
    * Channel name
    *

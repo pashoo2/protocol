@@ -7,6 +7,7 @@ import { BaseComponent } from '../base-component/base-component';
 import { swarmChannelDescriptionComponentCreateFormFieldsDescriptionForChannelDescription } from './swarm-channel-description-component.utils';
 import { IButtonProps, onFormValuesChange, IFormFieldsValues } from '../base-component/base-component.types';
 import { createFunctionFromSerializedFunction } from '../../utils/common-utils/common-utils.functions';
+import { deepCloneObject } from '../../utils/common-utils/common-utils-objects';
 
 export interface ISwarmChannelDescriptionComponentProps<
   P extends ESwarmStoreConnector,
@@ -15,6 +16,9 @@ export interface ISwarmChannelDescriptionComponentProps<
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>
 > {
   channelDescription: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>;
+  allFieldsEditable?: boolean;
+  showEditButton?: boolean;
+  editChannelButtonLabel?: string;
   updateChannelDescription(channelDescription: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>): Promise<void>;
 }
 
@@ -50,6 +54,20 @@ export class SwarmChannelDescriptionComponent<
   ISwarmChannelDescriptionComponentProps<P, T, DbType, DBO>,
   ISwarmChannelDescriptionComponentState<P, T, DbType, DBO>
 > {
+  static getDerivedStateFromProps(
+    newProps: ISwarmChannelDescriptionComponentProps<any, any, any, any>,
+    currentState: ISwarmChannelDescriptionComponentState<any, any, any, any>
+  ): ISwarmChannelDescriptionComponentState<any, any, any, any> | null {
+    if (!newProps.showEditButton && !currentState.isEditChannelDesctiptionMode) {
+      return {
+        ...currentState,
+        isEditChannelDesctiptionMode: true,
+        channelDescriptionEdited: deepCloneObject(currentState.channelDescription ?? newProps.channelDescription),
+      };
+    }
+    return null;
+  }
+
   public state: ISwarmChannelDescriptionComponentState<P, T, DbType, DBO> = {
     error: undefined,
     isPending: false,
@@ -90,17 +108,20 @@ export class SwarmChannelDescriptionComponent<
       return <p>Channel description is not ready to be edited</p>;
     }
 
+    const { allFieldsEditable, editChannelButtonLabel } = this.props;
+    debugger;
     const formFieldsDescription = swarmChannelDescriptionComponentCreateFormFieldsDescriptionForChannelDescription<
       P,
       T,
       DbType,
       DBO,
       typeof channelDescriptionEdited
-    >(channelDescriptionEdited);
+    >(channelDescriptionEdited, allFieldsEditable);
     const formProps = {
       formFields: formFieldsDescription,
       submitButton: {
         ...SUBMIT_CHANNEL_CHANGES_BUTTON_PROPS,
+        title: editChannelButtonLabel ?? SUBMIT_CHANNEL_CHANGES_BUTTON_PROPS.title,
         onClick: this.__handlePressUpdateChannelDescription,
       },
     };
@@ -118,19 +139,20 @@ export class SwarmChannelDescriptionComponent<
     );
   }
 
-  protected _renderButtonEnableEditMode(): React.ReactElement {
+  protected _renderButtonEnableEditMode(): React.ReactNode {
     const { isPending, isEditChannelDesctiptionMode } = this.state;
     const handleEnableEditMode = () => {
       this.setState((state) => {
         return {
-          isEditChannelDesctiptionMode: !state.isEditChannelDesctiptionMode,
-          channelDescriptionEdited: { ...state.channelDescription },
+          ...state,
+          isEditChannelDesctiptionMode,
+          channelDescriptionEdited: deepCloneObject(state.channelDescription),
         };
       });
     };
     return (
       <button disabled={isPending} onClick={handleEnableEditMode}>
-        {isEditChannelDesctiptionMode ? 'Readonly' : 'Edit'} form
+        {isEditChannelDesctiptionMode ? 'Disable edit mode' : 'Edit channel description'}
       </button>
     );
   }
@@ -175,7 +197,7 @@ export class SwarmChannelDescriptionComponent<
     });
   };
 
-  private __getNewChannelDescription() {
+  private __getNewChannelDescription(): ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO> {
     const channelDescriptionEdited = this.__channelDescriptionEdited;
     const { dbOptions } = channelDescriptionEdited;
     const { grantAccess } = dbOptions;

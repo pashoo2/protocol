@@ -20,6 +20,8 @@ export interface ISwarmMessagesChannelsListProps<
   MD extends ISwarmMessageInstanceDecrypted
 > {
   channelsList: ISwarmMessagesChannelsDescriptionsList<P, T, MD>;
+  updateChannelDescription(channelDescription: ISwarmMessageChannelDescriptionRaw<P, T, any, any>): Promise<void>;
+  renderOnChannelsListReady?: () => React.ReactNode;
 }
 
 export interface ISwarmMessagesChannelsListState<
@@ -40,13 +42,13 @@ export class SwarmMessagesChannelsListComponentBase<
   T extends TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted
 > extends React.PureComponent<ISwarmMessagesChannelsListProps<P, T, MD>, ISwarmMessagesChannelsListState<P, T, MD>> {
-  public state: ISwarmMessagesChannelsListState<P, T, MD> = {
+  public state = {
     channelsListInatance: undefined,
     isChannelsListReady: false,
     isChannelsListClosed: false,
     isChannelsListByEventsOpened: false,
     channelsDescriptions: new Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>(),
-    errorsList: [],
+    errorsList: [] as Error[],
   };
 
   constructor(props: ISwarmMessagesChannelsListProps<P, T, MD>) {
@@ -85,6 +87,7 @@ export class SwarmMessagesChannelsListComponentBase<
     return (
       <div>
         {this._renderChannelsListState()}
+        {this._renderPropOnChannelsListReady()}
         <hr />
         Channels list cached:
         <div>{this.renderChannelsDescriptionsCachedInChannelsListInstance()}</div>
@@ -115,13 +118,25 @@ export class SwarmMessagesChannelsListComponentBase<
     );
   }
 
+  protected _renderPropOnChannelsListReady(): React.ReactNode {
+    const { isChannelsListReady, isChannelsListClosed } = this.state;
+    const { renderOnChannelsListReady } = this.props;
+
+    if (renderOnChannelsListReady && isChannelsListReady && !isChannelsListClosed) {
+      return renderOnChannelsListReady();
+    }
+    return null;
+  }
+
   protected _renderChannelDescription(
     channelDescription: ISwarmMessageChannelDescriptionRaw<P, T, any, any>
   ): React.ReactElement {
+    const { updateChannelDescription } = this.props;
     return (
       <SwarmChannelDescriptionComponent
+        showEditButton
         channelDescription={channelDescription}
-        updateChannelDescription={this.__updateChannelDescription}
+        updateChannelDescription={updateChannelDescription}
       />
     );
   }
@@ -188,7 +203,7 @@ export class SwarmMessagesChannelsListComponentBase<
     if (!channelsList) {
       throw new Error('Channels list is not exists in the component state');
     }
-    return channelsList;
+    return (channelsList as unknown) as ISwarmMessagesChannelsDescriptionsList<P, T, MD>;
   }
 
   protected _setCurrentChannelsListByProps(): void {
@@ -386,11 +401,4 @@ export class SwarmMessagesChannelsListComponentBase<
       this._onChannelsListCachedUpdated
     );
   }
-
-  private __updateChannelDescription = async (
-    channelDescription: ISwarmMessageChannelDescriptionRaw<P, T, any, any>
-  ): Promise<void> => {
-    const channelsList = this._getHandledChannelsList();
-    await channelsList.upsertChannel(channelDescription);
-  };
 }
