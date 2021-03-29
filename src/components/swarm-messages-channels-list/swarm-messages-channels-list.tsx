@@ -129,6 +129,7 @@ export class SwarmMessagesChannelsListComponent<
       await this.__upsertChannelDescription(channelDescription);
       this.setState({ newChannelDescription: undefined });
     } catch (err) {
+      console.error(err);
       this.setState({ newChannelSavingError: err });
     } finally {
       this.setState({ ifNewChannelSaving: false });

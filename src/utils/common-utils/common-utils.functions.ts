@@ -46,7 +46,7 @@ export function createFunctionFromSerializedFunction(functionSerialized: string)
     }
     return funcitonCreatedFromString;
   } catch (err) {
-    throw new Error(`Faild parse the function ${functionSerialized}`);
+    throw new Error(`Faild to parser the function serialized ${functionSerialized}`);
   }
 }
 

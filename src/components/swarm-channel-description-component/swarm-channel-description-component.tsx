@@ -109,7 +109,6 @@ export class SwarmChannelDescriptionComponent<
     }
 
     const { allFieldsEditable, editChannelButtonLabel } = this.props;
-    debugger;
     const formFieldsDescription = swarmChannelDescriptionComponentCreateFormFieldsDescriptionForChannelDescription<
       P,
       T,
@@ -143,10 +142,11 @@ export class SwarmChannelDescriptionComponent<
     const { isPending, isEditChannelDesctiptionMode } = this.state;
     const handleEnableEditMode = () => {
       this.setState((state) => {
+        const isEditChannelDesctiptionModeEnabled = !state.isEditChannelDesctiptionMode;
         return {
           ...state,
-          isEditChannelDesctiptionMode,
-          channelDescriptionEdited: deepCloneObject(state.channelDescription),
+          isEditChannelDesctiptionMode: isEditChannelDesctiptionModeEnabled,
+          channelDescriptionEdited: isEditChannelDesctiptionModeEnabled ? deepCloneObject(state.channelDescription) : undefined,
         };
       });
     };
@@ -188,6 +188,7 @@ export class SwarmChannelDescriptionComponent<
   }
 
   private __onChannelDescriptionChange: onFormValuesChange = (values: IFormFieldsValues): void => {
+    // TODO - after update of a value ouside of an inner form, inner form values dissapears
     console.log('__onChannelDescriptionChange', values);
     this.setState({
       channelDescriptionEdited: {
@@ -197,7 +198,7 @@ export class SwarmChannelDescriptionComponent<
     });
   };
 
-  private __getNewChannelDescription(): ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO> {
+  private __getChannelDescriptionByChannelDescriptionEdited(): ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO> {
     const channelDescriptionEdited = this.__channelDescriptionEdited;
     const { dbOptions } = channelDescriptionEdited;
     const { grantAccess } = dbOptions;
@@ -218,7 +219,7 @@ export class SwarmChannelDescriptionComponent<
     debugger;
     ev.preventDefault();
     const { updateChannelDescription } = this.props;
-    const channelDescriptionEdited = this.__getNewChannelDescription();
+    const channelDescriptionEdited = this.__getChannelDescriptionByChannelDescriptionEdited();
     const pendingUpdateChannelDescriptionPromise = updateChannelDescription(channelDescriptionEdited);
     // TODO - dbOptions is empty
     this.setState({

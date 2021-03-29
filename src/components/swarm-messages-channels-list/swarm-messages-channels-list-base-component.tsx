@@ -42,7 +42,7 @@ export class SwarmMessagesChannelsListComponentBase<
   T extends TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted
 > extends React.PureComponent<ISwarmMessagesChannelsListProps<P, T, MD>, ISwarmMessagesChannelsListState<P, T, MD>> {
-  public state = {
+  public state: ISwarmMessagesChannelsListState<P, T, MD> = {
     channelsListInatance: undefined,
     isChannelsListReady: false,
     isChannelsListClosed: false,
@@ -105,6 +105,25 @@ export class SwarmMessagesChannelsListComponentBase<
     );
   }
 
+  protected _renderChannelsListDescription(): React.ReactElement | null {
+    const { channelsListInatance } = this.state;
+
+    if (!channelsListInatance) {
+      return null;
+    }
+
+    const { description } = channelsListInatance;
+    const { version, id, name } = description;
+
+    return (
+      <section>
+        <p>Id: {id}</p>
+        <p>Version: {version}</p>
+        <p>Name: {name}</p>
+      </section>
+    );
+  }
+
   protected _renderChannelsListState(): React.ReactElement {
     const { channelsListInatance: channelsList, isChannelsListReady, isChannelsListClosed } = this.state;
     if (!channelsList) {
@@ -112,8 +131,10 @@ export class SwarmMessagesChannelsListComponentBase<
     }
     return (
       <div>
-        <p>Channels list is {isChannelsListReady ? '' : 'not '}ready to use</p>
-        <p>Channels list is {isChannelsListClosed ? 'closed' : 'not closed'}</p>
+        <h3>Channels list state</h3>
+        <p>{isChannelsListReady ? '' : 'not '}ready to use</p>
+        <p>{isChannelsListClosed ? 'closed' : 'not closed'}</p>
+        <details>{this._renderChannelsListDescription()}</details>
       </div>
     );
   }

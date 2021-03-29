@@ -20,7 +20,7 @@ export const SWARM_MESSAGES_CHANNEL_V1_GENERATE_NEW_PUBLIC_KEY_VALUE_CHANNEL_DES
   isPublic: true,
   write: [],
   // eslint-disable-next-line @typescript-eslint/require-await
-  async grantAccess() {
+  grantAccess: async function grantAccess() {
     return true;
   },
 };
@@ -39,7 +39,7 @@ export const SWARM_MESSAGES_CHANNEL_V1_GENERATE_NEW_PUBLIC_KEY_VALUE_CHANNEL_DES
   version: SWARM_MESSAGES_CHANNEL_VERSION.FIRST,
   name: '',
   description: '',
-  tags: [],
+  tags: ['TestChannel'],
   dbType: ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
   messageEncryption: SWARM_MESSAGES_CHANNEL_ENCRYPION.PUBLIC,
   admins: [],

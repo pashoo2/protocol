@@ -104,6 +104,9 @@
             },
             "grantAccess": {
               "$ref": "#/definitions/SwarmDatabaseOptionsGrantAccessCallback"
+            },
+            "write": {
+              "$ref": "#/definitions/SwarmDatabaseOptionsWriteAccessUsersIdentities"
             }
           },
           "required": ["isPublic", "grantAccess"],

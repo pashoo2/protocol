@@ -217,10 +217,9 @@ export class BaseComponent implements IBaseComponent {
   renderFormAsField(
     formProps: IFormProps | TFormFieldProps<EFormFieldType.FORM>,
     onFormValuesChange: onFormValuesChange,
-    formFieldsValuesCurrent: IFormFieldsValues = {}
+    currentFormFieldsValues: IFormFieldsValues = {}
   ): React.ReactElement {
     // eslint-disable-next-line @typescript-eslint/unbound-method
-    const currentFormFieldsValues = { ...formFieldsValuesCurrent };
     const { formFields, submitButton } = formProps as IFormProps;
     const handleFormValuesChange = (values: IFormFieldsValues): void => {
       const updatedFormFieldsValues = Object.assign({}, currentFormFieldsValues, values);

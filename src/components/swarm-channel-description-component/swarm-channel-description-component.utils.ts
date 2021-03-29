@@ -30,7 +30,6 @@ export function swarmChannelDescriptionComponentCreateSubformDescriptionForChann
   CHD extends ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO> = ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>
 >(databaseOptions: CHD['dbOptions']): IFieldDescription<EFormFieldType.FORM> {
   const { isPublic, write, grantAccess } = databaseOptions;
-  debugger;
   const formFields: IFieldDescription<EFormFieldType>[] = [
     {
       type: EFormFieldType.CHECKBOX,
@@ -48,7 +47,6 @@ export function swarmChannelDescriptionComponentCreateSubformDescriptionForChann
         value: write,
         isMultiple: true,
         canRemove: true,
-        selectElementProps: { disabled: isPublic },
         options: write
           ? write.map((writeUserId) => ({
               name: writeUserId,
@@ -88,7 +86,8 @@ export function swarmChannelDescriptionComponentCreateSubformDescriptionForChann
           try {
             createFunctionFromSerializedFunction(value);
             return '';
-          } catch {
+          } catch (err) {
+            console.error(err);
             return 'Function can not be serialized';
           }
         },
@@ -114,8 +113,17 @@ export function swarmChannelDescriptionComponentCreateFormFieldsDescriptionForCh
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
   CHD extends ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO> = ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>
 >(channelDescription: CHD, ifAllFieldsEditable: boolean = false): IFieldDescription<EFormFieldType>[] {
-  const { name, tags, version, dbType, description, messageEncryption, admins, dbOptions } = channelDescription;
+  const { id, name, tags, version, dbType, description, messageEncryption, admins, dbOptions } = channelDescription;
   return [
+    {
+      type: EFormFieldType.INPUT,
+      props: {
+        name: 'id',
+        value: id,
+        inputFieldProps: { disabled: true },
+      },
+      label: { label: 'id:' },
+    },
     { type: EFormFieldType.INPUT, props: { name: 'name', value: name }, label: { label: 'Name:' } },
     { type: EFormFieldType.INPUT, props: { name: 'version', value: version }, label: { label: 'Version' } },
     {
