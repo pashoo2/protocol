@@ -2,7 +2,7 @@ import OrbitDB from 'orbit-db';
 import Identities from 'orbit-db-identity-provider';
 import AccessControllers from 'orbit-db-access-controllers';
 import { Keystore } from 'orbit-db-keystore';
-import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
+import { getEventEmitterClass } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
 import {
   SWARM_STORE_CONNECTOR_ORBITDB_CONNECTION_TIMEOUT_MS,
   SWARM_STORE_CONNECTOR_ORBITDB_LOG_PREFIX,
@@ -49,6 +49,7 @@ import { TSwarmStoreDatabaseOptions, TSwarmStoreConnectorConnectionOptions } fro
 import { ISwarmStoreConnector, TSwarmStoreValueTypes } from '../../swarm-store-class.types';
 import { ESwarmStoreConnector, ESwarmStoreEventNames } from '../../swarm-store-class.const';
 import { TSwarmMessageUserIdentifierSerialized } from '../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier.types';
+import { EventEmitter } from '../../../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 
 export class SwarmStoreConnectorOrbitDB<
     ItemType extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>,
@@ -57,8 +58,10 @@ export class SwarmStoreConnectorOrbitDB<
     ConnectorBasic extends ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, ItemType, DbType, DBO>,
     PO extends TSwarmStoreConnectorConnectionOptions<ESwarmStoreConnector.OrbitDB, ItemType, DbType, DBO, ConnectorBasic>
   >
-  extends EventEmitter<ISwarmStoreConnectorOrbitDBEvents<ESwarmStoreConnector.OrbitDB, ItemType, DbType, DBO>>
-  implements ISwarmStoreConnector<ESwarmStoreConnector.OrbitDB, ItemType, DbType, DBO, ConnectorBasic, PO> {
+  extends getEventEmitterClass<ISwarmStoreConnectorOrbitDBEvents<ESwarmStoreConnector.OrbitDB, any, any, any>>()
+  implements
+    ISwarmStoreConnector<ESwarmStoreConnector.OrbitDB, ItemType, DbType, DBO, ConnectorBasic, PO>,
+    EventEmitter<ISwarmStoreConnectorOrbitDBEvents<ESwarmStoreConnector.OrbitDB, ItemType, DbType, DBO>> {
   private static isLoadedCustomIdentityProvider: boolean = false;
 
   private static isLoadedCustomAccessController: boolean = false;

@@ -66,5 +66,5 @@ export abstract class TAsyncQueueBaseClass implements IAsyncQueueBaseClass {
 
   constructor(protected options: IAsyncQueueBaseClassOptions) {}
 
-  public abstract async do<T>(pending: TAsyncQueueBaseClassPromiseProviderPending<T>): Promise<T | Error | Array<T | Error>>;
+  public abstract do<T>(pending: TAsyncQueueBaseClassPromiseProviderPending<T>): Promise<T | Error | Array<T | Error>>;
 }

@@ -6,7 +6,7 @@ import {
   ISwarmStoreConnectorOrbitDBEvents,
   ISwarmStoreConnectorOrbitDBOptions,
 } from './swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.types';
-import { EventEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
+import { EventEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 import {
   ESwarmStoreConnector,
   ESwarmStoreDbStatus as ESwarmStoreDatabaseStatus,

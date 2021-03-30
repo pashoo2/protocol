@@ -145,10 +145,22 @@ export interface ISwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsS
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
-  ConnectorBasic extends ISwarmStoreConnectorBasicWithEntriesCount<P, T, DbType, DBO>,
+  ConnectorBasic extends ISwarmStoreConnectorBasicWithEntriesCount<
+    P,
+    T,
+    DbType,
+    DBO & ISwarmStoreDatabaseBaseOptions & { provider: P }
+  >,
   CO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
   PO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, CO>,
-  ConnectorMain extends ISwarmStoreConnectorWithEntriesCount<P, T, DbType, DBO, ConnectorBasic, CO>,
+  ConnectorMain extends ISwarmStoreConnectorWithEntriesCount<
+    P,
+    T,
+    DbType,
+    DBO & ISwarmStoreDatabaseBaseOptions & { provider: P },
+    ConnectorBasic,
+    CO
+  >,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain>,
   MSI extends TSwarmMessageInstance | T,
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, Exclude<MSI, ISwarmMessageInstanceEncrypted>>,

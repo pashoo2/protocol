@@ -26,15 +26,13 @@ import {
   ISwarmMessagesChannelsListNotificationEmitter,
   ISwarmMessagesChannelsListEvents,
 } from '../../../types/swarm-messages-channels-list-events.types';
-import {
-  getEventEmitterInstance,
-  EventEmitter,
-} from '../../../../basic-classes/event-emitter-class-base/event-emitter-class-base';
+import { getEventEmitterInstance } from '../../../../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { ESwarmMessagesChannelsListEventName } from '../../../types/swarm-messages-channels-list-events.types';
 import {
   forwardEvents,
   stopForwardEvents,
 } from '../../../../basic-classes/event-emitter-class-base/event-emitter-class-with-forwarding.utils';
+import { EventEmitter } from '../../../../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 
 export function getSwarmMessagesChannelsListVersionOneClass<
   P extends ESwarmStoreConnector,
@@ -142,7 +140,7 @@ export function getSwarmMessagesChannelsListVersionOneClass<
       ...args: Parameters<ISwarmMessagesChannelsListEvents<P, T, any>[E]>
     ): void {
       // TODO - resolve cast to any
-      (this.__emitterChannelsList as EventEmitter<ISwarmMessagesChannelsListEvents<P, T, any>>).emit(eventName, ...args);
+      this.__emitterChannelsList.emit(eventName, ...args);
     }
 
     protected _startEventsForwarding() {

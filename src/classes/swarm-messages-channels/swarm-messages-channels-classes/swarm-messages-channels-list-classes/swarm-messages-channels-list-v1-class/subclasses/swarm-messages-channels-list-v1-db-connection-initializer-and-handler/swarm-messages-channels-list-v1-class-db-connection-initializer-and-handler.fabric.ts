@@ -48,17 +48,17 @@ import {
   TSwarmStoreDatabaseEntityKey,
 } from '../../../../../../swarm-store-class/swarm-store-class.types';
 import { ESortingOrder } from 'classes/basic-classes/sorter-class';
-import {
-  getEventEmitterInstance,
-  EventEmitter,
-} from '../../../../../../basic-classes/event-emitter-class-base/event-emitter-class-base';
+import { getEventEmitterInstance } from '../../../../../../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { ESwarmMessageStoreEventNames } from '../../../../../../swarm-message-store/swarm-message-store.const';
 import { TSwarmMessageUserIdentifierSerialized } from '../../../../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier.types';
 import {
   ESwarmMessagesChannelsListEventName,
   ISwarmMessagesChannelsListEvents,
 } from '../../../../../types/swarm-messages-channels-list-events.types';
-import { TTypedEmitter } from '../../../../../../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
+import {
+  EventEmitter,
+  TTypedEmitter,
+} from '../../../../../../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 import { ISwarmMessagesChannelsListDatabaseEvents } from '../../../../../types/swarm-messages-channels-list-events.types';
 import { TSwarmMessageDatabaseMessagesCached } from '../../../../../../swarm-messages-database/swarm-messages-database.types';
 import { TSwarmMessagesChannelId } from '../../../../../types/swarm-messages-channel-instance.types';

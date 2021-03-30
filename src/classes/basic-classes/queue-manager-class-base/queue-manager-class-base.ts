@@ -1,4 +1,5 @@
 import { EventEmitter } from '../event-emitter-class-base';
+import { getEventEmitterClass } from '../event-emitter-class-base/event-emitter-class-base';
 import {
   TQueue,
   TIntervalEmitReadyMs,
@@ -14,7 +15,7 @@ import {
   QUEUE_MANAGER_EVENT_STOP,
 } from './queue-manager-class-base.const';
 
-export class QueueManagerClassBase<T> extends EventEmitter<TQueueManagerEvents<T>> {
+export class QueueManagerClassBase<T> extends getEventEmitterClass<any>() implements EventEmitter<TQueueManagerEvents<T>> {
   public static logError = (methodName: string, error: Error) => {
     console.error(`QueueManagerClassBase::${methodName}`, error);
   };

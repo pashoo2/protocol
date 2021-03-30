@@ -27,10 +27,7 @@ import { getSwarmMessageStoreWithDatabaseOptionsConstructorExtended } from '../.
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { ISwarmMessageStoreDatabaseOptionsWithMetaConstructor } from '../../../swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-store-connector-db-options.types';
 import { ISwarmMessageStoreWithEntriesCount } from '../../../swarm-message-store/types/swarm-message-store.types';
-import {
-  ISwarmStoreDatabaseBaseOptions,
-  TSwarmStoreConnectorAccessConrotllerGrantAccessCallback,
-} from '../../../swarm-store-class/swarm-store-class.types';
+import { ISwarmStoreDatabaseBaseOptions } from '../../../swarm-store-class/swarm-store-class.types';
 import { createSwarmMessageStoreDBOWithOptionsExtenderFabric } from '../../../swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-message-store-connector-db-options-with-options-extender-class-fabric/swarm-message-store-connector-db-options-with-options-extender-class-fabric';
 import { createSwarmMessageStoreUtilsExtenderOrbitDBDatabaseOptionsWithAccessControlAndGrandAccessCallbackBoundToContext } from '../../../swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-message-store-conector-db-options-grand-access-utils/swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks/swarm-store-connector-db-options-helpers-access-control-extend-with-common-checks';
 import { ConstructorType } from '../../../../types/helper.types';
@@ -105,10 +102,10 @@ export function getSwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptions
     grantAccess: GAC;
   },
   DBOE extends DBO & ISwarmStoreDatabaseBaseOptions & { provider: P },
-  ConnectorBasic extends ISwarmStoreConnectorBasicWithEntriesCount<P, T, DbType, DBO>,
+  ConnectorBasic extends ISwarmStoreConnectorBasicWithEntriesCount<P, T, DbType, DBOE>,
   CO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
   PO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, CO>,
-  ConnectorMain extends ISwarmStoreConnectorWithEntriesCount<P, T, DbType, DBO, ConnectorBasic, CO>,
+  ConnectorMain extends ISwarmStoreConnectorWithEntriesCount<P, T, DbType, DBOE, ConnectorBasic, CO>,
   CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain>,
   MD extends ISwarmMessageInstanceDecrypted,
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MD | T>,
@@ -220,7 +217,7 @@ export function getSwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptions
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType> & {
     grantAccess: GAC;
-  },
+  } & ISwarmStoreDatabaseBaseOptions & { provider: P },
   ConnectorBasic extends ISwarmStoreConnectorBasicWithEntriesCount<P, T, DbType, DBO>,
   CO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>,
   PO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, CO>,

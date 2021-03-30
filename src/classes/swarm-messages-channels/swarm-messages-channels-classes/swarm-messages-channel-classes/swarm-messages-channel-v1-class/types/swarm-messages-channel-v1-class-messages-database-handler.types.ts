@@ -30,7 +30,7 @@ import {
 import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../../../../const/swarm-messages-channels-main.const';
 import { ISwarmMessagesChannel } from '../../../../types/swarm-messages-channel-instance.types';
 import { ISwarmMessageDatabaseEvents } from '../../../../../swarm-messages-database/swarm-messages-database.types';
-import { EventEmitter } from '../../../../../basic-classes/event-emitter-class-base/event-emitter-class-base';
+import { EventEmitter } from '../../../../../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 
 /**
  * Helper class that helps in maintaining

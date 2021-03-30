@@ -9,7 +9,10 @@ import { validateUserIdentifier } from '../../../../central-authority-class/cent
 import { createValidatePayload } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-payload';
 import { createValidateTimestamp } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-timestamp';
 import { TSwarmMessageType } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-type/swarm-message-subclass-validator-fields-validator-validator-type.types';
-import { ISwarmMessagePayloadValidationOptions } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-payload/swarm-message-subclass-validator-fields-validator-validator-payload.types';
+import {
+  ISwarmMessagePayloadValidationOptions,
+  TSwarmMessagePayloadSerialized,
+} from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-payload/swarm-message-subclass-validator-fields-validator-validator-payload.types';
 import { ISwarmMessageTimestampValidationOptions } from './swarm-message-subclass-validator-fields-validator-validators/swarm-message-subclass-validator-fields-validator-validator-timestamp/swarm-message-subclass-validator-fields-validator-validator-timestamp.types';
 import { TSwarmMessageUserIdentifierSerialized } from '../../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier.types';
 import { CA_USER_IDENTITY_VERSIONS_LIST } from '../../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.const';
@@ -65,9 +68,9 @@ export class SwarmMessageSubclassFieldsValidator implements ISwarmMessageSubclas
 
   protected timestampValidationOptions?: ISwarmMessageTimestampValidationOptions;
 
-  protected validatePayload = createValidatePayload(this.payloadValidationOptions);
+  protected validatePayload: (pld: TSwarmMessagePayloadSerialized) => void;
 
-  protected validateTimestamp = createValidateTimestamp(this.timestampValidationOptions);
+  protected validateTimestamp: (timestamp: number) => void;
 
   /**
    * Creates an instance of SwarmMessageSubclassValidator.
@@ -77,6 +80,8 @@ export class SwarmMessageSubclassFieldsValidator implements ISwarmMessageSubclas
    */
   constructor(options?: IMessageFieldsValidatorOptions) {
     this.setOptions(options);
+    this.validatePayload = createValidatePayload(this.payloadValidationOptions);
+    this.validateTimestamp = createValidateTimestamp(this.timestampValidationOptions);
   }
 
   /**

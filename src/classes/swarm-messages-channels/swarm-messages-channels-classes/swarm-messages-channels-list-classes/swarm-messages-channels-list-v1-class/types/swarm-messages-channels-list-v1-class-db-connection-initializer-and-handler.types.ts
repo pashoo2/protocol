@@ -170,11 +170,11 @@ export abstract class AbstractSwarmMessagesChannelsListVersionOneDatabaseConnect
     Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>
   >;
 
-  protected abstract async _readSwarmMessagesChannelDescriptionOrUndefinedForDbKey(
+  protected abstract _readSwarmMessagesChannelDescriptionOrUndefinedForDbKey(
     dbbKey: TSwarmStoreDatabaseEntityKey<P>
   ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any> | undefined>;
 
-  protected abstract async _removeValueForDbKey(dbbKey: TSwarmStoreDatabaseEntityKey<P>): Promise<void>;
+  protected abstract _removeValueForDbKey(dbbKey: TSwarmStoreDatabaseEntityKey<P>): Promise<void>;
 
   protected abstract _addSwarmMessageBodyInDatabase(
     dbKey: TSwarmStoreDatabaseEntityKey<P>,

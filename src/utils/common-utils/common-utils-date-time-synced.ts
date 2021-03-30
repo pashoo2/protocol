@@ -19,7 +19,7 @@ export const getTimeDiffWithSyncServerSeconds = (() => {
     maxOffsetErrorS: CONST_VALUES_RESTRICTIONS_COMMON_CURRENT_DATE_MAX_ERROR_SECONDS,
   });
 
-  pseudoNTP.on(PseudoNTP.Event.TIME_SYNC, (differenceInSeconds) => {
+  pseudoNTP.on(PseudoNTP.Event.TIME_SYNC, (differenceInSeconds: number) => {
     offsetSeconds = differenceInSeconds;
   });
   return () => offsetSeconds;

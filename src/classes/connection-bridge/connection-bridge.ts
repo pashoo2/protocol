@@ -370,7 +370,7 @@ export class ConnectionBridge<
   }
 
   protected isUserLogin(userLogin: unknown): userLogin is string {
-    return userLogin && typeof userLogin === 'string';
+    return Boolean(userLogin) && typeof userLogin === 'string';
   }
 
   protected checkCurrentOptionsIsDefined(): this is {

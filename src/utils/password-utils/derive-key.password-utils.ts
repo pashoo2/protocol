@@ -33,7 +33,7 @@ export const generatePasswordKey = async (
       password,
       PASSWORD_ENCRYPTION_UTILS_KEY_GENERATION_ALHORITHM,
       PASSWORD_ENCRYPTION_UTILS_KEY_GENERATION_IS_KEY_EXTRACTABLE,
-      PASSWORD_ENCRYPTON_UTILS_KEY_USAGES
+      PASSWORD_ENCRYPTON_UTILS_KEY_USAGES as KeyUsage[]
     );
   } catch (err) {
     return err;
@@ -61,7 +61,7 @@ export const getDeriviationNative = async (passwordKey: CryptoKey, saltValue: Ui
         ...PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_CONFIG,
       },
       PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_IS_EXPORTED,
-      PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_USAGES
+      PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_USAGES as KeyUsage[]
     );
   } catch (err) {
     console.log(err);
@@ -155,7 +155,7 @@ export const importPasswordKey = async (
         ...PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_CONFIG,
       },
       PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_IS_EXPORTED,
-      PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_USAGES
+      PASSWORD_ENRYPTION_UTILS_KEY_DERIVED_TARGET_KEY_USAGES as KeyUsage[]
     );
   } catch (err) {
     return err;

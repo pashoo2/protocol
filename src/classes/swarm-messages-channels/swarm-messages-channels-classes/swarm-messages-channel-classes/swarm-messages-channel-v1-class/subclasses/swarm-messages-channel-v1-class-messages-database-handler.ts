@@ -713,7 +713,11 @@ export class SwarmMessagesChannelV1DatabaseHandler<
   }
 
   protected _emitReadyEvent(): void {
-    this.__emitter.emit(ESwarmStoreEventNames.READY, this.__actualSwarmMessagesDatabaseOptions?.dbName);
+    const databaseName = this.__actualSwarmMessagesDatabaseOptions?.dbName;
+    if (databaseName) {
+      throw new Error('A database name should be defined');
+    }
+    this.__emitter.emit(ESwarmStoreEventNames.READY, databaseName);
   }
 
   protected _emitReadyEventIfDatatbaseConnector(

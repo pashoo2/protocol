@@ -1,4 +1,3 @@
-import { EventEmitter } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import assert from 'assert';
 import { TSwarmStoreDatabaseRequestMethodReturnType, ISwarmStoreDatabasesCommonStatusList } from './swarm-store-class.types';
 import {
@@ -10,6 +9,7 @@ import {
 } from './swarm-store-class.const';
 import { calculateHash } from 'utils/hash-calculation-utils';
 import { checkIsError } from '../../utils/common-utils/common-utils-check-value';
+import { getEventEmitterClass } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import {
   ISwarmStoreOptionsWithConnectorFabric,
   TSwarmStoreConnectorConnectionOptions,
@@ -59,7 +59,7 @@ export class SwarmStore<
     O extends ISwarmStoreOptionsWithConnectorFabric<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO>,
     E extends ISwarmStoreEvents<P, ItemType, DbType, DBO>
   >
-  extends EventEmitter<E>
+  extends getEventEmitterClass<any>()
   implements
     ISwarmStore<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O>,
     ISwarmStoreWithConnector<P, ItemType, DbType, DBO, ConnectorBasic, PO, ConnectorMain> {

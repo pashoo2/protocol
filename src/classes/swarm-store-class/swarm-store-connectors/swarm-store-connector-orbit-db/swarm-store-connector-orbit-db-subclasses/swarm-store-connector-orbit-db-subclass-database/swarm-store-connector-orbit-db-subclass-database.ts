@@ -8,7 +8,7 @@ import {
   ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions,
   TSwarmStoreConnectorOrbitDbDatabaseEntityIndex,
 } from './swarm-store-connector-orbit-db-subclass-database.types';
-import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
+import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 import {
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_LOG_PREFIX,
   EOrbidDBFeedSoreEvents,
@@ -58,6 +58,7 @@ import { Sorter } from '../../../../../basic-classes/sorter-class/sorter-class';
 import { IPropsByAliasesGetter } from '../../../../../basic-classes/props-by-aliases-getter/props-by-aliases-getter.types';
 import { ESortingOrder } from '../../../../../basic-classes/sorter-class';
 import { ISortingOptions } from '../../../../../basic-classes/sorter-class/sorter-class.types';
+import { getEventEmitterClass } from '../../../../../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import {
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_EMIT_BATCH_INT_MS,
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_EMIT_BATCH_SIZE,
@@ -72,9 +73,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>,
     DBO extends TSwarmStoreDatabaseOptions<ESwarmStoreConnector.OrbitDB, ItemType, DbType>
   >
-  extends EventEmitter<
-    ISwarmStoreConnectorOrbitDbDatabaseEvents<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>, ItemType>
-  >
+  extends getEventEmitterClass<any>()
   implements ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, ItemType, DbType, DBO> {
   // is loaded fully and ready to use
   public isReady: boolean = false;

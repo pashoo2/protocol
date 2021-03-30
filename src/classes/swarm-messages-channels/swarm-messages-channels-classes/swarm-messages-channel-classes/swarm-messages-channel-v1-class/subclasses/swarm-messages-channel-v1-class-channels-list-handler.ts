@@ -29,7 +29,7 @@ import {
 } from '../../../../types/swarm-messages-channel-instance.types';
 import { ISwarmMessagesChannelsDescriptionsList } from '../../../../types/swarm-messages-channels-list-instance.types';
 import { ISwarmMessageChannelDescriptionWithoutDatabaseOptionsRaw } from '../../../../types/swarm-messages-channel-instance.types';
-import { EventEmitter } from '../../../../../basic-classes/event-emitter-class-base/event-emitter-class-base';
+import { EventEmitter } from '../../../../../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 import {
   ISwarmMessagesChannelV1ClassChannelsListHandler,
   ISwarmMessagesChannelV1ClassChannelsListHandlerConstructorOptions,

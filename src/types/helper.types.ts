@@ -11,7 +11,6 @@ export type ownValueOf<T extends object> = keyof T extends ownKeyOf<T> ? T[keyof
 export type ArgumentTypes<F extends Function> = F extends (...args: infer A) => any ? A : never;
 
 export type FirstPrameter<F extends (arg: any) => any> = Parameters<F> extends Array<infer FirstArg> ? FirstArg : never;
-type FirstPrameter<F extends (arg: any) => any> = Parameters<F> extends Array<infer FirstArg> ? FirstArg : never;
 
 export type OmitTypeProp<T extends {}, E> = {
   [k in keyof T]: T[k] extends E ? never : T[k];

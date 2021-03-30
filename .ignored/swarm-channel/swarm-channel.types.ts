@@ -1,4 +1,4 @@
-import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
+import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 import { TUesrIdentity } from '../../src/types/users.types';
 import { ISwarmMessageConstructor } from '../../src/classes/swarm-message/swarm-message-constructor.types';
 import { ISecretStorage } from '../../src/classes/secret-storage-class/secret-storage-class.types';

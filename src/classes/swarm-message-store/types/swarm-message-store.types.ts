@@ -26,7 +26,7 @@ import {
   TSwarmMessageInstance,
   TSwarmMessageSerialized,
 } from '../../swarm-message/swarm-message-constructor.types';
-import { EventEmitter } from '../../basic-classes/event-emitter-class-base/event-emitter-class-base';
+import { EventEmitter } from '../../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 import { ESwarmMessageStoreEventNames } from '../swarm-message-store.const';
 import { TSwarmMessageUserIdentifierSerialized } from '../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier.types';
 import { TCentralAuthorityUserIdentity } from '../../central-authority-class/central-authority-class-types/central-authority-class-types-common';

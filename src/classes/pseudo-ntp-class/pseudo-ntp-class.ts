@@ -1,4 +1,4 @@
-import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
+import { getEventEmitterClass } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
 import {
   IPseudoNTPClassEvents,
   IPseudoNTPClassOptions,
@@ -30,7 +30,7 @@ import { IHttpRequestOptions } from 'classes/basic-classes/http-request-class-ba
  * @class PseudoNTPClass
  * @extends {EventEmitter<IPseudoNTPClassEvents>}
  */
-export class PseudoNTPClass extends EventEmitter<IPseudoNTPClassEvents> {
+export class PseudoNTPClass extends getEventEmitterClass<IPseudoNTPClassEvents>() {
   public static Event = PSEUDO_NTP_CLASS_EVENTS;
 
   /**

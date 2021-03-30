@@ -1,4 +1,4 @@
-import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
+import { getEventEmitterInstance } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
 import {
   IStatusedClassHelperOptions,
   TStatusClassHelperStatusChangesEmitter,
@@ -10,6 +10,7 @@ import {
   STATUSED_CLASS_HELPER_STATUS_WAITING_TIMEOUT_MS_DEFAULT,
   STATUSED_CLASS_HELPER_STATUS_CHANGED_EVENT_NAME,
 } from './statused-class-helper.const';
+import { EventEmitter } from '../../../classes/basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 
 export class StatusedClassHelper<StatusChangedEventName extends string, Status extends string>
   implements IStatusedClassHelper<StatusChangedEventName, Status> {
@@ -32,7 +33,7 @@ export class StatusedClassHelper<StatusChangedEventName extends string, Status e
    * @protected
    * @memberof StatusedClassHelper
    */
-  protected __emitterInnerStatusChanged = new EventEmitter<IStatusedClassHelperStatusEmitterEvents<Status>>();
+  protected __emitterInnerStatusChanged = getEventEmitterInstance<IStatusedClassHelperStatusEmitterEvents<Status>>();
   protected __emitterExternal?: TStatusClassHelperStatusChangesEmitter<StatusChangedEventName, Status>;
   protected __emitterEventStatusChanged?: StatusChangedEventName;
 

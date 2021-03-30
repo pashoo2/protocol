@@ -1,7 +1,7 @@
 import { ownValueOf } from 'types/helper.types';
 import { TStatusClassBaseOptions } from './status-class-base.types';
-import { EventEmitter } from '../event-emitter-class-base/event-emitter-class-base';
 import { STATUS_CLASS_STATUS_CHANGE_EVENT } from './status-class-base.const';
+import { getEventEmitterInstance } from '../event-emitter-class-base/event-emitter-class-base';
 
 export const STATUS_EVENT = STATUS_CLASS_STATUS_CHANGE_EVENT;
 
@@ -32,7 +32,7 @@ export const getStatusClass = <TStatus extends object>({
      * @public
      * @memberof StatusClassBase
      */
-    public statusEmitter = new EventEmitter<{
+    public statusEmitter = getEventEmitterInstance<{
       ['status']: TStatus;
     }>();
 
