@@ -13,6 +13,15 @@ import {
   SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_ACCESS_CONTROLLER_TYPE,
 } from './swarm-store-connector-orbit-db-subclass-access-controller.const';
 
+export function getControllerAddressByOptions<T extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>>(
+  options: ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions<T> & {
+    address?: string;
+    name?: string;
+  }
+): string {
+  return options.address || options.name || 'default-access-controller';
+}
+
 export class SwarmStoreConnectorOrbitDBSubclassAccessController<
   T extends TSwarmStoreValueTypes<ESwarmStoreConnector.OrbitDB>
 > extends OrbitDBAccessController {
@@ -20,6 +29,7 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
   public static get type(): string {
     return SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_ACCESS_CONTROLLER_TYPE;
   }
+
   /**
    * create and preload an instance
    * of the SwarmStoreConnectorOrbitDBSubclassAccessController
@@ -38,8 +48,9 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
       name?: string;
     } = {}
   ) {
+    debugger;
     const ac = new SwarmStoreConnectorOrbitDBSubclassAccessController<T>(orbitdb, options);
-    await ac.load(options.address || options.name || 'default-access-controller');
+    await ac.load(getControllerAddressByOptions<T>(options));
 
     // Add write access from options
     if (options.write && !options.address) {
@@ -189,5 +200,18 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
       }
       this.__options = options;
     }
+  }
+
+  async save() {
+    const options = this.__options;
+
+    if (!options) {
+      throw new Error('Options are not defined for the access controller');
+    }
+    debugger;
+    // return the manifest data
+    return {
+      address: getControllerAddressByOptions<T>(options),
+    };
   }
 }

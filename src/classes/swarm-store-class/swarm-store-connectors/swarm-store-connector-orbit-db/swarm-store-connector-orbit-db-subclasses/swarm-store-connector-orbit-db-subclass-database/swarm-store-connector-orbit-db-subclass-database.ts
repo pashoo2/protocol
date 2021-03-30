@@ -171,6 +171,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     this.setOptions(options);
     this.setOrbitDbInstance(orbitDb);
     this.__createSorter();
+    debugger;
   }
 
   protected _validateOptions(options: ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType, DbType>): void {
@@ -364,7 +365,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   protected async _add(addArg: TSwarmStoreConnectorOrbitDbDatabaseAddMethodArgument<ItemType>): Promise<string | Error> {
     const { value, key } = addArg;
     const database = this.getDbStoreInstance();
-
+    debugger;
     if (database instanceof Error) {
       return database;
     }

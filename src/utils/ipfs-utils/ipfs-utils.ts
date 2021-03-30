@@ -10,9 +10,13 @@ export const ipfsUtilsConnectBasic = async (options?: object, timeoutMs: number 
       throw new Error('Connection timed out');
     }, timeoutMs);
     const ipfs = await require('ipfs').create({
-      ...IPFS_UTILS_DEFAULT_OPTIONS,
+      config: {
+        ...IPFS_UTILS_DEFAULT_OPTIONS.config,
+      },
     });
-
+    const thisUserId = await ipfs.id();
+    console.log('Ipfs user id', thisUserId);
+    debugger;
     // TODO can test that the pubsub works well. OrbitDB fully depended on it
     let idx = Math.random() * 100;
     const topicName = 'TEST_TOPIC_TEST_______';
@@ -22,6 +26,7 @@ export const ipfsUtilsConnectBasic = async (options?: object, timeoutMs: number 
         console.log(data.toString());
       }
     });
+    console.log('Ipfs id is ');
     setInterval(async () => {
       if ((window as any).__sending) {
         await ipfs.pubsub.publish('TEST_TOPIC_TEST_______', `test data ${idx++}`);

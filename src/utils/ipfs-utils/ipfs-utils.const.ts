@@ -49,7 +49,7 @@ export const IPFS_UTILS_DEFAULT_OPTIONS = {
     Addresses: {
       // TODO - it works for now, only for test purposes
       Swarm: [
-        '/dns4/p2p.3box.io/tcp/9091/wss/p2p-webrtc-star/',
+        '/dns4/wrtc-star1.par.dwebops.pub/tcp/443/wss/p2p-webrtc-star',
         // '/dns4/wrtc-star1.par.dwebops.pub/tcp/443/wss/p2p-webrtc-star',
         // '/dns4/wrtc-star2.sjc.dwebops.pub/tcp/443/wss/p2p-webrtc-star',
         // '/dns4/stardust.mkg20001.io/tcp/443/wss/p2p-stardust/',

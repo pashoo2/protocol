@@ -1,4 +1,3 @@
-import addSeconds from 'date-fns/addSeconds';
 import { PseudoNTPClass as PseudoNTP } from 'classes/pseudo-ntp-class';
 import { COMMON_DATE_TIME_NTP_SERVERS_POOL } from 'const/common-date-time/common-date-time-ntp-servers.const';
 import { DATE_TIME_COMMON_CURRENT_DATE_UPDATE_INTERVAL_SECONDS } from 'const/common-date-time/common-date-time-main';
@@ -34,7 +33,7 @@ export const getTimeDiffWithSyncServerSeconds = (() => {
  * @returns {Date}
  */
 export const getDateWithTimeSyncOffset = (d: Date): Date => {
-  return addSeconds(d, getTimeDiffWithSyncServerSeconds());
+  return new Date(d.getTime() + getTimeDiffWithSyncServerSeconds() * 1000);
 };
 
 /**

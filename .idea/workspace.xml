@@ -2,37 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e70e70e3-e48a-4dfd-91a6-03818e8691f6" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.ignored/swarm-channel/swarm-channel.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/.ignored/swarm-channel/swarm-channel.types.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/node_modules-local/hypervision-browser" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules-local/hypervision-browser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/async-queue-class-base/async-queue-class-base.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/async-queue-class-base/async-queue-class-base.types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/event-emitter-class-base/event-emitter-class-base.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/event-emitter-class-base/event-emitter-class-base.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/event-emitter-class-base/event-emitter-class-base.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/event-emitter-class-base/event-emitter-class-base.types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/event-emitter-class-base/event-emitter-class-with-forwarding.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/event-emitter-class-base/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/event-emitter-class-base/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/status-class-base/status-class-base.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/status-class-base/status-class-base.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/pseudo-ntp-class/pseudo-ntp-class.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/pseudo-ntp-class/pseudo-ntp-class.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message-store/types/swarm-message-store.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message-store/types/swarm-message-store.types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-fields-validator/swarm-message-subclass-validator-fields-validator.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/implementations/swarm-messages-channel-v1-class.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/implementations/swarm-messages-channel-v1-class.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/subclasses/swarm-messages-channel-v1-class-channels-list-handler.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/subclasses/swarm-messages-channel-v1-class-channels-list-handler.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/subclasses/swarm-messages-channel-v1-class-messages-database-handler.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/subclasses/swarm-messages-channel-v1-class-messages-database-handler.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/types/swarm-messages-channel-v1-class-messages-database-handler.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/types/swarm-messages-channel-v1-class-messages-database-handler.types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/subclasses/swarm-messages-channels-list-v1-db-connection-initializer-and-handler/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.fabric.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/subclasses/swarm-messages-channels-list-v1-db-connection-initializer-and-handler/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.fabric.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class.fabric.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/swarm-messages-channels-list-v1-class.fabric.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/types/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/types/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-class.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-class.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-class.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-class.types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/types/helper.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/types/helper.types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/classes-helpers/statused-class-helper/statused-class-helper.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/classes-helpers/statused-class-helper/statused-class-helper.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/classes-helpers/statused-class-helper/statused-class-helper.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/classes-helpers/statused-class-helper/statused-class-helper.types.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/common-utils/common-utils-date-time-synced.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/common-utils/common-utils-date-time-synced.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/password-utils/derive-key.password-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/password-utils/derive-key.password-utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/ipfs-utils/ipfs-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/ipfs-utils/ipfs-utils.ts" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -111,7 +83,7 @@
         <entry file="file://$PROJECT_DIR$/src/utils/common-utils/common-utils-objects.test.ts">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="70">
-              <caret line="5" column="37" lean-forward="true" selection-start-line="5" selection-start-column="37" selection-end-line="5" selection-end-column="37" />
+              <caret line="5" column="37" selection-start-line="5" selection-start-column="37" selection-end-line="5" selection-end-column="37" />
             </state>
           </provider>
         </entry>
@@ -804,7 +776,7 @@
       <workItem from="1616354036511" duration="1474000" />
       <workItem from="1616778639071" duration="3590000" />
       <workItem from="1616877919806" duration="1017000" />
-      <workItem from="1617128232492" duration="874000" />
+      <workItem from="1617128232492" duration="1605000" />
     </task>
     <servers />
   </component>
@@ -841,11 +813,10 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="169682000" />
+    <option name="totallyTimeSpent" value="170413000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="1600" height="873" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TypeScript" order="8" weight="0.32875144" />
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.35193405" />
@@ -1287,7 +1258,7 @@
     <entry file="file://$PROJECT_DIR$/src/utils/common-utils/common-utils-objects.test.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="70">
-          <caret line="5" column="37" lean-forward="true" selection-start-line="5" selection-start-column="37" selection-end-line="5" selection-end-column="37" />
+          <caret line="5" column="37" selection-start-line="5" selection-start-column="37" selection-end-line="5" selection-end-column="37" />
         </state>
       </provider>
     </entry>
