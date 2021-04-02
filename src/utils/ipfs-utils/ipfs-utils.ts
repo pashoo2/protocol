@@ -1,22 +1,10 @@
+import { IPFS } from 'types/ipfs.types';
 import { IPFS_UTILS_DEFAULT_OPTIONS, IPFS_UTILS_DEFAULT_TIMEOUT_MS } from './ipfs-utils.const';
 
-/**
- * create a ready to use connection to IPFS with a basis default options
- */
-export const ipfsUtilsConnectBasic = async (options?: object, timeoutMs: number = IPFS_UTILS_DEFAULT_TIMEOUT_MS) => {
-  let timer: NodeJS.Timeout | undefined;
-  try {
-    timer = setTimeout(() => {
-      throw new Error('Connection timed out');
-    }, timeoutMs);
-    const ipfs = await require('ipfs').create({
-      config: {
-        ...IPFS_UTILS_DEFAULT_OPTIONS.config,
-      },
-    });
+export async function ipfsDevModeUtils(ipfs: IPFS): Promise<void> {
+  if (process.env.NODE_ENV === 'development') {
     const thisUserId = await ipfs.id();
     console.log('Ipfs user id', thisUserId);
-    debugger;
     // TODO can test that the pubsub works well. OrbitDB fully depended on it
     let idx = Math.random() * 100;
     const topicName = 'TEST_TOPIC_TEST_______';
@@ -26,15 +14,35 @@ export const ipfsUtilsConnectBasic = async (options?: object, timeoutMs: number 
         console.log(data.toString());
       }
     });
-    console.log('Ipfs id is ');
     setInterval(async () => {
       if ((window as any).__sending) {
         await ipfs.pubsub.publish('TEST_TOPIC_TEST_______', `test data ${idx++}`);
       }
     }, 1500);
+  }
+}
 
+/**
+ * create a ready to use connection to IPFS with a basis default options
+ */
+export async function ipfsUtilsConnectBasic(options?: object, timeoutMs: number = IPFS_UTILS_DEFAULT_TIMEOUT_MS): Promise<IPFS> {
+  let timer: NodeJS.Timeout | undefined;
+  try {
+    timer = setTimeout(() => {
+      throw new Error('Connection timed out');
+    }, timeoutMs);
+
+    const ipfs = (await require('ipfs').create({
+      config: {
+        ...IPFS_UTILS_DEFAULT_OPTIONS.config,
+      },
+    })) as IPFS;
+
+    if (process.env.NODE_ENV === 'development') {
+      ipfsDevModeUtils(ipfs);
+    }
     return ipfs;
   } finally {
     clearTimeout(timer!);
   }
-};
+}

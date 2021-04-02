@@ -103,7 +103,6 @@ export class SwarmMessagesChannelsListComponent<
         write: [currentUserId],
       },
     });
-    debugger;
     return newSwarmMessagesChannelDescriptionRaw;
   }
 

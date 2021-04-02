@@ -4,6 +4,7 @@ import { ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions } from './sw
 import { IdentityProvider } from 'orbit-db-identity-provider';
 import { ESwarmStoreConnector } from '../../../../swarm-store-class.const';
 import { EOrbitDbStoreOperation } from '../swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
+import { P } from '../../../../../../components/connect-to-swarm-with-dbo/connect-to-swarm-with-dbo';
 import {
   TSwarmStoreConnectorAccessConrotllerGrantAccessCallback,
   TSwarmStoreValueTypes,
@@ -48,7 +49,6 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
       name?: string;
     } = {}
   ) {
-    debugger;
     const ac = new SwarmStoreConnectorOrbitDBSubclassAccessController<T>(orbitdb, options);
     await ac.load(getControllerAddressByOptions<T>(options));
 
@@ -94,34 +94,43 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
    * @memberof SwarmStoreConnectorOrbitDBSubclassAccessController
    */
   public async canAppend(entry: LogEntry<T>, identityProvider: IdentityProvider): Promise<boolean> {
-    if (!super.canAppend(entry, identityProvider)) {
+    try {
+      if (!super.canAppend(entry, identityProvider)) {
+        return false;
+      }
+      if (!this.__validateEntryFormat(entry)) {
+        console.warn(`${SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_ACCESS_CONTROLLER_LOG_PREFIX}::entry have an unknown format`);
+        return false;
+      }
+
+      // Write keys and admins keys are allowed
+      const { __options, __isPublic: _isPublic } = this;
+
+      if (_isPublic) {
+        return await this.__verifyAccess(entry);
+      }
+
+      if (!__options) {
+        return false;
+      }
+
+      const { identity } = entry;
+      const { id: userPerformedActionOnEntryId } = identity;
+      const { write: accessListForUsers } = __options;
+
+      // If the ACL contains the writer's public key or it contains '*'
+      if (
+        accessListForUsers &&
+        userPerformedActionOnEntryId !== '*' &&
+        accessListForUsers.includes(userPerformedActionOnEntryId)
+      ) {
+        return await this.__verifyAccess(entry);
+      }
+      return false;
+    } catch (err) {
+      console.error(err);
       return false;
     }
-    if (!this.__validateEntryFormat(entry)) {
-      console.warn(`${SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_ACCESS_CONTROLLER_LOG_PREFIX}::entry have an unknown format`);
-      return false;
-    }
-
-    // Write keys and admins keys are allowed
-    const { __options, __isPublic: _isPublic } = this;
-
-    if (_isPublic) {
-      return await this.__verifyAccess(entry);
-    }
-
-    if (!__options) {
-      return false;
-    }
-
-    const { identity } = entry;
-    const { id: userPerformedActionOnEntryId } = identity;
-    const { write: accessListForUsers } = __options;
-
-    // If the ACL contains the writer's public key or it contains '*'
-    if (accessListForUsers && userPerformedActionOnEntryId !== '*' && accessListForUsers.includes(userPerformedActionOnEntryId)) {
-      return await this.__verifyAccess(entry);
-    }
-    return false;
   }
 
   /**
@@ -202,13 +211,21 @@ export class SwarmStoreConnectorOrbitDBSubclassAccessController<
     }
   }
 
-  async save() {
+  /**
+   * It returns a manifest data, which is used
+   * in a naming of a resulted ipfs PubSub channel.
+   *
+   * @returns
+   * @memberof SwarmStoreConnectorOrbitDBSubclassAccessController
+   */
+  async save(): Promise<{
+    address: string;
+  }> {
     const options = this.__options;
 
     if (!options) {
       throw new Error('Options are not defined for the access controller');
     }
-    debugger;
     // return the manifest data
     return {
       address: getControllerAddressByOptions<T>(options),

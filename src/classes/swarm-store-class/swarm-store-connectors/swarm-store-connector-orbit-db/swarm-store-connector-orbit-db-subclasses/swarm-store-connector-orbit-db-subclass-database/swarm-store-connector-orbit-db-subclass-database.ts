@@ -171,7 +171,6 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     this.setOptions(options);
     this.setOrbitDbInstance(orbitDb);
     this.__createSorter();
-    debugger;
   }
 
   protected _validateOptions(options: ISwarmStoreConnectorOrbitDbDatabaseOptions<ItemType, DbType>): void {
@@ -247,6 +246,10 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       await this.preloadEntitiesBeforeIterate(messagesToReadCountLimitFromOptions);
     }
 
+    // TODO - databaseInstanceForQuerying is not exists
+    // doesn't works propely if someone added himself as an admin, because a previous message is always empty, so
+    // there is no way to compare a previous list with the next one and it leads to allow user unauthorized
+    // to add records to the database
     const databaseInstanceForQuerying = options?.fromCache ? this.database : await this._getDatabaseInstanceForQuering();
 
     if (!databaseInstanceForQuerying) {

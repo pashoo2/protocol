@@ -48,7 +48,7 @@ export async function validatorOfSwrmMessageWithChannelDescription<
   } = argument;
 
   assert(keyInDb, 'Database key should be defined for a swarm message with channel description');
-  if (isDatabaseReady && channelExistingDescription) {
+  if (channelExistingDescription) {
     assert(
       getDatabaseKeyForChannelDescription(channelExistingDescription) === keyInDb,
       'Key in the database is not equals to the existing channel desciption'

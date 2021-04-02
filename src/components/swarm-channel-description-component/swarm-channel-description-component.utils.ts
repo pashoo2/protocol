@@ -151,6 +151,7 @@ export function swarmChannelDescriptionComponentCreateFormFieldsDescriptionForCh
         name: 'tags',
         value: tags,
         isMultiple: true,
+        canRemove: true,
         options: tags.map((tag) => ({
           name: tag,
           value: tag,

@@ -39,6 +39,7 @@ export function getVariableArgumentsWithoutExistingChannelDescriptionForGrantAcc
   // Clock time (e.g. Lamprod clock time) when was the entry added
   time: number;
 }): Omit<Required<ISwarmMessagesChannelsListV1GrantAccessVariableArguments<P, T, MD, CTX, DBO>>, 'channelExistingDescription'> {
+  debugger;
   if (!key) {
     throw new Error('A key must be provided for swarm messages channel description');
   }
@@ -100,6 +101,79 @@ export function createGrantAccessCallbackByConstantArgumentsAndMessageWithChanne
   CTX,
   DBO
 >): DBO['grantAccess'] {
+  interface ILatestMessageDescription {
+    /**
+     * Swarm messages or undefiened if DELETE operation
+     */
+    message: MD;
+    latestTime: number;
+  }
+
+  const messagesCachedForDatabaseKey: Record<string, Map<number, ILatestMessageDescription>> = {};
+
+  function getHashForDatabaseKey(databaseName: string, key: string): string {
+    return `${databaseName}_${key}`;
+  }
+
+  function getMessagesCachedForDatabaseKeyOrUndefined(
+    databaseName: string,
+    key: string
+  ): Map<number, ILatestMessageDescription> | undefined {
+    const hash = getHashForDatabaseKey(databaseName, key);
+    return messagesCachedForDatabaseKey[hash];
+  }
+
+  function getPreviousMessageCachedFromDatabaseKeyAndTime(
+    databaseName: string,
+    // key of the value
+    key: string,
+    handledMessageTime: number
+  ): MD | undefined {
+    const messagesCachedMapWithTimeKeys = getMessagesCachedForDatabaseKeyOrUndefined(databaseName, key);
+
+    if (messagesCachedMapWithTimeKeys) {
+      const messagesAddTimes = messagesCachedMapWithTimeKeys;
+      let messageCachedAddTime: number;
+      let previousMessageTime: number = -1;
+
+      for (messageCachedAddTime of messagesAddTimes.keys()) {
+        if (messageCachedAddTime < handledMessageTime) {
+          if (previousMessageTime < messageCachedAddTime) {
+            previousMessageTime = messageCachedAddTime;
+          }
+        }
+      }
+      if (previousMessageTime !== -1) {
+        const previousMessageDescription = messagesCachedMapWithTimeKeys.get(previousMessageTime);
+        if (!previousMessageDescription) {
+          throw new Error(`Previous message can't be gotten by the time key ${previousMessageTime}`);
+        }
+        return previousMessageDescription.message;
+      }
+    }
+  }
+
+  function addMessageToDatabaseKeysCache(
+    swarmMessage: MD,
+    databaseName: string,
+    // key of the value
+    key: string,
+    time: number
+  ): void {
+    let messagesCachedMapWithTimeKeys = getMessagesCachedForDatabaseKeyOrUndefined(databaseName, key);
+
+    if (!messagesCachedMapWithTimeKeys) {
+      const hashForKeyAndDatabaseName = getHashForDatabaseKey(databaseName, key);
+
+      messagesCachedMapWithTimeKeys = new Map<number, ILatestMessageDescription>();
+      messagesCachedForDatabaseKey[hashForKeyAndDatabaseName] = messagesCachedMapWithTimeKeys;
+    }
+    messagesCachedMapWithTimeKeys.set(time, {
+      latestTime: time,
+      message: swarmMessage,
+    });
+  }
+
   async function channelsListGrantAccessCallbackFunction(
     this: CTX,
     payload: T | MD,
@@ -108,11 +182,15 @@ export function createGrantAccessCallbackByConstantArgumentsAndMessageWithChanne
     databaseName: string,
     // key of the value
     key: string | undefined,
-    // operation which is processed (like delete, add or something else)
+    // operation which is processed (like delete, add or something else).
     operation: TSwarmStoreDatabaseEntryOperation<P> | undefined,
     // a real or an abstract clock time when the entry was added into the database
     time: number
   ): Promise<boolean> {
+    // TODO
+    if ((window as any).__skipSwarmMessage) {
+      return true;
+    }
     if (!key) {
       throw new Error('Key should be provided for a message with a swarm messages channel description');
     }
@@ -123,31 +201,55 @@ export function createGrantAccessCallbackByConstantArgumentsAndMessageWithChanne
       operation,
       time,
     });
-    let swarmMessagesChannelExistingDescription: Readonly<ISwarmMessageChannelDescriptionRaw<P, T, any, any>> | undefined;
-    if (constantArguments.isDatabaseReady) {
-      /* 
-        TODO  
-        read an entry existsing before the current according 
-        it's time of adding to the database
-      */
-      swarmMessagesChannelExistingDescription = await getPreviousChannelDescriptionByMessageKeyAndAddedTime(key, time);
-      if (swarmMessagesChannelExistingDescription) {
-        console.log('swarmMessagesChannelExistingDescription', swarmMessagesChannelExistingDescription);
-      }
-      if (operation === EOrbitDbStoreOperation.DELETE) {
-        // TODO - may be it will cause a problems e.g. if the DELETE
-        // message has come before CREATE message
-        if (!swarmMessagesChannelExistingDescription) {
-          throw new Error('This is an unknown channel and can not be deleted');
-        }
+    // let swarmMessagesChannelExistingDescription: Readonly<ISwarmMessageChannelDescriptionRaw<P, T, any, any>> | undefined;
+    // if (constantArguments.isDatabaseReady) {
+    //   /*
+    //     TODO
+    //     read an entry existsing before the current according
+    //     it's time of adding to the database
+    //   */
+    //   swarmMessagesChannelExistingDescription = await getPreviousChannelDescriptionByMessageKeyAndAddedTime(key, time);
+    //   if (swarmMessagesChannelExistingDescription) {
+    //     console.log('swarmMessagesChannelExistingDescription', swarmMessagesChannelExistingDescription);
+    //   }
+    //   if (operation === EOrbitDbStoreOperation.DELETE) {
+    //     // TODO - may be it will cause a problems e.g. if the DELETE
+    //     // message has come before CREATE message
+    //     if (!swarmMessagesChannelExistingDescription) {
+    //       throw new Error('This is an unknown channel and can not be deleted');
+    //     }
+    //   }
+    // }
+    const isDELETE = operation === EOrbitDbStoreOperation.DELETE;
+    const swarmMessageForChanelDescription = getPreviousMessageCachedFromDatabaseKeyAndTime(databaseName, key, time);
+
+    if (isDELETE) {
+      // TODO - may be it will cause a problems e.g. if the DELETE
+      // message has come before CREATE message
+      if (!swarmMessageForChanelDescription) {
+        throw new Error('This is an unknown channel and can not be deleted');
       }
     }
+    debugger;
+    // TODO - instead of the getPreviousChannelDescriptionByMessageKeyAndAddedTime we need a function for
+    // parsing a swarm message to a channel's description
+    const swarmMessagesChannelExistingDescription = swarmMessageForChanelDescription
+      ? JSON.parse(swarmMessageForChanelDescription.bdy.pld)
+      : undefined;
+    if (swarmMessagesChannelExistingDescription) {
+      return false;
+    }
+    debugger;
     const argumentsForChannelDescriptionSwarmMessageValidator = getArgumentsForSwarmMessageWithChannelDescriptionValidator(
       constantArguments,
       variableArguments,
       swarmMessagesChannelExistingDescription
     );
     await channelDescriptionSwarmMessageValidator.call(this, argumentsForChannelDescriptionSwarmMessageValidator);
+    if (!isDELETE) {
+      // if it's a DELETE operation we don't need to add it into the list, because we need only an opearion before the DELETE.
+      addMessageToDatabaseKeysCache((typeof payload === 'string' ? JSON.parse(payload) : payload) as MD, databaseName, key, time);
+    }
     return true;
   }
   (channelsListGrantAccessCallbackFunction as ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<

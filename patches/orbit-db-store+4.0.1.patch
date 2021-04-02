@@ -1,0 +1,37 @@
+diff --git a/node_modules/orbit-db-store/src/Store.js b/node_modules/orbit-db-store/src/Store.js
+index f1835d1..7890ad7 100644
+--- a/node_modules/orbit-db-store/src/Store.js
++++ b/node_modules/orbit-db-store/src/Store.js
+@@ -5,6 +5,7 @@ const EventEmitter = require('events').EventEmitter
+ const mapSeries = require('p-each-series')
+ const { default: PQueue } = require('p-queue')
+ const Log = require('ipfs-log')
++const {SortByClocks} = require('ipfs-log/src/log-sorting');
+ const Entry = Log.Entry
+ const Index = require('./Index')
+ const Replicator = require('./Replicator')
+@@ -238,7 +239,23 @@ class Store {
+     }
+     const localHeads = await this._cache.get(this.localHeadsPath) || []
+     const remoteHeads = await this._cache.get(this.remoteHeadsPath) || []
+-    const heads = localHeads.concat(remoteHeads)
++    /**
++     * This is necessary to filter items stored that are not permitted
++     * to be written into the current log.
++     */
++    const heads = await Promise.all(
++        localHeads
++        .concat(remoteHeads)
++        .sort((a,b) => SortByClocks(a,b, (a,b) => a.clock.id < b.clock.id ? -1 : 1))
++        .map(async head => {
++          const canAppend = await this.access.canAppend(head, this.identity.provider);
++          if (!canAppend) {
++            console.warn('Warning: Given input entry is not allowed in this log and was discarded (no write access).')
++            return false;
++          }
++          return head;
++        })
++      ).then(headsList => headsList.filter(head => head !== false));
+     
+     if (heads.length > 0) {
+       this.events.emit('load', this.address.toString(), heads)

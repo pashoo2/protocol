@@ -159,6 +159,9 @@ export interface ISwarmMessagesChannelsDescriptionsListConnectionOptions<
 /**
  * Implementation of the channels descriptions list.
  *
+ * WARNING! Database operation 'DELETE' means that the key
+ * is removed from the database at all at that moment of time.
+ *
  * @export
  * @interface ISwarmMessagesChannelsDescriptionsList
  * @template P
