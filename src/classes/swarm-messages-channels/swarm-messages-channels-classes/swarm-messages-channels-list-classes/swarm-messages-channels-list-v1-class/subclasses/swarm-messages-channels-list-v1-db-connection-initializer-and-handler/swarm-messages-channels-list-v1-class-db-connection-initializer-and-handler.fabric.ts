@@ -15,17 +15,13 @@ import {
   ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric,
 } from '../../../../../types/swarm-messages-channels-list-instance.types';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
-import { IValidatorOfSwarmMessageWithChannelDescriptionArgument } from '../../../../../types/swarm-messages-channels-validation.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseIteratorOption } from '../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import { ISwarmMessagesChannelsDescriptionsListConstructorArguments } from '../../../../../types/swarm-messages-channels-list-instance.types';
 import { createImmutableObjectClone } from '../../../../../../../utils/data-immutability-utils/data-immutability-key-value-structure-utils';
 import { isNonNativeFunction } from '../../../../../../../utils/common-utils/common-utils.functions';
 import { IAdditionalUtils } from '../../types/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.types';
 import { ISwarmMessagesChannelsListV1GrantAccessConstantArguments } from '../../types/swarm-messages-channels-list-v1-class.types';
-import {
-  ESwarmStoreConnectorOrbitDbDatabaseType,
-  ESortFileds,
-} from '../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
+import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { IConstructorAbstactSwarmMessagesChannelsListVersionOneOptionsSetUp } from '../../types/swarm-messages-channels-list-v1-class-options-setup.types';
 import { IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler } from '../../types/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.types';
 import {
@@ -47,7 +43,6 @@ import {
   TSwarmStoreDatabaseEntityAddress,
   TSwarmStoreDatabaseEntityKey,
 } from '../../../../../../swarm-store-class/swarm-store-class.types';
-import { ESortingOrder } from 'classes/basic-classes/sorter-class';
 import { getEventEmitterInstance } from '../../../../../../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { ESwarmMessageStoreEventNames } from '../../../../../../swarm-message-store/swarm-message-store.const';
 import { TSwarmMessageUserIdentifierSerialized } from '../../../../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier.types';
@@ -70,6 +65,10 @@ import { whetherTwoMapsSimilar } from '../../../../../../../utils/common-utils/c
 import { compareTwoSwarmMessageStoreMessagingRequestWithMetaResults } from '../../../../../../swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache/swarm-messages-database-cache.utils';
 import { dataCachingUtilsCachingDecoratorGlobalCachePerClass } from '../../../../../../../utils/data-cache-utils/data-cache-utils-caching-decorator-global-cache-per-class/data-cache-utils-caching-decorator-global-cache-per-class';
 import { getSwarmMessageUniqueHash } from '../../../../../../swarm-message/swarm-message-utils/swarm-message-utils-common/swarm-message-utils-common-decrypted';
+import {
+  ISwarmChannelsListClockSortedChannelsDescriptionsUpdatesCache,
+  ISwarmChannelsListClockSortedChannelsDescriptionsUpdatesCacheConstructorParams,
+} from '../../../../../types/swarm-channels-list-clock-sorted-channels-descriptions-updates-cache.types';
 
 export function getRequestResultMessageUniqueIdOrUndefined(
   requestResult: ISwarmMessageStoreMessagingRequestWithMetaResult<ESwarmStoreConnector, ISwarmMessageInstanceDecrypted>
@@ -188,6 +187,8 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>
     > = new Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>();
 
+    private readonly __fabricSwarmChannelsListClockSortedChannelsDescriptionsUpdatesCache: CARGS['utilities']['getSwarmChannelsListClockSortedChannelsDescriptionsUpdatesCache'];
+
     /**
      * If an active swarm channels descriptions cached map
      * update process is in progress then this property will
@@ -208,6 +209,8 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
     constructor(constructorArguments: CARGS) {
       super(constructorArguments);
       this._validateAdditionalUtils(additionalUtils);
+      this.__fabricSwarmChannelsListClockSortedChannelsDescriptionsUpdatesCache =
+        constructorArguments.utilities.getSwarmChannelsListClockSortedChannelsDescriptionsUpdatesCache;
       this.__additionalUtils = createImmutableObjectClone(additionalUtils);
       this.__swarmMessagesKeyValueDatabaseConnectionPending = createRejectablePromiseByNativePromise(
         this._createActiveConnectionToChannelsListDatabase()
@@ -601,11 +604,11 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       return swarmMessagesChannelDescriptionDeserialized;
     }
 
-    private async __getChannelDescriptionBySwarmMessageDecrypted(
+    private __getChannelDescriptionBySwarmMessageDecrypted = async (
       swarmMessageDecrypted: MD
-    ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any>> {
+    ): Promise<ISwarmMessageChannelDescriptionRaw<P, T, any, any>> => {
       return await this._getValidSwarmMessagesChannelDescriptionFromSwarmMessageBody(swarmMessageDecrypted.bdy);
-    }
+    };
 
     @dataCachingUtilsCachingDecoratorGlobalCachePerClass(
       2, // TODO - after checking GET_SWARM_CHANNEL_DESCRIPTION_RAW_BY_SWARM_DB_REQUEST_RESULT_CACHED_ITEMS_COUNT_LIMIT,
@@ -732,34 +735,30 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       };
     }
 
-    private _getPreviousChannelDescriptionByMessageKeyAndAddedTime = async (
-      dbbKey: string,
-      addedTime: number
-    ): Promise<IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, MD, CTX, DBO>['channelExistingDescription']> => {
-      const dbIteratorOptionsReadValueFromCache: Partial<TSwarmStoreDatabaseIteratorMethodArgument<
-        ESwarmStoreConnector.OrbitDB,
-        ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
-      >> = {
-        fromCache: true,
-        ltT: addedTime,
-        limit: 1,
-        sortBy: {
-          [ESortFileds.TIME]: ESortingOrder.DESC,
-        },
+    private __getArgumentsForFabricSwarmChannelsListClockSortedChannelsDescriptionsUpdatesCache(): ISwarmChannelsListClockSortedChannelsDescriptionsUpdatesCacheConstructorParams<
+      P,
+      T,
+      ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
+      DBOFULL<P, T, MD, CTX, DBO>,
+      MD
+    > {
+      return {
+        getChannelDescriptionBySwarmMessage: this.__getChannelDescriptionBySwarmMessageDecrypted,
       };
-      if (!this._isDatabaseReady) {
-        // if database still not opened OrbitDB implementation
-        // can't read existsing values, bacuse it causes halt.
-        throw new Error('A database should be opened before read a value from it');
-      }
-      return await this._readSwarmMessagesChannelDescriptionOrUndefinedForDbKey(
-        dbbKey,
-        // TODO - resolve this type cast
-        dbIteratorOptionsReadValueFromCache as Partial<
-          TSwarmStoreDatabaseIteratorMethodArgument<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE>
-        >
+    }
+
+    private __createSwarmChannelsListClockSortedChannelsDescriptionsUpdatesCache(): ISwarmChannelsListClockSortedChannelsDescriptionsUpdatesCache<
+      P,
+      T,
+      ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
+      DBOFULL<P, T, MD, CTX, DBO>,
+      MD
+    > {
+      const swarmChannelsListClockSortedChannelsDescriptionsUpdatesCache = this.__fabricSwarmChannelsListClockSortedChannelsDescriptionsUpdatesCache(
+        this.__getArgumentsForFabricSwarmChannelsListClockSortedChannelsDescriptionsUpdatesCache()
       );
-    };
+      return swarmChannelsListClockSortedChannelsDescriptionsUpdatesCache;
+    }
 
     private _createGrantAccessCallbackForChannelsListDatabase(): DBO['grantAccess'] {
       const argumentsConstant = this._getConstantArgumentsForGrantAccessCallbackValidator();
@@ -769,12 +768,13 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
         getArgumentsForSwarmMessageWithChannelDescriptionValidator,
         getVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidator,
       } = this._additionalUtils;
+      const swarmChannelsListClockSortedChannelsDescriptionsUpdatesCache = this.__createSwarmChannelsListClockSortedChannelsDescriptionsUpdatesCache();
       const params = {
         constantArguments: argumentsConstant,
+        swarmChannelsListClockSortedChannelsDescriptionsUpdatesCache,
         channelDescriptionSwarmMessageValidator,
         getArgumentsForSwarmMessageWithChannelDescriptionValidator,
         getVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidator,
-        getPreviousChannelDescriptionByMessageKeyAndAddedTime: this._getPreviousChannelDescriptionByMessageKeyAndAddedTime,
       };
       return createGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidator(params);
     }

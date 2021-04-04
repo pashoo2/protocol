@@ -23,6 +23,9 @@ import { ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabase
 import { TTypedEmitter } from '../../../../../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 import { ISwarmMessagesChannelsListDatabaseEvents } from '../../../../types/swarm-messages-channels-list-events.types';
 import { TSwarmMessagesChannelId } from '../../../../types/swarm-messages-channel-instance.types';
+import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
+import { ISwarmChannelsListClockSortedChannelsDescriptionsUpdatesCache } from '../../../../types/swarm-channels-list-clock-sorted-channels-descriptions-updates-cache.types';
+import { TSwarmStoreDatabaseOptions } from '../../../../../swarm-store-class/swarm-store-class.types';
 import {
   ISwarmMessagesChannelsListV1GrantAccessConstantArguments,
   ISwarmMessagesChannelsListV1GrantAccessVariableArguments,
@@ -129,6 +132,13 @@ export interface ICreateGrantAccessCallbackByConstantArgumentsAndMessageWithChan
   DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 > {
   constantArguments: ISwarmMessagesChannelsListV1GrantAccessConstantArguments<P, T, MD, CTX, DBO>;
+  swarmChannelsListClockSortedChannelsDescriptionsUpdatesCache: ISwarmChannelsListClockSortedChannelsDescriptionsUpdatesCache<
+    P,
+    T,
+    ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
+    TSwarmStoreDatabaseOptions<P, T, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE> & DBO,
+    MD
+  >;
   channelDescriptionSwarmMessageValidator: IValidatorOfSwarmMessageWithChannelDescription<P, T, MD, CTX, DBO>;
   getVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidator: IGetVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidatorCreator<
     P,
@@ -144,13 +154,6 @@ export interface ICreateGrantAccessCallbackByConstantArgumentsAndMessageWithChan
     CTX,
     DBO
   >;
-  // get previus existsing entry by entrie's key and added time
-  getPreviousChannelDescriptionByMessageKeyAndAddedTime: (
-    // a database key for the entry
-    entryDbKey: string,
-    // an abstact or real time when the entry was added in the local db
-    timeEntryAdded: number
-  ) => Promise<IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, MD, CTX, DBO>['channelExistingDescription']>;
 }
 
 export abstract class AbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler<

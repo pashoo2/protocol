@@ -27,6 +27,10 @@ import { ISwarmMessagesDatabaseMessagesCollector } from '../../swarm-messages-da
 import { JSONSchema7 } from 'json-schema';
 import { ISwarmMessagesChannelsListNotificationEmitter } from './swarm-messages-channels-list-events.types';
 import {
+  ISwarmChannelsListClockSortedChannelsDescriptionsUpdatesCacheConstructorParams,
+  ISwarmChannelsListClockSortedChannelsDescriptionsUpdatesCache,
+} from './swarm-channels-list-clock-sorted-channels-descriptions-updates-cache.types';
+import {
   ISwarmMessagesDatabaseCacheOptions,
   ISwarmMessagesDatabaseCache,
   ISwarmMessagesDatabaseConnectOptions,
@@ -154,6 +158,41 @@ export interface ISwarmMessagesChannelsDescriptionsListConnectionOptions<
    * @memberof ISwarmMessagesChannelsListDescription
    */
   dbOptions: DBO;
+}
+
+/**
+ * Fabric for creation of an instance of the
+ * SwarmChannelsListClockSortedChannelsDescriptionsUpdatesCache.
+ *
+ * @export
+ * @interface ISwarmChannelsListClockSortedChannelsDescriptionsUpdatesCacheFabric
+ * @template P
+ * @template T
+ * @template MD
+ */
+export interface ISwarmChannelsListClockSortedChannelsDescriptionsUpdatesCacheFabric<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  MD extends ISwarmMessageInstanceDecrypted,
+  CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
+  DBOL extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
+  DBO extends DBOFULL<P, T, MD, CTX, DBOL> = DBOFULL<P, T, MD, CTX, DBOL>
+> {
+  (
+    params: ISwarmChannelsListClockSortedChannelsDescriptionsUpdatesCacheConstructorParams<
+      P,
+      T,
+      ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
+      DBO,
+      MD
+    >
+  ): ISwarmChannelsListClockSortedChannelsDescriptionsUpdatesCache<
+    P,
+    T,
+    ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
+    DBO,
+    MD
+  >;
 }
 
 /**
@@ -408,6 +447,17 @@ export interface ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils
    * @memberof ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtils
    */
   getChannelIdByDatabaseKey: IGetChannelIdByDatabaseKey<P>;
+
+  /**
+   * Fabric creates a cached history of swarm channel description updates.
+   */
+  getSwarmChannelsListClockSortedChannelsDescriptionsUpdatesCache: ISwarmChannelsListClockSortedChannelsDescriptionsUpdatesCacheFabric<
+    P,
+    T,
+    MD,
+    CTX,
+    DBO
+  >;
 }
 
 /**

@@ -24,6 +24,7 @@ import { getValidatorSwarmChannelsListDatabaseOptions } from '../../../../../swa
 import { validateGrantAccessCallback } from '../../../../../../swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-grant-access-callback';
 import { ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric } from '../../../../../types/swarm-messages-channels-list-instance.types';
 import { getSwarmMessagesChannelIdByChannelsListDatabaseKey } from '../../../../../swarm-messages-channels-utils/swarm-messages-channels-list-utils/swarm-messages-channels-list-swarm-messages-params-utils/swarm-messages-channels-list-swarm-messages-params-utils';
+import { swarmChannelsListClockSortedChannelsDescriptionsUpdatesCacheInstanceFabric } from '../../../../../swarm-messages-channels-subclasses/swarm-channels-list-clock-sorted-channels-descriptions-updates-cache/swarm-channels-list-clock-sorted-channels-descriptions-updates-cache.fabric';
 
 export function getSwarmMessagesChannelsListVersionOneConstructorOptionsDefault<
   P extends ESwarmStoreConnector,
@@ -66,6 +67,7 @@ export function getSwarmMessagesChannelsListVersionOneConstructorOptionsDefault<
     getTypeForSwarmMessageWithChannelDescriptionByChannelDescription: getSwarmMessageWithChannelDescriptionTypeByChannelListDescription,
     getDatabaseKeyForChannelDescription: getChannelsListDatabaseKeyForChannelDescription,
     getChannelIdByDatabaseKey: getSwarmMessagesChannelIdByChannelsListDatabaseKey,
+    getSwarmChannelsListClockSortedChannelsDescriptionsUpdatesCache: swarmChannelsListClockSortedChannelsDescriptionsUpdatesCacheInstanceFabric,
   };
   const swarmMessagesChannelDescriptionFormatValidator = createSwarmMessagesChannelValidationDescriptionFormatV1ByChannelDescriptionJSONSchema(
     swarmMessageChannelDescriptionFormatSchema as JSONSchema7

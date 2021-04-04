@@ -1,6 +1,9 @@
-import { TSwarmMessageConstructorBodyMessage } from '../../swarm-message/swarm-message-constructor.types';
-import { ESwarmStoreConnector } from '../../swarm-store-class';
-import { TSwarmMessageSerialized } from '../../swarm-message';
+import {
+  ISwarmMessageInstanceDecrypted,
+  TSwarmMessageConstructorBodyMessage,
+  TSwarmMessageSerialized,
+} from '../../swarm-message/swarm-message-constructor.types';
+import { ESwarmStoreConnector, TSwarmStoreDatabaseOptions, TSwarmStoreDatabaseType } from '../../swarm-store-class';
 import { ISwarmMessageChannelDescriptionRaw } from './swarm-messages-channel-instance.types';
 import { ISwarmMessagesChannelsListDescription } from './swarm-messages-channels-list-instance.types';
 import { TSwarmStoreDatabaseEntityKey } from '../../swarm-store-class/swarm-store-class.types';
@@ -147,4 +150,25 @@ export interface IBodyCreatorOfSwarmMessageWithChannelDescription<
  */
 export interface ISwarmMessagesListDatabaseNameByDescriptionGenerator {
   (swarmMessagesListDescription: ISwarmMessagesChannelsListDescription): string;
+}
+
+/**
+ * Fabric that creates channel description by swarm message.
+ *
+ * @export
+ * @interface IChannelDescriptionBySwarmMessageFabric
+ * @template P
+ * @template T
+ * @template DbType
+ * @template DBO
+ * @template MD
+ */
+export interface IChannelDescriptionBySwarmMessageFabric<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
+  MD extends ISwarmMessageInstanceDecrypted
+> {
+  (swarmMessage: MD): Promise<ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>>;
 }

@@ -9,6 +9,7 @@ import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from '../../s
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import { ISwarmMessageChannelDescriptionRaw } from './swarm-messages-channel-instance.types';
 import { JSONSchema7 } from 'json-schema';
+import { TSwarmStoreDatabaseEntityKey } from '../../swarm-store-class/swarm-store-class.types';
 import {
   IGetDatabaseKeyForChannelDescription,
   IGetSwarmMessageWithChannelDescriptionIssuerByChannelListDescription,
@@ -161,7 +162,7 @@ export interface IValidatorOfSwarmMessageWithChannelDescriptionArgument<
    * @type {(string | undefined)}
    * @memberof IGrantAccessCallbackSwrmMessagesChannelsListArguments
    */
-  keyInDb: string | undefined;
+  keyInDb: TSwarmStoreDatabaseEntityKey<P> | undefined;
   /**
    * Which operation performs by the message - remove the key from the database
    * or update/add a new message with a channel description.
