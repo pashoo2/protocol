@@ -1,4 +1,4 @@
-import { MarkOptional } from 'ts-essentials';
+import { MarkOptional, MarkRequired } from 'ts-essentials';
 import {
   ISwarmMessageChannelDescriptionRaw,
   ISwarmMessagesChannelConstructorOptions,
@@ -46,6 +46,7 @@ import {
 import { getQueuedEncryptionClassByPasswordStringAndSalt } from 'classes/basic-classes/queued-encryption-class-base/fabrics/queued-encryption-class-base-fabric-by-password';
 import { getSwarmMessagesChannelV1DefaultConstructorOptionsUtils } from '../../utils/swarm-messages-channel-v1-constructor-options-default-utils/swarm-messages-channel-v1-constructor-options-default-utils';
 import { ISwarmMessagesChannelV1ConstructorOptionsDefaultUtilsDefaultConnectionUtils } from '../../utils/swarm-messages-channel-v1-constructor-options-default-utils/types/swarm-messages-channel-v1-constructor-options-default-utils.types';
+import { ISwarmMessagesChannelV1DefaultFabricOptions } from './types/swarm-messges-channel-v1-fabric-async-default.types';
 
 /**
  * Creates instance of swarm channel
@@ -175,210 +176,31 @@ export async function getSwarmMessagesChannelV1InstanveWithDefaults<
     >,
     'passwordEncryptedChannelEncryptionQueue' | 'utils'
   >
->(options: {
-  channelConstructorMainOptions: CHCO;
-  channeDatabaseConnectorOptions: CHCO['utils'] extends never ? Omit<OPT, 'dbOptions' | 'user'> : never;
-  SwarmMessagesChannelConstructorWithHelperConstuctorsSupport:
-    | ISwarmMessagesChannelConstructor<
-        P,
-        T,
-        DbType,
-        DBO,
-        ConnectorBasic,
-        CO,
-        PO,
-        ConnectorMain,
-        CFO,
-        GAC,
-        MCF,
-        ACO,
-        O,
-        SMS,
-        MD,
-        SMSM,
-        DCO,
-        DCCRT,
-        OPT,
-        [
-          ISwarmMessagesChannelV1ClassChannelsListHandlerConstructor<
-            P,
-            T,
-            DbType,
-            DBO,
-            ConnectorBasic,
-            CO,
-            PO,
-            ConnectorMain,
-            CFO,
-            GAC,
-            MCF,
-            ACO,
-            O,
-            SMS,
-            MD
-          >,
-          ISwarmMessagesChannelV1DatabaseHandlerConstructor<
-            P,
-            T,
-            DbType,
-            DBO,
-            ConnectorBasic,
-            CO,
-            PO,
-            ConnectorMain,
-            CFO,
-            GAC,
-            MCF,
-            ACO,
-            O,
-            SMS,
-            MD,
-            SMSM,
-            DCO,
-            DCCRT,
-            OPT,
-            CHD['messageEncryption']
-          >
-        ]
-      >
-    | never;
-  /**
-   * Constructor of a swarm messages channel swarm channels list
-   * handler helper class.
-   *
-   * @type {ISwarmMessagesChannelV1ClassChannelsListHandlerConstructor<
-   *     P,
-   *     T,
-   *     DbType,
-   *     DBO,
-   *     ConnectorBasic,
-   *     CO,
-   *     PO,
-   *     ConnectorMain,
-   *     CFO,
-   *     GAC,
-   *     MCF,
-   *     ACO,
-   *     O,
-   *     SMS,
-   *     MD
-   *   >}
-   */
-  SwarmMessagesChannelV1ClassChannelsListHandlerConstructor:
-    | ISwarmMessagesChannelV1ClassChannelsListHandlerConstructor<
-        P,
-        T,
-        DbType,
-        DBO,
-        ConnectorBasic,
-        CO,
-        PO,
-        ConnectorMain,
-        CFO,
-        GAC,
-        MCF,
-        ACO,
-        O,
-        SMS,
-        MD
-      >
-    | never;
-  /**
-   * Constructor of swarm messages channel databse handler helper class.
-   *
-   * @type {ISwarmMessagesChannelV1DatabaseHandlerConstructor<
-   *     P,
-   *     T,
-   *     DbType,
-   *     DBO,
-   *     ConnectorBasic,
-   *     CO,
-   *     PO,
-   *     ConnectorMain,
-   *     CFO,
-   *     GAC,
-   *     MCF,
-   *     ACO,
-   *     O,
-   *     SMS,
-   *     MD,
-   *     SMSM,
-   *     DCO,
-   *     DCCRT,
-   *     OPT,
-   *     CHD['messageEncryption']
-   *   >}
-   */
-  SwarmMessagesChannelV1DatabaseHandlerConstructor:
-    | ISwarmMessagesChannelV1DatabaseHandlerConstructor<
-        P,
-        T,
-        DbType,
-        DBO,
-        ConnectorBasic,
-        CO,
-        PO,
-        ConnectorMain,
-        CFO,
-        GAC,
-        MCF,
-        ACO,
-        O,
-        SMS,
-        MD,
-        SMSM,
-        DCO,
-        DCCRT,
-        OPT,
-        CHD['messageEncryption']
-      >
-    | never;
-  /**
-   * A password string will be used for messages encryption and decryption.
-   *
-   * @type {CHD['messageEncryption'] extends SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD ? string : never}
-   */
-  passwordForMessagesEncryption: CHD['messageEncryption'] extends SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD ? string : never;
-  /**
-   * Fabric which creates instance of encryption queue
-   * by a password string and salt, with queue options
-   * optional argument.
-   */
-  encryptionQueueFabricByPasswordAndSalt?: CHD['messageEncryption'] extends SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD
-    ? (passwordString: string, salt: string, queueOptions?: IAsyncQueueBaseClassOptions) => Promise<IQueuedEncryptionClassBase>
-    : never;
-  /**
-   * Optional options for encryption queue.
-   *
-   * @type {CHD['messageEncryption'] extends SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD ? IAsyncQueueBaseClassOptions : never}
-   */
-  encryptionQueueOptions?: CHD['messageEncryption'] extends SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD
-    ? IAsyncQueueBaseClassOptions
-    : never;
-  defaultConnectionUtils?: Partial<
-    ISwarmMessagesChannelV1ConstructorOptionsDefaultUtilsDefaultConnectionUtils<
-      P,
-      T,
-      DbType,
-      DBO,
-      ConnectorBasic,
-      CO,
-      PO,
-      ConnectorMain,
-      CFO,
-      GAC,
-      MCF,
-      ACO,
-      O,
-      SMS,
-      MD,
-      SMSM,
-      DCO,
-      DCCRT,
-      OPT
-    >
-  >;
-}): Promise<
+>(
+  options: ISwarmMessagesChannelV1DefaultFabricOptions<
+    P,
+    T,
+    MD,
+    DbType,
+    DBO,
+    ConnectorBasic,
+    CO,
+    PO,
+    ConnectorMain,
+    CFO,
+    GAC,
+    MCF,
+    ACO,
+    O,
+    SMS,
+    SMSM,
+    DCO,
+    DCCRT,
+    OPT,
+    CHD,
+    CHCO
+  >
+): Promise<
   typeof options['SwarmMessagesChannelConstructorWithHelperConstuctorsSupport'] extends never
     ? ISwarmMessagesChannel<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, GAC, MCF, ACO, O, SMS, MD>
     : InstanceType<typeof options['SwarmMessagesChannelConstructorWithHelperConstuctorsSupport']>

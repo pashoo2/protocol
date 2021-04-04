@@ -35,11 +35,7 @@ import {
 import { ISwarmMessageStoreDeleteMessageArg } from './types/swarm-message-store.types';
 import { TSwarmMessageSerialized, TSwarmMessageConstructorBodyMessage } from '../swarm-message/swarm-message-constructor.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
-import {
-  TSwarmStoreDatabaseOptions,
-  TSwarmStoreDatabaseType,
-  TSwarmStoreConnectorAccessConrotllerGrantAccessCallback,
-} from '../swarm-store-class/swarm-store-class.types';
+import { TSwarmStoreDatabaseOptions, TSwarmStoreDatabaseType } from '../swarm-store-class/swarm-store-class.types';
 
 import { ISwarmMessageStoreAccessControlOptions, ISwarmMessageDatabaseConstructors } from './types/swarm-message-store.types';
 import { extendSwarmMessageStoreConnectionOptionsWithAccessControlAndConnectorSpecificOptions } from './swarm-message-store-connection-options/swarm-message-store-connection-options-utils/swarm-message-store-connection-options-extender';
@@ -497,9 +493,7 @@ export class SwarmMessageStore<
   protected async _getSwarmMessageConstructorForDb(
     dbName: DBO['dbName']
   ): Promise<PromiseResolveType<ReturnType<NonNullable<MCF>>>> {
-    return ((await this.getMessageConstructor(dbName)) ?? this._getDefaultSwarmMessageConstructor()) as PromiseResolveType<
-      ReturnType<NonNullable<MCF>>
-    >;
+    return (await this.getMessageConstructor(dbName)) ?? this._getDefaultSwarmMessageConstructor();
   }
 
   protected getMessagesWithMeta<MDT extends MD>(
