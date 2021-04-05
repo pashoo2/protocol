@@ -16,6 +16,7 @@ export interface ISwarmMessagesChannelsListComponentProps<
   MD extends ISwarmMessageInstanceDecrypted
 > extends Omit<ISwarmMessagesChannelsListProps<P, T, MD>, 'updateChannelDescription'> {
   currentUserId: TCentralAuthorityUserIdentity;
+  onChoseSwarmChannel?(swarmChannelDescription: ISwarmMessageChannelDescriptionRaw<P, T, any, any>): unknown;
 }
 
 interface ISwarmMessagesChannelsListComponentState<

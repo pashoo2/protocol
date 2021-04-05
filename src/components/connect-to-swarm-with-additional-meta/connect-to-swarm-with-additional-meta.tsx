@@ -47,6 +47,7 @@ import {
   ISwarmStoreConnectorBasicWithEntriesCount,
   ISwarmStoreConnectorWithEntriesCount,
 } from '../../classes/swarm-store-class/swarm-store-class-extended/swarm-store-class-with-entries-count/swarm-store-class-with-entries-count.types';
+import { getSwarmMessageStoreMeta } from 'classes/swarm-messages-database/swarm-messages-database-utils/swarm-messages-database-messages-collector-utils/swarm-messages-database-messages-collector-utils';
 
 export class ConnectToSwarmWithAdditionalMeta<
   DbType extends TSwarmStoreDatabaseType<P>,
@@ -184,16 +185,7 @@ export class ConnectToSwarmWithAdditionalMeta<
       ISwarmMessagesStoreMeta
     >({
       swarmMessageStore,
-      getSwarmMessageStoreMeta: async (swarmMessageStore: SMS, dbName: DBO['dbName']): Promise<ISwarmMessagesStoreMeta> => {
-        const messagesAllStoredCount = await swarmMessageStore.getCountEntriesAllExists(dbName);
-
-        if (messagesAllStoredCount instanceof Error) {
-          throw messagesAllStoredCount;
-        }
-        return {
-          messagesStoredCount: messagesAllStoredCount,
-        };
-      },
+      getSwarmMessageStoreMeta,
     }) as SMSM;
   }
 }

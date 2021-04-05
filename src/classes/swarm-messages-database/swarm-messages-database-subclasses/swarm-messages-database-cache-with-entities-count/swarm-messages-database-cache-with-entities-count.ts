@@ -35,13 +35,19 @@ export class SwarmMessagesDatabaseCacheWithEntitiesCount<
     }
   }
 
-  protected _getMessagesStoreMeta(): Promise<SMSMeta> {
+  protected async _getMessagesStoreMeta(): Promise<SMSMeta> {
     const dbName = this._options?.dbName;
 
     if (!dbName) {
       throw new Error('Database name should be defined in the options');
     }
-    return this._getSwarmMessagesCollector().getStoreMeta(dbName);
+
+    const swarmMessagesCollector = this._getSwarmMessagesCollector();
+
+    if (typeof swarmMessagesCollector.getStoreMeta !== 'function') {
+      throw new Error('swarmMessagesCollector doesnt support meta information');
+    }
+    return await swarmMessagesCollector.getStoreMeta(dbName);
   }
 
   protected async _getOverallMessagesInStoreCount(): Promise<number> {

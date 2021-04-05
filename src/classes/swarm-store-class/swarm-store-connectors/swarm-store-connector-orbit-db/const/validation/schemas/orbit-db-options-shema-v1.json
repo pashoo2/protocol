@@ -44,13 +44,16 @@
       "required": ["dbName", "dbType"]
     },
     {
-      "oneOf": [
+      "anyOf": [
         {
           "$comment": "Required isPublic in combination with the granAccess callback function",
           "type": "object",
           "properties": {
             "isPublic": {
               "type": "boolean"
+            },
+            "write": {
+              "type": "array"
             }
           },
           "required": ["isPublic", "grantAccess"]
@@ -61,6 +64,9 @@
           "properties": {
             "write": {
               "type": "array"
+            },
+            "isPublic": {
+              "type": "boolean"
             }
           },
           "required": ["write"]

@@ -14,7 +14,6 @@ import {
   ISwarmStoreProviderOptions,
   ISwarmStoreOptionsConnectorFabric,
 } from '../../../swarm-store-class/swarm-store-class.types';
-import { TSwarmMessageInstance } from '../../../swarm-message/swarm-message-constructor.types';
 import {
   TSwarmMessagesStoreGrantAccessCallback,
   ISwarmMessageStoreAccessControlOptions,

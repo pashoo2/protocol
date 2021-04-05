@@ -22,6 +22,7 @@ export interface ISwarmMessagesChannelsListProps<
   channelsList: ISwarmMessagesChannelsDescriptionsList<P, T, MD>;
   updateChannelDescription(channelDescription: ISwarmMessageChannelDescriptionRaw<P, T, any, any>): Promise<void>;
   renderOnChannelsListReady?: () => React.ReactNode;
+  onChoseSwarmChannel?(swarmChannelDescription: ISwarmMessageChannelDescriptionRaw<P, T, any, any>): unknown;
 }
 
 export interface ISwarmMessagesChannelsListState<
@@ -152,13 +153,16 @@ export class SwarmMessagesChannelsListComponentBase<
   protected _renderChannelDescription(
     channelDescription: ISwarmMessageChannelDescriptionRaw<P, T, any, any>
   ): React.ReactElement {
-    const { updateChannelDescription } = this.props;
+    const { updateChannelDescription, onChoseSwarmChannel } = this.props;
     return (
-      <SwarmChannelDescriptionComponent
-        showEditButton
-        channelDescription={channelDescription}
-        updateChannelDescription={updateChannelDescription}
-      />
+      <div>
+        {onChoseSwarmChannel ? <button onClick={() => onChoseSwarmChannel(channelDescription)}>Open</button> : null}
+        <SwarmChannelDescriptionComponent
+          showEditButton
+          channelDescription={channelDescription}
+          updateChannelDescription={updateChannelDescription}
+        />
+      </div>
     );
   }
 

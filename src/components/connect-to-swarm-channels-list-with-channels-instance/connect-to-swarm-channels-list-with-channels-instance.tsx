@@ -6,19 +6,12 @@ import { ISwarmMessageInstanceDecrypted } from '../../classes/swarm-message/swar
 import { TSwarmStoreDatabaseOptions, TSwarmStoreDatabaseType } from '../../classes/swarm-store-class/swarm-store-class.types';
 import { IConnectionBridgeOptionsDefault } from '../../classes/connection-bridge/types/connection-bridge.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
-import {
-  ISwarmMessageChannelDescriptionRaw,
-  ISwarmMessagesChannelConstructorOptions,
-} from '../../classes/swarm-messages-channels/types/swarm-messages-channel-instance.types';
+import { ISwarmMessageChannelDescriptionRaw } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-instance.types';
 import { ISwarmMessagesChannelsDescriptionsList } from '../../classes/swarm-messages-channels/types/swarm-messages-channels-list-instance.types';
 import { ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaWithDBO } from '../connect-to-swarm-channels-list-with-additional-meta-with-dbo';
 import { P } from '../connect-to-swarm-with-dbo/connect-to-swarm-with-dbo';
-import { ISwarmMessagesDatabaseConnectOptions } from '../../classes/swarm-messages-database/swarm-messages-database.types';
-import { CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_WITH_STORE_META_OPTIONS } from '../const/connect-to-swarm.const';
-import { createSwarmMessagesDatabaseMessagesCollectorInstance } from '../../classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector';
 import { TDatabaseOptionsTypeByChannelDescriptionRaw } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-instance.helpers.types';
 import { ESwarmMessagesChannelEventName } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-events.types';
-import { getSwarmMessagesDatabaseWithKVDbMessagesUpdatesConnectorInstanceFabric } from '../../classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/utils/swarm-messages-channel-v1-constructor-options-default-utils/utils/swarm-messages-channel-v1-constructor-options-default-utils-database-connector-fabrics';
 
 /**
  * Swarm messages channels list
@@ -81,142 +74,6 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithChannelInstance
         {isChannelReady ? 'channel database is ready' : 'channel database is not ready'}
       </div>
     );
-  }
-
-  protected _getConnectionBridgeInstance() {
-    const connectionBridge = this.state.connectionBridge;
-    if (!connectionBridge) {
-      throw new Error('Connection bridge insance is not available to be used');
-    }
-    return connectionBridge;
-  }
-
-  protected _getSwarmMessagesDatabaseConnectorOptions(): Omit<
-    ISwarmMessagesDatabaseConnectOptions<P, T, DbType, DBO, any, any, any, any, any, any, any, any, any, any, MD, any, any, any>,
-    'dbOptions' | 'user'
-  > {
-    const connectionBridge = this._getConnectionBridgeInstance();
-    const swarmMessageStore = connectionBridge.swarmMessageStore;
-
-    if (!swarmMessageStore) {
-      throw new Error('Swarm message store is not redy to be used');
-    }
-
-    const swarmMessagesCollector = createSwarmMessagesDatabaseMessagesCollectorInstance({
-      swarmMessageStore,
-    });
-    const swarmMessagesDatabaseConnectorOptions: Omit<
-      ISwarmMessagesDatabaseConnectOptions<
-        P,
-        T,
-        DbType,
-        DBO,
-        any,
-        any,
-        any,
-        any,
-        any,
-        any,
-        any,
-        any,
-        any,
-        any,
-        MD,
-        any,
-        any,
-        any
-      >,
-      'dbOptions' | 'user'
-    > = {
-      swarmMessageStore,
-      cacheOptions: CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_WITH_STORE_META_OPTIONS,
-      swarmMessagesCollector,
-    };
-    return swarmMessagesDatabaseConnectorOptions;
-  }
-
-  protected _getSwarmMessagesChannelConstructorOptions(
-    channelsListInstance: ISwarmMessagesChannelsDescriptionsList<P, T, MD>,
-    swarmMessageChannelDescription: ISwarmMessageChannelDescriptionRaw<
-      P,
-      T,
-      TSwarmStoreDatabaseType<P>,
-      TSwarmStoreDatabaseOptions<P, TSwarmMessageSerialized, TSwarmStoreDatabaseType<P>>
-    >
-  ) {
-    const { centralAuthorityConnection, swarmMessageStore } = this._getConnectionBridgeInstance();
-
-    if (!centralAuthorityConnection) {
-      throw new Error('Central authority connection is not ready to be used');
-    }
-    if (!swarmMessageStore) {
-      throw new Error('Swarm message store is not redy to be used');
-    }
-
-    const currentUserId = centralAuthorityConnection?.getUserIdentity();
-
-    if (currentUserId instanceof Error) {
-      throw currentUserId;
-    }
-    if (!currentUserId) {
-      throw new Error('Current user identifier is not defined');
-    }
-
-    const swarmMessagesChannelConstructorOptions: Omit<
-      ISwarmMessagesChannelConstructorOptions<
-        P,
-        T,
-        DbType,
-        DBO,
-        any,
-        any,
-        any,
-        any,
-        any,
-        any,
-        any,
-        any,
-        any,
-        any,
-        MD,
-        any,
-        any,
-        any,
-        any,
-        typeof swarmMessageStore
-      >,
-      'passwordEncryptedChannelEncryptionQueue' | 'utils'
-    > = {
-      currentUserId,
-      swarmMessagesChannelDescription: swarmMessageChannelDescription,
-      swarmMessagesChannelsListInstance: channelsListInstance,
-    };
-
-    return swarmMessagesChannelConstructorOptions;
-  }
-
-  protected _getOptionsForSwarmMessagesChannelV1FabricByChannelsListInstanceAndChannelDescription(
-    channelsListInstance: ISwarmMessagesChannelsDescriptionsList<P, T, MD>,
-    swarmMessageChannelDescription: ISwarmMessageChannelDescriptionRaw<
-      P,
-      T,
-      TSwarmStoreDatabaseType<P>,
-      TSwarmStoreDatabaseOptions<P, TSwarmMessageSerialized, TSwarmStoreDatabaseType<P>>
-    >
-  ) {
-    const swarmMessagesChannelConstructorOptions = this._getSwarmMessagesChannelConstructorOptions(
-      channelsListInstance,
-      swarmMessageChannelDescription
-    );
-    const swarmMessagesDatabaseConnectorOptions = this._getSwarmMessagesDatabaseConnectorOptions();
-    debugger;
-    return {
-      channelConstructorMainOptions: swarmMessagesChannelConstructorOptions,
-      channeDatabaseConnectorOptions: swarmMessagesDatabaseConnectorOptions,
-      defaultConnectionUtils: {
-        getSwarmMessagesDatabaseWithKVDbMessagesUpdatesConnectorInstanceFabric,
-      },
-    };
   }
 
   protected async _onChannelAdded(
