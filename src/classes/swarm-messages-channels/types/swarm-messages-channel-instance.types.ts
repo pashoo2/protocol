@@ -39,7 +39,10 @@ import { ISwarmMessagesDatabaseConnectedInstanceFabricByDatabaseOptions } from '
 import { ISwarmMessagesChannelNotificationEmitter } from './swarm-messages-channel-events.types';
 import { TCentralAuthorityUserIdentity } from '../../central-authority-class/central-authority-class-types/central-authority-class-types-common';
 import { IQueuedEncryptionClassBase } from '../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
-import { ISwarmMessageDatabaseEvents } from '../../swarm-messages-database/swarm-messages-database.types';
+import {
+  ISwarmMessageDatabaseEvents,
+  TSwarmMessageDatabaseMessagesCached,
+} from '../../swarm-messages-database/swarm-messages-database.types';
 import { TTypedEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 
 export type TSwarmMessagesChannelId = string;
@@ -329,6 +332,14 @@ export interface ISwarmMessagesChannel<
    * @memberof ISwarmMessagesChannel
    */
   readonly channelInactiveReasonError: Error | undefined;
+
+  /**
+   * List of a messages with additional meta information.
+   *
+   * @type {TSwarmMessageDatabaseMessagesCached<P, DbType, MD>}
+   * @memberof ISwarmMessagesDatabaseProperties
+   */
+  readonly cachedMessages: TSwarmMessageDatabaseMessagesCached<P, DbType, MD> | undefined;
 
   /**
    * Close the instance and a swarm messages database related.

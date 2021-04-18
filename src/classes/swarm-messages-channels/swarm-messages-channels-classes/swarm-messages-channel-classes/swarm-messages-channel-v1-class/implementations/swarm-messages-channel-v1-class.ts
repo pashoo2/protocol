@@ -55,6 +55,7 @@ import { EventEmitter } from '../../../../../basic-classes/event-emitter-class-b
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { ISwarmMessagesChannelEvents } from '../../../../types/swarm-messages-channel-events.types';
 import { SWARM_MESSAGES_CHANNEL_VERSION } from '../../../const/swarm-messages-channel-classes-params.const';
+import { TSwarmMessageDatabaseMessagesCached } from '../../../../../swarm-messages-database/swarm-messages-database.types';
 import {
   TSwarmStoreDatabaseEntityKey,
   TSwarmStoreDatabaseIteratorMethodArgument,
@@ -211,6 +212,16 @@ export class SwarmMessagesChannelV1Class<
       this._whetherChannelIsActive &&
       Boolean(this.__swarmMessagesChannelDatabaseHandlerInstance.isDatabaseReady)
     );
+  }
+
+  /**
+   * List of a messages with additional meta information.
+   *
+   * @type {TSwarmMessageDatabaseMessagesCached<P, DbType>}
+   * @memberof ISwarmMessagesDatabaseProperties
+   */
+  public get cachedMessages(): TSwarmMessageDatabaseMessagesCached<P, DbType, MD> | undefined {
+    return this.__swarmMessagesChannelDatabaseHandlerInstance.cachedMessages;
   }
 
   protected get _swarmMessagesChannelDescriptionWODatabaseOptions(): ISwarmMessageChannelDescriptionWithoutDatabaseOptionsRaw<

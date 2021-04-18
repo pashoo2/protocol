@@ -32,7 +32,6 @@ import {
   forwardEvents,
   stopForwardEvents,
 } from '../../../../basic-classes/event-emitter-class-base/event-emitter-class-with-forwarding.utils';
-import { EventEmitter } from '../../../../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 
 export function getSwarmMessagesChannelsListVersionOneClass<
   P extends ESwarmStoreConnector,

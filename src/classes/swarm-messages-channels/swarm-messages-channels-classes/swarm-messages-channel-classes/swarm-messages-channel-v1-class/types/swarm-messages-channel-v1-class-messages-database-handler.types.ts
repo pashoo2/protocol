@@ -29,7 +29,10 @@ import {
 } from '../../../../../swarm-store-class/swarm-store-class.types';
 import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../../../../const/swarm-messages-channels-main.const';
 import { ISwarmMessagesChannel } from '../../../../types/swarm-messages-channel-instance.types';
-import { ISwarmMessageDatabaseEvents } from '../../../../../swarm-messages-database/swarm-messages-database.types';
+import {
+  ISwarmMessageDatabaseEvents,
+  TSwarmMessageDatabaseMessagesCached,
+} from '../../../../../swarm-messages-database/swarm-messages-database.types';
 import { EventEmitter } from '../../../../../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 
 /**
@@ -111,6 +114,14 @@ export interface ISwarmMessagesChannelV1DatabaseHandler<
    * @memberof ISwarmMessagesChannelV1DatabaseHandler
    */
   readonly isDatabaseReady: boolean;
+
+  /**
+   * List of a messages with additional meta information.
+   *
+   * @type {TSwarmMessageDatabaseMessagesCached<P, DbType>}
+   * @memberof ISwarmMessagesDatabaseProperties
+   */
+  readonly cachedMessages: TSwarmMessageDatabaseMessagesCached<P, DbType, MD> | undefined;
 
   /**
    * Create new swarm messages database connector instance

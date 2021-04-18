@@ -137,7 +137,7 @@ export function createGrantAccessCallbackByConstantArgumentsAndMessageWithChanne
       key,
       time
     );
-    debugger;
+
     if (isDELETE) {
       // TODO - may be it will cause a problems e.g. if the DELETE
       // message has come before CREATE message

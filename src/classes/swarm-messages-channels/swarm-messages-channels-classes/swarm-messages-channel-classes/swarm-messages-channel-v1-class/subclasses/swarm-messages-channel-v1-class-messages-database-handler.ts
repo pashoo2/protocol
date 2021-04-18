@@ -36,7 +36,10 @@ import {
   ISwarmMessagesChannelV1DatabaseHandler,
 } from '../types/swarm-messages-channel-v1-class-messages-database-handler.types';
 import { getEventEmitterInstance, EventEmitter } from 'classes/basic-classes/event-emitter-class-base';
-import { ISwarmMessageDatabaseEvents } from '../../../../../swarm-messages-database/swarm-messages-database.types';
+import {
+  ISwarmMessageDatabaseEvents,
+  TSwarmMessageDatabaseMessagesCached,
+} from '../../../../../swarm-messages-database/swarm-messages-database.types';
 import { createCancellablePromiseByNativePromise } from '../../../../../../utils/common-utils/commom-utils.promies';
 import { IPromiseCancellable } from '../../../../../../types/promise.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
@@ -217,6 +220,17 @@ export class SwarmMessagesChannelV1DatabaseHandler<
    */
   public get isDatabaseReady(): boolean {
     return Boolean(this.__actualSwarmMessagesDatabaseConnector?.isReady);
+  }
+
+  /**
+   * Swarm channel messages cached.
+   *
+   * @readonly
+   * @type {(TSwarmMessageDatabaseMessagesCached<P, DbType, MD> | undefined)}
+   * @memberof SwarmMessagesChannelV1DatabaseHandler
+   */
+  public get cachedMessages(): TSwarmMessageDatabaseMessagesCached<P, DbType, MD> | undefined {
+    return this.__actualSwarmMessagesDatabaseConnector?.cachedMessages;
   }
 
   /**

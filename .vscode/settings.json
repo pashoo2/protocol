@@ -2,5 +2,7 @@
   "editor.formatOnSave": true,
   "editor.formatOnSaveTimeout": 1000,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "typescript.tsdk": "/home/paul/projects/protocol/node_modules/typescript/lib"
+  "typescript.tsdk": "/home/paul/projects/protocol/node_modules/typescript/lib",
+  "typescript.referencesCodeLens.enabled": true,
+  "typescript.suggest.completeFunctionCalls": true
 }

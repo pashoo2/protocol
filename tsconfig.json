@@ -25,7 +25,8 @@
     "typeRoots": ["src/types", "**/types", "**/node_modules/types", "**/node_modules/@types"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "noErrorTruncation": true
   },
   "include": [
     "src/**/*.ts",

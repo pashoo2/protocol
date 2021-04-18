@@ -216,7 +216,6 @@ export class SwarmChannelDescriptionComponent<
   }
 
   private __handlePressUpdateChannelDescription = async (ev: React.SyntheticEvent) => {
-    debugger;
     ev.preventDefault();
     const { updateChannelDescription } = this.props;
     const channelDescriptionEdited = this.__getChannelDescriptionByChannelDescriptionEdited();
@@ -226,6 +225,7 @@ export class SwarmChannelDescriptionComponent<
       isPending: true,
     });
     try {
+      debugger;
       await pendingUpdateChannelDescriptionPromise;
     } catch (err) {
       alert(err.message);

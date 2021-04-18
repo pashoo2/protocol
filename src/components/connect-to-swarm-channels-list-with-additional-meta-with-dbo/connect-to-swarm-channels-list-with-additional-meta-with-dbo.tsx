@@ -48,6 +48,11 @@ import { getSwarmMessagesChannelFabricByChannelDescriptionFabric } from '../../c
 import { ISwarmMessagesChannelFabricByChannelDescriptionWithDefaults } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-instance.fabrics.types';
 import { createSwarmMessagesDatabaseMessagesCollectorWithStoreMetaInstance } from '../../classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector-with-store-meta/swarm-messages-database-messages-collector-with-store-meta';
 import { getSwarmMessageStoreMeta } from 'classes/swarm-messages-database/swarm-messages-database-utils/swarm-messages-database-messages-collector-utils/swarm-messages-database-messages-collector-utils';
+import { ESwarmMessagesChannelEventName } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-events.types';
+import { PromiseResolveType } from '../../types/promise.types';
+import { SwarmChannelInstanceMessagesComponent } from '../swarm-channel-instance-component/swarm-channel-instance-messages-component';
+import { SwarmChannelInstanceStateComponent } from '../swarm-channel-instance-component/swarm-channel-instance-state-component';
+import { SwarmChannelInstanceComponent } from '../swarm-channel-instance-component/swarm-channel-instance-component';
 
 /**
  * Swarm messages channels list
@@ -149,9 +154,12 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
     }
   }
 
-  public render() {
-    const { swarmMessagesChannelsList } = this.state as any;
+  public render(): React.ReactElement {
+    const { swarmMessagesChannelsList, openedSwarmChannelInstance } = this.state as any;
     const whetherConnectionBridgeInstanceInitialized = this.isConnectionBridgeInstanceInitialized();
+    if (openedSwarmChannelInstance) {
+      return this._renderSwarmMessagesChannel();
+    }
     return (
       <div>
         {this._renderUserIdentity()}
@@ -169,6 +177,21 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
         )}
       </div>
     );
+  }
+
+  public componentWillUnmount() {
+    const { openedSwarmChannelInstance } = (this.state as unknown) as {
+      openedSwarmChannelInstance: PromiseResolveType<
+        ReturnType<ISwarmMessagesChannelFabricByChannelDescriptionWithDefaults<ESwarmStoreConnector.OrbitDB, T, MD, DbType, DBO>>
+      > | null;
+    };
+
+    if (openedSwarmChannelInstance) {
+      openedSwarmChannelInstance.emitterChannelState.removeListener(
+        ESwarmMessagesChannelEventName.CHANNEL_CLOSED,
+        this.__handleChannelClosed
+      );
+    }
   }
 
   protected isConnectionBridgeInstanceInitialized(): boolean {
@@ -223,6 +246,15 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
         jsonSchemaValidator,
       },
     };
+  }
+
+  protected _renderSwarmMessagesChannel(): React.ReactElement {
+    const { openedSwarmChannelInstance } = this.state as any;
+
+    if (!openedSwarmChannelInstance) {
+      throw new Error('Swarm channel instance should be defined');
+    }
+    return <SwarmChannelInstanceComponent swarmMessagesChannelInstance={openedSwarmChannelInstance} />;
   }
 
   protected _getDatabaseConnectorFabricForChannnelsList() {
@@ -478,7 +510,6 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
       DbType,
       DBO
     >['defaultConnectionUtils'];
-    debugger;
     return {
       channelConstructorMainOptions: swarmMessagesChannelConstructorOptions,
       channeDatabaseConnectorOptions: swarmMessagesDatabaseConnectorOptions,
@@ -551,17 +582,26 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
 
   protected async _createSwarmChannelInstanceByDescription(
     swarmChannelDescription: ISwarmMessageChannelDescriptionRaw<P, T, any, any>
-  ): ReturnType<ISwarmMessagesChannelFabricByChannelDescriptionWithDefaults<ESwarmStoreConnector.OrbitDB, T, MD, DbType, DBO>> {
+  ): Promise<void> {
     const fabricSwarmChannelByChannelDescription = this.__getExistingSwarmChannelsFabricChannelDescriptionOrCreateNewOne();
     const swarmChannelInstance = await fabricSwarmChannelByChannelDescription(swarmChannelDescription);
     debugger;
-    return swarmChannelInstance;
+    // TODO - render the instance with SwarmChannelInstanceComponent
+    this.setState({
+      openedSwarmChannelInstance: swarmChannelInstance,
+    });
+    swarmChannelInstance.emitterChannelState.once(ESwarmMessagesChannelEventName.CHANNEL_CLOSED, this.__handleChannelClosed);
   }
 
   private __onChoseSwarmChannel = async (
     swarmChannelDescription: ISwarmMessageChannelDescriptionRaw<P, T, any, any>
   ): Promise<void> => {
-    debugger;
     await this._createSwarmChannelInstanceByDescription(swarmChannelDescription);
+  };
+
+  private __handleChannelClosed = () => {
+    this.setState({
+      openedSwarmChannelInstance: null,
+    });
   };
 }
