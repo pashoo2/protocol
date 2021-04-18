@@ -119,6 +119,7 @@ export function SwarmChannelInstanceMessagesComponent<
 
     function swarmMessagesUpdate(dbName: DBO['dbName'], message: MD): void {
       const cachedMessages = swarmMessagesChannelInstance.cachedMessages;
+      debugger;
       if (cachedMessages) {
         let cachedMessageDescription;
         const messagesList = [];

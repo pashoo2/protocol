@@ -113,30 +113,44 @@ export function SwarmChannelInstanceSendMessageComponent<
   const [errorMessage, setErrorMessage] = useState('');
   const [messageKey, setMessageKey] = useState('');
   const [messageText, setMessageText] = useState('');
-  const handleSendMessage = useCallback(async (): Promise<void> => {
-    try {
-      setErrorMessage('');
+  const sendMessageWithSwarmMessagesChannelInstance = useCallback(
+    async (
+      swarmMessageBody: Omit<MD['bdy'], 'iss'>,
+      swarmMessageDbKey: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? string : never
+    ): Promise<void> => {
+      try {
+        const messageAddPendingPromise: Promise<void> = swarmMessagesChannelInstance.addMessage(
+          swarmMessageBody,
+          swarmMessageDbKey
+        );
 
-      const message = {
-        pld: messageText,
-        typ: 'test',
-        ts: Date.now(),
-      } as Omit<MD['bdy'], 'iss'>;
-      const messageAddPendingPromise: Promise<void> = swarmMessagesChannelInstance.addMessage(
+        setWhetherMessageIsPending(true);
+        await Promise.race([messageAddPendingPromise, timeout(2000)]);
+      } finally {
+        setWhetherMessageIsPending(false);
+      }
+    },
+    [swarmMessagesChannelInstance]
+  );
+  const handleSendMessage = useCallback(async (): Promise<void> => {
+    const message = {
+      pld: messageText,
+      typ: 'test',
+      ts: Date.now(),
+    } as Omit<MD['bdy'], 'iss'>;
+
+    setErrorMessage('');
+    try {
+      await sendMessageWithSwarmMessagesChannelInstance(
         message,
         (isChannelKeyValue ? messageKey : undefined) as DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
           ? string
           : never
       );
-
-      setWhetherMessageIsPending(true);
-      await Promise.race([messageAddPendingPromise, timeout(2000)]);
     } catch (err) {
       setErrorMessage(err.message);
-    } finally {
-      setWhetherMessageIsPending(false);
     }
-  }, [swarmMessagesChannelInstance]);
+  }, [isChannelKeyValue, messageText, messageKey, sendMessageWithSwarmMessagesChannelInstance]);
   const handleMessageKeyChange = useCallback((ev: React.ChangeEvent<HTMLInputElement>): void => setMessageKey(ev.target.value), [
     setMessageKey,
   ]);

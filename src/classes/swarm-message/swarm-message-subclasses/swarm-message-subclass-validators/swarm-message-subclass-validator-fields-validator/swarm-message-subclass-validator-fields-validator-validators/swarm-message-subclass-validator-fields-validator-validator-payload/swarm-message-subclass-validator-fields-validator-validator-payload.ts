@@ -49,7 +49,7 @@ function validatePayloadFunc(
     assert.fail('Unknown error has occurred while calculating the lenght of the payload');
     return;
   }
-  assert(Number.isFinite(len), 'The length of the payload is too big');
+  assert(Number.isFinite(len), 'The length of the payload must be a finite number');
   assert(len <= payloadMaxLengthBytes, 'The payload value is too big');
   assert(len >= payloadMinLengthBytes, 'The payload value is too small');
 }

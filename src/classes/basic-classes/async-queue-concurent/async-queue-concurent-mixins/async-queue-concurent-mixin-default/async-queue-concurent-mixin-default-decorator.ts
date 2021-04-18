@@ -13,7 +13,7 @@ export function decoratorAsyncQueueConcurentMixinDefault<M extends AnyConstructo
         inst[methodName] = (
           ...args: Parameters<InstanceType<M & AnyConstructor<IAsyncQueueConcurentMixinDefault>>[typeof methodName]>
         ) => {
-          return (inst as IAsyncQueueConcurentMixinDefault)._runAsJob(() => origin(...args), String(methodName));
+          return (inst as IAsyncQueueConcurentMixinDefault)._runAsJob(() => origin.apply(inst, args), String(methodName));
         };
       }
     });
