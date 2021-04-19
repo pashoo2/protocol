@@ -131,7 +131,7 @@ export const CONNECT_TO_SWARM_CONNECTION_STORAGE_OPTIONS: TConnectionBridgeStora
       op?: TSwarmStoreDatabaseEntryOperation<ESwarmStoreConnector.OrbitDB>
     ) {
       console.log(this);
-      debugger;
+      if (process.env.NODE_ENV === 'development') debugger;
       return Promise.resolve(true);
     },
   }, // use the default access control

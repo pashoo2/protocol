@@ -16,7 +16,7 @@ export const CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_KEY_VALUE = {
     console.log('grantAccess');
     console.log(...args);
     console.log(this);
-    debugger;
+    if (process.env.NODE_ENV === 'development') debugger;
     return true;
   },
 };

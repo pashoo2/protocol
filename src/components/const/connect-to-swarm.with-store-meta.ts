@@ -130,7 +130,7 @@ export const CONNECT_TO_SWARM_CONNECTION_STORAGE_OPTIONS: TConnectionBridgeStora
       time: number
     ) {
       console.log(this);
-      debugger;
+      if (process.env.NODE_ENV === 'development') debugger;
       return Promise.resolve(true);
     },
   }, // use the default access control
@@ -223,7 +223,7 @@ export const CONNECT_TO_SWARM_CONNECTION_STORAGE_WITH_STORE_META_OPTIONS: IConne
       op?: TSwarmStoreDatabaseEntryOperation<ESwarmStoreConnector.OrbitDB>
     ) {
       console.log(this);
-      debugger;
+      if (process.env.NODE_ENV === 'development') debugger;
       return Promise.resolve(true);
     },
   }, // use the default access control

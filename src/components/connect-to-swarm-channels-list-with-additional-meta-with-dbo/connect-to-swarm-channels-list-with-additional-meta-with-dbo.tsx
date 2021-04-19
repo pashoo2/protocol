@@ -308,7 +308,7 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
       dbOptions: {
         write: [currentUserId],
         grantAccess: async function grantAccess(): Promise<boolean> {
-          debugger;
+          if (process.env.NODE_ENV === 'development') debugger;
           return true;
         },
       },
@@ -585,7 +585,7 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
   ): Promise<void> {
     const fabricSwarmChannelByChannelDescription = this.__getExistingSwarmChannelsFabricChannelDescriptionOrCreateNewOne();
     const swarmChannelInstance = await fabricSwarmChannelByChannelDescription(swarmChannelDescription);
-    debugger;
+    if (process.env.NODE_ENV === 'development') debugger;
     // TODO - render the instance with SwarmChannelInstanceComponent
     this.setState({
       openedSwarmChannelInstance: swarmChannelInstance,

@@ -368,7 +368,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
   protected async _add(addArg: TSwarmStoreConnectorOrbitDbDatabaseAddMethodArgument<ItemType>): Promise<string | Error> {
     const { value, key } = addArg;
     const database = this.getDbStoreInstance();
-    debugger;
+    if (process.env.NODE_ENV === 'development') debugger;
     if (database instanceof Error) {
       return database;
     }

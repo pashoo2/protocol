@@ -366,7 +366,7 @@ export class SwarmMessagesChannelsListComponentBase<
       isChannelsListClosed: false,
     });
     try {
-      debugger;
+      if (process.env.NODE_ENV === 'development') debugger;
       void (await this._updateChannelsDescriptionsInState());
     } catch (err) {
       this._addErrorsIntoTheErrorsList([

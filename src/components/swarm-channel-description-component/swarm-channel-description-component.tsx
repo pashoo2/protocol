@@ -225,7 +225,7 @@ export class SwarmChannelDescriptionComponent<
       isPending: true,
     });
     try {
-      debugger;
+      if (process.env.NODE_ENV === 'development') debugger;
       await pendingUpdateChannelDescriptionPromise;
     } catch (err) {
       alert(err.message);

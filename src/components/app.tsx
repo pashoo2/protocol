@@ -92,7 +92,7 @@ export class App extends React.Component {
       userToConnectWith === '1' ? CONNECT_TO_SWARM_AUTH_CREDENTIALS_1 : CONNECT_TO_SWARM_AUTH_CREDENTIALS_2;
     const userIdReceiverMessages =
       userToConnectWith === '1' ? CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_2 : CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_1;
-    debugger;
+    if (process.env.NODE_ENV === 'development') debugger;
     // return (
     //   <ConnectToSwarmWithAdditionalMetaWithDBO<
     //     typeof CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_KEY_VALUE['dbType'],

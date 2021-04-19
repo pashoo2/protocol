@@ -408,7 +408,7 @@ export class SwarmMessagesChannelV1DatabaseHandler<
     message: Omit<MD['bdy'], 'iss'>,
     key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : never
   ): Promise<void> {
-    debugger;
+    if (process.env.NODE_ENV === 'development') debugger;
     const databaseConnector = await this._getActiveDatabaseConnector();
     const swarmMessageBody = await this._prepareSwarmMessageBodyBeforeSending(message);
     await databaseConnector.addMessage(swarmMessageBody, key);

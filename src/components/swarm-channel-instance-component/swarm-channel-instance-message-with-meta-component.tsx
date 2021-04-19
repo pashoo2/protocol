@@ -38,8 +38,6 @@ export function SwarmChannelInstanceMessageComponent<MD extends ISwarmMessageIns
       </div>
     );
   }
-  // TODO - render messages
-  debugger;
   return (
     <div>
       {messageMetaRenderResult}
