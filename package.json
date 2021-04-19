@@ -128,7 +128,7 @@
     "ts-jest": "^25.1.0",
     "ts-transformer-imports": "^0.4.3",
     "ttypescript": "^1.5.10",
-    "typedoc": "^0.16.11",
+    "typedoc": "^0.20.35",
     "typescript": "^4.2.3"
   }
 }

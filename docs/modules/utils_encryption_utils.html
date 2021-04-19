@@ -1,0 +1,773 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>utils/encryption-utils | decentralized-protocol</title>
+	<meta name="description" content="Documentation for decentralized-protocol">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+	<script async src="../assets/js/search.js" id="search-script"></script>
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">decentralized-protocol</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../modules.html">decentralized-protocol</a>
+				</li>
+				<li>
+					<a href="utils_encryption_utils.html">utils/encryption-utils</a>
+				</li>
+			</ul>
+			<h1>Module utils/encryption-utils</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>References</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#crypto_util_data_sign_private_key_usage" class="tsd-kind-icon">CRYPTO_<wbr>UTIL_<wbr>DATA_<wbr>SIGN_<wbr>PRIVATE_<wbr>KEY_<wbr>USAGE</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#crypto_util_data_sign_public_key_usage" class="tsd-kind-icon">CRYPTO_<wbr>UTIL_<wbr>DATA_<wbr>SIGN_<wbr>PUBLIC_<wbr>KEY_<wbr>USAGE</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#crypto_util_decription_key_type" class="tsd-kind-icon">CRYPTO_<wbr>UTIL_<wbr>DECRIPTION_<wbr>KEY_<wbr>TYPE</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#crypto_util_encryption_key_type" class="tsd-kind-icon">CRYPTO_<wbr>UTIL_<wbr>ENCRYPTION_<wbr>KEY_<wbr>TYPE</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#crypto_util_generate_keypair_options" class="tsd-kind-icon">CRYPTO_<wbr>UTIL_<wbr>GENERATE_<wbr>KEYPAIR_<wbr>OPTIONS</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#crypto_util_keypair_export_format" class="tsd-kind-icon">CRYPTO_<wbr>UTIL_<wbr>KEYPAIR_<wbr>EXPORT_<wbr>FORMAT</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#crypto_util_keypair_private_key_name" class="tsd-kind-icon">CRYPTO_<wbr>UTIL_<wbr>KEYPAIR_<wbr>PRIVATE_<wbr>KEY_<wbr>NAME</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#crypto_util_keypair_public_key_name" class="tsd-kind-icon">CRYPTO_<wbr>UTIL_<wbr>KEYPAIR_<wbr>PUBLIC_<wbr>KEY_<wbr>NAME</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#crypto_util_keypair_salt_key_name" class="tsd-kind-icon">CRYPTO_<wbr>UTIL_<wbr>KEYPAIR_<wbr>SALT_<wbr>KEY_<wbr>NAME</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#crypto_util_keypair_usages" class="tsd-kind-icon">CRYPTO_<wbr>UTIL_<wbr>KEYPAIR_<wbr>USAGES</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#crypto_util_keys_extractable" class="tsd-kind-icon">CRYPTO_<wbr>UTIL_<wbr>KEYS_<wbr>EXTRACTABLE</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#crypto_util_key_algorithm" class="tsd-kind-icon">CRYPTO_<wbr>UTIL_<wbr>KEY_<wbr>ALGORITHM</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#crypto_util_key_desc" class="tsd-kind-icon">CRYPTO_<wbr>UTIL_<wbr>KEY_<wbr>DESC</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#crypto_util_private_key_usage" class="tsd-kind-icon">CRYPTO_<wbr>UTIL_<wbr>PRIVATE_<wbr>KEY_<wbr>USAGE</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#crypto_util_public_key_usage" class="tsd-kind-icon">CRYPTO_<wbr>UTIL_<wbr>PUBLIC_<wbr>KEY_<wbr>USAGE</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#initialization_vector_default_length" class="tsd-kind-icon">INITIALIZATION_<wbr>VECTOR_<wbr>DEFAULT_<wbr>LENGTH</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#salt_generation_utils_salt_length_bytes" class="tsd-kind-icon">SALT_<wbr>GENERATION_<wbr>UTILS_<wbr>SALT_<wbr>LENGTH_<wbr>BYTES</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#salt_generation_utils_salt_max_length_bytes" class="tsd-kind-icon">SALT_<wbr>GENERATION_<wbr>UTILS_<wbr>SALT_<wbr>MAX_<wbr>LENGTH_<wbr>BYTES</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#salt_generation_utils_salt_min_length_bytes" class="tsd-kind-icon">SALT_<wbr>GENERATION_<wbr>UTILS_<wbr>SALT_<wbr>MIN_<wbr>LENGTH_<wbr>BYTES</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#tcrypto_utils_data_with_initialization_vector" class="tsd-kind-icon">TCRYPTO_<wbr>UTILS_<wbr>DATA_<wbr>WITH_<wbr>INITIALIZATION_<wbr>VECTOR</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#tcrypto_utils_decrypt_data_key_config" class="tsd-kind-icon">TCRYPTO_<wbr>UTILS_<wbr>DECRYPT_<wbr>DATA_<wbr>KEY_<wbr>CONFIG</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#tcrypto_utils_encrypt_data_key_config" class="tsd-kind-icon">TCRYPTO_<wbr>UTILS_<wbr>ENCRYPT_<wbr>DATA_<wbr>KEY_<wbr>CONFIG</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#tcrypto_util_decrypt_data_types" class="tsd-kind-icon">TCRYPTO_<wbr>UTIL_<wbr>DECRYPT_<wbr>DATA_<wbr>TYPES</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#tcrypto_util_decrypt_data_types_native" class="tsd-kind-icon">TCRYPTO_<wbr>UTIL_<wbr>DECRYPT_<wbr>DATA_<wbr>TYPES_<wbr>NATIVE</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#tcrypto_util_decrypt_key_types" class="tsd-kind-icon">TCRYPTO_<wbr>UTIL_<wbr>DECRYPT_<wbr>KEY_<wbr>TYPES</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#tcrypto_util_encrypt_data_types" class="tsd-kind-icon">TCRYPTO_<wbr>UTIL_<wbr>ENCRYPT_<wbr>DATA_<wbr>TYPES</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#tcrypto_util_encrypt_data_types_native" class="tsd-kind-icon">TCRYPTO_<wbr>UTIL_<wbr>ENCRYPT_<wbr>DATA_<wbr>TYPES_<wbr>NATIVE</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#tcrypto_util_encrypt_key_types" class="tsd-kind-icon">TCRYPTO_<wbr>UTIL_<wbr>ENCRYPT_<wbr>KEY_<wbr>TYPES</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#tcrypto_util_import_key_types" class="tsd-kind-icon">TCRYPTO_<wbr>UTIL_<wbr>IMPORT_<wbr>KEY_<wbr>TYPES</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#tcrypto_util_keypair_export_format_type" class="tsd-kind-icon">TCRYPTO_<wbr>UTIL_<wbr>KEYPAIR_<wbr>EXPORT_<wbr>FORMAT_<wbr>TYPE</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#tcrypto_util_keypair_import_format_type" class="tsd-kind-icon">TCRYPTO_<wbr>UTIL_<wbr>KEYPAIR_<wbr>IMPORT_<wbr>FORMAT_<wbr>TYPE</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#tcrypto_util_keypair_preimport_format_type" class="tsd-kind-icon">TCRYPTO_<wbr>UTIL_<wbr>KEYPAIR_<wbr>PREIMPORT_<wbr>FORMAT_<wbr>TYPE</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#tcrypto_util_key_export_format_type" class="tsd-kind-icon">TCRYPTO_<wbr>UTIL_<wbr>KEY_<wbr>EXPORT_<wbr>FORMAT_<wbr>TYPE</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#tsaltutilssalttype" class="tsd-kind-icon">TSalt<wbr>Utils<wbr>Salt<wbr>Type</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#checkifstringiskeypair" class="tsd-kind-icon">check<wbr>IfString<wbr>IsKey<wbr>Pair</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#concatdatawithinitializationvector" class="tsd-kind-icon">concat<wbr>Data<wbr>With<wbr>Initialization<wbr>Vector</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#cryptomodule" class="tsd-kind-icon">crypto<wbr>Module</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#decryptdata" class="tsd-kind-icon">decrypt<wbr>Data</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#decryptdatafromstring" class="tsd-kind-icon">decrypt<wbr>Data<wbr>From<wbr>String</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#decryptnative" class="tsd-kind-icon">decrypt<wbr>Native</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#ecrypto_utils_keys_types" class="tsd-kind-icon">eCRYPTO_<wbr>UTILS_<wbr>KEYS_<wbr>TYPES</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#ecrypto_utils_keys_usages" class="tsd-kind-icon">eCRYPTO_<wbr>UTILS_<wbr>KEYS_<wbr>USAGES</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#encryptnative" class="tsd-kind-icon">encrypt<wbr>Native</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#encrypttostring" class="tsd-kind-icon">encrypt<wbr>ToString</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#encrypttotypedarray" class="tsd-kind-icon">encrypt<wbr>ToTyped<wbr>Array</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#exportkey" class="tsd-kind-icon">export<wbr>Key</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#exportkeyasstring" class="tsd-kind-icon">export<wbr>Key<wbr>AsString</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#exportkeypair" class="tsd-kind-icon">export<wbr>Key<wbr>Pair</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#exportkeypairasstring" class="tsd-kind-icon">export<wbr>Key<wbr>Pair<wbr>AsString</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#exportpublickey" class="tsd-kind-icon">export<wbr>Public<wbr>Key</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#exportpublickeyasstring" class="tsd-kind-icon">export<wbr>Public<wbr>Key<wbr>AsString</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#generateinitializationvectornative" class="tsd-kind-icon">generate<wbr>Initialization<wbr>Vector<wbr>Native</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#generateinitializationvectornativearraybuffer" class="tsd-kind-icon">generate<wbr>Initialization<wbr>Vector<wbr>Native<wbr>Array<wbr>Buffer</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#generatekeypair" class="tsd-kind-icon">generate<wbr>Key<wbr>Pair</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#generatesalt" class="tsd-kind-icon">generate<wbr>Salt</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#generatesaltnative" class="tsd-kind-icon">generate<wbr>Salt<wbr>Native</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#generatesaltstring" class="tsd-kind-icon">generate<wbr>Salt<wbr>String</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#getinitializationvectorfromdata" class="tsd-kind-icon">get<wbr>Initialization<wbr>Vector<wbr>From<wbr>Data</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#getinitializationvectorfromdatastring" class="tsd-kind-icon">get<wbr>Initialization<wbr>Vector<wbr>From<wbr>Data<wbr>String</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#getkeyoftype" class="tsd-kind-icon">get<wbr>Key<wbr>OfType</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#importkey" class="tsd-kind-icon">import<wbr>Key</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#importkeyfromstring" class="tsd-kind-icon">import<wbr>Key<wbr>From<wbr>String</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#importkeypair" class="tsd-kind-icon">import<wbr>Key<wbr>Pair</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#importkeypairfromstring" class="tsd-kind-icon">import<wbr>Key<wbr>Pair<wbr>From<wbr>String</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#importprivatekey" class="tsd-kind-icon">import<wbr>Private<wbr>Key</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#importprivatekeyfromstring" class="tsd-kind-icon">import<wbr>Private<wbr>Key<wbr>From<wbr>String</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#importpublickey" class="tsd-kind-icon">import<wbr>Public<wbr>Key</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#importpublickeyfromstring" class="tsd-kind-icon">import<wbr>Public<wbr>Key<wbr>From<wbr>String</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#importsalt" class="tsd-kind-icon">import<wbr>Salt</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#iscryptokeypairimported" class="tsd-kind-icon">is<wbr>Crypto<wbr>Key<wbr>Pair<wbr>Imported</a></li>
+								<li class="tsd-kind-reference tsd-parent-kind-module"><a href="utils_encryption_utils.html#isvalidsalt" class="tsd-kind-icon">is<wbr>Valid<wbr>Salt</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>References</h2>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="crypto_util_data_sign_private_key_usage" class="tsd-anchor"></a>
+					<h3>CRYPTO_<wbr>UTIL_<wbr>DATA_<wbr>SIGN_<wbr>PRIVATE_<wbr>KEY_<wbr>USAGE</h3>
+					Re-exports <a href="utils_encryption_utils_crypto_utils_const.html#crypto_util_data_sign_private_key_usage">CRYPTO_UTIL_DATA_SIGN_PRIVATE_KEY_USAGE</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="crypto_util_data_sign_public_key_usage" class="tsd-anchor"></a>
+					<h3>CRYPTO_<wbr>UTIL_<wbr>DATA_<wbr>SIGN_<wbr>PUBLIC_<wbr>KEY_<wbr>USAGE</h3>
+					Re-exports <a href="utils_encryption_utils_crypto_utils_const.html#crypto_util_data_sign_public_key_usage">CRYPTO_UTIL_DATA_SIGN_PUBLIC_KEY_USAGE</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="crypto_util_decription_key_type" class="tsd-anchor"></a>
+					<h3>CRYPTO_<wbr>UTIL_<wbr>DECRIPTION_<wbr>KEY_<wbr>TYPE</h3>
+					Re-exports <a href="utils_encryption_utils_crypto_utils_const.html#crypto_util_decription_key_type">CRYPTO_UTIL_DECRIPTION_KEY_TYPE</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="crypto_util_encryption_key_type" class="tsd-anchor"></a>
+					<h3>CRYPTO_<wbr>UTIL_<wbr>ENCRYPTION_<wbr>KEY_<wbr>TYPE</h3>
+					Re-exports <a href="utils_encryption_utils_crypto_utils_const.html#crypto_util_encryption_key_type">CRYPTO_UTIL_ENCRYPTION_KEY_TYPE</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="crypto_util_generate_keypair_options" class="tsd-anchor"></a>
+					<h3>CRYPTO_<wbr>UTIL_<wbr>GENERATE_<wbr>KEYPAIR_<wbr>OPTIONS</h3>
+					Re-exports <a href="utils_encryption_utils_crypto_utils_const.html#crypto_util_generate_keypair_options">CRYPTO_UTIL_GENERATE_KEYPAIR_OPTIONS</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="crypto_util_keypair_export_format" class="tsd-anchor"></a>
+					<h3>CRYPTO_<wbr>UTIL_<wbr>KEYPAIR_<wbr>EXPORT_<wbr>FORMAT</h3>
+					Re-exports <a href="utils_encryption_utils_crypto_utils_const.html#crypto_util_keypair_export_format">CRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="crypto_util_keypair_private_key_name" class="tsd-anchor"></a>
+					<h3>CRYPTO_<wbr>UTIL_<wbr>KEYPAIR_<wbr>PRIVATE_<wbr>KEY_<wbr>NAME</h3>
+					Re-exports <a href="utils_encryption_utils_crypto_utils_const.html#crypto_util_keypair_private_key_name">CRYPTO_UTIL_KEYPAIR_PRIVATE_KEY_NAME</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="crypto_util_keypair_public_key_name" class="tsd-anchor"></a>
+					<h3>CRYPTO_<wbr>UTIL_<wbr>KEYPAIR_<wbr>PUBLIC_<wbr>KEY_<wbr>NAME</h3>
+					Re-exports <a href="utils_encryption_utils_crypto_utils_const.html#crypto_util_keypair_public_key_name">CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="crypto_util_keypair_salt_key_name" class="tsd-anchor"></a>
+					<h3>CRYPTO_<wbr>UTIL_<wbr>KEYPAIR_<wbr>SALT_<wbr>KEY_<wbr>NAME</h3>
+					Re-exports <a href="utils_encryption_utils_crypto_utils_const.html#crypto_util_keypair_salt_key_name">CRYPTO_UTIL_KEYPAIR_SALT_KEY_NAME</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="crypto_util_keypair_usages" class="tsd-anchor"></a>
+					<h3>CRYPTO_<wbr>UTIL_<wbr>KEYPAIR_<wbr>USAGES</h3>
+					Re-exports <a href="utils_encryption_utils_crypto_utils_const.html#crypto_util_keypair_usages">CRYPTO_UTIL_KEYPAIR_USAGES</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="crypto_util_keys_extractable" class="tsd-anchor"></a>
+					<h3>CRYPTO_<wbr>UTIL_<wbr>KEYS_<wbr>EXTRACTABLE</h3>
+					Re-exports <a href="utils_encryption_utils_crypto_utils_const.html#crypto_util_keys_extractable">CRYPTO_UTIL_KEYS_EXTRACTABLE</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="crypto_util_key_algorithm" class="tsd-anchor"></a>
+					<h3>CRYPTO_<wbr>UTIL_<wbr>KEY_<wbr>ALGORITHM</h3>
+					Re-exports <a href="utils_encryption_utils_crypto_utils_const.html#crypto_util_key_algorithm">CRYPTO_UTIL_KEY_ALGORITHM</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="crypto_util_key_desc" class="tsd-anchor"></a>
+					<h3>CRYPTO_<wbr>UTIL_<wbr>KEY_<wbr>DESC</h3>
+					Re-exports <a href="utils_encryption_utils_crypto_utils_const.html#crypto_util_key_desc">CRYPTO_UTIL_KEY_DESC</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="crypto_util_private_key_usage" class="tsd-anchor"></a>
+					<h3>CRYPTO_<wbr>UTIL_<wbr>PRIVATE_<wbr>KEY_<wbr>USAGE</h3>
+					Re-exports <a href="utils_encryption_utils_crypto_utils_const.html#crypto_util_private_key_usage">CRYPTO_UTIL_PRIVATE_KEY_USAGE</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="crypto_util_public_key_usage" class="tsd-anchor"></a>
+					<h3>CRYPTO_<wbr>UTIL_<wbr>PUBLIC_<wbr>KEY_<wbr>USAGE</h3>
+					Re-exports <a href="utils_encryption_utils_crypto_utils_const.html#crypto_util_public_key_usage">CRYPTO_UTIL_PUBLIC_KEY_USAGE</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="initialization_vector_default_length" class="tsd-anchor"></a>
+					<h3>INITIALIZATION_<wbr>VECTOR_<wbr>DEFAULT_<wbr>LENGTH</h3>
+					Re-exports <a href="utils_encryption_utils_crypto_utils_const.html#initialization_vector_default_length">INITIALIZATION_VECTOR_DEFAULT_LENGTH</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="salt_generation_utils_salt_length_bytes" class="tsd-anchor"></a>
+					<h3>SALT_<wbr>GENERATION_<wbr>UTILS_<wbr>SALT_<wbr>LENGTH_<wbr>BYTES</h3>
+					Re-exports <a href="utils_encryption_utils_salt_utils_const.html#salt_generation_utils_salt_length_bytes">SALT_GENERATION_UTILS_SALT_LENGTH_BYTES</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="salt_generation_utils_salt_max_length_bytes" class="tsd-anchor"></a>
+					<h3>SALT_<wbr>GENERATION_<wbr>UTILS_<wbr>SALT_<wbr>MAX_<wbr>LENGTH_<wbr>BYTES</h3>
+					Re-exports <a href="utils_encryption_utils_salt_utils_const.html#salt_generation_utils_salt_max_length_bytes">SALT_GENERATION_UTILS_SALT_MAX_LENGTH_BYTES</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="salt_generation_utils_salt_min_length_bytes" class="tsd-anchor"></a>
+					<h3>SALT_<wbr>GENERATION_<wbr>UTILS_<wbr>SALT_<wbr>MIN_<wbr>LENGTH_<wbr>BYTES</h3>
+					Re-exports <a href="utils_encryption_utils_salt_utils_const.html#salt_generation_utils_salt_min_length_bytes">SALT_GENERATION_UTILS_SALT_MIN_LENGTH_BYTES</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="tcrypto_utils_data_with_initialization_vector" class="tsd-anchor"></a>
+					<h3>TCRYPTO_<wbr>UTILS_<wbr>DATA_<wbr>WITH_<wbr>INITIALIZATION_<wbr>VECTOR</h3>
+					Re-exports <a href="utils_encryption_utils_crypto_utils_types.html#tcrypto_utils_data_with_initialization_vector">TCRYPTO_UTILS_DATA_WITH_INITIALIZATION_VECTOR</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="tcrypto_utils_decrypt_data_key_config" class="tsd-anchor"></a>
+					<h3>TCRYPTO_<wbr>UTILS_<wbr>DECRYPT_<wbr>DATA_<wbr>KEY_<wbr>CONFIG</h3>
+					Re-exports <a href="utils_encryption_utils_crypto_utils_types.html#tcrypto_utils_decrypt_data_key_config">TCRYPTO_UTILS_DECRYPT_DATA_KEY_CONFIG</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="tcrypto_utils_encrypt_data_key_config" class="tsd-anchor"></a>
+					<h3>TCRYPTO_<wbr>UTILS_<wbr>ENCRYPT_<wbr>DATA_<wbr>KEY_<wbr>CONFIG</h3>
+					Re-exports <a href="utils_encryption_utils_crypto_utils_types.html#tcrypto_utils_encrypt_data_key_config">TCRYPTO_UTILS_ENCRYPT_DATA_KEY_CONFIG</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="tcrypto_util_decrypt_data_types" class="tsd-anchor"></a>
+					<h3>TCRYPTO_<wbr>UTIL_<wbr>DECRYPT_<wbr>DATA_<wbr>TYPES</h3>
+					Re-exports <a href="utils_encryption_utils_crypto_utils_types.html#tcrypto_util_decrypt_data_types">TCRYPTO_UTIL_DECRYPT_DATA_TYPES</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="tcrypto_util_decrypt_data_types_native" class="tsd-anchor"></a>
+					<h3>TCRYPTO_<wbr>UTIL_<wbr>DECRYPT_<wbr>DATA_<wbr>TYPES_<wbr>NATIVE</h3>
+					Re-exports <a href="utils_encryption_utils_crypto_utils_types.html#tcrypto_util_decrypt_data_types_native">TCRYPTO_UTIL_DECRYPT_DATA_TYPES_NATIVE</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="tcrypto_util_decrypt_key_types" class="tsd-anchor"></a>
+					<h3>TCRYPTO_<wbr>UTIL_<wbr>DECRYPT_<wbr>KEY_<wbr>TYPES</h3>
+					Re-exports <a href="utils_encryption_utils_crypto_utils_types.html#tcrypto_util_decrypt_key_types">TCRYPTO_UTIL_DECRYPT_KEY_TYPES</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="tcrypto_util_encrypt_data_types" class="tsd-anchor"></a>
+					<h3>TCRYPTO_<wbr>UTIL_<wbr>ENCRYPT_<wbr>DATA_<wbr>TYPES</h3>
+					Re-exports <a href="utils_encryption_utils_crypto_utils_types.html#tcrypto_util_encrypt_data_types">TCRYPTO_UTIL_ENCRYPT_DATA_TYPES</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="tcrypto_util_encrypt_data_types_native" class="tsd-anchor"></a>
+					<h3>TCRYPTO_<wbr>UTIL_<wbr>ENCRYPT_<wbr>DATA_<wbr>TYPES_<wbr>NATIVE</h3>
+					Re-exports <a href="utils_encryption_utils_crypto_utils_types.html#tcrypto_util_encrypt_data_types_native">TCRYPTO_UTIL_ENCRYPT_DATA_TYPES_NATIVE</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="tcrypto_util_encrypt_key_types" class="tsd-anchor"></a>
+					<h3>TCRYPTO_<wbr>UTIL_<wbr>ENCRYPT_<wbr>KEY_<wbr>TYPES</h3>
+					Re-exports <a href="utils_encryption_utils_crypto_utils_types.html#tcrypto_util_encrypt_key_types">TCRYPTO_UTIL_ENCRYPT_KEY_TYPES</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="tcrypto_util_import_key_types" class="tsd-anchor"></a>
+					<h3>TCRYPTO_<wbr>UTIL_<wbr>IMPORT_<wbr>KEY_<wbr>TYPES</h3>
+					Re-exports <a href="utils_encryption_utils_crypto_utils_types.html#tcrypto_util_import_key_types">TCRYPTO_UTIL_IMPORT_KEY_TYPES</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="tcrypto_util_keypair_export_format_type" class="tsd-anchor"></a>
+					<h3>TCRYPTO_<wbr>UTIL_<wbr>KEYPAIR_<wbr>EXPORT_<wbr>FORMAT_<wbr>TYPE</h3>
+					Re-exports <a href="utils_encryption_utils_crypto_utils_types.html#tcrypto_util_keypair_export_format_type">TCRYPTO_UTIL_KEYPAIR_EXPORT_FORMAT_TYPE</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="tcrypto_util_keypair_import_format_type" class="tsd-anchor"></a>
+					<h3>TCRYPTO_<wbr>UTIL_<wbr>KEYPAIR_<wbr>IMPORT_<wbr>FORMAT_<wbr>TYPE</h3>
+					Re-exports <a href="utils_encryption_utils_crypto_utils_types.html#tcrypto_util_keypair_import_format_type">TCRYPTO_UTIL_KEYPAIR_IMPORT_FORMAT_TYPE</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="tcrypto_util_keypair_preimport_format_type" class="tsd-anchor"></a>
+					<h3>TCRYPTO_<wbr>UTIL_<wbr>KEYPAIR_<wbr>PREIMPORT_<wbr>FORMAT_<wbr>TYPE</h3>
+					Re-exports <a href="utils_encryption_utils_crypto_utils_types.html#tcrypto_util_keypair_preimport_format_type">TCRYPTO_UTIL_KEYPAIR_PREIMPORT_FORMAT_TYPE</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="tcrypto_util_key_export_format_type" class="tsd-anchor"></a>
+					<h3>TCRYPTO_<wbr>UTIL_<wbr>KEY_<wbr>EXPORT_<wbr>FORMAT_<wbr>TYPE</h3>
+					Re-exports <a href="utils_encryption_utils_crypto_utils_types.html#tcrypto_util_key_export_format_type">TCRYPTO_UTIL_KEY_EXPORT_FORMAT_TYPE</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="tsaltutilssalttype" class="tsd-anchor"></a>
+					<h3>TSalt<wbr>Utils<wbr>Salt<wbr>Type</h3>
+					Re-exports <a href="utils_encryption_utils_salt_utils_types.html#tsaltutilssalttype">TSaltUtilsSaltType</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="checkifstringiskeypair" class="tsd-anchor"></a>
+					<h3>check<wbr>IfString<wbr>IsKey<wbr>Pair</h3>
+					Re-exports <a href="utils_encryption_utils_keys_encryption_utils.html#checkifstringiskeypair">checkIfStringIsKeyPair</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="concatdatawithinitializationvector" class="tsd-anchor"></a>
+					<h3>concat<wbr>Data<wbr>With<wbr>Initialization<wbr>Vector</h3>
+					Re-exports <a href="utils_encryption_utils_encrypt_data_encryption_utils.html#concatdatawithinitializationvector">concatDataWithInitializationVector</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="cryptomodule" class="tsd-anchor"></a>
+					<h3>crypto<wbr>Module</h3>
+					Re-exports <a href="utils_encryption_utils_main_crypto_utils_const.html#cryptomodule">cryptoModule</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="decryptdata" class="tsd-anchor"></a>
+					<h3>decrypt<wbr>Data</h3>
+					Re-exports <a href="utils_encryption_utils_decrypt_data_encryption_utils.html#decryptdata">decryptData</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="decryptdatafromstring" class="tsd-anchor"></a>
+					<h3>decrypt<wbr>Data<wbr>From<wbr>String</h3>
+					Re-exports <a href="utils_encryption_utils_decrypt_data_encryption_utils.html#decryptdatafromstring">decryptDataFromString</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="decryptnative" class="tsd-anchor"></a>
+					<h3>decrypt<wbr>Native</h3>
+					Re-exports <a href="utils_encryption_utils_decrypt_data_encryption_utils.html#decryptnative">decryptNative</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="ecrypto_utils_keys_types" class="tsd-anchor"></a>
+					<h3>eCRYPTO_<wbr>UTILS_<wbr>KEYS_<wbr>TYPES</h3>
+					Re-exports <a href="../enums/utils_encryption_utils_crypto_utils_const.ecrypto_utils_keys_types.html">eCRYPTO_UTILS_KEYS_TYPES</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="ecrypto_utils_keys_usages" class="tsd-anchor"></a>
+					<h3>eCRYPTO_<wbr>UTILS_<wbr>KEYS_<wbr>USAGES</h3>
+					Re-exports <a href="../enums/utils_encryption_utils_crypto_utils_const.ecrypto_utils_keys_usages.html">eCRYPTO_UTILS_KEYS_USAGES</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="encryptnative" class="tsd-anchor"></a>
+					<h3>encrypt<wbr>Native</h3>
+					Re-exports <a href="utils_encryption_utils_encrypt_data_encryption_utils.html#encryptnative">encryptNative</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="encrypttostring" class="tsd-anchor"></a>
+					<h3>encrypt<wbr>ToString</h3>
+					Re-exports <a href="utils_encryption_utils_encrypt_data_encryption_utils.html#encrypttostring">encryptToString</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="encrypttotypedarray" class="tsd-anchor"></a>
+					<h3>encrypt<wbr>ToTyped<wbr>Array</h3>
+					Re-exports <a href="utils_encryption_utils_encrypt_data_encryption_utils.html#encrypttotypedarray">encryptToTypedArray</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="exportkey" class="tsd-anchor"></a>
+					<h3>export<wbr>Key</h3>
+					Re-exports <a href="utils_encryption_utils_keys_encryption_utils.html#exportkey">exportKey</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="exportkeyasstring" class="tsd-anchor"></a>
+					<h3>export<wbr>Key<wbr>AsString</h3>
+					Re-exports <a href="utils_encryption_utils_keys_encryption_utils.html#exportkeyasstring">exportKeyAsString</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="exportkeypair" class="tsd-anchor"></a>
+					<h3>export<wbr>Key<wbr>Pair</h3>
+					Re-exports <a href="utils_encryption_utils_keys_encryption_utils.html#exportkeypair">exportKeyPair</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="exportkeypairasstring" class="tsd-anchor"></a>
+					<h3>export<wbr>Key<wbr>Pair<wbr>AsString</h3>
+					Re-exports <a href="utils_encryption_utils_keys_encryption_utils.html#exportkeypairasstring">exportKeyPairAsString</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="exportpublickey" class="tsd-anchor"></a>
+					<h3>export<wbr>Public<wbr>Key</h3>
+					Re-exports <a href="utils_encryption_utils_keys_encryption_utils.html#exportpublickey">exportPublicKey</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="exportpublickeyasstring" class="tsd-anchor"></a>
+					<h3>export<wbr>Public<wbr>Key<wbr>AsString</h3>
+					Re-exports <a href="utils_encryption_utils_keys_encryption_utils.html#exportpublickeyasstring">exportPublicKeyAsString</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="generateinitializationvectornative" class="tsd-anchor"></a>
+					<h3>generate<wbr>Initialization<wbr>Vector<wbr>Native</h3>
+					Re-exports <a href="utils_encryption_utils_encrypt_data_encryption_utils.html#generateinitializationvectornative">generateInitializationVectorNative</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="generateinitializationvectornativearraybuffer" class="tsd-anchor"></a>
+					<h3>generate<wbr>Initialization<wbr>Vector<wbr>Native<wbr>Array<wbr>Buffer</h3>
+					Re-exports <a href="utils_encryption_utils_encrypt_data_encryption_utils.html#generateinitializationvectornativearraybuffer">generateInitializationVectorNativeArrayBuffer</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="generatekeypair" class="tsd-anchor"></a>
+					<h3>generate<wbr>Key<wbr>Pair</h3>
+					Re-exports <a href="utils_encryption_utils_keys_encryption_utils.html#generatekeypair">generateKeyPair</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="generatesalt" class="tsd-anchor"></a>
+					<h3>generate<wbr>Salt</h3>
+					Re-exports <a href="utils_encryption_utils_salt_utils.html#generatesalt">generateSalt</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="generatesaltnative" class="tsd-anchor"></a>
+					<h3>generate<wbr>Salt<wbr>Native</h3>
+					Re-exports <a href="utils_encryption_utils_salt_utils.html#generatesaltnative">generateSaltNative</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="generatesaltstring" class="tsd-anchor"></a>
+					<h3>generate<wbr>Salt<wbr>String</h3>
+					Re-exports <a href="utils_encryption_utils_salt_utils.html#generatesaltstring">generateSaltString</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="getinitializationvectorfromdata" class="tsd-anchor"></a>
+					<h3>get<wbr>Initialization<wbr>Vector<wbr>From<wbr>Data</h3>
+					Re-exports <a href="utils_encryption_utils_encrypt_data_encryption_utils.html#getinitializationvectorfromdata">getInitializationVectorFromData</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="getinitializationvectorfromdatastring" class="tsd-anchor"></a>
+					<h3>get<wbr>Initialization<wbr>Vector<wbr>From<wbr>Data<wbr>String</h3>
+					Re-exports <a href="utils_encryption_utils_encrypt_data_encryption_utils.html#getinitializationvectorfromdatastring">getInitializationVectorFromDataString</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="getkeyoftype" class="tsd-anchor"></a>
+					<h3>get<wbr>Key<wbr>OfType</h3>
+					Re-exports <a href="utils_encryption_utils_keys_encryption_utils.html#getkeyoftype">getKeyOfType</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="importkey" class="tsd-anchor"></a>
+					<h3>import<wbr>Key</h3>
+					Re-exports <a href="utils_encryption_utils_keys_encryption_utils.html#importkey">importKey</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="importkeyfromstring" class="tsd-anchor"></a>
+					<h3>import<wbr>Key<wbr>From<wbr>String</h3>
+					Re-exports <a href="utils_encryption_utils_keys_encryption_utils.html#importkeyfromstring">importKeyFromString</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="importkeypair" class="tsd-anchor"></a>
+					<h3>import<wbr>Key<wbr>Pair</h3>
+					Re-exports <a href="utils_encryption_utils_keys_encryption_utils.html#importkeypair">importKeyPair</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="importkeypairfromstring" class="tsd-anchor"></a>
+					<h3>import<wbr>Key<wbr>Pair<wbr>From<wbr>String</h3>
+					Re-exports <a href="utils_encryption_utils_keys_encryption_utils.html#importkeypairfromstring">importKeyPairFromString</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="importprivatekey" class="tsd-anchor"></a>
+					<h3>import<wbr>Private<wbr>Key</h3>
+					Re-exports <a href="utils_encryption_utils_keys_encryption_utils.html#importprivatekey">importPrivateKey</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="importprivatekeyfromstring" class="tsd-anchor"></a>
+					<h3>import<wbr>Private<wbr>Key<wbr>From<wbr>String</h3>
+					Re-exports <a href="utils_encryption_utils_keys_encryption_utils.html#importprivatekeyfromstring">importPrivateKeyFromString</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="importpublickey" class="tsd-anchor"></a>
+					<h3>import<wbr>Public<wbr>Key</h3>
+					Re-exports <a href="utils_encryption_utils_keys_encryption_utils.html#importpublickey">importPublicKey</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="importpublickeyfromstring" class="tsd-anchor"></a>
+					<h3>import<wbr>Public<wbr>Key<wbr>From<wbr>String</h3>
+					Re-exports <a href="utils_encryption_utils_keys_encryption_utils.html#importpublickeyfromstring">importPublicKeyFromString</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="importsalt" class="tsd-anchor"></a>
+					<h3>import<wbr>Salt</h3>
+					Re-exports <a href="utils_encryption_utils_salt_utils.html#importsalt">importSalt</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="iscryptokeypairimported" class="tsd-anchor"></a>
+					<h3>is<wbr>Crypto<wbr>Key<wbr>Pair<wbr>Imported</h3>
+					Re-exports <a href="utils_encryption_utils_keys_encryption_utils.html#iscryptokeypairimported">isCryptoKeyPairImported</a>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-reference tsd-parent-kind-module">
+					<a name="isvalidsalt" class="tsd-anchor"></a>
+					<h3>is<wbr>Valid<wbr>Salt</h3>
+					Re-exports <a href="utils_encryption_utils_salt_utils.html#isvalidsalt">isValidSalt</a>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class=" ">
+						<a href="../modules.html">Exports</a>
+					</li>
+					<li class="current tsd-kind-module">
+						<a href="utils_encryption_utils.html">utils/encryption-<wbr>utils</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#crypto_util_data_sign_private_key_usage" class="tsd-kind-icon">CRYPTO_<wbr>UTIL_<wbr>DATA_<wbr>SIGN_<wbr>PRIVATE_<wbr>KEY_<wbr>USAGE</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#crypto_util_data_sign_public_key_usage" class="tsd-kind-icon">CRYPTO_<wbr>UTIL_<wbr>DATA_<wbr>SIGN_<wbr>PUBLIC_<wbr>KEY_<wbr>USAGE</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#crypto_util_decription_key_type" class="tsd-kind-icon">CRYPTO_<wbr>UTIL_<wbr>DECRIPTION_<wbr>KEY_<wbr>TYPE</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#crypto_util_encryption_key_type" class="tsd-kind-icon">CRYPTO_<wbr>UTIL_<wbr>ENCRYPTION_<wbr>KEY_<wbr>TYPE</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#crypto_util_generate_keypair_options" class="tsd-kind-icon">CRYPTO_<wbr>UTIL_<wbr>GENERATE_<wbr>KEYPAIR_<wbr>OPTIONS</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#crypto_util_keypair_export_format" class="tsd-kind-icon">CRYPTO_<wbr>UTIL_<wbr>KEYPAIR_<wbr>EXPORT_<wbr>FORMAT</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#crypto_util_keypair_private_key_name" class="tsd-kind-icon">CRYPTO_<wbr>UTIL_<wbr>KEYPAIR_<wbr>PRIVATE_<wbr>KEY_<wbr>NAME</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#crypto_util_keypair_public_key_name" class="tsd-kind-icon">CRYPTO_<wbr>UTIL_<wbr>KEYPAIR_<wbr>PUBLIC_<wbr>KEY_<wbr>NAME</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#crypto_util_keypair_salt_key_name" class="tsd-kind-icon">CRYPTO_<wbr>UTIL_<wbr>KEYPAIR_<wbr>SALT_<wbr>KEY_<wbr>NAME</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#crypto_util_keypair_usages" class="tsd-kind-icon">CRYPTO_<wbr>UTIL_<wbr>KEYPAIR_<wbr>USAGES</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#crypto_util_keys_extractable" class="tsd-kind-icon">CRYPTO_<wbr>UTIL_<wbr>KEYS_<wbr>EXTRACTABLE</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#crypto_util_key_algorithm" class="tsd-kind-icon">CRYPTO_<wbr>UTIL_<wbr>KEY_<wbr>ALGORITHM</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#crypto_util_key_desc" class="tsd-kind-icon">CRYPTO_<wbr>UTIL_<wbr>KEY_<wbr>DESC</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#crypto_util_private_key_usage" class="tsd-kind-icon">CRYPTO_<wbr>UTIL_<wbr>PRIVATE_<wbr>KEY_<wbr>USAGE</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#crypto_util_public_key_usage" class="tsd-kind-icon">CRYPTO_<wbr>UTIL_<wbr>PUBLIC_<wbr>KEY_<wbr>USAGE</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#initialization_vector_default_length" class="tsd-kind-icon">INITIALIZATION_<wbr>VECTOR_<wbr>DEFAULT_<wbr>LENGTH</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#salt_generation_utils_salt_length_bytes" class="tsd-kind-icon">SALT_<wbr>GENERATION_<wbr>UTILS_<wbr>SALT_<wbr>LENGTH_<wbr>BYTES</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#salt_generation_utils_salt_max_length_bytes" class="tsd-kind-icon">SALT_<wbr>GENERATION_<wbr>UTILS_<wbr>SALT_<wbr>MAX_<wbr>LENGTH_<wbr>BYTES</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#salt_generation_utils_salt_min_length_bytes" class="tsd-kind-icon">SALT_<wbr>GENERATION_<wbr>UTILS_<wbr>SALT_<wbr>MIN_<wbr>LENGTH_<wbr>BYTES</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#tcrypto_utils_data_with_initialization_vector" class="tsd-kind-icon">TCRYPTO_<wbr>UTILS_<wbr>DATA_<wbr>WITH_<wbr>INITIALIZATION_<wbr>VECTOR</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#tcrypto_utils_decrypt_data_key_config" class="tsd-kind-icon">TCRYPTO_<wbr>UTILS_<wbr>DECRYPT_<wbr>DATA_<wbr>KEY_<wbr>CONFIG</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#tcrypto_utils_encrypt_data_key_config" class="tsd-kind-icon">TCRYPTO_<wbr>UTILS_<wbr>ENCRYPT_<wbr>DATA_<wbr>KEY_<wbr>CONFIG</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#tcrypto_util_decrypt_data_types" class="tsd-kind-icon">TCRYPTO_<wbr>UTIL_<wbr>DECRYPT_<wbr>DATA_<wbr>TYPES</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#tcrypto_util_decrypt_data_types_native" class="tsd-kind-icon">TCRYPTO_<wbr>UTIL_<wbr>DECRYPT_<wbr>DATA_<wbr>TYPES_<wbr>NATIVE</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#tcrypto_util_decrypt_key_types" class="tsd-kind-icon">TCRYPTO_<wbr>UTIL_<wbr>DECRYPT_<wbr>KEY_<wbr>TYPES</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#tcrypto_util_encrypt_data_types" class="tsd-kind-icon">TCRYPTO_<wbr>UTIL_<wbr>ENCRYPT_<wbr>DATA_<wbr>TYPES</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#tcrypto_util_encrypt_data_types_native" class="tsd-kind-icon">TCRYPTO_<wbr>UTIL_<wbr>ENCRYPT_<wbr>DATA_<wbr>TYPES_<wbr>NATIVE</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#tcrypto_util_encrypt_key_types" class="tsd-kind-icon">TCRYPTO_<wbr>UTIL_<wbr>ENCRYPT_<wbr>KEY_<wbr>TYPES</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#tcrypto_util_import_key_types" class="tsd-kind-icon">TCRYPTO_<wbr>UTIL_<wbr>IMPORT_<wbr>KEY_<wbr>TYPES</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#tcrypto_util_keypair_export_format_type" class="tsd-kind-icon">TCRYPTO_<wbr>UTIL_<wbr>KEYPAIR_<wbr>EXPORT_<wbr>FORMAT_<wbr>TYPE</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#tcrypto_util_keypair_import_format_type" class="tsd-kind-icon">TCRYPTO_<wbr>UTIL_<wbr>KEYPAIR_<wbr>IMPORT_<wbr>FORMAT_<wbr>TYPE</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#tcrypto_util_keypair_preimport_format_type" class="tsd-kind-icon">TCRYPTO_<wbr>UTIL_<wbr>KEYPAIR_<wbr>PREIMPORT_<wbr>FORMAT_<wbr>TYPE</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#tcrypto_util_key_export_format_type" class="tsd-kind-icon">TCRYPTO_<wbr>UTIL_<wbr>KEY_<wbr>EXPORT_<wbr>FORMAT_<wbr>TYPE</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#tsaltutilssalttype" class="tsd-kind-icon">TSalt<wbr>Utils<wbr>Salt<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#checkifstringiskeypair" class="tsd-kind-icon">check<wbr>IfString<wbr>IsKey<wbr>Pair</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#concatdatawithinitializationvector" class="tsd-kind-icon">concat<wbr>Data<wbr>With<wbr>Initialization<wbr>Vector</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#cryptomodule" class="tsd-kind-icon">crypto<wbr>Module</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#decryptdata" class="tsd-kind-icon">decrypt<wbr>Data</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#decryptdatafromstring" class="tsd-kind-icon">decrypt<wbr>Data<wbr>From<wbr>String</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#decryptnative" class="tsd-kind-icon">decrypt<wbr>Native</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#ecrypto_utils_keys_types" class="tsd-kind-icon">eCRYPTO_<wbr>UTILS_<wbr>KEYS_<wbr>TYPES</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#ecrypto_utils_keys_usages" class="tsd-kind-icon">eCRYPTO_<wbr>UTILS_<wbr>KEYS_<wbr>USAGES</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#encryptnative" class="tsd-kind-icon">encrypt<wbr>Native</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#encrypttostring" class="tsd-kind-icon">encrypt<wbr>ToString</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#encrypttotypedarray" class="tsd-kind-icon">encrypt<wbr>ToTyped<wbr>Array</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#exportkey" class="tsd-kind-icon">export<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#exportkeyasstring" class="tsd-kind-icon">export<wbr>Key<wbr>AsString</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#exportkeypair" class="tsd-kind-icon">export<wbr>Key<wbr>Pair</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#exportkeypairasstring" class="tsd-kind-icon">export<wbr>Key<wbr>Pair<wbr>AsString</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#exportpublickey" class="tsd-kind-icon">export<wbr>Public<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#exportpublickeyasstring" class="tsd-kind-icon">export<wbr>Public<wbr>Key<wbr>AsString</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#generateinitializationvectornative" class="tsd-kind-icon">generate<wbr>Initialization<wbr>Vector<wbr>Native</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#generateinitializationvectornativearraybuffer" class="tsd-kind-icon">generate<wbr>Initialization<wbr>Vector<wbr>Native<wbr>Array<wbr>Buffer</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#generatekeypair" class="tsd-kind-icon">generate<wbr>Key<wbr>Pair</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#generatesalt" class="tsd-kind-icon">generate<wbr>Salt</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#generatesaltnative" class="tsd-kind-icon">generate<wbr>Salt<wbr>Native</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#generatesaltstring" class="tsd-kind-icon">generate<wbr>Salt<wbr>String</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#getinitializationvectorfromdata" class="tsd-kind-icon">get<wbr>Initialization<wbr>Vector<wbr>From<wbr>Data</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#getinitializationvectorfromdatastring" class="tsd-kind-icon">get<wbr>Initialization<wbr>Vector<wbr>From<wbr>Data<wbr>String</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#getkeyoftype" class="tsd-kind-icon">get<wbr>Key<wbr>OfType</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#importkey" class="tsd-kind-icon">import<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#importkeyfromstring" class="tsd-kind-icon">import<wbr>Key<wbr>From<wbr>String</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#importkeypair" class="tsd-kind-icon">import<wbr>Key<wbr>Pair</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#importkeypairfromstring" class="tsd-kind-icon">import<wbr>Key<wbr>Pair<wbr>From<wbr>String</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#importprivatekey" class="tsd-kind-icon">import<wbr>Private<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#importprivatekeyfromstring" class="tsd-kind-icon">import<wbr>Private<wbr>Key<wbr>From<wbr>String</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#importpublickey" class="tsd-kind-icon">import<wbr>Public<wbr>Key</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#importpublickeyfromstring" class="tsd-kind-icon">import<wbr>Public<wbr>Key<wbr>From<wbr>String</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#importsalt" class="tsd-kind-icon">import<wbr>Salt</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#iscryptokeypairimported" class="tsd-kind-icon">is<wbr>Crypto<wbr>Key<wbr>Pair<wbr>Imported</a>
+					</li>
+					<li class=" tsd-kind-reference tsd-parent-kind-module">
+						<a href="utils_encryption_utils.html#isvalidsalt" class="tsd-kind-icon">is<wbr>Valid<wbr>Salt</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-namespace"><span class="tsd-kind-icon">Namespace</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>

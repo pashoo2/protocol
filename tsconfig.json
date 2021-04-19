@@ -43,9 +43,5 @@
     "/docs",
     "/module-build",
     ".ignored"
-  ],
-  "typedocOptions": {
-    "mode": "modules",
-    "out": "docs"
-  }
+  ]
 }
