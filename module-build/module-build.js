@@ -1,9 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const util = require('util');
 const tsConfig = require('../tsconfig-build.json');
-const outDirName =
-  tsConfig.compilerOptions.outDir || tsConfig.compilerOptions.declarationDir;
+const outDirName = tsConfig.compilerOptions.outDir || tsConfig.compilerOptions.declarationDir;
 
 if (!outDirName) {
   throw new Error('Failed to define output directory name');
@@ -61,13 +59,9 @@ fs.stat(buildPath, (err, stat) => {
             },
             packageJsonModuleParsed
           );
-          fs.writeFileSync(
-            packageJsonTargetPath,
-            JSON.stringify(resultedPackageJson, null, 2),
-            {
-              mode: 0o666,
-            }
-          );
+          fs.writeFileSync(packageJsonTargetPath, JSON.stringify(resultedPackageJson, null, 2), {
+            mode: 0o666,
+          });
         });
       });
     });

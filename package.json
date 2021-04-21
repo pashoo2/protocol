@@ -3,14 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "prebuild": "cp src/prod.ts src/index.ts",
+    "prebuild": "cp src/index.ts ../__test__.index.ts && cp src/prod.ts src/index.ts",
+    "postbuild": "cp ../__test__.index.ts src/index.ts && rm ../__test__.index.ts",
     "build:module:script": "node ./module-build",
-    "build:module": "npm run prebuild && ./node_modules/.bin/ttsc -p tsconfig-build.json && npm run build:module:script",
+    "build:module": "npm run prebuild && ./node_modules/.bin/ttsc -p tsconfig-build.json && npm run build:module:script && npm run postbuild",
     "build:declaration": "./node_modules/.bin/ttsc -p tsconfig-build.json --emitDeclarationOnly",
     "build:rollup": "npm run prebuild && rollup -c",
     "build:bundle": "./node_modules/.bin/cross-env-shell NODE_OPTIONS=--max_old_space_size=4096 npm run build:rollup && npm run build:declaration",
     "start": "cp src/dev.ts src/index.ts && react-scripts start",
-    "build": "npm run prebuild && react-scripts build",
+    "build": "export NODE_OPTIONS=--max_old_space_size=4096 && npm run prebuild && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "apply:patches": "patch-package",
@@ -26,7 +27,8 @@
     "lint:quiet:fix": "eslint --quiet --fix --cache --ext .js,.jsx,.ts,.tsx --ignore-path .gitignore --ignore-pattern \"*.test.*\" src",
     "lint:staged": "eslint . --quiet --ignore-path .gitignore --cache --ext .js,.jsx,.ts,.tsx --ignore-pattern \"*.test.*\" --ignore-pattern '/__test__/*' --ignore-pattern '/docs/*' --ignore-pattern '/module-build/*' --ignore-pattern '/src/utils/ipfs-utils'",
     "launch:chromium:unsecure": "google-chrome --disable-web-security --allow-file-access-from-files --user-data-dir=\"/tmp/chromium_tmp\"",
-    "docs:generate": "typedoc --out docs src"
+    "docs:generate": "typedoc --out docs src",
+    "build:decentralized-protocol": "npm run build:module"
   },
   "main": "src/index.ts",
   "lint-staged": {
