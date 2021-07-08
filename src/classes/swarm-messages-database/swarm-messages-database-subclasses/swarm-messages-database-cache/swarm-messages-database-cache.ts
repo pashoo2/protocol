@@ -21,11 +21,8 @@ import {
   SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_ITEMS_COUNT_PER_IDLE_PERIOD_OF_50_MS,
   SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_ITEMS_MAX_PAGE_QUERY_ATTEMPTS_DEFAULT,
 } from '../../swarm-messages-database.const';
-import {
-  resolveOnIdleCallback,
-  THROTTLING_UTILS_IDLE_CALLBACK_TIME_REMAINING_MAX_MS,
-} from '../../../../utils/throttling-utils/throttling-utils-idle-callback';
-import { round } from '../../../../utils/common-utils';
+import { resolveOnIdleCallback, THROTTLING_UTILS_IDLE_CALLBACK_TIMEOUT_DEFAULT_MS } from 'utils/throttling-utils';
+import { round } from 'utils/common-utils';
 import { TTypedEmitter } from '../../../basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 import { getEventEmitterInstance } from '../../../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import { ISwarmMessageStoreMessageWithMeta } from '../../../swarm-message-store/types/swarm-message-store.types';
@@ -449,7 +446,7 @@ export class SwarmMessagesDatabaseCache<
     // the maximum messages to read for max time remaining THROTTLING_UTILS_IDLE_CALLBACK_TIME_REMAINING_MAX_MS
     // is equal to SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_ITEMS_COUNT_PER_PAGE_DEFAULT. We need to calculate
     // messages to read for timeAvailToRun.
-    const percentAcordingToFreeTime = round(timeAvailToRun / THROTTLING_UTILS_IDLE_CALLBACK_TIME_REMAINING_MAX_MS, 2);
+    const percentAcordingToFreeTime = round(timeAvailToRun / THROTTLING_UTILS_IDLE_CALLBACK_TIMEOUT_DEFAULT_MS, 2);
 
     return round(SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_ITEMS_COUNT_PER_IDLE_PERIOD_OF_50_MS * percentAcordingToFreeTime, 0);
   };

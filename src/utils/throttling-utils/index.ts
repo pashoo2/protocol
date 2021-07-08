@@ -1,3 +1,3 @@
-export * from './throttling-utils-idle-callback';
-
 export * from './throttling-utils-main';
+
+export * from '@pashoo2/browser-idle-time-execution-utils';
