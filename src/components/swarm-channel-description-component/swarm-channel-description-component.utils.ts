@@ -1,5 +1,5 @@
-import { createFunctionFromSerializedFunction, commonUtilsArrayUniq } from 'utils';
-
+import { commonUtilsArrayUniq } from 'utils';
+import { serializerClassUtilFunctionParserSandboxedDefault } from 'classes/basic-classes/serializer-class';
 import { ISwarmMessageChannelDescriptionRaw } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-instance.types';
 import { IFieldDescription, EFormFieldType, IFormMethods } from '../base-component/base-component.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
@@ -84,7 +84,7 @@ export function swarmChannelDescriptionComponentCreateSubformDescriptionForChann
         value: String(grantAccess),
         validate: (name: string, value: string): string => {
           try {
-            createFunctionFromSerializedFunction(value);
+            serializerClassUtilFunctionParserSandboxedDefault(value);
             return '';
           } catch (err) {
             console.error(err);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { deepCloneObject, createFunctionFromSerializedFunction } from 'utils';
+import { deepCloneObject } from 'utils';
 
 import { ISwarmMessageChannelDescriptionRaw } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-instance.types';
 import { TSwarmMessageSerialized } from '../../classes/swarm-message/swarm-message-constructor.types';
@@ -8,6 +8,7 @@ import { TSwarmStoreDatabaseType, TSwarmStoreDatabaseOptions } from '../../class
 import { BaseComponent } from '../base-component/base-component';
 import { swarmChannelDescriptionComponentCreateFormFieldsDescriptionForChannelDescription } from './swarm-channel-description-component.utils';
 import { IButtonProps, onFormValuesChange, IFormFieldsValues } from '../base-component/base-component.types';
+import { serializerClassUtilFunctionParserSandboxedDefault } from 'classes/basic-classes/serializer-class';
 
 export interface ISwarmChannelDescriptionComponentProps<
   P extends ESwarmStoreConnector,
@@ -208,7 +209,7 @@ export class SwarmChannelDescriptionComponent<
         ...channelDescriptionEdited,
         dbOptions: {
           ...channelDescriptionEdited.dbOptions,
-          grantAccess: createFunctionFromSerializedFunction(grantAccess),
+          grantAccess: serializerClassUtilFunctionParserSandboxedDefault(grantAccess),
         },
       };
     }

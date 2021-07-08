@@ -1,7 +1,8 @@
 import assert from 'assert';
-import { isNativeFunction, isArrowFunction, createFunctionFromSerializedFunction } from 'utils';
+import { isNativeFunction, isArrowFunction } from 'utils';
 import { TSwarmMessagesStoreGrantAccessCallback } from '../../types/swarm-message-store.types';
 import { ISwarmStoreConnectorAccessConrotllerGrantAccessCallbackSerializable } from '../../../swarm-store-class/swarm-store-class.types';
+import { serializerClassUtilFunctionParserSandboxedDefault } from 'classes/basic-classes/serializer-class';
 
 /**
  * Validate grant access callback function
@@ -62,7 +63,7 @@ export function validateGrantAccessCallbackWithContextSerializable(
     'Grant access callback is not a valid function supports validation context'
   );
   // validate that the function can be serialized and parsed
-  createFunctionFromSerializedFunction(String(grantAccess));
+  serializerClassUtilFunctionParserSandboxedDefault(String(grantAccess));
   // TODO - verify that the function have no vulnerabilities, e.g. ReDoS attack
   return true;
 }
