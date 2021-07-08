@@ -3,7 +3,8 @@ import { SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter } from '.
 
 export class SwarmStoreConnectorOrbitDBSubclassStorageCache
   extends SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter
-  implements Cache {
+  implements Cache<any>
+{
   /**
    * @param {string} k
    * @param {*} v
@@ -15,6 +16,6 @@ export class SwarmStoreConnectorOrbitDBSubclassStorageCache
     if (typeof k !== 'string') {
       throw new Error('Key must be a string');
     }
-    return super.put(k, v);
+    return await super.put(k, v);
   }
 }

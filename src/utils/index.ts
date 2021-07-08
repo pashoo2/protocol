@@ -1,7 +1,5 @@
 export * from './common-utils';
 
-export * from './data-cache-utils';
-
 export * from './data-compression-utils';
 
 export * from './data-sign-utils';

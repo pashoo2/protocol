@@ -66,7 +66,7 @@ import { ESwarmMessagesDatabaseCacheEventsNames } from '../../../../../../swarm-
 import { debounce } from 'utils/throttling-utils';
 import { EMIT_CHANNELS_DESCRIPTIONS_MAP_CACHE_UPDATE_EVENT_DEBOUNCE_MS } from './swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.fabric.const';
 import { compareTwoSwarmMessageStoreMessagingRequestWithMetaResults } from '../../../../../../swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache/swarm-messages-database-cache.utils';
-import { dataCachingUtilsCachingDecoratorGlobalCachePerClass } from '../../../../../../../utils/data-cache-utils/data-cache-utils-caching-decorator-global-cache-per-class/data-cache-utils-caching-decorator-global-cache-per-class';
+import { dataCachingUtilsCachingDecoratorGlobalCachePerClass } from 'utils/data-cache-utils';
 import { getSwarmMessageUniqueHash } from '../../../../../../swarm-message/swarm-message-utils/swarm-message-utils-common/swarm-message-utils-common-decrypted';
 import {
   ISwarmChannelsListClockSortedChannelsDescriptionsUpdatesCache,
