@@ -77,7 +77,7 @@ import {
   TConnectionBridgeOptionsAuthCredentials,
   ISwarmStoreDatabasesPersistentListFabric,
 } from './types/connection-bridge.types';
-import { calculateHash } from '../../utils/hash-calculation-utils/hash-calculation-utils';
+import { calculateHash } from '@pashoo2/crypto-utilities';
 import { PromiseResolveType } from '../../types/promise.types';
 import { ISerializer } from '../../types/serialization.types';
 import { IStorageCommon } from '../../types/storage.types';

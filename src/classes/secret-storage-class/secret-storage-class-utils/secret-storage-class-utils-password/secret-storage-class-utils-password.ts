@@ -1,6 +1,4 @@
-import { generateSaltString } from './../../../../utils/encryption-utils/salt-utils';
-import { generatePasswordKeyByPasswordString } from 'utils/password-utils/derive-key.password-utils';
-import { TSaltUtilsSaltType } from 'utils/encryption-utils/salt-utils.types';
+import { generateSaltString, generatePasswordKeyByPasswordString, TSaltUtilsSaltType } from '@pashoo2/crypto-utilities';
 
 export const generatePasswordKeyByPasswordSalt = (password: string, salt: TSaltUtilsSaltType): Promise<CryptoKey | Error> => {
   return generatePasswordKeyByPasswordString(password, salt);

@@ -21,7 +21,7 @@ import {
 } from 'classes/central-authority-class/central-authority-validators/central-authority-validators-crypto-keys/central-authority-validators-crypto-keys';
 import { stringify } from 'utils/serialization-utils';
 import { TUserIdentityVersion } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types';
-import { calcCryptoKeyPairHash } from 'utils/encryption-keys-utils/encryption-keys-utils';
+import { calcCryptoKeyPairHash } from '@pashoo2/crypto-utilities';
 import { TCAAuthProviderIdentity } from '../../central-authority-connections/central-authority-connections.types';
 import { CA_UTILS_CRYPTO_CREDENTIALS_NORMALIZE_URL_OPTIONS } from './central-authority-utils-crypto-credentials.const';
 import normalizeUrl from 'normalize-url';

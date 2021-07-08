@@ -1,27 +1,23 @@
-import { TCRYPTO_UTIL_ENCRYPT_DATA_TYPES } from '../../../utils/encryption-utils/crypto-utils.types';
+import { TCryptoUtilEncryptDataTypes, TDataSignUtilSignDataTypes, TDataSignUtilVerifyDataTypes } from '@pashoo2/crypto-utilities';
 import { IAsyncQueueBaseClassOptions } from '../async-queue-class-base/async-queue-class-base.types';
-import {
-  TDATA_SIGN_UTIL_SIGN_DATA_TYPES,
-  TDATA_SIGN_UTIL_VERIFY_DATA_TYPES,
-} from '../../../utils/data-sign-utils/data-sign-utils.types';
 
-export interface IQueuedEncrypyionClassBaseOptions {
+export interface IQueuedEncryptionClassBaseOptions {
   /** crypto keys used as default keys */
   keys?: {
     /**
      * key used to sign data.
      *
      * @type {CryptoKey}
-     * @memberof IQueuedEncrypyionClassBaseOptions
+     * @memberof IQueuedEncryptionClassBaseOptions
      */
     signKey?: CryptoKey;
     /**
      * the key used data decryption.
-     * In assymetric encryption it
+     * In asymmetric encryption it
      * is the user's private key.
      *
      * @type {CryptoKey}
-     * @memberof IQueuedEncrypyionClassBaseOptions
+     * @memberof IQueuedEncryptionClassBaseOptions
      */
     decryptKey?: CryptoKey;
     /**
@@ -39,53 +35,53 @@ export interface IQueuedEncrypyionClassBaseOptions {
  * to avoid a performance issues.
  *
  * @export
- * @interface IQueuedEncrypyionClassBase
+ * @interface IQueuedEncryptionClassBase
  */
 export interface IQueuedEncryptionClassBase {
   /**
    * encrypt data provided with the public
    * crypto key provided
    *
-   * @param {TCRYPTO_UTIL_ENCRYPT_DATA_TYPES} data
+   * @param {TCryptoUtilEncryptDataTypes} data
    * @param {CryptoKey} key
    * @returns {Promise<string | Error>}
-   * @memberof IQueuedEncrypyionClassBase
+   * @memberof IQueuedEncryptionClassBase
    */
-  encryptData(data: TCRYPTO_UTIL_ENCRYPT_DATA_TYPES, key?: CryptoKey): Promise<string | Error>;
+  encryptData(data: TCryptoUtilEncryptDataTypes, key?: CryptoKey): Promise<string | Error>;
   /**
    * decrypt the data with the
    * private crypto key. If no key
    * provided then a key provided in the
    * constructor will be used.
    *
-   * @param {TCRYPTO_UTIL_ENCRYPT_DATA_TYPES} data
+   * @param {TCryptoUtilEncryptDataTypes} data
    * @param {CryptoKey} key
    * @returns {Promise<string | Error>}
-   * @memberof IQueuedEncrypyionClassBase
+   * @memberof IQueuedEncryptionClassBase
    */
-  decryptData(data: TCRYPTO_UTIL_ENCRYPT_DATA_TYPES, key?: CryptoKey): Promise<string | Error>;
+  decryptData(data: TCryptoUtilEncryptDataTypes, key?: CryptoKey): Promise<string | Error>;
   /**
    * sign data with the key provided. If
    * a key is not provided, then the key provided
    * in constructor will be used
    *
-   * @param {TDATA_SIGN_UTIL_SIGN_DATA_TYPES} data
+   * @param {TDataSignUtilSignDataTypes} data
    * @param {CryptoKey} [key]
    * @returns {(Promise<string | Error>)}
-   * @memberof IQueuedEncrypyionClassBase
+   * @memberof IQueuedEncryptionClassBase
    */
-  signData(data: TDATA_SIGN_UTIL_SIGN_DATA_TYPES, key?: CryptoKey): Promise<string | Error>;
+  signData(data: TDataSignUtilSignDataTypes, key?: CryptoKey): Promise<string | Error>;
   /**
    * verify data signature with the key provided.
    *
-   * @param {TDATA_SIGN_UTIL_VERIFY_DATA_TYPES} data
+   * @param {TDataSignUtilVerifyDataTypes} data
    * @param {CryptoKey} [key]
    * @returns {(Promise<string | Error>)}
-   * @memberof IQueuedEncrypyionClassBase
+   * @memberof IQueuedEncryptionClassBase
    */
   verifyData(
-    data: TDATA_SIGN_UTIL_VERIFY_DATA_TYPES,
-    signature: TDATA_SIGN_UTIL_VERIFY_DATA_TYPES,
+    data: TDataSignUtilVerifyDataTypes,
+    signature: TDataSignUtilVerifyDataTypes,
     key: CryptoKey
   ): Promise<boolean | Error>;
 }

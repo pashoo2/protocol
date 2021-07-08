@@ -9,7 +9,7 @@ import {
   SWARM_STORE_CONNECTORS,
   SWARM_STORE_DATABASES_STATUSES_EMPTY,
 } from './swarm-store-class.const';
-import { calculateHash } from 'utils/hash-calculation-utils';
+import { calculateHash } from '@pashoo2/crypto-utilities';
 import { getEventEmitterClass } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import {
   ISwarmStoreOptionsWithConnectorFabric,

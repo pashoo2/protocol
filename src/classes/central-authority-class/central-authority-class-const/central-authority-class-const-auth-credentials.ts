@@ -1,5 +1,5 @@
 import { UTILS_DATA_COMPRESSION_COMPRESSION_RATIO_MAX } from 'utils/data-compression-utils/data-compression-utils.const';
-import { MIN_JWK_STRING_LENGTH } from 'utils/encryption-keys-utils/encryption-keys-utils.const';
+import { MIN_JWK_STRING_LENGTH } from '@pashoo2/crypto-utilities';
 import {
   CONST_VALUES_RESTRICTIONS_COMMON_LOGIN_MIN_LENGTH,
   CONST_VALUES_RESTRICTIONS_COMMON_LOGIN_MAX_LENGTH,

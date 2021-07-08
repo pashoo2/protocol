@@ -30,7 +30,7 @@ import {
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../../../../swarm-messages-database/swarm-messages-database.messages-collector.types';
 import assert from 'assert';
 import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../../../../const/swarm-messages-channels-main.const';
-import { isCryptoKeyDataEncryption } from '../../../../../../utils/encryption-keys-utils/encryption-keys-utils';
+import { isCryptoKeyDataEncryption } from '@pashoo2/crypto-utilities';
 import { IQueuedEncryptionClassBase } from '../../../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
 import {
   ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions,

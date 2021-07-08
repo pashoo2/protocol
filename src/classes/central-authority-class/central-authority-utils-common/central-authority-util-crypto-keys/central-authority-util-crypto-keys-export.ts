@@ -1,12 +1,10 @@
 import {
   exportKeyPairAsString as exportKeyPairDataEncryptAsString,
   exportKeyAsString as exportPublicKeyDataEncryptAsString,
-} from 'utils/encryption-utils';
-import {
   dataSignExportKeyPairAsString as exportKeyPairDataSignAsString,
   dataSignExportKeyAsString as exportPublicKeyDataSignAsString,
-} from 'utils/data-sign-utils';
-import { TCACryptoKeyPairs, TCACryptoPubilicKeys } from '../../central-authority-class-types/central-authority-class-types';
+} from '@pashoo2/crypto-utilities';
+import { TCACryptoKeyPairs } from '../../central-authority-class-types/central-authority-class-types';
 import {
   CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME,
   CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME,
@@ -49,10 +47,6 @@ export const exportKeyPairsAsString = async (cryptoKeyPairs: TCACryptoKeyPairs, 
       [CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME]: encryptionKeyPairString,
       [CA_CRYPTO_KEY_PAIRS_SIGN_KEY_PAIR_NAME]: signDataKeyPairString,
     });
-
-    if (stringifyResult instanceof Error) {
-      return stringifyResult;
-    }
     return compressString(stringifyResult);
   } catch (err) {
     return err;

@@ -1,7 +1,9 @@
-import { encryptDataToString } from './../../../../utils/password-utils/encrypt.password-utils';
-import { decryptDataWithKey } from './../../../../utils/password-utils/decrypt.password-utils';
-import { generatePasswordKeyByPasswordString } from 'utils/password-utils/derive-key.password-utils';
-import { calculateHash } from 'utils/hash-calculation-utils';
+import {
+  encryptDataToString,
+  decryptDataWithKey,
+  generatePasswordKeyByPasswordString,
+  calculateHash,
+} from '@pashoo2/crypto-utilities';
 import {
   SECRET_STORAGE_CLASS_UTILS_LOGIN_HASH_ALG,
   SECRET_STORAGE_CLASS_UTILS_LOGIN_SALT,
@@ -22,7 +24,7 @@ export const encryptValueByLogin = async (login: string, value: string): Promise
     console.error(loginCryptoKey);
     return new Error('Failed to generate a crypto key by the login');
   }
-  return encryptDataToString(loginCryptoKey, value);
+  return await encryptDataToString(loginCryptoKey, value);
 };
 
 export const decryptValueByLogin = async (login: string, value: string): Promise<Error | string> => {
@@ -31,5 +33,5 @@ export const decryptValueByLogin = async (login: string, value: string): Promise
   if (loginCryptoKey instanceof Error) {
     return loginCryptoKey;
   }
-  return decryptDataWithKey(loginCryptoKey, value);
+  return await decryptDataWithKey(loginCryptoKey, value);
 };

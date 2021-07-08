@@ -8,10 +8,10 @@ import {
   ISwarmMessgaeEncryptedCacheOptionsForStorageProvider,
 } from './swarm-messgae-encrypted-cache.types';
 import {
-  SWARM_MESSGAE_ENCRYPTED_CACHE_DEFAULT_STORAGE_DATABASE_NAME,
-  SWARM_MESSGAE_ENCRYPTED_CACHE_DEFAULT_STORAGE_DATABASE_NAME_HASH,
+  SWARM_MESSAGE_ENCRYPTED_CACHE_DEFAULT_STORAGE_DATABASE_NAME,
+  SWARM_MESSAGE_ENCRYPTED_CACHE_DEFAULT_STORAGE_DATABASE_NAME_HASH,
 } from './swarm-messgae-encrypted-cache.const';
-import { calculateHash } from '../../utils/hash-calculation-utils/hash-calculation-utils';
+import { calculateHash } from '@pashoo2/crypto-utilities';
 
 export class SwarmMessageEncryptedCache implements ISwarmMessageEncryptedCache {
   public isRunning: boolean = false;
@@ -27,7 +27,7 @@ export class SwarmMessageEncryptedCache implements ISwarmMessageEncryptedCache {
   protected get dbName() {
     return `${
       (this.options as ISwarmMessgaeEncryptedCacheOptionsForStorageProvider)?.storageProviderOptions?.dbName ||
-      SWARM_MESSGAE_ENCRYPTED_CACHE_DEFAULT_STORAGE_DATABASE_NAME
+      SWARM_MESSAGE_ENCRYPTED_CACHE_DEFAULT_STORAGE_DATABASE_NAME
     }`;
   }
 
@@ -140,7 +140,7 @@ export class SwarmMessageEncryptedCache implements ISwarmMessageEncryptedCache {
     const { storageProviderOptions, storageProviderAuthOptions } = optsWithConfForStorageProviderConnection;
 
     const storageProvider = new SecretStorage();
-    const dbName = await calculateHash(this.dbName, SWARM_MESSGAE_ENCRYPTED_CACHE_DEFAULT_STORAGE_DATABASE_NAME_HASH);
+    const dbName = await calculateHash(this.dbName, SWARM_MESSAGE_ENCRYPTED_CACHE_DEFAULT_STORAGE_DATABASE_NAME_HASH);
 
     if (dbName instanceof Error) {
       console.error(`Failed to calculate hash for the database name ${this.dbName}`);

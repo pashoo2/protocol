@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { isCryptoKeyDataSign } from '../../../../utils/encryption-keys-utils/encryption-keys-utils';
+import { isCryptoKeyDataSign } from '@pashoo2/crypto-utilities';
 import { QueuedEncryptionClassBase } from '../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base';
 import { ISwarmMessageSerializerUser } from './swarm-message-subclass-serializer.types';
 import CentralAuthorityIdentity from '../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
@@ -10,7 +10,7 @@ import { TSwarmMessageBodyRaw, ISwarmMessageRaw } from '../../swarm-message-cons
 import { ISwarmMessageBodyDeserialized } from '../../swarm-message-constructor.types';
 import {
   IQueuedEncryptionClassBase,
-  IQueuedEncrypyionClassBaseOptions,
+  IQueuedEncryptionClassBaseOptions,
 } from '../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
 import { ISwarmMessageSerializerConstructorOptions, ISwarmMessageSerializer } from './swarm-message-subclass-serializer.types';
 import { TSwarmMessageUserIdentifierSerialized } from '../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier.types';
@@ -35,10 +35,10 @@ export class SwarmMessageSerializer implements ISwarmMessageSerializer {
    *
    * @readonly
    * @protected
-   * @type {IQueuedEncrypyionClassBaseOptions}
+   * @type {IQueuedEncryptionClassBaseOptions}
    * @memberof SwarmMessageSerializer
    */
-  protected get messageEncryptAndSignQueueOptions(): IQueuedEncrypyionClassBaseOptions {
+  protected get messageEncryptAndSignQueueOptions(): IQueuedEncryptionClassBaseOptions {
     const { user } = this;
 
     if (!user) {
@@ -209,7 +209,7 @@ export class SwarmMessageSerializer implements ISwarmMessageSerializer {
     const { pld } = msgBody;
 
     if (pld instanceof ArrayBuffer) {
-      msgPayload = typedArrayToString(pld) as string;
+      msgPayload = typedArrayToString(pld);
       assert(typeof msgPayload === 'string', 'Failed to convert message payload from Buffer to string');
     } else {
       msgPayload = pld;
@@ -235,7 +235,7 @@ export class SwarmMessageSerializer implements ISwarmMessageSerializer {
     const { utils } = this.options;
     const bodyRaw = utils.swarmMessageBodySerializer(msgBody);
 
-    return encryptWithKey ? this.encryptMessageBodyRaw(bodyRaw, encryptWithKey) : bodyRaw;
+    return encryptWithKey ? await this.encryptMessageBodyRaw(bodyRaw, encryptWithKey) : bodyRaw;
   }
 
   /**
@@ -300,7 +300,7 @@ export class SwarmMessageSerializer implements ISwarmMessageSerializer {
     const { utils } = this.options;
     const dataToSign = utils.getDataToSignBySwarmMsg(msgRawUnsigned);
 
-    return this.msgSignEncryptQueue.signData(dataToSign, this.user.dataSignKey);
+    return await this.msgSignEncryptQueue.signData(dataToSign, this.user.dataSignKey);
   }
 
   /**

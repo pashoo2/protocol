@@ -5,7 +5,8 @@ import {
 } from './sensitive-data-session-storage.const';
 import assert from 'assert';
 import { generatePasswordKeyByPasswordSalt, generateSaltForPassword } from 'classes/secret-storage-class';
-import { isSimpleObject, encryptDataToString, decryptDataByPassword } from 'utils';
+import { encryptDataToString, decryptDataByPassword } from '@pashoo2/crypto-utilities';
+import { isSimpleObject } from 'utils';
 
 export class SensitiveDataSessionStorage implements ISensitiveDataSessionStorage {
   protected isConnected: boolean = false;

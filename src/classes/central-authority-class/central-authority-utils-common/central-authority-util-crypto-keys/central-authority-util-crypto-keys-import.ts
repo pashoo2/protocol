@@ -1,11 +1,9 @@
 import {
   importKeyPairFromString as importKeyPairDataEncryptionFromString,
   importKeyFromString as importKeyEncryptionFromString,
-} from 'utils/encryption-utils';
-import {
   dataSignImportKeyPairFromString as importKeyPairDataSignFromString,
   dataSignImportKeyFromString as importKeySignFromString,
-} from 'utils/data-sign-utils';
+} from '@pashoo2/crypto-utilities';
 import { TCACryptoKeyPairs, TCACryptoPubilicKeys } from '../../central-authority-class-types/central-authority-class-types';
 import {
   CA_CRYPTO_KEY_PAIRS_ENCRYPTION_KEY_PAIR_NAME,

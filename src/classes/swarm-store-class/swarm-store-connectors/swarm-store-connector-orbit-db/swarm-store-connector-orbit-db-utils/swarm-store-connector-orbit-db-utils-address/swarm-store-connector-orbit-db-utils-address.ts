@@ -2,12 +2,12 @@ import { relative } from 'path';
 import OrbitDbAddress from 'orbit-db/src/orbit-db-address';
 import assert from 'assert';
 
-import { calculateHash } from 'utils/hash-calculation-utils/hash-calculation-utils';
+import { calculateHash } from '@pashoo2/crypto-utilities';
 
 import { ISwarmStoreConnectorOrbitDbUtilsAddressCreateRootPathOptions } from './swarm-store-connector-orbit-db-utils-address.types';
 
-import { HASH_CALCULATION_UTILS_HASH_ALHORITHM } from 'utils';
-import { SWARM_STORE_CONNECTOR_ORITDB_UTILS_ADDRESS_FULL_PSATH_HASH_CALC_METHOD } from './swarm-store-connector-orbit-db-utils-address.const';
+import { HASH_CALCULATION_UTILS_HASH_ALGORITHM } from '@pashoo2/crypto-utilities';
+import { SWARM_STORE_CONNECTOR_ORITDB_UTILS_ADDRESS_FULL_PATH_HASH_CALC_METHOD } from './swarm-store-connector-orbit-db-utils-address.const';
 import {
   SWARM_STORE_CONNECTOR_ORITDB_UTILS_ADDRESS_DIRECTORY_HASH_CALC_METHOD,
   SWARM_STORE_CONNECTOR_ORITDB_UTILS_ADDRESS_USER_ID_HASH_CALC_METHOD,
@@ -46,7 +46,7 @@ export function swarmStoreConnectorOrbitDbUtilsAddressJoinPathParts(...parts: st
 
 export async function swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForPathPart(
   pathPart: string,
-  alg: HASH_CALCULATION_UTILS_HASH_ALHORITHM
+  alg: HASH_CALCULATION_UTILS_HASH_ALGORITHM
 ): Promise<string> {
   const result = await calculateHash(pathPart, alg);
 
@@ -58,10 +58,10 @@ export async function swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForPath
 }
 
 export async function swarmStoreConnectorOrbitDbUtilsAddresGetHashPathFull(fullPath: string): Promise<string> {
-  assert(typeof fullPath === 'string', 'Full path shoult be a string');
+  assert(typeof fullPath === 'string', 'Full path should be a string');
   return await swarmStoreConnectorOrbitDbUtilsAddresGetAddressPartForPathPart(
     fullPath,
-    SWARM_STORE_CONNECTOR_ORITDB_UTILS_ADDRESS_FULL_PSATH_HASH_CALC_METHOD
+    SWARM_STORE_CONNECTOR_ORITDB_UTILS_ADDRESS_FULL_PATH_HASH_CALC_METHOD
   );
 }
 

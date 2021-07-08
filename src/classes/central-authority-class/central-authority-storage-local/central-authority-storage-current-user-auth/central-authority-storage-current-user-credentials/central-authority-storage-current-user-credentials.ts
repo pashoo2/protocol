@@ -24,7 +24,7 @@ import {
   TCAStorageCurrentUserCredentials,
 } from './central-authority-storage-current-user-credentials.types';
 import { ISensitiveDataSessionStorage } from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
-import { exportPasswordKeyAsString, importPasswordKeyFromString } from 'utils';
+import { exportPasswordKeyAsString, importPasswordKeyFromString } from '@pashoo2/crypto-utilities';
 
 /**
  * This storage is used to store the user's

@@ -1,5 +1,5 @@
 import { IQueuedEncryptionClassBase } from '../queued-encryption-class-base.types';
-import { generatePasswordKeyByPasswordString } from '../../../../utils/password-utils/derive-key.password-utils';
+import { generatePasswordKeyByPasswordString } from '@pashoo2/crypto-utilities';
 import { IAsyncQueueBaseClassOptions } from '../../async-queue-class-base/async-queue-class-base.types';
 import { QueuedEncryptionClassBase } from '../queued-encryption-class-base';
 

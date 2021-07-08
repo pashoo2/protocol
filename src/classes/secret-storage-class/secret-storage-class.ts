@@ -9,10 +9,14 @@ import {
   importPasswordKey,
   exportPasswordKeyAsString,
   importPasswordKeyFromString,
-} from 'utils/password-utils/derive-key.password-utils';
-import { TPASSWORD_ENCRYPTION_KEY_IMPORT_NATIVE_SUPPORTED_TYPES } from 'utils/password-utils/password-utils.types';
-import { decryptDataWithKey, decryptDataWithKeyFromUint8Array } from 'utils/password-utils/decrypt.password-utils';
-import { encryptDataToString, encryptDataToUInt8Array } from 'utils/password-utils/encrypt.password-utils';
+  decryptDataWithKey,
+  decryptDataWithKeyFromUint8Array,
+  encryptDataToString,
+  encryptDataToUInt8Array,
+  calcCryptoKeyHash,
+  isCryptoKeyDataEncryption,
+  TPasswordEncryptionKeyImportNativeSupportedTypes,
+} from '@pashoo2/crypto-utilities';
 import { getStatusClass } from 'classes/basic-classes/status-class-base/status-class-base';
 import {
   STORAGE_PROVIDERS,
@@ -20,7 +24,6 @@ import {
   STORAGE_PROVIDERS_NAMES,
 } from 'classes/storage-providers/storage-providers.const';
 import { SecretStorageProviderLocalStorage } from 'classes/storage-providers/storage-local-storage-provider/secret-storage-local-storage-provider';
-import { calcCryptoKeyHash } from './../../utils/encryption-keys-utils/encryption-keys-utils';
 import {
   checkIsStorageProviderInstance,
   validateCryptoKeyCredentials,
@@ -49,7 +52,6 @@ import { getLoginHash } from './secret-storage-class-utils/secret-storage-class-
 import { SECRET_STORAGE_LOGIN_MIN_LENGTH, SECRET_STORAGE_UNSET_MAX_ATTEMPTS } from './secret-storage-class.const';
 import { IStorageProviderOptions } from 'classes/storage-providers/storage-providers.types';
 import { ISensitiveDataSessionStorage } from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
-import { isCryptoKeyDataEncryption } from '../../utils/encryption-keys-utils/encryption-keys-utils';
 import { TSecretStorageAuthorizazionOptions } from './secret-storage-class.types';
 
 /**
@@ -579,9 +581,7 @@ export class SecretStorage
     return `${SecretStorage.PREFIX_KEY_IN_SECRET_STORAGE}_${this.keyHash}_${key}`;
   }
 
-  protected async setEncryptionKey(
-    key: TPASSWORD_ENCRYPTION_KEY_IMPORT_NATIVE_SUPPORTED_TYPES | CryptoKey
-  ): Promise<boolean | Error> {
+  protected async setEncryptionKey(key: TPasswordEncryptionKeyImportNativeSupportedTypes | CryptoKey): Promise<boolean | Error> {
     let k;
 
     if (key instanceof CryptoKey) {

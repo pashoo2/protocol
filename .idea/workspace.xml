@@ -2,49 +2,72 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e70e70e3-e48a-4dfd-91a6-03818e8691f6" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/utils/common-utils/common-utils.normalize-url.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/node_modules-local/hypervision-browser" beforeDir="false" afterPath="$PROJECT_DIR$/node_modules-local/hypervision-browser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/async-queue-class-base/async-queue-class-base.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/async-queue-class-base/async-queue-class-base.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/async-queue-class-base/async-queue-class-base.utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/async-queue-class-base/async-queue-class-base.utils.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/async-queue-concurent/async-queue-concurent-mixins/async-queue-concurent-mixin-default/async-queue-concurent-mixin-default.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/async-queue-concurent/async-queue-concurent-mixins/async-queue-concurent-mixin-default/async-queue-concurent-mixin-default.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/serializer-class/serializer-class.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/serializer-class/serializer-class.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/serializer-class/serializer-class.utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/serializer-class/serializer-class.utils.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/fabrics/queued-encryption-class-base-fabric-by-password.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/fabrics/queued-encryption-class-base-fabric-by-password.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.test.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.test.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/basic-classes/queued-encryption-class-base/queued-encryption-class-base.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-const/central-authority-class-const-auth-credentials.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-const/central-authority-class-const-auth-credentials.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-const/central-authority-class-const-crypto-keys-usages.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-class-const/central-authority-class-const-crypto-keys-usages.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-storage-local/central-authority-storage-current-user-auth/central-authority-storage-current-user-credentials/central-authority-storage-current-user-credentials.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-storage-local/central-authority-storage-current-user-auth/central-authority-storage-current-user-credentials/central-authority-storage-current-user-credentials.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys-common.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys-common.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys-export.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys-export.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys-generate.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys-generate.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys-import.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-utils-common/central-authority-util-crypto-keys/central-authority-util-crypto-keys-import.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-grant-access-callback.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-grant-access-callback.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/implementations/swarm-messages-channel-v1-class.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/implementations/swarm-messages-channel-v1-class.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/connection-bridge/connection-bridge.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/secret-storage-class/secret-storage-class-utils/secret-storage-class-utils-login/secret-storage-class-utils-login.const.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/secret-storage-class/secret-storage-class-utils/secret-storage-class-utils-login/secret-storage-class-utils-login.const.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/secret-storage-class/secret-storage-class-utils/secret-storage-class-utils-login/secret-storage-class-utils-login.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/secret-storage-class/secret-storage-class-utils/secret-storage-class-utils-login/secret-storage-class-utils-login.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/secret-storage-class/secret-storage-class-utils/secret-storage-class-utils-password/secret-storage-class-utils-password.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/secret-storage-class/secret-storage-class-utils/secret-storage-class-utils-password/secret-storage-class-utils-password.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/secret-storage-class/secret-storage-class.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/secret-storage-class/secret-storage-class.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/sensitive-data-session-storage/sensitive-data-session-storage.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/sensitive-data-session-storage/sensitive-data-session-storage.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.const.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.const.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-parser/swarm-message-subclass-parser.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-parser/swarm-message-subclass-parser.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-parser/swarm-message-subclass-parser.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-parser/swarm-message-subclass-parser.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-serializer/swarm-message-subclass-serializer.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-serializer/swarm-message-subclass-serializer.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-serializer/swarm-message-subclass-serializer.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-serializer/swarm-message-subclass-serializer.types.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-signature-validator/swarm-message-subclass-validator-signature-validator.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-signature-validator/swarm-message-subclass-validator-signature-validator.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-signature-validator/swarm-message-subclass-validator-signature-validator.types.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-message/swarm-message-subclasses/swarm-message-subclass-validators/swarm-message-subclass-validator-signature-validator/swarm-message-subclass-validator-signature-validator.types.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/subclasses/swarm-messages-channel-v1-class-messages-database-handler.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/subclasses/swarm-messages-channel-v1-class-messages-database-handler.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/utils/swarm-messages-channel-v1-constructor-options-default-utils/swarm-messages-channel-v1-constructor-options-default-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/utils/swarm-messages-channel-v1-constructor-options-default-utils/swarm-messages-channel-v1-constructor-options-default-utils.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/subclasses/swarm-messages-channels-list-v1-class-options-setup/swarm-messages-channels-list-v1-class-options-setup.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/subclasses/swarm-messages-channels-list-v1-class-options-setup/swarm-messages-channels-list-v1-class-options-setup.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/subclasses/swarm-messages-channels-list-v1-db-connection-initializer-and-handler/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.fabric.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/subclasses/swarm-messages-channels-list-v1-db-connection-initializer-and-handler/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.fabric.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache/swarm-messages-database-cache.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache/swarm-messages-database-cache.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-cached-store/abstractions/swarm-messages-database-messages-cached-store/swarm-messages-database-messages-cached-store.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-cached-store/abstractions/swarm-messages-database-messages-cached-store/swarm-messages-database-messages-cached-store.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-messages-database/swarm-messages-database.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-class-helpers/swarm-store-options-helpers/swarm-store-options-class-fabric/swarm-store-options-class-fabric.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-class-helpers/swarm-store-options-helpers/swarm-store-options-class-fabric/swarm-store-options-class-fabric.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-class.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-class.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-databases-persistent-list/swarm-store-connector-databases-persistent-list.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-databases-persistent-list/swarm-store-connector-databases-persistent-list.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/swarm-channel-description-component/swarm-channel-description-component.utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/swarm-channel-description-component/swarm-channel-description-component.utils.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/common-utils/commom-utils.promies.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/common-utils/common-utils-array.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/common-utils/common-utils-check-value.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/common-utils/common-utils-classes.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/common-utils/common-utils-date-time-synced.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/common-utils/common-utils-date-time.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/common-utils/common-utils-equality.test.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/common-utils/common-utils-equality.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/common-utils/common-utils-main.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/common-utils/common-utils-maps.test.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/common-utils/common-utils-maps.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/common-utils/common-utils-number.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/common-utils/common-utils-objects.test.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/common-utils/common-utils-objects.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/common-utils/common-utils-sets.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/common-utils/common-utils-timer.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/common-utils/common-utils-url.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/common-utils/common-utils.functions.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/common-utils/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/common-utils/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-utils/swarm-store-connector-orbit-db-utils-address/swarm-store-connector-orbit-db-utils-address.const.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-utils/swarm-store-connector-orbit-db-utils-address/swarm-store-connector-orbit-db-utils-address.const.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-utils/swarm-store-connector-orbit-db-utils-address/swarm-store-connector-orbit-db-utils-address.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-utils/swarm-store-connector-orbit-db-utils-address/swarm-store-connector-orbit-db-utils-address.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/data-sign-utils/data-sign-utils.const.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/data-sign-utils/data-sign-utils.types.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/data-sign-utils/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/data-sign-utils/keys.data-sign-utils.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/data-sign-utils/main.data-sign-utils.const.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/data-sign-utils/sign-data.encryption-utils.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/data-sign-utils/verify-data.encryption-utils.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/encryption-keys-utils/encryption-keys-utils.const.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/encryption-keys-utils/encryption-keys-utils.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/encryption-keys-utils/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/encryption-utils/crypto-utils.const.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/encryption-utils/crypto-utils.types.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/encryption-utils/decrypt-data.encryption-utils.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/encryption-utils/encrypt-data.encryption-utils.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/encryption-utils/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/encryption-utils/keys.encryption-utils.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/encryption-utils/main.crypto-utils.const.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/encryption-utils/salt-utils.const.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/encryption-utils/salt-utils.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/encryption-utils/salt-utils.types.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/hash-calculation-utils/hash-calculation-utils.const.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/hash-calculation-utils/hash-calculation-utils.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/hash-calculation-utils/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/password-utils/decrypt.password-utils.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/password-utils/derive-key.password-utils.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/password-utils/encrypt.password-utils.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/password-utils/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/password-utils/password-utils.const.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/password-utils/password-utils.types.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/serialization-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/serialization-utils.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/typed-array-utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/typed-array-utils.ts" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -121,11 +144,20 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="common-utils.normalize-url.ts" pinned="false" current-in-tab="true">
+      <file leaf-file-name="common-utils.normalize-url.ts" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/utils/common-utils/common-utils.normalize-url.ts">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="315">
-              <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
+              <caret line="21" selection-start-line="21" selection-end-line="21" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="index.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/node_modules/lodash.defaultsdeep/index.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="295">
+              <caret line="246" column="34" lean-forward="true" selection-start-line="246" selection-start-column="34" selection-end-line="246" selection-end-column="34" />
             </state>
           </provider>
         </entry>
@@ -155,7 +187,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>link</find>
       <find>_tempMessagesCachedStoreLinked</find>
       <find>linkWithTempStore</find>
       <find>OrbitDb</find>
@@ -185,6 +216,7 @@
       <find>_isDatabaseReady</find>
       <find>isChannelReady</find>
       <find>TSwarmMessagesChannelId</find>
+      <find>importSalt</find>
     </findStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$</dir>
@@ -339,13 +371,6 @@
               <item name="protocol" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="utils" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="protocol" type="b2602c69:ProjectViewProjectNode" />
-              <item name="protocol" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="utils" type="462c0819:PsiDirectoryNode" />
-              <item name="common-utils" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -595,7 +620,7 @@
       <workItem from="1618822681837" duration="9000" />
       <workItem from="1618832013344" duration="598000" />
       <workItem from="1618927296485" duration="3000" />
-      <workItem from="1625748594519" duration="1105000" />
+      <workItem from="1625748594519" duration="2509000" />
     </task>
     <servers />
   </component>
@@ -632,7 +657,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="175293000" />
+    <option name="totallyTimeSpent" value="176697000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="-37" width="1600" height="937" extended-state="6" />
@@ -768,9 +793,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/utils/data-sign-utils/index.ts">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/classes/basic-classes/async-queue-concurent/async-queue-concurent-mixins/async-queue-concurent-mixin-default/async-queue-concurent-mixin-default-decorator.test.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="112">
@@ -1040,7 +1062,14 @@
     <entry file="file://$PROJECT_DIR$/src/utils/common-utils/common-utils.normalize-url.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="315">
-          <caret line="21" lean-forward="true" selection-start-line="21" selection-end-line="21" />
+          <caret line="21" selection-start-line="21" selection-end-line="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/node_modules/lodash.defaultsdeep/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="295">
+          <caret line="246" column="34" lean-forward="true" selection-start-line="246" selection-start-column="34" selection-end-line="246" selection-end-column="34" />
         </state>
       </provider>
     </entry>

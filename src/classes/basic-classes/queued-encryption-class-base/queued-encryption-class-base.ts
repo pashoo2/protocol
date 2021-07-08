@@ -1,34 +1,34 @@
 import {
-  TCRYPTO_UTIL_ENCRYPT_DATA_TYPES,
-  TCRYPTO_UTIL_DECRYPT_DATA_TYPES,
-} from '../../../utils/encryption-utils/crypto-utils.types';
+  TCryptoUtilEncryptDataTypes,
+  TCryptoUtilDecryptDataTypes,
+  isCryptoKeyDataEncryption,
+  isCryptoKeyDataDecryption,
+  encryptToString,
+  decryptData,
+  TDataSignUtilSignDataTypes,
+  TDataSignUtilVerifyDataTypes,
+  TDataSignUtilVerifyDataTypesExtended,
+  isCryptoKeyDataSign,
+  isCryptoKeyDataVerify,
+  signToString,
+  verifyData,
+} from '@pashoo2/crypto-utilities';
 import { AsyncQueueClassBase } from '../async-queue-class-base/async-queue-class-base';
 import { IAsyncQueueBaseClassOptions } from '../async-queue-class-base/async-queue-class-base.types';
-import { isCryptoKeyDataEncryption, isCryptoKeyDataDecryption } from '../../../utils/encryption-keys-utils/encryption-keys-utils';
-import { encryptToString } from '../../../utils/encryption-utils/encrypt-data.encryption-utils';
-import { decryptData } from '../../../utils/encryption-utils/decrypt-data.encryption-utils';
-import {
-  TDATA_SIGN_UTIL_SIGN_DATA_TYPES,
-  TDATA_SIGN_UTIL_VERIFY_DATA_TYPES,
-  TDATA_SIGN_UTIL_VERIFY_DATA_TYPES_EXTENDED,
-} from '../../../utils/data-sign-utils/data-sign-utils.types';
-import { isCryptoKeyDataSign, isCryptoKeyDataVerify } from '../../../utils/encryption-keys-utils/encryption-keys-utils';
-import { signToString } from '../../../utils/data-sign-utils/sign-data.encryption-utils';
-import { verifyData } from '../../../utils/data-sign-utils/verify-data.encryption-utils';
 import { IQueuedEncryptionClassBase } from './queued-encryption-class-base.types';
-import { IQueuedEncrypyionClassBaseOptions } from './queued-encryption-class-base.types';
+import { IQueuedEncryptionClassBaseOptions } from './queued-encryption-class-base.types';
 
 export class QueuedEncryptionClassBase implements IQueuedEncryptionClassBase {
-  protected defaultKeys: Required<IQueuedEncrypyionClassBaseOptions>['keys'] = {};
+  protected defaultKeys: Required<IQueuedEncryptionClassBaseOptions>['keys'] = {};
 
   protected asyncQueue = new AsyncQueueClassBase();
 
-  constructor(options?: IQueuedEncrypyionClassBaseOptions) {
+  constructor(options?: IQueuedEncryptionClassBaseOptions) {
     this.setOptions(options);
     return this;
   }
 
-  public encryptData = (data: TCRYPTO_UTIL_ENCRYPT_DATA_TYPES, key?: CryptoKey): Promise<string | Error> => {
+  public encryptData = (data: TCryptoUtilEncryptDataTypes, key?: CryptoKey): Promise<string | Error> => {
     if (key && !isCryptoKeyDataEncryption(key)) {
       return Promise.resolve(new Error('Crypto key is not the valid key for data encryption'));
     }
@@ -41,7 +41,7 @@ export class QueuedEncryptionClassBase implements IQueuedEncryptionClassBase {
     return this.addInQueue(() => encryptToString(keyToUse, data));
   };
 
-  public decryptData = (data: TCRYPTO_UTIL_DECRYPT_DATA_TYPES, key?: CryptoKey): Promise<string | Error> => {
+  public decryptData = (data: TCryptoUtilDecryptDataTypes, key?: CryptoKey): Promise<string | Error> => {
     if (key && !isCryptoKeyDataDecryption(key)) {
       return Promise.resolve(new Error('Crypto key is not the valid key for data encryption'));
     }
@@ -54,7 +54,7 @@ export class QueuedEncryptionClassBase implements IQueuedEncryptionClassBase {
     return this.addInQueue(() => decryptData(keyToUse, data));
   };
 
-  public signData = (data: TDATA_SIGN_UTIL_SIGN_DATA_TYPES, key?: CryptoKey): Promise<string | Error> => {
+  public signData = (data: TDataSignUtilSignDataTypes, key?: CryptoKey): Promise<string | Error> => {
     if (key && !isCryptoKeyDataSign(key)) {
       return Promise.resolve(new Error('Crypto key is not the valid key for data encryption'));
     }
@@ -68,8 +68,8 @@ export class QueuedEncryptionClassBase implements IQueuedEncryptionClassBase {
   };
 
   public verifyData = (
-    data: TDATA_SIGN_UTIL_VERIFY_DATA_TYPES_EXTENDED,
-    signature: TDATA_SIGN_UTIL_VERIFY_DATA_TYPES,
+    data: TDataSignUtilVerifyDataTypesExtended,
+    signature: TDataSignUtilVerifyDataTypes,
     key: CryptoKey
   ): Promise<boolean | Error> => {
     if (!isCryptoKeyDataVerify(key)) {
@@ -86,10 +86,10 @@ export class QueuedEncryptionClassBase implements IQueuedEncryptionClassBase {
    * set options provided for feature usage
    *
    * @protected
-   * @param {IQueuedEncrypyionClassBaseOptions} [options]
+   * @param {IQueuedEncryptionClassBaseOptions} [options]
    * @memberof QueuedEncryptionClassBase
    */
-  protected setOptions(options?: IQueuedEncrypyionClassBaseOptions) {
+  protected setOptions(options?: IQueuedEncryptionClassBaseOptions) {
     if (options && typeof options === 'object') {
       const { keys, queueOptions } = options;
 

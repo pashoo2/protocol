@@ -1,4 +1,4 @@
-import { isCryptoKeyPair, isCryptoKey, isCryptoKeyPairExportedAsString } from 'utils/encryption-keys-utils/encryption-keys-utils';
+import { isCryptoKeyPair, isCryptoKey, isCryptoKeyPairExportedAsString } from '@pashoo2/crypto-utilities';
 import {
   TCACryptoKeyPairs,
   TCACryptoPubilicKeys,

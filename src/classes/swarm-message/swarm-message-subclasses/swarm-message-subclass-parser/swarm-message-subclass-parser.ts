@@ -4,11 +4,11 @@ import {
   TSwarmMessageBodyRaw,
   TSwarmMessageBodyRawEncrypted,
 } from '../../swarm-message-constructor.types';
-import { isCryptoKeyDataDecryption } from '../../../../utils/encryption-keys-utils/encryption-keys-utils';
+import { isCryptoKeyDataDecryption } from '@pashoo2/crypto-utilities';
 import { QueuedEncryptionClassBase } from '../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base';
 import { ISwarmMessageEncryptedCache } from '../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import {
-  IQueuedEncrypyionClassBaseOptions,
+  IQueuedEncryptionClassBaseOptions,
   IQueuedEncryptionClassBase,
 } from '../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
 import { ISwarmMessageRaw, TSwarmMessage, TSwarmMessageSerialized } from '../../swarm-message-constructor.types';
@@ -34,10 +34,10 @@ export class SwarmMessageSubclassParser implements ISwarmMessageSubclassParser {
    *
    * @readonly
    * @protected
-   * @type {IQueuedEncrypyionClassBaseOptions}
+   * @type {IQueuedEncryptionClassBaseOptions}
    * @memberof SwarmMessageSerializer
    */
-  protected get messageDecryptQueueOptions(): IQueuedEncrypyionClassBaseOptions {
+  protected get messageDecryptQueueOptions(): IQueuedEncryptionClassBaseOptions {
     return {
       ...this.options.queueOptions,
       keys: {
