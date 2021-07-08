@@ -8,7 +8,7 @@ import {
   ICAConnectionSignUpCredentials,
   ICAConnectionUserAuthorizedResult,
 } from '../../central-authority-connections.types';
-import { isEmptyObject } from 'utils/common-utils/common-utils-objects';
+import { isEmptyObject } from 'utils';
 import {
   ICentralAuthorityUserProfile,
   TCentralAuthorityUserCryptoCredentials,

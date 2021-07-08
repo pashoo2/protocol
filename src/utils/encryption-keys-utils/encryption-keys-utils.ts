@@ -5,7 +5,7 @@ import {
 } from 'utils/hash-calculation-utils/hash-calculation-utils.const';
 import { encodeArrayBufferToDOMString } from 'utils/string-encoding-utils';
 
-import { commonUtilsArrayIncludesAll } from '../common-utils/common-utils-array';
+import { commonUtilsArrayIncludesAll } from 'utils';
 import { eCRYPTO_UTILS_KEYS_USAGES } from '../encryption-utils/crypto-utils.const';
 import { calculateHash, calculateHashNative } from './../hash-calculation-utils/hash-calculation-utils';
 import {

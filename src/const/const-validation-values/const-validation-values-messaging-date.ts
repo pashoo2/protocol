@@ -1,7 +1,8 @@
 import { CONST_VALUES_RESTRICTIONS_COMMON_CURRENT_DATE_MAX_ERROR_SECONDS } from 'const/const-values-restrictions-common';
-import { getSecondsByMilliseconds } from 'utils/common-utils/common-utils-date-time';
+import { getSecondsByMilliseconds } from 'classes/pseudo-ntp-class/pseudo-ntp-class.utils';
 
-export const CONST_VALIDATION_VALUES_MESSAGING_MAX_ERROR_SECONDS = CONST_VALUES_RESTRICTIONS_COMMON_CURRENT_DATE_MAX_ERROR_SECONDS;
+export const CONST_VALIDATION_VALUES_MESSAGING_MAX_ERROR_SECONDS =
+  CONST_VALUES_RESTRICTIONS_COMMON_CURRENT_DATE_MAX_ERROR_SECONDS;
 
 export const CONST_VALIDATION_VALUES_MESSAGING_DATE_MIN_YEAR = '2019';
 

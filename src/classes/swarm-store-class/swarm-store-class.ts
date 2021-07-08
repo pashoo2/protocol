@@ -1,4 +1,6 @@
 import assert from 'assert';
+import { checkIsError } from 'utils';
+
 import { TSwarmStoreDatabaseRequestMethodReturnType, ISwarmStoreDatabasesCommonStatusList } from './swarm-store-class.types';
 import {
   ESwarmStoreConnector,
@@ -8,7 +10,6 @@ import {
   SWARM_STORE_DATABASES_STATUSES_EMPTY,
 } from './swarm-store-class.const';
 import { calculateHash } from 'utils/hash-calculation-utils';
-import { checkIsError } from '../../utils/common-utils/common-utils-check-value';
 import { getEventEmitterClass } from '../basic-classes/event-emitter-class-base/event-emitter-class-base';
 import {
   ISwarmStoreOptionsWithConnectorFabric,
@@ -62,7 +63,8 @@ export class SwarmStore<
   extends getEventEmitterClass<any>()
   implements
     ISwarmStore<P, ItemType, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, O>,
-    ISwarmStoreWithConnector<P, ItemType, DbType, DBO, ConnectorBasic, PO, ConnectorMain> {
+    ISwarmStoreWithConnector<P, ItemType, DbType, DBO, ConnectorBasic, PO, ConnectorMain>
+{
   public get isReady(): boolean {
     return !!this.connector && this.connector.isReady;
   }

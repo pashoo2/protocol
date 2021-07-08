@@ -1,4 +1,6 @@
 import React from 'react';
+import { cloneMap } from 'utils';
+
 import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
 import {
   TSwarmMessageSerialized,
@@ -11,7 +13,6 @@ import {
   ISwarmMessageChannelDescriptionRaw,
 } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-instance.types';
 import { TSwarmMessagesChannelId } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-instance.types';
-import { cloneMap } from '../../utils/common-utils/common-utils-maps';
 import { SwarmChannelDescriptionComponent } from '../swarm-channel-description-component/swarm-channel-description-component';
 
 export interface ISwarmMessagesChannelsListProps<
@@ -228,7 +229,7 @@ export class SwarmMessagesChannelsListComponentBase<
     if (!channelsList) {
       throw new Error('Channels list is not exists in the component state');
     }
-    return (channelsList as unknown) as ISwarmMessagesChannelsDescriptionsList<P, T, MD>;
+    return channelsList as unknown as ISwarmMessagesChannelsDescriptionsList<P, T, MD>;
   }
 
   protected _setCurrentChannelsListByProps(): void {

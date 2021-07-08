@@ -10,7 +10,7 @@ import {
   ESwarmMessageStoreEventNames,
   SWARM_MESSAGE_STORE_CONNECTOR_ORBIT_DB_ITERATOR_OPTIONS_DEFAULT,
 } from './swarm-message-store.const';
-import { extend } from '../../utils/common-utils/common-utils-objects';
+import { extend } from 'utils';
 import {
   TSwarmStoreDatabaseIteratorMethodAnswer,
   TSwarmStoreDatabaseMethodAnswer,

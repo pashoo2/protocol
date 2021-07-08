@@ -1,5 +1,7 @@
 import assert from 'assert';
 import { JSONSchema7 } from 'json-schema';
+
+import { isDeepEqual } from 'utils';
 import { ESwarmStoreConnector } from 'classes/swarm-store-class/swarm-store-class.const';
 import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from 'classes/swarm-message/swarm-message-constructor.types';
 import {
@@ -46,7 +48,6 @@ import {
 } from '../../../../types/swarm-messages-channel-instance.types';
 import { ISwarmMessagesChannelsDescriptionsList } from '../../../../types/swarm-messages-channels-list-instance.types';
 import { ESwarmMessagesChannelsListEventName } from '../../../../types/swarm-messages-channels-list-events.types';
-import { isDeepEqual } from '../../../../../../utils/common-utils/common-utils-equality';
 import { ISwarmMessagesChannelV1ClassChannelsListHandlerConstructorOptions } from '../types/swarm-messages-channel-v1-class-channels-list-handler.types';
 import { ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions } from '../types/swarm-messages-channel-v1-class-messages-database-handler.types';
 import { IQueuedEncryptionClassBase } from '../../../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
@@ -156,7 +157,8 @@ export class SwarmMessagesChannelV1Class<
     DCCRT
   >,
   CHD extends ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO> = ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>
-> implements ISwarmMessagesChannel<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, GAC, MCF, ACO, O, SMS, MD> {
+> implements ISwarmMessagesChannel<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, GAC, MCF, ACO, O, SMS, MD>
+{
   public get id(): TSwarmMessagesChannelId {
     return this._swarmMessagesChannelDescriptionWODatabaseOptions.id;
   }
@@ -585,11 +587,8 @@ export class SwarmMessagesChannelV1Class<
     assert(options, 'Options must be provided');
     assert(typeof options === 'object', 'Options must be an object');
 
-    const {
-      swarmMessagesChannelDescription,
-      swarmMessagesChannelsListInstance,
-      passwordEncryptedChannelEncryptionQueue,
-    } = options;
+    const { swarmMessagesChannelDescription, swarmMessagesChannelsListInstance, passwordEncryptedChannelEncryptionQueue } =
+      options;
 
     this._validateSwarmMessagesChannelsListInstance(swarmMessagesChannelsListInstance);
     this._validateSwarmChannelDescription(swarmMessagesChannelDescription);
@@ -649,8 +648,8 @@ export class SwarmMessagesChannelV1Class<
     SMS,
     MD
   > {
-    const SwarmMessagesChannelV1ClassChannelsListHandlerConstructor = this
-      .__swarmMessagesChannelV1ClassChannelsListHandlerConstructor;
+    const SwarmMessagesChannelV1ClassChannelsListHandlerConstructor =
+      this.__swarmMessagesChannelV1ClassChannelsListHandlerConstructor;
     const constructorOptions = this._getOptionsForSwarmMessagesChannelsListConstructor();
     const swarmMessagesChannelsListInstance = new SwarmMessagesChannelV1ClassChannelsListHandlerConstructor(constructorOptions);
 
@@ -783,11 +782,10 @@ export class SwarmMessagesChannelV1Class<
     const messagesIssuer = this._actualSwarmMessagesIssuer;
     const messageEncryptionType: CHD['messageEncryption'] = this._swarmMessagesChannelDescriptionActual.messageEncryption;
     const databaseOptions = this._getChannelDatabaseOptionsByChannelDescriptionActual();
-    const messagesEncryptionQueue = this._getMessagesEncryptionQueueOrUndefinedIfChannelNotEncryptedByPassword(
-      messageEncryptionType
-    );
-    const swarmMessagesDatabaseConnectorInstanceByDBOFabric = this.__options.utils
-      .swarmMessagesDatabaseConnectorInstanceByDBOFabric;
+    const messagesEncryptionQueue =
+      this._getMessagesEncryptionQueueOrUndefinedIfChannelNotEncryptedByPassword(messageEncryptionType);
+    const swarmMessagesDatabaseConnectorInstanceByDBOFabric =
+      this.__options.utils.swarmMessagesDatabaseConnectorInstanceByDBOFabric;
     return {
       databaseOptions,
       messagesEncryptionQueue,

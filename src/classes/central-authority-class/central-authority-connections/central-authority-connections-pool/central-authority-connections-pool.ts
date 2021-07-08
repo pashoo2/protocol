@@ -1,4 +1,4 @@
-import { normalizeUrl } from 'utils/common-utils/common-utils-url';
+import { normalizeUrl } from 'utils';
 import {
   ICAConnectionsPoolOptions,
   ICAConnectionsPoolConnections,

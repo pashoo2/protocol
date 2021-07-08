@@ -8,7 +8,7 @@ import {
 } from './swarm-messgae-encrypted-cache.types';
 import { TSwarmMessageConstructorOptions } from '../swarm-message/swarm-message-constructor.types';
 import { SwarmMessageConstructor } from '../swarm-message/swarm-message-constructor';
-import { extend } from '../../utils/common-utils/common-utils-objects';
+import { extend } from 'utils';
 
 /**
  * This is utility to create a fabric for the SwarmMessageEncryptedCache

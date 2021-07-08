@@ -1,3 +1,5 @@
+import { delay, timeout, commonUtilsArrayUniq } from 'utils';
+
 import { ESwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.const';
 import {
   TSwarmStoreDatabaseEntityAddress,
@@ -32,8 +34,6 @@ import {
   SWARM_MESSAGES_DATABASE_CACHE_PLANNED_CACHE_UPDATE_FAILED_RETRY_DELAY_MS,
   SWARM_MESSAGES_DATABASE_CACHE_PLANNED_CACHE_UPDATE_BATCH_TIMEOUT_MS,
 } from './swarm-messages-database-cache.const';
-import { delay } from 'utils/common-utils/common-utils-timer';
-import { timeout } from '../../../../utils/common-utils/common-utils-timer';
 import { debounce } from 'utils/throttling-utils';
 import { SWARM_MESSAGES_DATABASE_CACHE_ADD_TO_CACHE_MESSAGES_PENDING_DEBOUNCE_MS } from './swarm-messages-database-cache.const';
 import {
@@ -53,7 +53,6 @@ import { TSwarmMessageSerialized } from '../../../swarm-message/swarm-message-co
 import { TSwarmStoreDatabaseOptions } from '../../../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageInstanceDecrypted } from '../../../swarm-message/swarm-message-constructor.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../swarm-messages-database.messages-collector.types';
-import { commonUtilsArrayUniq } from '../../../../utils/common-utils/common-utils-array';
 import { ifSwarmMessagesDecryptedEqual } from '../../../swarm-message/swarm-message-utils/swarm-message-utils-common/swarm-message-utils-common-decrypted';
 
 export class SwarmMessagesDatabaseCache<
@@ -64,7 +63,8 @@ export class SwarmMessagesDatabaseCache<
   MD extends ISwarmMessageInstanceDecrypted,
   SMC extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>,
   DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMC>
-> implements ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMC> {
+> implements ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMC>
+{
   get isReady(): boolean {
     return this._isReady;
   }
@@ -941,7 +941,8 @@ export class SwarmMessagesDatabaseCache<
         this._emitCacheUpdated();
       }
 
-      const hasMessagesBeenDefferedUpdated = await this._runDefferedPartialCacheUpdateAfterFullCacheUpdateAndResetDefferedUpdateQueue();
+      const hasMessagesBeenDefferedUpdated =
+        await this._runDefferedPartialCacheUpdateAfterFullCacheUpdateAndResetDefferedUpdateQueue();
       if (hasMessagesBeenDefferedUpdated) {
         this._emitCacheUpdated();
       }
@@ -1039,9 +1040,8 @@ export class SwarmMessagesDatabaseCache<
   }
 
   protected _getAndResetDefferedUpdateAfterCacheUpdateProcess(): Set<ISwarmMessagesDatabaseMesssageMeta<P, DbType>> | undefined {
-    const messagesMetaToUpdate:
-      | Set<ISwarmMessagesDatabaseMesssageMeta<P, DbType>>
-      | undefined = this._getDefferedUpdateAfterCacheUpdateProcess();
+    const messagesMetaToUpdate: Set<ISwarmMessagesDatabaseMesssageMeta<P, DbType>> | undefined =
+      this._getDefferedUpdateAfterCacheUpdateProcess();
 
     this._resetMessagesDefferedFullQueue();
     this._resetMessagesDefferedQueuePartial();

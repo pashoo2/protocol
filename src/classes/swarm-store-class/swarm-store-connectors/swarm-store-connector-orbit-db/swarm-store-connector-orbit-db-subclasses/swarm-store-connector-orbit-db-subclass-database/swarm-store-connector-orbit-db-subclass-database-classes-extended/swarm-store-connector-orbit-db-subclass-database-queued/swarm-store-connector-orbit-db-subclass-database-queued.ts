@@ -1,5 +1,4 @@
 import { SwarmStoreConnectorOrbitDBDatabase } from '../../swarm-store-connector-orbit-db-subclass-database';
-import { createPromisePendingRejectable } from 'utils/common-utils/commom-utils.promies';
 
 import {
   TSwarmStoreValueTypes,
@@ -9,10 +8,9 @@ import {
 import { ESwarmStoreConnector } from '../../../../../../swarm-store-class.const';
 import { ArgumentTypes } from 'types/helper.types';
 import { ISwarmStoreConnectorBasic } from '../../../../../../swarm-store-class.types';
-import { ConcurentAsyncQueueWithAutoExecution } from '../../../../../../../basic-classes/async-queue-concurent/async-queue-concurent-extended/async-queue-concurent-with-auto-execution/async-queue-concurent-with-auto-execution';
-import { IAsyncQueueConcurentWithAutoExecution } from '../../../../../../../basic-classes/async-queue-concurent/async-queue-concurent-extended/async-queue-concurent-with-auto-execution/async-queue-concurent-with-auto-execution.types';
 import { ISwarmStoreConnectorOrbitDbDatabaseIteratorOptionsRequired } from '../../swarm-store-connector-orbit-db-subclass-database.types';
 import { asyncQueueConcurentMixinDefault } from 'classes/basic-classes/async-queue-concurent/async-queue-concurent-mixins/async-queue-concurent-mixin-default';
+import { IAsyncQueueConcurentWithAutoExecution } from '../../../../../../../basic-classes/async-queue-concurent/async-queue-concurent-extended/async-queue-concurent-with-auto-execution/async-queue-concurent-with-auto-execution.types';
 import {
   SWARM_STORE_CONNECTOR_ORBIT_DB_SUBCLASS_DATABASE_QUEUED_CRUD_OPERATIONS_TIMEOUTS_MS,
   SWARM_STORE_CONNECTOR_ORBIT_DB_SUBCLASS_DATABASE_QUEUED_OPERATIONS_DEFAULT_TIMEOUT_MS,
@@ -27,7 +25,8 @@ export class SwarmStoreConnectorOrbitDBDatabaseQueued<
     SwarmStoreConnectorOrbitDBDatabase,
     SWARM_STORE_CONNECTOR_ORBIT_DB_SUBCLASS_DATABASE_QUEUED_OPERATIONS_DEFAULT_TIMEOUT_MS
   )<ItemType, DbType, DBO>
-  implements ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, ItemType, DbType, DBO> {
+  implements ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, ItemType, DbType, DBO>
+{
   /**
    * All async operations with the database, excluding datbase
    * close and open, should use this queue.

@@ -1,4 +1,12 @@
 import assert from 'assert';
+import {
+  isNonNativeFunction,
+  isDefined,
+  mergeMaps,
+  createRejectablePromiseByNativePromise,
+  whetherTwoMapsSimilar,
+} from 'utils/common-utils';
+
 import { ESwarmStoreConnector, ESwarmStoreEventNames } from '../../../../../../swarm-store-class/swarm-store-class.const';
 import {
   TSwarmMessageSerialized,
@@ -18,7 +26,6 @@ import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from 'classes/swarm-stor
 import { ESwarmStoreConnectorOrbitDbDatabaseIteratorOption } from '../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
 import { ISwarmMessagesChannelsDescriptionsListConstructorArguments } from '../../../../../types/swarm-messages-channels-list-instance.types';
 import { createImmutableObjectClone } from '../../../../../../../utils/data-immutability-utils/data-immutability-key-value-structure-utils';
-import { isNonNativeFunction } from '../../../../../../../utils/common-utils/common-utils.functions';
 import { IAdditionalUtils } from '../../types/swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.types';
 import { ISwarmMessagesChannelsListV1GrantAccessConstantArguments } from '../../types/swarm-messages-channels-list-v1-class.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
@@ -32,9 +39,7 @@ import {
   TSwarmStoreDatabaseIteratorMethodArgument,
   TSwarmStoreDatabaseEntityUniqueIndex,
 } from '../../../../../../swarm-store-class/swarm-store-class.types';
-import { isDefined } from '../../../../../../../utils/common-utils/common-utils-main';
 import { SwarmMessagesChannelDescriptionWithMeta } from '../../../../../swarm-messages-channels-subclasses/swarm-messages-channel-description-with-meta/swarm-messages-channel-description-with-meta';
-import { createRejectablePromiseByNativePromise } from '../../../../../../../utils/common-utils/commom-utils.promies';
 import {
   ISwarmMessageStoreMessagingRequestWithMetaResult,
   ISwarmMessageStoreDeleteMessageArg,
@@ -58,10 +63,8 @@ import { ISwarmMessagesChannelsListDatabaseEvents } from '../../../../../types/s
 import { TSwarmMessageDatabaseMessagesCached } from '../../../../../../swarm-messages-database/swarm-messages-database.types';
 import { TSwarmMessagesChannelId } from '../../../../../types/swarm-messages-channel-instance.types';
 import { ESwarmMessagesDatabaseCacheEventsNames } from '../../../../../../swarm-messages-database/swarm-messages-database.const';
-import { mergeMaps } from 'utils/common-utils/common-utils-maps';
 import { debounce } from 'utils/throttling-utils';
 import { EMIT_CHANNELS_DESCRIPTIONS_MAP_CACHE_UPDATE_EVENT_DEBOUNCE_MS } from './swarm-messages-channels-list-v1-class-db-connection-initializer-and-handler.fabric.const';
-import { whetherTwoMapsSimilar } from '../../../../../../../utils/common-utils/common-utils-maps';
 import { compareTwoSwarmMessageStoreMessagingRequestWithMetaResults } from '../../../../../../swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache/swarm-messages-database-cache.utils';
 import { dataCachingUtilsCachingDecoratorGlobalCachePerClass } from '../../../../../../../utils/data-cache-utils/data-cache-utils-caching-decorator-global-cache-per-class/data-cache-utils-caching-decorator-global-cache-per-class';
 import { getSwarmMessageUniqueHash } from '../../../../../../swarm-message/swarm-message-utils/swarm-message-utils-common/swarm-message-utils-common-decrypted';
@@ -151,9 +154,8 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       return additionalUtils;
     }
 
-    private readonly __emitter: TTypedEmitter<ISwarmMessagesChannelsListDatabaseEvents<P, T, any>> = getEventEmitterInstance<
-      ISwarmMessagesChannelsListEvents<P, T, any>
-    >();
+    private readonly __emitter: TTypedEmitter<ISwarmMessagesChannelsListDatabaseEvents<P, T, any>> =
+      getEventEmitterInstance<ISwarmMessagesChannelsListEvents<P, T, any>>();
 
     private __swarmMessagesKeyValueDatabaseConnectionPending: IPromisePendingRejectable<
       PromiseResolveType<ReturnType<CARGS['utilities']['databaseConnectionFabric']>>,
@@ -260,9 +262,8 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
     > {
       const optionsForReadingAllValuesStored = this._createOptionsForCollectingAllDatabaseValues();
       const messagesReadFromDatabase = await this.__requestDatabase(optionsForReadingAllValuesStored);
-      const swarmMessagesChannelsDescriptionsOrErrors = await this._convertDatabaseRequestResultIntoSwarmChannelsDescriptionsWithMeta(
-        messagesReadFromDatabase
-      );
+      const swarmMessagesChannelsDescriptionsOrErrors =
+        await this._convertDatabaseRequestResultIntoSwarmChannelsDescriptionsWithMeta(messagesReadFromDatabase);
       return swarmMessagesChannelsDescriptionsOrErrors;
     }
 
@@ -414,8 +415,8 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
     private __whetherCurrentSwarmMessagesForCurrentUpdateOfDescriptionsCachedMapIfEqualsTo(
       cachedMessages: TSwarmMessageDatabaseMessagesCached<P, ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE, MD>
     ): boolean {
-      const swarmMessagesForCurrentUpdateOfDescriptionsCachedMapCurrentList = this
-        .__swarmMessagesForCurrentUpdateOfDescriptionsCachedMap;
+      const swarmMessagesForCurrentUpdateOfDescriptionsCachedMapCurrentList =
+        this.__swarmMessagesForCurrentUpdateOfDescriptionsCachedMap;
       if (!swarmMessagesForCurrentUpdateOfDescriptionsCachedMapCurrentList) {
         return false;
       }
@@ -505,9 +506,10 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
     private __setCurrentSwarmMessagesChannelDescriptionsMapCahcedUpdatingPromiseReturnItAndUnsetOnFinish<T>(
       promiseChannelsDescriptionsMapUpdate: Promise<T>
     ): IPromiseRejectable<T, Error> {
-      const promiseCancellableWaitingFor = this.__setCurrentSwarmMessagesChannelDescriptionsMapCahcedUpdatingPromiseAndReturnCancellable(
-        promiseChannelsDescriptionsMapUpdate
-      );
+      const promiseCancellableWaitingFor =
+        this.__setCurrentSwarmMessagesChannelDescriptionsMapCahcedUpdatingPromiseAndReturnCancellable(
+          promiseChannelsDescriptionsMapUpdate
+        );
       promiseCancellableWaitingFor.finally(() => {
         this.__unsetCurrentSwarmMessagesChannelDescriptionsMapCahcedUpdatingPromiseIfEqualsTo(promiseCancellableWaitingFor);
       });
@@ -727,8 +729,10 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
         },
         channelsListDescription,
         grandAccessCallbackFromDbOptions: grantAccess as NonNullable<DBO['grantAccess']>,
-        getIssuerForSwarmMessageWithChannelDescriptionByChannelsListDescription: getIssuerForSwarmMessageWithChannelDescriptionByChannelDescription,
-        getTypeForSwarmMessageWithChannelDescriptionByChannelsListDescription: getTypeForSwarmMessageWithChannelDescriptionByChannelDescription,
+        getIssuerForSwarmMessageWithChannelDescriptionByChannelsListDescription:
+          getIssuerForSwarmMessageWithChannelDescriptionByChannelDescription,
+        getTypeForSwarmMessageWithChannelDescriptionByChannelsListDescription:
+          getTypeForSwarmMessageWithChannelDescriptionByChannelDescription,
         getDatabaseKeyForChannelDescription,
         channelDescriptionFormatValidator: swarmMessagesChannelDescriptionValidator,
         parseChannelDescription: this._deserializeChannelDescriptionRaw.bind(this),
@@ -754,9 +758,10 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       DBOFULL<P, T, MD, CTX, DBO>,
       MD
     > {
-      const swarmChannelsListClockSortedChannelsDescriptionsUpdatesCache = this.__fabricSwarmChannelsListClockSortedChannelsDescriptionsUpdatesCache(
-        this.__getArgumentsForFabricSwarmChannelsListClockSortedChannelsDescriptionsUpdatesCache()
-      );
+      const swarmChannelsListClockSortedChannelsDescriptionsUpdatesCache =
+        this.__fabricSwarmChannelsListClockSortedChannelsDescriptionsUpdatesCache(
+          this.__getArgumentsForFabricSwarmChannelsListClockSortedChannelsDescriptionsUpdatesCache()
+        );
       return swarmChannelsListClockSortedChannelsDescriptionsUpdatesCache;
     }
 
@@ -768,7 +773,8 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
         getArgumentsForSwarmMessageWithChannelDescriptionValidator,
         getVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidator,
       } = this._additionalUtils;
-      const swarmChannelsListClockSortedChannelsDescriptionsUpdatesCache = this.__createSwarmChannelsListClockSortedChannelsDescriptionsUpdatesCache();
+      const swarmChannelsListClockSortedChannelsDescriptionsUpdatesCache =
+        this.__createSwarmChannelsListClockSortedChannelsDescriptionsUpdatesCache();
       const params = {
         constantArguments: argumentsConstant,
         swarmChannelsListClockSortedChannelsDescriptionsUpdatesCache,
@@ -791,7 +797,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       const { dbOptions } = this._getConnectionOptions();
       const databaseGrantAccessCallback = this._createGrantAccessCallbackForChannelsListDatabase();
       // TOOD - remove the type cast to the "unknown" type
-      return ({
+      return {
         ...dbOptions,
         dbType: ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
         dbName: databaseName,
@@ -799,7 +805,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
         // we need to preload all values in cache to make it possible to read values
         // cached from grant access callback
         preloadCount: -1,
-      } as unknown) as DBOFULL<P, T, MD, CTX, DBO>;
+      } as unknown as DBOFULL<P, T, MD, CTX, DBO>;
     }
 
     private __getNewSwarmMessagesChannelsDescriptiopnsCachedMap(): Map<
@@ -883,11 +889,12 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
           return;
         }
 
-        const pendingAddChannelDescription = this.__addSwarmChannelDescriptionOrErrorIfRejectedToSwarmChannelsDescriptionsMapBySwarmMessage(
-          updatedChannelsListDescriptionsCached,
-          swarmMessageOrError,
-          swarmMessageKeyInKVDatabase
-        );
+        const pendingAddChannelDescription =
+          this.__addSwarmChannelDescriptionOrErrorIfRejectedToSwarmChannelsDescriptionsMapBySwarmMessage(
+            updatedChannelsListDescriptionsCached,
+            swarmMessageOrError,
+            swarmMessageKeyInKVDatabase
+          );
 
         swarmMessagesConvertationsToChannelsDescriptionsAndAddingToCachePending.push(pendingAddChannelDescription);
       });
@@ -919,9 +926,10 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
       this.__rejectCurrentSwarmMessagesChannelDescriptionsMapCahcedUpdatingPromise(new Error('Rejected by new inconming update'));
 
       const updateChannelsDescriptionPromiseNative = this.__updateCachedChannelsListByCachedMessages(cachedMessages);
-      const promisePendingRejectable = this.__setCurrentSwarmMessagesChannelDescriptionsMapCahcedUpdatingPromiseReturnItAndUnsetOnFinish(
-        updateChannelsDescriptionPromiseNative
-      );
+      const promisePendingRejectable =
+        this.__setCurrentSwarmMessagesChannelDescriptionsMapCahcedUpdatingPromiseReturnItAndUnsetOnFinish(
+          updateChannelsDescriptionPromiseNative
+        );
 
       this.__updateChannelsMapCachedByPromisePendingResultOrHandleRejection(cachedMessages, promisePendingRejectable);
       this.__setSwarmMessagesForCurrentUpdateOfDescriptionsCachedMap(cachedMessages);
@@ -950,9 +958,8 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
         key
       );
 
-      const cahceUpdatingPromisePendingCancellable = this.__setCurrentSwarmMessagesChannelDescriptionsMapCahcedUpdatingPromiseReturnItAndUnsetOnFinish(
-        cahceUpdatingPromise
-      );
+      const cahceUpdatingPromisePendingCancellable =
+        this.__setCurrentSwarmMessagesChannelDescriptionsMapCahcedUpdatingPromiseReturnItAndUnsetOnFinish(cahceUpdatingPromise);
 
       await cahceUpdatingPromisePendingCancellable;
       this.__mergeSetAndEmitSwarmMessagesChannelsDescriptionsCachedMapUpdateEvent(temporaryMap);
@@ -1071,7 +1078,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
   }
   // TODO - typescript issue https://github.com/microsoft/TypeScript/issues/22815
   // Abstract classes that implement interfaces shouldn't require method signatures
-  return (SwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler as unknown) as IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler<
+  return SwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler as unknown as IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler<
     P,
     T,
     MD,

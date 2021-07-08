@@ -1,3 +1,5 @@
+import { isDeepEqual, createCancellablePromiseByNativePromise } from 'utils';
+
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
 import { ESwarmStoreConnector, ESwarmStoreEventNames } from '../../../../../swarm-store-class/swarm-store-class.const';
 import {
@@ -26,7 +28,6 @@ import {
   ISwarmMessagesDatabaseConnectOptions,
 } from '../../../../../swarm-messages-database/swarm-messages-database.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../../../../swarm-messages-database/swarm-messages-database.messages-collector.types';
-import { isDeepEqual } from '../../../../../../utils/common-utils/common-utils-equality';
 import assert from 'assert';
 import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../../../../const/swarm-messages-channels-main.const';
 import { isCryptoKeyDataEncryption } from '../../../../../../utils/encryption-keys-utils/encryption-keys-utils';
@@ -40,7 +41,6 @@ import {
   ISwarmMessageDatabaseEvents,
   TSwarmMessageDatabaseMessagesCached,
 } from '../../../../../swarm-messages-database/swarm-messages-database.types';
-import { createCancellablePromiseByNativePromise } from '../../../../../../utils/common-utils/commom-utils.promies';
 import { IPromiseCancellable } from '../../../../../../types/promise.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import {

@@ -4,7 +4,7 @@ import {
   ISwarmMessageTimestampValidationOptions,
 } from './swarm-message-subclass-validator-fields-validator-validator-timestamp.types';
 import assert from 'assert';
-import { getDateNowInSeconds } from 'utils/common-utils/common-utils-date-time-synced';
+import { getDateNowInSeconds } from 'utils';
 import { SWARM_MESSAGE_SUBCLASS_VALIDATOR_TIMESTAMP_OPTIONS_DEFAULT } from './swarm-message-subclass-validator-fields-validator-validator-timestamp.const';
 
 /**
@@ -37,6 +37,6 @@ function validateTimestamp(
   assert(timestamp - maxDiffErrorSeconds < maxValue, `Timestamp must be less than ${maxValue}`);
 }
 
-export const createValidateTimestamp = (options?: ISwarmMessageTimestampValidationOptions) => (
-  timestamp: TSwarmMessageTimestampSerialized
-) => validateTimestamp(timestamp, defaultsDeep(options, SWARM_MESSAGE_SUBCLASS_VALIDATOR_TIMESTAMP_OPTIONS_DEFAULT));
+export const createValidateTimestamp =
+  (options?: ISwarmMessageTimestampValidationOptions) => (timestamp: TSwarmMessageTimestampSerialized) =>
+    validateTimestamp(timestamp, defaultsDeep(options, SWARM_MESSAGE_SUBCLASS_VALIDATOR_TIMESTAMP_OPTIONS_DEFAULT));

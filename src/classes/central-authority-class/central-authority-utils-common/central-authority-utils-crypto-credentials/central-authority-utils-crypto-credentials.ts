@@ -23,8 +23,8 @@ import { stringify } from 'utils/serialization-utils';
 import { TUserIdentityVersion } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types';
 import { calcCryptoKeyPairHash } from 'utils/encryption-keys-utils/encryption-keys-utils';
 import { TCAAuthProviderIdentity } from '../../central-authority-connections/central-authority-connections.types';
-import { normalizeUrl } from '../../../../utils/common-utils/common-utils-url';
 import { CA_UTILS_CRYPTO_CREDENTIALS_NORMALIZE_URL_OPTIONS } from './central-authority-utils-crypto-credentials.const';
+import normalizeUrl from 'normalize-url';
 
 export const exportCryptoCredentialsToString = async (
   userCryptoCredentials: TCentralAuthorityUserCryptoCredentials,
@@ -35,10 +35,8 @@ export const exportCryptoCredentialsToString = async (
     return new Error('The given value is not a valid crypto credentials');
   }
 
-  const {
-    [CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeys,
-    [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: userIdentity,
-  } = userCryptoCredentials;
+  const { [CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME]: cryptoKeys, [CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME]: userIdentity } =
+    userCryptoCredentials;
   const exportedCryptoKeys = await exportKeyPairsAsString(cryptoKeys, password);
 
   if (exportedCryptoKeys instanceof Error) {

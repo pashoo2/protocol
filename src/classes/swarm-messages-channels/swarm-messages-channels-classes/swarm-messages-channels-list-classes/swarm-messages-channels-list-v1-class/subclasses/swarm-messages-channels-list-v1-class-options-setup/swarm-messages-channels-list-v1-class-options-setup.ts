@@ -1,3 +1,5 @@
+import { isNonNativeFunction } from 'utils';
+
 import { ESwarmStoreConnector } from '../../../../../../swarm-store-class/swarm-store-class.const';
 import {
   TSwarmMessageSerialized,
@@ -9,7 +11,6 @@ import {
   ISwarmMessagesChannelsDescriptionsListConnectionOptions,
   TSwrmMessagesChannelsListDBOWithGrantAccess,
 } from '../../../../../types/swarm-messages-channels-list-instance.types';
-import { isNonNativeFunction } from '../../../../../../../utils/common-utils/common-utils.functions';
 import {
   ISwarmMessagesChannelsDescriptionsListConstructorArguments,
   ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric,
@@ -282,7 +283,7 @@ export function getIConstructorAbstactSwarmMessagesChannelsListVersionOneOptions
   CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>
 >(): IConstructorAbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<P, T, MD, CTX, DBO, CF, CARGS> {
   // TODO - remove the type cast
-  return (SwarmMessagesChannelsListVersionOneOptionsSetUp as unknown) as IConstructorAbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<
+  return SwarmMessagesChannelsListVersionOneOptionsSetUp as unknown as IConstructorAbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<
     P,
     T,
     MD,

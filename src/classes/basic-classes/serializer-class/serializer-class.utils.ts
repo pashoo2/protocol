@@ -1,12 +1,13 @@
+import { isNativeFunction } from 'utils';
+import { isNonArrowFunctionStringified, isArrowFunctionStringified } from 'utils';
+
 import { IFunctionParser, IFunctionSerializer } from '../../../types/serialization.types';
 import { TSimpleTypes } from '../../../types/common.types';
-import { isNativeFunction } from 'utils/common-utils/common-utils.functions';
 import {
   ISerializerClassCheckerIsFunctionSerialized,
   ISerializerClassReplacerCallback,
   ISerializerClassReviverCallback,
 } from './serializer-class.types';
-import { isNonArrowFunctionStringified, isArrowFunctionStringified } from '../../../utils/common-utils/common-utils.functions';
 
 export function serializerClassUtilFunctionSerializer(fn: (...args: any[]) => any): string {
   if (isNativeFunction(fn)) {

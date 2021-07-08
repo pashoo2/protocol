@@ -1,4 +1,6 @@
 import assert from 'assert';
+import { extend } from 'utils';
+
 import {
   IConnectionBridgeOptions,
   IConnectionBridge,
@@ -19,7 +21,6 @@ import {
   TSwarmMessagesStoreGrantAccessCallback,
   ISwarmMessageStoreAccessControlOptions,
 } from '../swarm-message-store/types/swarm-message-store.types';
-import { extend } from '../../utils/common-utils/common-utils-objects';
 import {
   CONNECTION_BRIDGE_OPTIONS_DEFAULT_AUTH_PROVIDERS_POOL,
   CONNECTION_BRIDGE_SESSION_STORAGE_KEYS,

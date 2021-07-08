@@ -1,7 +1,8 @@
+import { createPromisePendingRejectable } from 'utils';
+import { AnyConstructor } from 'types/common.types';
+
 import { IAsyncQueueConcurentWithAutoExecution } from '../../async-queue-concurent-extended/async-queue-concurent-with-auto-execution/async-queue-concurent-with-auto-execution.types';
 import { ConcurentAsyncQueueWithAutoExecution } from '../../async-queue-concurent-extended/async-queue-concurent-with-auto-execution/async-queue-concurent-with-auto-execution';
-import { createPromisePendingRejectable } from '../../../../../utils/common-utils/commom-utils.promies';
-import { AnyConstructor } from 'types/common.types';
 import { IAsyncQueueConcurentMixinDefault } from '../../async-queue-concurent.types';
 
 export function asyncQueueConcurentMixinDefault<M extends AnyConstructor>(

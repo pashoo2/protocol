@@ -39,7 +39,7 @@ export const signToTypedArray = async (
     return d;
   }
 
-  return signNative(k, d);
+  return await signNative(k, d);
 };
 
 export const signToString = async (

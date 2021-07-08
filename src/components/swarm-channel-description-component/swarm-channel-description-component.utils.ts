@@ -1,11 +1,11 @@
+import { createFunctionFromSerializedFunction, commonUtilsArrayUniq } from 'utils';
+
 import { ISwarmMessageChannelDescriptionRaw } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-instance.types';
 import { IFieldDescription, EFormFieldType, IFormMethods } from '../base-component/base-component.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
 import { TSwarmMessageSerialized } from '../../classes/swarm-message/swarm-message-constructor.types';
 import { TSwarmStoreDatabaseType, TSwarmStoreDatabaseOptions } from '../../classes/swarm-store-class/swarm-store-class.types';
-import { commonUtilsArrayUniq } from '../../utils/common-utils/common-utils-array';
-import { createFunctionFromSerializedFunction } from '../../utils/common-utils/common-utils.functions';
 import validateUserIdentifier from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier';
 
 function openUserIdInputDialogAndReturnValueEntered(dialogMessage: string): string {

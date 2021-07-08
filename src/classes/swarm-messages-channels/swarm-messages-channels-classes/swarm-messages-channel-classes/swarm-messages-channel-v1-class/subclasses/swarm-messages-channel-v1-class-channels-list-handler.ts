@@ -16,7 +16,7 @@ import {
   TSwarmMessagesStoreGrantAccessCallback,
 } from 'classes/swarm-message-store/types/swarm-message-store.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from 'classes/swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
-import { isDeepEqual } from 'utils/common-utils/common-utils-equality';
+import { isDeepEqual } from 'utils';
 import { getEventEmitterInstance } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
 import {
   ESwarmMessagesChannelsListEventName,
@@ -86,7 +86,8 @@ export class SwarmMessagesChannelV1ClassChannelsListHandler<
       O,
       SMS,
       MD
-    > {
+    >
+{
   public get emitter(): ISwarmMessagesChannelNotificationEmitter<P, T, DbType> {
     return this.__emitter;
   }

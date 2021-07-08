@@ -1,4 +1,6 @@
 import React from 'react';
+import { deepCloneObject, createFunctionFromSerializedFunction } from 'utils';
+
 import { ISwarmMessageChannelDescriptionRaw } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-instance.types';
 import { TSwarmMessageSerialized } from '../../classes/swarm-message/swarm-message-constructor.types';
 import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
@@ -6,8 +8,6 @@ import { TSwarmStoreDatabaseType, TSwarmStoreDatabaseOptions } from '../../class
 import { BaseComponent } from '../base-component/base-component';
 import { swarmChannelDescriptionComponentCreateFormFieldsDescriptionForChannelDescription } from './swarm-channel-description-component.utils';
 import { IButtonProps, onFormValuesChange, IFormFieldsValues } from '../base-component/base-component.types';
-import { createFunctionFromSerializedFunction } from '../../utils/common-utils/common-utils.functions';
-import { deepCloneObject } from '../../utils/common-utils/common-utils-objects';
 
 export interface ISwarmChannelDescriptionComponentProps<
   P extends ESwarmStoreConnector,

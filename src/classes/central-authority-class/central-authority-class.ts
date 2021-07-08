@@ -1,4 +1,5 @@
-import { checkIsError } from '../../utils/common-utils/common-utils-check-value';
+import { checkIsError } from 'utils';
+
 import { dataCachingUtilsCachingDecoratorGlobalCachePerClass } from '../../utils/data-cache-utils/data-cache-utils-caching-decorator-global-cache-per-class/data-cache-utils-caching-decorator-global-cache-per-class';
 import { validateVerboseBySchema } from './../../utils/validation-utils/validation-utils';
 import { getErrorScopedClass } from './../basic-classes/error-extended-scoped-class-base/error-extended-scoped-class-base';

@@ -1,4 +1,4 @@
-import { normalizeUrl } from 'utils/common-utils/common-utils-url';
+import { normalizeUrl } from 'utils';
 import { IParser } from '../central-authority-class-user-identity-parsers.types';
 import { ICAUserIdentityDescription } from '../../central-authority-class-user-identity.types';
 import {

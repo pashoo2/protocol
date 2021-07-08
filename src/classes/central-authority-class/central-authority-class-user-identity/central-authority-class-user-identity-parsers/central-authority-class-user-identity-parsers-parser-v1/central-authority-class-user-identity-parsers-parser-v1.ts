@@ -6,7 +6,7 @@ import {
   CA_USER_IDENTITY_PARSER_IDENTITY_MAX_CHARACTERS_COUNT,
 } from './central-authority-class-user-identity-parsers-parser-v1.const';
 import { getUserIdentityDescription } from '../central-authority-class-user-identity-parsers.utils';
-import { normalizeUrl } from 'utils/common-utils/common-utils-url';
+import { normalizeUrl } from 'utils';
 
 /**
  * this is unique identifier of the user

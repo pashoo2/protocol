@@ -1,9 +1,10 @@
+import { commonUtilsArrayUniq, createPromisePendingRejectable } from 'utils';
+
 import { ESwarmStoreConnector } from '../../swarm-store-class.const';
 import assert from 'assert';
 import { IStorageCommon } from '../../../../types/storage.types';
 import { ISerializer } from '../../../../types/serialization.types';
 import { SWARM_STORE_CONNECTOR_DATABASES_PERSISTENT_LIST_ATTEMPTS_TO_SAVE_ON_FAIL } from './swarm-store-connector-databases-persistent-list.const';
-import { commonUtilsArrayUniq } from '../../../../utils/common-utils/common-utils-array';
 import {
   SWARM_STORE_CONNECTOR_DATABASES_PERSISTENT_LIST_DEFAULT_DATABASE_LIST,
   SWARM_STORE_CONNECTOR_DATABASES_PERSISTENT_LIST_STORAGE_KEY_PERFIX_DATABASE_NAME_DELIMETER,
@@ -13,7 +14,6 @@ import {
 import { ISwarmStoreConnectorDatabasesPersistentListConstructorParams } from '../../swarm-store-class.types';
 import { IAsyncQueueConcurentWithAutoExecution } from '../../../basic-classes/async-queue-concurent/async-queue-concurent-extended/async-queue-concurent-with-auto-execution/async-queue-concurent-with-auto-execution.types';
 import { ConcurentAsyncQueueWithAutoExecution } from '../../../basic-classes/async-queue-concurent/async-queue-concurent-extended/async-queue-concurent-with-auto-execution/async-queue-concurent-with-auto-execution';
-import { createPromisePendingRejectable } from '../../../../utils/common-utils/commom-utils.promies';
 import {
   TSwarmStoreValueTypes,
   TSwarmStoreDatabaseType,
@@ -28,7 +28,8 @@ export class SwarmStoreConnectorPersistentList<
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>,
   DBL extends Record<DBO['dbName'], DBO>
-> implements ISwarmStoreConnectorDatabasesPersistentList<P, ItemType, DbType, DBO, DBL> {
+> implements ISwarmStoreConnectorDatabasesPersistentList<P, ItemType, DbType, DBO, DBL>
+{
   public get databasesKnownOptionsList(): DBL | undefined {
     return this._databasesList;
   }
@@ -52,7 +53,8 @@ export class SwarmStoreConnectorPersistentList<
    */
   private _wasClosed: boolean | undefined;
 
-  protected readonly _maxFailsOfersistentStorageOperation = SWARM_STORE_CONNECTOR_DATABASES_PERSISTENT_LIST_ATTEMPTS_TO_SAVE_ON_FAIL;
+  protected readonly _maxFailsOfersistentStorageOperation =
+    SWARM_STORE_CONNECTOR_DATABASES_PERSISTENT_LIST_ATTEMPTS_TO_SAVE_ON_FAIL;
 
   protected get _databasesUniqNamesList(): Array<DBO['dbName']> | undefined {
     const databasesList = this._databasesList;
@@ -106,12 +108,10 @@ export class SwarmStoreConnectorPersistentList<
   public async close(): Promise<void> {
     this._checkInstanceIsNotClosed();
     this._setInstanceClosed();
-    await this._waitAllPendingAsyncEndedAndExecute(
-      async (): Promise<void> => {
-        await this._destroyAsyncOperationsQueue();
-        this._resetTheInstance();
-      }
-    );
+    await this._waitAllPendingAsyncEndedAndExecute(async (): Promise<void> => {
+      await this._destroyAsyncOperationsQueue();
+      this._resetTheInstance();
+    });
   }
 
   protected _validateParams(

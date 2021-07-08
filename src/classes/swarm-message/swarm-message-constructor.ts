@@ -1,6 +1,6 @@
 import assert from 'assert';
-import { getDateNowInSeconds } from '../../utils/common-utils/common-utils-date-time-synced';
-import { extend } from '../../utils/common-utils/common-utils-objects';
+import { extend, getDateNowInSeconds } from 'utils';
+
 import {
   SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_SERIALIZER,
   SWARM_MESSAGE_CONSTRUCTOR_OPTIONS_DEFAULTS_UTILS,

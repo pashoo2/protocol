@@ -1,9 +1,5 @@
 import assert from 'assert';
-import {
-  isNativeFunction,
-  isArrowFunction,
-  createFunctionFromSerializedFunction,
-} from '../../../../utils/common-utils/common-utils.functions';
+import { isNativeFunction, isArrowFunction, createFunctionFromSerializedFunction } from 'utils';
 import { TSwarmMessagesStoreGrantAccessCallback } from '../../types/swarm-message-store.types';
 import { ISwarmStoreConnectorAccessConrotllerGrantAccessCallbackSerializable } from '../../../swarm-store-class/swarm-store-class.types';
 

@@ -1,4 +1,4 @@
-import { getDateNowInSeconds } from 'utils/common-utils/common-utils-date-time-synced';
+import { getDateNowInSeconds } from 'utils';
 import { CONST_VALIDATION_VALUES_TIMESTAMP_UNIX_MIN_S } from 'const/const-validation-values/const-validation-values-messaging-date';
 
 /**

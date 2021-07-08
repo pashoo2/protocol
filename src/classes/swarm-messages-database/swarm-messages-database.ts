@@ -1,3 +1,6 @@
+import assert from 'assert';
+import { isConstructor, delay } from 'utils';
+
 import {
   ISwarmMessageDatabaseEvents,
   ISwarmMessagesDatabaseConnectCurrentUserOptions,
@@ -6,7 +9,6 @@ import {
   TSwarmMessageDatabaseMessagesCached,
 } from './swarm-messages-database.types';
 import { ESwarmStoreConnector, ESwarmStoreEventNames } from '../swarm-store-class/swarm-store-class.const';
-import assert from 'assert';
 import {
   ISwarmMessageStore,
   ISwarmMessageStoreDeleteMessageArg,
@@ -28,14 +30,12 @@ import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../swarm-store-class/sw
 import validateUserIdentifier from '../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier';
 import { TSwarmMessageUserIdentifierSerialized } from '../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier.types';
 import { ISwarmMessagesDatabaseCacheOptions, ISwarmMessagesDatabaseCache } from './swarm-messages-database.types';
-import { isConstructor } from '../../utils/common-utils/common-utils-classes';
 import {
   ESwarmMessagesDatabaseCacheEventsNames,
   SWARM_MESSAGES_DATABASE_MESSAGES_CACHE_UPDATE_RETRY_DELAY_MS,
   SWARM_MESSAGES_DATABASE_MESSAGES_EMITTED_UNIQ_ID_ADDRESS_PREFIX,
 } from './swarm-messages-database.const';
 import { ISwarmMessageStoreMessageWithMeta } from '../swarm-message-store/types/swarm-message-store.types';
-import { delay } from '../../utils/common-utils/common-utils-timer';
 import {
   SWARM_MESSAGES_DATABASE_MESSAGES_MAX_ATTEMPTS_CACHE_UPDATE,
   ESwarmMessagesDatabaseOperation,

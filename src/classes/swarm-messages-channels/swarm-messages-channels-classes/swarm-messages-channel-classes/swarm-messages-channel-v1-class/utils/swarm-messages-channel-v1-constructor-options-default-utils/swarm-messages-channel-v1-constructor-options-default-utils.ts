@@ -1,4 +1,6 @@
 import { join } from 'path';
+import { extend } from 'utils';
+
 import { ESwarmStoreConnector } from '../../../../../../swarm-store-class/swarm-store-class.const';
 import {
   ISwarmMessageInstanceDecrypted,
@@ -33,7 +35,6 @@ import {
 } from '../swarm-messages-channel-v1-class-common.utils';
 import { ISwarmMessagesChannelV1ConstructorOptionsDefaultUtilsDefaultConnectionUtils } from './types/swarm-messages-channel-v1-constructor-options-default-utils.types';
 import { SWARM_MESSAGES_CHANNEL_V1_CONSTRUCTOR_OPTIONS_DEFAULT_UTILS_DEFAULT_CONNECTION_UTILS } from './const/swarm-messages-channel-v1-constructor-options-default-utils.const';
-import { extend } from '../../../../../../../utils/common-utils/common-utils-objects';
 
 /**
  * Returns utilities to use as utilities as a swarm messages constructor options
@@ -186,9 +187,8 @@ export function getSwarmMessagesChannelV1DefaultConstructorOptionsUtils<
     getSwarmMessageIssuerByChannelDescriptionUtilityDefault,
     getDatabaseNameByChannelDescriptionUtilityDefault,
   } = extend(defaultUtils || {}, SWARM_MESSAGES_CHANNEL_V1_CONSTRUCTOR_OPTIONS_DEFAULT_UTILS_DEFAULT_CONNECTION_UTILS);
-  const swarmMessagesDatabaseConnectedByDatabaseOptionsDefaultFabric = getSwarmMessagesDatabaseConnectorInstanceDefaultFabric(
-    options
-  );
+  const swarmMessagesDatabaseConnectedByDatabaseOptionsDefaultFabric =
+    getSwarmMessagesDatabaseConnectorInstanceDefaultFabric(options);
   const getSwarmMessagesChannelMessagesIssuerByChannelDescription = getSwarmMessageIssuerByChannelDescriptionUtilityDefault(
     getSwarmMessagesIssuerCodeBySwarmMessagesChannelEncryptionType,
     getSwarmMessagesIssuerCodeBySwarmMessagesChannelDatabaseType,

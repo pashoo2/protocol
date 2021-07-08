@@ -1,9 +1,8 @@
 import { ASYNC_QUEUE_BASE_CLASS_OPTIONS } from './async-queue-class-base.const';
-import { extend } from '../../../utils/common-utils/common-utils-objects';
+import { extend, delay } from 'utils';
 import { TAsyncQueueBaseClassPromiseProviderPending, TAsyncQueueBaseClassPromiseProvider } from './async-queue-class-base.types';
 import { TAsyncQueueBaseClass, IAsyncQueueBaseClassOptions } from './async-queue-class-base.types';
 import { getRun } from './async-queue-class-base.utils';
-import { delay } from '../../../utils/common-utils/common-utils-timer';
 import { TAsyncQueueBaseClassPromiseProviderBatch } from './async-queue-class-base.types';
 
 export class AsyncQueueClassBase extends TAsyncQueueBaseClass {

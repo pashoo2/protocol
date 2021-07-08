@@ -1,3 +1,5 @@
+import { createFunctionFromSerializedFunction } from 'utils';
+
 import { ISerializer, IFunctionSerializer } from 'types/serialization.types';
 import {
   ISerializerClassConstructorOptions,
@@ -17,7 +19,6 @@ import {
   serializerClassUtilCreateReviverArgumentForJSONParse,
 } from './serializer-class.utils';
 import { serializerClassUtilIsFunctionSerialziedDefault } from './serializer-class.utils';
-import { createFunctionFromSerializedFunction } from '../../../utils/common-utils/common-utils.functions';
 
 /**
  * Used a replace of the JSON for values

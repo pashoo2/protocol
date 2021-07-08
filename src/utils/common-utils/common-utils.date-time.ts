@@ -2,7 +2,6 @@ import { PseudoNTPClass as PseudoNTP } from 'classes/pseudo-ntp-class';
 import { COMMON_DATE_TIME_NTP_SERVERS_POOL } from 'const/common-date-time/common-date-time-ntp-servers.const';
 import { DATE_TIME_COMMON_CURRENT_DATE_UPDATE_INTERVAL_SECONDS } from 'const/common-date-time/common-date-time-main';
 import { CONST_VALUES_RESTRICTIONS_COMMON_CURRENT_DATE_MAX_ERROR_SECONDS } from 'const/const-values-restrictions-common';
-import { getSecondsByMilliseconds } from './common-utils-date-time';
 
 /**
  * returns a signed difference with the
@@ -63,6 +62,7 @@ export const getCurrentDateSynced = (() => {
  * date synced will change
  */
 export const getDateNowInSeconds = (() => {
+  const getSecondsByMilliseconds = (ms: number): number => Math.round(ms / 1000);
   let prevReturnValue = getSecondsByMilliseconds(Date.now());
   let prevDateSynced = getCurrentDateSynced();
 

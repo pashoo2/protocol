@@ -1,14 +1,14 @@
 import * as orbitDbModule from 'orbit-db';
 import OrbitDbFeedStore from 'orbit-db-feedstore';
 import OrbitDbKeyValueStore from 'orbit-db-kvstore';
+import { isDefined, createPromisePending, resolvePromisePending } from 'utils';
+
 import {
   ISwarmStoreConnectorOrbitDbDatabaseOptions,
-  ISwarmStoreConnectorOrbitDbDatabaseEvents,
   ISwarmStoreConnectorOrbitDbDatabaseValue,
   ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions,
   TSwarmStoreConnectorOrbitDbDatabaseEntityIndex,
 } from './swarm-store-connector-orbit-db-subclass-database.types';
-import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base.types';
 import {
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_LOG_PREFIX,
   EOrbidDBFeedSoreEvents,
@@ -46,9 +46,7 @@ import {
 import { ISwarmStoreConnectorOrbitDbSubclassesCacheOrbitDbCacheStore } from '../swarm-store-connector-orbit-db-subclasses-cache/swarm-store-connector-orbit-db-subclasses-cache.types';
 import { IPromisePending } from '../../../../../../types/promise.types';
 import { ISwarmStoreConnectorBasic } from '../../../../swarm-store-class.types';
-import { createPromisePending, resolvePromisePending } from '../../../../../../utils/common-utils/commom-utils.promies';
 import { validateOrbitDBDatabaseOptionsV1 } from '../../swarm-store-connector-orbit-db-validators/swarm-store-connector-orbit-db-validators-db-options';
-import { isDefined } from '../../../../../../utils/common-utils/common-utils-main';
 import {
   SWARM_STORE_CONNECTOR_ORBITDB_DATABASE_ITERATOR_VALUES_GETTER,
   ESortFileds,

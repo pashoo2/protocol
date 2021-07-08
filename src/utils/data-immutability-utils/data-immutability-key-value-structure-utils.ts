@@ -1,5 +1,5 @@
 import { DeepReadonly } from 'ts-essentials';
-import { isSimpleObject } from '../common-utils/common-utils-objects';
+import { isSimpleObject } from 'utils';
 
 export const createImmutableObjectClone = <T extends Record<string | number, any>>(object: T): DeepReadonly<T> => {
   const objectClone = {};

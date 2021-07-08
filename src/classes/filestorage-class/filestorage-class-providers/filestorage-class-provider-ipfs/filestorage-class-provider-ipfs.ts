@@ -14,7 +14,7 @@ import { FILE_STORAGE_PROVIDER_IPFS_FILE_UPLOAD_TIMEOUT_MS } from './filestorage
 import { IPFS, FileObject, IPFSFile } from 'types/ipfs.types';
 import BufferList from 'bl';
 import { FILE_STORAGE_PROVIDER_ROOT_PATH_DEFAULT } from './filestorage-class-provider-ipfs.const';
-import { timeout } from 'utils/common-utils/common-utils-timer';
+import { timeout } from 'utils';
 import { UnixTime } from 'types/ipfs.types';
 import { downloadFile } from '../../../../utils/files-utils/files-utils-download';
 import {

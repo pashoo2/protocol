@@ -1,4 +1,5 @@
 import assert from 'assert';
+import { isArraysSwallowEqual } from 'utils';
 
 import { ISwarmMessagesDatabaseMessagesCachedStoreCore } from '../../swarm-messages-database-messages-cached-store.types';
 import { ESwarmStoreConnector } from '../../../../../swarm-store-class/swarm-store-class.const';
@@ -17,7 +18,6 @@ import { ifSwarmMessagesDecryptedEqual } from '../../../../../swarm-message/swar
 import { ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../../../swarm-message-store/types/swarm-message-store.types';
 import { isValidSwarmMessageDecryptedFormat } from '../../../../../swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-swarm-message';
 import { ISwarmMessageInstanceDecrypted } from '../../../../../swarm-message/swarm-message-constructor.types';
-import { isArraysSwallowEqual } from '../../../../../../utils/common-utils/common-utils-array';
 
 export class SwarmMessagesDatabaseMessagesCachedStore<
     P extends ESwarmStoreConnector,
@@ -25,8 +25,10 @@ export class SwarmMessagesDatabaseMessagesCachedStore<
     MD extends ISwarmMessageInstanceDecrypted
   >
   extends SwarmMessagesDatabaseMessagesCachedStoreTemp<P, DbType, MD, false>
-  implements ISwarmMessagesDatabaseMessagesCacheStoreExtendedDefferedMethods<P, DbType, MD> {
-  protected _listMessagesMetaForDefferedReadAfterCurrentCacheUpdateBatch = this._createNewListMessagesMetaForDefferedReadPartial();
+  implements ISwarmMessagesDatabaseMessagesCacheStoreExtendedDefferedMethods<P, DbType, MD>
+{
+  protected _listMessagesMetaForDefferedReadAfterCurrentCacheUpdateBatch =
+    this._createNewListMessagesMetaForDefferedReadPartial();
 
   protected _listMessagesMetaForDefferedRead = this._createNewListMessagesMetaForDefferedReadFull();
 

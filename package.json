@@ -75,7 +75,9 @@
     "orbit-db": "^0.26.1",
     "sort-keys": "^3.0.0",
     "validator": "^12.1.0",
-    "@pashoo2/utils": "^0.0.1"
+    "@pashoo2/utils": "^0.0.1",
+    "@pashoo2/typed-array-utils": "0.0.1",
+    "@pashoo2/crypto-utilities": "0.0.2"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^11.1.0",

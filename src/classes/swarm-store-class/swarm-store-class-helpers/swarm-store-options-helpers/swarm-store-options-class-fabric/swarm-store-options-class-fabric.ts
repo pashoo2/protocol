@@ -1,3 +1,5 @@
+import { extend } from 'utils';
+
 import { ESwarmStoreConnector } from '../../../swarm-store-class.const';
 import {
   TSwarmStoreValueTypes,
@@ -11,7 +13,6 @@ import {
 } from '../../../swarm-store-class.types';
 import { SwarmStoreOptions } from '../swarm-store-options-class/swarm-store-options-class';
 import { ISwarmStoreOptionsClassConstructorParams } from '../../../swarm-store-class.types';
-import { extend } from '../../../../../utils/common-utils/common-utils-objects';
 import { IOptionsSerializerValidatorConstructorParams } from '../../../../basic-classes/options-serializer-validator-class/options-serializer-validator-class.types';
 import {
   IOptionsSerializerValidatorValidators,

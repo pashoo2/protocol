@@ -20,7 +20,7 @@ import {
   ISwarmStoreConnectorOrbitDBConnectionOptions,
   ISwarmStoreConnectorOrbitDBEvents,
 } from './swarm-store-connector-orbit-db.types';
-import { timeout, delay } from 'utils/common-utils/common-utils-timer';
+import { timeout, delay } from 'utils';
 import {
   ISwarmStoreConnectorOrbitDbDatabaseOptions,
   TSwarmStoreConnectorOrbitDbDatabaseMethodNames,
@@ -61,7 +61,8 @@ export class SwarmStoreConnectorOrbitDB<
   extends getEventEmitterClass<ISwarmStoreConnectorOrbitDBEvents<ESwarmStoreConnector.OrbitDB, any, any, any>>()
   implements
     ISwarmStoreConnector<ESwarmStoreConnector.OrbitDB, ItemType, DbType, DBO, ConnectorBasic, PO>,
-    EventEmitter<ISwarmStoreConnectorOrbitDBEvents<ESwarmStoreConnector.OrbitDB, ItemType, DbType, DBO>> {
+    EventEmitter<ISwarmStoreConnectorOrbitDBEvents<ESwarmStoreConnector.OrbitDB, ItemType, DbType, DBO>>
+{
   private static isLoadedCustomIdentityProvider: boolean = false;
 
   private static isLoadedCustomAccessController: boolean = false;

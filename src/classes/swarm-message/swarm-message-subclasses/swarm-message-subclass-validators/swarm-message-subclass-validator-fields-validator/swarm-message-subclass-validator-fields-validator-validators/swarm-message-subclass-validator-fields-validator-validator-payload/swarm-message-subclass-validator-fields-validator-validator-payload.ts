@@ -5,7 +5,7 @@ import {
   ISwarmMessagePayloadValidationOptions,
 } from './swarm-message-subclass-validator-fields-validator-validator-payload.types';
 import { SwarmMessagePayloadValidationOptionsDefault } from './swarm-message-subclass-validator-fields-validator-validator-payload.const';
-import { commonUtilsArrayCalculateLengthOfIntegerArray } from 'utils/common-utils/common-utils-array';
+import { commonUtilsArrayCalculateLengthOfIntegerArray } from 'utils';
 
 /**
  * validates if the payload is an instance
