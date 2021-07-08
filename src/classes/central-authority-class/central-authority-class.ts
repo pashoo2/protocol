@@ -679,6 +679,9 @@ export class CentralAuthority implements ICentralAuthority {
       console.warn('There is no credentials stored locally for the current user');
       return;
     }
+    if (cryptoCredentials instanceof Error) {
+      return new CAError(cryptoCredentials.message);
+    }
     return this.setLocallyStoredCredentials(cryptoCredentials);
   }
 
@@ -726,11 +729,8 @@ export class CentralAuthority implements ICentralAuthority {
    * @memberof CentralAuthority
    */
   protected async storeCryptoCredentialsFromAuthProvider(): Promise<Error | void> {
-    const {
-      connectionStorageCurrentUserCrdentials,
-      locallyStoredUserCryptoCredntials,
-      remoteProvidedUserCryptoCredntials,
-    } = this;
+    const { connectionStorageCurrentUserCrdentials, locallyStoredUserCryptoCredntials, remoteProvidedUserCryptoCredntials } =
+      this;
 
     if (locallyStoredUserCryptoCredntials) {
       console.warn('storeCryptoCredentialsFromAuthProvider:: locally stored credentials for the current user is already exists');

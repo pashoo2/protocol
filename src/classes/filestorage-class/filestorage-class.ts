@@ -82,7 +82,7 @@ export class FileStorage<T extends FILE_STORAGE_SERVICE_TYPE> implements IFileSt
   }
 
   protected getServiceByTypeOrId(s: TFileStorageServiceIdentifier | T) {
-    return this.getServiceById(s as TFileStorageServiceIdentifier) || this.getServiceByType(s as T);
+    return this.getServiceById(s) || this.getServiceByType(s as T);
   }
 
   protected getServiceConstructorByType(type: FILE_STORAGE_SERVICE_TYPE) {

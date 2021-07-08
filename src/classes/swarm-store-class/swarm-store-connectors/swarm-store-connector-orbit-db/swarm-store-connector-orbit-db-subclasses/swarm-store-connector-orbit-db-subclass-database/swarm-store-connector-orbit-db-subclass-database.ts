@@ -74,7 +74,8 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     DBO extends TSwarmStoreDatabaseOptions<ESwarmStoreConnector.OrbitDB, ItemType, DbType>
   >
   extends getEventEmitterClass<any>()
-  implements ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, ItemType, DbType, DBO> {
+  implements ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, ItemType, DbType, DBO>
+{
   // is loaded fully and ready to use
   public isReady: boolean = false;
 
@@ -382,10 +383,10 @@ export class SwarmStoreConnectorOrbitDBDatabase<
          TODO - https://github.com/orbitdb/orbit-db/blob/master/API.md#setkey-value.
          the 'set' method returns hash of entry added
         */
-        hash = ((await (database as OrbitDbKeyValueStore<ItemType>).set(
+        hash = (await (database as OrbitDbKeyValueStore<ItemType>).set(
           key,
           value
-        )) as unknown) as TSwarmStoreConnectorOrbitDbDatabaseStoreHash;
+        )) as unknown as TSwarmStoreConnectorOrbitDbDatabaseStoreHash;
       } else {
         hash = await (database as OrbitDbFeedStore<ItemType>).add(value);
       }
@@ -551,7 +552,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     }
     return oplogAllValues.find((rawEntry) => {
       const pld = rawEntry?.payload;
-      return pld?.op === EOrbitDbStoreOperation.PUT && pld.key === key && (pld?.value as ItemType | undefined) === entry;
+      return pld?.op === EOrbitDbStoreOperation.PUT && pld.key === key && pld?.value === entry;
     });
   }
 
@@ -589,14 +590,16 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     try {
       // read LogEntry by hash in feed store or by key for KeyValue store
       const entryRawOrStoreValue = this.readRawValueFromStorage(keyOrHash, database);
-      const entryRaw = (entryRawOrStoreValue && this.isKVStore
-        ? // for a key value store db type read all oplog to find the full log entry into it
-          this.findAddedEntryForKeyInKeyValueDbOpLog(
-            keyOrHash,
-            entryRawOrStoreValue as ItemType,
-            database as OrbitDbFeedStore<ItemType>
-          )
-        : entryRawOrStoreValue) as LogEntry<ItemType> | Error | undefined;
+      const entryRaw = (
+        entryRawOrStoreValue && this.isKVStore
+          ? // for a key value store db type read all oplog to find the full log entry into it
+            this.findAddedEntryForKeyInKeyValueDbOpLog(
+              keyOrHash,
+              entryRawOrStoreValue as ItemType,
+              database as OrbitDbFeedStore<ItemType>
+            )
+          : entryRawOrStoreValue
+      ) as LogEntry<ItemType> | Error | undefined;
 
       if (entryRaw instanceof Error) {
         return new Error('An error has occurred on get the data from the key');
@@ -730,7 +733,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
       const element = iteratedItems[index];
 
       if (element == null || element instanceof Error) {
-        errorsAndNonDefinedEntries.push(element);
+        errorsAndNonDefinedEntries.push(element ? (element as Error) : undefined);
       } else {
         logEntries.push(element);
       }

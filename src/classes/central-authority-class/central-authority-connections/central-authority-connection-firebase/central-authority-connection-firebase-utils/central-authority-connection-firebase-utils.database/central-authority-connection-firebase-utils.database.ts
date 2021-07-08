@@ -1,4 +1,4 @@
-import * as firebase from 'firebase';
+import firebase from 'firebase';
 import {
   CA_CONNECTION_FIREBASE_UTILS_DATABASE_KEY_MAX_LENGTH,
   CA_CONNECTION_FIREBASE_UTILS_DATABASE_KEY_MIN_LENGTH,
@@ -100,7 +100,7 @@ export class CAConnectionWithFirebaseUtilDatabase {
     const { database } = this;
 
     try {
-      await database!.goOffline();
+      await database.goOffline();
     } catch (err) {
       console.error(err);
       return new Error('Failed to go offline before destroy the application');
@@ -152,7 +152,7 @@ export class CAConnectionWithFirebaseUtilDatabase {
     const { database } = this;
 
     try {
-      const snapshot = await database!.ref(key).once('value');
+      const snapshot = await database.ref(key).once('value');
       const isExists = snapshot.exists();
 
       if (!isExists) {

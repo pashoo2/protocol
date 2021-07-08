@@ -173,7 +173,7 @@ export class SecretStorageProviderLevelJS implements StorageProvider {
       }
 
       const { levelStorage } = this;
-      const item = await levelStorage!.get(key, { asBuffer: false });
+      const item = await levelStorage.get(key, { asBuffer: false });
 
       if (typeof item !== 'string') {
         return undefined;
@@ -195,7 +195,7 @@ export class SecretStorageProviderLevelJS implements StorageProvider {
       const { levelStorage } = this;
       // TODO - the custom patch used to return
       // Uint8Array instead of Buffer
-      const item = await levelStorage!.get(key, { asBuffer: true });
+      const item = await levelStorage.get(key, { asBuffer: true });
 
       return new Uint8Array(item);
     } catch (err) {

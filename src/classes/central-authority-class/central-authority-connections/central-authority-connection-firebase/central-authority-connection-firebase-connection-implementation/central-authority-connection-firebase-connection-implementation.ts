@@ -177,7 +177,7 @@ export class CAConnectionWithFirebaseImplementation extends CAConnectionWithFire
     if (status !== CA_CONNECTION_STATUS.DISCONNECTED) {
       const { connectionWithCredentialsStorage } = this;
 
-      return connectionWithCredentialsStorage!.getUserCredentials(userId);
+      return connectionWithCredentialsStorage.getUserCredentials(userId);
     }
     return new Error('Not connected to the Firebase');
   }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { IPFS } from 'types/ipfs.types';
 import { IPFS_UTILS_DEFAULT_OPTIONS, IPFS_UTILS_DEFAULT_TIMEOUT_MS } from './ipfs-utils.const';
 
@@ -32,6 +33,7 @@ export async function ipfsUtilsConnectBasic(options?: object, timeoutMs: number 
       throw new Error('Connection timed out');
     }, timeoutMs);
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     const ipfs = (await require('ipfs').create({
       config: {
         ...IPFS_UTILS_DEFAULT_OPTIONS.config,
@@ -39,10 +41,10 @@ export async function ipfsUtilsConnectBasic(options?: object, timeoutMs: number 
     })) as IPFS;
 
     if (process.env.NODE_ENV === 'development') {
-      ipfsDevModeUtils(ipfs);
+      await ipfsDevModeUtils(ipfs);
     }
     return ipfs;
   } finally {
-    clearTimeout(timer!);
+    clearTimeout(timer);
   }
 }

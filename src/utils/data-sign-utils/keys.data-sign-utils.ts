@@ -206,7 +206,7 @@ export const dataSignImportKeyPair = async (
       const importResult = await Promise.all([
         dataSignImportPublicKey(keyPair[DATA_SIGN_CRYPTO_UTIL_KEYPAIR_PUBLIC_KEY_NAME]),
         checkPrivateKey || privateKeyToImport
-          ? dataSignImportPrivateKey(privateKeyToImport!)
+          ? dataSignImportPrivateKey(privateKeyToImport)
           : (Promise.resolve(undefined) as any),
       ]).catch((err) => [err, err]);
       const publicKey = importResult[0];

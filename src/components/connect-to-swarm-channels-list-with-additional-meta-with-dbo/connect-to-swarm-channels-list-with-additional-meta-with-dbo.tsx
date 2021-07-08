@@ -180,7 +180,7 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
   }
 
   public componentWillUnmount() {
-    const { openedSwarmChannelInstance } = (this.state as unknown) as {
+    const { openedSwarmChannelInstance } = this.state as unknown as {
       openedSwarmChannelInstance: PromiseResolveType<
         ReturnType<ISwarmMessagesChannelFabricByChannelDescriptionWithDefaults<ESwarmStoreConnector.OrbitDB, T, MD, DbType, DBO>>
       > | null;
@@ -237,7 +237,7 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
       description,
       connectionOptions: {
         connectorType: ESwarmStoreConnector.OrbitDB,
-        dbOptions: dbo,
+        dbOptions: dbo as any,
       },
       utilities: {
         serializer,
@@ -266,7 +266,7 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
       MD,
       ISwarmStoreDBOGrandAccessCallbackBaseContext,
       TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, ISwarmStoreDBOGrandAccessCallbackBaseContext>
-    >(optionsForDatabaseConnectionFabric);
+    >(optionsForDatabaseConnectionFabric as any);
     return dbConnectorByDbOptionsFabric;
   }
 
@@ -494,15 +494,17 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
       channelsListInstance,
       swarmMessageChannelDescription
     );
-    const swarmMessagesDatabaseConnectorOptions = this._getSwarmMessagesDatabaseConnectorOptions() as ISwarmMessagesChannelV1DefaultFabricOptionsDefault<
-      ESwarmStoreConnector.OrbitDB,
-      T,
-      MD,
-      DbType,
-      DBO
-    >['channeDatabaseConnectorOptions'];
+    const swarmMessagesDatabaseConnectorOptions =
+      this._getSwarmMessagesDatabaseConnectorOptions() as ISwarmMessagesChannelV1DefaultFabricOptionsDefault<
+        ESwarmStoreConnector.OrbitDB,
+        T,
+        MD,
+        DbType,
+        DBO
+      >['channeDatabaseConnectorOptions'];
     const defaultConnectionUtils = {
-      getSwarmMessagesDatabaseConnectorInstanceDefaultFabric: getSwarmMessagesDatabaseWithKVDbMessagesUpdatesConnectorInstanceFabric,
+      getSwarmMessagesDatabaseConnectorInstanceDefaultFabric:
+        getSwarmMessagesDatabaseWithKVDbMessagesUpdatesConnectorInstanceFabric,
     } as ISwarmMessagesChannelV1DefaultFabricOptionsDefault<
       ESwarmStoreConnector.OrbitDB,
       T,
@@ -542,17 +544,16 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
     if (!swarmMessagesChannelsList) {
       throw new Error('Swarm messages channels list is not ready');
     }
-    const optionsToCreateSwarmChannelInstanceFabric = this._getOptionsForSwarmMessagesChannelV1FabricByChannelsListInstanceAndChannelDescription(
-      swarmMessagesChannelsList
-    );
+    const optionsToCreateSwarmChannelInstanceFabric =
+      this._getOptionsForSwarmMessagesChannelV1FabricByChannelsListInstanceAndChannelDescription(swarmMessagesChannelsList);
     const swarmChannelInstanceByDescriptionFabric = getSwarmMessagesChannelFabricByChannelDescriptionFabric<
       ESwarmStoreConnector.OrbitDB,
       T,
       MD,
       DbType,
       DBO
-    >(optionsToCreateSwarmChannelInstanceFabric as Parameters<typeof getSwarmMessagesChannelFabricByChannelDescriptionFabric>[0]);
-    return (swarmChannelInstanceByDescriptionFabric as unknown) as ISwarmMessagesChannelFabricByChannelDescriptionWithDefaults<
+    >(optionsToCreateSwarmChannelInstanceFabric as any);
+    return swarmChannelInstanceByDescriptionFabric as unknown as ISwarmMessagesChannelFabricByChannelDescriptionWithDefaults<
       ESwarmStoreConnector.OrbitDB,
       T,
       MD,

@@ -96,7 +96,7 @@ export class FileStorageClassProviderIPFS implements IFileStorageService<FILE_ST
         pin: false,
         cidVersion: 1,
         progress: (bytes: number) => {
-          const percent = (bytes / fileSize!) * 100;
+          const percent = (bytes / fileSize) * 100;
 
           if (progressCallback) {
             progressCallback(percent);
@@ -135,7 +135,7 @@ export class FileStorageClassProviderIPFS implements IFileStorageService<FILE_ST
 
     const ipfs = this._ipfs;
     const fileDesc = this.getFileDescription(addr);
-    const filesOrChunks = await ipfs!.get(fileDesc.cid);
+    const filesOrChunks = await ipfs.get(fileDesc.cid);
     const content = new BufferList();
     let lastModified = 0;
     let fileBlob: ArrayBuffer | Blob[];

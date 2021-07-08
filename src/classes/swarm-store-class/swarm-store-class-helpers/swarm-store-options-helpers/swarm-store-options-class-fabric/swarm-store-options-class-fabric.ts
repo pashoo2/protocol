@@ -63,23 +63,12 @@ export function swarmStoreOptionsClassFabric<
   ): ISwarmStoreOptionsClassConstructorParams<P, T, DbType, DBO, ConnectorBasic, CO, SSO>['swarmStoreOptions'] => {
     const defaultSwarmStoreOptions = defaults?.swarmStoreOptions;
     if (!defaultSwarmStoreOptions || typeof defaultSwarmStoreOptions !== 'object') {
-      return (
-        options ||
-        (defaultSwarmStoreOptions as ISwarmStoreOptionsClassConstructorParams<
-          P,
-          T,
-          DbType,
-          DBO,
-          ConnectorBasic,
-          CO,
-          SSO
-        >['swarmStoreOptions'])
-      );
+      return options || defaultSwarmStoreOptions;
     }
     if (typeof options !== 'object') {
       return options;
     }
-    return extend(options as ISwarmStoreOptions<P, T, DbType, DBO, ConnectorBasic, CO>, defaultSwarmStoreOptions);
+    return extend(options, defaultSwarmStoreOptions);
   };
 
   class SwarmStoreOptionsClass extends SwarmStoreOptions<P, T, DbType, DBO, ConnectorBasic, CO, SSO> {

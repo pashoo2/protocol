@@ -56,9 +56,8 @@ export class SafeStorage<TYPE extends ESAFE_STORAGE_STORAGE_TYPE> extends getSta
 
   protected secretStorageConnection?: InstanceType<typeof SecretStorage>;
 
-  protected tableData: TSafeStorageStoredDataType<ESAFE_STORAGE_STORAGE_TYPE> = [] as TSafeStorageStoredDataType<
-    ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG
-  >;
+  protected tableData: TSafeStorageStoredDataType<ESAFE_STORAGE_STORAGE_TYPE> =
+    [] as TSafeStorageStoredDataType<ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG>;
 
   /**
    *
@@ -70,9 +69,8 @@ export class SafeStorage<TYPE extends ESAFE_STORAGE_STORAGE_TYPE> extends getSta
    *   >}
    * @memberof SafeStorage
    */
-  protected appendData: TSafeStorageStoredDataType<ESAFE_STORAGE_STORAGE_TYPE> = [] as TSafeStorageStoredDataType<
-    ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG
-  >;
+  protected appendData: TSafeStorageStoredDataType<ESAFE_STORAGE_STORAGE_TYPE> =
+    [] as TSafeStorageStoredDataType<ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG>;
 
   /**
    *
@@ -85,9 +83,8 @@ export class SafeStorage<TYPE extends ESAFE_STORAGE_STORAGE_TYPE> extends getSta
    *   >}
    * @memberof SafeStorage
    */
-  protected appendDataTemp: TSafeStorageStoredDataType<ESAFE_STORAGE_STORAGE_TYPE> = [] as TSafeStorageStoredDataType<
-    ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG
-  >;
+  protected appendDataTemp: TSafeStorageStoredDataType<ESAFE_STORAGE_STORAGE_TYPE> =
+    [] as TSafeStorageStoredDataType<ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG>;
 
   protected storageType?: ESAFE_STORAGE_STORAGE_TYPE;
 
@@ -111,7 +108,7 @@ export class SafeStorage<TYPE extends ESAFE_STORAGE_STORAGE_TYPE> extends getSta
 
   get secretStorageOptions() {
     const { options } = this;
-    const { storageDumpProvider } = options as ISafeStorageOptions;
+    const { storageDumpProvider } = options;
 
     return {
       storageProviderName: storageDumpProvider || SAFE_STORAGE_DUMP_PROVIDER_DEFAULT,
@@ -135,7 +132,7 @@ export class SafeStorage<TYPE extends ESAFE_STORAGE_STORAGE_TYPE> extends getSta
     const { status, options } = this;
 
     if (status !== ESAFE_STORAGE_PROVIDER_STATUS.CONNECTING_TO_STORAGE) {
-      const { credentials } = options as ISafeStorageOptions;
+      const { credentials } = options;
       const connectionToTheSecretStorage = this.createSecretStorageInstance();
 
       if (connectionToTheSecretStorage instanceof Error) {
@@ -272,7 +269,7 @@ export class SafeStorage<TYPE extends ESAFE_STORAGE_STORAGE_TYPE> extends getSta
       return [] as TSafeStorageStoredDataTypeAppendLog;
     }
     if (data instanceof Array) {
-      return data as TSafeStorageStoredDataTypeAppendLog;
+      return data;
     }
     return new Error(`There is a wrong data type ${typeof data} for the append log storage`);
   }
@@ -282,7 +279,7 @@ export class SafeStorage<TYPE extends ESAFE_STORAGE_STORAGE_TYPE> extends getSta
       return {} as TSafeStorageStoredDataTypeKeyValue;
     }
     if (!(data instanceof Array) && typeof data === 'object') {
-      return data as TSafeStorageStoredDataTypeKeyValue;
+      return data;
     }
     return new Error(`There is a wrong data type ${typeof data} for a key value storage`);
   }
@@ -358,12 +355,17 @@ export class SafeStorage<TYPE extends ESAFE_STORAGE_STORAGE_TYPE> extends getSta
     if (dataCastedToStorageType instanceof Error) {
       return this.setErrorStatus(dataCastedToStorageType);
     }
-    return (isAppendLogStorage
-      ? [...(result as TSafeStorageStoredDataTypeAppendLog), ...(dataCastedToStorageType as TSafeStorageStoredDataTypeAppendLog)]
-      : {
-          ...(result as TSafeStorageStoredDataTypeKeyValue),
-          ...(dataCastedToStorageType as TSafeStorageStoredDataTypeKeyValue),
-        }) as TSafeStorageStoredDataType<TYPE>;
+    return (
+      isAppendLogStorage
+        ? [
+            ...(result as TSafeStorageStoredDataTypeAppendLog),
+            ...(dataCastedToStorageType as TSafeStorageStoredDataTypeAppendLog),
+          ]
+        : {
+            ...(result as TSafeStorageStoredDataTypeKeyValue),
+            ...(dataCastedToStorageType as TSafeStorageStoredDataTypeKeyValue),
+          }
+    ) as TSafeStorageStoredDataType<TYPE>;
   };
 
   /**
@@ -378,7 +380,7 @@ export class SafeStorage<TYPE extends ESAFE_STORAGE_STORAGE_TYPE> extends getSta
 
     if (await this.waitingStorageFreed()) {
       const setPreviousStatus = this.setStatus(ESAFE_STORAGE_PROVIDER_STATUS.WORKING_WITH_STORAGE);
-      const data = await (secretStorageConnection as SecretStorage).get(storageName);
+      const data = await secretStorageConnection.get(storageName);
 
       setPreviousStatus();
 
@@ -472,12 +474,7 @@ export class SafeStorage<TYPE extends ESAFE_STORAGE_STORAGE_TYPE> extends getSta
       const setPrevStatus = this.setStatus(ESAFE_STORAGE_PROVIDER_STATUS.WORKING_WITH_STORAGE);
 
       while ((attempt += 1) < SAFE_STORAGE_ATTEMPTS_TO_SAVE_DATA_TO_STORAGE) {
-        if (
-          !(
-            (secretStorageConnection as InstanceType<typeof SecretStorage>).set(storageName, dataStringified || '') instanceof
-            Error
-          )
-        ) {
+        if (!(secretStorageConnection.set(storageName, dataStringified || '') instanceof Error)) {
           setPrevStatus();
           return true;
         }
@@ -596,19 +593,15 @@ export class SafeStorage<TYPE extends ESAFE_STORAGE_STORAGE_TYPE> extends getSta
     const { storageType } = this;
 
     if (storageType === ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG) {
-      this.tableData = (tableData || SAFE_STORAGE_APPEND_LOG_INITIAL_VALUE) as TSafeStorageStoredDataType<
-        ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG
-      >;
-      this.appendData = SAFE_STORAGE_APPEND_LOG_APPEND_DATA_INITIAL_VALUE as TSafeStorageStoredDataType<
-        ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG
-      >;
+      this.tableData = (tableData ||
+        SAFE_STORAGE_APPEND_LOG_INITIAL_VALUE) as TSafeStorageStoredDataType<ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG>;
+      this.appendData =
+        SAFE_STORAGE_APPEND_LOG_APPEND_DATA_INITIAL_VALUE as TSafeStorageStoredDataType<ESAFE_STORAGE_STORAGE_TYPE.APPEND_LOG>;
     } else {
-      this.tableData = (tableData || SAFE_STORAGE_KEY_VALUE_INITIAL_VALUE) as TSafeStorageStoredDataType<
-        ESAFE_STORAGE_STORAGE_TYPE.KEY_VALUE
-      >;
-      this.appendData = SAFE_STORAGE_KEY_VALUE_APPEND_DATA_INITIAL_VALUE as TSafeStorageStoredDataType<
-        ESAFE_STORAGE_STORAGE_TYPE.KEY_VALUE
-      >;
+      this.tableData = (tableData ||
+        SAFE_STORAGE_KEY_VALUE_INITIAL_VALUE) as TSafeStorageStoredDataType<ESAFE_STORAGE_STORAGE_TYPE.KEY_VALUE>;
+      this.appendData =
+        SAFE_STORAGE_KEY_VALUE_APPEND_DATA_INITIAL_VALUE as TSafeStorageStoredDataType<ESAFE_STORAGE_STORAGE_TYPE.KEY_VALUE>;
     }
   }
 

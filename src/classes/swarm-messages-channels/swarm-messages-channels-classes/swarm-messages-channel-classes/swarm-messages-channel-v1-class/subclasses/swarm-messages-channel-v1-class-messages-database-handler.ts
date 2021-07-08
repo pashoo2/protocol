@@ -199,7 +199,8 @@ export class SwarmMessagesChannelV1DatabaseHandler<
       O,
       SMS,
       MD
-    > {
+    >
+{
   /**
    * Emitter that emits events related to the database connector.
    *
@@ -259,9 +260,8 @@ export class SwarmMessagesChannelV1DatabaseHandler<
    */
   private __actualSwarmMessagesDatabaseOptions: DBO | undefined;
 
-  private readonly __emitter: EventEmitter<ISwarmMessageDatabaseEvents<P, T, DbType, DBO, MD>> = getEventEmitterInstance<
-    ISwarmMessageDatabaseEvents<P, T, DbType, DBO, MD>
-  >();
+  private readonly __emitter: EventEmitter<ISwarmMessageDatabaseEvents<P, T, DbType, DBO, MD>> =
+    getEventEmitterInstance<ISwarmMessageDatabaseEvents<P, T, DbType, DBO, MD>>();
 
   /**
    * Database has been dropped at all
@@ -971,7 +971,7 @@ export class SwarmMessagesChannelV1DatabaseHandler<
     encryptedMessageWithMeta: ISwarmMessageStoreMessagingRequestWithMetaResult<P, ISwarmMessageInstanceDecrypted> | undefined
   ): Promise<ISwarmMessageStoreMessagingRequestWithMetaResult<P, MD> | undefined> => {
     if (!encryptedMessageWithMeta) {
-      return encryptedMessageWithMeta;
+      return undefined;
     }
     return await this._decryptSwarmMessageWithMeta(encryptedMessageWithMeta);
   };

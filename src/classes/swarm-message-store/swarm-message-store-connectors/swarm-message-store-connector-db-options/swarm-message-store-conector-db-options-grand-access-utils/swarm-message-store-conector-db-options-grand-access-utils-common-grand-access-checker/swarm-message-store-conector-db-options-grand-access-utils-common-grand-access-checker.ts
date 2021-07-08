@@ -118,13 +118,10 @@ async function swarmMessageGrantValidatorWithCBContext<
 async function swarmMessageGrantValidator<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
-  I extends TSwarmMessageInstance,
-  CB extends
-    | ISwarmMessageStoreAccessControlGrantAccessCallback<P, T>
-    | ISwarmMessageStoreAccessControlGrantAccessCallback<P, I>
-    | undefined
+  MD extends ISwarmMessageInstanceDecrypted,
+  CB extends ISwarmMessageStoreAccessControlGrantAccessCallback<P, T | MD | string>
 >(
-  this: ISwarmMessageGrantValidatorContext<P, T, I, CB>,
+  this: ISwarmMessageGrantValidatorContext<P, T, MD, CB>,
   value: T,
   senderUserId: TCentralAuthorityUserIdentity,
   key: TSwarmStoreDatabaseEntityKey<P> | undefined,
@@ -143,23 +140,25 @@ export const getMessageValidator = <
   GAC extends TSwarmMessagesStoreGrantAccessCallback<P, Exclude<MSI, ISwarmMessageInstanceEncrypted>>,
   SMC extends ISwarmMessageConstructor
 >(
-  dboptions: DBO & {
+  dbOptions: DBO & {
     grantAccess: GAC;
   },
   messageConstructor: SMC,
   grantAccessCb: GAC,
   currentUserId: TCentralAuthorityUserIdentity
 ): TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<P, T, Exclude<Exclude<MSI, ISwarmMessageInstanceEncrypted>, T>> => {
-  const { dbName, isPublic, write } = dboptions;
+  const { dbName, isPublic, write } = dbOptions;
 
   if (!messageConstructor) {
-    throw new Error(`There is no message contructor found for the ${dbName}`);
+    throw new Error(`There is no message constructor found for the ${dbName}`);
   }
-  return (swarmMessageGrantValidator as TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<
-    P,
-    T,
-    Exclude<Exclude<MSI, ISwarmMessageInstanceEncrypted>, T>
-  >).bind({
+  return (
+    swarmMessageGrantValidator as TSwarmStoreConnectorAccessConrotllerGrantAccessCallback<
+      P,
+      T,
+      Exclude<Exclude<MSI, ISwarmMessageInstanceEncrypted>, T>
+    >
+  ).bind({
     messageConstructor,
     dbName,
     grantAccessCb,
@@ -173,7 +172,7 @@ export const getMessageValidatorForGrandAccessCallbackBound = <
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted,
-  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MD | T>,
+  GAC extends TSwarmMessagesStoreGrantAccessCallback<P, string>,
   SMC extends ISwarmMessageConstructor
 >(
   grantAccessCb: GAC | undefined
@@ -214,7 +213,7 @@ export const getMessageValidatorForGrandAccessCallbackBound = <
     return grantAccessCb ? grantAccessCb.toString() : undefined;
   };
   // TODO - resolve cast to unknown
-  return (swarmMessageGrantValidatorWithSwarmMessageStoreContext as unknown) as typeof grantAccessCb extends undefined
+  return swarmMessageGrantValidatorWithSwarmMessageStoreContext as unknown as typeof grantAccessCb extends undefined
     ? TSwarmMessagesStoreGrantAccessCallback<P, MD | T>
     : GAC;
 };

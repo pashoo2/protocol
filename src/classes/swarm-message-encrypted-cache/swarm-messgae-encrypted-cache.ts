@@ -46,7 +46,7 @@ export class SwarmMessageEncryptedCache implements ISwarmMessageEncryptedCache {
     this.checkIsActive();
 
     const value = message || null;
-    const result = await this.storageProvider!.insert(sig, value);
+    const result = await this.storageProvider.insert(sig, value);
 
     if (result instanceof Error) {
       throw result;
@@ -65,7 +65,7 @@ export class SwarmMessageEncryptedCache implements ISwarmMessageEncryptedCache {
   public unset = async (sig: string) => {
     this.checkIsActive();
 
-    const resutl = await this.storageProvider!.unset(sig);
+    const resutl = await this.storageProvider.unset(sig);
 
     if (resutl instanceof Error) {
       throw resutl;
@@ -92,7 +92,7 @@ export class SwarmMessageEncryptedCache implements ISwarmMessageEncryptedCache {
     this.checkIsActive();
 
     const value = message || null;
-    const result = await this.storageProvider!.set(sig, value);
+    const result = await this.storageProvider.set(sig, value);
 
     if (result instanceof Error) {
       throw result;
@@ -181,7 +181,7 @@ export class SwarmMessageEncryptedCache implements ISwarmMessageEncryptedCache {
   protected async readValue(sig: string): Promise<TSwarmMessageBodyRaw | undefined | null> {
     this.checkIsActive();
 
-    const result = await this.storageProvider!.get(sig);
+    const result = await this.storageProvider.get(sig);
 
     if (result instanceof Error) {
       throw result;

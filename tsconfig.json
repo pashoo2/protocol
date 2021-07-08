@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES6",
+    "incremental": true,
     "module": "esnext",
     "downlevelIteration": true,
     "lib": ["dom", "dom.iterable", "esnext"],
@@ -8,7 +9,7 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "strict": true,
+    "strict": false,
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
     "isolatedModules": true,

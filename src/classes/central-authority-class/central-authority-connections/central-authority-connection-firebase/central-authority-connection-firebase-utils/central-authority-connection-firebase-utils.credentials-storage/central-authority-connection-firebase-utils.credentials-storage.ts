@@ -1,3 +1,4 @@
+import firebase from 'firebase/app';
 import { CAConnectionWithFirebaseUtilDatabase } from '../central-authority-connection-firebase-utils.database/central-authority-connection-firebase-utils.database';
 import {
   getUserIdentityByCryptoCredentials,
@@ -42,8 +43,11 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
 
     const { app } = this;
 
+    if (!app) {
+      throw new Error('Firebase application is not ready');
+    }
     try {
-      return app!.auth().currentUser;
+      return app.auth().currentUser;
     } catch (err) {
       console.error(err);
       return new Error('Failed to get the user id for firebase');
@@ -154,10 +158,8 @@ export class CAConnectionFirestoreUtilsCredentialsStrorage extends CAConnectionW
       return false;
     }
     if (storedCredentialsValue && typeof storedCredentialsValue === 'object') {
-      const {
-        credentials,
-        [CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_FIREBASE_USER_ID_PROPERTY]: firebaseId,
-      } = storedCredentialsValue;
+      const { credentials, [CA_CONNECTION_FIREBASE_UTILS_STORAGE_CREDENTIALS_FIREBASE_USER_ID_PROPERTY]: firebaseId } =
+        storedCredentialsValue;
 
       // an id set for the user by the Firebase
       if (typeof firebaseId === 'string') {

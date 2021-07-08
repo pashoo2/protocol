@@ -82,7 +82,7 @@ export const dataCachingUtilsCachingDecoratorGlobalCachePerClass = <T, V, I exte
     }, 500);
 
     async function cachingWrapper(this: I, parameter: T): Promise<V> {
-      const key = getKeyByMethodArgument ? (getKeyByMethodArgument(parameter) as TMapKey) : parameter;
+      const key = getKeyByMethodArgument ? getKeyByMethodArgument(parameter) : parameter;
 
       if (key === undefined) {
         // if there is no key for the method parameter, then call the method origin itself

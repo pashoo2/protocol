@@ -158,24 +158,22 @@ export class BaseComponent implements IBaseComponent {
       const valuesUpdated = getCurrentValues().filter((value) => value !== optionValue);
       onChange(name, optionName, valuesUpdated as T extends boolean ? string[] : string);
     };
-    const optionsElements = options.map(
-      ({ name, value, optionElementProps }): React.ReactElement => {
-        const isSelected: boolean =
-          Boolean(currentValue) &&
-          (isMultiple && Array.isArray(currentValue) ? (currentValue as string[]).includes(value) : value === currentValue);
-        return (
-          <option
-            key={`${name};${value}`}
-            value={value}
-            selected={isSelected}
-            onDoubleClick={canRemove ? handleRemoveValue : undefined}
-            {...optionElementProps}
-          >
-            {name}
-          </option>
-        );
-      }
-    );
+    const optionsElements = options.map(({ name, value, optionElementProps }): React.ReactElement => {
+      const isSelected: boolean =
+        Boolean(currentValue) &&
+        (isMultiple && Array.isArray(currentValue) ? currentValue.includes(value) : value === currentValue);
+      return (
+        <option
+          key={`${name};${value}`}
+          value={value}
+          selected={isSelected}
+          onDoubleClick={canRemove ? handleRemoveValue : undefined}
+          {...optionElementProps}
+        >
+          {name}
+        </option>
+      );
+    });
 
     if (formFieldsValues) {
       formFieldsValues[name] = currentValue;
@@ -293,7 +291,13 @@ export class BaseComponent implements IBaseComponent {
         };
         return this.renderInputField(propsInputResulted, currentFormFieldsValues);
       case EFormFieldType.BUTTON:
-        return this.renderButton(props as IButtonProps, formMethods);
+        return this.renderButton(
+          {
+            title: '',
+            ...props,
+          } as IButtonProps,
+          formMethods
+        );
       case EFormFieldType.CHECKBOX: {
         const fieldProps = props as TFormFieldProps<EFormFieldType.CHECKBOX>;
         const handleCheckboxValueChange: TFormFieldProps<EFormFieldType.CHECKBOX>['onChange'] = (

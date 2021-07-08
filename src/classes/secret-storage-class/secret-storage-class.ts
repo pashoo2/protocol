@@ -73,7 +73,8 @@ export class SecretStorage
     errorStatus: SECRET_STORAGE_STATUS.ERROR,
     instanceName: 'SecretStorage',
   })
-  implements ISecretStorage {
+  implements ISecretStorage
+{
   private static AuthStorageProvider: IStorageProvider = STORAGE_PROVIDERS[STORAGE_PROVIDERS_NAME.SESSION_STORAGE];
 
   private static PREFIX_KEY_IN_SECRET_STORAGE = '__SecretStorage__';
@@ -355,7 +356,7 @@ export class SecretStorage
       this.setErrorStatus(setKeyResult);
       return setKeyResult;
     }
-    return this.connect(options);
+    return await this.connect(options);
   }
 
   public has = async (key: string): Promise<boolean | Error> => {
@@ -371,7 +372,7 @@ export class SecretStorage
     const valueEncrypted = await this.readValueForKey(key);
 
     if (!valueEncrypted) {
-      return valueEncrypted;
+      return undefined;
     }
     if (valueEncrypted instanceof Error) {
       return SecretStorage.error(valueEncrypted);

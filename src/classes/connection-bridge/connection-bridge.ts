@@ -225,7 +225,8 @@ export class ConnectionBridge<
       SMS,
       SSDPLF,
       SRLZR
-    > {
+    >
+{
   static joinKeyPartsUsedForStorageValue(...parts: string[]): string {
     return parts.join(CONNECTION_BRIDGE_STORAGE_DELIMETER_FOR_STORAGE_KEYS_DEFAULT);
   }
@@ -639,8 +640,8 @@ export class ConnectionBridge<
   }
 
   protected _getSwarmDatabasesListPersistentStorageFabricFromCurrentOptions(): SSDPLF {
-    const swarmStorageDatabasesPersistentListFabricFromOptions = this._getStorageOptions()
-      .swarmStoreDatabasesPersistentListFabric;
+    const swarmStorageDatabasesPersistentListFabricFromOptions =
+      this._getStorageOptions().swarmStoreDatabasesPersistentListFabric;
     if (!swarmStorageDatabasesPersistentListFabricFromOptions) {
       throw new Error('There is no swarm storage databases persistent list fabric is provided in the options');
     }
@@ -716,13 +717,10 @@ export class ConnectionBridge<
     return jointStoragePrefixHashCalcResult;
   }
 
-  protected async _getSwarmDatabasesListPersistentStorageFabricOptionsFromCurrentOptions(): Promise<
-    ISwarmStoreConnectorDatabasesPersistentListConstructorParams
-  > {
+  protected async _getSwarmDatabasesListPersistentStorageFabricOptionsFromCurrentOptions(): Promise<ISwarmStoreConnectorDatabasesPersistentListConstructorParams> {
     const storageKeyPrefix: string = await this._getKeyPrefixForDatabasesLisInPersistentStorageForCurrentUser();
-    const persistentStorageForDatabasesList: IStorageCommon = await this._getPersistentEncryptedStorageForStoreDatabasesListPersistentStorage(
-      storageKeyPrefix
-    );
+    const persistentStorageForDatabasesList: IStorageCommon =
+      await this._getPersistentEncryptedStorageForStoreDatabasesListPersistentStorage(storageKeyPrefix);
     return {
       persistentStorage: persistentStorageForDatabasesList,
       serializer: this._getSerializer(),
@@ -738,7 +736,8 @@ export class ConnectionBridge<
 
   protected async _createSwarmDatabasesListPersistentStorageByCurrentOptions(): Promise<PromiseResolveType<ReturnType<SSDPLF>>> {
     const swarmDatabasesListPersistentStorageFabric = this._getSwarmDatabasesListPersistentStorageFabricFromCurrentOptions();
-    const swarmDatabasesListPersistentStorageFabricOptions = await this._getSwarmDatabasesListPersistentStorageFabricOptionsFromCurrentOptions();
+    const swarmDatabasesListPersistentStorageFabricOptions =
+      await this._getSwarmDatabasesListPersistentStorageFabricOptionsFromCurrentOptions();
 
     return (await swarmDatabasesListPersistentStorageFabric(
       swarmDatabasesListPersistentStorageFabricOptions
@@ -1534,7 +1533,7 @@ export class ConnectionBridge<
 
   protected getSessionParamsOrUndefinedFromConnectionBridgeOrSensitiveDataSessionStorageOptions(
     options?: ISensitiveDataSessionStorageOptions | CBO
-  ): ISensitiveDataSessionStorageOptions | undefined {
+  ): ISensitiveDataSessionStorageOptions | CBO | undefined {
     if (!options) {
       return undefined;
     }

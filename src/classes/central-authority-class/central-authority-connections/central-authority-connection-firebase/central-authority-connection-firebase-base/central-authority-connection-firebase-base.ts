@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
-import * as firebase from 'firebase/app';
+import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
 import { ICAConnectionSignUpCredentials, ICAConnectionUserAuthorizedResult } from '../../central-authority-connections.types';
@@ -405,7 +405,7 @@ export class CAConnectionWithFirebaseBase {
     const { login, password } = authCredentials;
 
     try {
-      await this.app.auth().createUserWithEmailAndPassword(login, password as string);
+      await this.app.auth().createUserWithEmailAndPassword(login, password);
     } catch (err) {
       console.error(err);
       return new Error('Failed to sign up to the Firebase with the given credentials');
@@ -727,7 +727,7 @@ export class CAConnectionWithFirebaseBase {
     }
 
     const { connectionWithCredentialsStorage } = this;
-    const credentialsForTheCurrentUser = await connectionWithCredentialsStorage!.getCredentialsForTheCurrentUser(
+    const credentialsForTheCurrentUser = await connectionWithCredentialsStorage.getCredentialsForTheCurrentUser(
       signUpCredentials
     );
 
@@ -751,7 +751,7 @@ export class CAConnectionWithFirebaseBase {
     // set the new generated credentials forcely
     // and rewrite the existing
     // cause it is not valid
-    const setCredentialsResult = await connectionWithCredentialsStorage!.setUserCredentials(cryptoCredentials, signUpCredentials);
+    const setCredentialsResult = await connectionWithCredentialsStorage.setUserCredentials(cryptoCredentials, signUpCredentials);
 
     if (setCredentialsResult instanceof Error) {
       return setCredentialsResult;
@@ -947,7 +947,7 @@ export class CAConnectionWithFirebaseBase {
     }
     if (credentialsExistingForTheCurrentUser != null) {
       // if an existing credentials returned
-      return credentialsExistingForTheCurrentUser;
+      return credentialsExistingForTheCurrentUser as TCentralAuthorityUserCryptoCredentials;
     }
     // if there is no credentials stored for the user
 

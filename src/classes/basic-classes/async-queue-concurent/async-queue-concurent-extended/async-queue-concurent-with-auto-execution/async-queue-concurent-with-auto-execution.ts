@@ -5,7 +5,8 @@ import { timeout } from 'utils';
 
 export class ConcurentAsyncQueueWithAutoExecution<T = void, E extends MaybeError = void>
   extends ConcurentAsyncQueue<T, E>
-  implements IAsyncQueueConcurentWithAutoExecution<T, E> {
+  implements IAsyncQueueConcurentWithAutoExecution<T, E>
+{
   public async executeQueued<TE extends T = T>(
     jobCreator: () => Promise<TE>,
     timeoutMs: number = 1000,
@@ -25,7 +26,7 @@ export class ConcurentAsyncQueueWithAutoExecution<T = void, E extends MaybeError
       throw new Error(`Job ${thisJobName} failed: ${err.message}`);
     } finally {
       if (!isError) {
-        currentJob.done(jobResult as TE);
+        currentJob.done(jobResult);
       }
     }
     return jobResult;

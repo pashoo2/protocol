@@ -95,8 +95,8 @@ export function deepCloneObject<T extends Record<string, any> | TSimpleTypes | A
 
   const clone = {} as Record<string, unknown>;
 
-  Object.keys(value as Record<string, any>).forEach((key: string): void => {
-    clone[key] = deepCloneObject((value as Record<string, any>)[key]);
+  Object.keys(value).forEach((key: string): void => {
+    clone[key] = deepCloneObject(value[key]);
   });
   return clone as T;
 }

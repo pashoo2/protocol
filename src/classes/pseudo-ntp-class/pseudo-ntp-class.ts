@@ -171,7 +171,7 @@ export class PseudoNTPClass extends getEventEmitterClass<IPseudoNTPClassEvents>(
 
   protected setCurrentServerFromPoolIndex(): void {
     const { serversPool, currentServerIndex } = this;
-    const serversPoolLength = serversPool!.length;
+    const serversPoolLength = serversPool.length;
     let currentServerIndexResolved: number;
 
     if (typeof currentServerIndex === 'number') {
@@ -196,7 +196,7 @@ export class PseudoNTPClass extends getEventEmitterClass<IPseudoNTPClassEvents>(
    */
   protected setCurrentServerRequestOptions(): void | Error {
     const { currentServerOptions } = this;
-    const { server: serverUrl } = currentServerOptions!;
+    const { server: serverUrl } = currentServerOptions;
 
     if (!currentServerOptions) {
       return new Error('The current server options is not defined');
@@ -209,7 +209,7 @@ export class PseudoNTPClass extends getEventEmitterClass<IPseudoNTPClassEvents>(
 
   protected setCurrentServerFromPoolOptions(): void {
     const { serversPool, currentServerIndex } = this;
-    const currentServerOptions = serversPool![currentServerIndex || 0];
+    const currentServerOptions = serversPool[currentServerIndex || 0];
 
     if (!this.checkServerOptions(currentServerOptions)) {
       // if the options is not defined for the server or there is no url for it
@@ -467,7 +467,7 @@ export class PseudoNTPClass extends getEventEmitterClass<IPseudoNTPClassEvents>(
     // timestamp when the request sent
     const timestampReq = getTimestampSeconds();
     const request = new HttpRequest({
-      ...currentServerRequestOptions!,
+      ...currentServerRequestOptions,
     });
     let responseRaw;
 

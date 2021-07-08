@@ -127,13 +127,14 @@ export class SwarmMessagesDatabase<
       DCO,
       DCCRT,
       OPT
-    > {
+    >
+{
   get dbName(): DBO['dbName'] | undefined {
     return this._dbName;
   }
 
   get dbType(): DbType {
-    return this._dbType as DbType;
+    return this._dbType;
   }
 
   get isReady(): boolean {

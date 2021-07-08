@@ -26,7 +26,7 @@ export class SwarmStoreConnectorOrbitDBSubclassIdentityProvider extends Identity
    */
   public static async verifyIdentity(identity: IdentityAsJson): Promise<boolean> {
     // TODO - may be better to verify the identity with central authority instanceof KeyStore
-    const verifyResult = await ((KeystoreClass as unknown) as IOrbitDBKeystoreStoreCustom).verify(
+    const verifyResult = await (KeystoreClass as unknown as IOrbitDBKeystoreStoreCustom).verify(
       identity.signatures.publicKey,
       identity.publicKey,
       identity.publicKey + identity.signatures.id
@@ -82,13 +82,13 @@ export class SwarmStoreConnectorOrbitDBSubclassIdentityProvider extends Identity
     }
 
     const { _keystore: keystore } = this;
-    const key = await keystore!.getKey(id);
+    const key = await keystore.getKey(id);
 
     if (!key) {
       throw new Error(`Signing key for '${id}' not found`);
     }
 
-    const result = await (keystore! as any).sign(key, data);
+    const result = await (keystore as any).sign(key, data);
 
     return result;
   }
