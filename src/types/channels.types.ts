@@ -1,4 +1,4 @@
-import { IUserDescription, TUesrIdentity } from './users.types';
+import { IUserDescription, TUserIdentity } from './users.types';
 
 export type TChannelMemberRole = 'member' | 'administrator';
 
@@ -11,7 +11,7 @@ export type TChannelIdentity = string;
  * only the short descirption of the member
  */
 export interface IChannelMemberDescription {
-  id: TUesrIdentity;
+  id: TUserIdentity;
   role: TChannelMemberRole;
 }
 

@@ -6,7 +6,7 @@ import {
   IPseudoNTPClassServerConnection,
   IPseudoNTPClassCommonOptionsMilliseconds,
   TPseudoNTPClassServerResponse,
-  TPseudoNTPClassResponseWithTimesamps,
+  TPseudoNTPClassResponseWithTimestamps,
   IPseudoNTPClassServerConnectionField,
   IPseudoNTPClassServerConnectionCb,
 } from './pseudo-ntp-class.types';
@@ -17,8 +17,7 @@ import {
   PSEUDO_NTP_CLASS_REQUEST_OPTIONS,
 } from './pseudo-ntp-class.const';
 import { getTimestampSeconds, addSecondsToDate, datesDifferenceSeconds } from './pseudo-ntp-class.utils';
-import HttpRequest from 'classes/basic-classes/http-request-class-base/http-request-class-base';
-import { IHttpRequestOptions } from 'classes/basic-classes/http-request-class-base/http-request-class-base.types';
+import { HttpRequest, IHttpRequestOptions } from 'classes/basic-classes/http-request-class-base';
 
 /**
  * This is class for time sync with the
@@ -436,8 +435,8 @@ export class PseudoNTPClass extends getEventEmitterClass<IPseudoNTPClassEvents>(
    * @private
    * @memberof PseudoNTPClass
    */
-  private handleServerResponse = async (responseWithTimestamps: TPseudoNTPClassResponseWithTimesamps): Promise<void | Error> => {
-    const { responseRaw, timestampReq, timestempRes, dateRes } = responseWithTimestamps;
+  private handleServerResponse = async (responseWithTimestamps: TPseudoNTPClassResponseWithTimestamps): Promise<void | Error> => {
+    const { responseRaw, timestampReq, timestampRes: timestempRes, dateRes } = responseWithTimestamps;
     const response = this.convertServerResponseRaw(responseRaw);
 
     if (response instanceof Error) {
@@ -462,7 +461,7 @@ export class PseudoNTPClass extends getEventEmitterClass<IPseudoNTPClassEvents>(
    * @private
    * @memberof PseudoNTPClass
    */
-  private async sendRequestToCurrentServer(): Promise<Error | TPseudoNTPClassResponseWithTimesamps> {
+  private async sendRequestToCurrentServer(): Promise<Error | TPseudoNTPClassResponseWithTimestamps> {
     const { currentServerRequestOptions } = this;
     // timestamp when the request sent
     const timestampReq = getTimestampSeconds();
@@ -487,7 +486,7 @@ export class PseudoNTPClass extends getEventEmitterClass<IPseudoNTPClassEvents>(
     return {
       responseRaw,
       timestampReq,
-      timestempRes,
+      timestampRes: timestempRes,
       dateRes,
     };
   }

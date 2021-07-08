@@ -3,7 +3,7 @@ import {
   HTTP_REQUEST_CACHE_CONTROL,
   HTTP_REQUEST_METHOD,
   HTTP_REQUEST_MODE,
-} from 'classes/basic-classes/http-request-class-base/http-request-class-base.const';
+} from 'classes/basic-classes/http-request-class-base';
 
 export enum PSEUDO_NTP_CLASS_EVENTS {
   TIME_SYNC = 'TIME_SYNC',

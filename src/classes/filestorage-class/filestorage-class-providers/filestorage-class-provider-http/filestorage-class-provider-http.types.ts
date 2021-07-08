@@ -1,4 +1,4 @@
-import { IHttpRequestOptions } from 'classes/basic-classes/http-request-class-base/http-request-class-base.types';
+import { IHttpRequestOptions } from 'classes/basic-classes/http-request-class-base';
 
 export interface IFileStorageClassProviderHTTPOptions {}
 

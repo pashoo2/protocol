@@ -1,5 +1,5 @@
 // uuid v4 string
-export type TUesrIdentity = string;
+export type TUserIdentity = string;
 
 // must be a JSON stringify object in jwk format
 export type TUserPublicKey = string;
@@ -8,7 +8,7 @@ export type TUserPublicKey = string;
 export type TUserSignKey = string;
 
 export interface IUserDescription {
-  id: TUesrIdentity;
+  id: TUserIdentity;
   publicKey: TUserSignKey;
   signKey: TUserSignKey;
 }

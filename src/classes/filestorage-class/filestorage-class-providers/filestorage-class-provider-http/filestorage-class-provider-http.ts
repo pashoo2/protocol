@@ -1,12 +1,11 @@
 import { FILE_STORAGE_SERVICE_STATUS, FILE_STORAGE_SERVICE_TYPE } from '../../filestorage-class.const';
-import HttpRequest from 'classes/basic-classes/http-request-class-base/http-request-class-base';
+import { HttpRequest, HTTP_REQUEST_MODE } from 'classes/basic-classes/http-request-class-base';
 import {
   IFileStorageClassProviderHTTPFileGetOptions,
   IFileStorageClassProviderHTTPFileAddOptions,
 } from './filestorage-class-provider-http.types';
 import { FILE_STORAGE_PROVIDER_HTTP_TYPE, FILE_STORAGE_PROVIDER_HTTP_IDENTIFIER } from './filestorage-class-provider-http.const';
-import { HTTP_REQUEST_MODE } from 'classes/basic-classes/http-request-class-base';
-import { downloadFileByUrl } from 'utils/files-utils/files-utils-download';
+import { downloadFileByUrl } from 'utils/files-utils';
 
 import { IFileStorageService, TFileStorageFileAddress } from '../../filestorage-class.types';
 import { TFileStorageFile } from '../../filestorage-class.types';
@@ -26,7 +25,7 @@ export class FileStorageClassProviderHTTP implements IFileStorageService<FILE_ST
     return addr.startsWith('/http') || this.isBlobAddr(addr);
   }
 
-  public async connect(options: {}) {
+  public async connect(options: {}): Promise<string> {
     return FILE_STORAGE_PROVIDER_HTTP_IDENTIFIER;
   }
 

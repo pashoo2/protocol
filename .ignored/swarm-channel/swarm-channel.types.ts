@@ -1,5 +1,5 @@
 import { EventEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base.types';
-import { TUesrIdentity } from '../../src/types/users.types';
+import { TUserIdentity } from '../../src/types/users.types';
 import { ISwarmMessageConstructor } from '../../src/classes/swarm-message/swarm-message-constructor.types';
 import { ISecretStorage } from '../../src/classes/secret-storage-class/secret-storage-class.types';
 import { ESwarmStoreConnector } from '../../src/classes/swarm-store-class/swarm-store-class.const';
@@ -62,10 +62,10 @@ export interface ISwarmChannelLocalMeta extends ISwarmChannelDescriptionFieldsMa
    * Blacklist of users who can't to
    * put messages on the channel.
    *
-   * @type {TUesrIdentity[]}
+   * @type {TUserIdentity[]}
    * @memberof ISwarmChannelLocalMeta
    */
-  blacklist: TUesrIdentity[];
+  blacklist: TUserIdentity[];
   /**
    * A crypto key exported in a string.
    *
@@ -95,7 +95,7 @@ export interface ISwarmChannelSharedMeta extends ISwarmChannelDescriptionFieldsM
    *
    * @type {string}
    */
-  ownerId: TUesrIdentity;
+  ownerId: TUserIdentity;
   /**
    * Whether a public channel or not.
    *
@@ -109,7 +109,7 @@ export interface ISwarmChannelSharedMeta extends ISwarmChannelDescriptionFieldsM
    *
    * @type {string[]}
    */
-  participants: TUesrIdentity[];
+  participants: TUserIdentity[];
   /**
    * Description of the channel.
    * May be JSON stringified
@@ -286,19 +286,19 @@ export interface ISwarmChannelMethodsBase {
   /**
    * Add a new participant for the channel.
    *
-   * @param {TUesrIdentity} id
+   * @param {TUserIdentity} id
    * @returns {Promise<void>}
    * @memberof ISwarmChannelMethodsBase
    */
-  addParticipant?(id: TUesrIdentity): Promise<void>;
+  addParticipant?(id: TUserIdentity): Promise<void>;
   /**
    * Remove a participant from the list.
    *
-   * @param {TUesrIdentity} id
+   * @param {TUserIdentity} id
    * @returns {Promise<void>}
    * @memberof ISwarmChannelMethodsBase
    */
-  removeParticipant?(id: TUesrIdentity): Promise<void>;
+  removeParticipant?(id: TUserIdentity): Promise<void>;
   /**
    * Add new channel to the channel's list.
    * Specific for the channels list channel type.

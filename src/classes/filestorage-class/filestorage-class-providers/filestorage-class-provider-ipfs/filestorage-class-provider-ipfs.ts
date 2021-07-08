@@ -16,7 +16,7 @@ import BufferList from 'bl';
 import { FILE_STORAGE_PROVIDER_ROOT_PATH_DEFAULT } from './filestorage-class-provider-ipfs.const';
 import { timeout } from 'utils';
 import { UnixTime } from 'types/ipfs.types';
-import { downloadFile } from '../../../../utils/files-utils/files-utils-download';
+import { downloadFile } from 'utils/files-utils';
 import {
   IFileStorageClassProviderIPFSFileGetOptions,
   IFileStorageClassProviderIPFSFileDownloadOptions,

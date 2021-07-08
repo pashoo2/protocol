@@ -1,3 +1,1 @@
-export * from './files-utils-size';
-
-export * from './files-utils-download';
+export * from '@pashoo2/files-utils';

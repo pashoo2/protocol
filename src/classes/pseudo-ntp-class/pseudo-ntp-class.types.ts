@@ -4,13 +4,13 @@ export type TPseudoNTPClassResponseRaw = any;
 
 /**
  * @param {number} timestampReq - timestamp when the request was sent
- * @param {number} timestempRes - timestamp when the response was received
+ * @param {number} timestampRes - timestamp when the response was received
  * @param {Date} dateRes - date when the response was received
- * @param {TPseudoNTPClassResponseRaw} responseRaw - reqponse from the server
+ * @param {TPseudoNTPClassResponseRaw} responseRaw - response from the server
  */
-export type TPseudoNTPClassResponseWithTimesamps = {
+export type TPseudoNTPClassResponseWithTimestamps = {
   timestampReq: number;
-  timestempRes: number;
+  timestampRes: number;
   dateRes: Date;
   responseRaw: TPseudoNTPClassResponseRaw;
 };
@@ -23,7 +23,7 @@ export type TPseudoNTPClassResponseWithTimesamps = {
  */
 export interface IPseudoNTPClassEvents {
   /**
-   * after syncronization with the
+   * after synchronization with the
    * server emit the event and
    * returns the time offset in
    * seconds

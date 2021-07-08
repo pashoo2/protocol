@@ -1,5 +1,5 @@
-import { IUserDescription, TUesrIdentity } from 'types/users.types';
-import { IHttpRequestOptions } from 'classes/basic-classes/http-request-class-base/http-request-class-base.types';
+import { IUserDescription, TUserIdentity } from 'types/users.types';
+import { IHttpRequestOptions } from 'classes/basic-classes/http-request-class-base';
 import {
   CA_AUTH_CREDENTIALS_USER_PASSWORD_PROP_NAME,
   CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME,
@@ -66,7 +66,7 @@ export abstract class CentralAuthorityConnection {
   /**
    * request the users descriptions by the user identities
    */
-  public abstract getUsersDescription(users: TUesrIdentity[]): Promise<(IUserDescription | null)[] | Error>;
+  public abstract getUsersDescription(users: TUserIdentity[]): Promise<(IUserDescription | null)[] | Error>;
 }
 
 export interface ICentralAuthorityConnection {
