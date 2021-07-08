@@ -1,1 +1,1 @@
-export { SerializerClass } from './serializer-class';
+export * from '@pashoo2/serializer';

@@ -6,7 +6,7 @@ import {
 } from '../../swarm-message-constructor.types';
 import { isCryptoKeyDataDecryption } from '@pashoo2/crypto-utilities';
 import { QueuedEncryptionClassBase } from '../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base';
-import { ISwarmMessageEncryptedCache } from '../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageEncryptedCache } from '../../../swarm-message-encrypted-cache/swarm-message-encrypted-cache.types';
 import {
   IQueuedEncryptionClassBaseOptions,
   IQueuedEncryptionClassBase,

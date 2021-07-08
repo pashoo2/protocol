@@ -15,7 +15,7 @@ import {
   ISwarmMessageStoreAccessControlOptions,
   ISwarmMessageStoreOptionsWithConnectorFabric,
 } from '../../swarm-message-store/types/swarm-message-store.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../swarm-message-encrypted-cache/swarm-message-encrypted-cache.types';
 import { ISwarmMessageStore } from '../../swarm-message-store/types/swarm-message-store.types';
 
 export interface ISwarmMessagesChannelFabricByChannelDescription<

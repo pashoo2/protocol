@@ -1,37 +1,37 @@
-import { TSwarmMessgaeEncryptedCacheOptions, ISwarmMessageEncryptedCache } from './swarm-messgae-encrypted-cache.types';
+import { TSwarmMessageEncryptedCacheOptions, ISwarmMessageEncryptedCache } from './swarm-message-encrypted-cache.types';
 import assert from 'assert';
 import { ISecretStorage } from '../secret-storage-class/secret-storage-class.types';
 import { SecretStorage } from '../secret-storage-class/secret-storage-class';
 import { TSwarmMessageBodyRaw } from '../swarm-message/swarm-message-constructor.types';
 import {
-  ISwarmMessgaeEncryptedCacheOptionsStorageProvider,
-  ISwarmMessgaeEncryptedCacheOptionsForStorageProvider,
-} from './swarm-messgae-encrypted-cache.types';
+  ISwarmMessageEncryptedCacheOptionsStorageProvider,
+  ISwarmMessageEncryptedCacheOptionsForStorageProvider,
+} from './swarm-message-encrypted-cache.types';
 import {
   SWARM_MESSAGE_ENCRYPTED_CACHE_DEFAULT_STORAGE_DATABASE_NAME,
   SWARM_MESSAGE_ENCRYPTED_CACHE_DEFAULT_STORAGE_DATABASE_NAME_HASH,
-} from './swarm-messgae-encrypted-cache.const';
+} from './swarm-message-encrypted-cache.const';
 import { calculateHash } from '@pashoo2/crypto-utilities';
 
 export class SwarmMessageEncryptedCache implements ISwarmMessageEncryptedCache {
   public isRunning: boolean = false;
 
-  protected options?: TSwarmMessgaeEncryptedCacheOptions = undefined;
+  protected options?: TSwarmMessageEncryptedCacheOptions = undefined;
 
   protected storageProvider?: ISecretStorage = undefined;
 
   protected get dbNamePrefix() {
-    return (this.options as ISwarmMessgaeEncryptedCacheOptionsForStorageProvider)?.dbNamePrefix || '';
+    return (this.options as ISwarmMessageEncryptedCacheOptionsForStorageProvider)?.dbNamePrefix || '';
   }
 
   protected get dbName() {
     return `${
-      (this.options as ISwarmMessgaeEncryptedCacheOptionsForStorageProvider)?.storageProviderOptions?.dbName ||
+      (this.options as ISwarmMessageEncryptedCacheOptionsForStorageProvider)?.storageProviderOptions?.dbName ||
       SWARM_MESSAGE_ENCRYPTED_CACHE_DEFAULT_STORAGE_DATABASE_NAME
     }`;
   }
 
-  public async connect(options: TSwarmMessgaeEncryptedCacheOptions) {
+  public async connect(options: TSwarmMessageEncryptedCacheOptions) {
     this.setOptions(options);
     await this.runStorageConnection();
     this.setIsRunning();
@@ -99,11 +99,11 @@ export class SwarmMessageEncryptedCache implements ISwarmMessageEncryptedCache {
     }
   };
 
-  protected setOptions(options: TSwarmMessgaeEncryptedCacheOptions) {
+  protected setOptions(options: TSwarmMessageEncryptedCacheOptions) {
     assert(options, 'Options must be provided');
     assert(typeof options === 'object', 'Options must be an object');
 
-    const optsWithStorageProvider = options as ISwarmMessgaeEncryptedCacheOptionsStorageProvider;
+    const optsWithStorageProvider = options as ISwarmMessageEncryptedCacheOptionsStorageProvider;
 
     if (optsWithStorageProvider.storageProvider) {
       assert(typeof optsWithStorageProvider.storageProvider === 'object', 'Storage provider must be an object');
@@ -114,7 +114,7 @@ export class SwarmMessageEncryptedCache implements ISwarmMessageEncryptedCache {
         'Storage provider provided is not valid'
       );
     } else {
-      const optsWithConfForStorageProviderConnection = options as ISwarmMessgaeEncryptedCacheOptionsForStorageProvider;
+      const optsWithConfForStorageProviderConnection = options as ISwarmMessageEncryptedCacheOptionsForStorageProvider;
 
       assert(
         optsWithConfForStorageProviderConnection.storageProviderAuthOptions,
@@ -131,7 +131,7 @@ export class SwarmMessageEncryptedCache implements ISwarmMessageEncryptedCache {
 
   protected async runDefaultStorageConnection() {
     const { options } = this;
-    const optsWithConfForStorageProviderConnection = options as ISwarmMessgaeEncryptedCacheOptionsForStorageProvider;
+    const optsWithConfForStorageProviderConnection = options as ISwarmMessageEncryptedCacheOptionsForStorageProvider;
 
     if (!optsWithConfForStorageProviderConnection.storageProviderAuthOptions) {
       throw new Error('Auth options was not provided to connect with the secret storage provider');
@@ -155,7 +155,7 @@ export class SwarmMessageEncryptedCache implements ISwarmMessageEncryptedCache {
 
   protected async runStorageConnection() {
     const { options } = this;
-    const optsWithStorageProvider = options as ISwarmMessgaeEncryptedCacheOptionsStorageProvider;
+    const optsWithStorageProvider = options as ISwarmMessageEncryptedCacheOptionsStorageProvider;
 
     if (optsWithStorageProvider.storageProvider) {
       this.setStorageProvider(optsWithStorageProvider.storageProvider);

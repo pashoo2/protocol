@@ -1,5 +1,5 @@
 import { TCryptoUtilEncryptDataTypes, TDataSignUtilSignDataTypes, TDataSignUtilVerifyDataTypes } from '@pashoo2/crypto-utilities';
-import { IAsyncQueueBaseClassOptions } from '../async-queue-class-base/async-queue-class-base.types';
+import { IAsyncQueueBaseClassOptions } from '../async-queue-class-base';
 
 export interface IQueuedEncryptionClassBaseOptions {
   /** crypto keys used as default keys */

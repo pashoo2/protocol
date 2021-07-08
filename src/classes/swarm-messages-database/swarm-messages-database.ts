@@ -47,7 +47,7 @@ import {
   ISwarmStoreProviderOptions,
   ISwarmStoreOptionsConnectorFabric,
 } from '../swarm-store-class/swarm-store-class.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../swarm-message-encrypted-cache/swarm-message-encrypted-cache.types';
 import { ISwarmMessagesDatabaseConnector } from './swarm-messages-database.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from './swarm-messages-database.messages-collector.types';
 import { TSwarmStoreDatabaseIteratorMethodArgument } from '../swarm-store-class/swarm-store-class.types';
@@ -344,7 +344,7 @@ export class SwarmMessagesDatabase<
       throw new Error('The instance is not ready to use');
     }
     if (!this._swarmMessageStore) {
-      throw new Error('Implementation of the SwarmMessgaeStore interface is not provided');
+      throw new Error('Implementation of the SwarmMessageStore interface is not provided');
     }
     if (!this._dbName) {
       throw new Error('Database name is not defined for the instance');

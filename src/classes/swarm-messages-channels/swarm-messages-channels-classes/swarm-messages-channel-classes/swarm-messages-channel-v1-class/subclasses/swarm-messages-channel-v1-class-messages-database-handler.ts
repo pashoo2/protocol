@@ -1,6 +1,6 @@
 import { isDeepEqual, createCancellablePromiseByNativePromise } from 'utils';
 
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../swarm-message-encrypted-cache/swarm-message-encrypted-cache.types';
 import { ESwarmStoreConnector, ESwarmStoreEventNames } from '../../../../../swarm-store-class/swarm-store-class.const';
 import {
   ISwarmStoreConnector,
@@ -29,7 +29,7 @@ import {
 } from '../../../../../swarm-messages-database/swarm-messages-database.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../../../../swarm-messages-database/swarm-messages-database.messages-collector.types';
 import assert from 'assert';
-import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../../../../const/swarm-messages-channels-main.const';
+import { SWARM_MESSAGES_CHANNEL_ENCRYPTION } from '../../../../const/swarm-messages-channels-main.const';
 import { isCryptoKeyDataEncryption } from '@pashoo2/crypto-utilities';
 import { IQueuedEncryptionClassBase } from '../../../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
 import {
@@ -138,7 +138,7 @@ export class SwarmMessagesChannelV1DatabaseHandler<
     DCO,
     DCCRT
   >,
-  CHE extends SWARM_MESSAGES_CHANNEL_ENCRYPION = SWARM_MESSAGES_CHANNEL_ENCRYPION.PUBLIC,
+  CHE extends SWARM_MESSAGES_CHANNEL_ENCRYPTION = SWARM_MESSAGES_CHANNEL_ENCRYPTION.PUBLIC,
   COPTS extends ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions<
     P,
     T,
@@ -247,7 +247,7 @@ export class SwarmMessagesChannelV1DatabaseHandler<
   }
 
   protected get _isPasswordEncryptedChannel(): boolean {
-    return this.___options.messageEncryptionType === SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD;
+    return this.___options.messageEncryptionType === SWARM_MESSAGES_CHANNEL_ENCRYPTION.PASSWORD;
   }
 
   /**
@@ -460,7 +460,7 @@ export class SwarmMessagesChannelV1DatabaseHandler<
   protected _validateConstructorOptions(options: COPTS): void {
     assert(options, 'Options must be provided for constructor');
     assert(typeof options === 'object', 'Constructor options must be an object');
-    if (options.messageEncryptionType === SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD) {
+    if (options.messageEncryptionType === SWARM_MESSAGES_CHANNEL_ENCRYPTION.PASSWORD) {
       assert(
         isCryptoKeyDataEncryption(options.messagesEncryptionQueue),
         'A messagesEncryptionQueue must be provided in options for the channel, because it uses a password encryption'

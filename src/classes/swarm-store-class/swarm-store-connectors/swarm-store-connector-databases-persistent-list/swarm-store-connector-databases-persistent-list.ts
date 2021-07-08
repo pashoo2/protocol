@@ -7,13 +7,15 @@ import { ISerializer } from '../../../../types/serialization.types';
 import { SWARM_STORE_CONNECTOR_DATABASES_PERSISTENT_LIST_ATTEMPTS_TO_SAVE_ON_FAIL } from './swarm-store-connector-databases-persistent-list.const';
 import {
   SWARM_STORE_CONNECTOR_DATABASES_PERSISTENT_LIST_DEFAULT_DATABASE_LIST,
-  SWARM_STORE_CONNECTOR_DATABASES_PERSISTENT_LIST_STORAGE_KEY_PERFIX_DATABASE_NAME_DELIMETER,
+  SWARM_STORE_CONNECTOR_DATABASES_PERSISTENT_LIST_STORAGE_KEY_PREFIX_DATABASE_NAME_DELIMITER,
   SWARM_STORE_CONNECTOR_DATABASES_PERSISTENT_LIST_STORAGE_KEY_DATABASES_NAMES,
-  SWARM_STORE_CONNECTOR_DATABASES_PERSISTENT_LIST_STORAGE_KEY_PERFIX_DATABASES_NAMES_DELIMETER,
+  SWARM_STORE_CONNECTOR_DATABASES_PERSISTENT_LIST_STORAGE_KEY_PREFIX_DATABASES_NAMES_DELIMITER,
 } from './swarm-store-connector-databases-persistent-list.const';
 import { ISwarmStoreConnectorDatabasesPersistentListConstructorParams } from '../../swarm-store-class.types';
-import { IAsyncQueueConcurentWithAutoExecution } from '../../../basic-classes/async-queue-concurent/async-queue-concurent-extended/async-queue-concurent-with-auto-execution/async-queue-concurent-with-auto-execution.types';
-import { ConcurentAsyncQueueWithAutoExecution } from '../../../basic-classes/async-queue-concurent/async-queue-concurent-extended/async-queue-concurent-with-auto-execution/async-queue-concurent-with-auto-execution';
+import {
+  ConcurrentAsyncQueueWithAutoExecution,
+  IAsyncQueueConcurrentWithAutoExecution,
+} from '../../../basic-classes/async-queue-class-base';
 import {
   TSwarmStoreValueTypes,
   TSwarmStoreDatabaseType,
@@ -41,7 +43,7 @@ export class SwarmStoreConnectorPersistentList<
 
   protected _databasesList: DBL | undefined;
 
-  private _asyncOperationsQueue: IAsyncQueueConcurentWithAutoExecution<void, Error> | undefined;
+  private _asyncOperationsQueue: IAsyncQueueConcurrentWithAutoExecution<void, Error> | undefined;
 
   /**
    * Whether the instance has been closing and cannot perfom
@@ -134,7 +136,7 @@ export class SwarmStoreConnectorPersistentList<
   }
 
   protected _initializeAsyncQueue() {
-    this._asyncOperationsQueue = new ConcurentAsyncQueueWithAutoExecution<void, Error>(createPromisePendingRejectable);
+    this._asyncOperationsQueue = new ConcurrentAsyncQueueWithAutoExecution<void, Error>(createPromisePendingRejectable);
   }
 
   protected _setInstanceClosed(): void {
@@ -162,7 +164,7 @@ export class SwarmStoreConnectorPersistentList<
     }
   }
 
-  protected _getAsyncOperationsQueue(): IAsyncQueueConcurentWithAutoExecution<void, Error> {
+  protected _getAsyncOperationsQueue(): IAsyncQueueConcurrentWithAutoExecution<void, Error> {
     if (!this._asyncOperationsQueue) {
       throw new Error('Failed to initialize the async queue instance');
     }
@@ -206,11 +208,11 @@ export class SwarmStoreConnectorPersistentList<
   }
 
   protected _getStorageKeyForDatabasesNamesList(): string {
-    return `${this._getKeyPrefixForSerializedDbListInStorage()}//${SWARM_STORE_CONNECTOR_DATABASES_PERSISTENT_LIST_STORAGE_KEY_PERFIX_DATABASES_NAMES_DELIMETER}${SWARM_STORE_CONNECTOR_DATABASES_PERSISTENT_LIST_STORAGE_KEY_DATABASES_NAMES}`;
+    return `${this._getKeyPrefixForSerializedDbListInStorage()}//${SWARM_STORE_CONNECTOR_DATABASES_PERSISTENT_LIST_STORAGE_KEY_PREFIX_DATABASES_NAMES_DELIMITER}${SWARM_STORE_CONNECTOR_DATABASES_PERSISTENT_LIST_STORAGE_KEY_DATABASES_NAMES}`;
   }
 
   protected _getStorageKeyForDatabase(dbName: string): string {
-    return `${this._getKeyPrefixForSerializedDbListInStorage()}${SWARM_STORE_CONNECTOR_DATABASES_PERSISTENT_LIST_STORAGE_KEY_PERFIX_DATABASE_NAME_DELIMETER}${dbName}`;
+    return `${this._getKeyPrefixForSerializedDbListInStorage()}${SWARM_STORE_CONNECTOR_DATABASES_PERSISTENT_LIST_STORAGE_KEY_PREFIX_DATABASE_NAME_DELIMITER}${dbName}`;
   }
 
   protected _isTheLastFailedOperationAllowed(attempt: number): boolean {

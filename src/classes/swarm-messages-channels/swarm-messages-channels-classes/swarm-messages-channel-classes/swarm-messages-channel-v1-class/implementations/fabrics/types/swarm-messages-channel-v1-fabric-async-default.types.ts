@@ -17,7 +17,7 @@ import {
   TSwarmMessagesStoreGrantAccessCallback,
   ISwarmMessageStoreAccessControlOptions,
 } from '../../../../../../../swarm-message-store/types/swarm-message-store.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../../../swarm-message-encrypted-cache/swarm-message-encrypted-cache.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../../../../../../swarm-messages-database/swarm-messages-database.messages-collector.types';
 import {
   ISwarmMessageChannelDescriptionRaw,
@@ -26,8 +26,8 @@ import {
 import { ISwarmMessagesChannelConstructor } from '../../../../../../types/swarm-messages-channel-instance.types';
 import { ISwarmMessagesChannelV1ClassChannelsListHandlerConstructor } from '../../../types/swarm-messages-channel-v1-class-channels-list-handler.types';
 import { ISwarmMessagesChannelV1DatabaseHandlerConstructor } from '../../../types/swarm-messages-channel-v1-class-messages-database-handler.types';
-import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../../../../../../const/swarm-messages-channels-main.const';
-import { IAsyncQueueBaseClassOptions } from '../../../../../../../basic-classes/async-queue-class-base/async-queue-class-base.types';
+import { SWARM_MESSAGES_CHANNEL_ENCRYPTION } from '../../../../../../const/swarm-messages-channels-main.const';
+import { IAsyncQueueBaseClassOptions } from '../../../../../../../basic-classes/async-queue-class-base';
 import { IQueuedEncryptionClassBase } from '../../../../../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
 import { ISwarmMessagesChannelV1ConstructorOptionsDefaultUtilsDefaultConnectionUtils } from '../../../utils/swarm-messages-channel-v1-constructor-options-default-utils/types/swarm-messages-channel-v1-constructor-options-default-utils.types';
 import {
@@ -280,23 +280,23 @@ export interface ISwarmMessagesChannelV1DefaultFabricOptions<
   /**
    * A password string will be used for messages encryption and decryption.
    *
-   * @type {CHD['messageEncryption'] extends SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD ? string : never}
+   * @type {CHD['messageEncryption'] extends SWARM_MESSAGES_CHANNEL_ENCRYPTION.PASSWORD ? string : never}
    */
-  passwordForMessagesEncryption: CHD['messageEncryption'] extends SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD ? string : never;
+  passwordForMessagesEncryption: CHD['messageEncryption'] extends SWARM_MESSAGES_CHANNEL_ENCRYPTION.PASSWORD ? string : never;
   /**
    * Fabric which creates instance of encryption queue
    * by a password string and salt, with queue options
    * optional argument.
    */
-  encryptionQueueFabricByPasswordAndSalt?: CHD['messageEncryption'] extends SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD
+  encryptionQueueFabricByPasswordAndSalt?: CHD['messageEncryption'] extends SWARM_MESSAGES_CHANNEL_ENCRYPTION.PASSWORD
     ? (passwordString: string, salt: string, queueOptions?: IAsyncQueueBaseClassOptions) => Promise<IQueuedEncryptionClassBase>
     : never;
   /**
    * Optional options for encryption queue.
    *
-   * @type {CHD['messageEncryption'] extends SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD ? IAsyncQueueBaseClassOptions : never}
+   * @type {CHD['messageEncryption'] extends SWARM_MESSAGES_CHANNEL_ENCRYPTION.PASSWORD ? IAsyncQueueBaseClassOptions : never}
    */
-  encryptionQueueOptions?: CHD['messageEncryption'] extends SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD
+  encryptionQueueOptions?: CHD['messageEncryption'] extends SWARM_MESSAGES_CHANNEL_ENCRYPTION.PASSWORD
     ? IAsyncQueueBaseClassOptions
     : never;
   defaultConnectionUtils?: Partial<
@@ -324,7 +324,7 @@ export interface ISwarmMessagesChannelV1DefaultFabricOptions<
   >;
 }
 
-export interface ISwarmMessagesChannelV1DefaultFabricOptionsDefault<
+export type ISwarmMessagesChannelV1DefaultFabricOptionsDefault<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted,
@@ -511,26 +511,26 @@ export interface ISwarmMessagesChannelV1DefaultFabricOptionsDefault<
     >,
     'passwordEncryptedChannelEncryptionQueue' | 'utils' | 'swarmMessagesChannelDescription'
   >
-> extends ISwarmMessagesChannelV1DefaultFabricOptions<
-    P,
-    T,
-    MD,
-    DbType,
-    DBO,
-    ConnectorBasic,
-    CO,
-    PO,
-    ConnectorMain,
-    CFO,
-    GAC,
-    MCF,
-    ACO,
-    O,
-    SMS,
-    SMSM,
-    DCO,
-    DCCRT,
-    OPT,
-    CHD,
-    CHCO
-  > {}
+> = ISwarmMessagesChannelV1DefaultFabricOptions<
+  P,
+  T,
+  MD,
+  DbType,
+  DBO,
+  ConnectorBasic,
+  CO,
+  PO,
+  ConnectorMain,
+  CFO,
+  GAC,
+  MCF,
+  ACO,
+  O,
+  SMS,
+  SMSM,
+  DCO,
+  DCCRT,
+  OPT,
+  CHD,
+  CHCO
+>;

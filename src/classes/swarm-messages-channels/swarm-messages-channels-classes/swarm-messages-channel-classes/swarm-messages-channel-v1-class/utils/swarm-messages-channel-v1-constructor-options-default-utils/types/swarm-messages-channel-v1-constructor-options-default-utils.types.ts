@@ -3,7 +3,7 @@ import {
   TSwarmMessageSerialized,
   ISwarmMessageInstanceDecrypted,
 } from '../../../../../../../swarm-message/swarm-message-constructor.types';
-import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../../../../../../const/swarm-messages-channels-main.const';
+import { SWARM_MESSAGES_CHANNEL_ENCRYPTION } from '../../../../../../const/swarm-messages-channels-main.const';
 import {
   ISwarmStoreConnectorBasic,
   TSwarmStoreConnectorConnectionOptions,
@@ -17,7 +17,7 @@ import {
   ISwarmMessageStoreOptionsWithConnectorFabric,
   ISwarmMessageStore,
 } from '../../../../../../../swarm-message-store/types/swarm-message-store.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../../../swarm-message-encrypted-cache/swarm-message-encrypted-cache.types';
 import {
   ISwarmMessagesDatabaseCacheOptions,
   ISwarmMessagesDatabaseCache,
@@ -41,7 +41,7 @@ export interface IGetSwarmMessageIssuerByChannelDescriptionUtility<
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>
 > {
   (
-    getSwarmMessagesIssuerCodeBySwarmMessagesChannelEncryptionType: (encryption: SWARM_MESSAGES_CHANNEL_ENCRYPION) => string,
+    getSwarmMessagesIssuerCodeBySwarmMessagesChannelEncryptionType: (encryption: SWARM_MESSAGES_CHANNEL_ENCRYPTION) => string,
     getSwarmMessagesIssuerCodeBySwarmMessagesChannelDatabaseType: (dbType: DbType) => string,
     joinParts: (...paths: string[]) => string
   ): ISwarmMessagesChannelMessageIssuerByChannelDescription<P, T, DbType, DBO>;

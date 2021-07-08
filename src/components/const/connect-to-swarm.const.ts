@@ -35,7 +35,7 @@ import {
   TSwarmStoreDatabaseType,
 } from '../../classes/swarm-store-class/swarm-store-class.types';
 import { connectionBridgeSwarmStoreConnectorDatabasesPersistentListFabricDefault } from '../../classes/connection-bridge/connection-bridge-utils-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-store-database-list-storage-fabrics';
-import { SerializerClass } from '../../classes/basic-classes/serializer-class/serializer-class';
+import { SerializerClass } from '../../classes/basic-classes/serializer-class';
 import {
   TSwarmStoreDatabaseEntityKey,
   TSwarmStoreDatabaseEntryOperation,
@@ -106,11 +106,13 @@ export const CONNECT_TO_SWARM_DATABASE_MAIN_2: TSwarmStoreDatabaseOptions<
   dbType: ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
 };
 
-export const CONNECT_TO_SWARM_DATABASES_DEFAULT: Array<TSwarmStoreDatabaseOptions<
-  ESwarmStoreConnector.OrbitDB,
-  TSwarmMessageSerialized,
-  ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
->> = [CONNECT_TO_SWARM_DATABASE_MAIN];
+export const CONNECT_TO_SWARM_DATABASES_DEFAULT: Array<
+  TSwarmStoreDatabaseOptions<
+    ESwarmStoreConnector.OrbitDB,
+    TSwarmMessageSerialized,
+    ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+  >
+> = [CONNECT_TO_SWARM_DATABASE_MAIN];
 
 export const CONNECT_TO_SWARM_CONNECTION_USER_OPTIONS: IConnectionBridgeOptionsUser = {
   profile: {},

@@ -1,5 +1,5 @@
 import { IQueuedEncryptionClassBase } from '../../../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../swarm-message-encrypted-cache/swarm-message-encrypted-cache.types';
 import {
   ISwarmMessageStore,
   ISwarmMessageStoreAccessControlOptions,
@@ -27,7 +27,7 @@ import {
   TSwarmStoreDatabaseOptions,
   TSwarmStoreDatabaseType,
 } from '../../../../../swarm-store-class/swarm-store-class.types';
-import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../../../../const/swarm-messages-channels-main.const';
+import { SWARM_MESSAGES_CHANNEL_ENCRYPTION } from '../../../../const/swarm-messages-channels-main.const';
 import { ISwarmMessagesChannel } from '../../../../types/swarm-messages-channel-instance.types';
 import {
   ISwarmMessageDatabaseEvents,
@@ -227,7 +227,7 @@ export interface ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions<
     DCO,
     DCCRT
   >,
-  CHE extends SWARM_MESSAGES_CHANNEL_ENCRYPION = SWARM_MESSAGES_CHANNEL_ENCRYPION.PUBLIC
+  CHE extends SWARM_MESSAGES_CHANNEL_ENCRYPTION = SWARM_MESSAGES_CHANNEL_ENCRYPTION.PUBLIC
 > {
   /**
    * Database's opitons which must be created.
@@ -244,7 +244,7 @@ export interface ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions<
    * @type {CryptoKey}
    * @memberof ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions
    */
-  messagesEncryptionQueue: CHE extends SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD ? IQueuedEncryptionClassBase : undefined;
+  messagesEncryptionQueue: CHE extends SWARM_MESSAGES_CHANNEL_ENCRYPTION.PASSWORD ? IQueuedEncryptionClassBase : undefined;
   /**
    * Encryption type used for messaging
    *
@@ -391,7 +391,7 @@ export interface ISwarmMessagesChannelV1DatabaseHandlerConstructor<
     DCO,
     DCCRT
   >,
-  CHE extends SWARM_MESSAGES_CHANNEL_ENCRYPION = SWARM_MESSAGES_CHANNEL_ENCRYPION.PUBLIC
+  CHE extends SWARM_MESSAGES_CHANNEL_ENCRYPTION = SWARM_MESSAGES_CHANNEL_ENCRYPTION.PUBLIC
 > {
   new (
     options: ISwarmMessagesChannelV1DatabaseHandlerConstructorOptions<

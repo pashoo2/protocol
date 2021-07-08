@@ -22,7 +22,7 @@ import {
   ISwarmMessageStoreAccessControlOptions,
 } from '../../swarm-message-store/types/swarm-message-store.types';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../swarm-message-encrypted-cache/swarm-message-encrypted-cache.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../swarm-messages-database/swarm-messages-database.messages-collector.types';
 import { JSONSchema7 } from 'json-schema';
 import { ISwarmMessagesChannelsListNotificationEmitter } from './swarm-messages-channels-list-events.types';

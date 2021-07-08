@@ -20,7 +20,7 @@ import {
   ISwarmMessageStoreAccessControlOptions,
   ISwarmMessageStoreOptionsWithConnectorFabric,
 } from '../../../swarm-message-store/types/swarm-message-store.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-message-encrypted-cache/swarm-message-encrypted-cache.types';
 import { ISwarmStoreConnectorBasic, ISwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../swarm-messages-database.messages-collector.types';
 import { ISwarmMessagesDatabaseMessagesCollectorOptions } from '../../swarm-messages-database.messages-collector.types';
@@ -55,7 +55,8 @@ export class SwarmMessagesDatabaseMessagesCollector<
   >,
   SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, MD | T, GAC, MCF, ACO, O>,
   MD extends ISwarmMessageInstanceDecrypted
-> implements ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD> {
+> implements ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>
+{
   protected get _swarmMesssagesStore(): SMS {
     return this._options.swarmMessageStore;
   }

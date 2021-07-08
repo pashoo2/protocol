@@ -18,7 +18,7 @@ import {
   ISwarmMessageStoreOptionsWithConnectorFabric,
   ISwarmMessageStore,
 } from '../../../../../../swarm-message-store/types/swarm-message-store.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../../swarm-message-encrypted-cache/swarm-message-encrypted-cache.types';
 import {
   ISwarmMessageChannelDescriptionRaw,
   ISwarmMessagesChannel,
@@ -27,13 +27,13 @@ import { ISwarmMessagesChannelFabricByChannelDescription } from 'classes/swarm-m
 import { MarkOptional, MarkRequired } from 'ts-essentials';
 import { ISwarmMessagesChannelConstructorOptions } from '../../../../../types/swarm-messages-channel-instance.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../../../../../swarm-messages-database/swarm-messages-database.messages-collector.types';
-import { ISwarmMessagesChannelV1DefaultFabricOptions } from './types/swarm-messges-channel-v1-fabric-async-default.types';
+import { ISwarmMessagesChannelV1DefaultFabricOptions } from './types/swarm-messages-channel-v1-fabric-async-default.types';
 import {
   ISwarmMessagesDatabaseCacheOptions,
   ISwarmMessagesDatabaseCache,
   ISwarmMessagesDatabaseConnectOptions,
 } from '../../../../../../swarm-messages-database/swarm-messages-database.types';
-import { getSwarmMessagesChannelV1InstanveWithDefaults } from 'classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/implementations/fabrics/swarm-messges-channel-v1-fabric-async-default';
+import { getSwarmMessagesChannelV1InstanveWithDefaults } from 'classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/implementations/fabrics/swarm-messages-channel-v1-fabric-async-default';
 
 export function getSwarmMessagesChannelFabricByChannelDescriptionFabric<
   P extends ESwarmStoreConnector,

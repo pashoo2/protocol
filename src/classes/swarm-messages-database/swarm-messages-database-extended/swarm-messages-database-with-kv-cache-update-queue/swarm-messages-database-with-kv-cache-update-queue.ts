@@ -18,7 +18,7 @@ import {
   ISwarmMessageStoreAccessControlOptions,
   ISwarmMessageStoreOptionsWithConnectorFabric,
 } from '../../../swarm-message-store/types/swarm-message-store.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-message-encrypted-cache/swarm-message-encrypted-cache.types';
 import {
   ISwarmMessageStore,
   ISwarmMessageStoreMessagingRequestWithMetaResult,
@@ -153,7 +153,8 @@ export class SwarmMessagesDatabaseWithKVCacheUpdateQueue<
       DCO,
       DCCRT,
       OPT
-    > {
+    >
+{
   protected get __dbKeysForDefferedValuesUpdateInCacheQueue(): Array<TSwarmStoreDatabaseEntityKey<P>> {
     return [...this.__dbKeysForDefferedValuesUpdateInCache.values()];
   }
@@ -260,7 +261,7 @@ export class SwarmMessagesDatabaseWithKVCacheUpdateQueue<
       throw new Error('Key should exists for a message in a KV database');
     }
 
-    const dbKey = (keyOrHash as unknown) as TSwarmStoreDatabaseEntityKey<P>;
+    const dbKey = keyOrHash as unknown as TSwarmStoreDatabaseEntityKey<P>;
 
     this._addOperationUnderMessageToListOfHandled(ESwarmMessagesDatabaseOperation.DELETE, messageAddress, dbKey);
     try {
@@ -284,11 +285,11 @@ export class SwarmMessagesDatabaseWithKVCacheUpdateQueue<
     keyOrKeys: TSwarmStoreDatabaseEntityKey<P>[] | TSwarmStoreDatabaseEntityKey<P>
   ): TSwarmStoreDatabaseIteratorMethodArgument<P, DbType> {
     // TODO - make it universally for any database, not only for OrbitDb
-    return ({
+    return {
       [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.eq]: keyOrKeys,
       [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.limit]: 1,
       [ESwarmStoreConnectorOrbitDbDatabaseIteratorOption.fromCache]: true,
-    } as unknown) as TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>;
+    } as unknown as TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>;
   }
 
   /**
@@ -471,7 +472,7 @@ export class SwarmMessagesDatabaseWithKVCacheUpdateQueue<
         ? TSwarmStoreDatabaseEntityAddress<P> | undefined
         : TSwarmStoreDatabaseEntityAddress<P>,
       // TODO - resolve type casting
-      (keyOrHash as unknown) as DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+      keyOrHash as unknown as DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
         ? TSwarmStoreDatabaseEntityKey<P>
         : undefined
     );
@@ -573,8 +574,8 @@ export class SwarmMessagesDatabaseWithKVCacheUpdateQueue<
   }
 
   private __stopIntervalDefferedKeysValuesUpdateInCacheRelatedToStorage(): void {
-    const intervalDefferedKeysValuesUpdateInCacheRelatedToStorage = this
-      .__intervalDefferedKeysValuesUpdateInCacheRelatedToStorage;
+    const intervalDefferedKeysValuesUpdateInCacheRelatedToStorage =
+      this.__intervalDefferedKeysValuesUpdateInCacheRelatedToStorage;
     if (intervalDefferedKeysValuesUpdateInCacheRelatedToStorage) {
       clearInterval(intervalDefferedKeysValuesUpdateInCacheRelatedToStorage);
     }

@@ -15,7 +15,7 @@ import {
   ISwarmMessageStoreOptionsWithConnectorFabric,
   TSwarmMessagesStoreGrantAccessCallback,
 } from 'classes/swarm-message-store/types/swarm-message-store.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from 'classes/swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from 'classes/swarm-message-encrypted-cache/swarm-message-encrypted-cache.types';
 import { isDeepEqual } from 'utils';
 import { getEventEmitterInstance } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base';
 import {

@@ -13,8 +13,7 @@ import {
   signToString,
   verifyData,
 } from '@pashoo2/crypto-utilities';
-import { AsyncQueueClassBase } from '../async-queue-class-base/async-queue-class-base';
-import { IAsyncQueueBaseClassOptions } from '../async-queue-class-base/async-queue-class-base.types';
+import { AsyncQueueClassBase, IAsyncQueueBaseClassOptions } from '../async-queue-class-base';
 import { IQueuedEncryptionClassBase } from './queued-encryption-class-base.types';
 import { IQueuedEncryptionClassBaseOptions } from './queued-encryption-class-base.types';
 

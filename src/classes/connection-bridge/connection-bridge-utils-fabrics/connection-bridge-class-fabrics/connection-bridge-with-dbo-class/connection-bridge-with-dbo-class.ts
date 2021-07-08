@@ -18,7 +18,7 @@ import {
   ISwarmMessageStoreAccessControlOptions,
   ISwarmMessageStoreOptionsWithConnectorFabric,
 } from '../../../../swarm-message-store/types/swarm-message-store.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../swarm-message-encrypted-cache/swarm-message-encrypted-cache.types';
 import { ConstructorType } from '../../../../../types/helper.types';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import {
@@ -241,7 +241,8 @@ export class ConnectionBridgeWithDBOClassEntriesCount<
   }
 
   protected __createSwarmStoreGrandAccessCallbackBaseClassByCurrentOptions(): CTXC {
-    const swarmMessageStoreDatabaseGrandAccessBaseContextClassFabric = this.__getSwarmMessageStoreDatabaseGrandAccessBaseContextClassFabricFromOptions();
+    const swarmMessageStoreDatabaseGrandAccessBaseContextClassFabric =
+      this.__getSwarmMessageStoreDatabaseGrandAccessBaseContextClassFabricFromOptions();
     const centralAuthorityConnection = this._getCentralAuthorityConnection();
     return swarmMessageStoreDatabaseGrandAccessBaseContextClassFabric({
       centralAuthority: centralAuthorityConnection,
@@ -265,11 +266,8 @@ export class ConnectionBridgeWithDBOClassEntriesCount<
   }
 
   protected createSwarmMessageStoreInstance(): SMS {
-    const {
-      ContextBaseClass,
-      swarmMessageStoreDBOGrandAccessCallbackFabric,
-      databaseOptionsClassFabric,
-    } = this._createAndGetSwarmMessageStoreInstanceWithDBOClassFabricOptions();
+    const { ContextBaseClass, swarmMessageStoreDBOGrandAccessCallbackFabric, databaseOptionsClassFabric } =
+      this._createAndGetSwarmMessageStoreInstanceWithDBOClassFabricOptions();
     const swarmMessageStoreInstanceWithDBOClassFabric = this.__getSwarmMessageStoreInstanceWithDBOClassFabricFromOptions();
 
     return swarmMessageStoreInstanceWithDBOClassFabric(

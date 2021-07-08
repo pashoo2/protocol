@@ -19,7 +19,7 @@ import {
   ISwarmMessageStoreOptionsWithConnectorFabric,
   TSwarmMessagesStoreGrantAccessCallback,
 } from 'classes/swarm-message-store/types/swarm-message-store.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from 'classes/swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from 'classes/swarm-message-encrypted-cache/swarm-message-encrypted-cache.types';
 import {
   ISwarmMessagesDatabaseCache,
   ISwarmMessagesDatabaseCacheOptions,
@@ -29,7 +29,7 @@ import { ISwarmMessagesDatabaseMessagesCollector } from 'classes/swarm-messages-
 import { swarmMessagesChannelValidationDescriptionFormatV1 } from '../../../../swarm-messages-channels-utils/swarm-messages-channel-utils/swarm-messages-channel-validation-utils/swarm-messages-channel-validation-description-utils/swarm-messages-channel-validation-description-format-v1/swarm-messages-channel-validation-description-format-v1';
 import { validateVerboseBySchemaWithVoidResult } from 'utils/validation-utils/validation-utils';
 import swarmMessagesChannelDescriptionJSONSchema from '../../../../const/validation/swarm-messages-channel/swarm-messages-channel-description/schemas/swarm-message-channel-description-v1-format-schema.json';
-import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../../../../const/swarm-messages-channels-main.const';
+import { SWARM_MESSAGES_CHANNEL_ENCRYPTION } from '../../../../const/swarm-messages-channels-main.const';
 import { TSwarmMessageUserIdentifierSerialized } from '../../../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier.types';
 import {
   ISwarmMessagesDatabaseConnector,
@@ -183,7 +183,7 @@ export class SwarmMessagesChannelV1Class<
     return this._swarmMessagesChannelDescriptionWODatabaseOptions.dbType;
   }
 
-  public get messageEncryption(): SWARM_MESSAGES_CHANNEL_ENCRYPION {
+  public get messageEncryption(): SWARM_MESSAGES_CHANNEL_ENCRYPTION {
     return this._swarmMessagesChannelDescriptionWODatabaseOptions.messageEncryption;
   }
 
@@ -593,7 +593,7 @@ export class SwarmMessagesChannelV1Class<
     this._validateSwarmMessagesChannelsListInstance(swarmMessagesChannelsListInstance);
     this._validateSwarmChannelDescription(swarmMessagesChannelDescription);
 
-    if (swarmMessagesChannelDescription.messageEncryption === SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD) {
+    if (swarmMessagesChannelDescription.messageEncryption === SWARM_MESSAGES_CHANNEL_ENCRYPTION.PASSWORD) {
       assert(
         passwordEncryptedChannelEncryptionQueue,
         'Encryption queue must be provided in constructor options for channel with password encryption'
@@ -744,15 +744,15 @@ export class SwarmMessagesChannelV1Class<
 
   protected _getMessagesEncryptionQueueOrUndefinedIfChannelNotEncryptedByPassword(
     messageEncryption: CHD['messageEncryption']
-  ): CHD['messageEncryption'] extends SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD ? IQueuedEncryptionClassBase : undefined {
-    if (messageEncryption === SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD) {
+  ): CHD['messageEncryption'] extends SWARM_MESSAGES_CHANNEL_ENCRYPTION.PASSWORD ? IQueuedEncryptionClassBase : undefined {
+    if (messageEncryption === SWARM_MESSAGES_CHANNEL_ENCRYPTION.PASSWORD) {
       const { passwordEncryptedChannelEncryptionQueue } = this.__options;
       if (!passwordEncryptedChannelEncryptionQueue) {
         throw new Error('An encryption queue instance should be set');
       }
       return passwordEncryptedChannelEncryptionQueue;
     }
-    return undefined as CHD['messageEncryption'] extends SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD
+    return undefined as CHD['messageEncryption'] extends SWARM_MESSAGES_CHANNEL_ENCRYPTION.PASSWORD
       ? IQueuedEncryptionClassBase
       : undefined;
   }

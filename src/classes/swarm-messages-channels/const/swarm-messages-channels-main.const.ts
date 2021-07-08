@@ -4,7 +4,7 @@
  * @export
  * @enum {number}
  */
-export enum SWARM_MESSAGES_CHANNEL_ENCRYPION {
+export enum SWARM_MESSAGES_CHANNEL_ENCRYPTION {
   /**
    * no additional messages encryption
    */

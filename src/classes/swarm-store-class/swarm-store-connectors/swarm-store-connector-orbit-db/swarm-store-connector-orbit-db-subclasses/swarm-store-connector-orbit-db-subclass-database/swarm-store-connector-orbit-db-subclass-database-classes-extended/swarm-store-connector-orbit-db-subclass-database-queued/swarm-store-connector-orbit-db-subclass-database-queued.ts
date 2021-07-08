@@ -9,8 +9,10 @@ import { ESwarmStoreConnector } from '../../../../../../swarm-store-class.const'
 import { ArgumentTypes } from 'types/helper.types';
 import { ISwarmStoreConnectorBasic } from '../../../../../../swarm-store-class.types';
 import { ISwarmStoreConnectorOrbitDbDatabaseIteratorOptionsRequired } from '../../swarm-store-connector-orbit-db-subclass-database.types';
-import { asyncQueueConcurentMixinDefault } from 'classes/basic-classes/async-queue-concurent/async-queue-concurent-mixins/async-queue-concurent-mixin-default';
-import { IAsyncQueueConcurentWithAutoExecution } from '../../../../../../../basic-classes/async-queue-concurent/async-queue-concurent-extended/async-queue-concurent-with-auto-execution/async-queue-concurent-with-auto-execution.types';
+import {
+  asyncQueueConcurrentMixinDefault,
+  IAsyncQueueConcurrentWithAutoExecution,
+} from 'classes/basic-classes/async-queue-class-base';
 import {
   SWARM_STORE_CONNECTOR_ORBIT_DB_SUBCLASS_DATABASE_QUEUED_CRUD_OPERATIONS_TIMEOUTS_MS,
   SWARM_STORE_CONNECTOR_ORBIT_DB_SUBCLASS_DATABASE_QUEUED_OPERATIONS_DEFAULT_TIMEOUT_MS,
@@ -21,20 +23,20 @@ export class SwarmStoreConnectorOrbitDBDatabaseQueued<
     DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>,
     DBO extends TSwarmStoreDatabaseOptions<ESwarmStoreConnector.OrbitDB, ItemType, DbType>
   >
-  extends asyncQueueConcurentMixinDefault(
+  extends asyncQueueConcurrentMixinDefault(
     SwarmStoreConnectorOrbitDBDatabase,
     SWARM_STORE_CONNECTOR_ORBIT_DB_SUBCLASS_DATABASE_QUEUED_OPERATIONS_DEFAULT_TIMEOUT_MS
   )<ItemType, DbType, DBO>
   implements ISwarmStoreConnectorBasic<ESwarmStoreConnector.OrbitDB, ItemType, DbType, DBO>
 {
   /**
-   * All async operations with the database, excluding datbase
+   * All async operations with the database, excluding database
    * close and open, should use this queue.
    *
    * @protected
    * @memberof SwarmStoreConnectorOrbitDBDatabase
    */
-  private _asyncOperationsQueue: IAsyncQueueConcurentWithAutoExecution<void, Error> | undefined;
+  private _asyncOperationsQueue: IAsyncQueueConcurrentWithAutoExecution<void, Error> | undefined;
 
   public connect = async (
     ...args: ArgumentTypes<SwarmStoreConnectorOrbitDBDatabase<ItemType, DbType, DBO>['connect']>
@@ -114,14 +116,14 @@ export class SwarmStoreConnectorOrbitDBDatabaseQueued<
   };
 
   protected _rejectAllPendingOperationsOnDbClose(): Promise<void> {
-    return this._rejectAllPendingOperations(new Error('Datatabase closed'));
+    return this._rejectAllPendingOperations(new Error('Database closed'));
   }
 
   protected _rejectAllPendingOperationsOnDbOpen(): Promise<void> {
-    return this._rejectAllPendingOperations(new Error('Datatabase opened again'));
+    return this._rejectAllPendingOperations(new Error('Database opened again'));
   }
 
   protected _rejectAllPendingOperationsOnDbDrop(): Promise<void> {
-    return this._rejectAllPendingOperations(new Error('Datatabase dropped'));
+    return this._rejectAllPendingOperations(new Error('Database dropped'));
   }
 }

@@ -1,4 +1,4 @@
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../swarm-message-encrypted-cache/swarm-message-encrypted-cache.types';
 import { ESwarmStoreConnector } from '../../../../../swarm-store-class/swarm-store-class.const';
 import {
   ISwarmStoreConnector,
@@ -27,7 +27,7 @@ import {
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../../../../swarm-messages-database/swarm-messages-database.messages-collector.types';
 import { SwarmMessagesChannelV1DatabaseHandler } from './swarm-messages-channel-v1-class-messages-database-handler';
 import { SWARM_MESSAGES_CHANNEL_V1_DATABASE_CONNECTOR_OPERATIONS_TIMEOUT_DEFAULT_MS } from '../const/swarm-messages-channel-v1-class-timeouts.const';
-import { decoratorAsyncQueueConcurentMixinDefault } from '../../../../../basic-classes/async-queue-concurent/async-queue-concurent-mixins/async-queue-concurent-mixin-default/async-queue-concurent-mixin-default-decorator';
+import { decoratorAsyncQueueConcurentMixinDefault } from '../../../../../basic-classes/async-queue-class-base';
 
 /**
  * Helper class that helps in maintaining

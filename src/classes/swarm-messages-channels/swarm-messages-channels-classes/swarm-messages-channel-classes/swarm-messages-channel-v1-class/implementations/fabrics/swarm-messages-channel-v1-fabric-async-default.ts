@@ -1,4 +1,4 @@
-import { MarkOptional, MarkRequired } from 'ts-essentials';
+import { MarkOptional } from 'ts-essentials';
 import {
   ISwarmMessageChannelDescriptionRaw,
   ISwarmMessagesChannelConstructorOptions,
@@ -29,24 +29,17 @@ import {
   ISwarmStoreConnector,
   ISwarmStoreOptionsConnectorFabric,
 } from '../../../../../../swarm-store-class/swarm-store-class.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
-import { ISwarmMessagesChannelV1DatabaseHandlerConstructor } from '../../types/swarm-messages-channel-v1-class-messages-database-handler.types';
-import { ISwarmMessagesChannelV1ClassChannelsListHandlerConstructor } from '../../types/swarm-messages-channel-v1-class-channels-list-handler.types';
-import { IAsyncQueueBaseClassOptions } from '../../../../../../basic-classes/async-queue-class-base/async-queue-class-base.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../../swarm-message-encrypted-cache/swarm-message-encrypted-cache.types';
 import { IQueuedEncryptionClassBase } from '../../../../../../basic-classes/queued-encryption-class-base/queued-encryption-class-base.types';
-import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../../../../../const/swarm-messages-channels-main.const';
+import { SWARM_MESSAGES_CHANNEL_ENCRYPTION } from '../../../../../const/swarm-messages-channels-main.const';
 import { SwarmMessagesChannelV1Class } from '../swarm-messages-channel-v1-class';
 import { SwarmMessagesChannelV1ClassChannelsListHandler } from '../../subclasses/swarm-messages-channel-v1-class-channels-list-handler';
 import { SwarmMessagesChannelV1DatabaseHandlerQueued } from '../../subclasses/swarm-messages-channel-v1-class-messages-database-handler-queued';
 import assert from 'assert';
-import {
-  ISwarmMessagesChannelConstructor,
-  ISwarmMessagesChannel,
-} from '../../../../../types/swarm-messages-channel-instance.types';
+import { ISwarmMessagesChannel } from '../../../../../types/swarm-messages-channel-instance.types';
 import { getQueuedEncryptionClassByPasswordStringAndSalt } from 'classes/basic-classes/queued-encryption-class-base/fabrics/queued-encryption-class-base-fabric-by-password';
 import { getSwarmMessagesChannelV1DefaultConstructorOptionsUtils } from '../../utils/swarm-messages-channel-v1-constructor-options-default-utils/swarm-messages-channel-v1-constructor-options-default-utils';
-import { ISwarmMessagesChannelV1ConstructorOptionsDefaultUtilsDefaultConnectionUtils } from '../../utils/swarm-messages-channel-v1-constructor-options-default-utils/types/swarm-messages-channel-v1-constructor-options-default-utils.types';
-import { ISwarmMessagesChannelV1DefaultFabricOptions } from './types/swarm-messges-channel-v1-fabric-async-default.types';
+import { ISwarmMessagesChannelV1DefaultFabricOptions } from './types/swarm-messages-channel-v1-fabric-async-default.types';
 
 /**
  * Creates instance of swarm channel
@@ -283,7 +276,7 @@ export async function getSwarmMessagesChannelV1InstanveWithDefaults<
     CHD
   >;
 
-  if (swarmMessagesChannelDescription.messageEncryption === SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD) {
+  if (swarmMessagesChannelDescription.messageEncryption === SWARM_MESSAGES_CHANNEL_ENCRYPTION.PASSWORD) {
     assert(passwordForMessagesEncryption, 'A password string must be provided for channels with messages encryption by password');
     const salt = swarmMessagesChannelDescription.id;
     const encryptionQueueForMessagesEncryption =
@@ -292,7 +285,7 @@ export async function getSwarmMessagesChannelV1InstanveWithDefaults<
         passwordForMessagesEncryption,
         salt,
         encryptionQueueOptions
-      )) as CHD['messageEncryption'] extends SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD ? IQueuedEncryptionClassBase : never);
+      )) as CHD['messageEncryption'] extends SWARM_MESSAGES_CHANNEL_ENCRYPTION.PASSWORD ? IQueuedEncryptionClassBase : never);
     channelConstructorOptionsResulted = {
       ...channelConstructorOptionsResulted,
       passwordEncryptedChannelEncryptionQueue: encryptionQueueForMessagesEncryption,

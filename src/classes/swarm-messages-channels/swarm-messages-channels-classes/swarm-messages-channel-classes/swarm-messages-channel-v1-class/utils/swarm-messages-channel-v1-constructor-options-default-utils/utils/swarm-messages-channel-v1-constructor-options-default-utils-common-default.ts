@@ -4,7 +4,7 @@ import {
   TSwarmStoreDatabaseType,
 } from '../../../../../../../swarm-store-class';
 import { TSwarmMessageSerialized } from '../../../../../../../swarm-message';
-import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../../../../../../const/swarm-messages-channels-main.const';
+import { SWARM_MESSAGES_CHANNEL_ENCRYPTION } from '../../../../../../const/swarm-messages-channels-main.const';
 import {
   ISwarmMessageChannelDescriptionRaw,
   ISwarmMessagesChannelDatabaseNameGeneratorByChannelDescription,
@@ -28,7 +28,7 @@ export function getSwarmMessageIssuerByChannelDescriptionUtilityDefault<
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>
 >(
-  getSwarmMessagesIssuerCodeBySwarmMessagesChannelEncryptionType: (encryption: SWARM_MESSAGES_CHANNEL_ENCRYPION) => string,
+  getSwarmMessagesIssuerCodeBySwarmMessagesChannelEncryptionType: (encryption: SWARM_MESSAGES_CHANNEL_ENCRYPTION) => string,
   getSwarmMessagesIssuerCodeBySwarmMessagesChannelDatabaseType: (dbType: DbType) => string,
   joinParts: (...paths: string[]) => string
 ): ISwarmMessagesChannelMessageIssuerByChannelDescription<P, T, DbType, DBO> {

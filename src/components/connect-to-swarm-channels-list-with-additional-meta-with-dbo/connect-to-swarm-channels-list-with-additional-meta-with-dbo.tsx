@@ -12,7 +12,7 @@ import {
   ISwarmMessageChannelDescriptionRaw,
   ISwarmMessagesChannelConstructorOptions,
 } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-instance.types';
-import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../../classes/swarm-messages-channels/const/swarm-messages-channels-main.const';
+import { SWARM_MESSAGES_CHANNEL_ENCRYPTION } from '../../classes/swarm-messages-channels/const/swarm-messages-channels-main.const';
 import {
   TSwrmMessagesChannelsListDBOWithGrantAccess,
   ISwarmMessagesChannelsDescriptionsList,
@@ -43,7 +43,7 @@ import { SWARM_CHANNELS_LIST_VERSION } from '../../classes/swarm-messages-channe
 import { ISwarmMessagesDatabaseConnectOptions } from '../../classes/swarm-messages-database/swarm-messages-database.types';
 import { CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_WITH_STORE_META_OPTIONS } from '../const/connect-to-swarm.const';
 import { getSwarmMessagesDatabaseWithKVDbMessagesUpdatesConnectorInstanceFabric } from '../../classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/utils/swarm-messages-channel-v1-constructor-options-default-utils/utils/swarm-messages-channel-v1-constructor-options-default-utils-database-connector-fabrics';
-import { ISwarmMessagesChannelV1DefaultFabricOptionsDefault } from '../../classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/implementations/fabrics/types/swarm-messges-channel-v1-fabric-async-default.types';
+import { ISwarmMessagesChannelV1DefaultFabricOptionsDefault } from '../../classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/implementations/fabrics/types/swarm-messages-channel-v1-fabric-async-default.types';
 import { getSwarmMessagesChannelFabricByChannelDescriptionFabric } from '../../classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/implementations/fabrics/swarm-messages-channel-v1-fabric-by-channel-description';
 import { ISwarmMessagesChannelFabricByChannelDescriptionWithDefaults } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-instance.fabrics.types';
 import { createSwarmMessagesDatabaseMessagesCollectorWithStoreMetaInstance } from '../../classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector-with-store-meta/swarm-messages-database-messages-collector-with-store-meta';
@@ -304,7 +304,7 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
       name: 'test swarm channel',
       admins: [currentUserId],
       description: 'This is a swarm channel for test purposes',
-      messageEncryption: SWARM_MESSAGES_CHANNEL_ENCRYPION.PUBLIC,
+      messageEncryption: SWARM_MESSAGES_CHANNEL_ENCRYPTION.PUBLIC,
       dbOptions: {
         write: [currentUserId],
         grantAccess: async function grantAccess(): Promise<boolean> {

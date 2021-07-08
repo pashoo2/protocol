@@ -15,7 +15,7 @@ import {
   ISwarmMessageStoreOptionsWithConnectorFabric,
   ISwarmMessageStore,
 } from '../../../swarm-message-store/types/swarm-message-store.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-message-encrypted-cache/swarm-message-encrypted-cache.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../swarm-messages-database.messages-collector.types';
 import {
   ISwarmMessagesDatabaseCacheOptions,

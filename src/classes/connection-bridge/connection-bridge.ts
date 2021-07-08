@@ -33,7 +33,7 @@ import { SensitiveDataSessionStorage } from 'classes/sensitive-data-session-stor
 import {
   ISwarmMessageEncryptedCacheFabric,
   ISwarmMessageConstructorWithEncryptedCacheFabric,
-} from '../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+} from '../swarm-message-encrypted-cache/swarm-message-encrypted-cache.types';
 import {
   CONNECTION_BRIDGE_STORAGE_DATABASE_NAME,
   CONNECTION_BRIDGE_OPTIONS_DEFAULT_USER_SENSITIVE_DATA_STORE as CONNECTION_BRIDGE_OPTIONS_DEFAULT_USER_SENSITIVE_DATA_STORE_OPTIONS,

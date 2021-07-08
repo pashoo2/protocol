@@ -3,7 +3,7 @@ import { ESwarmStoreConnector } from '../../../../../../swarm-store-class/swarm-
 import { TSwarmMessageSerialized } from '../../../../../../swarm-message/swarm-message-constructor.types';
 import { TSwarmStoreDatabaseOptions } from '../../../../../../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageChannelDescriptionRaw } from '../../../../../types/swarm-messages-channel-instance.types';
-import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../../../../../const/swarm-messages-channels-main.const';
+import { SWARM_MESSAGES_CHANNEL_ENCRYPTION } from '../../../../../const/swarm-messages-channels-main.const';
 import { validateGrantAccessCallbackWithContextSerializable } from '../../../../../../swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-grant-access-callback';
 
 /**
@@ -27,14 +27,14 @@ export function swarmMessagesChannelValidationDescriptionFormatV1<
 
   if (dbOptions.isPublic) {
     assert(
-      messageEncryption === SWARM_MESSAGES_CHANNEL_ENCRYPION.PUBLIC,
+      messageEncryption === SWARM_MESSAGES_CHANNEL_ENCRYPTION.PUBLIC,
       'For a public database there should no be any message encryption specified'
     );
   }
-  if (messageEncryption === SWARM_MESSAGES_CHANNEL_ENCRYPION.PRIVATE) {
+  if (messageEncryption === SWARM_MESSAGES_CHANNEL_ENCRYPTION.PRIVATE) {
     assert(dbOptions.write?.length === 2, 'For a private message channel only two users should be specified');
   }
-  if (messageEncryption === SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD) {
+  if (messageEncryption === SWARM_MESSAGES_CHANNEL_ENCRYPTION.PASSWORD) {
     assert(
       Number(dbOptions.write?.length) > 1,
       'For a password encrypted channels at least a 2 users should be specified as users who have a the write access'

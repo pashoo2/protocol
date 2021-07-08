@@ -26,7 +26,7 @@ import {
   ISwarmMessageStoreAccessControlOptions,
   ISwarmMessageStoreOptionsWithConnectorFabric,
 } from '../../../types/swarm-message-store.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../swarm-message-encrypted-cache/swarm-message-encrypted-cache.types';
 import { ISwarmStoreDatabaseBaseOptions } from '../../../../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessageStoreDatabaseOptionsExtender } from '../../../types/swarm-message-store-utils.types';
 import { PromiseResolveType } from '../../../../../types/promise.types';
@@ -140,6 +140,6 @@ export function createSwarmMessageStoreDBOWithOptionsExtenderFabric<
       return optionsExtender(dbOptionsCopy, swarmMessageConstructor);
     }
   }
-  return (SwarmMessageStoreDBOWithExtendedGrandAccessClass as unknown) as SSDOC &
+  return SwarmMessageStoreDBOWithExtendedGrandAccessClass as unknown as SSDOC &
     ConstructorType<ISwarmStoreDBOSerializerValidator<P, ItemType, DbType, DBOE, DBOS>>;
 }

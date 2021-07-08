@@ -17,12 +17,12 @@ import {
   ISwarmMessageStoreAccessControlOptions,
   ISwarmMessageStoreOptionsWithConnectorFabric,
 } from '../../../../../swarm-message-store/types/swarm-message-store.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../../swarm-message-encrypted-cache/swarm-message-encrypted-cache.types';
 import { ISwarmMessageStore } from '../../../../../swarm-message-store/types/swarm-message-store.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../../../../swarm-messages-database/swarm-messages-database.messages-collector.types';
 import { ISwarmMessagesChannelConstructorOptions } from '../../../../types/swarm-messages-channel-instance.types';
 import { ISwarmMessagesChannelV1ClassChannelsListHandlerConstructorOptions } from '../types/swarm-messages-channel-v1-class-channels-list-handler.types';
-import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../../../../const/swarm-messages-channels-main.const';
+import { SWARM_MESSAGES_CHANNEL_ENCRYPTION } from '../../../../const/swarm-messages-channels-main.const';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import {
   ISwarmMessagesDatabaseCacheOptions,
@@ -106,11 +106,8 @@ export function getOptionsForChannelsListHandlerByContstructorOptions<
     OPT
   >
 ): ISwarmMessagesChannelV1ClassChannelsListHandlerConstructorOptions<P, T, DbType, DBO, MD> {
-  const {
-    currentUserId,
-    swarmMessagesChannelsListInstance,
-    swarmMessagesChannelDescription,
-  } = swarmMessagesChannelconstructorOptions;
+  const { currentUserId, swarmMessagesChannelsListInstance, swarmMessagesChannelDescription } =
+    swarmMessagesChannelconstructorOptions;
 
   return {
     currentUserId,
@@ -124,18 +121,18 @@ export function getOptionsForChannelsListHandlerByContstructorOptions<
  * by swarm channel encryption type.
  *
  * @export
- * @param {SWARM_MESSAGES_CHANNEL_ENCRYPION} channelEncryptionType
+ * @param {SWARM_MESSAGES_CHANNEL_ENCRYPTION} channelEncryptionType
  * @returns {string}
  */
 export function getSwarmMessagesIssuerCodeBySwarmMessagesChannelEncryptionType(
-  channelEncryptionType: SWARM_MESSAGES_CHANNEL_ENCRYPION
+  channelEncryptionType: SWARM_MESSAGES_CHANNEL_ENCRYPTION
 ): string {
   switch (channelEncryptionType) {
-    case SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD:
+    case SWARM_MESSAGES_CHANNEL_ENCRYPTION.PASSWORD:
       return 'pwd';
-    case SWARM_MESSAGES_CHANNEL_ENCRYPION.PRIVATE:
+    case SWARM_MESSAGES_CHANNEL_ENCRYPTION.PRIVATE:
       return 'pri';
-    case SWARM_MESSAGES_CHANNEL_ENCRYPION.PUBLIC:
+    case SWARM_MESSAGES_CHANNEL_ENCRYPTION.PUBLIC:
       return 'pub';
     default:
       throw new Error(`An unknown swarm messages channel encryption type: ${channelEncryptionType}`);

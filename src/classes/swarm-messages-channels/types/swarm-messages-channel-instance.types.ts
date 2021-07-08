@@ -10,7 +10,7 @@ import {
   TSwarmStoreDatabaseOptions,
   TSwarmStoreDatabaseType,
 } from 'classes/swarm-store-class/swarm-store-class.types';
-import { SWARM_MESSAGES_CHANNEL_ENCRYPION } from '../const/swarm-messages-channels-main.const';
+import { SWARM_MESSAGES_CHANNEL_ENCRYPTION } from '../const/swarm-messages-channels-main.const';
 import { TSwarmMessageUserIdentifierSerialized } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier.types';
 import {
   ISwarmMessageStore,
@@ -18,7 +18,7 @@ import {
   ISwarmMessageStoreOptionsWithConnectorFabric,
   TSwarmMessagesStoreGrantAccessCallback,
 } from 'classes/swarm-message-store/types/swarm-message-store.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from 'classes/swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from 'classes/swarm-message-encrypted-cache/swarm-message-encrypted-cache.types';
 import {
   ISwarmMessagesDatabaseCache,
   ISwarmMessagesDatabaseCacheOptions,
@@ -111,10 +111,10 @@ export interface ISwarmMessageChannelDescriptionWithoutDatabaseOptionsRaw<
   /**
    * Messages encryption used for the channel
    *
-   * @type {SWARM_MESSAGES_CHANNEL_ENCRYPION}
+   * @type {SWARM_MESSAGES_CHANNEL_ENCRYPTION}
    * @memberof ISwarmMessageChannelDescriptionRaw
    */
-  readonly messageEncryption: SWARM_MESSAGES_CHANNEL_ENCRYPION;
+  readonly messageEncryption: SWARM_MESSAGES_CHANNEL_ENCRYPTION;
   /**
    * Only this users can rewrite the channel description
    *
@@ -208,10 +208,10 @@ export interface ISwarmMessageChannelDescriptionRaw<
   /**
    * Messages encryption used for the channel
    *
-   * @type {SWARM_MESSAGES_CHANNEL_ENCRYPION}
+   * @type {SWARM_MESSAGES_CHANNEL_ENCRYPTION}
    * @memberof ISwarmMessageChannelDescriptionRaw
    */
-  messageEncryption: SWARM_MESSAGES_CHANNEL_ENCRYPION;
+  messageEncryption: SWARM_MESSAGES_CHANNEL_ENCRYPTION;
   /**
    * Only this users can rewrite the channel description
    *
@@ -700,7 +700,7 @@ export interface ISwarmMessagesChannelConstructorOptions<
    *
    * @memberof ISwarmMessagesChannelConstructorOptions
    */
-  passwordEncryptedChannelEncryptionQueue: CHD['messageEncryption'] extends SWARM_MESSAGES_CHANNEL_ENCRYPION.PASSWORD
+  passwordEncryptedChannelEncryptionQueue: CHD['messageEncryption'] extends SWARM_MESSAGES_CHANNEL_ENCRYPTION.PASSWORD
     ? IQueuedEncryptionClassBase
     : never;
 

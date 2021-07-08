@@ -5,7 +5,7 @@ import { IISecretStorageOptions } from '../secret-storage-class/secret-storage-c
 import {
   ISwarmMessageEncryptedCacheFabric,
   ISwarmMessageConstructorWithEncryptedCacheFabric,
-} from './swarm-messgae-encrypted-cache.types';
+} from './swarm-message-encrypted-cache.types';
 import { TSwarmMessageConstructorOptions } from '../swarm-message/swarm-message-constructor.types';
 import { SwarmMessageConstructor } from '../swarm-message/swarm-message-constructor';
 import { extend } from 'utils';

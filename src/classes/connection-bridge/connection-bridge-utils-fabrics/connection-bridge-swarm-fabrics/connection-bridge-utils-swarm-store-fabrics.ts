@@ -7,7 +7,7 @@ import {
   TSwarmStoreDatabaseOptions,
   TSwarmStoreDatabaseType,
 } from '../../../swarm-store-class/swarm-store-class.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-message-encrypted-cache/swarm-message-encrypted-cache.types';
 import {
   ISwarmStoreConnectorBasicWithEntriesCount,
   ISwarmStoreConnectorWithEntriesCount,
@@ -329,36 +329,37 @@ export function getSwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptions
       PromiseResolveType<ReturnType<NonNullable<MCF>>>
     >;
 
-  const swarmMessagesStoreInstance = getSwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsSerializerAndDatabaseOptionsExtendedConstructor<
-    P,
-    T,
-    DbType,
-    DBO,
-    DBO & ISwarmStoreDatabaseBaseOptions & { provider: P },
-    ConnectorBasic,
-    CO,
-    PO,
-    ConnectorMain,
-    CFO,
-    MD,
-    GAC,
-    MCF,
-    ACO,
-    O,
-    E,
-    DBOS,
-    InstanceType<typeof ContextBaseClass>,
-    typeof DatabaseOptionsClass,
-    (
-      options: O
-    ) => ISwarmMessageStoreDatabaseOptionsExtender<
+  const swarmMessagesStoreInstance =
+    getSwarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsSerializerAndDatabaseOptionsExtendedConstructor<
       P,
       T,
       DbType,
       DBO,
       DBO & ISwarmStoreDatabaseBaseOptions & { provider: P },
-      PromiseResolveType<ReturnType<NonNullable<MCF>>>
-    >
-  >(DatabaseOptionsClass, dboExtender);
+      ConnectorBasic,
+      CO,
+      PO,
+      ConnectorMain,
+      CFO,
+      MD,
+      GAC,
+      MCF,
+      ACO,
+      O,
+      E,
+      DBOS,
+      InstanceType<typeof ContextBaseClass>,
+      typeof DatabaseOptionsClass,
+      (
+        options: O
+      ) => ISwarmMessageStoreDatabaseOptionsExtender<
+        P,
+        T,
+        DbType,
+        DBO,
+        DBO & ISwarmStoreDatabaseBaseOptions & { provider: P },
+        PromiseResolveType<ReturnType<NonNullable<MCF>>>
+      >
+    >(DatabaseOptionsClass, dboExtender);
   return swarmMessagesStoreInstance;
 }

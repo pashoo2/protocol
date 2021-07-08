@@ -4,24 +4,24 @@ import { TSwarmMessageConstructorOptions } from '../swarm-message/swarm-message-
 import { IStorageCommon } from 'types/storage.types';
 import { ISecretStorage, IISecretStorageOptions } from '../secret-storage-class/secret-storage-class.types';
 
-export interface ISwarmMessgaeEncryptedCacheOptionsStorageProvider {
+export interface ISwarmMessageEncryptedCacheOptionsStorageProvider {
   storageProvider: ISecretStorage;
 }
 
-export interface ISwarmMessgaeEncryptedCacheOptionsForStorageProvider {
+export interface ISwarmMessageEncryptedCacheOptionsForStorageProvider {
   dbNamePrefix?: string;
   storageProviderOptions?: IISecretStorageOptions;
   storageProviderAuthOptions: TSecretStorageAuthOptions;
 }
 
-export type TSwarmMessgaeEncryptedCacheOptions =
-  | ISwarmMessgaeEncryptedCacheOptionsStorageProvider
-  | ISwarmMessgaeEncryptedCacheOptionsForStorageProvider;
+export type TSwarmMessageEncryptedCacheOptions =
+  | ISwarmMessageEncryptedCacheOptionsStorageProvider
+  | ISwarmMessageEncryptedCacheOptionsForStorageProvider;
 
 /**
  * This is a cache of the messages decrypted
  * and signatures already validated.
- * It usefull to store messages body decrypted,
+ * It usefully to store messages body decrypted,
  * which was encrypted with a receiver user
  * public key, and sent to it. But this
  * message can't be decrypted cause there is
@@ -34,23 +34,23 @@ export type TSwarmMessgaeEncryptedCacheOptions =
  * // TODO - rename it
  *
  * @export
- * @interface ISwarmMessgaeEncryptedCache
+ * @interface ISwarmMessageEncryptedCache
  */
 export interface ISwarmMessageEncryptedCache extends IStorageCommon {
   /**
    * is the instance running
    *
    * @type {boolean}
-   * @memberof ISwarmMessgaeEncryptedCache
+   * @memberof ISwarmMessageEncryptedCache
    */
   isRunning: boolean;
-  connect(options?: TSwarmMessgaeEncryptedCacheOptions): Promise<void>;
+  connect(options?: TSwarmMessageEncryptedCacheOptions): Promise<void>;
   /**
    * get body decrypted for the message with the signature
    *
    * @param {string} sig
    * @returns {(Promise<TSwarmMessageBodyRaw | undefined>)}
-   * @memberof ISwarmMessgaeEncryptedCache
+   * @memberof ISwarmMessageEncryptedCache
    * @throws
    */
   get(sig: string): Promise<TSwarmMessageBodyRaw | null | undefined>;
@@ -66,7 +66,7 @@ export interface ISwarmMessageEncryptedCache extends IStorageCommon {
    * @param {string} sig
    * @param {TSwarmMessageBodyRaw} [message]
    * @returns {Promise<void>}
-   * @memberof ISwarmMessgaeEncryptedCache
+   * @memberof ISwarmMessageEncryptedCache
    * @throws
    */
   add(sig: string, message: TSwarmMessageBodyRaw): Promise<boolean>;
@@ -78,7 +78,7 @@ export interface ISwarmMessageEncryptedCache extends IStorageCommon {
    * @param {string} sig
    * @param {TSwarmMessageBodyRaw} [message]
    * @returns {Promise<void>}
-   * @memberof ISwarmMessgaeEncryptedCache
+   * @memberof ISwarmMessageEncryptedCache
    * @throws
    */
   set(sig: string, message: TSwarmMessageBodyRaw): Promise<void>;
@@ -87,7 +87,7 @@ export interface ISwarmMessageEncryptedCache extends IStorageCommon {
    *
    * @param {string} sig
    * @returns {Promise<void>}
-   * @memberof ISwarmMessgaeEncryptedCache
+   * @memberof ISwarmMessageEncryptedCache
    * @throws
    */
   unset(sig: string): Promise<void>;
@@ -96,7 +96,7 @@ export interface ISwarmMessageEncryptedCache extends IStorageCommon {
    * clear the database and all of it's content
    *
    * @returns {Promise<void>}
-   * @memberof ISwarmMessgaeEncryptedCache
+   * @memberof ISwarmMessageEncryptedCache
    */
   clearDb(): Promise<void>;
 }

@@ -1,3 +1,3 @@
 export * from './swarm-messgae-encrypted-cache';
 
-export * from './swarm-messgae-encrypted-cache.types';
+export * from './swarm-message-encrypted-cache.types';

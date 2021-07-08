@@ -13,7 +13,7 @@ import {
   ISwarmMessageStoreOptionsWithConnectorFabric,
   ISwarmMessageStoreEvents,
 } from '../../types/swarm-message-store.types';
-import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-message-encrypted-cache/swarm-messgae-encrypted-cache.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-message-encrypted-cache/swarm-message-encrypted-cache.types';
 import { SwarmMessageStore } from '../../swarm-message-store';
 import { getClassSwarmStoreWithEntriesCount } from '../../../swarm-store-class/swarm-store-class-extended/swarm-store-class-with-entries-count';
 import { ISwarmMessageStoreWithEntriesCount } from '../../types/swarm-message-store.types';
@@ -88,7 +88,7 @@ export function getClassSwarmMessageStoreWithEntriesCount<
     O,
     typeof SwarmMessageStoreConstructor
   >(SwarmMessageStoreConstructor);
-  return (Class as unknown) as ConstructorType<
+  return Class as unknown as ConstructorType<
     ISwarmMessageStoreWithEntriesCount<P, T, DbType, DBO, ConnectorBasic, CO, PO, ConnectorMain, CFO, MD | T, GAC, MCF, ACO, O> &
       ISwarmStoreWithConnector<P, T, DbType, DBO, ConnectorBasic, CO, ConnectorMain> &
       SwarmMessageStoreWithCreateDatabaseOptionsExtender<

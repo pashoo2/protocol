@@ -24,7 +24,6 @@ import {
   ISwarmMessagesDatabaseMessagesCollectorWithStoreMeta,
 } from '../../classes/swarm-messages-database/swarm-messages-database.messages-collector.types';
 import { getMainConnectorFabricWithEntriesCountDefault } from '../../classes/connection-bridge/connection-bridge-utils-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-store-to-swarm-connector-fabrics';
-import { SwarmMessageStore } from '../../classes/swarm-message-store/swarm-message-store';
 import { TCentralAuthorityUserIdentity } from '../../classes/central-authority-class/central-authority-class-types/central-authority-class-types-common';
 import { SwarmMessagesDatabaseCacheWithEntitiesCount } from '../../classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-cache-with-entities-count/swarm-messages-database-cache-with-entities-count';
 import { ISwarmMessagesStoreMeta } from '../../classes/swarm-messages-database/swarm-messages-database.messages-collector.types';
@@ -40,7 +39,7 @@ import {
   TSwarmStoreDatabaseEntryOperation,
 } from '../../classes/swarm-store-class/swarm-store-class.types';
 import { connectorBasicFabricOrbitDBWithEntriesCount } from '../../classes/connection-bridge/connection-bridge-utils-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-store-to-swarm-database-fabrics';
-import { SerializerClass } from '../../classes/basic-classes/serializer-class/serializer-class';
+import { SerializerClass } from '../../classes/basic-classes/serializer-class';
 import { swarmStoreOptionsClassFabric } from '../../classes/swarm-store-class/swarm-store-class-helpers/swarm-store-options-helpers/swarm-store-options-class-fabric/swarm-store-options-class-fabric';
 import { swarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsSerializer } from '../../classes/connection-bridge/connection-bridge-utils-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-swarm-store-fabrics';
 import { asyncValidateVerboseBySchemaWithVoidResult } from 'utils';
@@ -103,11 +102,13 @@ export const CONNECT_TO_SWARM_DATABASE_MAIN_2: TSwarmStoreDatabaseOptions<
   dbType: ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
 };
 
-export const CONNECT_TO_SWARM_DATABASES_DEFAULT: Array<TSwarmStoreDatabaseOptions<
-  ESwarmStoreConnector.OrbitDB,
-  TSwarmMessageSerialized,
-  ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
->> = [CONNECT_TO_SWARM_DATABASE_MAIN];
+export const CONNECT_TO_SWARM_DATABASES_DEFAULT: Array<
+  TSwarmStoreDatabaseOptions<
+    ESwarmStoreConnector.OrbitDB,
+    TSwarmMessageSerialized,
+    ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+  >
+> = [CONNECT_TO_SWARM_DATABASE_MAIN];
 
 export const CONNECT_TO_SWARM_CONNECTION_USER_OPTIONS: IConnectionBridgeOptionsUser = {
   profile: {},
