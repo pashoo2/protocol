@@ -1,6 +1,6 @@
 {
   "name": "decentralized-protocol",
-  "version": "0.1.1",
+  "version": "0.2.1",
   "dependencies": {
     "@pashoo2/async-queue": "^0.0.4",
     "@pashoo2/browser-idle-time-execution-utils": "^0.0.1",
