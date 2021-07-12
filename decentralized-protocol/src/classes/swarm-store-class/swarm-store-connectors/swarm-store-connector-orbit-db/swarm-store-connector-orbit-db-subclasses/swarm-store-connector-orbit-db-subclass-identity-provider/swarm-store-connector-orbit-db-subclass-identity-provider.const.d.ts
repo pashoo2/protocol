@@ -1,2 +1,0 @@
-export declare const SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_IDENTITY_PROVIDER_TYPE = "CustomIdentityProviderdecentralizedProtocol";
-//# sourceMappingURL=swarm-store-connector-orbit-db-subclass-identity-provider.const.d.ts.map

@@ -1,2 +1,0 @@
-export declare const CENTRAL_AUTHORITY_CONNECTION_FIREBASE_BASE_SESSION_KEY = "__CENTRAL_AUTHORITY_CONNECTION_FIREBASE_BASE_SESSION_KEY";
-//# sourceMappingURL=central-authority-connection-firebase-base.const.d.ts.map

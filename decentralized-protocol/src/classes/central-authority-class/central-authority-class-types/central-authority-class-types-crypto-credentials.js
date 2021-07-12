@@ -1,2 +1,0 @@
-import { CA_CREDENTIALS_CRYPTO_KEYS_KEY_NAME, CA_AUTH_CREDENTIALS_USER_IDENTITY_PROP_NAME, } from "../central-authority-class-const/central-authority-class-const";
-//# sourceMappingURL=central-authority-class-types-crypto-credentials.js.map

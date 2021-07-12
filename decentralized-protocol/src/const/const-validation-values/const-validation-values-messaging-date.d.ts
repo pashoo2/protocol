@@ -1,8 +1,0 @@
-export declare const CONST_VALIDATION_VALUES_MESSAGING_MAX_ERROR_SECONDS = 70;
-export declare const CONST_VALIDATION_VALUES_MESSAGING_DATE_MIN_YEAR = "2019";
-export declare const CONST_VALIDATION_VALUES_MESSAGING_DATE_MIN_YEAR_MONTH = "01";
-export declare const CONST_VALIDATION_VALUES_MESSAGING_DATE_MIN_YEAR_MONTH_DAY = "01";
-export declare const CONST_VALIDATION_VALUES_MESSAGING_DATE_MIN_STRING_IN_UTC: string;
-export declare const CONST_VALIDATION_VALUES_MESSAGING_DATE_MIN: Date;
-export declare const CONST_VALIDATION_VALUES_TIMESTAMP_UNIX_MIN_S: number;
-//# sourceMappingURL=const-validation-values-messaging-date.d.ts.map

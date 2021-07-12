@@ -1,3 +1,0 @@
-import { ESwarmStoreConnector, ISwarmStoreConnectorDatabasesPersistentList, ISwarmStoreConnectorDatabasesPersistentListConstructorParams, TSwarmStoreDatabaseOptions } from '../../../swarm-store-class';
-export declare const connectionBridgeSwarmStoreConnectorDatabasesPersistentListFabricDefault: <P extends ESwarmStoreConnector, T extends string, DbType extends import("../../../swarm-store-class").ESwarmStoreConnectorOrbitDbDatabaseType, DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>>(persistentListOptions: ISwarmStoreConnectorDatabasesPersistentListConstructorParams) => Promise<ISwarmStoreConnectorDatabasesPersistentList<P, T, DbType, DBO, Record<DBO["dbName"], DBO>>>;
-//# sourceMappingURL=connection-bridge-utils-store-database-list-storage-fabrics.d.ts.map

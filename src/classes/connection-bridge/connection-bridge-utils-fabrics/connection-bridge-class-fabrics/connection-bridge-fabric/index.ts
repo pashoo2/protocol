@@ -1,1 +1,1 @@
-export { createConnectionBridgeConnection as createConnectrionBridgeConnection } from './connection-bridge-fabric';
+export { createConnectionBridgeConnection } from './connection-bridge-fabric';

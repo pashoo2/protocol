@@ -1,5 +1,0 @@
-import { ESwarmStoreConnector } from '../../../swarm-store-class.const';
-import { TSwarmStoreValueTypes, TSwarmStoreDatabaseType, TSwarmStoreDatabaseOptions, TSwarmStoreConnectorConnectionOptions, ISwarmStoreConnectorBasic, TSwarmStoreOptionsSerialized, ISwarmStoreOptions } from '../../../swarm-store-class.types';
-export declare function validateSwarmStoreOptionsSerialized(optsSerialized: unknown): optsSerialized is TSwarmStoreOptionsSerialized;
-export declare function validateSwarmStoreOptions<P extends ESwarmStoreConnector, ItemType extends TSwarmStoreValueTypes<P>, DbType extends TSwarmStoreDatabaseType<P>, DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>, ConnectorBasic extends ISwarmStoreConnectorBasic<P, ItemType, DbType, DBO>, PO extends TSwarmStoreConnectorConnectionOptions<P, ItemType, DbType, DBO, ConnectorBasic>>(opts: unknown): opts is ISwarmStoreOptions<P, ItemType, DbType, DBO, ConnectorBasic, PO>;
-//# sourceMappingURL=swarm-store-options-utils.d.ts.map

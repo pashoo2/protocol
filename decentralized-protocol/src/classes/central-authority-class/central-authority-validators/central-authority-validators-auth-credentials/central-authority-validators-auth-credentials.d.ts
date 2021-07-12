@@ -1,9 +1,0 @@
-export declare const validateUserIdentityType: (v: any) => boolean;
-export declare const validateUserIdentityVersion: (v: any) => v is string;
-export declare const validateUserIdentity: (v: any, isSilentMode?: boolean) => v is string;
-export declare const validateUserIdentitySilent: (v: any) => v is string;
-export declare const validatePassword: (v: any) => v is string;
-export declare const validateLogin: (v: any) => v is string;
-export declare const validateAuthCredentials: (authCredentials: any) => void | Error;
-export declare const validateAuthProviderIdentity: (authProviderId: string) => boolean;
-//# sourceMappingURL=central-authority-validators-auth-credentials.d.ts.map
