@@ -64,7 +64,7 @@
     "@pashoo2/serialization-utils": "^0.0.1",
     "@pashoo2/serializer": "0.0.3",
     "@pashoo2/typed-array-utils": "^0.0.1",
-    "@pashoo2/utils": "^0.0.3",
+    "@pashoo2/utils": "^0.0.1",
     "ajv": "^6.10.2",
     "assert": "^2.0.0",
     "bl": "^4.0.2",
