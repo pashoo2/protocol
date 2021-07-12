@@ -1,0 +1,3 @@
+import { ISwarmStoreConnectorOrbitDbDatabaseOptions } from '../swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.types';
+export declare function validateOrbitDBDatabaseOptionsV1(value: ISwarmStoreConnectorOrbitDbDatabaseOptions<any, any>): void;
+//# sourceMappingURL=swarm-store-connector-orbit-db-validators-db-options.d.ts.map

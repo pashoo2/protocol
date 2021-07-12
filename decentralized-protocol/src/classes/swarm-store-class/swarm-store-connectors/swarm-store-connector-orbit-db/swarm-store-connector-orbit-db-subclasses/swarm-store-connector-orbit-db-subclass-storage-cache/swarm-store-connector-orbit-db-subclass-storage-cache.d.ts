@@ -1,0 +1,7 @@
+/// <reference types="node" />
+import Cache from 'orbit-db-cache';
+import { SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter } from '../swarm-store-connector-orbit-db-subclasses-cache/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter/swarm-store-connector-orbit-db-subclass-store-to-secret-storage-adapter';
+export declare class SwarmStoreConnectorOrbitDBSubclassStorageCache extends SwarmStoreConnectorOrbitDBSubclassStoreToSecretStorageAdapter implements Cache<any> {
+    set(k: string, v: string | Buffer): Promise<void>;
+}
+//# sourceMappingURL=swarm-store-connector-orbit-db-subclass-storage-cache.d.ts.map

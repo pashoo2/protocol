@@ -1,0 +1,3 @@
+import { TSwarmMessagePayloadSerialized, ISwarmMessagePayloadValidationOptions } from './swarm-message-subclass-validator-fields-validator-validator-payload.types';
+export declare const createValidatePayload: (opts?: ISwarmMessagePayloadValidationOptions) => (pld: TSwarmMessagePayloadSerialized) => void;
+//# sourceMappingURL=swarm-message-subclass-validator-fields-validator-validator-payload.d.ts.map

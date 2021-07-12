@@ -1,0 +1,3 @@
+export declare const SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_ACCESS_CONTROLLER_TYPE = "DecentralizedProtocolOrbitDBAccessController_v1";
+export declare const SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_ACCESS_CONTROLLER_LOG_PREFIX = "SwarmStoreConnectorOrbitDBSubclassAccessController";
+//# sourceMappingURL=swarm-store-connector-orbit-db-subclass-access-controller.const.d.ts.map

@@ -1,0 +1,5 @@
+import { ESwarmStoreConnector } from '../../../swarm-store-class.const';
+import { TSwarmStoreValueTypes, TSwarmStoreDatabaseType, TSwarmStoreDatabaseOptions, TSwarmStoreConnectorConnectionOptions, ISwarmStoreConnectorBasic, ISwarmStoreOptions, ISwarmStoreOptionsClassConstructor } from '../../../swarm-store-class.types';
+import { ISwarmStoreOptionsClassConstructorParams } from '../../../swarm-store-class.types';
+export declare function swarmStoreOptionsClassFabric<P extends ESwarmStoreConnector, T extends TSwarmStoreValueTypes<P>, DbType extends TSwarmStoreDatabaseType<P>, DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>, ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO>, CO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>, SSO extends ISwarmStoreOptions<P, T, DbType, DBO, ConnectorBasic, CO>>(defaults?: Partial<ISwarmStoreOptionsClassConstructorParams<P, T, DbType, DBO, ConnectorBasic, CO, SSO>>): ISwarmStoreOptionsClassConstructor<P, T, DbType, DBO, ConnectorBasic, CO, SSO>;
+//# sourceMappingURL=swarm-store-options-class-fabric.d.ts.map

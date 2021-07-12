@@ -1,0 +1,2 @@
+export declare const validateUsersList: (usersIdsList: string[], isValidUserId: (userId: string) => Promise<boolean>) => Promise<void>;
+//# sourceMappingURL=swarm-messages-channel-validation-utils-common.d.ts.map

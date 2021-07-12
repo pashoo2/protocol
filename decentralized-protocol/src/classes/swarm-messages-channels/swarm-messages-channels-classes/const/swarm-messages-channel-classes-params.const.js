@@ -1,0 +1,5 @@
+export var SWARM_MESSAGES_CHANNEL_VERSION;
+(function (SWARM_MESSAGES_CHANNEL_VERSION) {
+    SWARM_MESSAGES_CHANNEL_VERSION["FIRST"] = "1";
+})(SWARM_MESSAGES_CHANNEL_VERSION || (SWARM_MESSAGES_CHANNEL_VERSION = {}));
+//# sourceMappingURL=swarm-messages-channel-classes-params.const.js.map

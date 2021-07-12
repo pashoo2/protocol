@@ -1,0 +1,8 @@
+import { ISwarmMessagesStoreMeta } from '../../swarm-messages-database.messages-collector.types';
+import { TSwarmStoreDatabaseType, TSwarmStoreDatabaseOptions, TSwarmStoreConnectorConnectionOptions } from '../../../swarm-store-class/swarm-store-class.types';
+import { TSwarmMessageSerialized } from '../../../swarm-message/swarm-message-constructor.types';
+import { ESwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.const';
+import { ISwarmMessageStoreWithEntriesCount } from '../../../swarm-message-store/types/swarm-message-store.types';
+import { ISwarmStoreConnectorBasicWithEntriesCount, ISwarmStoreConnectorWithEntriesCount } from '../../../swarm-store-class/swarm-store-class-extended/swarm-store-class-with-entries-count/swarm-store-class-with-entries-count.types';
+export declare function getSwarmMessageStoreMeta<P extends ESwarmStoreConnector, DbType extends TSwarmStoreDatabaseType<P>, T extends TSwarmMessageSerialized, DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>, ConnectorBasic extends ISwarmStoreConnectorBasicWithEntriesCount<P, T, DbType, DBO>, ConnectorMain extends ISwarmStoreConnectorWithEntriesCount<P, T, DbType, DBO, ConnectorBasic, TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>>, SMS extends ISwarmMessageStoreWithEntriesCount<P, T, DbType, DBO, ConnectorBasic, any, any, ConnectorMain, any, any, any, any, any, any>>(swarmMessageStore: SMS, dbName: DBO['dbName']): Promise<ISwarmMessagesStoreMeta>;
+//# sourceMappingURL=swarm-messages-database-messages-collector-utils.d.ts.map

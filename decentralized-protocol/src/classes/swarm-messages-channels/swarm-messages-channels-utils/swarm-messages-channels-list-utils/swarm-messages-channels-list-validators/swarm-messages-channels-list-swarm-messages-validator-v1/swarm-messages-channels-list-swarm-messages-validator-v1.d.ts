@@ -1,0 +1,9 @@
+import { ESwarmStoreConnector } from '../../../../../swarm-store-class/swarm-store-class.const';
+import { TSwarmMessageSerialized, ISwarmMessageInstanceDecrypted } from '../../../../../swarm-message/swarm-message-constructor.types';
+import { IValidatorOfSwarmMessageWithChannelDescriptionArgument } from '../../../../types/swarm-messages-channels-validation.types';
+import { TSwrmMessagesChannelsListDBOWithGrantAccess } from '../../../../types/swarm-messages-channels-list-instance.types';
+import { IValidatorOfSwarmMessageWithChannelDescription } from '../../../../types/swarm-messages-channels-validation.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+export declare function validatorOfSwrmMessageWithChannelDescription<P extends ESwarmStoreConnector, T extends TSwarmMessageSerialized, MD extends ISwarmMessageInstanceDecrypted, CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext, DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>>(this: CTX, argument: IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, MD, CTX, DBO>): Promise<void>;
+export declare function getValidatorOfSwrmMessageWithChannelDescription<P extends ESwarmStoreConnector, T extends TSwarmMessageSerialized, MD extends ISwarmMessageInstanceDecrypted, CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext, DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>>(): IValidatorOfSwarmMessageWithChannelDescription<P, T, MD, CTX, DBO>;
+//# sourceMappingURL=swarm-messages-channels-list-swarm-messages-validator-v1.d.ts.map

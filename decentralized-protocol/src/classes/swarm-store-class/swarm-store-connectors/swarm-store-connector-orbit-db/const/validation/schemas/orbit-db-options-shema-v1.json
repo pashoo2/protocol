@@ -1,0 +1,77 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$version": "v1",
+    "$comment": "TODO - reuse some parts src/classes/swarm-messages-channels/const/validation/swarm-messages-channel/swarm-messages-channel-description/schemas/swarm-message-channel-description-v1-format-schema.json",
+    "allOf": [
+        {
+            "type": "object",
+            "properties": {
+                "isPublic": {
+                    "type": "boolean"
+                },
+                "write": {
+                    "type": "array",
+                    "items": {
+                        "type": "string",
+                        "maxLength": 200,
+                        "minLength": 10
+                    },
+                    "minItems": 1,
+                    "maxItems": 500,
+                    "uniqueItems": true
+                },
+                "dbName": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 10
+                },
+                "dbType": {
+                    "type": "string",
+                    "enum": ["feed_store", "key_value"]
+                },
+                "preloadCount": {
+                    "type": "integer",
+                    "minimum": -1
+                },
+                "useEncryptedStorage": {
+                    "type": "boolean"
+                },
+                "grantAccess": {
+                    "$comment": "Function which is used for write access. 'instanceof' - is a custom keyword",
+                    "instanceof": "Function"
+                }
+            },
+            "required": ["dbName", "dbType"]
+        },
+        {
+            "anyOf": [
+                {
+                    "$comment": "Required isPublic in combination with the granAccess callback function",
+                    "type": "object",
+                    "properties": {
+                        "isPublic": {
+                            "type": "boolean"
+                        },
+                        "write": {
+                            "type": "array"
+                        }
+                    },
+                    "required": ["isPublic", "grantAccess"]
+                },
+                {
+                    "$comment": "Required list with users identities who have a write access",
+                    "type": "object",
+                    "properties": {
+                        "write": {
+                            "type": "array"
+                        },
+                        "isPublic": {
+                            "type": "boolean"
+                        }
+                    },
+                    "required": ["write"]
+                }
+            ]
+        }
+    ]
+}

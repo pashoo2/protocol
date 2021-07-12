@@ -1,0 +1,43 @@
+import { ESwarmStoreConnector } from 'classes/swarm-store-class/swarm-store-class.const';
+import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from 'classes/swarm-message/swarm-message-constructor.types';
+import { ISwarmStoreConnector, ISwarmStoreConnectorBasic, ISwarmStoreOptionsConnectorFabric, ISwarmStoreProviderOptions, TSwarmStoreConnectorConnectionOptions, TSwarmStoreDatabaseOptions, TSwarmStoreDatabaseType } from 'classes/swarm-store-class/swarm-store-class.types';
+import { ISwarmMessageStore, ISwarmMessageStoreAccessControlOptions, ISwarmMessageStoreOptionsWithConnectorFabric, TSwarmMessagesStoreGrantAccessCallback } from 'classes/swarm-message-store/types/swarm-message-store.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from 'classes/swarm-message-encrypted-cache/swarm-message-encrypted-cache.types';
+import { TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw } from '../../../../types/swarm-messages-channel-instance.types';
+import { ISwarmMessagesChannelsDescriptionsList } from '../../../../types/swarm-messages-channels-list-instance.types';
+import { ISwarmMessagesChannelV1ClassChannelsListHandler, ISwarmMessagesChannelV1ClassChannelsListHandlerConstructorOptions } from '../types/swarm-messages-channel-v1-class-channels-list-handler.types';
+import { ISwarmMessagesChannelNotificationEmitter } from '../../../../types/swarm-messages-channel-events.types';
+export declare class SwarmMessagesChannelV1ClassChannelsListHandler<P extends ESwarmStoreConnector, T extends TSwarmMessageSerialized, DbType extends TSwarmStoreDatabaseType<P>, DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>, ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO>, PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>, CO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, PO>, ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, PO>, CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>, GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MD | T>, MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined, ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MD | T, GAC> | undefined, O extends ISwarmMessageStoreOptionsWithConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MD | T, GAC, MCF, ACO>, SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MD | T, GAC, MCF, ACO, O>, MD extends ISwarmMessageInstanceDecrypted> implements ISwarmMessagesChannelV1ClassChannelsListHandler<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, GAC, MCF, ACO, O, SMS, MD> {
+    private readonly __options;
+    get emitter(): ISwarmMessagesChannelNotificationEmitter<P, T, DbType>;
+    protected get _whetherUserIsChannelAdmin(): boolean;
+    private __emitter;
+    private __channelDescriptionUpdatePromise;
+    private __channelMarkedAsRemoved;
+    private __actualChannelDescription;
+    private get __chanelsListInstance();
+    private get __currentUserId();
+    constructor(__options: ISwarmMessagesChannelV1ClassChannelsListHandlerConstructorOptions<P, T, DbType, DBO, MD>);
+    updateChannelDescription(channelRawDescription: Readonly<ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>>): Promise<void>;
+    dropChannelDescriptionFromList(): Promise<void>;
+    protected _whetherUserCanEditChannelDescription(): Promise<void>;
+    protected _subscribeOnChannelDescriptionUpdates(swarmMessagesChannelsListInstance: ISwarmMessagesChannelsDescriptionsList<P, T, MD>): void;
+    protected _unsubscribeOnChannelDescriptionUpdates(swarmMessagesChannelsListInstance: ISwarmMessagesChannelsDescriptionsList<P, T, MD>): void;
+    protected _updateChannelDescriptionInChannelsList(swarmChannelDescription: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>): Promise<void>;
+    protected _dropChannelDescriptionFromTheChannelsList(): Promise<void>;
+    protected _isTwoChannelsDescriptionsEqual(firstChannelDescription: ISwarmMessageChannelDescriptionRaw<P, T, any, any>, secondChannelDescription: ISwarmMessageChannelDescriptionRaw<P, T, any, any>): boolean;
+    protected _readChannelDescriptionFromChannelsList(id: TSwarmMessagesChannelId, swarmMessagesChannelsListInstance: ISwarmMessagesChannelsDescriptionsList<P, T, MD>): Promise<ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO> | undefined>;
+    protected _createPromiseAddChannelDescriptionToTheChannelsList(swarmChannelDescriptionFromOptions: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>, swarmMessagesChannelsListInstance: ISwarmMessagesChannelsDescriptionsList<P, T, MD>): Promise<void>;
+    protected _readActualChannelDescriptionFromCurrentChannelsList(): Promise<ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO> | undefined>;
+    protected _setActualChannelDescription(channelDescription: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>): void;
+    protected _emitChannelUpdatedDescription(channelDescription: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>): void;
+    protected _emitChannelDescriptionRemoved(channelId: TSwarmMessagesChannelId): void;
+    protected _updateThisInstanceChannelDescription(): Promise<void>;
+    protected _handleChannelDescriptionUpdateListener: (channelDescription: ISwarmMessageChannelDescriptionRaw<P, T, DbType, DBO>) => void;
+    protected _setChannelRemovedMark(): void;
+    protected _unsetChannelRemovedMark(): void;
+    protected _handleChannelDescriptionDeleteListener: (channelDeletedId: TSwarmMessagesChannelId) => Promise<void>;
+    protected _setChannelDescriptionUpdatePromise(channelDescriptionUpdatePromise: Promise<void>): void;
+    private __subscribeOrUnsubscribeFromChannelDescriptionUpdates;
+}
+//# sourceMappingURL=swarm-messages-channel-v1-class-channels-list-handler.d.ts.map

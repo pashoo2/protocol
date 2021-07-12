@@ -1,0 +1,45 @@
+import { ESwarmStoreConnector } from '../../../swarm-store-class/swarm-store-class.const';
+import { TSwarmMessageSerialized, ISwarmMessageInstanceDecrypted, ISwarmMessageInstanceEncrypted } from '../../../swarm-message/swarm-message-constructor.types';
+import { TSwarmStoreDatabaseType, TSwarmStoreDatabaseOptions, ISwarmStoreConnectorBasic, TSwarmStoreConnectorConnectionOptions, ISwarmStoreProviderOptions, ISwarmStoreConnector, ISwarmStoreOptionsConnectorFabric } from '../../../swarm-store-class/swarm-store-class.types';
+import { TSwarmMessagesStoreGrantAccessCallback, ISwarmMessageStoreAccessControlOptions, ISwarmMessageStoreOptionsWithConnectorFabric } from '../../../swarm-message-store/types/swarm-message-store.types';
+import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-message-encrypted-cache/swarm-message-encrypted-cache.types';
+import { ISwarmMessageStore, ISwarmMessageStoreMessagingRequestWithMetaResult } from '../../../swarm-message-store/types/swarm-message-store.types';
+import { ISwarmMessagesDatabaseMessagesCollector } from '../../swarm-messages-database.messages-collector.types';
+import { ISwarmMessagesDatabaseCacheOptions, ISwarmMessagesDatabaseCache, ISwarmMessagesDatabaseConnectOptions } from '../../swarm-messages-database.types';
+import { SwarmMessagesDatabase } from '../../swarm-messages-database';
+import { ISwarmMessagesDatabaseConnector } from '../../swarm-messages-database.types';
+import { TSwarmStoreDatabaseEntityAddress, TSwarmStoreDatabaseEntityKey } from '../../../swarm-store-class/swarm-store-class.types';
+import { TSwarmStoreDatabaseIteratorMethodArgument } from '../../../swarm-store-class/swarm-store-class.types';
+import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
+import { TSwarmMessageUserIdentifierSerialized } from '../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier.types';
+import { ESwarmMessageStoreEventNames } from '../../../swarm-message-store/swarm-message-store.const';
+export declare class SwarmMessagesDatabaseWithKVCacheUpdateQueue<P extends ESwarmStoreConnector, T extends TSwarmMessageSerialized, DbType extends TSwarmStoreDatabaseType<P>, DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>, ConnectorBasic extends ISwarmStoreConnectorBasic<P, T, DbType, DBO>, PO extends TSwarmStoreConnectorConnectionOptions<P, T, DbType, DBO, ConnectorBasic>, CO extends ISwarmStoreProviderOptions<P, T, DbType, DBO, ConnectorBasic, PO>, ConnectorMain extends ISwarmStoreConnector<P, T, DbType, DBO, ConnectorBasic, PO>, CFO extends ISwarmStoreOptionsConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain>, GAC extends TSwarmMessagesStoreGrantAccessCallback<P, MD | T>, MCF extends ISwarmMessageConstructorWithEncryptedCacheFabric | undefined, ACO extends ISwarmMessageStoreAccessControlOptions<P, T, MD | T, GAC> | undefined, O extends ISwarmMessageStoreOptionsWithConnectorFabric<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MD | T, GAC, MCF, ACO>, SMS extends ISwarmMessageStore<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, MD | T, GAC, MCF, ACO, O>, MD extends ISwarmMessageInstanceDecrypted, SMSM extends ISwarmMessagesDatabaseMessagesCollector<P, DbType, MD>, DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMSM>, DCCRT extends ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMSM>, OPT extends ISwarmMessagesDatabaseConnectOptions<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, GAC, MCF, ACO, O, SMS, MD, SMSM, DCO, DCCRT>> extends SwarmMessagesDatabase<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, GAC, MCF, ACO, O, SMS, MD, SMSM, DCO, DCCRT, OPT> implements ISwarmMessagesDatabaseConnector<P, T, DbType, DBO, ConnectorBasic, PO, CO, ConnectorMain, CFO, GAC, MCF, ACO, O, SMS, MD, SMSM, DCO, DCCRT, OPT> {
+    protected get __dbKeysForDefferedValuesUpdateInCacheQueue(): Array<TSwarmStoreDatabaseEntityKey<P>>;
+    protected get _isMessagesCacheExists(): boolean;
+    private __dbKeysForDefferedValuesUpdateInCache;
+    private readonly __newMessagesEmitted;
+    private __intervalDefferedKeysValuesUpdateInCacheRelatedToStorage;
+    connect(options: OPT): Promise<void>;
+    close(): Promise<void>;
+    drop(): Promise<void>;
+    protected _handleDatabaseNewMessage(dbName: DBO['dbName'], message: MD, messageAddress: TSwarmStoreDatabaseEntityAddress<P>, key?: TSwarmStoreDatabaseEntityKey<P>): Promise<void>;
+    protected _handleDatabaseNewMessageInKVDatabase(dbName: DBO['dbName'], message: MD, messageAddress: TSwarmStoreDatabaseEntityAddress<P>, key?: TSwarmStoreDatabaseEntityKey<P>): void;
+    protected _handleDatabaseDeleteMessage(dbName: DBO['dbName'], userID: TSwarmMessageUserIdentifierSerialized, messageAddress: TSwarmStoreDatabaseEntityAddress<P>, messageDeletedAddress: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityAddress<P> | undefined : TSwarmStoreDatabaseEntityAddress<P>, keyOrHash: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined): Promise<void>;
+    protected _handleDatabaseDeleteMessageFromKVDatabase(dbName: DBO['dbName'], userID: TSwarmMessageUserIdentifierSerialized, messageAddress: TSwarmStoreDatabaseEntityAddress<P>, messageDeletedAddress: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityAddress<P> | undefined : TSwarmStoreDatabaseEntityAddress<P>, keyOrHash: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined): Promise<void>;
+    protected _getQueryParamsToReadValueForDbKeys(keyOrKeys: TSwarmStoreDatabaseEntityKey<P>[] | TSwarmStoreDatabaseEntityKey<P>): TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>;
+    protected _addKeyInMessagesDefferedReadQueue(key: TSwarmStoreDatabaseEntityKey<P>): void;
+    protected _resetKeysQueuedForDefferedCacheUpdate(): void;
+    protected _updateFeedStoreCacheByMessageAndMeta(dbName: DBO['dbName'], message: MD, messageAddress: TSwarmStoreDatabaseEntityAddress<P>): Promise<void>;
+    protected _handleMessageForKeyInKVDatabase(key: TSwarmStoreDatabaseEntityKey<P>): void;
+    protected _getUniqueHashForTheEventTypeForAMessage(eventType: ESwarmMessageStoreEventNames, messageAddress: TSwarmStoreDatabaseEntityAddress<P>, key?: TSwarmStoreDatabaseEntityKey<P>, message?: MD): string;
+    protected _addMessageEventToListOfEmitted: (eventType: ESwarmMessageStoreEventNames, messageAddress: TSwarmStoreDatabaseEntityAddress<P>, key?: TSwarmStoreDatabaseEntityKey<P>, message?: MD) => void;
+    protected _hasMessageEventAlreadyBeenEmitted: (messageType: ESwarmMessageStoreEventNames, messageAddress: TSwarmStoreDatabaseEntityAddress<P>, key?: TSwarmStoreDatabaseEntityKey<P>, message?: MD) => boolean;
+    protected _emitNewMessageEventIfHaventBeenEmittedBefore(dbName: DBO['dbName'], message: MD, messageAddress: TSwarmStoreDatabaseEntityAddress<P>, key?: TSwarmStoreDatabaseEntityKey<P>): void;
+    protected _emitDeleteMessageEventIfHaventBeenEmittedBefore(dbName: DBO['dbName'], userID: TSwarmMessageUserIdentifierSerialized, messageAddress: TSwarmStoreDatabaseEntityAddress<P>, messageDeletedAddress: TSwarmStoreDatabaseEntityAddress<P> | undefined, keyOrHash: TSwarmStoreDatabaseEntityKey<P>): void;
+    protected __emitMessagesUpdatesAndUpdateCacheIfExistsByRequestResult(requestValuesWithMetadataForKeysResult: (ISwarmMessageStoreMessagingRequestWithMetaResult<P, Exclude<Exclude<T, T>, ISwarmMessageInstanceEncrypted> | Exclude<Exclude<MD, T>, ISwarmMessageInstanceEncrypted>> | undefined)[]): Promise<void>;
+    protected _whetherAMessageExistsForDbKey(dbKey: TSwarmStoreDatabaseEntityKey<P>): Promise<boolean>;
+    protected _readMessagesByDefferedKeysQueueKVStorage(): Promise<void>;
+    private __startIntervalDefferedKeysValuesUpdateInCacheRelatedToStorage;
+    private __stopIntervalDefferedKeysValuesUpdateInCacheRelatedToStorage;
+}
+//# sourceMappingURL=swarm-messages-database-with-kv-cache-update-queue.d.ts.map

@@ -1,0 +1,20 @@
+import { TCentralAuthorityUserCryptoCredentials } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types-crypto-credentials';
+import { TCentralAuthorityUserIdentity, TCACryptoKeyPairs } from 'classes/central-authority-class/central-authority-class-types/central-authority-class-types';
+import { CentralAuthorityIdentity } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity';
+import { TUserIdentityVersion } from 'classes/central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity.types';
+import { TCAAuthProviderIdentity } from '../../central-authority-connections/central-authority-connections.types';
+export declare const exportCryptoCredentialsToString: (userCryptoCredentials: TCentralAuthorityUserCryptoCredentials, withoutIdentityVersion?: boolean, password?: string) => Promise<Error | string>;
+export declare const exportCryptoCredentialsToStringWithoutTheCAIdentityVersion: (userCryptoCredentials: TCentralAuthorityUserCryptoCredentials) => Promise<Error | string>;
+export declare const compareAuthProvidersIdentities: (...authProvidersIds: TCAAuthProviderIdentity[]) => boolean;
+export declare const compareCryptoCredentials: (...credentials: TCentralAuthorityUserCryptoCredentials[]) => Promise<boolean | Error>;
+export declare const importCryptoCredentialsFromExportedFromat: (cryptoCredentialsExported: any, password?: string) => Promise<Error | TCentralAuthorityUserCryptoCredentials>;
+export declare const importCryptoCredentialsFromAString: (cryptoCredentialsString: any, password?: string) => Promise<Error | TCentralAuthorityUserCryptoCredentials>;
+export declare const getUserCredentialsByUserIdentityAndCryptoKeys: (userIdentity: TCentralAuthorityUserIdentity, cryptoKeyPairs: TCACryptoKeyPairs, checkPrivateKey?: boolean) => Error | TCentralAuthorityUserCryptoCredentials;
+export declare const getExportedAsStringCryptoCredentials: (identity: TCentralAuthorityUserIdentity, cryptoCredentialsKeyPairs: TCACryptoKeyPairs, checkPrivateKey?: boolean) => Promise<Error | string>;
+export declare const getExportedCryptoCredentialsByCAIdentity: (caIdentity: CentralAuthorityIdentity | string, cryptoCredentialsKeyPairs: TCACryptoKeyPairs, checkPrivateKey?: boolean) => Promise<Error | string>;
+export declare const replaceCryptoCredentialsIdentity: (cryptoCredentials: TCentralAuthorityUserCryptoCredentials, identity: TCentralAuthorityUserIdentity, checkPrivateKey?: boolean) => Error | TCentralAuthorityUserCryptoCredentials;
+export declare const getUserIdentityByCryptoCredentials: (cryptoCredentials: TCentralAuthorityUserCryptoCredentials) => Error | TCentralAuthorityUserIdentity;
+export declare const getCryptoKeyPairsByCryptoCredentials: (cryptoCredentials: TCentralAuthorityUserCryptoCredentials, checkPrivateKey?: boolean) => Error | TCACryptoKeyPairs;
+export declare const getUserIdentityVersion: (userIdentity: TCentralAuthorityUserIdentity | CentralAuthorityIdentity) => TUserIdentityVersion | Error;
+export declare const getVersionOfCryptoCredentials: (cryptoCredentials: TCentralAuthorityUserCryptoCredentials) => TUserIdentityVersion | Error;
+//# sourceMappingURL=central-authority-utils-crypto-credentials.d.ts.map

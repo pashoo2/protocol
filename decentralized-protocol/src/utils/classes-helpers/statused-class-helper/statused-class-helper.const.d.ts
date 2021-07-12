@@ -1,0 +1,3 @@
+export declare const STATUSED_CLASS_HELPER_STATUS_CHANGED_EVENT_NAME = "STATUSED_CLASS_HELPER_STATUS_CHANGED_EVENT_NAME";
+export declare const STATUSED_CLASS_HELPER_STATUS_WAITING_TIMEOUT_MS_DEFAULT = 5000;
+//# sourceMappingURL=statused-class-helper.const.d.ts.map

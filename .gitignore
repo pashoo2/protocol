@@ -5,7 +5,6 @@
 /**/node_modules
 /.pnp
 .pnp.js
-/decentralized-protocol
 ./src/index.ts
 
 # testing

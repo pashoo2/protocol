@@ -1,0 +1,19 @@
+export var FILE_STORAGE_SERVICE_STATUS;
+(function (FILE_STORAGE_SERVICE_STATUS) {
+    FILE_STORAGE_SERVICE_STATUS["READY"] = "READY";
+    FILE_STORAGE_SERVICE_STATUS["CONNECTING"] = "CONNECTING";
+    FILE_STORAGE_SERVICE_STATUS["NOT_READY"] = "NOT_READY";
+    FILE_STORAGE_SERVICE_STATUS["ERROR"] = "ERROR";
+})(FILE_STORAGE_SERVICE_STATUS || (FILE_STORAGE_SERVICE_STATUS = {}));
+export var FILE_STORAGE_SERVICE_TYPE;
+(function (FILE_STORAGE_SERVICE_TYPE) {
+    FILE_STORAGE_SERVICE_TYPE["IPFS"] = "IPFS";
+    FILE_STORAGE_SERVICE_TYPE["HTTP"] = "HTTP";
+})(FILE_STORAGE_SERVICE_TYPE || (FILE_STORAGE_SERVICE_TYPE = {}));
+export const FILE_STORAGE_SERVICES_IMPLEMENTATIONS = {
+    [FILE_STORAGE_SERVICE_TYPE.IPFS]: () => import('./filestorage-class-providers/filestorage-class-provider-ipfs'),
+    [FILE_STORAGE_SERVICE_TYPE.HTTP]: () => import('./filestorage-class-providers/filestorage-class-provider-http'),
+};
+export const FILE_STORAGE_SERVICE_PREFIX = '/file';
+export const FILE_STORAGE_SERVICE_PREFIX_LENGTH = FILE_STORAGE_SERVICE_PREFIX.length;
+//# sourceMappingURL=filestorage-class.const.js.map

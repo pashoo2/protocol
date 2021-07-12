@@ -1,0 +1,2 @@
+import { TCentralAuthorityUserIdentity, TCACryptoKeyPairs, TCentralAuthorityUserCryptoCredentials, } from "../../../central-authority-class-types/central-authority-class-types";
+//# sourceMappingURL=central-authority-storage-swarm-users-identity-credentials.types.js.map

@@ -1,0 +1,32 @@
+import { CONST_VALUES_RESTRICTIONS_COMMON_URI_MAX_LENGTH, CONST_VALUES_RESTRICTIONS_COMMON_UUID_V4_MAX_LENGTH, CONST_VALUES_RESTRICTIONS_COMMON_UUID_V4_MIN_LENGTH, CONST_VALUES_RESTRICTIONS_COMMON_LOGIN_MAX_LENGTH, CONST_VALUES_RESTRICTIONS_COMMON_LOGIN_MIN_LENGTH, } from "../const-values-restrictions-common";
+import { CONST_VALIDATION_REGEX_LOGIN_STRING, CONST_VALIDATION_REGEX_INTERNATIONAL_PHONE_NUMBER_STRING, } from "../const-validation-regex/const-validation-regex-common";
+export const CONST_VALIDATION_SCHEMES_URI = {
+    type: 'string',
+    format: 'uri',
+    maxLength: CONST_VALUES_RESTRICTIONS_COMMON_URI_MAX_LENGTH,
+};
+export const CONST_VALIDATION_SCHEMES_URL = {
+    type: 'string',
+    format: 'url',
+};
+export const CONST_VALIDATION_SCHEMES_EMAIL = {
+    type: 'string',
+    format: 'email',
+};
+export const CONST_VALIDATION_SCHEMES_LOGIN = {
+    type: 'string',
+    minLength: CONST_VALUES_RESTRICTIONS_COMMON_LOGIN_MIN_LENGTH,
+    maxLength: CONST_VALUES_RESTRICTIONS_COMMON_LOGIN_MAX_LENGTH,
+    pattern: CONST_VALIDATION_REGEX_LOGIN_STRING,
+};
+export const CONST_VALIDATION_SCHEMES_INTERNATIONAL_PHONE_NUMBER = {
+    type: 'string',
+    pattern: CONST_VALIDATION_REGEX_INTERNATIONAL_PHONE_NUMBER_STRING,
+};
+export const CONST_VALIDATION_SCHEMES_UUID_V4 = {
+    type: 'string',
+    format: 'uuid',
+    maxLength: CONST_VALUES_RESTRICTIONS_COMMON_UUID_V4_MAX_LENGTH,
+    minLength: CONST_VALUES_RESTRICTIONS_COMMON_UUID_V4_MIN_LENGTH,
+};
+//# sourceMappingURL=const-validation-schemes-common.js.map

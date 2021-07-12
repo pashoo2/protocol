@@ -1,0 +1,12 @@
+import { CAConnectionWithFirebase } from './central-authority-connection-firebase';
+export var CA_CONNECTION_AUTH_PROVIDERS;
+(function (CA_CONNECTION_AUTH_PROVIDERS) {
+    CA_CONNECTION_AUTH_PROVIDERS[CA_CONNECTION_AUTH_PROVIDERS["FIREBASE"] = 0] = "FIREBASE";
+})(CA_CONNECTION_AUTH_PROVIDERS || (CA_CONNECTION_AUTH_PROVIDERS = {}));
+export const CA_CONNECTIONS_POOL_AUTH_PROVIDERS_CONNECTION_CONSTRUCTORS = {
+    [CA_CONNECTION_AUTH_PROVIDERS.FIREBASE]: CAConnectionWithFirebase,
+};
+export const CA_CONNECTIONS_POOL_AUTH_PROVIDERS_CONNECTION_CONFIGURATION_VALIDATORS = {
+    [CA_CONNECTION_AUTH_PROVIDERS.FIREBASE]: CAConnectionWithFirebase.validateConfiguration,
+};
+//# sourceMappingURL=central-authority-connections.const.js.map

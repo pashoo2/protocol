@@ -1,9 +1,8 @@
 // TODO - comment next line before run
 // import '@types/jest';
 import { QueuedEncryptionClassBase } from './queued-encryption-class-base';
-import { dataSignGenerateKeyPair } from '../../../utils/data-sign-utils';
-import { generateKeyPair as generateEncryptionKeyPair } from '../../../utils/encryption-utils';
 import { IQueuedEncryptionClassBaseOptions } from './queued-encryption-class-base.types';
+import { dataSignGenerateKeyPair, generateKeyPair } from '@pashoo2/crypto-utilities';
 
 const testString = '!@#$%^&&**())_)(*&%%{}|?><,.eowiroidfhjklhs121шфыво';
 const asyncQueueOptions = {
@@ -26,7 +25,7 @@ describe('QueuedEncryptionClassBase tests', () => {
   } as Required<IQueuedEncryptionClassBaseOptions>['keys'];
   beforeAll(async () => {
     const dataSignKeyPair = await dataSignGenerateKeyPair();
-    const dataEncryptionKeyPair = await generateEncryptionKeyPair();
+    const dataEncryptionKeyPair = await generateKeyPair();
 
     keysOptions.signKey = dataSignKeyPair.privateKey;
     keysOptions.decryptKey = dataEncryptionKeyPair.privateKey;
@@ -89,7 +88,7 @@ describe('QueuedEncryptionClassBase tests', () => {
         decryptKey: undefined,
       } as Required<IQueuedEncryptionClassBaseOptions>['keys'];
       const dataSignKeyPair = await dataSignGenerateKeyPair();
-      const dataEncryptionKeyPair = await generateEncryptionKeyPair();
+      const dataEncryptionKeyPair = await generateKeyPair();
 
       keysOptions.signKey = dataSignKeyPair.privateKey;
       keysOptions.decryptKey = dataEncryptionKeyPair.privateKey;
@@ -116,7 +115,7 @@ describe('QueuedEncryptionClassBase tests', () => {
         decryptKey: undefined,
       } as Required<IQueuedEncryptionClassBaseOptions>['keys'];
       dataSignKeyPair = await dataSignGenerateKeyPair();
-      dataEncryptionKeyPair = await generateEncryptionKeyPair();
+      dataEncryptionKeyPair = await generateKeyPair();
 
       keysOptions.signKey = dataSignKeyPair.privateKey;
       keysOptions.decryptKey = dataEncryptionKeyPair.privateKey;
@@ -127,7 +126,7 @@ describe('QueuedEncryptionClassBase tests', () => {
     });
     it('verify string signed should not failed', async () => {
       const testValue = testString;
-      let signature = await instance.signData(testValue);
+      const signature = await instance.signData(testValue);
 
       expect(signature).not.toEqual(expect.any(Error));
       expect(signature).toEqual(expect.any(String));
@@ -135,7 +134,7 @@ describe('QueuedEncryptionClassBase tests', () => {
     });
     it('verify an object signed should not failed', async () => {
       const testValue = testObject;
-      let signature = await instance.signData(testValue);
+      const signature = await instance.signData(testValue);
 
       expect(signature).not.toEqual(expect.any(Error));
       expect(signature).toEqual(expect.any(String));
@@ -153,7 +152,7 @@ describe('QueuedEncryptionClassBase tests', () => {
         decryptKey: undefined,
       } as Required<IQueuedEncryptionClassBaseOptions>['keys'];
       dataSignKeyPair = await dataSignGenerateKeyPair();
-      dataEncryptionKeyPair = await generateEncryptionKeyPair();
+      dataEncryptionKeyPair = await generateKeyPair();
 
       keysOptions.signKey = dataSignKeyPair.privateKey;
       keysOptions.decryptKey = dataEncryptionKeyPair.privateKey;
@@ -181,7 +180,7 @@ describe('QueuedEncryptionClassBase tests', () => {
         decryptKey: undefined,
       } as Required<IQueuedEncryptionClassBaseOptions>['keys'];
       dataSignKeyPair = await dataSignGenerateKeyPair();
-      dataEncryptionKeyPair = await generateEncryptionKeyPair();
+      dataEncryptionKeyPair = await generateKeyPair();
 
       keysOptions.signKey = dataSignKeyPair.privateKey;
       keysOptions.decryptKey = dataEncryptionKeyPair.privateKey;
