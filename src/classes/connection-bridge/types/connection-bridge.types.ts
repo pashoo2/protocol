@@ -308,6 +308,35 @@ export interface IConnectionBridgeOptions<
   jsonSchemaValidator: (jsonSchema: JSONSchema7, valueToValidate: any) => Promise<void>;
 }
 
+export interface IConnectionBridgeOptionsAny<
+  P extends ESwarmStoreConnector,
+  T extends TSwarmMessageSerialized,
+  DbType extends TSwarmStoreDatabaseType<P>,
+  DBO extends TSwarmStoreDatabaseOptions<P, T, DbType>,
+  CD extends boolean = boolean,
+  SRLZR extends ISerializer = ISerializer
+> extends IConnectionBridgeOptions<
+    P,
+    T,
+    DbType,
+    DBO,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    CD,
+    any,
+    any,
+    any,
+    SRLZR
+  > {}
+
 export interface IConnectionBridge<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,

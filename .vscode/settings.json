@@ -5,5 +5,17 @@
   "typescript.tsdk": "/home/paul/projects/protocol/node_modules/typescript/lib",
   "typescript.referencesCodeLens.enabled": true,
   "typescript.suggest.completeFunctionCalls": true,
-  "cSpell.words": ["IPFS", "filestorage", "filestore"]
+  "cSpell.words": [
+    "DCCRT",
+    "IPFS",
+    "KEYVALUE",
+    "SMDCC",
+    "SMSM",
+    "SRLZR",
+    "SSDPLF",
+    "emiter",
+    "filestorage",
+    "filestore",
+    "orbitdb"
+  ]
 }

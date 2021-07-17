@@ -241,9 +241,9 @@ export const CONNECT_TO_SWARM_CONNECTION_STORAGE_WITH_STORE_META_OPTIONS: IConne
   swarmMessageStoreInstanceFabric: swarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsSerializer,
 };
 
-export const CONNECT_TO_SWARM_CONNECTION_AUTH_OPTOINS: IConnectionBridgeOptionsAuth<false> = {
+export const CONNECT_TO_SWARM_CONNECTION_AUTH_OPTIONS: IConnectionBridgeOptionsAuth<false> = {
   providerUrl: CONNECT_TO_SWARM_AUTH_PROVIDERS.FIREBASE_WATCHA,
-  // use session persistanse
+  // use session persistance
   session: {},
   credentials: undefined,
 };
@@ -260,7 +260,7 @@ export const CONNECT_TO_SWARM_CONNECTION_OPTIONS: IConnectionBridgeOptionsDefaul
   jsonSchemaValidator: asyncValidateVerboseBySchemaWithVoidResult,
   swarmStoreConnectorType: CONNECT_TO_SWARM_STORAGE_PROVIDER_DEFAULT,
   user: CONNECT_TO_SWARM_CONNECTION_USER_OPTIONS,
-  auth: CONNECT_TO_SWARM_CONNECTION_AUTH_OPTOINS,
+  auth: CONNECT_TO_SWARM_CONNECTION_AUTH_OPTIONS,
   storage: CONNECT_TO_SWARM_CONNECTION_STORAGE_OPTIONS,
   nativeConnection: CONNECT_TO_SWARM_CONNECTION_NATIVE_CONNECTION_OPTIONS, // use the default value
 };
@@ -280,7 +280,7 @@ export const CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS: IConnectionBri
 > = {
   swarmStoreConnectorType: CONNECT_TO_SWARM_STORAGE_PROVIDER_DEFAULT,
   user: CONNECT_TO_SWARM_CONNECTION_USER_OPTIONS,
-  auth: CONNECT_TO_SWARM_CONNECTION_AUTH_OPTOINS,
+  auth: CONNECT_TO_SWARM_CONNECTION_AUTH_OPTIONS,
   storage: CONNECT_TO_SWARM_CONNECTION_STORAGE_WITH_STORE_META_OPTIONS,
   nativeConnection: CONNECT_TO_SWARM_CONNECTION_NATIVE_CONNECTION_OPTIONS, // use the default value
   serializer: new SerializerClass(),
