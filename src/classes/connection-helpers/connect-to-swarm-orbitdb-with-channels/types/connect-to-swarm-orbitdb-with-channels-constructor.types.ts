@@ -32,7 +32,6 @@ export interface IConnectToSwarmOrbitDbWithChannelsConstructorOptions<
     */
 
   connectionBridgeOptions: CBO;
-  dbo: DBO;
   swarmMessagesDatabaseCacheOptions: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<
     TSwarmStoreConnectorDefault,
     T,

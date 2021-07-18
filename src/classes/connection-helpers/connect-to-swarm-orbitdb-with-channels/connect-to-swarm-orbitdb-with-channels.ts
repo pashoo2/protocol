@@ -6,10 +6,7 @@ import {
   IConnectionBridgeOptionsDefault,
   TConnectionBridgeOptionsAuthCredentials,
 } from 'classes/connection-bridge/types/connection-bridge.types';
-import {
-  IConnectToSwarmOrbitdbWithChannelsState,
-  IConnectToSwarmOrbitdbWithChannelsStateListener,
-} from 'classes/connection-helpers/connect-to-swarm-orbitdb-with-channels/types/connect-to-swarm-orbitdb-with-channels-state.types';
+import { IConnectToSwarmOrbitDbWithChannelsState } from 'classes/connection-helpers/connect-to-swarm-orbitdb-with-channels/types/connect-to-swarm-orbitdb-with-channels-state.types';
 import { CONFIGURATION_CONNECTION_DATABASE_STORAGE_OPTIONS_DEFAULT } from 'classes/connection-helpers/const/configuration/swarm-connection-orbitdb/configuration-database-storage.const';
 import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from 'classes/swarm-message';
 import {
@@ -17,14 +14,18 @@ import {
   ISwarmMessagesDatabaseCacheConstructor,
   ISwarmMessagesDatabaseCacheOptions,
   ISwarmMessagesDatabaseMessagesCollector,
+  ISwarmMessagesStoreMeta,
 } from 'classes/swarm-messages-database';
 import {
+  ESwarmStoreConnectorOrbitDbDatabaseType,
   ESwarmStoreEventNames,
   ISwarmStoreDatabasesCommonStatusList,
+  TSwarmDatabaseName,
   TSwarmStoreDatabaseOptions,
   TSwarmStoreDatabaseType,
 } from 'classes/swarm-store-class';
 import { IUserCredentialsCommon } from 'types/credentials.types';
+import { getSwarmMessageStoreMeta } from 'classes/swarm-messages-database/swarm-messages-database-utils/swarm-messages-database-messages-collector-utils/swarm-messages-database-messages-collector-utils';
 
 import {
   IConnectToSwarmOrbitDbWithChannelsConstructorOptions,
@@ -35,7 +36,56 @@ import {
   CONNECT_TO_SWARM_ORBITDB_WITH_CHANNELS_STATE_DEFAULT,
 } from './const/connect-to-swarm-orbitdb-with-channels-state.const';
 import { TConnectionBridgeByOptions } from 'classes/connection-bridge/types/connection-bridge.types-helpers/connection-bridge.types.helpers';
-import { ESwarmMessageStoreEventNames } from 'classes/swarm-message-store';
+import { ESwarmMessageStoreEventNames, ISwarmMessageStore } from 'classes/swarm-message-store';
+import { TConnectToSwarmOrbitDbSwarmMessagesList } from 'classes/connection-helpers/connect-to-swarm-orbitdb-with-channels/types/connect-to-swarm-orbitdb-with-channels-state.types';
+import { IConnectToSwarmOrbitDbSwarmMessageDescription } from './types/connect-to-swarm-orbitdb-with-channels-state.types';
+import {
+  IConnectToSwarmOrbitDbWithChannelsDatabaseSwarmMessagesListUpdateListener,
+  IConnectToSwarmOrbitDbWithChannelsDatabaseSwarmMessagesListUpdateListenerParameter,
+} from 'classes/connection-helpers/connect-to-swarm-orbitdb-with-channels/types/connect-to-swarm-orbitdb-with-channels-change-listeners.types';
+import { CONNECT_TO_SWARM_ORBITDB_WITH_CHANNELS_DATABASE_MESSAGES_UPDATE_EVENT_NAME } from './const/connect-to-swarm-orbitdb-with-channels-state.const';
+import {
+  ESwarmMessagesChannelsListEventName,
+  ISwarmMessageChannelDescriptionRaw,
+  ISwarmMessagesChannelsDescriptionsList,
+  ISwarmMessagesChannelV1DefaultFabricOptionsDefault,
+  TSwarmMessagesChannelAnyByChannelDescriptionRaw,
+  getSwarmMessagesChannelV1InstanveWithDefaults,
+} from 'classes/swarm-messages-channels';
+import { TSwarmMessagesDatabaseConnectedFabricOptions } from '../../swarm-messages-database/swarm-messages-database-fabrics/types/swarm-messages-database-intstance-fabric-main.types';
+import { swarmMessagesDatabaseConnectedFabricMain } from 'classes/swarm-messages-database/swarm-messages-database-fabrics/swarm-messages-database-intstance-fabric-main/swarm-messages-database-intstance-fabric-main';
+import {
+  TConnectionBridgeOptionsAccessControlOptions,
+  TConnectionBridgeOptionsConnectorBasic,
+  TConnectionBridgeOptionsConnectorConnectionOptions,
+  TConnectionBridgeOptionsConnectorFabricOptions,
+  TConnectionBridgeOptionsConnectorMain,
+  TConnectionBridgeOptionsConstructorWithEncryptedCacheFabric,
+  TConnectionBridgeOptionsGrandAccessCallback,
+  TConnectionBridgeOptionsProviderOptions,
+  TConnectionBridgeOptionsSwarmMessageStoreInstance,
+  TConnectionBridgeOptionsSwarmMessageStoreOptionsWithConnectorFabric,
+} from 'classes/connection-bridge/types/connection-bridge.types-helpers';
+import { createSwarmMessagesDatabaseMessagesCollectorInstance } from '../../swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector';
+import { ISerializer } from 'types/serialization.types';
+import { TCentralAuthorityUserIdentity } from 'classes/central-authority-class';
+import { SMS } from 'classes/connection-bridge/types/connection-bridge.types-helpers/connection-bridge-storage-options.types.helpers';
+import { getDatabaseConnectionByDatabaseOptionsFabricWithKvMessagesUpdatesQueuedHandling } from '../../swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-constructor-arguments-fabrics/swarm-messages-channels-list-v1-database-connection-fabrics/swarm-messages-channels-list-v1-database-connection-fabric-with-kv-messages-updates-queued-handling';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import {
+  ISwarmMessagesChannelsListDescription,
+  TSwarmMessagesChannelsListDbType,
+  TSwrmMessagesChannelsListDBOWithGrantAccess,
+} from '../../swarm-messages-channels/types/swarm-messages-channels-list-instance.types';
+import { getSwarmMessagesChannelsListVersionOneInstanceWithDefaultParameters } from '../../swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-instance-fabrics/swarm-messages-channels-list-v1-instance-fabric-default';
+import { IConnectToSwarmOrbitDbWithChannelsStateListener } from './types/connect-to-swarm-orbitdb-with-channels-change-listeners.types';
+import { CONFIGURATION_DEFAULT_DATABASE_CONNECTOR_DEFAULT } from 'classes/connection-helpers/const/configuration/swarm-connection-orbitdb/configuration-database.const';
+import { ISwarmMessagesChannelConstructorOptions } from '../../swarm-messages-channels/types/swarm-messages-channel-instance.types';
+import { ISwarmMessagesDatabaseConnectOptions } from 'classes/swarm-messages-database/swarm-messages-database.types';
+import { createSwarmMessagesDatabaseMessagesCollectorWithStoreMetaInstance } from 'classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector-with-store-meta';
+import { getSwarmMessagesDatabaseWithKVDbMessagesUpdatesConnectorInstanceFabric } from '../../swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/utils/swarm-messages-channel-v1-constructor-options-default-utils/utils/swarm-messages-channel-v1-constructor-options-default-utils-database-connector-fabrics';
+import { TDatabaseOptionsTypeByChannelDescriptionRaw } from '../../swarm-messages-channels/types/swarm-messages-channel-instance.helpers.types';
+import { ESwarmMessagesChannelEventName } from 'classes/swarm-messages-channels/types/swarm-messages-channel-events.types';
 
 export class ConnectionToSwarmWithChannels<
   DbType extends TSwarmStoreDatabaseType<TSwarmStoreConnectorDefault>,
@@ -49,14 +99,15 @@ export class ConnectionToSwarmWithChannels<
   DCCRT extends ISwarmMessagesDatabaseCache<TSwarmStoreConnectorDefault, T, DbType, DBO, MD, SMSM>,
   SMDCC extends ISwarmMessagesDatabaseCacheConstructor<TSwarmStoreConnectorDefault, T, DbType, DBO, MD, SMSM, DCO, DCCRT>
 > {
-  public get state(): Readonly<IConnectToSwarmOrbitdbWithChannelsState<DbType, T, DBO, CBO>> {
+  public get state(): Readonly<IConnectToSwarmOrbitDbWithChannelsState<DbType, T, DBO, CBO>> {
     return {
       ...this.__state,
     };
   }
-  private __state: IConnectToSwarmOrbitdbWithChannelsState<DbType, T, DBO, CBO> =
-    CONNECT_TO_SWARM_ORBITDB_WITH_CHANNELS_STATE_DEFAULT as IConnectToSwarmOrbitdbWithChannelsState<DbType, T, DBO, CBO>;
+  private __state: IConnectToSwarmOrbitDbWithChannelsState<DbType, T, DBO, CBO> =
+    CONNECT_TO_SWARM_ORBITDB_WITH_CHANNELS_STATE_DEFAULT as IConnectToSwarmOrbitDbWithChannelsState<DbType, T, DBO, CBO>;
   private __emiter = new EventEmitter();
+  private __emitterDatabaseMessagesListUpdate = new EventEmitter();
   constructor(
     private __configuration: IConnectToSwarmOrbitDbWithChannelsConstructorOptions<
       DbType,
@@ -71,16 +122,34 @@ export class ConnectionToSwarmWithChannels<
       SMDCC
     >
   ) {}
-  public addStateChangeListener(listener: IConnectToSwarmOrbitdbWithChannelsStateListener<DbType, T, DBO, CBO>): void {
+  public addStateChangeListener(listener: IConnectToSwarmOrbitDbWithChannelsStateListener<DbType, T, DBO, CBO>): void {
     this.__emiter.addListener(CONNECT_TO_SWARM_ORBITDB_WITH_CHANNELS_STATE_CHANGE_EVENT_NAME, listener);
   }
-  public removeStateChangeListener(listener: IConnectToSwarmOrbitdbWithChannelsStateListener<DbType, T, DBO, CBO>): void {
+  public removeStateChangeListener(listener: IConnectToSwarmOrbitDbWithChannelsStateListener<DbType, T, DBO, CBO>): void {
     this.__emiter.removeListener(CONNECT_TO_SWARM_ORBITDB_WITH_CHANNELS_STATE_CHANGE_EVENT_NAME, listener);
   }
-  public async connectToSwarm(credentials: IUserCredentialsCommon): Promise<void> {
+
+  public addDatabaseSwarmMessagesListUpdateListener(
+    listener: IConnectToSwarmOrbitDbWithChannelsDatabaseSwarmMessagesListUpdateListener<DbType>
+  ): void {
+    this.__emitterDatabaseMessagesListUpdate.addListener(
+      CONNECT_TO_SWARM_ORBITDB_WITH_CHANNELS_DATABASE_MESSAGES_UPDATE_EVENT_NAME,
+      listener
+    );
+  }
+  public removeDatabaseSwarmMessagesListUpdateListener(
+    listener: IConnectToSwarmOrbitDbWithChannelsDatabaseSwarmMessagesListUpdateListener<DbType>
+  ): void {
+    this.__emitterDatabaseMessagesListUpdate.removeListener(
+      CONNECT_TO_SWARM_ORBITDB_WITH_CHANNELS_DATABASE_MESSAGES_UPDATE_EVENT_NAME,
+      listener
+    );
+  }
+
+  public async connectToSwarm(userCredentials: IUserCredentialsCommon): Promise<void> {
     const currentState = this.state;
 
-    if (!credentials) {
+    if (!userCredentials) {
       throw new Error('Credentials should be defined to connect to swarm');
     }
     if (currentState.isConnectingToSwarm) {
@@ -89,12 +158,12 @@ export class ConnectionToSwarmWithChannels<
 
     this._updateState({
       isConnectingToSwarm: true,
-      userCredentialsActive: credentials,
+      userCredentialsActive: userCredentials,
     });
     try {
-      const connectionBridge = (await this._connectToSwarmWithDBOUtil(
+      const connectionBridge = (await this._connectToSwarm(
         this.__configuration.connectionBridgeOptions,
-        credentials
+        userCredentials
       )) as unknown as TConnectionBridgeByOptions<TSwarmStoreConnectorDefault, T, DbType, DBO, CBO>;
 
       if (!connectionBridge) {
@@ -115,17 +184,10 @@ export class ConnectionToSwarmWithChannels<
       this._updateState({
         connectionBridge,
         userId,
-        databasesList: databasesList as unknown as IConnectToSwarmOrbitdbWithChannelsState<DbType, T, DBO, CBO>['databasesList'],
+        databasesList: databasesList as unknown as IConnectToSwarmOrbitDbWithChannelsState<DbType, T, DBO, CBO>['databasesList'],
         userProfileData,
       });
       this._setListenersConnectionBridge(connectionBridge);
-
-      const { dbo } = this.__configuration;
-
-      if (!dbo) {
-        throw new Error('Database options should be defined to connect with it');
-      }
-      await this.handleOpenNewSwarmStoreMessagesDatabase(dbo);
     } catch (err) {
       this._updateState({
         connectionError: err as Error,
@@ -133,7 +195,53 @@ export class ConnectionToSwarmWithChannels<
     }
   }
 
-  protected async _connectToSwarmWithDBOUtil(
+  public async connectToSwarmChannelsList(
+    userCredentials: IUserCredentialsCommon,
+    channelsListDescription: ISwarmMessagesChannelsListDescription,
+    channelDatabaseOptions: TSwrmMessagesChannelsListDBOWithGrantAccess<
+      TSwarmStoreConnectorDefault,
+      T,
+      MD,
+      ISwarmStoreDBOGrandAccessCallbackBaseContext,
+      TSwarmStoreDatabaseOptions<TSwarmStoreConnectorDefault, T, TSwarmMessagesChannelsListDbType>
+    > // TODO - maybe make it as optional
+  ): Promise<void> {
+    const swarmMessagesChannelsList = await this._connectToSwarmAndCreateSwarmMessagesChannelsList(
+      userCredentials,
+      channelsListDescription,
+      channelDatabaseOptions
+    );
+
+    await new Promise((res) => {
+      // wait when the the channels list will be ready
+      swarmMessagesChannelsList.emitter.addListener(ESwarmMessagesChannelsListEventName.CHANNELS_LIST_READY, res);
+    });
+
+    this._updateState({
+      swarmMessagesChannelsList,
+    });
+  }
+
+  public async connectToSwarmChannel(
+    swarmMessageChannelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<
+      TSwarmStoreConnectorDefault,
+      TSwarmMessageSerialized,
+      ESwarmStoreConnectorOrbitDbDatabaseType,
+      TSwarmStoreDatabaseOptions<TSwarmStoreConnectorDefault, TSwarmMessageSerialized, ESwarmStoreConnectorOrbitDbDatabaseType>
+    >
+  ): Promise<TSwarmMessagesChannelAnyByChannelDescriptionRaw<typeof swarmMessageChannelDescriptionRaw>> {
+    const { swarmMessagesChannelsList } = this.state;
+    if (!swarmMessagesChannelsList) {
+      throw new Error('Swarm messages channels list instance should be exists');
+    }
+    const swarmMessagesChanelInstance = await this._createSwarmMessagesChannelInstanceAndConnect(
+      swarmMessagesChannelsList as ISwarmMessagesChannelsDescriptionsList<TSwarmStoreConnectorDefault, T, MD>,
+      swarmMessageChannelDescriptionRaw
+    );
+    return swarmMessagesChanelInstance;
+  }
+
+  protected async _connectToSwarm(
     options: IConnectionBridgeOptions<
       TSwarmStoreConnectorDefault,
       T,
@@ -174,7 +282,23 @@ export class ConnectionToSwarmWithChannels<
     return connectionBridgeInstance;
   }
 
-  protected _updateState(updatedStatePartial: Partial<IConnectToSwarmOrbitdbWithChannelsState<DbType, T, DBO, CBO>>) {
+  protected async _connectToSwarmAndCreateSwarmMessagesChannelsList(
+    userCredentials: IUserCredentialsCommon,
+    channelsListDescription: ISwarmMessagesChannelsListDescription,
+    channelDatabaseOptions: TSwrmMessagesChannelsListDBOWithGrantAccess<
+      TSwarmStoreConnectorDefault,
+      T,
+      MD,
+      ISwarmStoreDBOGrandAccessCallbackBaseContext,
+      TSwarmStoreDatabaseOptions<TSwarmStoreConnectorDefault, T, TSwarmMessagesChannelsListDbType>
+    >
+  ): Promise<ISwarmMessagesChannelsDescriptionsList<TSwarmStoreConnectorDefault, T, MD>> {
+    await this.connectToSwarm(userCredentials);
+    const channelsListInstance = this._createSwarmMessagesChannelsList(channelsListDescription, channelDatabaseOptions);
+    return channelsListInstance;
+  }
+
+  protected _updateState(updatedStatePartial: Partial<IConnectToSwarmOrbitDbWithChannelsState<DbType, T, DBO, CBO>>) {
     const newState = {
       ...this.__state,
       ...updatedStatePartial,
@@ -186,8 +310,182 @@ export class ConnectionToSwarmWithChannels<
 
   protected _resetState() {
     this._updateState(
-      CONNECT_TO_SWARM_ORBITDB_WITH_CHANNELS_STATE_DEFAULT as IConnectToSwarmOrbitdbWithChannelsState<DbType, T, DBO, CBO>
+      CONNECT_TO_SWARM_ORBITDB_WITH_CHANNELS_STATE_DEFAULT as IConnectToSwarmOrbitDbWithChannelsState<DbType, T, DBO, CBO>
     );
+  }
+
+  protected _getActiveConnectionBridgeInstance(): TConnectionBridgeByOptions<
+    TSwarmStoreConnectorDefault,
+    T,
+    DbType,
+    DBO,
+    CBO,
+    boolean,
+    ISerializer<any>,
+    CBO['storage']
+  > {
+    const { connectionBridge } = this.state;
+
+    if (!connectionBridge) {
+      throw new Error('There is no active connection with swarm');
+    }
+    return connectionBridge;
+  }
+
+  protected _getActiveUserId(): TCentralAuthorityUserIdentity {
+    const { userId } = this.state;
+
+    if (!userId) {
+      throw new Error('An active user identity is not defined');
+    }
+    return userId;
+  }
+
+  protected _getActiveSwarmMessageStore(): SMS<CBO['storage']> {
+    const connectionBridge = this._getActiveConnectionBridgeInstance();
+    const { swarmMessageStore } = connectionBridge;
+
+    if (!swarmMessageStore) {
+      throw new Error('There is no active instance of a swarm message store found');
+    }
+    return swarmMessageStore;
+  }
+
+  protected _getSwarmMessagesCollector(): SMSM {
+    const swarmMessageStore = this._getActiveSwarmMessageStore();
+    return createSwarmMessagesDatabaseMessagesCollectorInstance<
+      TSwarmStoreConnectorDefault,
+      T,
+      DbType,
+      DBO,
+      TConnectionBridgeOptionsConnectorBasic<CBO>,
+      TConnectionBridgeOptionsConnectorConnectionOptions<CBO>,
+      TConnectionBridgeOptionsProviderOptions<CBO>,
+      TConnectionBridgeOptionsConnectorMain<CBO>,
+      TConnectionBridgeOptionsConnectorFabricOptions<CBO>,
+      TConnectionBridgeOptionsGrandAccessCallback<CBO>,
+      TConnectionBridgeOptionsConstructorWithEncryptedCacheFabric<CBO>,
+      TConnectionBridgeOptionsAccessControlOptions<CBO>,
+      TConnectionBridgeOptionsSwarmMessageStoreOptionsWithConnectorFabric<CBO>,
+      TConnectionBridgeOptionsSwarmMessageStoreInstance<CBO>,
+      MD
+    >({
+      swarmMessageStore: swarmMessageStore as ISwarmMessageStore<
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any
+      > as TConnectionBridgeOptionsSwarmMessageStoreInstance<CBO>,
+    }) as SMSM;
+  }
+
+  protected _getOptionsForSwarmMessagesDatabaseConnectedWithoutDatabaseOptionsFabric = (): Omit<
+    TSwarmMessagesDatabaseConnectedFabricOptions<typeof swarmMessagesDatabaseConnectedFabricMain>,
+    'dbOptions'
+  > => {
+    const { swarmMessagesDatabaseCacheOptions } = this.__configuration;
+    const swarmMessageStore = this._getActiveSwarmMessageStore();
+    const activeUserId = this._getActiveUserId();
+
+    return {
+      cacheOptions: swarmMessagesDatabaseCacheOptions,
+      swarmMessageStore,
+      swarmMessagesCollector: this._getSwarmMessagesCollector(),
+      user: {
+        userId: activeUserId,
+      },
+    };
+  };
+
+  protected _getDatabaseConnectorFabricForChannnelsList() {
+    // TODO - make fabrics of options for creating database connectors options, options for connection bridge
+    const optionsForDatabaseConnectionFabric = this._getOptionsForSwarmMessagesDatabaseConnectedWithoutDatabaseOptionsFabric();
+    const dbConnectorByDbOptionsFabric = getDatabaseConnectionByDatabaseOptionsFabricWithKvMessagesUpdatesQueuedHandling<
+      TSwarmStoreConnectorDefault,
+      T,
+      MD,
+      ISwarmStoreDBOGrandAccessCallbackBaseContext,
+      TSwrmMessagesChannelsListDBOWithGrantAccess<
+        TSwarmStoreConnectorDefault,
+        T,
+        MD,
+        ISwarmStoreDBOGrandAccessCallbackBaseContext
+      >
+    >(
+      // TODO - make a right type assertion
+      optionsForDatabaseConnectionFabric as any
+    );
+    return dbConnectorByDbOptionsFabric;
+  }
+
+  protected _getOptionsForConstructorArgumentsFabric(
+    channelsListDescription: ISwarmMessagesChannelsListDescription,
+    channelDatabaseOptions: TSwrmMessagesChannelsListDBOWithGrantAccess<
+      TSwarmStoreConnectorDefault,
+      T,
+      MD,
+      ISwarmStoreDBOGrandAccessCallbackBaseContext,
+      TSwarmStoreDatabaseOptions<TSwarmStoreConnectorDefault, T, TSwarmMessagesChannelsListDbType>
+    >
+  ): Parameters<typeof getSwarmMessagesChannelsListVersionOneInstanceWithDefaultParameters>[1] {
+    const { connectionBridgeOptions } = this.__configuration;
+    const { serializer, jsonSchemaValidator } = connectionBridgeOptions;
+    return {
+      description: channelsListDescription,
+      connectionOptions: {
+        connectorType: CONFIGURATION_DEFAULT_DATABASE_CONNECTOR_DEFAULT,
+        // TODO - resolve the type assertion
+        dbOptions: channelDatabaseOptions,
+      },
+      utilities: {
+        serializer,
+      },
+      validators: {
+        jsonSchemaValidator,
+      },
+    };
+  }
+
+  protected _createSwarmMessagesChannelsList(
+    channelsListDescription: ISwarmMessagesChannelsListDescription,
+    channelDatabaseOptions: TSwrmMessagesChannelsListDBOWithGrantAccess<
+      TSwarmStoreConnectorDefault,
+      T,
+      MD,
+      ISwarmStoreDBOGrandAccessCallbackBaseContext,
+      TSwarmStoreDatabaseOptions<TSwarmStoreConnectorDefault, T, TSwarmMessagesChannelsListDbType>
+    >
+  ) {
+    const connectorFabric = this._getDatabaseConnectorFabricForChannnelsList();
+    const optionsForConstructorArgumentsFabric = this._getOptionsForConstructorArgumentsFabric(
+      channelsListDescription,
+      channelDatabaseOptions
+    );
+    const swarmMessageChannelsList = getSwarmMessagesChannelsListVersionOneInstanceWithDefaultParameters<
+      TSwarmStoreConnectorDefault,
+      T,
+      MD,
+      ISwarmStoreDBOGrandAccessCallbackBaseContext,
+      TSwrmMessagesChannelsListDBOWithGrantAccess<
+        TSwarmStoreConnectorDefault,
+        T,
+        MD,
+        ISwarmStoreDBOGrandAccessCallbackBaseContext
+      >,
+      typeof connectorFabric,
+      typeof optionsForConstructorArgumentsFabric
+    >(connectorFabric, optionsForConstructorArgumentsFabric);
+    return swarmMessageChannelsList;
   }
 
   protected _handleDatabasesListUpdate = (
@@ -203,24 +501,116 @@ export class ConnectionToSwarmWithChannels<
     });
   };
 
-  protected _handleMessage = (dbName: DBO['dbName'], message: MI, id: string, key: string) => {
-    const { messagesReceived } = this.state;
-    const messagesMap = messagesReceived.get(dbName) || new Map();
-    // TODO - to get all of actual values for KV-store it is necessary
-    // to iterate overall database. Cause for a KV store implemented
-    // by the OrbitDB only the "db.all" method returns all keys, so
-    // in this implementation only thught the iterate method of a db
-    // this is able to iterate over all items(db.all)
+  protected _getDatabaseOptionsOrUndefined(dbName: DBO['dbName']): DBO | undefined {
+    const { databasesList } = this.state;
+    return databasesList.options?.[dbName] as DBO | undefined;
+  }
 
-    if (!messagesMap.get(id)) {
-      messagesMap.set(id, {
-        message,
-        id,
-        key,
-      });
-      messagesReceived.set(dbName, messagesMap);
-      this.forceUpdate();
+  protected _getDatabaseMessagesListOrUndefined(
+    dbName: DBO['dbName']
+  ): TConnectToSwarmOrbitDbSwarmMessagesList<DbType> | undefined {
+    const { databasesMessagesLists } = this.state;
+    return databasesMessagesLists.get(dbName);
+  }
+
+  protected _creteNewDatabaseMessagesList(dbName: DBO['dbName']): void {
+    if (!this._getDatabaseOptionsOrUndefined(dbName)) {
+      throw new Error('A database with unknown options');
     }
+
+    const { databasesMessagesLists } = this.state;
+    const databaseMessagesList: TConnectToSwarmOrbitDbSwarmMessagesList<DbType> = new Map<
+      TSwarmDatabaseName,
+      IConnectToSwarmOrbitDbSwarmMessageDescription<DbType>
+    >();
+
+    databasesMessagesLists.set(dbName, databaseMessagesList);
+  }
+
+  protected _getOrCreateNewDatabaseMessagesListAndReturnIt(
+    dbName: DBO['dbName']
+  ): TConnectToSwarmOrbitDbSwarmMessagesList<DbType> {
+    const databaseExistingMessagesList = this._getDatabaseMessagesListOrUndefined(dbName);
+    if (!databaseExistingMessagesList) {
+      this._creteNewDatabaseMessagesList(dbName);
+    }
+
+    const databaseMessagesList = databaseExistingMessagesList ?? this._getDatabaseMessagesListOrUndefined(dbName);
+    if (!databaseMessagesList) {
+      throw new Error('New database messages list creation has failed');
+    }
+    return databaseMessagesList;
+  }
+
+  protected _getSwarmMessageDescriptionByMetadata(
+    message: ISwarmMessageInstanceDecrypted,
+    messageId: string,
+    databaseName: TSwarmDatabaseName,
+    databaseKey?: string
+  ): IConnectToSwarmOrbitDbSwarmMessageDescription<DbType> {
+    const databaseOptions = this._getDatabaseOptionsOrUndefined(databaseName);
+    if (databaseOptions?.dbType === ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE && !databaseKey) {
+      throw new Error('A database key for the message is not defined');
+    }
+    return {
+      id: messageId,
+      key: databaseKey as DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? string : void,
+      message,
+    };
+  }
+
+  protected _getDatabaseMessagesListUpdateEventListenerParameter(
+    dbName: TSwarmDatabaseName,
+    swarmMessageDescription: IConnectToSwarmOrbitDbSwarmMessageDescription<DbType>,
+    databaseMessagesList: TConnectToSwarmOrbitDbSwarmMessagesList<DbType>
+  ): IConnectToSwarmOrbitDbWithChannelsDatabaseSwarmMessagesListUpdateListenerParameter<DbType> {
+    return {
+      databaseName: dbName,
+      swarmMessageDescription,
+      databaseSwarmMessagesList: databaseMessagesList,
+    };
+  }
+
+  protected _emitDatabaseMessagesListUpdateEvent(
+    eventListenerParameter: IConnectToSwarmOrbitDbWithChannelsDatabaseSwarmMessagesListUpdateListenerParameter<DbType>
+  ): void {
+    this.__emitterDatabaseMessagesListUpdate.emit(
+      CONNECT_TO_SWARM_ORBITDB_WITH_CHANNELS_DATABASE_MESSAGES_UPDATE_EVENT_NAME,
+      eventListenerParameter
+    );
+  }
+
+  protected _addNewMessageReceivedToTheListAndEmitEventDatabaseMessagesListUpdate(
+    databaseName: TSwarmDatabaseName,
+    message: ISwarmMessageInstanceDecrypted,
+    messageId: string,
+    databaseKey?: string
+  ): void {
+    const databaseMessagesList = this._getOrCreateNewDatabaseMessagesListAndReturnIt(databaseName);
+    if (databaseMessagesList.get(messageId)) {
+      // if a message with the same identity already exists in the list
+      return;
+    }
+
+    const swarmMessageDescription = this._getSwarmMessageDescriptionByMetadata(message, messageId, databaseName, databaseKey);
+    databaseMessagesList.set(messageId, swarmMessageDescription);
+
+    const eventListenerParamter = this._getDatabaseMessagesListUpdateEventListenerParameter(
+      databaseName,
+      swarmMessageDescription,
+      databaseMessagesList
+    );
+
+    this._emitDatabaseMessagesListUpdateEvent(eventListenerParamter);
+  }
+
+  protected _handleMessage = (
+    dbName: DBO['dbName'],
+    message: ISwarmMessageInstanceDecrypted,
+    messageId: string,
+    databaseKey?: string
+  ): void => {
+    this._addNewMessageReceivedToTheListAndEmitEventDatabaseMessagesListUpdate(dbName, message, messageId, databaseKey);
   };
 
   protected _setListenersConnectionBridge(
@@ -233,5 +623,220 @@ export class ConnectionToSwarmWithChannels<
     }
     swarmMessageStore.addListener(ESwarmStoreEventNames.DATABASES_LIST_UPDATED, this._handleDatabasesListUpdate);
     swarmMessageStore.addListener(ESwarmMessageStoreEventNames.NEW_MESSAGE, this._handleMessage);
+  }
+
+  protected _getSwarmMessagesChannelConstructorOptions(
+    swarmChannelsListInstance: ISwarmMessagesChannelsDescriptionsList<TSwarmStoreConnectorDefault, T, MD>,
+    swarmMessageChannelDescription: ISwarmMessageChannelDescriptionRaw<
+      TSwarmStoreConnectorDefault,
+      T,
+      TSwarmStoreDatabaseType<TSwarmStoreConnectorDefault>,
+      TSwarmStoreDatabaseOptions<
+        TSwarmStoreConnectorDefault,
+        TSwarmMessageSerialized,
+        TSwarmStoreDatabaseType<TSwarmStoreConnectorDefault>
+      >
+    >
+  ): ISwarmMessagesChannelV1DefaultFabricOptionsDefault<
+    TSwarmStoreConnectorDefault,
+    T,
+    MD,
+    DbType,
+    DBO
+  >['channelConstructorMainOptions'] {
+    const { centralAuthorityConnection, swarmMessageStore } = this._getActiveConnectionBridgeInstance();
+
+    if (!centralAuthorityConnection) {
+      throw new Error('Central authority connection is not ready to be used');
+    }
+    if (!swarmMessageStore) {
+      throw new Error('Swarm message store is not ready to be used');
+    }
+
+    const currentUserId = this._getActiveUserId();
+
+    const swarmMessagesChannelConstructorOptions: Omit<
+      ISwarmMessagesChannelConstructorOptions<
+        TSwarmStoreConnectorDefault,
+        T,
+        DbType,
+        DBO,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        typeof swarmMessageStore,
+        MD,
+        any,
+        any,
+        any,
+        any,
+        any
+      >,
+      'passwordEncryptedChannelEncryptionQueue' | 'utils'
+    > = {
+      currentUserId,
+      swarmMessagesChannelDescription: swarmMessageChannelDescription,
+      swarmMessagesChannelsListInstance: swarmChannelsListInstance,
+    };
+
+    return swarmMessagesChannelConstructorOptions;
+  }
+
+  protected _getSwarmMessagesDatabaseConnectorOptions(): Omit<
+    ISwarmMessagesDatabaseConnectOptions<
+      TSwarmStoreConnectorDefault,
+      T,
+      DbType,
+      DBO,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      MD,
+      any,
+      any,
+      any
+    >,
+    'dbOptions' | 'user'
+  > {
+    const swarmMessageStore = this._getActiveSwarmMessageStore();
+    const swarmMessagesCollector = createSwarmMessagesDatabaseMessagesCollectorWithStoreMetaInstance({
+      swarmMessageStore,
+      getSwarmMessageStoreMeta: getSwarmMessageStoreMeta as (
+        swarmMessageStoreParameter: typeof swarmMessageStore,
+        dbName: DBO['dbName']
+      ) => Promise<ISwarmMessagesStoreMeta>,
+    });
+    const { swarmMessagesDatabaseCacheOptions } = this.__configuration;
+    const swarmMessagesDatabaseConnectorOptions: Omit<
+      ISwarmMessagesDatabaseConnectOptions<
+        TSwarmStoreConnectorDefault,
+        T,
+        DbType,
+        DBO,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        any,
+        MD,
+        any,
+        any,
+        any
+      >,
+      'dbOptions' | 'user'
+    > = {
+      swarmMessageStore,
+      cacheOptions: swarmMessagesDatabaseCacheOptions,
+      swarmMessagesCollector,
+    };
+    return swarmMessagesDatabaseConnectorOptions;
+  }
+
+  protected _getOptionsForSwarmMessagesChannelV1FabricByChannelsListInstanceAndChannelDescription(
+    channelsListInstance: ISwarmMessagesChannelsDescriptionsList<TSwarmStoreConnectorDefault, T, MD>,
+    swarmMessageChannelDescription: ISwarmMessageChannelDescriptionRaw<
+      TSwarmStoreConnectorDefault,
+      T,
+      TSwarmStoreDatabaseType<TSwarmStoreConnectorDefault>,
+      TSwarmStoreDatabaseOptions<
+        TSwarmStoreConnectorDefault,
+        TSwarmMessageSerialized,
+        TSwarmStoreDatabaseType<TSwarmStoreConnectorDefault>
+      >
+    >
+  ): ISwarmMessagesChannelV1DefaultFabricOptionsDefault<TSwarmStoreConnectorDefault, T, MD, DbType, DBO> {
+    const swarmMessagesChannelConstructorOptions = this._getSwarmMessagesChannelConstructorOptions(
+      channelsListInstance,
+      swarmMessageChannelDescription
+    );
+    const swarmMessagesDatabaseConnectorOptions =
+      this._getSwarmMessagesDatabaseConnectorOptions() as ISwarmMessagesChannelV1DefaultFabricOptionsDefault<
+        TSwarmStoreConnectorDefault,
+        T,
+        MD,
+        DbType,
+        DBO
+      >['channeDatabaseConnectorOptions'];
+    const defaultConnectionUtils = {
+      getSwarmMessagesDatabaseConnectorInstanceDefaultFabric:
+        getSwarmMessagesDatabaseWithKVDbMessagesUpdatesConnectorInstanceFabric,
+    } as ISwarmMessagesChannelV1DefaultFabricOptionsDefault<
+      TSwarmStoreConnectorDefault,
+      T,
+      MD,
+      DbType,
+      DBO
+    >['defaultConnectionUtils'];
+    return {
+      channelConstructorMainOptions: swarmMessagesChannelConstructorOptions,
+      channeDatabaseConnectorOptions: swarmMessagesDatabaseConnectorOptions,
+      defaultConnectionUtils,
+    } as ISwarmMessagesChannelV1DefaultFabricOptionsDefault<TSwarmStoreConnectorDefault, T, MD, DbType, DBO>;
+  }
+
+  protected async _createSwarmMessagesChannelInstanceAndConnect(
+    channelsListInstance: ISwarmMessagesChannelsDescriptionsList<TSwarmStoreConnectorDefault, T, MD>,
+    swarmMessageChannelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<
+      TSwarmStoreConnectorDefault,
+      TSwarmMessageSerialized,
+      ESwarmStoreConnectorOrbitDbDatabaseType,
+      TSwarmStoreDatabaseOptions<TSwarmStoreConnectorDefault, TSwarmMessageSerialized, ESwarmStoreConnectorOrbitDbDatabaseType>
+    >
+  ): Promise<TSwarmMessagesChannelAnyByChannelDescriptionRaw<typeof swarmMessageChannelDescriptionRaw>> {
+    const swarmMessageStore = this._getActiveSwarmMessageStore();
+    const optionsForChannelFabric = this._getOptionsForSwarmMessagesChannelV1FabricByChannelsListInstanceAndChannelDescription(
+      channelsListInstance,
+      swarmMessageChannelDescriptionRaw
+    );
+    const swarmMessagesChannelInstance = await getSwarmMessagesChannelV1InstanveWithDefaults<
+      TSwarmStoreConnectorDefault,
+      T,
+      typeof swarmMessageChannelDescriptionRaw['dbType'],
+      TDatabaseOptionsTypeByChannelDescriptionRaw<typeof swarmMessageChannelDescriptionRaw>,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      typeof swarmMessageStore,
+      MD,
+      any,
+      any,
+      any,
+      any,
+      typeof swarmMessageChannelDescriptionRaw
+    >(optionsForChannelFabric as unknown as any);
+
+    const isChannelReady = swarmMessagesChannelInstance.isReady;
+
+    if (!isChannelReady) {
+      await new Promise((res) =>
+        swarmMessagesChannelInstance.emitterChannelState.once(ESwarmMessagesChannelEventName.CHANNEL_OPEN, res)
+      );
+    }
+
+    return swarmMessagesChannelInstance;
   }
 }

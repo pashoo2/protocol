@@ -42,11 +42,10 @@ import { ISwarmMessageStoreDeleteMessageArg } from '../swarm-message-store/types
 
 export type TSwarmStoreDatabaseType<P extends ESwarmStoreConnector> = ESwarmStoreConnectorOrbitDbDatabaseType;
 
-export type TSwarmStoreOrbitDBDatabaseEntityUniqueIndex<
-  DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>
-> = DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
-  ? TSwarmStoreDatabaseEntityKey<ESwarmStoreConnector.OrbitDB>
-  : TSwarmStoreDatabaseEntityAddress<ESwarmStoreConnector.OrbitDB>;
+export type TSwarmStoreOrbitDBDatabaseEntityUniqueIndex<DbType extends TSwarmStoreDatabaseType<ESwarmStoreConnector.OrbitDB>> =
+  DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE
+    ? TSwarmStoreDatabaseEntityKey<ESwarmStoreConnector.OrbitDB>
+    : TSwarmStoreDatabaseEntityAddress<ESwarmStoreConnector.OrbitDB>;
 
 export type TSwarmStoreDatabaseEntityUniqueIndex<
   P extends ESwarmStoreConnector,
@@ -207,6 +206,8 @@ export interface ISwarmStoreDatabaseBaseOptionsWithWriteAccess {
   write?: string[];
 }
 
+export type TSwarmDatabaseName = string;
+
 /**
  * A standard database options for a swarm database
  *
@@ -221,7 +222,7 @@ export interface ISwarmStoreDatabaseBaseOptions extends ISwarmStoreDatabaseBaseO
    * @type {string}
    * @memberof ISwarmStoreDatabaseBaseOptions
    */
-  dbName: string;
+  dbName: TSwarmDatabaseName;
   /**
    * Is it a puclic database. If the database is
    * public than everyone has the write access.
@@ -581,8 +582,10 @@ export interface ISwarmStoreDatabasesCommonStatusList<
   DbType extends TSwarmStoreDatabaseType<P>,
   DBO extends TSwarmStoreDatabaseOptions<P, ItemType, DbType>
 > {
+  // known databases options
   readonly options: TSwarmStoreOptionsOfDatabasesKnownList<P, ItemType, DbType, DBO> | undefined;
-  readonly opened: Record<string, boolean>;
+  // databases with "connected" status
+  readonly opened: Record<TSwarmDatabaseName, boolean>;
 }
 
 export interface ISwarmStoreWithConnector<
