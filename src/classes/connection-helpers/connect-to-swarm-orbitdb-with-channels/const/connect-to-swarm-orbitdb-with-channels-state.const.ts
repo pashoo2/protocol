@@ -12,7 +12,6 @@ export const CONNECT_TO_SWARM_ORBITDB_WITH_CHANNELS_DATABASE_MESSAGES_UPDATE_EVE
 
 export const CONNECT_TO_SWARM_ORBITDB_WITH_CHANNELS_STATE_DEFAULT: IConnectToSwarmOrbitDbWithChannelsState<any, any, any, any> = {
   isConnectingToSwarm: false,
-  userCredentialsActive: undefined,
   userId: undefined,
   databasesList: undefined,
   userProfileData: undefined,

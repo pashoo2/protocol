@@ -95,7 +95,7 @@ export interface ISwarmMessagesChannelsListDatabaseEvents<
  */
 export interface ISwarmMessagesChannelsListStatusEvents {
   /**
-   * Swarm messages datatabase related to the channels list
+   * Swarm messages database related to the channels list
    * has opened and the channels list is ready to be used.
    *
    * @type {void}

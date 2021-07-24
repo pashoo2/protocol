@@ -1,0 +1,159 @@
+import { createConnectionBridgeConnectionWithDBOClassByOptions } from 'classes/connection-bridge/connection-bridge-utils-fabrics/connection-bridge-class-fabrics/connection-bridge-with-dbo-class/connection-bridge-with-dbo-class-fabric';
+import {
+  IConnectionBridgeOptions,
+  IConnectionBridgeOptionsDefault,
+  TConnectionBridgeOptionsAuthCredentials,
+} from 'classes/connection-bridge/types/connection-bridge.types';
+import { IConnectToSwarmOrbitDbWithChannelsState } from 'classes/connection-helpers/connect-to-swarm-orbitdb-with-channels/types/connect-to-swarm-orbitdb-with-channels-state.types';
+import { CONFIGURATION_CONNECTION_DATABASE_STORAGE_OPTIONS_DEFAULT } from 'classes/connection-helpers/const/configuration/swarm-connection-orbitdb/configuration-database-storage.const';
+import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from 'classes/swarm-message';
+import {
+  ISwarmMessagesDatabaseCache,
+  ISwarmMessagesDatabaseCacheConstructor,
+  ISwarmMessagesDatabaseCacheOptions,
+  ISwarmMessagesDatabaseMessagesCollector,
+  ISwarmMessagesStoreMeta,
+} from 'classes/swarm-messages-database';
+import {
+  ESwarmStoreConnectorOrbitDbDatabaseType,
+  ESwarmStoreEventNames,
+  ISwarmStoreDatabasesCommonStatusList,
+  TSwarmDatabaseName,
+  TSwarmStoreDatabaseOptions,
+  TSwarmStoreDatabaseType,
+} from 'classes/swarm-store-class';
+import { IUserCredentialsCommon } from 'types/credentials.types';
+import { getSwarmMessageStoreMeta } from 'classes/swarm-messages-database/swarm-messages-database-utils/swarm-messages-database-messages-collector-utils/swarm-messages-database-messages-collector-utils';
+import {
+  ISwarmMessagesChannelsListDescription,
+  TSwarmMessagesChannelsListDbType,
+  TSwrmMessagesChannelsListDBOWithGrantAccess,
+} from 'classes/swarm-messages-channels/types/swarm-messages-channels-list-instance.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import {
+  ESwarmMessagesChannelsListEventName,
+  ISwarmMessageChannelDescriptionRaw,
+  ISwarmMessagesChannelsDescriptionsList,
+  ISwarmMessagesChannelV1DefaultFabricOptionsDefault,
+  TSwarmMessagesChannelAnyByChannelDescriptionRaw,
+  getSwarmMessagesChannelV1InstanveWithDefaults,
+} from 'classes/swarm-messages-channels';
+
+import {
+  IConnectToSwarmOrbitDbWithChannelsConstructorOptions,
+  TSwarmStoreConnectorDefault,
+} from './connect-to-swarm-orbitdb-with-channels-constructor.types';
+import { IConnectToSwarmOrbitDbWithChannelsStateListener } from 'classes/connection-helpers/connect-to-swarm-orbitdb-with-channels/types/connect-to-swarm-orbitdb-with-channels-change-listeners.types';
+import { IConnectToSwarmOrbitDbWithChannelsDatabaseSwarmMessagesListUpdateListener } from './connect-to-swarm-orbitdb-with-channels-change-listeners.types';
+
+export interface IConnectionToSwarmWithChannels<
+  DbType extends TSwarmStoreDatabaseType<TSwarmStoreConnectorDefault>,
+  T extends TSwarmMessageSerialized,
+  DBO extends TSwarmStoreDatabaseOptions<TSwarmStoreConnectorDefault, T, DbType>,
+  CD extends boolean,
+  CBO extends IConnectionBridgeOptionsDefault<TSwarmStoreConnectorDefault, T, DbType, CD>,
+  MD extends ISwarmMessageInstanceDecrypted
+> {
+  /**
+   * Current connection state
+   *
+   * @type {Readonly<IConnectToSwarmOrbitDbWithChannelsState<DbType, T, DBO, CBO>>}
+   * @memberof IConnectionToSwarmWithChannels
+   */
+  state: Readonly<IConnectToSwarmOrbitDbWithChannelsState<DbType, T, DBO, CBO>>;
+
+  /**
+   * Connect to an instance that allows to share information about messaging channels
+   * available within this channels list.
+   * It allows to add new channels to the list, listen for any updates of the existing
+   * ones and listen for new ones, which have been added by other users.
+   * Create connection to the swarm at first, if there is no connection so far.
+   *
+   * @param {ISwarmMessagesChannelsListDescription} channelsListDescription
+   * @param {TSwrmMessagesChannelsListDBOWithGrantAccess<
+   *             TSwarmStoreConnectorDefault,
+   *             T,
+   *             MD,
+   *             ISwarmStoreDBOGrandAccessCallbackBaseContext,
+   *             TSwarmStoreDatabaseOptions<TSwarmStoreConnectorDefault, T, TSwarmMessagesChannelsListDbType>
+   *         >} channelDatabaseOptions
+   * @param {IUserCredentialsCommon} [userCredentials]
+   * @returns {Promise<void>}
+   * @memberof IConnectionToSwarmWithChannels
+   */
+  connectToSwarmChannelsList(
+    channelsListDescription: ISwarmMessagesChannelsListDescription,
+    channelDatabaseOptions: TSwrmMessagesChannelsListDBOWithGrantAccess<
+      TSwarmStoreConnectorDefault,
+      T,
+      MD,
+      ISwarmStoreDBOGrandAccessCallbackBaseContext,
+      TSwarmStoreDatabaseOptions<TSwarmStoreConnectorDefault, T, TSwarmMessagesChannelsListDbType>
+    >,
+    userCredentials?: IUserCredentialsCommon
+  ): Promise<void>;
+
+  /**
+   * Create a swarm channel instance which allows messaging with other
+   * users connected to the swarm channel.
+   * Created swarm channel will be added to an instance of swarm channels list
+   *
+   * @param {ISwarmMessageChannelDescriptionRaw<
+   *             TSwarmStoreConnectorDefault,
+   *             TSwarmMessageSerialized,
+   *             ESwarmStoreConnectorOrbitDbDatabaseType,
+   *             TSwarmStoreDatabaseOptions<
+   *                 TSwarmStoreConnectorDefault,
+   *                 TSwarmMessageSerialized,
+   *                 ESwarmStoreConnectorOrbitDbDatabaseType,
+   *             >
+   *         >} swarmMessageChannelDescriptionRaw
+   * @returns {Promise<TSwarmMessagesChannelAnyByChannelDescriptionRaw<typeof swarmMessageChannelDescriptionRaw>>}
+   * @memberof IConnectionToSwarmWithChannels
+   */
+  connectToSwarmChannel(
+    swarmMessageChannelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<
+      TSwarmStoreConnectorDefault,
+      TSwarmMessageSerialized,
+      ESwarmStoreConnectorOrbitDbDatabaseType,
+      TSwarmStoreDatabaseOptions<TSwarmStoreConnectorDefault, TSwarmMessageSerialized, ESwarmStoreConnectorOrbitDbDatabaseType>
+    >
+  ): Promise<TSwarmMessagesChannelAnyByChannelDescriptionRaw<typeof swarmMessageChannelDescriptionRaw>>;
+
+  /**
+   * Add a listener for listening changes of the instance's state changes
+   *
+   * @param {IConnectToSwarmOrbitDbWithChannelsStateListener<DbType, T, DBO, CBO>} listener
+   * @memberof IConnectionToSwarmWithChannels
+   */
+  addStateChangeListener(listener: IConnectToSwarmOrbitDbWithChannelsStateListener<DbType, T, DBO, CBO>): void;
+
+  /**
+   * Remove state change listener.
+   *
+   * @param {IConnectToSwarmOrbitDbWithChannelsStateListener<DbType, T, DBO, CBO>} listener
+   * @memberof IConnectionToSwarmWithChannels
+   */
+  removeStateChangeListener(listener: IConnectToSwarmOrbitDbWithChannelsStateListener<DbType, T, DBO, CBO>): void;
+
+  /**
+   * Listen for messages which have been read from the database.
+   * It might be messages which were added to the channels before as well as a new ones.
+   *
+   * @param {IConnectToSwarmOrbitDbWithChannelsDatabaseSwarmMessagesListUpdateListener<DbType>} listener
+   * @memberof IConnectionToSwarmWithChannels
+   */
+  addDatabaseSwarmMessagesListUpdateListener(
+    listener: IConnectToSwarmOrbitDbWithChannelsDatabaseSwarmMessagesListUpdateListener<DbType>
+  ): void;
+
+  /**
+   * Remove listener of messages updates.
+   *
+   * @param {IConnectToSwarmOrbitDbWithChannelsDatabaseSwarmMessagesListUpdateListener<DbType>} listener
+   * @memberof IConnectionToSwarmWithChannels
+   */
+  removeDatabaseSwarmMessagesListUpdateListener(
+    listener: IConnectToSwarmOrbitDbWithChannelsDatabaseSwarmMessagesListUpdateListener<DbType>
+  ): void;
+}

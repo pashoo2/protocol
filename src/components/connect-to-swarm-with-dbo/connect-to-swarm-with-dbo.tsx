@@ -427,7 +427,7 @@ export class ConnectToSwarmWithDBO<
         userProfileData,
       });
       this.setListenersConnectionBridge(
-        (connectionBridge as unknown) as PromiseResolveType<ReturnType<typeof connectToSwarmWithDBOUtil>>
+        connectionBridge as unknown as PromiseResolveType<ReturnType<typeof connectToSwarmWithDBOUtil>>
       );
 
       const { dbo } = this.props;

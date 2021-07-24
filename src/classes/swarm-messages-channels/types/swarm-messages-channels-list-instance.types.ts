@@ -241,7 +241,7 @@ export interface ISwarmMessagesChannelsDescriptionsList<
   /**
    * Immutable channels decriptions map cached and read only.
    * Because the map is immutable an updates of the list
-   * can be lisened with event "ESwarmMessagesChannelsListEventName.CHANNELS_CACHE_UPDATED".
+   * can be listened with event "ESwarmMessagesChannelsListEventName.CHANNELS_CACHE_UPDATED".
    *
    * @type {(Readonly<
    *     Map<TSwarmMessagesChannelId, ISwarmMessageChannelDescriptionRaw<P, T, any, any> | Error>

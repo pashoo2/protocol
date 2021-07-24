@@ -43,7 +43,6 @@ export interface IConnectToSwarmOrbitDbWithChannelsState<
   isConnectingToSwarm: boolean;
   userId: TCentralAuthorityUserIdentity | undefined;
   userProfileData: ICentralAuthorityUserProfile | undefined;
-  userCredentialsActive: IUserCredentialsCommon | undefined;
   connectionBridge: TConnectionBridgeByOptions<TSwarmStoreConnectorDefault, T, DbType, DBO, CBO> | undefined;
   databasesList:
     | ISwarmStoreDatabasesCommonStatusList<
