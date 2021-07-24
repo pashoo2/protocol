@@ -10,7 +10,6 @@ import {
   TSwarmStoreDatabaseOptions,
   TSwarmStoreDatabaseType,
 } from 'classes/swarm-store-class';
-import { IUserCredentialsCommon } from 'types/credentials.types';
 import { TConnectionBridgeByOptions } from 'classes/connection-bridge/types/connection-bridge.types-helpers/connection-bridge.types.helpers';
 import { ISwarmMessagesChannelsDescriptionsList } from 'classes/swarm-messages-channels';
 

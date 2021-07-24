@@ -131,7 +131,7 @@ export class ConnectionToSwarmWithChannels<
 
   public async connectToSwarmChannelsList(
     channelsListDescription: ISwarmMessagesChannelsListDescription,
-    channelDatabaseOptions: TSwrmMessagesChannelsListDBOWithGrantAccess<
+    channelsListDatabaseOptions: TSwrmMessagesChannelsListDBOWithGrantAccess<
       TSwarmStoreConnectorDefault,
       T,
       MD,
@@ -143,7 +143,7 @@ export class ConnectionToSwarmWithChannels<
     await this._connectToSwarmIfNotConnected(userCredentials);
     const swarmMessagesChannelsList = await this._connectToSwarmAndCreateSwarmMessagesChannelsList(
       channelsListDescription,
-      channelDatabaseOptions
+      channelsListDatabaseOptions
     );
 
     this._setListenerSwarmMessagesChannelsListClosed(swarmMessagesChannelsList);

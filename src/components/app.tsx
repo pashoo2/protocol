@@ -38,7 +38,8 @@ export class App extends React.Component {
     // return <FileStoreAddFile />;
     // return <SensitiveDataStorage />;
     // return <ConnectToSwarm />;
-    type TSwarmCacheConstructor = typeof CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_WITH_STORE_META_OPTIONS['cacheConstructor'];
+    type TSwarmCacheConstructor =
+      typeof CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_WITH_STORE_META_OPTIONS['cacheConstructor'];
     // return (
     //   <ConnectToSwarmImmediate<
     //     typeof CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_KEY_VALUE['dbType'],

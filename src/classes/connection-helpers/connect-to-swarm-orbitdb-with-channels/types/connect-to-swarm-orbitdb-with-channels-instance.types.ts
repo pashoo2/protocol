@@ -1,29 +1,18 @@
-import { createConnectionBridgeConnectionWithDBOClassByOptions } from 'classes/connection-bridge/connection-bridge-utils-fabrics/connection-bridge-class-fabrics/connection-bridge-with-dbo-class/connection-bridge-with-dbo-class-fabric';
-import {
-  IConnectionBridgeOptions,
-  IConnectionBridgeOptionsDefault,
-  TConnectionBridgeOptionsAuthCredentials,
-} from 'classes/connection-bridge/types/connection-bridge.types';
+import { IConnectionBridgeOptionsDefault } from 'classes/connection-bridge/types/connection-bridge.types';
 import { IConnectToSwarmOrbitDbWithChannelsState } from 'classes/connection-helpers/connect-to-swarm-orbitdb-with-channels/types/connect-to-swarm-orbitdb-with-channels-state.types';
-import { CONFIGURATION_CONNECTION_DATABASE_STORAGE_OPTIONS_DEFAULT } from 'classes/connection-helpers/const/configuration/swarm-connection-orbitdb/configuration-database-storage.const';
 import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from 'classes/swarm-message';
 import {
   ISwarmMessagesDatabaseCache,
   ISwarmMessagesDatabaseCacheConstructor,
   ISwarmMessagesDatabaseCacheOptions,
   ISwarmMessagesDatabaseMessagesCollector,
-  ISwarmMessagesStoreMeta,
 } from 'classes/swarm-messages-database';
 import {
   ESwarmStoreConnectorOrbitDbDatabaseType,
-  ESwarmStoreEventNames,
-  ISwarmStoreDatabasesCommonStatusList,
-  TSwarmDatabaseName,
   TSwarmStoreDatabaseOptions,
   TSwarmStoreDatabaseType,
 } from 'classes/swarm-store-class';
 import { IUserCredentialsCommon } from 'types/credentials.types';
-import { getSwarmMessageStoreMeta } from 'classes/swarm-messages-database/swarm-messages-database-utils/swarm-messages-database-messages-collector-utils/swarm-messages-database-messages-collector-utils';
 import {
   ISwarmMessagesChannelsListDescription,
   TSwarmMessagesChannelsListDbType,
@@ -31,14 +20,9 @@ import {
 } from 'classes/swarm-messages-channels/types/swarm-messages-channels-list-instance.types';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
 import {
-  ESwarmMessagesChannelsListEventName,
   ISwarmMessageChannelDescriptionRaw,
-  ISwarmMessagesChannelsDescriptionsList,
-  ISwarmMessagesChannelV1DefaultFabricOptionsDefault,
   TSwarmMessagesChannelAnyByChannelDescriptionRaw,
-  getSwarmMessagesChannelV1InstanveWithDefaults,
 } from 'classes/swarm-messages-channels';
-
 import {
   IConnectToSwarmOrbitDbWithChannelsConstructorOptions,
   TSwarmStoreConnectorDefault,
@@ -60,7 +44,7 @@ export interface IConnectionToSwarmWithChannels<
    * @type {Readonly<IConnectToSwarmOrbitDbWithChannelsState<DbType, T, DBO, CBO>>}
    * @memberof IConnectionToSwarmWithChannels
    */
-  state: Readonly<IConnectToSwarmOrbitDbWithChannelsState<DbType, T, DBO, CBO>>;
+  state: Readonly<Partial<IConnectToSwarmOrbitDbWithChannelsState<DbType, T, DBO, CBO>>>;
 
   /**
    * Connect to an instance that allows to share information about messaging channels
@@ -76,14 +60,14 @@ export interface IConnectionToSwarmWithChannels<
    *             MD,
    *             ISwarmStoreDBOGrandAccessCallbackBaseContext,
    *             TSwarmStoreDatabaseOptions<TSwarmStoreConnectorDefault, T, TSwarmMessagesChannelsListDbType>
-   *         >} channelDatabaseOptions
+   *         >} channelsListDatabaseOptions
    * @param {IUserCredentialsCommon} [userCredentials]
    * @returns {Promise<void>}
    * @memberof IConnectionToSwarmWithChannels
    */
   connectToSwarmChannelsList(
     channelsListDescription: ISwarmMessagesChannelsListDescription,
-    channelDatabaseOptions: TSwrmMessagesChannelsListDBOWithGrantAccess<
+    channelsListDatabaseOptions: TSwrmMessagesChannelsListDBOWithGrantAccess<
       TSwarmStoreConnectorDefault,
       T,
       MD,
@@ -156,4 +140,21 @@ export interface IConnectionToSwarmWithChannels<
   removeDatabaseSwarmMessagesListUpdateListener(
     listener: IConnectToSwarmOrbitDbWithChannelsDatabaseSwarmMessagesListUpdateListener<DbType>
   ): void;
+}
+
+export interface IConnectionToSwarmWithChannelsConstructor<
+  DbType extends TSwarmStoreDatabaseType<TSwarmStoreConnectorDefault>,
+  T extends TSwarmMessageSerialized,
+  DBO extends TSwarmStoreDatabaseOptions<TSwarmStoreConnectorDefault, T, DbType>,
+  CD extends boolean,
+  CBO extends IConnectionBridgeOptionsDefault<TSwarmStoreConnectorDefault, T, DbType, CD>,
+  MD extends ISwarmMessageInstanceDecrypted,
+  SMSM extends ISwarmMessagesDatabaseMessagesCollector<TSwarmStoreConnectorDefault, DbType, MD>,
+  DCO extends ISwarmMessagesDatabaseCacheOptions<TSwarmStoreConnectorDefault, DbType, MD, SMSM>,
+  DCCRT extends ISwarmMessagesDatabaseCache<TSwarmStoreConnectorDefault, T, DbType, DBO, MD, SMSM>,
+  SMDCC extends ISwarmMessagesDatabaseCacheConstructor<TSwarmStoreConnectorDefault, T, DbType, DBO, MD, SMSM, DCO, DCCRT>
+> {
+  new (
+    configuration: IConnectToSwarmOrbitDbWithChannelsConstructorOptions<DbType, T, DBO, CD, CBO, MD, SMSM, DCO, DCCRT, SMDCC>
+  ): IConnectionToSwarmWithChannels<DbType, T, DBO, CD, CBO, MD>;
 }
