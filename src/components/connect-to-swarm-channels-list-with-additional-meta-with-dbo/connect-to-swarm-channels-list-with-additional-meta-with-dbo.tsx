@@ -305,9 +305,8 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
       messageEncryption: SWARM_MESSAGES_CHANNEL_ENCRYPTION.PUBLIC,
       dbOptions: {
         write: [currentUserId],
-        grantAccess: async function grantAccess(): Promise<boolean> {
-          if (process.env.NODE_ENV === 'development') debugger;
-          return true;
+        grantAccess: function grantAccess(): Promise<boolean> {
+          return Promise.resolve(true);
         },
       },
     };

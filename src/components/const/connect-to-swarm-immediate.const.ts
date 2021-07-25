@@ -12,12 +12,11 @@ export const CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_KEY_VALUE = {
   dbName: CONNECT_TO_SWARM_IMMEDIATE_DATABASE_NAME_KEY_VALUE,
   preloadCount: 0,
   dbType: ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
-  grantAccess: async function grantAccess(...args: any[]) {
+  grantAccess: function grantAccess(...args: any[]): Promise<boolean> {
     console.log('grantAccess');
     console.log(...args);
     console.log(this);
-    if (process.env.NODE_ENV === 'development') debugger;
-    return true;
+    return Promise.resolve(true);
   },
 };
 
@@ -30,7 +29,7 @@ export const CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_SWARM_CHANNELS_LIST: TS
   dbName: CONNECT_TO_SWARM_IMMEDIATE_DATABASE_NAME_KEY_VALUE,
   preloadCount: 0,
   dbType: ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE,
-  grantAccess: function grantAccess(...args: any[]) {
+  grantAccess: function grantAccess(...args: any[]): Promise<boolean> {
     console.log('grantAccess', ...args);
     console.log('grantAccess', this);
     // TODO - async/await is not supported
@@ -43,9 +42,9 @@ export const CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_FEED = {
   dbName: CONNECT_TO_SWARM_IMMEDIATE_DATABASE_NAME_FEED_STORE,
   preloadCount: 0,
   dbType: ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
-  grantAccess: async function grantAccess(...args: any[]) {
+  grantAccess: function grantAccess(...args: any[]): Promise<boolean> {
     console.log('grantAccess arguments', ...args);
     console.log('grantAccess context', this);
-    return true;
+    return Promise.resolve(true);
   },
 };

@@ -19,7 +19,6 @@ import {
   ISwarmMessagesDatabaseCacheOptions,
   ISwarmMessagesDatabaseCache,
   ISwarmMessagesDatabaseCacheConstructor,
-  ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions,
 } from '../../classes/swarm-messages-database/swarm-messages-database.types';
 import {
   ISwarmMessagesDatabaseMessagesCollector,
@@ -40,7 +39,6 @@ import {
   TSwarmMessagesChannelAnyByChannelDescriptionRaw,
   TSwarmMessageUserIdentifierSerialized,
 } from 'classes';
-import { SWARM_CHANNELS_LIST_DESCRIPTION } from '../const/connect-to-swarm-channels-list.const';
 import { ISerializer } from 'types/serialization.types';
 import { TConnectionBridgeByOptions } from 'classes/connection-bridge/types/connection-bridge.types-helpers/connection-bridge.types.helpers';
 
@@ -56,22 +54,22 @@ export interface IConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditional
   DCCRT extends ISwarmMessagesDatabaseCache<TSwarmStoreConnectorDefault, T, DbType, DBO, MD, SMSM>,
   SMDCC extends ISwarmMessagesDatabaseCacheConstructor<TSwarmStoreConnectorDefault, T, DbType, DBO, MD, SMSM, DCO, DCCRT>
 > {
-  swarmMessagesChannelsListDescription: ISwarmMessagesChannelsListDescription;
-  connectionBridgeOptions: CBO;
-  userCredentialsList: Array<IUserCredentialsCommon>;
-  dbo: DBO;
-  userIdReceiverSwarmMessages: TSwarmMessageUserIdentifierSerialized;
-  swarmMessagesDatabaseCacheOptions: ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<
-    TSwarmStoreConnectorDefault,
-    T,
+  connectionHelperOptions: IConnectToSwarmOrbitDbWithChannelsConstructorOptions<
     DbType,
+    T,
     DBO,
+    CD,
+    CBO,
     MD,
     SMSM,
     DCO,
     DCCRT,
     SMDCC
   >;
+  swarmMessagesChannelsListDescription: ISwarmMessagesChannelsListDescription;
+  userCredentialsList: Array<IUserCredentialsCommon>;
+  dbo: DBO;
+  userIdReceiverSwarmMessages: TSwarmMessageUserIdentifierSerialized;
   swarmChannelsListDatabaseOptions: TSwrmMessagesChannelsListDBOWithGrantAccess<
     TSwarmStoreConnectorDefault,
     T,
@@ -326,23 +324,6 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
     return <SwarmChannelInstanceComponent swarmMessagesChannelInstance={openedSwarmChannelInstanceOrUndefined} />;
   }
 
-  protected _getSwarmMessagesDatabaseCacheOptions(): ISwarmMessagesDatabaseConnectOptionsSwarmMessagesCacheOptions<
-    TSwarmStoreConnectorDefault,
-    T,
-    DbType,
-    DBO,
-    MD,
-    SMSM,
-    DCO,
-    DCCRT,
-    SMDCC
-  > {
-    const { swarmMessagesDatabaseCacheOptions } = this.props;
-    return {
-      cacheConstructor: swarmMessagesDatabaseCacheOptions.cacheConstructor,
-    };
-  }
-
   protected _getConnectToSwarmOrbitDbWithChannelsConstructorOptions(): IConnectToSwarmOrbitDbWithChannelsConstructorOptions<
     DbType,
     T,
@@ -355,11 +336,8 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
     DCCRT,
     SMDCC
   > {
-    const { connectionBridgeOptions } = this.props;
-    return {
-      connectionBridgeOptions: connectionBridgeOptions,
-      swarmMessagesDatabaseCacheOptions: this._getSwarmMessagesDatabaseCacheOptions(),
-    };
+    const { connectionHelperOptions } = this.props;
+    return connectionHelperOptions;
   }
 
   protected _createAndReturnConnectionToSwarmWithChannelsInstance(): ConnectionToSwarmWithChannels<
@@ -394,7 +372,7 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
   }
 
   protected _getChannelsListDescription(): ISwarmMessagesChannelsListDescription {
-    return SWARM_CHANNELS_LIST_DESCRIPTION;
+    return this.props.swarmMessagesChannelsListDescription;
   }
 
   protected _getSwarmChannelsListDatabaseOptions(): TSwrmMessagesChannelsListDBOWithGrantAccess<
@@ -479,23 +457,6 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
       channelsListIsReady: false,
     });
   };
-
-  protected _getConnectionBridgeInstanceOrThrow(): TConnectionBridgeByOptions<
-    TSwarmStoreConnectorDefault,
-    T,
-    DbType,
-    DBO,
-    CBO,
-    boolean,
-    ISerializer<any>,
-    CBO['storage']
-  > {
-    const connectionBridge = this.state.connectionToSwarmWithChannelsStatePartial.connectionBridge;
-    if (!connectionBridge) {
-      throw new Error('Connection bridge instance is not available to be used');
-    }
-    return connectionBridge;
-  }
 
   protected _getConnectionToSwarmWithChannelsOrThrow(): IConnectionToSwarmWithChannels<DbType, T, DBO, CD, CBO, MD> {
     const { connectionToSwarmWithChannelsOrUndefined } = this.state;

@@ -20,8 +20,8 @@ export const SWARM_MESSAGES_CHANNEL_V1_GENERATE_NEW_PUBLIC_KEY_VALUE_CHANNEL_DES
   isPublic: true,
   write: [],
   // eslint-disable-next-line @typescript-eslint/require-await
-  grantAccess: async function grantAccess() {
-    return true;
+  grantAccess: function grantAccess(): Promise<boolean> {
+    return Promise.resolve(true);
   },
 };
 
