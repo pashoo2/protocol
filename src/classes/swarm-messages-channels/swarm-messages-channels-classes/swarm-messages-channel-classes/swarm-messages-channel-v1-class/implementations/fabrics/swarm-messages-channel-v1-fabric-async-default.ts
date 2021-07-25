@@ -200,7 +200,7 @@ export async function getSwarmMessagesChannelV1InstanveWithDefaults<
 > {
   const {
     channelConstructorMainOptions: channelConstructorOptions,
-    channeDatabaseConnectorOptions,
+    channelDatabaseConnectorOptions,
     SwarmMessagesChannelConstructorWithHelperConstuctorsSupport,
     SwarmMessagesChannelV1ClassChannelsListHandlerConstructor,
     SwarmMessagesChannelV1DatabaseHandlerConstructor,
@@ -243,7 +243,7 @@ export async function getSwarmMessagesChannelV1InstanveWithDefaults<
       OPT
     >(
       {
-        ...channeDatabaseConnectorOptions,
+        ...channelDatabaseConnectorOptions,
         user: {
           userId: channelConstructorOptions.currentUserId,
         },

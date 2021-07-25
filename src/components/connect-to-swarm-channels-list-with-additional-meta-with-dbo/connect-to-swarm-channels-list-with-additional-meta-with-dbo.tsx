@@ -499,7 +499,7 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
         MD,
         DbType,
         DBO
-      >['channeDatabaseConnectorOptions'];
+      >['channelDatabaseConnectorOptions'];
     const defaultConnectionUtils = {
       getSwarmMessagesDatabaseConnectorInstanceDefaultFabric:
         getSwarmMessagesDatabaseWithKVDbMessagesUpdatesConnectorInstanceFabric,
@@ -512,7 +512,7 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
     >['defaultConnectionUtils'];
     return {
       channelConstructorMainOptions: swarmMessagesChannelConstructorOptions,
-      channeDatabaseConnectorOptions: swarmMessagesDatabaseConnectorOptions,
+      channelDatabaseConnectorOptions: swarmMessagesDatabaseConnectorOptions,
       defaultConnectionUtils,
     } as ISwarmMessagesChannelV1DefaultFabricOptionsDefault<ESwarmStoreConnector.OrbitDB, T, MD, DbType, DBO>;
   }

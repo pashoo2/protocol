@@ -121,7 +121,7 @@ export interface ISwarmMessagesChannelV1DefaultFabricOptions<
   >
 > {
   channelConstructorMainOptions: CHCO;
-  channeDatabaseConnectorOptions: CHCO['utils'] extends never ? Omit<OPT, 'dbOptions' | 'user'> : never;
+  channelDatabaseConnectorOptions: CHCO['utils'] extends never ? Omit<OPT, 'dbOptions' | 'user'> : never;
   SwarmMessagesChannelConstructorWithHelperConstuctorsSupport:
     | ISwarmMessagesChannelConstructor<
         P,

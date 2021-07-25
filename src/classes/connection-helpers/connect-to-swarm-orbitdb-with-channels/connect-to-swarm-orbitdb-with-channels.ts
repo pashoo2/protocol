@@ -804,7 +804,7 @@ export class ConnectionToSwarmWithChannels<
         MD,
         DbType,
         DBO
-      >['channeDatabaseConnectorOptions'];
+      >['channelDatabaseConnectorOptions'];
     const defaultConnectionUtils = {
       getSwarmMessagesDatabaseConnectorInstanceDefaultFabric:
         getSwarmMessagesDatabaseWithKVDbMessagesUpdatesConnectorInstanceFabric,
@@ -817,7 +817,7 @@ export class ConnectionToSwarmWithChannels<
     >['defaultConnectionUtils'];
     return {
       channelConstructorMainOptions: swarmMessagesChannelConstructorOptions,
-      channeDatabaseConnectorOptions: swarmMessagesDatabaseConnectorOptions,
+      channelDatabaseConnectorOptions: swarmMessagesDatabaseConnectorOptions,
       defaultConnectionUtils,
     } as ISwarmMessagesChannelV1DefaultFabricOptionsDefault<TSwarmStoreConnectorDefault, T, MD, DbType, DBO>;
   }

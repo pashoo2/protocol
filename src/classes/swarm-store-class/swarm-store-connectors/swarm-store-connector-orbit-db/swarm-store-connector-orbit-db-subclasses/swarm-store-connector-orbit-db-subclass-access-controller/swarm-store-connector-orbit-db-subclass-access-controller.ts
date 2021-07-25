@@ -4,7 +4,6 @@ import { ISwarmStoreConnectorOrbitDbDatabaseAccessControllerOptions } from './sw
 import { IdentityProvider } from 'orbit-db-identity-provider';
 import { ESwarmStoreConnector } from '../../../../swarm-store-class.const';
 import { EOrbitDbStoreOperation } from '../swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
-import { P } from '../../../../../../components/connect-to-swarm-with-dbo/connect-to-swarm-with-dbo';
 import {
   TSwarmStoreConnectorAccessConrotllerGrantAccessCallback,
   TSwarmStoreValueTypes,

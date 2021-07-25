@@ -32,6 +32,9 @@ import {
   CONNECT_TO_SWARM_AUTH_CREDENTIALS_1,
   CONNECT_TO_SWARM_AUTH_CREDENTIALS_2,
 } from './const/connect-to-swarm.const';
+import { ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaWithDBOViaHelpers } from 'components/connect-to-swarm-channels-list-with-additional-meta-with-dbo-via-helpers';
+import { SWARM_CHANNELS_LIST_DESCRIPTION } from 'components/const/connect-to-swarm-channels-list.const';
+import { CONFIGURATION_DEFAULT_SWARM_CHANNELS_LIST_DATABASE_OPTIONS } from 'classes/connection-helpers/const/configuration/swarm-connection-orbitdb/configuration-swarm-channels-list.const';
 
 export class App extends React.Component {
   render() {
@@ -118,8 +121,23 @@ export class App extends React.Component {
     //     swarmMessagesDatabaseCacheOptions={CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_WITH_STORE_META_OPTIONS}
     //   />
     // );
+    // return (
+    //   <ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaWithDBO<
+    //     ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
+    //     typeof CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_SWARM_CHANNELS_LIST,
+    //     typeof CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS,
+    //     false
+    //   >
+    //     dbo={CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_SWARM_CHANNELS_LIST}
+    //     connectionBridgeOptions={CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS}
+    //     userCredentialsList={[userToConnectWithCredentials]}
+    //     userCredentialsToConnectImmediate={userToConnectWithCredentials}
+    //     userIdReceiverSwarmMessages={userIdReceiverMessages}
+    //     swarmMessagesDatabaseCacheOptions={CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_WITH_STORE_META_OPTIONS}
+    //   />
+    // );
     return (
-      <ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaWithDBO<
+      <ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaWithDBOViaHelpers<
         ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
         typeof CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_SWARM_CHANNELS_LIST,
         typeof CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS,
@@ -131,6 +149,8 @@ export class App extends React.Component {
         userCredentialsToConnectImmediate={userToConnectWithCredentials}
         userIdReceiverSwarmMessages={userIdReceiverMessages}
         swarmMessagesDatabaseCacheOptions={CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_WITH_STORE_META_OPTIONS}
+        swarmMessagesChannelsListDescription={SWARM_CHANNELS_LIST_DESCRIPTION}
+        swarmChannelsListDatabaseOptions={CONFIGURATION_DEFAULT_SWARM_CHANNELS_LIST_DATABASE_OPTIONS}
       />
     );
     // return (
