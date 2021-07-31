@@ -389,6 +389,7 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
     connectionToSwarmWithChannels: IConnectionToSwarmWithChannels<DbType, T, DBO, CD, CBO, MD>,
     userCredentialsToConnectImmediate?: IUserCredentialsCommon
   ): Promise<ISwarmMessagesChannelsDescriptionsList<TSwarmStoreConnectorDefault, T, MD>> {
+    await connectionToSwarmWithChannels.connectToSwarm(userCredentialsToConnectImmediate);
     const channelsListDescription = this._getChannelsListDescription();
     const swarmChannelsListDatabaseOptions = this._getSwarmChannelsListDatabaseOptions();
     await connectionToSwarmWithChannels.connectToSwarmChannelsList(

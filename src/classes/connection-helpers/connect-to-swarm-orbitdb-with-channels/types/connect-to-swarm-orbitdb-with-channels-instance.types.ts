@@ -44,7 +44,16 @@ export interface IConnectionToSwarmWithChannels<
    * @type {Readonly<IConnectToSwarmOrbitDbWithChannelsState<DbType, T, DBO, CBO>>}
    * @memberof IConnectionToSwarmWithChannels
    */
-  state: Readonly<Partial<IConnectToSwarmOrbitDbWithChannelsState<DbType, T, DBO, CBO>>>;
+  readonly state: Readonly<Partial<IConnectToSwarmOrbitDbWithChannelsState<DbType, T, DBO, CBO>>>;
+
+  /**
+   * Create an active connection to the swarm
+   *
+   * @param {IUserCredentialsCommon} [userCredentials] - ??? credentials are not necessary only if there is a session exists for the user
+   * @returns {Promise<void>}
+   * @memberof IConnectionToSwarmWithChannels
+   */
+  connectToSwarm(userCredentials?: IUserCredentialsCommon): Promise<void>;
 
   /**
    * Connect to an instance that allows to share information about messaging channels
