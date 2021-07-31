@@ -129,6 +129,10 @@ export class ConnectionToSwarmWithChannels<
     >
   ) {}
 
+  public async connectToSwarm(userCredentials?: IUserCredentialsCommon): Promise<void> {
+    await this._connectToSwarmIfNotConnected(userCredentials);
+  }
+
   public async connectToSwarmChannelsList(
     channelsListDescription: ISwarmMessagesChannelsListDescription,
     channelsListDatabaseOptions: TSwrmMessagesChannelsListDBOWithGrantAccess<
@@ -137,10 +141,8 @@ export class ConnectionToSwarmWithChannels<
       MD,
       ISwarmStoreDBOGrandAccessCallbackBaseContext,
       TSwarmStoreDatabaseOptions<TSwarmStoreConnectorDefault, T, TSwarmMessagesChannelsListDbType>
-    >,
-    userCredentials?: IUserCredentialsCommon
+    >
   ): Promise<void> {
-    await this._connectToSwarmIfNotConnected(userCredentials);
     const swarmMessagesChannelsList = await this._connectToSwarmAndCreateSwarmMessagesChannelsList(
       channelsListDescription,
       channelsListDatabaseOptions
@@ -822,15 +824,17 @@ export class ConnectionToSwarmWithChannels<
     } as ISwarmMessagesChannelV1DefaultFabricOptionsDefault<TSwarmStoreConnectorDefault, T, MD, DbType, DBO>;
   }
 
-  protected async _createSwarmMessagesChannelInstanceAndConnect(
-    channelsListInstance: ISwarmMessagesChannelsDescriptionsList<TSwarmStoreConnectorDefault, T, MD>,
-    swarmMessageChannelDescriptionRaw: ISwarmMessageChannelDescriptionRaw<
+  protected async _createSwarmMessagesChannelInstanceAndConnect<
+    SMCDR extends ISwarmMessageChannelDescriptionRaw<
       TSwarmStoreConnectorDefault,
       TSwarmMessageSerialized,
       ESwarmStoreConnectorOrbitDbDatabaseType,
       TSwarmStoreDatabaseOptions<TSwarmStoreConnectorDefault, TSwarmMessageSerialized, ESwarmStoreConnectorOrbitDbDatabaseType>
     >
-  ): Promise<TSwarmMessagesChannelAnyByChannelDescriptionRaw<typeof swarmMessageChannelDescriptionRaw>> {
+  >(
+    channelsListInstance: ISwarmMessagesChannelsDescriptionsList<TSwarmStoreConnectorDefault, T, MD>,
+    swarmMessageChannelDescriptionRaw: SMCDR
+  ): Promise<TSwarmMessagesChannelAnyByChannelDescriptionRaw<SMCDR>> {
     const swarmMessageStore = this._getActiveSwarmMessageStore();
     const optionsForChannelFabric = this._getOptionsForSwarmMessagesChannelV1FabricByChannelsListInstanceAndChannelDescription(
       channelsListInstance,
@@ -856,7 +860,7 @@ export class ConnectionToSwarmWithChannels<
       any,
       any,
       any,
-      typeof swarmMessageChannelDescriptionRaw
+      any
     >(optionsForChannelFabric as unknown as any);
 
     const isChannelReady = swarmMessagesChannelInstance.isReady;
@@ -867,7 +871,7 @@ export class ConnectionToSwarmWithChannels<
       );
     }
 
-    return swarmMessagesChannelInstance;
+    return swarmMessagesChannelInstance as unknown as TSwarmMessagesChannelAnyByChannelDescriptionRaw<SMCDR>;
   }
 
   protected _handleDatabasesListClosed(
