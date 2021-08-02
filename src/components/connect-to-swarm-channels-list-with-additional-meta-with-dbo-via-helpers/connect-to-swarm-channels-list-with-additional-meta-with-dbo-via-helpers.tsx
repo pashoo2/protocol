@@ -39,8 +39,6 @@ import {
   TSwarmMessagesChannelAnyByChannelDescriptionRaw,
   TSwarmMessageUserIdentifierSerialized,
 } from 'classes';
-import { ISerializer } from 'types/serialization.types';
-import { TConnectionBridgeByOptions } from 'classes/connection-bridge/types/connection-bridge.types-helpers/connection-bridge.types.helpers';
 
 export interface IConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaWithDBOViaHelpersProps<
   DbType extends TSwarmStoreDatabaseType<TSwarmStoreConnectorDefault>,

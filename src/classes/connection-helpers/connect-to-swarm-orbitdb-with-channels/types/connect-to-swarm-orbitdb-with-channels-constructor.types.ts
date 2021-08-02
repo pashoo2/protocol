@@ -1,4 +1,6 @@
+import { TConnectionBridgeOptionsDatabaseOptions, TConnectionBridgeOptionsDbType } from 'classes/connection-bridge';
 import { IConnectionBridgeOptionsDefault } from 'classes/connection-bridge/types/connection-bridge.types';
+import { DbType } from 'classes/connection-bridge/types/connection-bridge.types-helpers/connection-bridge-storage-options.types.helpers';
 import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from 'classes/swarm-message';
 import {
   ISwarmMessagesDatabaseCache,
@@ -44,3 +46,69 @@ export interface IConnectToSwarmOrbitDbWithChannelsConstructorOptions<
     SMDCC
   >;
 }
+
+export type TConnectToSwarmOrbitDbWithChannelsConstructorOptionsByConnectionBridgeOptions<
+  CBO extends IConnectionBridgeOptionsDefault<
+    TSwarmStoreConnectorDefault,
+    T,
+    TSwarmStoreDatabaseType<TSwarmStoreConnectorDefault>,
+    boolean
+  >,
+  DBO extends TConnectionBridgeOptionsDatabaseOptions<CBO> & {
+    dbType: TConnectionBridgeOptionsDbType<CBO>;
+  } = TConnectionBridgeOptionsDatabaseOptions<CBO> & {
+    dbType: TConnectionBridgeOptionsDbType<CBO>;
+  },
+  T extends TSwarmMessageSerialized = TSwarmMessageSerialized,
+  MD extends ISwarmMessageInstanceDecrypted = ISwarmMessageInstanceDecrypted,
+  CD extends boolean = boolean,
+  SMSM extends ISwarmMessagesDatabaseMessagesCollector<
+    TSwarmStoreConnectorDefault,
+    TConnectionBridgeOptionsDbType<CBO>,
+    MD
+  > = ISwarmMessagesDatabaseMessagesCollector<TSwarmStoreConnectorDefault, TConnectionBridgeOptionsDbType<CBO>, MD>,
+  DCO extends ISwarmMessagesDatabaseCacheOptions<
+    TSwarmStoreConnectorDefault,
+    TConnectionBridgeOptionsDbType<CBO>,
+    MD,
+    SMSM
+  > = ISwarmMessagesDatabaseCacheOptions<TSwarmStoreConnectorDefault, TConnectionBridgeOptionsDbType<CBO>, MD, SMSM>,
+  DCCRT extends ISwarmMessagesDatabaseCache<
+    TSwarmStoreConnectorDefault,
+    T,
+    TConnectionBridgeOptionsDbType<CBO>,
+    DBO,
+    MD,
+    SMSM
+  > = ISwarmMessagesDatabaseCache<TSwarmStoreConnectorDefault, T, TConnectionBridgeOptionsDbType<CBO>, DBO, MD, SMSM>,
+  SMDCC extends ISwarmMessagesDatabaseCacheConstructor<
+    TSwarmStoreConnectorDefault,
+    T,
+    TConnectionBridgeOptionsDbType<CBO>,
+    DBO,
+    MD,
+    SMSM,
+    DCO,
+    DCCRT
+  > = ISwarmMessagesDatabaseCacheConstructor<
+    TSwarmStoreConnectorDefault,
+    T,
+    TConnectionBridgeOptionsDbType<CBO>,
+    DBO,
+    MD,
+    SMSM,
+    DCO,
+    DCCRT
+  >
+> = IConnectToSwarmOrbitDbWithChannelsConstructorOptions<
+  TSwarmStoreDatabaseType<TSwarmStoreConnectorDefault>,
+  T,
+  DBO,
+  CD,
+  CBO,
+  MD,
+  SMSM,
+  DCO,
+  DCCRT,
+  SMDCC
+>;
