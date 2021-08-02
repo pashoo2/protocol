@@ -28,7 +28,7 @@
     "lint:staged": "eslint . --quiet --ignore-path .gitignore --cache --ext .js,.jsx,.ts,.tsx --ignore-pattern \"*.test.*\" --ignore-pattern '/__test__/*' --ignore-pattern '/docs/*' --ignore-pattern '/module-build/*' --ignore-pattern '/src/utils/ipfs-utils'",
     "launch:chromium:unsecure": "google-chrome --disable-web-security --allow-file-access-from-files --user-data-dir=\"/tmp/chromium_tmp\"",
     "docs:generate": "typedoc --out docs src",
-    "build:decentralized-protocol": "npm run build:module"
+    "build:package": "rm -rf decentralized-protocol && npm run build:module"
   },
   "main": "src/index.ts",
   "lint-staged": {

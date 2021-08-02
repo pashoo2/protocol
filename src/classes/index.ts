@@ -23,3 +23,5 @@ export * from './swarm-messages-channels';
 export * from './swarm-messages-database';
 
 export * from './swarm-message-encrypted-cache';
+
+export * from './connection-helpers';

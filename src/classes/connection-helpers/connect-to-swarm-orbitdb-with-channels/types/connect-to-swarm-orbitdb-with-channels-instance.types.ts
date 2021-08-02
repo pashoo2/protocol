@@ -29,6 +29,8 @@ import {
 } from './connect-to-swarm-orbitdb-with-channels-constructor.types';
 import { IConnectToSwarmOrbitDbWithChannelsStateListener } from 'classes/connection-helpers/connect-to-swarm-orbitdb-with-channels/types/connect-to-swarm-orbitdb-with-channels-change-listeners.types';
 import { IConnectToSwarmOrbitDbWithChannelsDatabaseSwarmMessagesListUpdateListener } from './connect-to-swarm-orbitdb-with-channels-change-listeners.types';
+import { TConnectionBridgeOptionsDatabaseOptions } from 'classes/connection-bridge';
+import { TConnectionBridgeOptionsDbType } from '../../../connection-bridge/types/connection-bridge.types-helpers/connection-bridge-options.types-helpers';
 
 export interface IConnectionToSwarmWithChannels<
   DbType extends TSwarmStoreDatabaseType<TSwarmStoreConnectorDefault>,
@@ -167,3 +169,20 @@ export interface IConnectionToSwarmWithChannelsConstructor<
     configuration: IConnectToSwarmOrbitDbWithChannelsConstructorOptions<DbType, T, DBO, CD, CBO, MD, SMSM, DCO, DCCRT, SMDCC>
   ): IConnectionToSwarmWithChannels<DbType, T, DBO, CD, CBO, MD>;
 }
+
+export type TConnectionToSwarmWithChannelsByConnectionBridgeOptions<
+  CBO extends IConnectionBridgeOptionsDefault<
+    TSwarmStoreConnectorDefault,
+    T,
+    TSwarmStoreDatabaseType<TSwarmStoreConnectorDefault>,
+    boolean
+  >,
+  DBO extends TConnectionBridgeOptionsDatabaseOptions<CBO> & {
+    dbType: TConnectionBridgeOptionsDbType<CBO>;
+  } = TConnectionBridgeOptionsDatabaseOptions<CBO> & {
+    dbType: TConnectionBridgeOptionsDbType<CBO>;
+  },
+  T extends TSwarmMessageSerialized = TSwarmMessageSerialized,
+  MD extends ISwarmMessageInstanceDecrypted = ISwarmMessageInstanceDecrypted,
+  CD extends boolean = boolean
+> = IConnectionToSwarmWithChannels<TSwarmStoreDatabaseType<TSwarmStoreConnectorDefault>, T, DBO, CD, CBO, MD>;

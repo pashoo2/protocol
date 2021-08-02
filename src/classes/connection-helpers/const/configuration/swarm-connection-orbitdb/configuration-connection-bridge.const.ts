@@ -30,8 +30,8 @@ import { connectionBridgeSwarmStoreConnectorDatabasesPersistentListFabricDefault
 import { swarmMessageStoreInstanceFabricWithSwarmStoreFabricAndOptionsSerializer } from 'classes/connection-bridge/connection-bridge-utils-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-swarm-store-fabrics';
 import { asyncValidateVerboseBySchemaWithVoidResult } from 'utils/validation-utils/validation-utils';
 
-import { CONFIGURATION_USER_OPTIONS_DEFAULT } from './configuration-user.const';
-import { CONFIGURATION_AUTHORIZATION_FIREBASE_AUTH_PROVIDER_OPTIONS_DEFAULT } from './configuration-authorization.const';
+import { CONFIGURATION_USER_OPTIONS_DEFAULT } from '../central-authority/configuration-user.const';
+import { CONFIGURATION_AUTHORIZATION_FIREBASE_AUTH_PROVIDER_OPTIONS_DEFAULT } from '../central-authority/configuration-authorization.const';
 
 export const CONFIGURATION_CONNECTION_BRIDGE_NATIVE_CONNECTION_OPTIONS_DEFAULT: TNativeConnectionOptions<
   typeof CONFIGURATION_DEFAULT_DATABASE_CONNECTOR_DEFAULT
