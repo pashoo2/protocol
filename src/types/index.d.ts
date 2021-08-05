@@ -21,3 +21,15 @@ export * from './orbit-db-keystore';
 export * from './users.types';
 
 export * from './orbit-db-address';
+
+export * from './users.types';
+
+export * from './swarm-store-connector.types';
+
+export * from './storage.types';
+
+export * from './serialization.types';
+
+export * from './promise.types';
+
+export * from './credentials.types';
