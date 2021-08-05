@@ -148,7 +148,7 @@ export interface IConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditional
  * @template SMDCC
  */
 export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaWithDBOViaHelpers<
-  DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE | ESwarmStoreConnectorOrbitDbDatabaseType.FEED,
+  DbType extends TSwarmStoreDatabaseType<TSwarmStoreConnectorDefault>,
   DBO extends TSwarmStoreDatabaseOptions<TSwarmStoreConnectorDefault, T, DbType>,
   CBO extends IConnectionBridgeOptionsDefault<
     TSwarmStoreConnectorDefault,
@@ -338,18 +338,7 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
     return connectionHelperOptions;
   }
 
-  protected _createAndReturnConnectionToSwarmWithChannelsInstance(): ConnectionToSwarmWithChannels<
-    DbType,
-    T,
-    DBO,
-    CD,
-    CBO,
-    MD,
-    SMSM,
-    DCO,
-    DCCRT,
-    SMDCC
-  > {
+  protected _createAndReturnConnectionToSwarmWithChannelsInstance(): IConnectionToSwarmWithChannels<DbType, T, DBO, CD, CBO, MD> {
     const constructorOptions = this._getConnectToSwarmOrbitDbWithChannelsConstructorOptions();
     const connectionToSwarmWithChannels = new ConnectionToSwarmWithChannels(constructorOptions);
 
@@ -359,7 +348,7 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
   }
 
   protected _setInStateConnectionToSwarmWithChannels(
-    connectionToSwarmWithChannels: ConnectionToSwarmWithChannels<DbType, T, DBO, CD, CBO, MD, SMSM, DCO, DCCRT, SMDCC>
+    connectionToSwarmWithChannels: IConnectionToSwarmWithChannels<DbType, T, DBO, CD, CBO, MD>
   ): void {
     this.setState({
       connectionToSwarmWithChannelsOrUndefined: connectionToSwarmWithChannels,
