@@ -101,6 +101,16 @@ export interface ICentralAuthority {
    */
   disconnect(): Promise<Error | void>;
   /**
+   * Update user profile and return an updated profile
+   *
+   * @param {Partial<ICentralAuthorityUserProfile>} profile
+   * @returns {(Promise<ICentralAuthorityUserProfile | Error>)}
+   * @memberof ICentralAuthority
+   */
+  updateUserProfileAndReturnUpdated(
+    profile: Partial<ICentralAuthorityUserProfile>
+  ): Promise<ICentralAuthorityUserProfile | Error>;
+  /**
    * returns a crypto credentials by the user identity.
    * Credentials received form an existing connection
    * to an auth provider, specified by the user identity.

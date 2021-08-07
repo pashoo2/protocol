@@ -98,6 +98,9 @@ export interface ICAConnectionPool {
   ): Promise<Error | ICAConnection>;
   // disconnect from the auth provider service
   disconnect(authProviderUrl: TCAAuthProviderIdentity): Promise<Error | void>;
+  updateUserProfileAndReturnUpdated(
+    profile: Partial<ICentralAuthorityUserProfile>
+  ): Promise<ICentralAuthorityUserProfile | Error>;
   // disconnect from all the connected providers
   close(): Promise<Error | void>;
   // sign out from the service currently authorized throught

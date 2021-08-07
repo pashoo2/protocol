@@ -33,7 +33,7 @@ import { IConnectToSwarmOrbitDbWithChannelsStateListener } from 'classes/connect
 import { IConnectToSwarmOrbitDbWithChannelsDatabaseSwarmMessagesListUpdateListener } from './connect-to-swarm-orbitdb-with-channels-change-listeners.types';
 import { TConnectionBridgeOptionsDatabaseOptions } from 'classes/connection-bridge';
 import { TConnectionBridgeOptionsDbType } from '../../../connection-bridge/types/connection-bridge.types-helpers/connection-bridge-options.types-helpers';
-import { ICentralAuthorityUser } from 'classes/central-authority-class';
+import { ICentralAuthorityUserProfile } from 'classes/central-authority-class';
 
 export interface IConnectionToSwarmWithChannels<
   DbType extends TSwarmStoreDatabaseType<TSwarmStoreConnectorDefault>,
@@ -60,9 +60,10 @@ export interface IConnectionToSwarmWithChannels<
    */
   connectToSwarm(
     userCredentials?: TConnectionBridgeOptionsAuthCredentialsWithAuthProvider,
-    userProfile?: ICentralAuthorityUser
+    userProfile?: Partial<ICentralAuthorityUserProfile>
   ): Promise<void>;
 
+  updateUserCentralAuthorityProfile(userProfile: Partial<ICentralAuthorityUserProfile>): Promise<void>;
   /**
    * Connect to an instance that allows to share information about messaging channels
    * available within this channels list.
@@ -189,4 +190,8 @@ export type TConnectionToSwarmWithChannelsByConnectionBridgeOptions<
   T extends TSwarmMessageSerialized = TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted = ISwarmMessageInstanceDecrypted,
   CD extends boolean = boolean
-> = IConnectionToSwarmWithChannels<TSwarmStoreDatabaseType<TSwarmStoreConnectorDefault>, T, DBO, CD, CBO, MD>;
+> = IConnectionToSwarmWithChannels<TSwarmStoreDatabaseType<TSwarmStoreConnectorDefault>, T, DBO, CD, CBO, MD> & {
+  readonly state: Readonly<
+    Partial<IConnectToSwarmOrbitDbWithChannelsState<TSwarmStoreDatabaseType<TSwarmStoreConnectorDefault>, T, DBO, CBO>>
+  >;
+};

@@ -332,13 +332,44 @@ export class CAConnectionsPool implements ICAConnectionPool {
    *
    * @memberof CAConnectionsPool
    */
-  public getCAUserProfile = async () => {
+  public getCAUserProfile = async (): Promise<Partial<ICentralAuthorityUserProfile> | Error> => {
+    try {
+      const connection = this._getConnectionToCentralAuthority();
+      return await connection.getCAUserProfile();
+    } catch (err) {
+      return err;
+    }
+  };
+
+  /**
+   * Update user profile and return an updated profile
+   *
+   * @param {Partial<ICentralAuthorityUserProfile>} profile
+   * @returns {(Promise<ICentralAuthorityUserProfile | Error>)}
+   * @memberof ICentralAuthority
+   */
+  async updateUserProfileAndReturnUpdated(
+    profile: Partial<ICentralAuthorityUserProfile>
+  ): Promise<ICentralAuthorityUserProfile | Error> {
+    try {
+      const connection = this._getConnectionToCentralAuthority();
+      return await connection.updateUserProfileAndReturnUpdated(profile);
+    } catch (err) {
+      return err;
+    }
+  }
+
+  protected _getConnectionToCentralAuthority(): ICAConnection {
     const authConnection = this.authConnection;
     if (!authConnection) {
-      return;
+      throw new Error('There is no authorized connection');
     }
-    return authConnection.connection?.getCAUserProfile();
-  };
+    const { connection } = authConnection;
+    if (!connection) {
+      throw new Error('There is no authorized connection');
+    }
+    return connection;
+  }
 
   /**
    * set the auth result and check the auth provider
