@@ -1,6 +1,5 @@
 import { TConnectionBridgeOptionsDatabaseOptions, TConnectionBridgeOptionsDbType } from 'classes/connection-bridge';
 import { IConnectionBridgeOptionsDefault } from 'classes/connection-bridge/types/connection-bridge.types';
-import { DbType } from 'classes/connection-bridge/types/connection-bridge.types-helpers/connection-bridge-storage-options.types.helpers';
 import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from 'classes/swarm-message';
 import {
   ISwarmMessagesDatabaseCache,

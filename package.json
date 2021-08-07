@@ -1,6 +1,6 @@
 {
   "name": "@local/decentralized-protocol",
-  "version": "0.2.4",
+  "version": "0.2.6",
   "private": true,
   "scripts": {
     "prebuild": "cp src/index.ts ../__test__.index.ts && cp src/prod.ts src/index.ts",
