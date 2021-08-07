@@ -1,4 +1,7 @@
-import { IConnectionBridgeOptionsDefault } from 'classes/connection-bridge/types/connection-bridge.types';
+import {
+  IConnectionBridgeOptionsDefault,
+  TConnectionBridgeOptionsAuthCredentialsWithAuthProvider,
+} from 'classes/connection-bridge/types/connection-bridge.types';
 import { IConnectToSwarmOrbitDbWithChannelsState } from 'classes/connection-helpers/connect-to-swarm-orbitdb-with-channels/types/connect-to-swarm-orbitdb-with-channels-state.types';
 import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from 'classes/swarm-message';
 import {
@@ -12,7 +15,6 @@ import {
   TSwarmStoreDatabaseOptions,
   TSwarmStoreDatabaseType,
 } from 'classes/swarm-store-class';
-import { IUserCredentialsCommon } from 'types/credentials.types';
 import {
   ISwarmMessagesChannelsListDescription,
   TSwarmMessagesChannelsListDbType,
@@ -31,6 +33,7 @@ import { IConnectToSwarmOrbitDbWithChannelsStateListener } from 'classes/connect
 import { IConnectToSwarmOrbitDbWithChannelsDatabaseSwarmMessagesListUpdateListener } from './connect-to-swarm-orbitdb-with-channels-change-listeners.types';
 import { TConnectionBridgeOptionsDatabaseOptions } from 'classes/connection-bridge';
 import { TConnectionBridgeOptionsDbType } from '../../../connection-bridge/types/connection-bridge.types-helpers/connection-bridge-options.types-helpers';
+import { ICentralAuthorityUser } from 'classes/central-authority-class';
 
 export interface IConnectionToSwarmWithChannels<
   DbType extends TSwarmStoreDatabaseType<TSwarmStoreConnectorDefault>,
@@ -51,11 +54,14 @@ export interface IConnectionToSwarmWithChannels<
   /**
    * Create an active connection to the swarm
    *
-   * @param {IUserCredentialsCommon} [userCredentials] - ??? credentials are not necessary only if there is a session exists for the user
+   * @param {TConnectionBridgeOptionsAuthCredentialsWithAuthProvider} [userCredentials] - ??? credentials are not necessary only if there is a session exists for the user
    * @returns {Promise<void>}
    * @memberof IConnectionToSwarmWithChannels
    */
-  connectToSwarm(userCredentials?: IUserCredentialsCommon): Promise<void>;
+  connectToSwarm(
+    userCredentials?: TConnectionBridgeOptionsAuthCredentialsWithAuthProvider,
+    userProfile?: ICentralAuthorityUser
+  ): Promise<void>;
 
   /**
    * Connect to an instance that allows to share information about messaging channels
@@ -72,7 +78,6 @@ export interface IConnectionToSwarmWithChannels<
    *             ISwarmStoreDBOGrandAccessCallbackBaseContext,
    *             TSwarmStoreDatabaseOptions<TSwarmStoreConnectorDefault, T, TSwarmMessagesChannelsListDbType>
    *         >} channelsListDatabaseOptions
-   * @param {IUserCredentialsCommon} [userCredentials]
    * @returns {Promise<void>}
    * @memberof IConnectionToSwarmWithChannels
    */
@@ -84,8 +89,7 @@ export interface IConnectionToSwarmWithChannels<
       MD,
       ISwarmStoreDBOGrandAccessCallbackBaseContext,
       TSwarmStoreDatabaseOptions<TSwarmStoreConnectorDefault, T, TSwarmMessagesChannelsListDbType>
-    >,
-    userCredentials?: IUserCredentialsCommon
+    >
   ): Promise<void>;
 
   /**
