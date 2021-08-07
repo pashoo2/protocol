@@ -47,6 +47,10 @@ export type TConnectionBridgeOptionsAuthCredentials = {
   password: string | undefined;
 };
 
+export interface TConnectionBridgeOptionsAuthCredentialsWithAuthProvider extends TConnectionBridgeOptionsAuthCredentials {
+  providerUrl: ICentralAuthorityOptions['user']['authProviderUrl'];
+}
+
 export type TConnectionBridgeCFODefault<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,

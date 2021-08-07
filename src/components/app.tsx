@@ -9,6 +9,7 @@ import {
 } from './const/connect-to-swarm-immediate.const';
 import {
   CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_WITH_STORE_META_OPTIONS,
+  CONNECT_TO_SWARM_AUTH_PROVIDERS,
   CONNECT_TO_SWARM_CONNECTION_WITH_STORE_META_OPTIONS,
 } from './const/connect-to-swarm.const';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
@@ -97,7 +98,16 @@ export class App extends React.Component {
       userToConnectWith === '1' ? CONNECT_TO_SWARM_AUTH_CREDENTIALS_1 : CONNECT_TO_SWARM_AUTH_CREDENTIALS_2;
     const userIdReceiverMessages =
       userToConnectWith === '1' ? CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_2 : CONNECT_TO_SWARM_AUTH_CREDENTIALS_USEDID_1;
-    if (process.env.NODE_ENV === 'development') debugger;
+    const centralAuthorityUrl =
+      userToConnectWith === '1'
+        ? CONNECT_TO_SWARM_AUTH_PROVIDERS.FIREBASE_WATCHA
+        : CONNECT_TO_SWARM_AUTH_PROVIDERS.FIREBASE_WATCHA;
+    const userCentralAuthorityCredentials = {
+      //...userToConnectWithCredentials,
+      login: 'folafop844@1uscare.com',
+      password: 'fdkjsfieorjfkld;ngm,bvcnx',
+      providerUrl: centralAuthorityUrl,
+    };
     // return (
     //   <ConnectToSwarmWithAdditionalMetaWithDBO<
     //     typeof CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_KEY_VALUE['dbType'],
@@ -146,8 +156,7 @@ export class App extends React.Component {
       >
         connectionHelperOptions={CONNECT_TO_SWARM_HELPER_OPTIONS}
         dbo={CONNECT_TO_SWARM_IMMEDIATE_DATABASE_OPTIONS_SWARM_CHANNELS_LIST}
-        userCredentialsList={[userToConnectWithCredentials]}
-        userCredentialsToConnectImmediate={userToConnectWithCredentials}
+        userCredentials={userCentralAuthorityCredentials}
         userIdReceiverSwarmMessages={userIdReceiverMessages}
         swarmMessagesChannelsListDescription={SWARM_CHANNELS_LIST_DESCRIPTION}
         swarmChannelsListDatabaseOptions={CONFIGURATION_DEFAULT_SWARM_CHANNELS_LIST_DATABASE_OPTIONS}

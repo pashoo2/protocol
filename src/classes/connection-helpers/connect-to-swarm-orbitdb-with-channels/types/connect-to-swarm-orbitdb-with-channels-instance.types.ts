@@ -1,4 +1,7 @@
-import { IConnectionBridgeOptionsDefault } from 'classes/connection-bridge/types/connection-bridge.types';
+import {
+  IConnectionBridgeOptionsDefault,
+  TConnectionBridgeOptionsAuthCredentialsWithAuthProvider,
+} from 'classes/connection-bridge/types/connection-bridge.types';
 import { IConnectToSwarmOrbitDbWithChannelsState } from 'classes/connection-helpers/connect-to-swarm-orbitdb-with-channels/types/connect-to-swarm-orbitdb-with-channels-state.types';
 import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from 'classes/swarm-message';
 import {
@@ -12,7 +15,6 @@ import {
   TSwarmStoreDatabaseOptions,
   TSwarmStoreDatabaseType,
 } from 'classes/swarm-store-class';
-import { IUserCredentialsCommon } from 'types/credentials.types';
 import {
   ISwarmMessagesChannelsListDescription,
   TSwarmMessagesChannelsListDbType,
@@ -29,6 +31,9 @@ import {
 } from './connect-to-swarm-orbitdb-with-channels-constructor.types';
 import { IConnectToSwarmOrbitDbWithChannelsStateListener } from 'classes/connection-helpers/connect-to-swarm-orbitdb-with-channels/types/connect-to-swarm-orbitdb-with-channels-change-listeners.types';
 import { IConnectToSwarmOrbitDbWithChannelsDatabaseSwarmMessagesListUpdateListener } from './connect-to-swarm-orbitdb-with-channels-change-listeners.types';
+import { TConnectionBridgeOptionsDatabaseOptions } from 'classes/connection-bridge';
+import { TConnectionBridgeOptionsDbType } from '../../../connection-bridge/types/connection-bridge.types-helpers/connection-bridge-options.types-helpers';
+import { ICentralAuthorityUser } from 'classes/central-authority-class';
 
 export interface IConnectionToSwarmWithChannels<
   DbType extends TSwarmStoreDatabaseType<TSwarmStoreConnectorDefault>,
@@ -44,7 +49,19 @@ export interface IConnectionToSwarmWithChannels<
    * @type {Readonly<IConnectToSwarmOrbitDbWithChannelsState<DbType, T, DBO, CBO>>}
    * @memberof IConnectionToSwarmWithChannels
    */
-  state: Readonly<Partial<IConnectToSwarmOrbitDbWithChannelsState<DbType, T, DBO, CBO>>>;
+  readonly state: Readonly<Partial<IConnectToSwarmOrbitDbWithChannelsState<DbType, T, DBO, CBO>>>;
+
+  /**
+   * Create an active connection to the swarm
+   *
+   * @param {TConnectionBridgeOptionsAuthCredentialsWithAuthProvider} [userCredentials] - ??? credentials are not necessary only if there is a session exists for the user
+   * @returns {Promise<void>}
+   * @memberof IConnectionToSwarmWithChannels
+   */
+  connectToSwarm(
+    userCredentials?: TConnectionBridgeOptionsAuthCredentialsWithAuthProvider,
+    userProfile?: ICentralAuthorityUser
+  ): Promise<void>;
 
   /**
    * Connect to an instance that allows to share information about messaging channels
@@ -61,7 +78,6 @@ export interface IConnectionToSwarmWithChannels<
    *             ISwarmStoreDBOGrandAccessCallbackBaseContext,
    *             TSwarmStoreDatabaseOptions<TSwarmStoreConnectorDefault, T, TSwarmMessagesChannelsListDbType>
    *         >} channelsListDatabaseOptions
-   * @param {IUserCredentialsCommon} [userCredentials]
    * @returns {Promise<void>}
    * @memberof IConnectionToSwarmWithChannels
    */
@@ -73,8 +89,7 @@ export interface IConnectionToSwarmWithChannels<
       MD,
       ISwarmStoreDBOGrandAccessCallbackBaseContext,
       TSwarmStoreDatabaseOptions<TSwarmStoreConnectorDefault, T, TSwarmMessagesChannelsListDbType>
-    >,
-    userCredentials?: IUserCredentialsCommon
+    >
   ): Promise<void>;
 
   /**
@@ -158,3 +173,20 @@ export interface IConnectionToSwarmWithChannelsConstructor<
     configuration: IConnectToSwarmOrbitDbWithChannelsConstructorOptions<DbType, T, DBO, CD, CBO, MD, SMSM, DCO, DCCRT, SMDCC>
   ): IConnectionToSwarmWithChannels<DbType, T, DBO, CD, CBO, MD>;
 }
+
+export type TConnectionToSwarmWithChannelsByConnectionBridgeOptions<
+  CBO extends IConnectionBridgeOptionsDefault<
+    TSwarmStoreConnectorDefault,
+    T,
+    TSwarmStoreDatabaseType<TSwarmStoreConnectorDefault>,
+    boolean
+  >,
+  DBO extends TConnectionBridgeOptionsDatabaseOptions<CBO> & {
+    dbType: TConnectionBridgeOptionsDbType<CBO>;
+  } = TConnectionBridgeOptionsDatabaseOptions<CBO> & {
+    dbType: TConnectionBridgeOptionsDbType<CBO>;
+  },
+  T extends TSwarmMessageSerialized = TSwarmMessageSerialized,
+  MD extends ISwarmMessageInstanceDecrypted = ISwarmMessageInstanceDecrypted,
+  CD extends boolean = boolean
+> = IConnectionToSwarmWithChannels<TSwarmStoreDatabaseType<TSwarmStoreConnectorDefault>, T, DBO, CD, CBO, MD>;
