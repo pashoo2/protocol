@@ -78,6 +78,16 @@ export interface ICAConnection {
   /** sign in anonymousely to the database */
   signInAnonymousely(): Promise<Error | void>;
   /**
+   * Update profile in central authority
+   *
+   * @param {Partial<ICentralAuthorityUserProfile>} profile
+   * @returns {(Promise<ICentralAuthorityUserProfile | Error>)}
+   * @memberof ICAConnection
+   */
+  updateUserProfileAndReturnUpdated(
+    profile: Partial<ICentralAuthorityUserProfile>
+  ): Promise<ICentralAuthorityUserProfile | Error>;
+  /**
    * authorize with the credentials on
    * the remote central authority.
    * If the user was not signed up before

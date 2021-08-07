@@ -157,6 +157,18 @@ export class CAConnectionWithFirebaseImplementation extends CAConnectionWithFire
     this.setIsAnonymousely();
   }
 
+  public async updateUserProfileAndReturnUpdated(
+    profile: Partial<ICentralAuthorityUserProfile>
+  ): Promise<ICentralAuthorityUserProfile | Error> {
+    if (this.isAnonymousely) {
+      return new Error('Profile updates is not allowed for anonymous connections');
+    }
+    if (!this.checkIfConnected()) {
+      return new Error('Connection is not active');
+    }
+    return await super.updateUserProfileAndReturnUpdated(profile);
+  }
+
   /**
    * return a credentials for the user
    * with the id = userId.
@@ -177,7 +189,7 @@ export class CAConnectionWithFirebaseImplementation extends CAConnectionWithFire
     if (status !== CA_CONNECTION_STATUS.DISCONNECTED) {
       const { connectionWithCredentialsStorage } = this;
 
-      return connectionWithCredentialsStorage.getUserCredentials(userId);
+      return await connectionWithCredentialsStorage.getUserCredentials(userId);
     }
     return new Error('Not connected to the Firebase');
   }
@@ -350,7 +362,7 @@ export class CAConnectionWithFirebaseImplementation extends CAConnectionWithFire
         return new Error('An unknown error has occurred while sign out');
       }
     }
-    return this.disconnectFromTheApp();
+    return await this.disconnectFromTheApp();
   }
 
   public async delete(firebaseCredentials: ICAConnectionSignUpCredentials): Promise<Error | boolean> {
@@ -540,12 +552,12 @@ export class CAConnectionWithFirebaseImplementation extends CAConnectionWithFire
       }
       // if a credentials for the V1 must be generated and set
       if (credentialsForV1 === true) {
-        return this.createOrSetCredentialsInDB(signUpCredentials);
+        return await this.createOrSetCredentialsInDB(signUpCredentials);
       }
     }
     // if the version is not 01, then provide another implementations
     // of the methods to generate and set the crypto credentials
-    return this.createOrSetCredentialsInDB(signUpCredentials, this.generateNewCryptoCredentialsForConfigurationProvidedV2);
+    return await this.createOrSetCredentialsInDB(signUpCredentials, this.generateNewCryptoCredentialsForConfigurationProvidedV2);
   }
 
   /**

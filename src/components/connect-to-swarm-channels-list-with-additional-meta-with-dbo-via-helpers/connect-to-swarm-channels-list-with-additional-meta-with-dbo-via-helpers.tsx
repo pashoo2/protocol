@@ -30,6 +30,7 @@ import {
 import { ESwarmMessagesChannelEventName } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-events.types';
 import { SwarmChannelInstanceComponent } from '../swarm-channel-instance-component/swarm-channel-instance-component';
 import { ICentralAuthorityUser } from '../../classes/central-authority-class/central-authority-class.types';
+import { TConnectionToSwarmWithChannelsByConnectionBridgeOptions } from '../../classes/connection-helpers/connect-to-swarm-orbitdb-with-channels/types/connect-to-swarm-orbitdb-with-channels-instance.types';
 import {
   TSwarmStoreConnectorDefault,
   ConnectionToSwarmWithChannels,

@@ -192,6 +192,12 @@ export class CAConnectionWithFirebaseBase {
     return true;
   }
 
+  public async updateUserProfileAndReturnUpdated(
+    profile: Partial<ICentralAuthorityUserProfile>
+  ): Promise<ICentralAuthorityUserProfile | Error> {
+    return await this.setProfileData(profile);
+  }
+
   public getCAUserProfile = async (): Promise<Partial<ICentralAuthorityUserProfile> | undefined | Error> => {
     if (this.isAuthorized) {
       return this.getCurrentUserProfileData() || undefined;
@@ -290,7 +296,7 @@ export class CAConnectionWithFirebaseBase {
       return credentialsProvidedCheckResult;
     }
 
-    return this.createOrSetCredentialsInDB(signUpCredentials);
+    return await this.createOrSetCredentialsInDB(signUpCredentials);
   }
 
   protected setConnectedStatus(isConnected: false | firebase.app.App) {
@@ -370,7 +376,7 @@ export class CAConnectionWithFirebaseBase {
     if (!this.app) {
       return new Error('The Firebase app is not defined');
     }
-    return new Promise((res) => {
+    return await new Promise((res) => {
       this.app.auth().onAuthStateChanged((user) => {
         if (user && user.email) {
           res(user);
@@ -581,7 +587,7 @@ export class CAConnectionWithFirebaseBase {
   // TODO - test it and change to private method
   protected async setProfileData(profile: Partial<ICentralAuthorityUserProfile>): Promise<Error | ICentralAuthorityUserProfile> {
     if (isEmptyObject(profile)) {
-      return this.getUserProfileData();
+      return await this.getUserProfileData();
     }
     if (!validateUserProfileData(profile)) {
       return new Error('The profile is not valid');
@@ -994,7 +1000,7 @@ export class CAConnectionWithFirebaseBase {
 
   protected async signIn(firebaseCredentials: ICAConnectionSignUpCredentials): Promise<boolean | Error> {
     if (!firebaseCredentials.password && firebaseCredentials.session) {
-      return this.signInWithSessionPersisted();
+      return await this.signInWithSessionPersisted();
     }
 
     const checkSignUpCredentialsResult = this.checkSignUpCredentials(firebaseCredentials);

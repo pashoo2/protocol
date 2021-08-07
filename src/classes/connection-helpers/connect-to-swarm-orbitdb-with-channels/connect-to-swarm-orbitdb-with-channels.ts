@@ -69,7 +69,11 @@ import {
 } from 'classes/connection-bridge/types/connection-bridge.types-helpers';
 import { createSwarmMessagesDatabaseMessagesCollectorInstance } from '../../swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector';
 import { ISerializer } from 'types/serialization.types';
-import { ICentralAuthorityUser, TCentralAuthorityUserIdentity } from 'classes/central-authority-class';
+import {
+  ICentralAuthorityUser,
+  ICentralAuthorityUserProfile,
+  TCentralAuthorityUserIdentity,
+} from 'classes/central-authority-class';
 import { SMS } from 'classes/connection-bridge/types/connection-bridge.types-helpers/connection-bridge-storage-options.types.helpers';
 import { getDatabaseConnectionByDatabaseOptionsFabricWithKvMessagesUpdatesQueuedHandling } from '../../swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-constructor-arguments-fabrics/swarm-messages-channels-list-v1-database-connection-fabrics/swarm-messages-channels-list-v1-database-connection-fabric-with-kv-messages-updates-queued-handling';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
@@ -160,8 +164,16 @@ export class ConnectionToSwarmWithChannels<
     >
   ) {}
 
-  public async connectToSwarm(userCredentials?: TConnectionBridgeOptionsAuthCredentialsWithAuthProvider): Promise<void> {
-    await this._connectToSwarmIfNotConnected(userCredentials);
+  public async connectToSwarm(
+    userCredentials?: TConnectionBridgeOptionsAuthCredentialsWithAuthProvider,
+    userProfile?: Partial<ICentralAuthorityUserProfile>
+  ): Promise<void> {
+    await this._connectToSwarmIfNotConnected(userCredentials, userProfile);
+  }
+
+  public async updateUserCentralAuthorityProfile(userProfile: Partial<ICentralAuthorityUserProfile>): Promise<void> {
+    const { centralAuthorityConnection } = this._getActiveConnectionBridgeInstance();
+    await centralAuthorityConnection.updateUserProfileAndReturnUpdated(userProfile);
   }
 
   public async connectToSwarmChannelsList(
@@ -230,7 +242,7 @@ export class ConnectionToSwarmWithChannels<
 
   protected _getOptionsForConnectionBridgeInstance(
     userCredentials?: TConnectionBridgeOptionsAuthCredentialsWithAuthProvider,
-    userProfile?: ICentralAuthorityUser
+    userProfile?: Partial<ICentralAuthorityUserProfile>
   ): CBO {
     const { connectionBridgeOptions } = this.__configuration;
     return {
@@ -252,7 +264,7 @@ export class ConnectionToSwarmWithChannels<
 
   protected async _connectToSwarm(
     userCredentials?: TConnectionBridgeOptionsAuthCredentialsWithAuthProvider,
-    userProfile?: ICentralAuthorityUser
+    userProfile?: Partial<ICentralAuthorityUserProfile>
   ): Promise<void> {
     const currentState = this.state;
 
@@ -306,12 +318,13 @@ export class ConnectionToSwarmWithChannels<
   }
 
   protected async _connectToSwarmIfNotConnected(
-    userCredentials?: TConnectionBridgeOptionsAuthCredentialsWithAuthProvider
+    userCredentials?: TConnectionBridgeOptionsAuthCredentialsWithAuthProvider,
+    userProfile?: Partial<ICentralAuthorityUserProfile>
   ): Promise<void> {
     if (this.isConnectedToSwarm) {
       return;
     }
-    return await this._connectToSwarm(userCredentials);
+    return await this._connectToSwarm(userCredentials, userProfile);
   }
 
   protected async _createConnectionBridgeInstance(
