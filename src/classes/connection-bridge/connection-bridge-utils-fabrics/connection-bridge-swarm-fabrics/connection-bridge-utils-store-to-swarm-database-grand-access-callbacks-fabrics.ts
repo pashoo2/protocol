@@ -3,7 +3,7 @@ import { TSwarmMessageUserIdentifierSerialized } from '../../../central-authorit
 import { ICentralAuthority } from '../../../central-authority-class/central-authority-class.types';
 import { getSwarmStoreConectorDbOptionsGrandAccessContextClass } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-options/swarm-store-connector-options-grand-access-context/swarm-store-conector-db-options-grand-access-context-base-class/swarm-store-conector-db-options-grand-access-context-class';
 import { ConstructorType } from '../../../../types/helper.types';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 import { JSONSchema7 } from 'json-schema';
 
 /**

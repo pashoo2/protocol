@@ -6,7 +6,7 @@ import {
   TSwarmStoreDatabaseType,
 } from '../../swarm-store-class';
 import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from '../../swarm-message';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 import { ISwarmMessageChannelDescriptionRaw } from './swarm-messages-channel-instance.types';
 import { JSONSchema7 } from 'json-schema';
 import { TSwarmStoreDatabaseEntityKey } from '../../swarm-store-class/swarm-store-class.types';

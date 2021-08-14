@@ -75,8 +75,8 @@ export interface ICAConnection {
    * @memberof ICAConnection
    */
   connect(configuration: ICAConnectionConfigurationFirebase): Promise<boolean | Error>;
-  /** sign in anonymousely to the database */
-  signInAnonymousely(): Promise<Error | void>;
+  /** sign in anonymously to the database */
+  signInAnonymously(): Promise<Error | void>;
   /**
    * Update profile in central authority
    *

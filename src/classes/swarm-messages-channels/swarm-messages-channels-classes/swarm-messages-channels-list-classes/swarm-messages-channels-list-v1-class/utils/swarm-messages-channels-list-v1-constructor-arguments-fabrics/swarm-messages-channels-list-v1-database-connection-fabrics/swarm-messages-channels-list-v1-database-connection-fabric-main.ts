@@ -8,7 +8,7 @@ import {
   TSwarmStoreConnectorConnectionOptions,
 } from '../../../../../../../swarm-store-class/index';
 import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from '../../../../../../../swarm-message/index';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 import {
   ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric,
   TSwrmMessagesChannelsListDBOWithGrantAccess,

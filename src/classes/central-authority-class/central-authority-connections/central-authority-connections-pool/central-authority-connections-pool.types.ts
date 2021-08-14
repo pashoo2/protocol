@@ -81,14 +81,14 @@ export interface ICAConnectionPool {
    *
    *
    * @param {TCAAuthProviderIdentity} authProviderUrl
-   * @param {boolean} [isAuthentificateAnonymousely = true] - authentificate without credentials
+   * @param {boolean} [isAuthentificateAnonymously = true] - authentificate without credentials
    * @returns {(Promise<Error | ICAConnection>)}
    * @memberof ICAConnectionPool
    */
   connect(
     authProviderUrl: TCAAuthProviderIdentity,
 
-    isAuthentificateAnonymousely?: boolean
+    isAuthentificateAnonymously?: boolean
   ): Promise<Error | ICAConnection>;
   // authorize on the auth provider service or return an existing connection authorized on
   authorize(

@@ -6,7 +6,11 @@ import {
   IConnectionBridgeOptionsDefault,
   TConnectionBridgeOptionsAuthCredentials,
 } from 'classes/connection-bridge/types/connection-bridge.types';
-import { IConnectToSwarmOrbitDbWithChannelsState } from 'classes/connection-helpers/connect-to-swarm-orbitdb-with-channels/types/connect-to-swarm-orbitdb-with-channels-state.types';
+import {
+  IConnectToSwarmOrbitDbWithChannelsState,
+  TSwarmChannelsListGeneral,
+  TSwarmChannelsListId,
+} from 'classes/connection-helpers/connect-to-swarm-orbitdb-with-channels/types/connect-to-swarm-orbitdb-with-channels-state.types';
 import { CONFIGURATION_CONNECTION_DATABASE_STORAGE_OPTIONS_DEFAULT } from 'classes/connection-helpers/const/configuration/swarm-connection-orbitdb/configuration-database-storage.const';
 import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from 'classes/swarm-message';
 import {
@@ -37,7 +41,10 @@ import {
 import { TConnectionBridgeByOptions } from 'classes/connection-bridge/types/connection-bridge.types-helpers/connection-bridge.types.helpers';
 import { ESwarmMessageStoreEventNames, ISwarmMessageStore } from 'classes/swarm-message-store';
 import { TConnectToSwarmOrbitDbSwarmMessagesList } from 'classes/connection-helpers/connect-to-swarm-orbitdb-with-channels/types/connect-to-swarm-orbitdb-with-channels-state.types';
-import { IConnectToSwarmOrbitDbSwarmMessageDescription } from './types/connect-to-swarm-orbitdb-with-channels-state.types';
+import {
+  IConnectToSwarmOrbitDbSwarmMessageDescription,
+  TSwarmChannelGeneral,
+} from './types/connect-to-swarm-orbitdb-with-channels-state.types';
 import {
   IConnectToSwarmOrbitDbWithChannelsDatabaseSwarmMessagesListUpdateListener,
   IConnectToSwarmOrbitDbWithChannelsDatabaseSwarmMessagesListUpdateListenerParameter,
@@ -69,14 +76,10 @@ import {
 } from 'classes/connection-bridge/types/connection-bridge.types-helpers';
 import { createSwarmMessagesDatabaseMessagesCollectorInstance } from '../../swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector';
 import { ISerializer } from 'types/serialization.types';
-import {
-  ICentralAuthorityUser,
-  ICentralAuthorityUserProfile,
-  TCentralAuthorityUserIdentity,
-} from 'classes/central-authority-class';
+import { ICentralAuthorityUserProfile, TCentralAuthorityUserIdentity } from 'classes/central-authority-class';
 import { SMS } from 'classes/connection-bridge/types/connection-bridge.types-helpers/connection-bridge-storage-options.types.helpers';
 import { getDatabaseConnectionByDatabaseOptionsFabricWithKvMessagesUpdatesQueuedHandling } from '../../swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-constructor-arguments-fabrics/swarm-messages-channels-list-v1-database-connection-fabrics/swarm-messages-channels-list-v1-database-connection-fabric-with-kv-messages-updates-queued-handling';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 import {
   ISwarmMessagesChannelsListDescription,
   TSwarmMessagesChannelsListDbType,
@@ -85,7 +88,10 @@ import {
 import { getSwarmMessagesChannelsListVersionOneInstanceWithDefaultParameters } from '../../swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-instance-fabrics/swarm-messages-channels-list-v1-instance-fabric-default';
 import { IConnectToSwarmOrbitDbWithChannelsStateListener } from './types/connect-to-swarm-orbitdb-with-channels-change-listeners.types';
 import { CONFIGURATION_DEFAULT_DATABASE_CONNECTOR_DEFAULT } from 'classes/connection-helpers/const/configuration/swarm-connection-orbitdb/configuration-database.const';
-import { ISwarmMessagesChannelConstructorOptions } from '../../swarm-messages-channels/types/swarm-messages-channel-instance.types';
+import {
+  ISwarmMessagesChannelConstructorOptions,
+  TSwarmMessagesChannelId,
+} from '../../swarm-messages-channels/types/swarm-messages-channel-instance.types';
 import { ISwarmMessagesDatabaseConnectOptions } from 'classes/swarm-messages-database/swarm-messages-database.types';
 import { createSwarmMessagesDatabaseMessagesCollectorWithStoreMetaInstance } from 'classes/swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector-with-store-meta';
 import { getSwarmMessagesDatabaseWithKVDbMessagesUpdatesConnectorInstanceFabric } from '../../swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/utils/swarm-messages-channel-v1-constructor-options-default-utils/utils/swarm-messages-channel-v1-constructor-options-default-utils-database-connector-fabrics';
@@ -190,10 +196,13 @@ export class ConnectionToSwarmWithChannels<
       channelsListDescription,
       channelsListDatabaseOptions
     );
+    const { swarmChannelsListsInstances } = this.state;
+    const { id } = channelsListDescription;
 
+    swarmChannelsListsInstances.set(id, swarmMessagesChannelsList);
     this._setListenerSwarmMessagesChannelsListClosed(swarmMessagesChannelsList);
     this._updateState({
-      swarmMessagesChannelsList,
+      swarmChannelsListsInstances,
     });
   }
 
@@ -203,16 +212,20 @@ export class ConnectionToSwarmWithChannels<
       TSwarmMessageSerialized,
       ESwarmStoreConnectorOrbitDbDatabaseType,
       TSwarmStoreDatabaseOptions<TSwarmStoreConnectorDefault, TSwarmMessageSerialized, ESwarmStoreConnectorOrbitDbDatabaseType>
-    >
+    >,
+    swarmChannelsListId: TSwarmChannelsListId
   ): Promise<TSwarmMessagesChannelAnyByChannelDescriptionRaw<typeof swarmMessageChannelDescriptionRaw>> {
-    const { swarmMessagesChannelsList } = this.state;
-    if (!swarmMessagesChannelsList) {
-      throw new Error('Swarm messages channels list instance should be exists');
+    const swarmMessagesChannelsListOrUndefined = this._getChannelsListById(swarmChannelsListId);
+
+    if (!swarmMessagesChannelsListOrUndefined) {
+      throw new Error('Swarm channels list is not found');
     }
     const swarmMessagesChanelInstance = await this._createSwarmMessagesChannelInstanceAndConnect(
-      swarmMessagesChannelsList as ISwarmMessagesChannelsDescriptionsList<TSwarmStoreConnectorDefault, T, MD>,
+      swarmMessagesChannelsListOrUndefined as ISwarmMessagesChannelsDescriptionsList<TSwarmStoreConnectorDefault, T, MD>,
       swarmMessageChannelDescriptionRaw
     );
+
+    this._setOrUnsetSwarmChannelInstanceListeners(swarmMessagesChanelInstance);
     return swarmMessagesChanelInstance;
   }
 
@@ -306,7 +319,7 @@ export class ConnectionToSwarmWithChannels<
         connectionBridge,
         userId,
         databasesList: databasesList as unknown as IConnectToSwarmOrbitDbWithChannelsState<DbType, T, DBO, CBO>['databasesList'],
-        userProfileData,
+        userCentralAuthorityProfileData: userProfileData,
       });
       this._setListenersConnectionBridge(connectionBridge);
     } catch (err) {
@@ -950,9 +963,16 @@ export class ConnectionToSwarmWithChannels<
   protected _handleDatabasesListClosed(
     swarmMessagesChannelsList: ISwarmMessagesChannelsDescriptionsList<TSwarmStoreConnectorDefault, T, MD>
   ): void {
-    if (this.state.swarmMessagesChannelsList === swarmMessagesChannelsList) {
+    const { description } = swarmMessagesChannelsList;
+    const { id } = description;
+    const swarmChannelsList = this._getChannelsListById(id);
+
+    if (swarmChannelsList === swarmMessagesChannelsList) {
+      const { swarmChannelsListsInstances } = this.state;
+
+      swarmChannelsListsInstances.delete(id);
       this._updateState({
-        swarmMessagesChannelsList: undefined,
+        swarmChannelsListsInstances,
       });
     }
   }
@@ -962,6 +982,57 @@ export class ConnectionToSwarmWithChannels<
   ): void {
     swarmMessagesChannelsList.emitter.once(ESwarmMessagesChannelsListEventName.CHANNELS_LIST_CLOSED, () =>
       this._handleDatabasesListClosed(swarmMessagesChannelsList)
+    );
+  }
+
+  protected _getChannelsListById(channelsListId: TSwarmChannelsListId): TSwarmChannelsListGeneral | undefined {
+    const { swarmChannelsListsInstances } = this.state;
+    return swarmChannelsListsInstances.get(channelsListId);
+  }
+
+  protected _getChannelById(channelId: TSwarmMessagesChannelId): TSwarmChannelGeneral | undefined {
+    const { swarmChannelsList } = this.state;
+    const description = swarmChannelsList.get(channelId);
+
+    if (!description) {
+      return;
+    }
+
+    const { channel } = description;
+
+    return channel;
+  }
+
+  protected _deleteChannelById(channelId: TSwarmMessagesChannelId): void {
+    const { swarmChannelsList } = this.state;
+
+    swarmChannelsList.delete(channelId);
+  }
+
+  private _swarmChannelListDescriptionRemovedOrChannelClosedListener = (channelId: TSwarmMessagesChannelId) => {
+    const channel = this._getChannelById(channelId);
+
+    if (!channel) {
+      return channel;
+    }
+    this._deleteChannelById(channelId);
+    this._setOrUnsetSwarmChannelInstanceListeners(channel, false);
+  };
+
+  protected _setOrUnsetSwarmChannelInstanceListeners(
+    swarmChannelInstance: TSwarmChannelGeneral,
+    isSetListeners: boolean = true
+  ): void {
+    const methodName: 'addListener' | 'removeListener' = isSetListeners ? 'addListener' : 'removeListener';
+    const emitterChannelState = swarmChannelInstance.emitterChannelState;
+
+    emitterChannelState[methodName](
+      ESwarmMessagesChannelsListEventName.CHANNEL_DESCRIPTION_REMOVED,
+      this._swarmChannelListDescriptionRemovedOrChannelClosedListener
+    );
+    emitterChannelState[methodName](
+      ESwarmMessagesChannelsListEventName.CHANNELS_LIST_CLOSED,
+      this._swarmChannelListDescriptionRemovedOrChannelClosedListener
     );
   }
 }

@@ -8,7 +8,7 @@ import {
 import { ISwarmMessageInstanceDecrypted } from 'classes/swarm-message/swarm-message-constructor.types';
 import { ISwarmMessageStoreConnectorDatabaseAccessControlleGrantCallbackBound } from '../../../swarm-store-connector-db-options.types';
 import { ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder } from '../../../swarm-store-connector-db-options.types';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 import { TSwarmStoreConnectorAccessConrotllerGrantAccessCallback } from '../../../../../../swarm-store-class/swarm-store-class.types';
 
 export function swarmStoreConectorDbOptionsGrandAccessContextBinderToDatabaseOptions<

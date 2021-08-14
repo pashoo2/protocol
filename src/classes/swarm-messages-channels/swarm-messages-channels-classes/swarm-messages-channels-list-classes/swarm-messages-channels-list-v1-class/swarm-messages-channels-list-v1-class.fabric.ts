@@ -3,7 +3,7 @@ import {
   TSwarmMessageSerialized,
   ISwarmMessageInstanceDecrypted,
 } from '../../../../swarm-message/swarm-message-constructor.types';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 import {
   TSwrmMessagesChannelsListDBOWithGrantAccess,
   ISwarmMessagesChannelsDescriptionsListConstructorArguments,
@@ -54,7 +54,8 @@ export function getSwarmMessagesChannelsListVersionOneClass<
 ): ConstructorType<ISwarmMessagesChannelsDescriptionsList<P, T, MD>> {
   abstract class SwarmMessagesChannelsListVersionOne
     extends ClassSwarmMessagesChannelsListVersionOneOptionsSetUp
-    implements ISwarmMessagesChannelsDescriptionsList<P, T, MD> {
+    implements ISwarmMessagesChannelsDescriptionsList<P, T, MD>
+  {
     public get description(): Readonly<ISwarmMessagesChannelsListDescription> {
       return this._getChannelsListDescription();
     }
@@ -204,5 +205,5 @@ export function getSwarmMessagesChannelsListVersionOneClass<
 
   // TODO - typescript issue https://github.com/microsoft/TypeScript/issues/22815
   // Abstract classes that implement interfaces shouldn't require method signatures
-  return (SwarmMessagesChannelsListVersionOne as unknown) as ConstructorType<ISwarmMessagesChannelsDescriptionsList<P, T, MD>>;
+  return SwarmMessagesChannelsListVersionOne as unknown as ConstructorType<ISwarmMessagesChannelsDescriptionsList<P, T, MD>>;
 }

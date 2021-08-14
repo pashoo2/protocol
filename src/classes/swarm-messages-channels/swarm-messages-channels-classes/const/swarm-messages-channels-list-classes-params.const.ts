@@ -1,3 +1,3 @@
-export enum SWARM_CHANNELS_LIST_VERSION {
+export enum ESwarmChannelsListVersion {
   FIRST = '1',
 }

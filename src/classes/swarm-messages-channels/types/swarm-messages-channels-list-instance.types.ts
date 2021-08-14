@@ -1,4 +1,4 @@
-import { SWARM_CHANNELS_LIST_VERSION } from './../swarm-messages-channels-classes/const/swarm-messages-channels-list-classes-params.const';
+import { ESwarmChannelsListVersion } from './../swarm-messages-channels-classes/const/swarm-messages-channels-list-classes-params.const';
 import {
   ESwarmStoreConnector,
   ESwarmStoreConnectorOrbitDbDatabaseType,
@@ -21,7 +21,7 @@ import {
   TSwarmMessagesStoreGrantAccessCallback,
   ISwarmMessageStoreAccessControlOptions,
 } from '../../swarm-message-store/types/swarm-message-store.types';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../swarm-message-encrypted-cache/swarm-message-encrypted-cache.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../swarm-messages-database/swarm-messages-database.messages-collector.types';
 import { JSONSchema7 } from 'json-schema';
@@ -116,7 +116,7 @@ export interface ISwarmMessagesChannelsListDescription {
    * @type {string}
    * @memberof ISwarmMessagesChannelsListDescription
    */
-  version: SWARM_CHANNELS_LIST_VERSION;
+  version: ESwarmChannelsListVersion;
   /**
    * Identifier
    *

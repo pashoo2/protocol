@@ -6,7 +6,7 @@ import {
   IConnectionBridgeOptionsDefault,
   TConnectionBridgeOptionsAuthCredentialsWithAuthProvider,
 } from '../../classes/connection-bridge/types/connection-bridge.types';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { ISwarmMessageChannelDescriptionRaw } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-instance.types';
 import {
@@ -29,8 +29,6 @@ import {
 } from '../../classes/swarm-messages-database/swarm-messages-database.messages-collector.types';
 import { ESwarmMessagesChannelEventName } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-events.types';
 import { SwarmChannelInstanceComponent } from '../swarm-channel-instance-component/swarm-channel-instance-component';
-import { ICentralAuthorityUser } from '../../classes/central-authority-class/central-authority-class.types';
-import { TConnectionToSwarmWithChannelsByConnectionBridgeOptions } from '../../classes/connection-helpers/connect-to-swarm-orbitdb-with-channels/types/connect-to-swarm-orbitdb-with-channels-instance.types';
 import {
   TSwarmStoreConnectorDefault,
   ConnectionToSwarmWithChannels,
@@ -39,6 +37,7 @@ import {
   IConnectToSwarmOrbitDbWithChannelsState,
 } from 'classes/connection-helpers/connect-to-swarm-orbitdb-with-channels';
 import {
+  ICentralAuthorityUserProfile,
   TCentralAuthorityUserIdentity,
   TSwarmMessagesChannelAnyByChannelDescriptionRaw,
   TSwarmMessageUserIdentifierSerialized,
@@ -79,7 +78,7 @@ export interface IConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditional
     TSwarmStoreDatabaseOptions<TSwarmStoreConnectorDefault, T, TSwarmMessagesChannelsListDbType>
   >;
   userCredentials?: TConnectionBridgeOptionsAuthCredentialsWithAuthProvider;
-  userProfile?: ICentralAuthorityUser;
+  userProfile?: Partial<ICentralAuthorityUserProfile>;
 }
 
 export interface IConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaWithDBOViaHelpersState<
@@ -248,11 +247,17 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
     return this.state.connectionToSwarmWithChannelsStatePartial.userId;
   }
 
+  protected get _swarmChannelListConnectedToId(): string {
+    return this.props.swarmMessagesChannelsListDescription.id;
+  }
+
   protected get _swarmMessagesChannelsListOrUndefined():
     | ISwarmMessagesChannelsDescriptionsList<TSwarmStoreConnectorDefault, T, MD>
     | undefined {
-    return this.state.connectionToSwarmWithChannelsStatePartial
-      .swarmMessagesChannelsList as ISwarmMessagesChannelsDescriptionsList<TSwarmStoreConnectorDefault, T, MD>;
+    const channelsListId = this._swarmChannelListConnectedToId;
+    const swarmMessagesChannelsList =
+      this.state.connectionToSwarmWithChannelsStatePartial?.swarmChannelsListsInstances?.get(channelsListId);
+    return swarmMessagesChannelsList as ISwarmMessagesChannelsDescriptionsList<TSwarmStoreConnectorDefault, T, MD> | undefined;
   }
 
   public async componentDidMount() {
@@ -391,13 +396,14 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
   protected async _createAndReturnSwarmMessagesChannelsList(
     connectionToSwarmWithChannels: IConnectionToSwarmWithChannels<DbType, T, DBO, CD, CBO, MD>,
     userCredentials?: TConnectionBridgeOptionsAuthCredentialsWithAuthProvider,
-    userProfile?: ICentralAuthorityUser
+    userProfile?: Partial<ICentralAuthorityUserProfile>
   ): Promise<ISwarmMessagesChannelsDescriptionsList<TSwarmStoreConnectorDefault, T, MD>> {
     await connectionToSwarmWithChannels.connectToSwarm(userCredentials, userProfile);
     const channelsListDescription = this._getChannelsListDescription();
+    const { id } = channelsListDescription;
     const swarmChannelsListDatabaseOptions = this._getSwarmChannelsListDatabaseOptions();
     await connectionToSwarmWithChannels.connectToSwarmChannelsList(channelsListDescription, swarmChannelsListDatabaseOptions);
-    const swarmMessagesChannelsList = connectionToSwarmWithChannels.state.swarmMessagesChannelsList;
+    const swarmMessagesChannelsList = connectionToSwarmWithChannels.state.swarmChannelsListsInstances.get(id);
     if (!swarmMessagesChannelsList) {
       throw new Error('Channels list has not been created and started for unknown reason');
     }
@@ -476,7 +482,10 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
     >
   ): Promise<void> {
     const connectionToSwarmWithChannels = this._getConnectionToSwarmWithChannelsOrThrow();
-    const swarmChannelInstance = await connectionToSwarmWithChannels.connectToSwarmChannel(swarmChannelDescription);
+    const swarmChannelInstance = await connectionToSwarmWithChannels.connectToSwarmChannel(
+      swarmChannelDescription,
+      this._swarmChannelListConnectedToId
+    );
     this._handleSwarmChannelInstance(swarmChannelInstance);
   }
 

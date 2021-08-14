@@ -10,7 +10,7 @@ import { ISwarmMessageConstructor, ISwarmMessageInstanceDecrypted } from '../../
 import {
   ISwarmStoreDBOGrandAccessCallbackBaseContext,
   ISwarmStoreConnectorUtilsDatabaseOptionsValidatorsInstanceConstructor,
-} from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+} from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 import {
   ISwarmStoreConnectoDbOptionsUtilsGrandAccessCallbackContextFabric,
   ISwarmMessageStoreDatabaseOptionsWithMetaConstructor,
@@ -29,7 +29,7 @@ import {
 import { validateGrantAccessCallbackWithContextSerializable } from '../../../swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-grant-access-callback';
 import { IDatabaseOptionsClass } from '../../../swarm-store-class/swarm-store-class.types';
 import { SwarmMessageStoreDBOptionsClass } from '../../../swarm-message-store/swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-message-store-connector-db-options-class/swarm-message-store-connector-db-options-class';
-import { ISwarmStoreDBOSerializerValidator } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOSerializerValidator } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 
 export function getSwarmMessageStoreConnectorDBOClass<
   P extends ESwarmStoreConnector,
@@ -134,7 +134,7 @@ export function getSwarmMessageStoreConnectorDBOClassFabric<
     const fabricDBOValidator = () => new DboValidatorClass();
     const additionalParamsResulted = {
       ...additionalParams,
-      optionsSerializer: (serializer as unknown) as IOptionsSerializerValidatorSerializer<DBO, DBOS>,
+      optionsSerializer: serializer as unknown as IOptionsSerializerValidatorSerializer<DBO, DBOS>,
       validatorsFabric: fabricDBOValidator,
     };
     class SwarmMessageStoreDBOptionsBaseClass extends SwarmMessageStoreDBOptionsClass<P, T, DbType, MD, CTX, DBO, DBOS> {}

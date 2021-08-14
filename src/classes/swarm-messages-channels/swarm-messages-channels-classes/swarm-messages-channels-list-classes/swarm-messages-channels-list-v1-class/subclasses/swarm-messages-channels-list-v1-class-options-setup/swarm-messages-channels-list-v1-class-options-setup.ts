@@ -15,7 +15,7 @@ import {
   ISwarmMessagesChannelsDescriptionsListConstructorArguments,
   ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric,
 } from '../../../../../types/swarm-messages-channels-list-instance.types';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 import {
   AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp,
   IConstructorAbstactSwarmMessagesChannelsListVersionOneOptionsSetUp,

@@ -6,10 +6,10 @@ import {
   TSwarmStoreDatabaseOptions,
 } from '../../../../swarm-store-class/swarm-store-class.types';
 import { ESwarmStoreConnector } from '../../../../swarm-store-class/swarm-store-class.const';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 import { ISwarmMessageInstanceDecrypted } from '../../../../swarm-message/swarm-message-constructor.types';
 import assert from 'assert';
-import { ISwarmStoreDBOSerializerValidator } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOSerializerValidator } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 import {
   ISwarmMessageStoreDBOSerializerValidatorConstructorParams,
   ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder,
@@ -26,7 +26,8 @@ export class SwarmMessageStoreDBOptionsClass<
     DBOS extends TSwarmStoreDatabaseOptionsSerialized
   >
   extends OptionsSerializerValidator<DBO, DBOS>
-  implements ISwarmStoreDBOSerializerValidator<P, ItemType, DbType, DBO, DBOS> {
+  implements ISwarmStoreDBOSerializerValidator<P, ItemType, DbType, DBO, DBOS>
+{
   protected _grandAccessContextBinder:
     | ISwarmMessageStoreConnectorUtilsDbOptionsGrandAccessCallbackContextBinder<P, ItemType, MD, CTX>
     | undefined;

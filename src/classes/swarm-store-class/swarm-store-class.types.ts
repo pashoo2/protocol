@@ -37,7 +37,7 @@ import {
   IOptionsSerializerValidatorConstructorParams,
   IOptionsSerializerValidatorValidators,
 } from '../basic-classes/options-serializer-validator-class/options-serializer-validator-class.types';
-import { ISwarmStoreDBOSerializerValidator } from './swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOSerializerValidator } from './swarm-store-connectors/swarm-store-connectors.types';
 import { ISwarmMessageStoreDeleteMessageArg } from '../swarm-message-store/types/swarm-message-store.types';
 
 export type TSwarmStoreDatabaseType<P extends ESwarmStoreConnector> = ESwarmStoreConnectorOrbitDbDatabaseType;

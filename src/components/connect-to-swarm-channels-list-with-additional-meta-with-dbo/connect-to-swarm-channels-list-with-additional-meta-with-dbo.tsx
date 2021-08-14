@@ -4,7 +4,7 @@ import { ISwarmMessageInstanceDecrypted } from '../../classes/swarm-message/swar
 import { TSwarmStoreDatabaseOptions, TSwarmStoreDatabaseType } from '../../classes/swarm-store-class/swarm-store-class.types';
 import { IConnectionBridgeOptionsDefault } from '../../classes/connection-bridge/types/connection-bridge.types';
 import { P } from '../connect-to-swarm-with-dbo/connect-to-swarm-with-dbo';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 import { ConnectToSwarmWithAdditionalMetaWithDBO } from '../connect-to-swarm-with-additional-meta-with-dbo';
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { ESwarmStoreConnector } from '../../classes/swarm-store-class/swarm-store-class.const';
@@ -39,7 +39,7 @@ import {
   TConnectionBridgeOptionsConnectorMain,
 } from '../../classes/connection-bridge/types/connection-bridge.types-helpers/connection-bridge-options.types-helpers';
 import { SWARM_MESSAGES_CHANNEL_VERSION } from 'classes/swarm-messages-channels/swarm-messages-channels-classes/const/swarm-messages-channel-classes-params.const';
-import { SWARM_CHANNELS_LIST_VERSION } from '../../classes/swarm-messages-channels/swarm-messages-channels-classes/const/swarm-messages-channels-list-classes-params.const';
+import { ESwarmChannelsListVersion } from '../../classes/swarm-messages-channels/swarm-messages-channels-classes/const/swarm-messages-channels-list-classes-params.const';
 import { ISwarmMessagesDatabaseConnectOptions } from '../../classes/swarm-messages-database/swarm-messages-database.types';
 import { CONNECTO_TO_SWARM_OPTIONS_SWARM_MESSAGES_DATABASE_CACHE_WITH_STORE_META_OPTIONS } from '../const/connect-to-swarm.const';
 import { getSwarmMessagesDatabaseWithKVDbMessagesUpdatesConnectorInstanceFabric } from '../../classes/swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channel-classes/swarm-messages-channel-v1-class/utils/swarm-messages-channel-v1-constructor-options-default-utils/utils/swarm-messages-channel-v1-constructor-options-default-utils-database-connector-fabrics';
@@ -225,7 +225,7 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
     typeof getSwarmMessagesChannelsListVersionOneInstanceWithDefaultParameters
   >[1] {
     const description = {
-      version: SWARM_CHANNELS_LIST_VERSION.FIRST,
+      version: ESwarmChannelsListVersion.FIRST,
       id: 'eff9f522-3a63-46f7-8d5f-ad76765c3779',
       name: 'channelsList',
     };

@@ -17,7 +17,7 @@ import { swarmStoreConectorDbOptionsGrandAccessContextBinderToDatabaseOptionsFab
 import { ISwarmMessageStoreConnectorDatabaseOptionsWithAccessControlleGrantCallbackBound } from '../swarm-store-connector-db-options.types';
 import { ISwarmMessageStoreDatabaseOptionsWithMetaConstructor } from '../swarm-store-connector-db-options.types';
 import { ConstructorType } from '../../../../../types/helper.types';
-import { ISwarmStoreDBOSerializerValidator } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOSerializerValidator } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 import { IDatabaseOptionsClass } from '../../../../swarm-store-class/swarm-store-class.types';
 import {
   ISwarmMessageConstructor,
@@ -26,7 +26,7 @@ import {
 import {
   ISwarmStoreDBOGrandAccessCallbackBaseContext,
   ISwarmStoreConnectorUtilsDatabaseOptionsValidators,
-} from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+} from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 
 export function getSwarmMessageStoreDBOClass<
   P extends ESwarmStoreConnector,
@@ -62,7 +62,7 @@ export function getSwarmMessageStoreDBOClass<
   { swarmMessageConstructor: SMC }
 > {
   const getDbOptionsSerializer = (): IOptionsSerializerValidatorSerializer<DBO, DBOS> =>
-    params.optionsSerializer ?? ((JSON as unknown) as IOptionsSerializerValidatorSerializer<DBO, DBOS>);
+    params.optionsSerializer ?? (JSON as unknown as IOptionsSerializerValidatorSerializer<DBO, DBOS>);
 
   const createDBOValidators = (): ISwarmStoreConnectorUtilsDatabaseOptionsValidators<P, ItemType, DbType, DBO, DBOS> => {
     const validatorsFabric = params.validatorsFabric;
@@ -80,18 +80,12 @@ export function getSwarmMessageStoreDBOClass<
     return grandAccessContextBinderFabric(context);
   };
 
-  const createGrandAccessCallbackBinderForDBOptions = (): ISwarmMessageStoreConnectorDatabaseOptionsWithAccessControlleGrantCallbackBound<
-    P,
-    ItemType,
-    DbType,
-    MD,
-    CTX,
-    DBO
-  > => {
-    const grandAccessBinderForDBOptionsFabric =
-      params.grandAccessBinderForDBOptionsFabric ?? swarmStoreConectorDbOptionsGrandAccessContextBinderToDatabaseOptionsFabric;
-    return grandAccessBinderForDBOptionsFabric();
-  };
+  const createGrandAccessCallbackBinderForDBOptions =
+    (): ISwarmMessageStoreConnectorDatabaseOptionsWithAccessControlleGrantCallbackBound<P, ItemType, DbType, MD, CTX, DBO> => {
+      const grandAccessBinderForDBOptionsFabric =
+        params.grandAccessBinderForDBOptionsFabric ?? swarmStoreConectorDbOptionsGrandAccessContextBinderToDatabaseOptionsFabric;
+      return grandAccessBinderForDBOptionsFabric();
+    };
 
   const extendDatabaseOptions = (options: {
     options: DBO | DBOS;

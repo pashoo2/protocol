@@ -104,7 +104,7 @@ export class App extends React.Component {
         : CONNECT_TO_SWARM_AUTH_PROVIDERS.FIREBASE_WATCHA;
     const userCentralAuthorityCredentials = {
       //...userToConnectWithCredentials,
-      login: 'folafop844@1uscare.com',
+      login: 'gevocok435@fada55.com',
       password: 'fdkjsfieorjfkld;ngm,bvcnx',
       providerUrl: centralAuthorityUrl,
     };

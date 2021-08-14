@@ -17,7 +17,7 @@ import {
   ISwarmMessageStoreOptionsWithConnectorFabric,
 } from '../../types/swarm-message-store.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../swarm-message-encrypted-cache/swarm-message-encrypted-cache.types';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 import { ISwarmMessageStore } from '../../types/swarm-message-store.types';
 import { ISwarmMessageStoreDatabaseOptionsWithMetaConstructor } from '../../swarm-message-store-connectors/swarm-message-store-connector-db-options/swarm-store-connector-db-options.types';
 import { ISwarmMessageInstanceDecrypted } from '../../../swarm-message/swarm-message-constructor.types';

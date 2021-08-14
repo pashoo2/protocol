@@ -1,4 +1,4 @@
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 import { ConstructorType } from 'types/helper.types';
 import { ISwarmMessageStoreDbOptionsGrandAccessCallbackContext } from '../../../../../../types/swarm-message-store-db-options.types';
 import { ISwarmMessageConstructor } from '../../../../../../../swarm-message/swarm-message-constructor.types';
@@ -14,7 +14,8 @@ export function getSwarmStoreConectorDbOptionsGrandAccessContextClass<
 ): BC & ConstructorType<ISwarmMessageStoreDbOptionsGrandAccessCallbackContext<SMC>> {
   class SwarmStoreConectorDbOptionsGrandAccessContextExtended
     extends BaseContext
-    implements ISwarmMessageStoreDbOptionsGrandAccessCallbackContext<SMC> {
+    implements ISwarmMessageStoreDbOptionsGrandAccessCallbackContext<SMC>
+  {
     get dbName(): string {
       return params.dbName;
     }
