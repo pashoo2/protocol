@@ -1,6 +1,6 @@
 import { ESwarmStoreConnector } from '../../../../../../swarm-store-class/index';
 import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from '../../../../../../swarm-message/index';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 import {
   TSwrmMessagesChannelsListDBOWithGrantAccess,
   ISwarmMessagesChannelsDescriptionsListConstructorArguments,
@@ -77,23 +77,26 @@ export function getSwarmMessagesChannelsListVersionOneInstanceWithDefaultParamet
   optionsForConstructorArgumentsFabric: OFCAF
 ): ISwarmMessagesChannelsDescriptionsList<ESwarmStoreConnector, T, MD> {
   // this constant is added to have the reference to it's type
-  const createGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidatorUtil = createGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidator as ICreateGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidator<
-    P,
-    T,
-    MD,
-    CTX,
-    DBO
-  >;
-  const additionalUtils: IAdditionalUtils<P, T, MD, CTX, DBO> = {
-    getVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidator: getVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidator as IGetVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidatorCreator<
+  const createGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidatorUtil =
+    createGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidator as ICreateGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidator<
       P,
       T,
       MD,
       CTX,
       DBO
-    >,
+    >;
+  const additionalUtils: IAdditionalUtils<P, T, MD, CTX, DBO> = {
+    getVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidator:
+      getVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidator as IGetVariableArgumentsWithoutExistingChannelDescriptionForGrantAccessValidatorCreator<
+        P,
+        T,
+        MD,
+        CTX,
+        DBO
+      >,
     getArgumentsForSwarmMessageWithChannelDescriptionValidator: getArgumentsForSwarmMessageWithChannelDescriptionValidator,
-    createGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidator: createGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidatorUtil,
+    createGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidator:
+      createGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidatorUtil,
   };
   const SwarmMessagesChannelsListVersionOneOptionsSetUp = getConstructorAbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<
     P,
@@ -104,15 +107,16 @@ export function getSwarmMessagesChannelsListVersionOneInstanceWithDefaultParamet
     CF,
     ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>
   >();
-  const SwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler = getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandlerClass<
-    P,
-    T,
-    MD,
-    CTX,
-    DBO,
-    CF,
-    ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>
-  >(SwarmMessagesChannelsListVersionOneOptionsSetUp, additionalUtils);
+  const SwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandler =
+    getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitializerAndHandlerClass<
+      P,
+      T,
+      MD,
+      CTX,
+      DBO,
+      CF,
+      ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>
+    >(SwarmMessagesChannelsListVersionOneOptionsSetUp, additionalUtils);
   const options = {
     ...optionsForConstructorArgumentsFabric,
     databaseConnectionFabric,

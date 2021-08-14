@@ -307,7 +307,7 @@ export class ConnectionBridge<
       if (sensitiveDataStorageOptions) {
         await this.markSessionAsStartedInStorageForSession();
       }
-      this.setCurrentSecretStorageInstance(await this.createAndAutorizeInSecretStorage());
+      this.setCurrentSecretStorageInstance(await this.createAndAuthorizeInSecretStorage());
     } catch (err) {
       console.error('connection to the swarm failed', err);
       await this.close();
@@ -342,7 +342,7 @@ export class ConnectionBridge<
     // check any data exists in the main session data store
     const mainSessionDataStore = await this.createMainSensitiveDataStorageForSession({
       ...sessionParams,
-      // do not clear data from the storage becuse it can be used later
+      // do not clear data from the storage because it can be used later
       clearStorageAfterConnect: false,
     });
 
@@ -1521,7 +1521,7 @@ export class ConnectionBridge<
     this._secretStorage = secretStorage;
   }
 
-  protected async createAndAutorizeInSecretStorage(): Promise<ISecretStorage> {
+  protected async createAndAuthorizeInSecretStorage(): Promise<ISecretStorage> {
     const secretStorage = this.createSecretStorageInstance();
 
     await this.authorizeInSecretStorage(secretStorage);

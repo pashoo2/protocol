@@ -23,7 +23,7 @@
     "prettier/@typescript-eslint"
   ],
   "plugins": ["@typescript-eslint/eslint-plugin"],
-  "ignorePatterns": ["temp.js", "node_modules/", "node_modules-local/", "*config.js", "app.test/"],
+  "ignorePatterns": ["temp.js", "*.d.ts", "node_modules/", "node_modules-local/", "*config.js", "app.test/"],
   "rules": {
     "no-return-await": "off",
     "@typescript-eslint/return-await": ["warn", "always"],

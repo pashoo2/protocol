@@ -11,7 +11,10 @@ import {
   TSwarmStoreDatabaseType,
 } from 'classes/swarm-store-class';
 import { TConnectionBridgeByOptions } from 'classes/connection-bridge/types/connection-bridge.types-helpers/connection-bridge.types.helpers';
-import { ISwarmMessagesChannelsDescriptionsList } from 'classes/swarm-messages-channels';
+import { ISwarmMessageChannelDescriptionRaw, ISwarmMessagesChannelsDescriptionsList } from 'classes/swarm-messages-channels';
+import { ISwarmMessagesChannelsListDescription } from '../../../swarm-messages-channels/types/swarm-messages-channels-list-instance.types';
+import { TSwarmMessagesChannelAnyByChannelDescriptionRaw } from '../../../swarm-messages-channels/types/swarm-messages-channel-instance.helpers.types';
+import { TSwarmMessagesChannelId } from '../../../swarm-messages-channels/types/swarm-messages-channel-instance.types';
 
 export type TSwarmMessageIdentity = string;
 
@@ -33,6 +36,28 @@ export type TConnectToSwarmOrbitDbSwarmMessagesList<DbType extends TSwarmStoreDa
 export type TConnectToSwarmOrbitDatabasesSwarmMessagesLists<DbType extends TSwarmStoreDatabaseType<TSwarmStoreConnectorDefault>> =
   Map<TSwarmDatabaseName, TConnectToSwarmOrbitDbSwarmMessagesList<DbType>>;
 
+export type TSwarmChannelsListId = ISwarmMessagesChannelsListDescription['id'];
+
+export type TSwarmChannelsListGeneral = ISwarmMessagesChannelsDescriptionsList<
+  TSwarmStoreConnectorDefault,
+  TSwarmMessageSerialized,
+  ISwarmMessageInstanceDecrypted
+>;
+
+export type TSwarmChannelDescriptionRawGeneral = ISwarmMessageChannelDescriptionRaw<
+  TSwarmStoreConnectorDefault,
+  TSwarmMessageSerialized,
+  ESwarmStoreConnectorOrbitDbDatabaseType,
+  TSwarmStoreDatabaseOptions<TSwarmStoreConnectorDefault, TSwarmMessageSerialized, ESwarmStoreConnectorOrbitDbDatabaseType>
+>;
+
+export type TSwarmChannelGeneral = TSwarmMessagesChannelAnyByChannelDescriptionRaw<TSwarmChannelDescriptionRawGeneral>;
+
+export type TSwarmChannelOpenedInListDescription = {
+  channelsListId: TSwarmChannelsListId;
+  channel: TSwarmChannelGeneral;
+};
+
 export interface IConnectToSwarmOrbitDbWithChannelsState<
   DbType extends TSwarmStoreDatabaseType<TSwarmStoreConnectorDefault>,
   T extends TSwarmMessageSerialized,
@@ -41,7 +66,7 @@ export interface IConnectToSwarmOrbitDbWithChannelsState<
 > {
   isConnectingToSwarm: boolean;
   userId: TCentralAuthorityUserIdentity | undefined;
-  userProfileData: ICentralAuthorityUserProfile | undefined;
+  userCentralAuthorityProfileData: ICentralAuthorityUserProfile | undefined;
   connectionBridge: TConnectionBridgeByOptions<TSwarmStoreConnectorDefault, T, DbType, DBO, CBO> | undefined;
   databasesList:
     | ISwarmStoreDatabasesCommonStatusList<
@@ -52,8 +77,7 @@ export interface IConnectToSwarmOrbitDbWithChannelsState<
       >
     | undefined;
   databasesMessagesLists: TConnectToSwarmOrbitDatabasesSwarmMessagesLists<DbType>;
-  swarmMessagesChannelsList:
-    | ISwarmMessagesChannelsDescriptionsList<TSwarmStoreConnectorDefault, T, ISwarmMessageInstanceDecrypted>
-    | undefined;
+  swarmChannelsListsInstances: Map<TSwarmChannelsListId, TSwarmChannelsListGeneral>;
+  swarmChannelsList: Map<TSwarmMessagesChannelId, TSwarmChannelOpenedInListDescription>;
   connectionError?: Error;
 }

@@ -1,3 +1,5 @@
 export * from './classes';
 
-export * from './types';
+if (process.env.NODE_ENV === 'development') {
+  void import('./components/app-render');
+}

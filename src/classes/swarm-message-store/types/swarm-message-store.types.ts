@@ -43,7 +43,7 @@ import {
 import {
   ISwarmStoreConnectorUtilsDbOptionsGrandAccessCallbackBound,
   ISwarmStoreDBOGrandAccessCallbackBaseContext,
-} from '../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+} from '../../swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 
 export interface ISwarmMessageStoreSwarmMessageMetadata<P extends ESwarmStoreConnector> {
   /**

@@ -7,7 +7,7 @@ import { CA_CONNECTION_STATUS } from 'classes/central-authority-class/central-au
 import { connectWithFirebase } from './central-authority-connection.utils.firebase';
 import { compareCryptoCredentials } from 'classes/central-authority-class/central-authority-utils-common/central-authority-utils-crypto-credentials/central-authority-utils-crypto-credentials';
 
-const connectToFirebaseAnonymousely = async (
+const connectToFirebaseAnonymously = async (
   firebaseParams: typeof CA_CONNECTION_FIREBASE_CONFIG = CA_CONNECTION_FIREBASE_CONFIG
 ): Promise<Error | CAConnectionWithFirebase> => {
   const connectionFirebase = new CAConnectionWithFirebase();
@@ -26,7 +26,7 @@ const connectToFirebaseAnonymousely = async (
 export const runTestForFirebaseConfig = async (
   firebaseParams: typeof CA_CONNECTION_FIREBASE_CONFIG = CA_CONNECTION_FIREBASE_CONFIG
 ) => {
-  console.warn('test runTestConnectToFirebaseAnonymousely is started');
+  console.warn('test runTestConnectToFirebaseAnonymously is started');
   const connectionToFirebase = await connectWithFirebase(
     {
       login: 'yaxida4519@email1.pro',
@@ -49,55 +49,43 @@ export const runTestForFirebaseConfig = async (
     return disconnectResult;
   }
 
-  const connectAnonymousely = await connectToFirebaseAnonymousely(
-    firebaseParams
-  );
+  const connectAnonymously = await connectToFirebaseAnonymously(firebaseParams);
 
-  if (connectAnonymousely instanceof Error) {
-    return connectAnonymousely;
+  if (connectAnonymously instanceof Error) {
+    return connectAnonymously;
   }
 
-  const userCredentials = await connectAnonymousely.getUserCredentials(
-    userCryptoCredentials.userIdentity
-  );
+  const userCredentials = await connectAnonymously.getUserCredentials(userCryptoCredentials.userIdentity);
 
   if (userCredentials instanceof Error) {
     return userCredentials;
   }
   if (!userCredentials) {
-    return new Error(
-      'User crypto credentials must be returned even if the user is not authorized'
-    );
+    return new Error('User crypto credentials must be returned even if the user is not authorized');
   }
   if (!compareCryptoCredentials(userCryptoCredentials, userCredentials)) {
-    return new Error(
-      'User crypto credentials must be the same with the credentials when the user is authorized'
-    );
+    return new Error('User crypto credentials must be the same with the credentials when the user is authorized');
   }
 
-  const anonymouselyDisconnect = await connectAnonymousely.disconnect();
+  const anonymouslyDisconnect = await connectAnonymously.disconnect();
 
-  if (anonymouselyDisconnect instanceof Error) {
-    return anonymouselyDisconnect;
+  if (anonymouslyDisconnect instanceof Error) {
+    return anonymouslyDisconnect;
   }
 };
 
-export const runTestConnectToFirebaseAnonymousely = async () => {
-  const resTestFirebaseV1 = await runTestForFirebaseConfig(
-    CA_CONNECTION_FIREBASE_CONFIG
-  );
+export const runTestConnectToFirebaseAnonymously = async () => {
+  const resTestFirebaseV1 = await runTestForFirebaseConfig(CA_CONNECTION_FIREBASE_CONFIG);
 
   if (resTestFirebaseV1 instanceof Error) {
     return resTestFirebaseV1;
   }
 
-  const resTestFirebaseV2 = await runTestForFirebaseConfig(
-    CA_CONNECTION_FIREBASE_CONFIG_WATCHA3
-  );
+  const resTestFirebaseV2 = await runTestForFirebaseConfig(CA_CONNECTION_FIREBASE_CONFIG_WATCHA3);
 
   if (resTestFirebaseV2 instanceof Error) {
     return resTestFirebaseV2;
   }
 
-  console.warn('test runTestConnectToFirebaseAnonymousely was succeed');
+  console.warn('test runTestConnectToFirebaseAnonymously was succeed');
 };

@@ -66,7 +66,7 @@ export class CAConnectionWithFirebaseImplementation extends CAConnectionWithFire
    * @memberof CAConnectionWithFirebaseImplementation
    */
   public get status(): CA_CONNECTION_STATUS {
-    const { isConnected, isAuthorized, isAnonymousely } = this;
+    const { isConnected, isAuthorized, isAnonymously } = this;
 
     if (!isConnected) {
       return CA_CONNECTION_STATUS.DISCONNECTED;
@@ -74,20 +74,20 @@ export class CAConnectionWithFirebaseImplementation extends CAConnectionWithFire
     if (isAuthorized) {
       return CA_CONNECTION_STATUS.AUTHORIZED;
     }
-    if (isAnonymousely) {
+    if (isAnonymously) {
       return CA_CONNECTION_STATUS.CONNECTED;
     }
     return CA_CONNECTION_STATUS.DISCONNECTED;
   }
 
   /**
-   * whether the user is connected anonymousely
+   * whether the user is connected anonymously
    * or not. User must be authorized or connected
-   * anonymousely
+   * anonymously
    *
    * @memberof CAConnectionWithFirebaseImplementation
    */
-  protected isAnonymousely = false;
+  protected isAnonymously = false;
 
   protected userLogin?: string;
 
@@ -135,17 +135,17 @@ export class CAConnectionWithFirebaseImplementation extends CAConnectionWithFire
     return true;
   }
 
-  public async signInAnonymousely(): Promise<Error | void> {
+  public async signInAnonymously(): Promise<Error | void> {
     try {
-      // may be authentificated with session
+      // may be authenticated with session
       //await this.signInWithSessionPersisted();
-      const connectAnonymouselyResult = await this.app.auth().signInAnonymously();
-      if (connectAnonymouselyResult instanceof Error) {
-        return connectAnonymouselyResult;
+      const connectAnonymouslyResult = await this.app.auth().signInAnonymously();
+      if (connectAnonymouslyResult instanceof Error) {
+        return connectAnonymouslyResult;
       }
     } catch (err) {
       console.error(err);
-      return new Error('Failed to connect anonymousely');
+      return new Error('Failed to connect anonymously');
     }
 
     const connectWithStorageResult = await this.startConnectionWithCredentialsStorage();
@@ -154,13 +154,13 @@ export class CAConnectionWithFirebaseImplementation extends CAConnectionWithFire
       console.error(connectWithStorageResult);
       return new Error('Failed to connect to the credentials storage');
     }
-    this.setIsAnonymousely();
+    this.setIsAnonymously();
   }
 
   public async updateUserProfileAndReturnUpdated(
     profile: Partial<ICentralAuthorityUserProfile>
   ): Promise<ICentralAuthorityUserProfile | Error> {
-    if (this.isAnonymousely) {
+    if (this.isAnonymously) {
       return new Error('Profile updates is not allowed for anonymous connections');
     }
     if (!this.checkIfConnected()) {
@@ -333,7 +333,7 @@ export class CAConnectionWithFirebaseImplementation extends CAConnectionWithFire
     // request
     this.valueofCredentialsSignUpOnAuthorizedSuccess = authHandleResult;
     this.setValueofCredentialsSignUpOnAuthorizedSuccess(authHandleResult);
-    this.unsetIsAnonymousely();
+    this.unsetIsAnonymously();
     return authHandleResult;
   }
 
@@ -412,25 +412,25 @@ export class CAConnectionWithFirebaseImplementation extends CAConnectionWithFire
   }
 
   /**
-   * set that connected anonymousely
+   * set that connected anonymously
    * to the Firebase
    *
    * @protected
    * @memberof CAConnectionWithFirebaseImplementation
    */
-  protected setIsAnonymousely() {
-    this.isAnonymousely = true;
+  protected setIsAnonymously() {
+    this.isAnonymously = true;
   }
 
   /**
    * unset that connected to the Firebase
-   * anonymousely
+   * anonymously
    *
    * @protected
    * @memberof CAConnectionWithFirebaseImplementation
    */
-  protected unsetIsAnonymousely() {
-    this.isAnonymousely = false;
+  protected unsetIsAnonymously() {
+    this.isAnonymously = false;
   }
 
   protected setValueofCredentialsSignUpOnAuthorizedSuccess(authResult: ICAConnectionUserAuthorizedResult) {
@@ -568,7 +568,7 @@ export class CAConnectionWithFirebaseImplementation extends CAConnectionWithFire
    * @memberof CAConnectionWithFirebaseImplementation
    */
   protected async disconnectFromTheApp(): Promise<Error | void> {
-    this.unsetIsAnonymousely();
+    this.unsetIsAnonymously();
     this.unsetValueofCredentialsSignUpOnAuthorizedSuccess();
 
     const disconnectFromStorageResult = await this.disconnectCredentialsStorage();

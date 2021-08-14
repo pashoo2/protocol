@@ -7,13 +7,13 @@ import {
   ISwarmStoreConnectorBasic,
 } from '../../../../swarm-store-class/swarm-store-class.types';
 import { ESwarmStoreConnector } from '../../../../swarm-store-class/swarm-store-class.const';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 import {
   TSwarmMessageInstance,
   ISwarmMessageInstanceEncrypted,
   ISwarmMessageInstanceDecrypted,
 } from '../../../../swarm-message/swarm-message-constructor.types';
-import { ISwarmStoreDBOSerializerValidator } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOSerializerValidator } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 import { ConstructorType } from '../../../../../types/helper.types';
 import {
   TSwarmStoreConnectorConnectionOptions,

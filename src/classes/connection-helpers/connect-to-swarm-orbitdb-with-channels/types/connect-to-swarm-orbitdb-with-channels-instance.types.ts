@@ -20,7 +20,7 @@ import {
   TSwarmMessagesChannelsListDbType,
   TSwrmMessagesChannelsListDBOWithGrantAccess,
 } from 'classes/swarm-messages-channels/types/swarm-messages-channels-list-instance.types';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 import {
   ISwarmMessageChannelDescriptionRaw,
   TSwarmMessagesChannelAnyByChannelDescriptionRaw,
@@ -34,6 +34,7 @@ import { IConnectToSwarmOrbitDbWithChannelsDatabaseSwarmMessagesListUpdateListen
 import { TConnectionBridgeOptionsDatabaseOptions } from 'classes/connection-bridge';
 import { TConnectionBridgeOptionsDbType } from '../../../connection-bridge/types/connection-bridge.types-helpers/connection-bridge-options.types-helpers';
 import { ICentralAuthorityUserProfile } from 'classes/central-authority-class';
+import { TSwarmChannelsListId } from './connect-to-swarm-orbitdb-with-channels-state.types';
 
 export interface IConnectionToSwarmWithChannels<
   DbType extends TSwarmStoreDatabaseType<TSwarmStoreConnectorDefault>,
@@ -62,7 +63,13 @@ export interface IConnectionToSwarmWithChannels<
     userCredentials?: TConnectionBridgeOptionsAuthCredentialsWithAuthProvider,
     userProfile?: Partial<ICentralAuthorityUserProfile>
   ): Promise<void>;
-
+  /**
+   * Update user's profile in central authority.
+   *
+   * @param {Partial<ICentralAuthorityUserProfile>} userProfile
+   * @returns {Promise<void>}
+   * @memberof IConnectionToSwarmWithChannels
+   */
   updateUserCentralAuthorityProfile(userProfile: Partial<ICentralAuthorityUserProfile>): Promise<void>;
   /**
    * Connect to an instance that allows to share information about messaging channels
@@ -92,22 +99,18 @@ export interface IConnectionToSwarmWithChannels<
       TSwarmStoreDatabaseOptions<TSwarmStoreConnectorDefault, T, TSwarmMessagesChannelsListDbType>
     >
   ): Promise<void>;
-
   /**
    * Create a swarm channel instance which allows messaging with other
    * users connected to the swarm channel.
    * Created swarm channel will be added to an instance of swarm channels list
    *
    * @param {ISwarmMessageChannelDescriptionRaw<
-   *             TSwarmStoreConnectorDefault,
-   *             TSwarmMessageSerialized,
-   *             ESwarmStoreConnectorOrbitDbDatabaseType,
-   *             TSwarmStoreDatabaseOptions<
-   *                 TSwarmStoreConnectorDefault,
-   *                 TSwarmMessageSerialized,
-   *                 ESwarmStoreConnectorOrbitDbDatabaseType,
-   *             >
-   *         >} swarmMessageChannelDescriptionRaw
+   *       TSwarmStoreConnectorDefault,
+   *       TSwarmMessageSerialized,
+   *       ESwarmStoreConnectorOrbitDbDatabaseType,
+   *       TSwarmStoreDatabaseOptions<TSwarmStoreConnectorDefault, TSwarmMessageSerialized, ESwarmStoreConnectorOrbitDbDatabaseType>
+   *     >} swarmMessageChannelDescriptionRaw
+   * @param {TSwarmChannelsListId} swarmChannelsListId
    * @returns {Promise<TSwarmMessagesChannelAnyByChannelDescriptionRaw<typeof swarmMessageChannelDescriptionRaw>>}
    * @memberof IConnectionToSwarmWithChannels
    */
@@ -117,7 +120,8 @@ export interface IConnectionToSwarmWithChannels<
       TSwarmMessageSerialized,
       ESwarmStoreConnectorOrbitDbDatabaseType,
       TSwarmStoreDatabaseOptions<TSwarmStoreConnectorDefault, TSwarmMessageSerialized, ESwarmStoreConnectorOrbitDbDatabaseType>
-    >
+    >,
+    swarmChannelsListId: TSwarmChannelsListId
   ): Promise<TSwarmMessagesChannelAnyByChannelDescriptionRaw<typeof swarmMessageChannelDescriptionRaw>>;
 
   /**

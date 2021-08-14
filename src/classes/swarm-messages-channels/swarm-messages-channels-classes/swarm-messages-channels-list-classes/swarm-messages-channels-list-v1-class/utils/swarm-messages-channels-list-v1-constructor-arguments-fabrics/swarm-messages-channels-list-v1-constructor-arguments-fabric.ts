@@ -4,7 +4,7 @@ import {
   ISwarmMessageInstanceDecrypted,
   TSwarmMessageSerialized,
 } from '../../../../../../swarm-message/swarm-message-constructor.types';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 import { createSwarmMessagesChannelValidationDescriptionFormatV1ByChannelDescriptionJSONSchema } from '../../../../../swarm-messages-channels-utils/swarm-messages-channel-utils/swarm-messages-channel-validation-utils/swarm-messages-channel-validation-description-utils/swarm-messages-channel-validation-description-format-v1/swarm-messages-channel-validation-description-format-v1.fabric';
 import {
   getChannelsListDatabaseKeyForChannelDescription,
@@ -63,21 +63,26 @@ export function getSwarmMessagesChannelsListVersionOneConstructorOptionsDefault<
     'databaseConnectionFabric' | 'serializer'
   > = {
     databaseNameGenerator: getSwarmMessagesListDatbaseNameByChannelDescription,
-    getIssuerForSwarmMessageWithChannelDescriptionByChannelDescription: getSwarmMessageWithChannelDescriptionIssuerByChannelListDescription,
-    getTypeForSwarmMessageWithChannelDescriptionByChannelDescription: getSwarmMessageWithChannelDescriptionTypeByChannelListDescription,
+    getIssuerForSwarmMessageWithChannelDescriptionByChannelDescription:
+      getSwarmMessageWithChannelDescriptionIssuerByChannelListDescription,
+    getTypeForSwarmMessageWithChannelDescriptionByChannelDescription:
+      getSwarmMessageWithChannelDescriptionTypeByChannelListDescription,
     getDatabaseKeyForChannelDescription: getChannelsListDatabaseKeyForChannelDescription,
     getChannelIdByDatabaseKey: getSwarmMessagesChannelIdByChannelsListDatabaseKey,
-    getSwarmChannelsListClockSortedChannelsDescriptionsUpdatesCache: swarmChannelsListClockSortedChannelsDescriptionsUpdatesCacheInstanceFabric,
+    getSwarmChannelsListClockSortedChannelsDescriptionsUpdatesCache:
+      swarmChannelsListClockSortedChannelsDescriptionsUpdatesCacheInstanceFabric,
   };
-  const swarmMessagesChannelDescriptionFormatValidator = createSwarmMessagesChannelValidationDescriptionFormatV1ByChannelDescriptionJSONSchema(
-    swarmMessageChannelDescriptionFormatSchema as JSONSchema7
-  );
+  const swarmMessagesChannelDescriptionFormatValidator =
+    createSwarmMessagesChannelValidationDescriptionFormatV1ByChannelDescriptionJSONSchema(
+      swarmMessageChannelDescriptionFormatSchema as JSONSchema7
+    );
   const validatorsDefault = {
     swarmMessagesChannelDescriptionFormatValidator: swarmMessagesChannelDescriptionFormatValidator,
     channelDescriptionSwarmMessageValidator: validatorOfSwrmMessageWithChannelDescription,
-    channelsListDescriptionValidator: getSwarmMessagesChannelDescriptionFormatValidatorISwarmMessagesChannelDescriptionFormatValidator(
-      jsonSchemaForChannelsListDescriptionV1 as JSONSchema7
-    ),
+    channelsListDescriptionValidator:
+      getSwarmMessagesChannelDescriptionFormatValidatorISwarmMessagesChannelDescriptionFormatValidator(
+        jsonSchemaForChannelsListDescriptionV1 as JSONSchema7
+      ),
     swamChannelsListDatabaseOptionsValidator: getValidatorSwarmChannelsListDatabaseOptions(validateGrantAccessCallback),
   };
   const options = {

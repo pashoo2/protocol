@@ -3,7 +3,7 @@ import {
   TSwarmMessageSerialized,
   ISwarmMessageInstanceDecrypted,
 } from '../../../../../../../swarm-message/swarm-message-constructor.types';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 import { TSwrmMessagesChannelsListDBOWithGrantAccess } from '../../../../../../types/swarm-messages-channels-list-instance.types';
 import { TSwarmMessageUserIdentifierSerialized } from '../../../../../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier.types';
 import {
@@ -133,10 +133,11 @@ export function createGrantAccessCallbackByConstantArgumentsAndMessageWithChanne
       operation,
       time,
     });
-    const previousChannelDescription = swarmChannelsListClockSortedChannelsDescriptionsUpdatesCache.getChannelDescriptionUpdatePreviousByClockTimeOrUndefined(
-      key,
-      time
-    );
+    const previousChannelDescription =
+      swarmChannelsListClockSortedChannelsDescriptionsUpdatesCache.getChannelDescriptionUpdatePreviousByClockTimeOrUndefined(
+        key,
+        time
+      );
 
     if (isDELETE) {
       // TODO - may be it will cause a problems e.g. if the DELETE
@@ -166,18 +167,15 @@ export function createGrantAccessCallbackByConstantArgumentsAndMessageWithChanne
     }
     return true;
   }
-  (channelsListGrantAccessCallbackFunction as ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<
-    P,
-    T,
-    MD,
-    CTX
-  >).toString = constantArguments.grandAccessCallbackFromDbOptions.toString.bind(
+  (
+    channelsListGrantAccessCallbackFunction as ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<P, T, MD, CTX>
+  ).toString = constantArguments.grandAccessCallbackFromDbOptions.toString.bind(
     constantArguments.grandAccessCallbackFromDbOptions
   );
-  return (channelsListGrantAccessCallbackFunction as ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<
+  return channelsListGrantAccessCallbackFunction as ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound<
     P,
     T,
     MD,
     CTX
-  >) as DBO['grantAccess'];
+  > as DBO['grantAccess'];
 }

@@ -19,7 +19,7 @@ import {
 } from '../../../../swarm-message-store/types/swarm-message-store.types';
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../../../swarm-message-encrypted-cache/swarm-message-encrypted-cache.types';
 import { ConstructorType } from '../../../../../types/helper.types';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 import {
   TSwarmStoreDatabaseOptionsSerialized,
   ISwarmStoreDatabaseBaseOptions,

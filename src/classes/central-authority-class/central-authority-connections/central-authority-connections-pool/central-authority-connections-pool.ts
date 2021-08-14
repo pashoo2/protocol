@@ -110,7 +110,7 @@ export class CAConnectionsPool implements ICAConnectionPool {
    */
   public async connect(
     authProviderUrl: TCAAuthProviderIdentity,
-    isAuthentificateAnonymousely: boolean = true
+    isAuthentificateAnonymously: boolean = true
   ): Promise<ICAConnection | Error> {
     if (!validateCAConnectionAuthProviderUrl(authProviderUrl)) {
       return new Error('The url provided as the auth provider service url is not valid');
@@ -131,8 +131,8 @@ export class CAConnectionsPool implements ICAConnectionPool {
     if (connectionWithAuthProvider instanceof Error) {
       return connectionWithAuthProvider;
     }
-    if (isAuthentificateAnonymousely) {
-      const ananymousResult = await connectionWithAuthProvider.signInAnonymousely();
+    if (isAuthentificateAnonymously) {
+      const ananymousResult = await connectionWithAuthProvider.signInAnonymously();
 
       if (ananymousResult instanceof Error) {
         return ananymousResult;

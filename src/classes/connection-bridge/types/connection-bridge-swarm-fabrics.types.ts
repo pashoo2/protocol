@@ -1,5 +1,5 @@
 import { ConstructorType } from '../../../types/helper.types';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 import { ICentralAuthority } from '../../central-authority-class/central-authority-class.types';
 import {
   IDatabaseOptionsClass,

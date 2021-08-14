@@ -8,7 +8,7 @@ import {
   ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric,
 } from '../../../../types/swarm-messages-channels-list-instance.types';
 import { ISwarmMessagesChannelsDescriptionsListConstructorArguments } from '../../../../types/swarm-messages-channels-list-instance.types';
-import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 import { ISwarmMessageChannelDescriptionRaw } from '../../../../types/swarm-messages-channel-instance.types';
 import { TSwarmMessageConstructorBodyMessage } from '../../../../../swarm-message/swarm-message-constructor.types';
 import { TSwarmStoreDatabaseEntityKey } from '../../../../../swarm-store-class/swarm-store-class.types';

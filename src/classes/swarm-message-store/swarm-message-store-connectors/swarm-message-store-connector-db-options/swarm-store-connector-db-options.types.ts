@@ -18,7 +18,7 @@ import {
   ISwarmStoreDBOGrandAccessCallbackBaseContext,
   ISwarmStoreDBOSerializerValidator,
   ISwarmStoreConnectorUtilsDatabaseOptionsValidatorsInstanceFabric,
-} from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connetors.types';
+} from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 import { ISwarmMessagesStoreConnectorUtilsDbOptionsGrandAccessCallbackBound } from '../..';
 import { ISwarmStoreOptionsClassConstructor } from '../../../swarm-store-class/swarm-store-class.types';
 
