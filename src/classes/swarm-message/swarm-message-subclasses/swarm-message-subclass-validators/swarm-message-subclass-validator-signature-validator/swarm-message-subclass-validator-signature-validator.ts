@@ -55,7 +55,7 @@ export class SwarmMessgeSubclassSignatureValidator {
 
     assert(!!caConnection, 'Central authority connection must be provided in options');
     assert(
-      typeof caConnection.getSwarmUserSignPubKey === 'function',
+      typeof caConnection.getSwarmUserSignVerifyPubKey === 'function',
       'Central authority connection must have the method getSwarmUserSignPubKey'
     );
     assert(options.utils, 'Utils must be provided in options');
@@ -106,7 +106,7 @@ export class SwarmMessgeSubclassSignatureValidator {
 
   protected getSenderSignPubKey(uid: TSwarmMessageUserIdentifierSerialized) {
     assert(!!this.caConnection, 'there is no connection to the central authority to get the user public key for data sign');
-    return !!this.caConnection && this.caConnection.getSwarmUserSignPubKey(uid);
+    return !!this.caConnection && this.caConnection.getSwarmUserSignVerifyPubKey(uid);
   }
 
   protected getHashForSignature(sig: string): string {

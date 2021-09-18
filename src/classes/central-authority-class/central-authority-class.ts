@@ -260,7 +260,7 @@ export class CentralAuthority implements ICentralAuthority {
    * @returns {(Promise<Error | null | CryptoKey>)}
    * @memberof CentralAuthority
    */
-  public async getSwarmUserSignPubKey(identity: TCAUserIdentityRawTypes): Promise<Error | null | CryptoKey> {
+  public async getSwarmUserSignVerifyPubKey(identity: TCAUserIdentityRawTypes): Promise<Error | null | CryptoKey> {
     if (!this.isRunning) {
       return this.errorNotRunning;
     }

@@ -76,7 +76,7 @@ import {
 } from 'classes/connection-bridge/types/connection-bridge.types-helpers';
 import { createSwarmMessagesDatabaseMessagesCollectorInstance } from '../../swarm-messages-database/swarm-messages-database-subclasses/swarm-messages-database-messages-collector/swarm-messages-database-messages-collector';
 import { ISerializer } from 'types/serialization.types';
-import { ICentralAuthorityUserProfile, TCentralAuthorityUserIdentity } from 'classes/central-authority-class';
+import { ICentralAuthority, ICentralAuthorityUserProfile, TCentralAuthorityUserIdentity } from 'classes/central-authority-class';
 import { SMS } from 'classes/connection-bridge/types/connection-bridge.types-helpers/connection-bridge-storage-options.types.helpers';
 import { getDatabaseConnectionByDatabaseOptionsFabricWithKvMessagesUpdatesQueuedHandling } from '../../swarm-messages-channels/swarm-messages-channels-classes/swarm-messages-channels-list-classes/swarm-messages-channels-list-v1-class/utils/swarm-messages-channels-list-v1-constructor-arguments-fabrics/swarm-messages-channels-list-v1-database-connection-fabrics/swarm-messages-channels-list-v1-database-connection-fabric-with-kv-messages-updates-queued-handling';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
@@ -99,6 +99,13 @@ import { TDatabaseOptionsTypeByChannelDescriptionRaw } from '../../swarm-message
 import { ESwarmMessagesChannelEventName } from 'classes/swarm-messages-channels/types/swarm-messages-channel-events.types';
 import { IConnectionToSwarmWithChannels } from './types/connect-to-swarm-orbitdb-with-channels-instance.types';
 import { TConnectionBridgeOptionsAuthCredentialsWithAuthProvider } from '../../connection-bridge/types/connection-bridge.types';
+import { decryptData, encryptDataToString } from '@pashoo2/crypto-utilities';
+import assert from 'assert';
+import {
+  IQueuedEncryptionClassBase,
+  IQueuedEncryptionClassBaseOptions,
+  QueuedEncryptionClassBase,
+} from 'classes/basic-classes/queued-encryption-class-base';
 
 export class ConnectionToSwarmWithChannels<
   CBO extends IConnectionBridgeOptionsDefault<TSwarmStoreConnectorDefault, T, DbType, boolean>,
@@ -151,6 +158,8 @@ export class ConnectionToSwarmWithChannels<
     const { isConnectingToSwarm, connectionBridge } = this.__state;
     return Boolean(connectionBridge) && !isConnectingToSwarm;
   }
+
+  protected _encryptionQueue: IQueuedEncryptionClassBase | undefined;
   private __state: IConnectToSwarmOrbitDbWithChannelsState<DbType, T, DBO, CBO> =
     CONNECT_TO_SWARM_ORBITDB_WITH_CHANNELS_STATE_DEFAULT as IConnectToSwarmOrbitDbWithChannelsState<DbType, T, DBO, CBO>;
   private __emiter = new EventEmitter();
@@ -175,6 +184,7 @@ export class ConnectionToSwarmWithChannels<
     userProfile?: Partial<ICentralAuthorityUserProfile>
   ): Promise<void> {
     await this._connectToSwarmIfNotConnected(userCredentials, userProfile);
+    this._createAndSetQueuedEncryptionClassBase();
   }
 
   public async updateUserCentralAuthorityProfile(userProfile: Partial<ICentralAuthorityUserProfile>): Promise<void> {
@@ -251,6 +261,66 @@ export class ConnectionToSwarmWithChannels<
       CONNECT_TO_SWARM_ORBITDB_WITH_CHANNELS_DATABASE_MESSAGES_UPDATE_EVENT_NAME,
       listener
     );
+  }
+
+  public async encryptString(value: string): Promise<string>;
+  public async encryptString(value: string, userId?: TCentralAuthorityUserIdentity): Promise<string> {
+    let cryptoKey: CryptoKey;
+
+    assert(!!value, 'A value should be defined and should not be an empty string');
+    if (!userId || this._isCurrentUserIdentity(userId)) {
+      cryptoKey = this._getCurrentUserDataEncryptionCryptoKey();
+    } else {
+      cryptoKey = await this._getSwarmUserDataEncryptionCryptoKeyByUserId(userId);
+    }
+
+    const encryptedStringOrError: string | Error = await this._encryptionQueue.encryptData(value, cryptoKey);
+
+    if (encryptedStringOrError instanceof Error) {
+      throw encryptedStringOrError;
+    }
+    return encryptedStringOrError;
+  }
+
+  public async decryptString(value: string): Promise<string> {
+    assert(!!value, 'A value should be defined and should not be an empty string');
+
+    const decryptedStringOrError: string | Error = await this._encryptionQueue.decryptData(value);
+
+    if (decryptedStringOrError instanceof Error) {
+      throw decryptedStringOrError;
+    }
+    return decryptedStringOrError;
+  }
+
+  public async signString(value: string): Promise<string> {
+    assert(!!value, 'A value should be defined and should not be an empty string');
+
+    const signatureForValue: string | Error = await this._encryptionQueue.signData(value);
+
+    if (signatureForValue instanceof Error) {
+      throw signatureForValue;
+    }
+    return signatureForValue;
+  }
+
+  public verifySignature(value: string, signature: string): Promise<boolean>;
+  public async verifySignature(value: string, signature: string, userId?: TCentralAuthorityUserIdentity): Promise<boolean> {
+    let cryptoKey: CryptoKey;
+
+    assert(!!value, 'A value should be defined and should not be an empty string');
+    if (!userId || this._isCurrentUserIdentity(userId)) {
+      cryptoKey = this._getCurrentUserDataSignatureVerifyCryptoKey();
+    } else {
+      cryptoKey = await this._getSwarmUserDataSignatureVerifyCryptoKey(userId);
+    }
+
+    const isSignatureValid: boolean | Error = await this._encryptionQueue.verifyData(value, signature, cryptoKey);
+
+    if (isSignatureValid instanceof Error) {
+      throw isSignatureValid;
+    }
+    return isSignatureValid;
   }
 
   protected _getOptionsForConnectionBridgeInstance(
@@ -1034,5 +1104,139 @@ export class ConnectionToSwarmWithChannels<
       ESwarmMessagesChannelsListEventName.CHANNELS_LIST_CLOSED,
       this._swarmChannelListDescriptionRemovedOrChannelClosedListener
     );
+  }
+
+  protected _isCurrentUserIdentity(userId: TCentralAuthorityUserIdentity): boolean {
+    const currentUserId = this._getActiveUserId();
+
+    if (!userId) {
+      throw new Error('Swarm user id should be defined');
+    }
+    return currentUserId === userId;
+  }
+
+  protected getCentralAuthorityActiveConnection(): ICentralAuthority {
+    const connectionBridgeInstance = this._getActiveConnectionBridgeInstance();
+    const { centralAuthorityConnection } = connectionBridgeInstance;
+
+    if (!centralAuthorityConnection.isRunning) {
+      throw new Error('Central authority connection is not active');
+    }
+    return centralAuthorityConnection;
+  }
+
+  protected _getCurrentUserDataEncryptionCryptoKeyPair(): CryptoKeyPair {
+    const centralAuthorityConnection: ICentralAuthority = this.getCentralAuthorityActiveConnection();
+    const cryptoKeyPairOrError: Error | CryptoKeyPair = centralAuthorityConnection.getUserEncryptionKeyPair();
+
+    if (cryptoKeyPairOrError instanceof Error) {
+      throw cryptoKeyPairOrError;
+    }
+
+    return cryptoKeyPairOrError;
+  }
+
+  protected _getCurrentUserDataEncryptionCryptoKey(): CryptoKey {
+    const { publicKey } = this._getCurrentUserDataEncryptionCryptoKeyPair();
+
+    if (!publicKey) {
+      throw new Error('Public key is not defined');
+    }
+    return publicKey;
+  }
+
+  protected _getCurrentUserDataDecryptionCryptoKey(): CryptoKey {
+    const { privateKey } = this._getCurrentUserDataEncryptionCryptoKeyPair();
+
+    if (!privateKey) {
+      throw new Error('Private key is not defined');
+    }
+    return privateKey;
+  }
+
+  protected async _getSwarmUserDataEncryptionCryptoKeyByUserId(userId: TCentralAuthorityUserIdentity): Promise<CryptoKey> {
+    const centralAuthorityConnection: ICentralAuthority = this.getCentralAuthorityActiveConnection();
+    const encryptionCryptoKeyErrorOrNull: CryptoKey | Error | null =
+      await centralAuthorityConnection.getSwarmUserEncryptionPubKey(userId);
+
+    if (!encryptionCryptoKeyErrorOrNull) {
+      throw new Error('A crypto key has not been found for the user');
+    }
+    if (encryptionCryptoKeyErrorOrNull instanceof Error) {
+      throw encryptionCryptoKeyErrorOrNull;
+    }
+    return encryptionCryptoKeyErrorOrNull;
+  }
+
+  protected _getCurrentUserDataSignCryptoKeyPair(): CryptoKeyPair {
+    const centralAuthorityConnection: ICentralAuthority = this.getCentralAuthorityActiveConnection();
+    const dataSignCryptoKeyPairOrError: CryptoKeyPair | Error = centralAuthorityConnection.getUserDataSignKeyPair();
+
+    if (dataSignCryptoKeyPairOrError instanceof Error) {
+      throw dataSignCryptoKeyPairOrError;
+    }
+    return dataSignCryptoKeyPairOrError;
+  }
+
+  protected _getCurrentUserDataSignCryptoKey(): CryptoKey {
+    const userDataSignCryptoKeyPair: CryptoKeyPair = this._getCurrentUserDataSignCryptoKeyPair();
+    const { privateKey } = userDataSignCryptoKeyPair;
+
+    if (!privateKey) {
+      throw new Error('There is no public crypto key for data sign');
+    }
+    return privateKey;
+  }
+
+  protected _getCurrentUserDataSignatureVerifyCryptoKey(): CryptoKey {
+    const userDataSignCryptoKeyPair: CryptoKeyPair = this._getCurrentUserDataSignCryptoKeyPair();
+    const { publicKey } = userDataSignCryptoKeyPair;
+
+    if (!publicKey) {
+      throw new Error('There is no public crypto key for data sign');
+    }
+    return publicKey;
+  }
+
+  protected async _getSwarmUserDataSignatureVerifyCryptoKey(userId: TCentralAuthorityUserIdentity): Promise<CryptoKey> {
+    const centralAuthorityConnection: ICentralAuthority = this.getCentralAuthorityActiveConnection();
+    const cryptoKeyDataSignVerification: CryptoKey | Error | null = await centralAuthorityConnection.getSwarmUserSignVerifyPubKey(
+      userId
+    );
+
+    if (!cryptoKeyDataSignVerification) {
+      throw new Error('A crypto key for data signature verification is not defined for the user');
+    }
+    if (cryptoKeyDataSignVerification instanceof Error) {
+      throw cryptoKeyDataSignVerification;
+    }
+    return cryptoKeyDataSignVerification;
+  }
+
+  protected _getQueuedEncryptionClassBaseConstrucorOptions(): IQueuedEncryptionClassBaseOptions {
+    const userSignKey: CryptoKey = this._getCurrentUserDataSignCryptoKey();
+    const userDecryptionKey: CryptoKey = this._getCurrentUserDataDecryptionCryptoKey();
+    const userEncryptionKey: CryptoKey = this._getCurrentUserDataEncryptionCryptoKey();
+    const cryptoKeys: IQueuedEncryptionClassBaseOptions['keys'] = {
+      signKey: userSignKey,
+      decryptKey: userDecryptionKey,
+      encryptKey: userEncryptionKey,
+    };
+    const options: IQueuedEncryptionClassBaseOptions = {
+      keys: cryptoKeys,
+    };
+
+    return options;
+  }
+
+  protected _createAndSetQueuedEncryptionClassBase(): void {
+    this._encryptionQueue = this._createQueuedEncryptionClassBase();
+  }
+
+  protected _createQueuedEncryptionClassBase(): IQueuedEncryptionClassBase {
+    const constructorOptions = this._getQueuedEncryptionClassBaseConstrucorOptions();
+    const encryptionQueue: IQueuedEncryptionClassBase = new QueuedEncryptionClassBase(constructorOptions);
+
+    return encryptionQueue;
   }
 }
