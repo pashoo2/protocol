@@ -135,13 +135,13 @@ export interface ICentralAuthority {
   getSwarmUserEncryptionPubKey(identity: TCAUserIdentityRawTypes): Promise<Error | null | CryptoKey>;
   /**
    * returns a crypto key of the swarm user used
-   * for data sign
+   * for verification of a data signed by the swarm user
    *
    * @param {TCAUserIdentityRawTypes} identity
    * @returns {(Promise<Error | null | CryptoKey>)}
    * @memberof ICentralAuthority
    */
-  getSwarmUserSignPubKey(identity: TCAUserIdentityRawTypes): Promise<Error | null | CryptoKey>;
+  getSwarmUserSignVerifyPubKey(identity: TCAUserIdentityRawTypes): Promise<Error | null | CryptoKey>;
   /**
    * return the identity of the current user
    *

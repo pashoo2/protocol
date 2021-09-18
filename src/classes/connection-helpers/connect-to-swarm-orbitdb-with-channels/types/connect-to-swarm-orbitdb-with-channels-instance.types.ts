@@ -33,7 +33,7 @@ import { IConnectToSwarmOrbitDbWithChannelsStateListener } from 'classes/connect
 import { IConnectToSwarmOrbitDbWithChannelsDatabaseSwarmMessagesListUpdateListener } from './connect-to-swarm-orbitdb-with-channels-change-listeners.types';
 import { TConnectionBridgeOptionsDatabaseOptions } from 'classes/connection-bridge';
 import { TConnectionBridgeOptionsDbType } from '../../../connection-bridge/types/connection-bridge.types-helpers/connection-bridge-options.types-helpers';
-import { ICentralAuthorityUserProfile } from 'classes/central-authority-class';
+import { ICentralAuthorityUserProfile, TCentralAuthorityUserIdentity } from 'classes/central-authority-class';
 import { TSwarmChannelsListId } from './connect-to-swarm-orbitdb-with-channels-state.types';
 
 export interface IConnectionToSwarmWithChannels<
@@ -160,6 +160,63 @@ export interface IConnectionToSwarmWithChannels<
   removeDatabaseSwarmMessagesListUpdateListener(
     listener: IConnectToSwarmOrbitDbWithChannelsDatabaseSwarmMessagesListUpdateListener<DbType>
   ): void;
+  /**
+   * Encrypt a string using a public crypto key of
+   * the user specified through userId
+   *
+   * @param {string} value
+   * @param {TCentralAuthorityUserIdentity} userId
+   * @returns {Promise<string>}
+   * @memberof IConnectionInitializer
+   */
+  encryptString(value: string, userId: TCentralAuthorityUserIdentity): Promise<string>;
+  /**
+   * Encrypt a string using the current user's public crypto key
+   * The data then key be decrypted by the user's private
+   * crypto key
+   *
+   * @param {string} value
+   * @returns {Promise<string>}
+   * @memberof IConnectionInitializer
+   */
+  encryptString(value: string): Promise<string>;
+  /**
+   * Decrypt a string encrypted using the current user's public crypto key
+   *
+   * @param {string} value
+   * @returns {Promise<string>}
+   * @memberof IConnectionInitializer
+   */
+  decryptString(value: string): Promise<string>;
+  /**
+   * Sign the string by a crypto key of the current user
+   * and return a signature.
+   *
+   * @param {string} value
+   * @returns {Promise<string>}
+   * @memberof IConnectionToSwarmWithChannels
+   */
+  signString(value: string): Promise<string>;
+  /**
+   * Verify the signature for a data signed by a swarm
+   * user's crypto key
+   *
+   * @param {string} value
+   * @param {string} signature
+   * @param {TCentralAuthorityUserIdentity} userId
+   * @returns {Promise<string>}
+   * @memberof IConnectionToSwarmWithChannels
+   */
+  verifySignature(value: string, signature: string, userId: TCentralAuthorityUserIdentity): Promise<boolean>;
+  /**
+   * Verify the signature for a data signed by the current user's
+   * crypto key
+   *
+   * @param {string} value
+   * @returns {Promise<string>}
+   * @memberof IConnectionToSwarmWithChannels
+   */
+  verifySignature(value: string, signature: string): Promise<boolean>;
 }
 
 export interface IConnectionToSwarmWithChannelsConstructor<

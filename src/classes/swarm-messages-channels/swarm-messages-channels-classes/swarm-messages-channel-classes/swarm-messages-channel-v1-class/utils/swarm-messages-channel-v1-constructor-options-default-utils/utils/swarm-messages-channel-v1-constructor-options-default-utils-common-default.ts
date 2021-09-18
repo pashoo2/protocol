@@ -45,7 +45,7 @@ export function getSwarmMessageIssuerByChannelDescriptionUtilityDefault<
 }
 
 /**
- * Returns database name by swarm messages channel description.
+ * Returns database name by swarm messages channel description.feat
  *
  * @export
  * @template P
