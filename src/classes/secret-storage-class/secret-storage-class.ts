@@ -75,8 +75,7 @@ export class SecretStorage
     errorStatus: SECRET_STORAGE_STATUS.ERROR,
     instanceName: 'SecretStorage',
   })
-  implements ISecretStorage
-{
+  implements ISecretStorage {
   private static AuthStorageProvider: IStorageProvider = STORAGE_PROVIDERS[STORAGE_PROVIDERS_NAME.SESSION_STORAGE];
 
   private static PREFIX_KEY_IN_SECRET_STORAGE = '__SecretStorage__';
@@ -452,7 +451,7 @@ export class SecretStorage
       promisePending = [];
       for (; idx < len; idx++) {
         if (results[idx] instanceof Error) {
-          promisePending.push(this.unsetWithStorageProvider(isKeyString ? (key as string) : key[idx]));
+          promisePending.push(this.unsetWithStorageProvider(isKeyString ? key : key[idx]));
         }
       }
     }

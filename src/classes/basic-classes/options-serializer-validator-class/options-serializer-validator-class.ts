@@ -123,7 +123,7 @@ export class OptionsSerializerValidator<OPTS, OPTSSERIALIZED extends string>
   protected _setOptions(options: OPTS | OPTSSERIALIZED): void {
     const isSerializedOptions = this._validateSerializedOptionsSilent(options);
     if (isSerializedOptions) {
-      this._parseAndSetOptionsFromSerialized(options as OPTSSERIALIZED);
+      this._parseAndSetOptionsFromSerialized(options);
     } else {
       this._validateAndSetOptionsUnserialized(options as OPTS);
     }
