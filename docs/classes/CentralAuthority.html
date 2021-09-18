@@ -1,0 +1,3150 @@
+<!DOCTYPE html>
+<html class="default no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>CentralAuthority | @local/decentralized-protocol</title>
+    <meta name="description" content="Documentation for @local/decentralized-protocol" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="../assets/style.css" />
+    <link rel="stylesheet" href="../assets/highlight.css" />
+    <script async src="../assets/search.js" id="search-script"></script>
+  </head>
+  <body>
+    <header>
+      <div class="tsd-page-toolbar">
+        <div class="container">
+          <div class="table-wrap">
+            <div class="table-cell" id="tsd-search" data-base="..">
+              <div class="field">
+                <label for="tsd-search-field" class="tsd-widget search no-caption">Search</label
+                ><input type="text" id="tsd-search-field" />
+              </div>
+              <ul class="results">
+                <li class="state loading">Preparing search index...</li>
+                <li class="state failure">The search index is not available</li>
+              </ul>
+              <a href="../index.html" class="title">@local/decentralized-protocol</a>
+            </div>
+            <div class="table-cell" id="tsd-widgets">
+              <div id="tsd-filter">
+                <a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+                <div class="tsd-filter-group">
+                  <div class="tsd-select" id="tsd-filter-visibility">
+                    <span class="tsd-select-label">All</span>
+                    <ul class="tsd-select-list">
+                      <li data-value="public">Public</li>
+                      <li data-value="protected">Public/Protected</li>
+                      <li data-value="private" class="selected">All</li>
+                    </ul>
+                  </div>
+                  <input type="checkbox" id="tsd-filter-inherited" checked /><label class="tsd-widget" for="tsd-filter-inherited"
+                    >Inherited</label
+                  ><input type="checkbox" id="tsd-filter-externals" checked /><label class="tsd-widget" for="tsd-filter-externals"
+                    >Externals</label
+                  >
+                </div>
+              </div>
+              <a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tsd-page-title">
+        <div class="container">
+          <ul class="tsd-breadcrumb">
+            <li><a href="../modules.html">@local/decentralized-protocol</a></li>
+            <li><a href="CentralAuthority.html">CentralAuthority</a></li>
+          </ul>
+          <h1>Class CentralAuthority</h1>
+        </div>
+      </div>
+    </header>
+    <div class="container container-main">
+      <div class="row">
+        <div class="col-8 col-content">
+          <section class="tsd-panel tsd-comment">
+            <div class="tsd-comment tsd-typography">
+              <div class="lead">
+                <p>
+                  Used to get and approve the user&#39;s credentials stored by an authorization provider. It&#39;s necessary to
+                  allow each user can connect and get info from all authorization providers. This class used to authorize the user
+                  in the SWARM. User must register on one of authority providers services with a public credentials which used by
+                  another to authorize the user and approve him to access on the data.
+                </p>
+              </div>
+              <dl class="tsd-comment-tags">
+                <dt>export</dt>
+                <dd></dd>
+              </dl>
+            </div>
+          </section>
+          <section class="tsd-panel tsd-hierarchy">
+            <h3>Hierarchy</h3>
+            <ul class="tsd-hierarchy">
+              <li><span class="target">CentralAuthority</span></li>
+            </ul>
+          </section>
+          <section class="tsd-panel">
+            <h3>Implements</h3>
+            <ul class="tsd-hierarchy">
+              <li>
+                <a href="../interfaces/ICentralAuthority.html" class="tsd-signature-type" data-tsd-kind="Interface"
+                  >ICentralAuthority</a
+                >
+              </li>
+            </ul>
+          </section>
+          <section class="tsd-panel-group tsd-index-group">
+            <h2>Index</h2>
+            <section class="tsd-panel tsd-index-panel">
+              <div class="tsd-index-content">
+                <section class="tsd-index-section">
+                  <h3>Constructors</h3>
+                  <ul class="tsd-index-list">
+                    <li class="tsd-kind-constructor tsd-parent-kind-class">
+                      <a href="CentralAuthority.html#constructor" class="tsd-kind-icon">constructor</a>
+                    </li>
+                  </ul>
+                </section>
+                <section class="tsd-index-section tsd-is-private-protected">
+                  <h3>Properties</h3>
+                  <ul class="tsd-index-list">
+                    <li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#authProviderId" class="tsd-kind-icon">auth<wbr />Provider<wbr />Id</a>
+                    </li>
+                    <li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#authProvidersPoolConfiguration" class="tsd-kind-icon"
+                        >auth<wbr />Providers<wbr />Pool<wbr />Configuration</a
+                      >
+                    </li>
+                    <li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#connectionAuthProvidersPool" class="tsd-kind-icon"
+                        >connection<wbr />Auth<wbr />Providers<wbr />Pool</a
+                      >
+                    </li>
+                    <li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#connectionStorageCurrentUserCredentials" class="tsd-kind-icon"
+                        >connection<wbr />Storage<wbr />Current<wbr />User<wbr />Credentials</a
+                      >
+                    </li>
+                    <li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#connectionSwarmCredentialsProvider" class="tsd-kind-icon"
+                        >connection<wbr />Swarm<wbr />Credentials<wbr />Provider</a
+                      >
+                    </li>
+                    <li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#isRunningInstance" class="tsd-kind-icon">is<wbr />Running<wbr />Instance</a>
+                    </li>
+                    <li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#locallyStoredUserCryptoCredentials" class="tsd-kind-icon"
+                        >locally<wbr />Stored<wbr />User<wbr />Crypto<wbr />Credentials</a
+                      >
+                    </li>
+                    <li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#remoteProvidedUserCryptoCredentials" class="tsd-kind-icon"
+                        >remote<wbr />Provided<wbr />User<wbr />Crypto<wbr />Credentials</a
+                      >
+                    </li>
+                    <li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#userProfileOnAuthService" class="tsd-kind-icon"
+                        >user<wbr />Profile<wbr />On<wbr />Auth<wbr />Service</a
+                      >
+                    </li>
+                  </ul>
+                </section>
+                <section class="tsd-index-section">
+                  <h3>Accessors</h3>
+                  <ul class="tsd-index-list">
+                    <li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#errorNotRunning" class="tsd-kind-icon">error<wbr />Not<wbr />Running</a>
+                    </li>
+                    <li class="tsd-kind-get-signature tsd-parent-kind-class">
+                      <a href="CentralAuthority.html#isRunning" class="tsd-kind-icon">is<wbr />Running</a>
+                    </li>
+                  </ul>
+                </section>
+                <section class="tsd-index-section">
+                  <h3>Methods</h3>
+                  <ul class="tsd-index-list">
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#closeAllConnections" class="tsd-kind-icon"
+                        >close<wbr />All<wbr />Connections</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#closeConnectionSwarmCredentialsProvider" class="tsd-kind-icon"
+                        >close<wbr />Connection<wbr />Swarm<wbr />Credentials<wbr />Provider</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#closeConnectionToAuthProvidersPool" class="tsd-kind-icon"
+                        >close<wbr />Connection<wbr />To<wbr />Auth<wbr />Providers<wbr />Pool</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#closeConnectionToCurrentUserCredentialsStorage" class="tsd-kind-icon"
+                        >close<wbr />Connection<wbr />To<wbr />Current<wbr />User<wbr />Credentials<wbr />Storage</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#compareLocalAndRemoteCredentials" class="tsd-kind-icon"
+                        >compare<wbr />Local<wbr />And<wbr />Remote<wbr />Credentials</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class">
+                      <a href="CentralAuthority.html#connect" class="tsd-kind-icon">connect</a>
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#connectToAuthProvidersPool" class="tsd-kind-icon"
+                        >connect<wbr />To<wbr />Auth<wbr />Providers<wbr />Pool</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#connectToSwarmCredentialsStorage" class="tsd-kind-icon"
+                        >connect<wbr />To<wbr />Swarm<wbr />Credentials<wbr />Storage</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#connectToUserCredentialsStorage" class="tsd-kind-icon"
+                        >connect<wbr />To<wbr />User<wbr />Credentials<wbr />Storage</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#createConnectionToSwarmCredentialsStorage" class="tsd-kind-icon"
+                        >create<wbr />Connection<wbr />To<wbr />Swarm<wbr />Credentials<wbr />Storage</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class">
+                      <a href="CentralAuthority.html#disconnect" class="tsd-kind-icon">disconnect</a>
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#disconnectAll" class="tsd-kind-icon">disconnect<wbr />All</a>
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class">
+                      <a href="CentralAuthority.html#exportCryptoCredentials" class="tsd-kind-icon"
+                        >export<wbr />Crypto<wbr />Credentials</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class">
+                      <a href="CentralAuthority.html#getCAUserProfile" class="tsd-kind-icon">getCAUser<wbr />Profile</a>
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#getCurrentUserCryptoCredentials" class="tsd-kind-icon"
+                        >get<wbr />Current<wbr />User<wbr />Crypto<wbr />Credentials</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#getOptionsForAuthProvidersConnectionsPool" class="tsd-kind-icon"
+                        >get<wbr />Options<wbr />For<wbr />Auth<wbr />Providers<wbr />Connections<wbr />Pool</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#getOptionsForCAStorageCurrentUserCredentials" class="tsd-kind-icon"
+                        >get<wbr />Options<wbr />ForCAStorage<wbr />Current<wbr />User<wbr />Credentials</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#getOptionsForSwarmCredentialsStorageConnection" class="tsd-kind-icon"
+                        >get<wbr />Options<wbr />For<wbr />Swarm<wbr />Credentials<wbr />Storage<wbr />Connection</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#getOptionsToAuthorizeUserOnAuthConnection" class="tsd-kind-icon"
+                        >get<wbr />Options<wbr />To<wbr />Authorize<wbr />User<wbr />On<wbr />Auth<wbr />Connection</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class">
+                      <a href="CentralAuthority.html#getSwarmUserCredentials" class="tsd-kind-icon"
+                        >get<wbr />Swarm<wbr />User<wbr />Credentials</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class">
+                      <a href="CentralAuthority.html#getSwarmUserEncryptionPubKey" class="tsd-kind-icon"
+                        >get<wbr />Swarm<wbr />User<wbr />Encryption<wbr />Pub<wbr />Key</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class">
+                      <a href="CentralAuthority.html#getSwarmUserSignVerifyPubKey" class="tsd-kind-icon"
+                        >get<wbr />Swarm<wbr />User<wbr />Sign<wbr />Verify<wbr />Pub<wbr />Key</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class">
+                      <a href="CentralAuthority.html#getUserDataSignKeyPair" class="tsd-kind-icon"
+                        >get<wbr />User<wbr />Data<wbr />Sign<wbr />Key<wbr />Pair</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class">
+                      <a href="CentralAuthority.html#getUserEncryptionKeyPair" class="tsd-kind-icon"
+                        >get<wbr />User<wbr />Encryption<wbr />Key<wbr />Pair</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class">
+                      <a href="CentralAuthority.html#getUserIdentity" class="tsd-kind-icon">get<wbr />User<wbr />Identity</a>
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#handleFailAndClose" class="tsd-kind-icon"
+                        >handle<wbr />Fail<wbr />And<wbr />Close</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#readAndSetLocallyStoredUserCredentials" class="tsd-kind-icon"
+                        >read<wbr />And<wbr />Set<wbr />Locally<wbr />Stored<wbr />User<wbr />Credentials</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#readSwarmUserCredentials" class="tsd-kind-icon"
+                        >read<wbr />Swarm<wbr />User<wbr />Credentials</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#setConnectionToAuthProvidersPool" class="tsd-kind-icon"
+                        >set<wbr />Connection<wbr />To<wbr />Auth<wbr />Providers<wbr />Pool</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#setConnectionToCurrentUserCredentialsStorage" class="tsd-kind-icon"
+                        >set<wbr />Connection<wbr />To<wbr />Current<wbr />User<wbr />Credentials<wbr />Storage</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#setConnectionToSwarmCredentialsStorage" class="tsd-kind-icon"
+                        >set<wbr />Connection<wbr />To<wbr />Swarm<wbr />Credentials<wbr />Storage</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#setIsRunning" class="tsd-kind-icon">set<wbr />Is<wbr />Running</a>
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#setLocallyStoredCredentials" class="tsd-kind-icon"
+                        >set<wbr />Locally<wbr />Stored<wbr />Credentials</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#setOptions" class="tsd-kind-icon">set<wbr />Options</a>
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#setUserOnAuthResult" class="tsd-kind-icon"
+                        >set<wbr />User<wbr />On<wbr />Auth<wbr />Result</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#storeCryptoCredentialsFromAuthProvider" class="tsd-kind-icon"
+                        >store<wbr />Crypto<wbr />Credentials<wbr />From<wbr />Auth<wbr />Provider</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#unsetConnectionToAuthProvidersPool" class="tsd-kind-icon"
+                        >unset<wbr />Connection<wbr />To<wbr />Auth<wbr />Providers<wbr />Pool</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#unsetConnectionToCurrentUserCredentialsStorage" class="tsd-kind-icon"
+                        >unset<wbr />Connection<wbr />To<wbr />Current<wbr />User<wbr />Credentials<wbr />Storage</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#unsetConnectionToSwarmCredentialsStorage" class="tsd-kind-icon"
+                        >unset<wbr />Connection<wbr />To<wbr />Swarm<wbr />Credentials<wbr />Storage</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#unsetIsRunning" class="tsd-kind-icon">unset<wbr />Is<wbr />Running</a>
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#unsetLocallyStoredCredentials" class="tsd-kind-icon"
+                        >unset<wbr />Locally<wbr />Stored<wbr />Credentials</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#unsetOptions" class="tsd-kind-icon">unset<wbr />Options</a>
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#unsetPropsOnClose" class="tsd-kind-icon"
+                        >unset<wbr />Props<wbr />On<wbr />Close</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#unsetUserOnAuthResult" class="tsd-kind-icon"
+                        >unset<wbr />User<wbr />On<wbr />Auth<wbr />Result</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class">
+                      <a href="CentralAuthority.html#updateUserProfileAndReturnUpdated" class="tsd-kind-icon"
+                        >update<wbr />User<wbr />Profile<wbr />And<wbr />Return<wbr />Updated</a
+                      >
+                    </li>
+                    <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                      <a href="CentralAuthority.html#validateOptions" class="tsd-kind-icon">validate<wbr />Options</a>
+                    </li>
+                  </ul>
+                </section>
+              </div>
+            </section>
+          </section>
+          <section class="tsd-panel-group tsd-member-group">
+            <h2>Constructors</h2>
+            <section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+              <a name="constructor" class="tsd-anchor"></a>
+              <h3>constructor</h3>
+              <ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
+                <li class="tsd-signature tsd-kind-icon">
+                  new <wbr />Central<wbr />Authority<span class="tsd-signature-symbol">(</span
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><a href="CentralAuthority.html" class="tsd-signature-type" data-tsd-kind="Class">CentralAuthority</a>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources"></aside>
+                  <h4 class="tsd-returns-title">
+                    Returns <a href="CentralAuthority.html" class="tsd-signature-type" data-tsd-kind="Class">CentralAuthority</a>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+          </section>
+          <section class="tsd-panel-group tsd-member-group tsd-is-private-protected">
+            <h2>Properties</h2>
+            <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+              <a name="authProviderId" class="tsd-anchor"></a>
+              <h3>
+                <span class="tsd-flag ts-flagProtected">Protected</span>
+                <span class="tsd-flag ts-flagOptional">Optional</span> auth<wbr />Provider<wbr />Id
+              </h3>
+              <div class="tsd-signature tsd-kind-icon">
+                auth<wbr />Provider<wbr />Id<span class="tsd-signature-symbol">?:</span>
+                <span class="tsd-signature-type">string</span>
+              </div>
+              <aside class="tsd-sources">
+                <ul>
+                  <li>
+                    Defined in
+                    <a
+                      href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-92"
+                      >src/classes/central-authority-class/central-authority-class.ts:92</a
+                    >
+                  </li>
+                </ul>
+              </aside>
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
+                  <p>an identity of auth provider the user is authorized on</p>
+                </div>
+                <dl class="tsd-comment-tags">
+                  <dt>memberof</dt>
+                  <dd><p>CentralAuthority</p></dd>
+                </dl>
+              </div>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+              <a name="authProvidersPoolConfiguration" class="tsd-anchor"></a>
+              <h3>
+                <span class="tsd-flag ts-flagProtected">Protected</span>
+                <span class="tsd-flag ts-flagOptional">Optional</span> auth<wbr />Providers<wbr />Pool<wbr />Configuration
+              </h3>
+              <div class="tsd-signature tsd-kind-icon">
+                auth<wbr />Providers<wbr />Pool<wbr />Configuration<span class="tsd-signature-symbol">?:</span>
+                <a
+                  href="../interfaces/ICentralAuthorityAuthProvidersOptions.html"
+                  class="tsd-signature-type"
+                  data-tsd-kind="Interface"
+                  >ICentralAuthorityAuthProvidersOptions</a
+                >
+              </div>
+              <aside class="tsd-sources">
+                <ul>
+                  <li>
+                    Defined in
+                    <a
+                      href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-104"
+                      >src/classes/central-authority-class/central-authority-class.ts:104</a
+                    >
+                  </li>
+                </ul>
+              </aside>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+              <a name="connectionAuthProvidersPool" class="tsd-anchor"></a>
+              <h3>
+                <span class="tsd-flag ts-flagProtected">Protected</span>
+                <span class="tsd-flag ts-flagOptional">Optional</span> connection<wbr />Auth<wbr />Providers<wbr />Pool
+              </h3>
+              <div class="tsd-signature tsd-kind-icon">
+                connection<wbr />Auth<wbr />Providers<wbr />Pool<span class="tsd-signature-symbol">?:</span>
+                <span class="tsd-signature-type">ICAConnectionPool</span>
+              </div>
+              <aside class="tsd-sources">
+                <ul>
+                  <li>
+                    Defined in
+                    <a
+                      href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-105"
+                      >src/classes/central-authority-class/central-authority-class.ts:105</a
+                    >
+                  </li>
+                </ul>
+              </aside>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+              <a name="connectionStorageCurrentUserCredentials" class="tsd-anchor"></a>
+              <h3>
+                <span class="tsd-flag ts-flagProtected">Protected</span>
+                <span class="tsd-flag ts-flagOptional">Optional</span>
+                connection<wbr />Storage<wbr />Current<wbr />User<wbr />Credentials
+              </h3>
+              <div class="tsd-signature tsd-kind-icon">
+                connection<wbr />Storage<wbr />Current<wbr />User<wbr />Credentials<span class="tsd-signature-symbol">?:</span>
+                <span class="tsd-signature-type">ICAStorageCurrentUserCredentials</span>
+              </div>
+              <aside class="tsd-sources">
+                <ul>
+                  <li>
+                    Defined in
+                    <a
+                      href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-106"
+                      >src/classes/central-authority-class/central-authority-class.ts:106</a
+                    >
+                  </li>
+                </ul>
+              </aside>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+              <a name="connectionSwarmCredentialsProvider" class="tsd-anchor"></a>
+              <h3>
+                <span class="tsd-flag ts-flagProtected">Protected</span>
+                <span class="tsd-flag ts-flagOptional">Optional</span> connection<wbr />Swarm<wbr />Credentials<wbr />Provider
+              </h3>
+              <div class="tsd-signature tsd-kind-icon">
+                connection<wbr />Swarm<wbr />Credentials<wbr />Provider<span class="tsd-signature-symbol">?:</span>
+                <span class="tsd-signature-type">ICASwarmCredentialsProvider</span>
+              </div>
+              <aside class="tsd-sources">
+                <ul>
+                  <li>
+                    Defined in
+                    <a
+                      href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-107"
+                      >src/classes/central-authority-class/central-authority-class.ts:107</a
+                    >
+                  </li>
+                </ul>
+              </aside>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+              <a name="isRunningInstance" class="tsd-anchor"></a>
+              <h3><span class="tsd-flag ts-flagProtected">Protected</span> is<wbr />Running<wbr />Instance</h3>
+              <div class="tsd-signature tsd-kind-icon">
+                is<wbr />Running<wbr />Instance<span class="tsd-signature-symbol">:</span>
+                <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span>
+              </div>
+              <aside class="tsd-sources">
+                <ul>
+                  <li>
+                    Defined in
+                    <a
+                      href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-84"
+                      >src/classes/central-authority-class/central-authority-class.ts:84</a
+                    >
+                  </li>
+                </ul>
+              </aside>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+              <a name="locallyStoredUserCryptoCredentials" class="tsd-anchor"></a>
+              <h3>
+                <span class="tsd-flag ts-flagProtected">Protected</span>
+                <span class="tsd-flag ts-flagOptional">Optional</span>
+                locally<wbr />Stored<wbr />User<wbr />Crypto<wbr />Credentials
+              </h3>
+              <div class="tsd-signature tsd-kind-icon">
+                locally<wbr />Stored<wbr />User<wbr />Crypto<wbr />Credentials<span class="tsd-signature-symbol">?:</span>
+                <a
+                  href="../modules.html#TCentralAuthorityUserCryptoCredentials"
+                  class="tsd-signature-type"
+                  data-tsd-kind="Type alias"
+                  >TCentralAuthorityUserCryptoCredentials</a
+                >
+              </div>
+              <aside class="tsd-sources">
+                <ul>
+                  <li>
+                    Defined in
+                    <a
+                      href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-102"
+                      >src/classes/central-authority-class/central-authority-class.ts:102</a
+                    >
+                  </li>
+                </ul>
+              </aside>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+              <a name="remoteProvidedUserCryptoCredentials" class="tsd-anchor"></a>
+              <h3>
+                <span class="tsd-flag ts-flagProtected">Protected</span>
+                <span class="tsd-flag ts-flagOptional">Optional</span>
+                remote<wbr />Provided<wbr />User<wbr />Crypto<wbr />Credentials
+              </h3>
+              <div class="tsd-signature tsd-kind-icon">
+                remote<wbr />Provided<wbr />User<wbr />Crypto<wbr />Credentials<span class="tsd-signature-symbol">?:</span>
+                <a
+                  href="../modules.html#TCentralAuthorityUserCryptoCredentials"
+                  class="tsd-signature-type"
+                  data-tsd-kind="Type alias"
+                  >TCentralAuthorityUserCryptoCredentials</a
+                >
+              </div>
+              <aside class="tsd-sources">
+                <ul>
+                  <li>
+                    Defined in
+                    <a
+                      href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-101"
+                      >src/classes/central-authority-class/central-authority-class.ts:101</a
+                    >
+                  </li>
+                </ul>
+              </aside>
+              <div class="tsd-comment tsd-typography">
+                <div class="lead">
+                  <p>crypto credentials of the user, for the auth provider the user is authorized on</p>
+                </div>
+                <dl class="tsd-comment-tags">
+                  <dt>memberof</dt>
+                  <dd><p>CentralAuthority</p></dd>
+                </dl>
+              </div>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+              <a name="userProfileOnAuthService" class="tsd-anchor"></a>
+              <h3>
+                <span class="tsd-flag ts-flagProtected">Protected</span>
+                <span class="tsd-flag ts-flagOptional">Optional</span> user<wbr />Profile<wbr />On<wbr />Auth<wbr />Service
+              </h3>
+              <div class="tsd-signature tsd-kind-icon">
+                user<wbr />Profile<wbr />On<wbr />Auth<wbr />Service<span class="tsd-signature-symbol">?:</span>
+                <a href="../interfaces/ICentralAuthorityUserProfile.html" class="tsd-signature-type" data-tsd-kind="Interface"
+                  >ICentralAuthorityUserProfile</a
+                >
+              </div>
+              <aside class="tsd-sources">
+                <ul>
+                  <li>
+                    Defined in
+                    <a
+                      href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-103"
+                      >src/classes/central-authority-class/central-authority-class.ts:103</a
+                    >
+                  </li>
+                </ul>
+              </aside>
+            </section>
+          </section>
+          <section class="tsd-panel-group tsd-member-group">
+            <h2>Accessors</h2>
+            <section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-protected">
+              <a name="errorNotRunning" class="tsd-anchor"></a>
+              <h3><span class="tsd-flag ts-flagProtected">Protected</span> error<wbr />Not<wbr />Running</h3>
+              <ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  <span class="tsd-signature-symbol">get</span> errorNotRunning<span class="tsd-signature-symbol">(</span
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">ErrorExtendedBaseClass</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-109"
+                          >src/classes/central-authority-class/central-authority-class.ts:109</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ErrorExtendedBaseClass</span></h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
+              <a name="isRunning" class="tsd-anchor"></a>
+              <h3>is<wbr />Running</h3>
+              <ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
+                <li class="tsd-signature tsd-kind-icon">
+                  <span class="tsd-signature-symbol">get</span> isRunning<span class="tsd-signature-symbol">(</span
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">boolean</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <p>
+                      Implementation of <a href="../interfaces/ICentralAuthority.html">ICentralAuthority</a>.<a
+                        href="../interfaces/ICentralAuthority.html#isRunning"
+                        >isRunning</a
+                      >
+                    </p>
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-80"
+                          >src/classes/central-authority-class/central-authority-class.ts:80</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <div class="tsd-comment tsd-typography">
+                    <div class="lead">
+                      <p>returns true if the instance is connected to the storages and ready to be used</p>
+                    </div>
+                  </div>
+                  <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+                </li>
+              </ul>
+            </section>
+          </section>
+          <section class="tsd-panel-group tsd-member-group">
+            <h2>Methods</h2>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="closeAllConnections" class="tsd-anchor"></a>
+              <h3><span class="tsd-flag ts-flagProtected">Protected</span> close<wbr />All<wbr />Connections</h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  close<wbr />All<wbr />Connections<span class="tsd-signature-symbol">(</span
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                  ><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span
+                  ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-446"
+                          >src/classes/central-authority-class/central-authority-class.ts:446</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <div class="tsd-comment tsd-typography">
+                    <div class="lead">
+                      <p>close all the existing connections</p>
+                    </div>
+                    <dl class="tsd-comment-tags">
+                      <dt>memberof</dt>
+                      <dd><p>CentralAuthority</p></dd>
+                    </dl>
+                  </div>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                    ><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span
+                    ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="closeConnectionSwarmCredentialsProvider" class="tsd-anchor"></a>
+              <h3>
+                <span class="tsd-flag ts-flagProtected">Protected</span>
+                close<wbr />Connection<wbr />Swarm<wbr />Credentials<wbr />Provider
+              </h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  close<wbr />Connection<wbr />Swarm<wbr />Credentials<wbr />Provider<span class="tsd-signature-symbol">(</span
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                  ><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span
+                  ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-425"
+                          >src/classes/central-authority-class/central-authority-class.ts:425</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                    ><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span
+                    ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="closeConnectionToAuthProvidersPool" class="tsd-anchor"></a>
+              <h3>
+                <span class="tsd-flag ts-flagProtected">Protected</span>
+                close<wbr />Connection<wbr />To<wbr />Auth<wbr />Providers<wbr />Pool
+              </h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  close<wbr />Connection<wbr />To<wbr />Auth<wbr />Providers<wbr />Pool<span class="tsd-signature-symbol">(</span
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                  ><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span
+                  ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-397"
+                          >src/classes/central-authority-class/central-authority-class.ts:397</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                    ><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span
+                    ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="closeConnectionToCurrentUserCredentialsStorage" class="tsd-anchor"></a>
+              <h3>
+                <span class="tsd-flag ts-flagProtected">Protected</span>
+                close<wbr />Connection<wbr />To<wbr />Current<wbr />User<wbr />Credentials<wbr />Storage
+              </h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  close<wbr />Connection<wbr />To<wbr />Current<wbr />User<wbr />Credentials<wbr />Storage<span
+                    class="tsd-signature-symbol"
+                    >(</span
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                  ><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span
+                  ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-411"
+                          >src/classes/central-authority-class/central-authority-class.ts:411</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                    ><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span
+                    ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="compareLocalAndRemoteCredentials" class="tsd-anchor"></a>
+              <h3>
+                <span class="tsd-flag ts-flagProtected">Protected</span>
+                compare<wbr />Local<wbr />And<wbr />Remote<wbr />Credentials
+              </h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  compare<wbr />Local<wbr />And<wbr />Remote<wbr />Credentials<span class="tsd-signature-symbol">(</span
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                  ><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span
+                  ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-710"
+                          >src/classes/central-authority-class/central-authority-class.ts:710</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <div class="tsd-comment tsd-typography">
+                    <div class="lead">
+                      <p>
+                        compare the user&#39;s credentials got from the user credentials storage and the swarm provider user is
+                        authorized on.
+                      </p>
+                    </div>
+                    <dl class="tsd-comment-tags">
+                      <dt>memberof</dt>
+                      <dd><p>CentralAuthority</p></dd>
+                    </dl>
+                  </div>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                    ><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span
+                    ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+              <a name="connect" class="tsd-anchor"></a>
+              <h3>connect</h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+                <li class="tsd-signature tsd-kind-icon">
+                  connect<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span
+                  ><a href="../interfaces/ICentralAuthorityOptions.html" class="tsd-signature-type" data-tsd-kind="Interface"
+                    >ICentralAuthorityOptions</a
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                  ><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span
+                  ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <p>
+                      Implementation of <a href="../interfaces/ICentralAuthority.html">ICentralAuthority</a>.<a
+                        href="../interfaces/ICentralAuthority.html#connect"
+                        >connect</a
+                      >
+                    </p>
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-113"
+                          >src/classes/central-authority-class/central-authority-class.ts:113</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <div class="tsd-comment tsd-typography">
+                    <div class="lead">
+                      <p>
+                        connect to the auth providers pool and authorize the user on one of them. Also connect to the data
+                        storages which are necessary to store or caching some information.
+                      </p>
+                    </div>
+                  </div>
+                  <h4 class="tsd-parameters-title">Parameters</h4>
+                  <ul class="tsd-parameters">
+                    <li>
+                      <h5>
+                        options:
+                        <a href="../interfaces/ICentralAuthorityOptions.html" class="tsd-signature-type" data-tsd-kind="Interface"
+                          >ICentralAuthorityOptions</a
+                        >
+                      </h5>
+                    </li>
+                  </ul>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                    ><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span
+                    ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="connectToAuthProvidersPool" class="tsd-anchor"></a>
+              <h3>
+                <span class="tsd-flag ts-flagProtected">Protected</span> connect<wbr />To<wbr />Auth<wbr />Providers<wbr />Pool
+              </h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  connect<wbr />To<wbr />Auth<wbr />Providers<wbr />Pool<span class="tsd-signature-symbol">(</span
+                  >optionsConnectionPool<span class="tsd-signature-symbol">: </span
+                  ><a
+                    href="../interfaces/ICentralAuthorityAuthProvidersOptions.html"
+                    class="tsd-signature-type"
+                    data-tsd-kind="Interface"
+                    >ICentralAuthorityAuthProvidersOptions</a
+                  >, optionsUserCredentials<span class="tsd-signature-symbol">: </span
+                  ><a href="../interfaces/ICentralAuthorityUser.html" class="tsd-signature-type" data-tsd-kind="Interface"
+                    >ICentralAuthorityUser</a
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                  ><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span
+                  ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-550"
+                          >src/classes/central-authority-class/central-authority-class.ts:550</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <div class="tsd-comment tsd-typography">
+                    <div class="lead">
+                      <p>create connection of the CAConnectionsPool and authorize on auth provider specified by the user.</p>
+                    </div>
+                    <dl class="tsd-comment-tags">
+                      <dt>memberof</dt>
+                      <dd><p>CentralAuthority</p></dd>
+                    </dl>
+                  </div>
+                  <h4 class="tsd-parameters-title">Parameters</h4>
+                  <ul class="tsd-parameters">
+                    <li>
+                      <h5>
+                        optionsConnectionPool:
+                        <a
+                          href="../interfaces/ICentralAuthorityAuthProvidersOptions.html"
+                          class="tsd-signature-type"
+                          data-tsd-kind="Interface"
+                          >ICentralAuthorityAuthProvidersOptions</a
+                        >
+                      </h5>
+                    </li>
+                    <li>
+                      <h5>
+                        optionsUserCredentials:
+                        <a href="../interfaces/ICentralAuthorityUser.html" class="tsd-signature-type" data-tsd-kind="Interface"
+                          >ICentralAuthorityUser</a
+                        >
+                      </h5>
+                    </li>
+                  </ul>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                    ><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span
+                    ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="connectToSwarmCredentialsStorage" class="tsd-anchor"></a>
+              <h3>
+                <span class="tsd-flag ts-flagProtected">Protected</span>
+                connect<wbr />To<wbr />Swarm<wbr />Credentials<wbr />Storage
+              </h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  connect<wbr />To<wbr />Swarm<wbr />Credentials<wbr />Storage<span class="tsd-signature-symbol">(</span
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                  ><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span
+                  ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-823"
+                          >src/classes/central-authority-class/central-authority-class.ts:823</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <div class="tsd-comment tsd-typography">
+                    <div class="lead">
+                      <p>establish connection to the swarm storage credentials provider</p>
+                    </div>
+                    <dl class="tsd-comment-tags">
+                      <dt>memberof</dt>
+                      <dd><p>CentralAuthority</p></dd>
+                    </dl>
+                  </div>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                    ><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span
+                    ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="connectToUserCredentialsStorage" class="tsd-anchor"></a>
+              <h3>
+                <span class="tsd-flag ts-flagProtected">Protected</span>
+                connect<wbr />To<wbr />User<wbr />Credentials<wbr />Storage
+              </h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  connect<wbr />To<wbr />User<wbr />Credentials<wbr />Storage<span class="tsd-signature-symbol">(</span
+                  >optionsUser<span class="tsd-signature-symbol">: </span
+                  ><a href="../interfaces/ICentralAuthorityUser.html" class="tsd-signature-type" data-tsd-kind="Interface"
+                    >ICentralAuthorityUser</a
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                  ><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span
+                  ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-617"
+                          >src/classes/central-authority-class/central-authority-class.ts:617</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <h4 class="tsd-parameters-title">Parameters</h4>
+                  <ul class="tsd-parameters">
+                    <li>
+                      <h5>
+                        optionsUser:
+                        <a href="../interfaces/ICentralAuthorityUser.html" class="tsd-signature-type" data-tsd-kind="Interface"
+                          >ICentralAuthorityUser</a
+                        >
+                      </h5>
+                    </li>
+                  </ul>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                    ><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span
+                    ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="createConnectionToSwarmCredentialsStorage" class="tsd-anchor"></a>
+              <h3>
+                <span class="tsd-flag ts-flagProtected">Protected</span>
+                create<wbr />Connection<wbr />To<wbr />Swarm<wbr />Credentials<wbr />Storage
+              </h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  create<wbr />Connection<wbr />To<wbr />Swarm<wbr />Credentials<wbr />Storage<span class="tsd-signature-symbol"
+                    >(</span
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">ICASwarmCredentialsProvider</span><span class="tsd-signature-symbol"> | </span
+                  ><span class="tsd-signature-type">Error</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-778"
+                          >src/classes/central-authority-class/central-authority-class.ts:778</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <div class="tsd-comment tsd-typography">
+                    <div class="lead">
+                      <p>create instance</p>
+                    </div>
+                    <dl class="tsd-comment-tags">
+                      <dt>memberof</dt>
+                      <dd><p>CentralAuthority</p></dd>
+                    </dl>
+                  </div>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">ICASwarmCredentialsProvider</span
+                    ><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Error</span>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+              <a name="disconnect" class="tsd-anchor"></a>
+              <h3>disconnect</h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+                <li class="tsd-signature tsd-kind-icon">
+                  disconnect<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span
+                  ><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span
+                  ><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span
+                  ><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Error</span
+                  ><span class="tsd-signature-symbol">&gt;</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <p>
+                      Implementation of <a href="../interfaces/ICentralAuthority.html">ICentralAuthority</a>.<a
+                        href="../interfaces/ICentralAuthority.html#disconnect"
+                        >disconnect</a
+                      >
+                    </p>
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-184"
+                          >src/classes/central-authority-class/central-authority-class.ts:184</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <div class="tsd-comment tsd-typography">
+                    <div class="lead">
+                      <p>close all existing connections and unset all options</p>
+                    </div>
+                    <dl class="tsd-comment-tags">
+                      <dt>memberof</dt>
+                      <dd><p>CentralAuthority</p></dd>
+                    </dl>
+                  </div>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                    ><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span
+                    ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="disconnectAll" class="tsd-anchor"></a>
+              <h3><span class="tsd-flag ts-flagProtected">Protected</span> disconnect<wbr />All</h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  disconnect<wbr />All<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span
+                  ><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span
+                  ><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span
+                  ><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Error</span
+                  ><span class="tsd-signature-symbol">&gt;</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-472"
+                          >src/classes/central-authority-class/central-authority-class.ts:472</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <div class="tsd-comment tsd-typography">
+                    <div class="lead">
+                      <p>close and unset all connections</p>
+                    </div>
+                    <dl class="tsd-comment-tags">
+                      <dt>memberof</dt>
+                      <dd><p>CentralAuthority</p></dd>
+                    </dl>
+                  </div>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                    ><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span
+                    ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+              <a name="exportCryptoCredentials" class="tsd-anchor"></a>
+              <h3>export<wbr />Crypto<wbr />Credentials</h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+                <li class="tsd-signature tsd-kind-icon">
+                  export<wbr />Crypto<wbr />Credentials<span class="tsd-signature-symbol">(</span
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                  ><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span
+                  ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <p>
+                      Implementation of <a href="../interfaces/ICentralAuthority.html">ICentralAuthority</a>.<a
+                        href="../interfaces/ICentralAuthority.html#exportCryptoCredentials"
+                        >exportCryptoCredentials</a
+                      >
+                    </p>
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-351"
+                          >src/classes/central-authority-class/central-authority-class.ts:351</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <div class="tsd-comment tsd-typography">
+                    <div class="lead">
+                      <p>export crypto credentials of the current user</p>
+                    </div>
+                    <dl class="tsd-comment-tags">
+                      <dt>memberof</dt>
+                      <dd><p>CentralAuthority</p></dd>
+                    </dl>
+                  </div>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                    ><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span
+                    ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+              <a name="getCAUserProfile" class="tsd-anchor"></a>
+              <h3>getCAUser<wbr />Profile</h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+                <li class="tsd-signature tsd-kind-icon">
+                  getCAUser<wbr />Profile<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span
+                  ><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span
+                  ><span class="tsd-signature-symbol">&lt;</span
+                  ><a href="../interfaces/ICentralAuthorityUserProfile.html" class="tsd-signature-type" data-tsd-kind="Interface"
+                    >ICentralAuthorityUserProfile</a
+                  ><span class="tsd-signature-symbol">&gt;</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <p>
+                      Implementation of <a href="../interfaces/ICentralAuthority.html">ICentralAuthority</a>.<a
+                        href="../interfaces/ICentralAuthority.html#getCAUserProfile"
+                        >getCAUserProfile</a
+                      >
+                    </p>
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-339"
+                          >src/classes/central-authority-class/central-authority-class.ts:339</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <div class="tsd-comment tsd-typography">
+                    <div class="lead">
+                      <p>
+                        Reads the user&#39;s profile from the CA service the user is authrorized on and return it if exists. If
+                        the user is not authorized on a CA then undefined will be returned.
+                      </p>
+                    </div>
+                    <dl class="tsd-comment-tags">
+                      <dt>memberof</dt>
+                      <dd><p>CentralAuthority</p></dd>
+                    </dl>
+                  </div>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                    ><a
+                      href="../interfaces/ICentralAuthorityUserProfile.html"
+                      class="tsd-signature-type"
+                      data-tsd-kind="Interface"
+                      >ICentralAuthorityUserProfile</a
+                    ><span class="tsd-signature-symbol">&gt;</span>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="getCurrentUserCryptoCredentials" class="tsd-anchor"></a>
+              <h3>
+                <span class="tsd-flag ts-flagProtected">Protected</span>
+                get<wbr />Current<wbr />User<wbr />Crypto<wbr />Credentials
+              </h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  get<wbr />Current<wbr />User<wbr />Crypto<wbr />Credentials<span class="tsd-signature-symbol">(</span
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><a
+                    href="../modules.html#TCentralAuthorityUserCryptoCredentials"
+                    class="tsd-signature-type"
+                    data-tsd-kind="Type alias"
+                    >TCentralAuthorityUserCryptoCredentials</a
+                  ><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Error</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-870"
+                          >src/classes/central-authority-class/central-authority-class.ts:870</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <h4 class="tsd-returns-title">
+                    Returns
+                    <a
+                      href="../modules.html#TCentralAuthorityUserCryptoCredentials"
+                      class="tsd-signature-type"
+                      data-tsd-kind="Type alias"
+                      >TCentralAuthorityUserCryptoCredentials</a
+                    ><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Error</span>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="getOptionsForAuthProvidersConnectionsPool" class="tsd-anchor"></a>
+              <h3>
+                <span class="tsd-flag ts-flagProtected">Protected</span>
+                get<wbr />Options<wbr />For<wbr />Auth<wbr />Providers<wbr />Connections<wbr />Pool
+              </h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  get<wbr />Options<wbr />For<wbr />Auth<wbr />Providers<wbr />Connections<wbr />Pool<span
+                    class="tsd-signature-symbol"
+                    >(</span
+                  >options<span class="tsd-signature-symbol">: </span
+                  ><a
+                    href="../interfaces/ICentralAuthorityAuthProvidersOptions.html"
+                    class="tsd-signature-type"
+                    data-tsd-kind="Interface"
+                    >ICentralAuthorityAuthProvidersOptions</a
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">ICAConnectionsPoolOptions</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-501"
+                          >src/classes/central-authority-class/central-authority-class.ts:501</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <h4 class="tsd-parameters-title">Parameters</h4>
+                  <ul class="tsd-parameters">
+                    <li>
+                      <h5>
+                        options:
+                        <a
+                          href="../interfaces/ICentralAuthorityAuthProvidersOptions.html"
+                          class="tsd-signature-type"
+                          data-tsd-kind="Interface"
+                          >ICentralAuthorityAuthProvidersOptions</a
+                        >
+                      </h5>
+                    </li>
+                  </ul>
+                  <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">ICAConnectionsPoolOptions</span></h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="getOptionsForCAStorageCurrentUserCredentials" class="tsd-anchor"></a>
+              <h3>
+                <span class="tsd-flag ts-flagProtected">Protected</span>
+                get<wbr />Options<wbr />ForCAStorage<wbr />Current<wbr />User<wbr />Credentials
+              </h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  get<wbr />Options<wbr />ForCAStorage<wbr />Current<wbr />User<wbr />Credentials<span
+                    class="tsd-signature-symbol"
+                    >(</span
+                  >optionsUser<span class="tsd-signature-symbol">: </span
+                  ><a href="../interfaces/ICentralAuthorityUser.html" class="tsd-signature-type" data-tsd-kind="Interface"
+                    >ICentralAuthorityUser</a
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">ICAStorageCurrentUserCredentialsOptions</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-586"
+                          >src/classes/central-authority-class/central-authority-class.ts:586</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <h4 class="tsd-parameters-title">Parameters</h4>
+                  <ul class="tsd-parameters">
+                    <li>
+                      <h5>
+                        optionsUser:
+                        <a href="../interfaces/ICentralAuthorityUser.html" class="tsd-signature-type" data-tsd-kind="Interface"
+                          >ICentralAuthorityUser</a
+                        >
+                      </h5>
+                    </li>
+                  </ul>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">ICAStorageCurrentUserCredentialsOptions</span>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="getOptionsForSwarmCredentialsStorageConnection" class="tsd-anchor"></a>
+              <h3>
+                <span class="tsd-flag ts-flagProtected">Protected</span>
+                get<wbr />Options<wbr />For<wbr />Swarm<wbr />Credentials<wbr />Storage<wbr />Connection
+              </h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  get<wbr />Options<wbr />For<wbr />Swarm<wbr />Credentials<wbr />Storage<wbr />Connection<span
+                    class="tsd-signature-symbol"
+                    >(</span
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span
+                  ><span class="tsd-signature-type">ICASwarmCredentialsProviderOptions</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-796"
+                          >src/classes/central-authority-class/central-authority-class.ts:796</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <div class="tsd-comment tsd-typography">
+                    <div class="lead">
+                      <p>get options to establish a new connection to the swarm credentials storage</p>
+                    </div>
+                    <dl class="tsd-comment-tags">
+                      <dt>memberof</dt>
+                      <dd><p>CentralAuthority</p></dd>
+                    </dl>
+                  </div>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span
+                    ><span class="tsd-signature-type">ICASwarmCredentialsProviderOptions</span>
+                  </h4>
+                  <div><p>{(Error | ICASwarmCredentialsProviderOptions)}</p></div>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="getOptionsToAuthorizeUserOnAuthConnection" class="tsd-anchor"></a>
+              <h3>
+                <span class="tsd-flag ts-flagProtected">Protected</span>
+                get<wbr />Options<wbr />To<wbr />Authorize<wbr />User<wbr />On<wbr />Auth<wbr />Connection
+              </h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  get<wbr />Options<wbr />To<wbr />Authorize<wbr />User<wbr />On<wbr />Auth<wbr />Connection<span
+                    class="tsd-signature-symbol"
+                    >(</span
+                  >optionsUserCredentials<span class="tsd-signature-symbol">: </span
+                  ><a href="../interfaces/ICentralAuthorityUser.html" class="tsd-signature-type" data-tsd-kind="Interface"
+                    >ICentralAuthorityUser</a
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">string</span
+                  ><span class="tsd-signature-symbol">, </span
+                  ><span class="tsd-signature-type">ICAConnectionSignUpCredentials</span
+                  ><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Partial</span
+                  ><span class="tsd-signature-symbol">&lt;</span
+                  ><a href="../interfaces/ICentralAuthorityUserProfile.html" class="tsd-signature-type" data-tsd-kind="Interface"
+                    >ICentralAuthorityUserProfile</a
+                  ><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">]</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-507"
+                          >src/classes/central-authority-class/central-authority-class.ts:507</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <h4 class="tsd-parameters-title">Parameters</h4>
+                  <ul class="tsd-parameters">
+                    <li>
+                      <h5>
+                        optionsUserCredentials:
+                        <a href="../interfaces/ICentralAuthorityUser.html" class="tsd-signature-type" data-tsd-kind="Interface"
+                          >ICentralAuthorityUser</a
+                        >
+                      </h5>
+                    </li>
+                  </ul>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">string</span
+                    ><span class="tsd-signature-symbol">, </span
+                    ><span class="tsd-signature-type">ICAConnectionSignUpCredentials</span
+                    ><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Partial</span
+                    ><span class="tsd-signature-symbol">&lt;</span
+                    ><a
+                      href="../interfaces/ICentralAuthorityUserProfile.html"
+                      class="tsd-signature-type"
+                      data-tsd-kind="Interface"
+                      >ICentralAuthorityUserProfile</a
+                    ><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">]</span>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+              <a name="getSwarmUserCredentials" class="tsd-anchor"></a>
+              <h3>get<wbr />Swarm<wbr />User<wbr />Credentials</h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+                <li class="tsd-signature tsd-kind-icon">
+                  get<wbr />Swarm<wbr />User<wbr />Credentials<span class="tsd-signature-symbol">(</span>identity<span
+                    class="tsd-signature-symbol"
+                    >: </span
+                  ><span class="tsd-signature-type">TCAUserIdentityRawTypes</span><span class="tsd-signature-symbol">)</span
+                  ><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span
+                  ><span class="tsd-signature-symbol">&lt;</span
+                  ><a
+                    href="../modules.html#TCentralAuthorityUserCryptoCredentials"
+                    class="tsd-signature-type"
+                    data-tsd-kind="Type alias"
+                    >TCentralAuthorityUserCryptoCredentials</a
+                  ><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Error</span
+                  ><span class="tsd-signature-symbol">&gt;</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <p>
+                      Implementation of <a href="../interfaces/ICentralAuthority.html">ICentralAuthority</a>.<a
+                        href="../interfaces/ICentralAuthority.html#getSwarmUserCredentials"
+                        >getSwarmUserCredentials</a
+                      >
+                    </p>
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-222"
+                          >src/classes/central-authority-class/central-authority-class.ts:222</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <div class="tsd-comment tsd-typography">
+                    <div class="lead">
+                      <p>
+                        read credentials of the user connected to the swarm from a local cache or, if it&#39;s not found, in the
+                        local cache, from the swarm auth provider.
+                      </p>
+                    </div>
+                    <dl class="tsd-comment-tags">
+                      <dt>memberof</dt>
+                      <dd><p>CentralAuthority</p></dd>
+                    </dl>
+                  </div>
+                  <h4 class="tsd-parameters-title">Parameters</h4>
+                  <ul class="tsd-parameters">
+                    <li>
+                      <h5>identity: <span class="tsd-signature-type">TCAUserIdentityRawTypes</span></h5>
+                    </li>
+                  </ul>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                    ><a
+                      href="../modules.html#TCentralAuthorityUserCryptoCredentials"
+                      class="tsd-signature-type"
+                      data-tsd-kind="Type alias"
+                      >TCentralAuthorityUserCryptoCredentials</a
+                    ><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Error</span
+                    ><span class="tsd-signature-symbol">&gt;</span>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+              <a name="getSwarmUserEncryptionPubKey" class="tsd-anchor"></a>
+              <h3>get<wbr />Swarm<wbr />User<wbr />Encryption<wbr />Pub<wbr />Key</h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+                <li class="tsd-signature tsd-kind-icon">
+                  get<wbr />Swarm<wbr />User<wbr />Encryption<wbr />Pub<wbr />Key<span class="tsd-signature-symbol">(</span
+                  >identity<span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">TCAUserIdentityRawTypes</span><span class="tsd-signature-symbol">)</span
+                  ><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span
+                  ><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Error</span
+                  ><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">CryptoKey</span
+                  ><span class="tsd-signature-symbol">&gt;</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <p>
+                      Implementation of <a href="../interfaces/ICentralAuthority.html">ICentralAuthority</a>.<a
+                        href="../interfaces/ICentralAuthority.html#getSwarmUserEncryptionPubKey"
+                        >getSwarmUserEncryptionPubKey</a
+                      >
+                    </p>
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-240"
+                          >src/classes/central-authority-class/central-authority-class.ts:240</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <div class="tsd-comment tsd-typography">
+                    <div class="lead">
+                      <p>
+                        return crypto key of the swarm user if exists in the local cache or in the swarm providers the current
+                        user is connected to
+                      </p>
+                    </div>
+                    <dl class="tsd-comment-tags">
+                      <dt>memberof</dt>
+                      <dd><p>CentralAuthority</p></dd>
+                    </dl>
+                  </div>
+                  <h4 class="tsd-parameters-title">Parameters</h4>
+                  <ul class="tsd-parameters">
+                    <li>
+                      <h5>identity: <span class="tsd-signature-type">TCAUserIdentityRawTypes</span></h5>
+                    </li>
+                  </ul>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                    ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span
+                    ><span class="tsd-signature-type">CryptoKey</span><span class="tsd-signature-symbol">&gt;</span>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+              <a name="getSwarmUserSignVerifyPubKey" class="tsd-anchor"></a>
+              <h3>get<wbr />Swarm<wbr />User<wbr />Sign<wbr />Verify<wbr />Pub<wbr />Key</h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+                <li class="tsd-signature tsd-kind-icon">
+                  get<wbr />Swarm<wbr />User<wbr />Sign<wbr />Verify<wbr />Pub<wbr />Key<span class="tsd-signature-symbol">(</span
+                  >identity<span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">TCAUserIdentityRawTypes</span><span class="tsd-signature-symbol">)</span
+                  ><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span
+                  ><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Error</span
+                  ><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">CryptoKey</span
+                  ><span class="tsd-signature-symbol">&gt;</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <p>
+                      Implementation of <a href="../interfaces/ICentralAuthority.html">ICentralAuthority</a>.<a
+                        href="../interfaces/ICentralAuthority.html#getSwarmUserSignVerifyPubKey"
+                        >getSwarmUserSignVerifyPubKey</a
+                      >
+                    </p>
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-263"
+                          >src/classes/central-authority-class/central-authority-class.ts:263</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <div class="tsd-comment tsd-typography">
+                    <div class="lead">
+                      <p>
+                        return crypto key of the swarm user if exists in the local cache or in the swarm providers the current
+                        user is connected to
+                      </p>
+                    </div>
+                    <dl class="tsd-comment-tags">
+                      <dt>memberof</dt>
+                      <dd><p>CentralAuthority</p></dd>
+                    </dl>
+                  </div>
+                  <h4 class="tsd-parameters-title">Parameters</h4>
+                  <ul class="tsd-parameters">
+                    <li>
+                      <h5>identity: <span class="tsd-signature-type">TCAUserIdentityRawTypes</span></h5>
+                    </li>
+                  </ul>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                    ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span
+                    ><span class="tsd-signature-type">CryptoKey</span><span class="tsd-signature-symbol">&gt;</span>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+              <a name="getUserDataSignKeyPair" class="tsd-anchor"></a>
+              <h3>get<wbr />User<wbr />Data<wbr />Sign<wbr />Key<wbr />Pair</h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+                <li class="tsd-signature tsd-kind-icon">
+                  get<wbr />User<wbr />Data<wbr />Sign<wbr />Key<wbr />Pair<span class="tsd-signature-symbol">(</span
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span
+                  ><span class="tsd-signature-type">CryptoKeyPair</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <p>
+                      Implementation of <a href="../interfaces/ICentralAuthority.html">ICentralAuthority</a>.<a
+                        href="../interfaces/ICentralAuthority.html#getUserDataSignKeyPair"
+                        >getUserDataSignKeyPair</a
+                      >
+                    </p>
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-319"
+                          >src/classes/central-authority-class/central-authority-class.ts:319</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <div class="tsd-comment tsd-typography">
+                    <div class="lead">
+                      <p>retutn a crypto key pair of the current user for a data encryption</p>
+                    </div>
+                    <dl class="tsd-comment-tags">
+                      <dt>memberof</dt>
+                      <dd><p>CentralAuthority</p></dd>
+                    </dl>
+                  </div>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span
+                    ><span class="tsd-signature-type">CryptoKeyPair</span>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+              <a name="getUserEncryptionKeyPair" class="tsd-anchor"></a>
+              <h3>get<wbr />User<wbr />Encryption<wbr />Key<wbr />Pair</h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+                <li class="tsd-signature tsd-kind-icon">
+                  get<wbr />User<wbr />Encryption<wbr />Key<wbr />Pair<span class="tsd-signature-symbol">(</span
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span
+                  ><span class="tsd-signature-type">CryptoKeyPair</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <p>
+                      Implementation of <a href="../interfaces/ICentralAuthority.html">ICentralAuthority</a>.<a
+                        href="../interfaces/ICentralAuthority.html#getUserEncryptionKeyPair"
+                        >getUserEncryptionKeyPair</a
+                      >
+                    </p>
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-300"
+                          >src/classes/central-authority-class/central-authority-class.ts:300</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <div class="tsd-comment tsd-typography">
+                    <div class="lead">
+                      <p>retutn a crypto key pair of the current user for a data encryption</p>
+                    </div>
+                    <dl class="tsd-comment-tags">
+                      <dt>memberof</dt>
+                      <dd><p>CentralAuthority</p></dd>
+                    </dl>
+                  </div>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol"> | </span
+                    ><span class="tsd-signature-type">CryptoKeyPair</span>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+              <a name="getUserIdentity" class="tsd-anchor"></a>
+              <h3>get<wbr />User<wbr />Identity</h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+                <li class="tsd-signature tsd-kind-icon">
+                  get<wbr />User<wbr />Identity<span class="tsd-signature-symbol">(</span
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span
+                  ><span class="tsd-signature-type">Error</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <p>
+                      Implementation of <a href="../interfaces/ICentralAuthority.html">ICentralAuthority</a>.<a
+                        href="../interfaces/ICentralAuthority.html#getUserIdentity"
+                        >getUserIdentity</a
+                      >
+                    </p>
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-283"
+                          >src/classes/central-authority-class/central-authority-class.ts:283</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <div class="tsd-comment tsd-typography">
+                    <div class="lead">
+                      <p>return the identity of the current user</p>
+                    </div>
+                    <dl class="tsd-comment-tags">
+                      <dt>memberof</dt>
+                      <dd><p>ICentralAuthority</p></dd>
+                    </dl>
+                  </div>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span
+                    ><span class="tsd-signature-type">Error</span>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="handleFailAndClose" class="tsd-anchor"></a>
+              <h3><span class="tsd-flag ts-flagProtected">Protected</span> handle<wbr />Fail<wbr />And<wbr />Close</h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  handle<wbr />Fail<wbr />And<wbr />Close<span class="tsd-signature-symbol">(</span>error<span
+                    class="tsd-signature-symbol"
+                    >?: </span
+                  ><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span
+                  ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">)</span
+                  ><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span
+                  ><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Error</span
+                  ><span class="tsd-signature-symbol">&gt;</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-491"
+                          >src/classes/central-authority-class/central-authority-class.ts:491</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <div class="tsd-comment tsd-typography">
+                    <div class="lead">
+                      <p>close the instance and emit an error</p>
+                    </div>
+                    <dl class="tsd-comment-tags">
+                      <dt>memberof</dt>
+                      <dd><p>CentralAuthority</p></dd>
+                    </dl>
+                  </div>
+                  <h4 class="tsd-parameters-title">Parameters</h4>
+                  <ul class="tsd-parameters">
+                    <li>
+                      <h5>
+                        <span class="tsd-flag ts-flagOptional">Optional</span> error:
+                        <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span
+                        ><span class="tsd-signature-type">Error</span>
+                      </h5>
+                    </li>
+                  </ul>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                    ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="readAndSetLocallyStoredUserCredentials" class="tsd-anchor"></a>
+              <h3>
+                <span class="tsd-flag ts-flagProtected">Protected</span>
+                read<wbr />And<wbr />Set<wbr />Locally<wbr />Stored<wbr />User<wbr />Credentials
+              </h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  read<wbr />And<wbr />Set<wbr />Locally<wbr />Stored<wbr />User<wbr />Credentials<span
+                    class="tsd-signature-symbol"
+                    >(</span
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                  ><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span
+                  ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-659"
+                          >src/classes/central-authority-class/central-authority-class.ts:659</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <div class="tsd-comment tsd-typography">
+                    <div class="lead">
+                      <p>
+                        Set a locally stored credentials of the user by the credentials got from the swarm auth provider connected
+                        to.
+                      </p>
+                    </div>
+                    <dl class="tsd-comment-tags">
+                      <dt>memberof</dt>
+                      <dd><p>CentralAuthority</p></dd>
+                    </dl>
+                  </div>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                    ><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span
+                    ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span>
+                  </h4>
+                  <div></div>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="readSwarmUserCredentials" class="tsd-anchor"></a>
+              <h3><span class="tsd-flag ts-flagProtected">Protected</span> read<wbr />Swarm<wbr />User<wbr />Credentials</h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  read<wbr />Swarm<wbr />User<wbr />Credentials<span class="tsd-signature-symbol">(</span>identity<span
+                    class="tsd-signature-symbol"
+                    >: </span
+                  ><span class="tsd-signature-type">TCAUserIdentityRawTypes</span><span class="tsd-signature-symbol">)</span
+                  ><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span
+                  ><span class="tsd-signature-symbol">&lt;</span
+                  ><a
+                    href="../modules.html#TCentralAuthorityUserCryptoCredentials"
+                    class="tsd-signature-type"
+                    data-tsd-kind="Type alias"
+                    >TCentralAuthorityUserCryptoCredentials</a
+                  ><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Error</span
+                  ><span class="tsd-signature-symbol">&gt;</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-859"
+                          >src/classes/central-authority-class/central-authority-class.ts:859</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <div class="tsd-comment tsd-typography">
+                    <div class="lead">
+                      <p>
+                        read credentials of the user connected to the swarm from a local cache or, if not found in the local
+                        cache, from the swarm auth provider.
+                      </p>
+                    </div>
+                    <dl class="tsd-comment-tags">
+                      <dt>memberof</dt>
+                      <dd><p>CentralAuthority</p></dd>
+                    </dl>
+                  </div>
+                  <h4 class="tsd-parameters-title">Parameters</h4>
+                  <ul class="tsd-parameters">
+                    <li>
+                      <h5>identity: <span class="tsd-signature-type">TCAUserIdentityRawTypes</span></h5>
+                    </li>
+                  </ul>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                    ><a
+                      href="../modules.html#TCentralAuthorityUserCryptoCredentials"
+                      class="tsd-signature-type"
+                      data-tsd-kind="Type alias"
+                      >TCentralAuthorityUserCryptoCredentials</a
+                    ><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Error</span
+                    ><span class="tsd-signature-symbol">&gt;</span>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="setConnectionToAuthProvidersPool" class="tsd-anchor"></a>
+              <h3>
+                <span class="tsd-flag ts-flagProtected">Protected</span>
+                set<wbr />Connection<wbr />To<wbr />Auth<wbr />Providers<wbr />Pool
+              </h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  set<wbr />Connection<wbr />To<wbr />Auth<wbr />Providers<wbr />Pool<span class="tsd-signature-symbol">(</span
+                  >connectionSwarmPool<span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">ICAConnectionPool</span><span class="tsd-signature-symbol">)</span
+                  ><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-532"
+                          >src/classes/central-authority-class/central-authority-class.ts:532</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <h4 class="tsd-parameters-title">Parameters</h4>
+                  <ul class="tsd-parameters">
+                    <li>
+                      <h5>connectionSwarmPool: <span class="tsd-signature-type">ICAConnectionPool</span></h5>
+                    </li>
+                  </ul>
+                  <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="setConnectionToCurrentUserCredentialsStorage" class="tsd-anchor"></a>
+              <h3>
+                <span class="tsd-flag ts-flagProtected">Protected</span>
+                set<wbr />Connection<wbr />To<wbr />Current<wbr />User<wbr />Credentials<wbr />Storage
+              </h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  set<wbr />Connection<wbr />To<wbr />Current<wbr />User<wbr />Credentials<wbr />Storage<span
+                    class="tsd-signature-symbol"
+                    >(</span
+                  >connection<span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">CentralAuthorityStorageCurrentUserCredentials</span
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">void</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-609"
+                          >src/classes/central-authority-class/central-authority-class.ts:609</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <h4 class="tsd-parameters-title">Parameters</h4>
+                  <ul class="tsd-parameters">
+                    <li>
+                      <h5>connection: <span class="tsd-signature-type">CentralAuthorityStorageCurrentUserCredentials</span></h5>
+                    </li>
+                  </ul>
+                  <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="setConnectionToSwarmCredentialsStorage" class="tsd-anchor"></a>
+              <h3>
+                <span class="tsd-flag ts-flagProtected">Protected</span>
+                set<wbr />Connection<wbr />To<wbr />Swarm<wbr />Credentials<wbr />Storage
+              </h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  set<wbr />Connection<wbr />To<wbr />Swarm<wbr />Credentials<wbr />Storage<span class="tsd-signature-symbol"
+                    >(</span
+                  >connection<span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">ICASwarmCredentialsProvider</span><span class="tsd-signature-symbol">)</span
+                  ><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-808"
+                          >src/classes/central-authority-class/central-authority-class.ts:808</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <h4 class="tsd-parameters-title">Parameters</h4>
+                  <ul class="tsd-parameters">
+                    <li>
+                      <h5>connection: <span class="tsd-signature-type">ICASwarmCredentialsProvider</span></h5>
+                    </li>
+                  </ul>
+                  <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="setIsRunning" class="tsd-anchor"></a>
+              <h3><span class="tsd-flag ts-flagProtected">Protected</span> set<wbr />Is<wbr />Running</h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  set<wbr />Is<wbr />Running<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span
+                  ><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-389"
+                          >src/classes/central-authority-class/central-authority-class.ts:389</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="setLocallyStoredCredentials" class="tsd-anchor"></a>
+              <h3><span class="tsd-flag ts-flagProtected">Protected</span> set<wbr />Locally<wbr />Stored<wbr />Credentials</h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  set<wbr />Locally<wbr />Stored<wbr />Credentials<span class="tsd-signature-symbol">(</span
+                  >cryptoCredentials<span class="tsd-signature-symbol">: </span
+                  ><a
+                    href="../modules.html#TCentralAuthorityUserCryptoCredentials"
+                    class="tsd-signature-type"
+                    data-tsd-kind="Type alias"
+                    >TCentralAuthorityUserCryptoCredentials</a
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span
+                  ><span class="tsd-signature-type">Error</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-638"
+                          >src/classes/central-authority-class/central-authority-class.ts:638</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <div class="tsd-comment tsd-typography">
+                    <dl class="tsd-comment-tags">
+                      <dt>memberof</dt>
+                      <dd><p>CentralAuthority</p></dd>
+                    </dl>
+                  </div>
+                  <h4 class="tsd-parameters-title">Parameters</h4>
+                  <ul class="tsd-parameters">
+                    <li>
+                      <h5>
+                        cryptoCredentials:
+                        <a
+                          href="../modules.html#TCentralAuthorityUserCryptoCredentials"
+                          class="tsd-signature-type"
+                          data-tsd-kind="Type alias"
+                          >TCentralAuthorityUserCryptoCredentials</a
+                        >
+                      </h5>
+                    </li>
+                  </ul>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span
+                    ><span class="tsd-signature-type">Error</span>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="setOptions" class="tsd-anchor"></a>
+              <h3><span class="tsd-flag ts-flagProtected">Protected</span> set<wbr />Options</h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  set<wbr />Options<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">: </span
+                  ><a href="../interfaces/ICentralAuthorityOptions.html" class="tsd-signature-type" data-tsd-kind="Interface"
+                    >ICentralAuthorityOptions</a
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span
+                  ><span class="tsd-signature-type">Error</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-372"
+                          >src/classes/central-authority-class/central-authority-class.ts:372</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <h4 class="tsd-parameters-title">Parameters</h4>
+                  <ul class="tsd-parameters">
+                    <li>
+                      <h5>
+                        options:
+                        <a href="../interfaces/ICentralAuthorityOptions.html" class="tsd-signature-type" data-tsd-kind="Interface"
+                          >ICentralAuthorityOptions</a
+                        >
+                      </h5>
+                    </li>
+                  </ul>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span
+                    ><span class="tsd-signature-type">Error</span>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="setUserOnAuthResult" class="tsd-anchor"></a>
+              <h3><span class="tsd-flag ts-flagProtected">Protected</span> set<wbr />User<wbr />On<wbr />Auth<wbr />Result</h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  set<wbr />User<wbr />On<wbr />Auth<wbr />Result<span class="tsd-signature-symbol">(</span
+                  >caSwarmConnectionsPoolAuthResult<span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">ICAConnectionPoolAuthResult</span><span class="tsd-signature-symbol">)</span
+                  ><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-521"
+                          >src/classes/central-authority-class/central-authority-class.ts:521</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <div class="tsd-comment tsd-typography">
+                    <div class="lead">
+                      <p>set the user profile and crypto keys after he was authorized on the auth provider service.</p>
+                    </div>
+                    <dl class="tsd-comment-tags">
+                      <dt>memberof</dt>
+                      <dd><p>CentralAuthority</p></dd>
+                    </dl>
+                  </div>
+                  <h4 class="tsd-parameters-title">Parameters</h4>
+                  <ul class="tsd-parameters">
+                    <li>
+                      <h5>
+                        caSwarmConnectionsPoolAuthResult: <span class="tsd-signature-type">ICAConnectionPoolAuthResult</span>
+                      </h5>
+                    </li>
+                  </ul>
+                  <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="storeCryptoCredentialsFromAuthProvider" class="tsd-anchor"></a>
+              <h3>
+                <span class="tsd-flag ts-flagProtected">Protected</span>
+                store<wbr />Crypto<wbr />Credentials<wbr />From<wbr />Auth<wbr />Provider
+              </h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  store<wbr />Crypto<wbr />Credentials<wbr />From<wbr />Auth<wbr />Provider<span class="tsd-signature-symbol"
+                    >(</span
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                  ><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span
+                  ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-745"
+                          >src/classes/central-authority-class/central-authority-class.ts:745</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <div class="tsd-comment tsd-typography">
+                    <div class="lead">
+                      <p>Stores the crypto credentials to the current user credentials storage connection.</p>
+                    </div>
+                    <dl class="tsd-comment-tags">
+                      <dt>memberof</dt>
+                      <dd><p>CentralAuthority</p></dd>
+                    </dl>
+                  </div>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                    ><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span
+                    ><span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">&gt;</span>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="unsetConnectionToAuthProvidersPool" class="tsd-anchor"></a>
+              <h3>
+                <span class="tsd-flag ts-flagProtected">Protected</span>
+                unset<wbr />Connection<wbr />To<wbr />Auth<wbr />Providers<wbr />Pool
+              </h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  unset<wbr />Connection<wbr />To<wbr />Auth<wbr />Providers<wbr />Pool<span class="tsd-signature-symbol">(</span
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">void</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-536"
+                          >src/classes/central-authority-class/central-authority-class.ts:536</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="unsetConnectionToCurrentUserCredentialsStorage" class="tsd-anchor"></a>
+              <h3>
+                <span class="tsd-flag ts-flagProtected">Protected</span>
+                unset<wbr />Connection<wbr />To<wbr />Current<wbr />User<wbr />Credentials<wbr />Storage
+              </h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  unset<wbr />Connection<wbr />To<wbr />Current<wbr />User<wbr />Credentials<wbr />Storage<span
+                    class="tsd-signature-symbol"
+                    >(</span
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">void</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-613"
+                          >src/classes/central-authority-class/central-authority-class.ts:613</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="unsetConnectionToSwarmCredentialsStorage" class="tsd-anchor"></a>
+              <h3>
+                <span class="tsd-flag ts-flagProtected">Protected</span>
+                unset<wbr />Connection<wbr />To<wbr />Swarm<wbr />Credentials<wbr />Storage
+              </h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  unset<wbr />Connection<wbr />To<wbr />Swarm<wbr />Credentials<wbr />Storage<span class="tsd-signature-symbol"
+                    >(</span
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">void</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-812"
+                          >src/classes/central-authority-class/central-authority-class.ts:812</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="unsetIsRunning" class="tsd-anchor"></a>
+              <h3><span class="tsd-flag ts-flagProtected">Protected</span> unset<wbr />Is<wbr />Running</h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  unset<wbr />Is<wbr />Running<span class="tsd-signature-symbol">(</span
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">void</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-393"
+                          >src/classes/central-authority-class/central-authority-class.ts:393</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="unsetLocallyStoredCredentials" class="tsd-anchor"></a>
+              <h3><span class="tsd-flag ts-flagProtected">Protected</span> unset<wbr />Locally<wbr />Stored<wbr />Credentials</h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  unset<wbr />Locally<wbr />Stored<wbr />Credentials<span class="tsd-signature-symbol">(</span
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">void</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-647"
+                          >src/classes/central-authority-class/central-authority-class.ts:647</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="unsetOptions" class="tsd-anchor"></a>
+              <h3><span class="tsd-flag ts-flagProtected">Protected</span> unset<wbr />Options</h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  unset<wbr />Options<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span
+                  ><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-384"
+                          >src/classes/central-authority-class/central-authority-class.ts:384</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="unsetPropsOnClose" class="tsd-anchor"></a>
+              <h3><span class="tsd-flag ts-flagProtected">Protected</span> unset<wbr />Props<wbr />On<wbr />Close</h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  unset<wbr />Props<wbr />On<wbr />Close<span class="tsd-signature-symbol">(</span
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">void</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-459"
+                          >src/classes/central-authority-class/central-authority-class.ts:459</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="unsetUserOnAuthResult" class="tsd-anchor"></a>
+              <h3><span class="tsd-flag ts-flagProtected">Protected</span> unset<wbr />User<wbr />On<wbr />Auth<wbr />Result</h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  unset<wbr />User<wbr />On<wbr />Auth<wbr />Result<span class="tsd-signature-symbol">(</span
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">void</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-527"
+                          >src/classes/central-authority-class/central-authority-class.ts:527</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+              <a name="updateUserProfileAndReturnUpdated" class="tsd-anchor"></a>
+              <h3>update<wbr />User<wbr />Profile<wbr />And<wbr />Return<wbr />Updated</h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+                <li class="tsd-signature tsd-kind-icon">
+                  update<wbr />User<wbr />Profile<wbr />And<wbr />Return<wbr />Updated<span class="tsd-signature-symbol">(</span
+                  >profile<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Partial</span
+                  ><span class="tsd-signature-symbol">&lt;</span
+                  ><a href="../interfaces/ICentralAuthorityUserProfile.html" class="tsd-signature-type" data-tsd-kind="Interface"
+                    >ICentralAuthorityUserProfile</a
+                  ><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span
+                  ><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span
+                  ><span class="tsd-signature-symbol">&lt;</span
+                  ><a href="../interfaces/ICentralAuthorityUserProfile.html" class="tsd-signature-type" data-tsd-kind="Interface"
+                    >ICentralAuthorityUserProfile</a
+                  ><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Error</span
+                  ><span class="tsd-signature-symbol">&gt;</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <p>
+                      Implementation of <a href="../interfaces/ICentralAuthority.html">ICentralAuthority</a>.<a
+                        href="../interfaces/ICentralAuthority.html#updateUserProfileAndReturnUpdated"
+                        >updateUserProfileAndReturnUpdated</a
+                      >
+                    </p>
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-199"
+                          >src/classes/central-authority-class/central-authority-class.ts:199</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <div class="tsd-comment tsd-typography">
+                    <div class="lead">
+                      <p>Update user profile and return an updated profile</p>
+                    </div>
+                  </div>
+                  <h4 class="tsd-parameters-title">Parameters</h4>
+                  <ul class="tsd-parameters">
+                    <li>
+                      <h5>
+                        profile: <span class="tsd-signature-type">Partial</span><span class="tsd-signature-symbol">&lt;</span
+                        ><a
+                          href="../interfaces/ICentralAuthorityUserProfile.html"
+                          class="tsd-signature-type"
+                          data-tsd-kind="Interface"
+                          >ICentralAuthorityUserProfile</a
+                        ><span class="tsd-signature-symbol">&gt;</span>
+                      </h5>
+                    </li>
+                  </ul>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span
+                    ><a
+                      href="../interfaces/ICentralAuthorityUserProfile.html"
+                      class="tsd-signature-type"
+                      data-tsd-kind="Interface"
+                      >ICentralAuthorityUserProfile</a
+                    ><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Error</span
+                    ><span class="tsd-signature-symbol">&gt;</span>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+            <section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <a name="validateOptions" class="tsd-anchor"></a>
+              <h3><span class="tsd-flag ts-flagProtected">Protected</span> validate<wbr />Options</h3>
+              <ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                <li class="tsd-signature tsd-kind-icon">
+                  validate<wbr />Options<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol"
+                    >: </span
+                  ><a href="../interfaces/ICentralAuthorityOptions.html" class="tsd-signature-type" data-tsd-kind="Interface"
+                    >ICentralAuthorityOptions</a
+                  ><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span
+                  ><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span
+                  ><span class="tsd-signature-type">Error</span>
+                </li>
+              </ul>
+              <ul class="tsd-descriptions">
+                <li class="tsd-description">
+                  <aside class="tsd-sources">
+                    <ul>
+                      <li>
+                        Defined in
+                        <a
+                          href="https://bitbucket.org/geoservices/protocol/src/5aa66f74/src/classes/central-authority-class/central-authority-class.ts#lines-360"
+                          >src/classes/central-authority-class/central-authority-class.ts:360</a
+                        >
+                      </li>
+                    </ul>
+                  </aside>
+                  <h4 class="tsd-parameters-title">Parameters</h4>
+                  <ul class="tsd-parameters">
+                    <li>
+                      <h5>
+                        options:
+                        <a href="../interfaces/ICentralAuthorityOptions.html" class="tsd-signature-type" data-tsd-kind="Interface"
+                          >ICentralAuthorityOptions</a
+                        >
+                      </h5>
+                    </li>
+                  </ul>
+                  <h4 class="tsd-returns-title">
+                    Returns <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol"> | </span
+                    ><span class="tsd-signature-type">Error</span>
+                  </h4>
+                </li>
+              </ul>
+            </section>
+          </section>
+        </div>
+        <div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+          <nav class="tsd-navigation primary">
+            <ul>
+              <li class=""><a href="../modules.html">Exports</a></li>
+            </ul>
+          </nav>
+          <nav class="tsd-navigation secondary menu-sticky">
+            <ul>
+              <li class="current tsd-kind-class">
+                <a href="CentralAuthority.html" class="tsd-kind-icon">Central<wbr />Authority</a>
+                <ul>
+                  <li class="tsd-kind-constructor tsd-parent-kind-class">
+                    <a href="CentralAuthority.html#constructor" class="tsd-kind-icon">constructor</a>
+                  </li>
+                  <li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#authProviderId" class="tsd-kind-icon">auth<wbr />Provider<wbr />Id</a>
+                  </li>
+                  <li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#authProvidersPoolConfiguration" class="tsd-kind-icon"
+                      >auth<wbr />Providers<wbr />Pool<wbr />Configuration</a
+                    >
+                  </li>
+                  <li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#connectionAuthProvidersPool" class="tsd-kind-icon"
+                      >connection<wbr />Auth<wbr />Providers<wbr />Pool</a
+                    >
+                  </li>
+                  <li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#connectionStorageCurrentUserCredentials" class="tsd-kind-icon"
+                      >connection<wbr />Storage<wbr />Current<wbr />User<wbr />Credentials</a
+                    >
+                  </li>
+                  <li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#connectionSwarmCredentialsProvider" class="tsd-kind-icon"
+                      >connection<wbr />Swarm<wbr />Credentials<wbr />Provider</a
+                    >
+                  </li>
+                  <li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#isRunningInstance" class="tsd-kind-icon">is<wbr />Running<wbr />Instance</a>
+                  </li>
+                  <li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#locallyStoredUserCryptoCredentials" class="tsd-kind-icon"
+                      >locally<wbr />Stored<wbr />User<wbr />Crypto<wbr />Credentials</a
+                    >
+                  </li>
+                  <li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#remoteProvidedUserCryptoCredentials" class="tsd-kind-icon"
+                      >remote<wbr />Provided<wbr />User<wbr />Crypto<wbr />Credentials</a
+                    >
+                  </li>
+                  <li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#userProfileOnAuthService" class="tsd-kind-icon"
+                      >user<wbr />Profile<wbr />On<wbr />Auth<wbr />Service</a
+                    >
+                  </li>
+                  <li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#errorNotRunning" class="tsd-kind-icon">error<wbr />Not<wbr />Running</a>
+                  </li>
+                  <li class="tsd-kind-get-signature tsd-parent-kind-class">
+                    <a href="CentralAuthority.html#isRunning" class="tsd-kind-icon">is<wbr />Running</a>
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#closeAllConnections" class="tsd-kind-icon"
+                      >close<wbr />All<wbr />Connections</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#closeConnectionSwarmCredentialsProvider" class="tsd-kind-icon"
+                      >close<wbr />Connection<wbr />Swarm<wbr />Credentials<wbr />Provider</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#closeConnectionToAuthProvidersPool" class="tsd-kind-icon"
+                      >close<wbr />Connection<wbr />To<wbr />Auth<wbr />Providers<wbr />Pool</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#closeConnectionToCurrentUserCredentialsStorage" class="tsd-kind-icon"
+                      >close<wbr />Connection<wbr />To<wbr />Current<wbr />User<wbr />Credentials<wbr />Storage</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#compareLocalAndRemoteCredentials" class="tsd-kind-icon"
+                      >compare<wbr />Local<wbr />And<wbr />Remote<wbr />Credentials</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class">
+                    <a href="CentralAuthority.html#connect" class="tsd-kind-icon">connect</a>
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#connectToAuthProvidersPool" class="tsd-kind-icon"
+                      >connect<wbr />To<wbr />Auth<wbr />Providers<wbr />Pool</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#connectToSwarmCredentialsStorage" class="tsd-kind-icon"
+                      >connect<wbr />To<wbr />Swarm<wbr />Credentials<wbr />Storage</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#connectToUserCredentialsStorage" class="tsd-kind-icon"
+                      >connect<wbr />To<wbr />User<wbr />Credentials<wbr />Storage</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#createConnectionToSwarmCredentialsStorage" class="tsd-kind-icon"
+                      >create<wbr />Connection<wbr />To<wbr />Swarm<wbr />Credentials<wbr />Storage</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class">
+                    <a href="CentralAuthority.html#disconnect" class="tsd-kind-icon">disconnect</a>
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#disconnectAll" class="tsd-kind-icon">disconnect<wbr />All</a>
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class">
+                    <a href="CentralAuthority.html#exportCryptoCredentials" class="tsd-kind-icon"
+                      >export<wbr />Crypto<wbr />Credentials</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class">
+                    <a href="CentralAuthority.html#getCAUserProfile" class="tsd-kind-icon">getCAUser<wbr />Profile</a>
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#getCurrentUserCryptoCredentials" class="tsd-kind-icon"
+                      >get<wbr />Current<wbr />User<wbr />Crypto<wbr />Credentials</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#getOptionsForAuthProvidersConnectionsPool" class="tsd-kind-icon"
+                      >get<wbr />Options<wbr />For<wbr />Auth<wbr />Providers<wbr />Connections<wbr />Pool</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#getOptionsForCAStorageCurrentUserCredentials" class="tsd-kind-icon"
+                      >get<wbr />Options<wbr />ForCAStorage<wbr />Current<wbr />User<wbr />Credentials</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#getOptionsForSwarmCredentialsStorageConnection" class="tsd-kind-icon"
+                      >get<wbr />Options<wbr />For<wbr />Swarm<wbr />Credentials<wbr />Storage<wbr />Connection</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#getOptionsToAuthorizeUserOnAuthConnection" class="tsd-kind-icon"
+                      >get<wbr />Options<wbr />To<wbr />Authorize<wbr />User<wbr />On<wbr />Auth<wbr />Connection</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class">
+                    <a href="CentralAuthority.html#getSwarmUserCredentials" class="tsd-kind-icon"
+                      >get<wbr />Swarm<wbr />User<wbr />Credentials</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class">
+                    <a href="CentralAuthority.html#getSwarmUserEncryptionPubKey" class="tsd-kind-icon"
+                      >get<wbr />Swarm<wbr />User<wbr />Encryption<wbr />Pub<wbr />Key</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class">
+                    <a href="CentralAuthority.html#getSwarmUserSignVerifyPubKey" class="tsd-kind-icon"
+                      >get<wbr />Swarm<wbr />User<wbr />Sign<wbr />Verify<wbr />Pub<wbr />Key</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class">
+                    <a href="CentralAuthority.html#getUserDataSignKeyPair" class="tsd-kind-icon"
+                      >get<wbr />User<wbr />Data<wbr />Sign<wbr />Key<wbr />Pair</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class">
+                    <a href="CentralAuthority.html#getUserEncryptionKeyPair" class="tsd-kind-icon"
+                      >get<wbr />User<wbr />Encryption<wbr />Key<wbr />Pair</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class">
+                    <a href="CentralAuthority.html#getUserIdentity" class="tsd-kind-icon">get<wbr />User<wbr />Identity</a>
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#handleFailAndClose" class="tsd-kind-icon"
+                      >handle<wbr />Fail<wbr />And<wbr />Close</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#readAndSetLocallyStoredUserCredentials" class="tsd-kind-icon"
+                      >read<wbr />And<wbr />Set<wbr />Locally<wbr />Stored<wbr />User<wbr />Credentials</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#readSwarmUserCredentials" class="tsd-kind-icon"
+                      >read<wbr />Swarm<wbr />User<wbr />Credentials</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#setConnectionToAuthProvidersPool" class="tsd-kind-icon"
+                      >set<wbr />Connection<wbr />To<wbr />Auth<wbr />Providers<wbr />Pool</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#setConnectionToCurrentUserCredentialsStorage" class="tsd-kind-icon"
+                      >set<wbr />Connection<wbr />To<wbr />Current<wbr />User<wbr />Credentials<wbr />Storage</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#setConnectionToSwarmCredentialsStorage" class="tsd-kind-icon"
+                      >set<wbr />Connection<wbr />To<wbr />Swarm<wbr />Credentials<wbr />Storage</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#setIsRunning" class="tsd-kind-icon">set<wbr />Is<wbr />Running</a>
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#setLocallyStoredCredentials" class="tsd-kind-icon"
+                      >set<wbr />Locally<wbr />Stored<wbr />Credentials</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#setOptions" class="tsd-kind-icon">set<wbr />Options</a>
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#setUserOnAuthResult" class="tsd-kind-icon"
+                      >set<wbr />User<wbr />On<wbr />Auth<wbr />Result</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#storeCryptoCredentialsFromAuthProvider" class="tsd-kind-icon"
+                      >store<wbr />Crypto<wbr />Credentials<wbr />From<wbr />Auth<wbr />Provider</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#unsetConnectionToAuthProvidersPool" class="tsd-kind-icon"
+                      >unset<wbr />Connection<wbr />To<wbr />Auth<wbr />Providers<wbr />Pool</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#unsetConnectionToCurrentUserCredentialsStorage" class="tsd-kind-icon"
+                      >unset<wbr />Connection<wbr />To<wbr />Current<wbr />User<wbr />Credentials<wbr />Storage</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#unsetConnectionToSwarmCredentialsStorage" class="tsd-kind-icon"
+                      >unset<wbr />Connection<wbr />To<wbr />Swarm<wbr />Credentials<wbr />Storage</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#unsetIsRunning" class="tsd-kind-icon">unset<wbr />Is<wbr />Running</a>
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#unsetLocallyStoredCredentials" class="tsd-kind-icon"
+                      >unset<wbr />Locally<wbr />Stored<wbr />Credentials</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#unsetOptions" class="tsd-kind-icon">unset<wbr />Options</a>
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#unsetPropsOnClose" class="tsd-kind-icon"
+                      >unset<wbr />Props<wbr />On<wbr />Close</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#unsetUserOnAuthResult" class="tsd-kind-icon"
+                      >unset<wbr />User<wbr />On<wbr />Auth<wbr />Result</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class">
+                    <a href="CentralAuthority.html#updateUserProfileAndReturnUpdated" class="tsd-kind-icon"
+                      >update<wbr />User<wbr />Profile<wbr />And<wbr />Return<wbr />Updated</a
+                    >
+                  </li>
+                  <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+                    <a href="CentralAuthority.html#validateOptions" class="tsd-kind-icon">validate<wbr />Options</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+    <footer class="with-border-bottom">
+      <div class="container">
+        <h2>Legend</h2>
+        <div class="tsd-legend-group">
+          <ul class="tsd-legend">
+            <li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+            <li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+            <li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+          </ul>
+          <ul class="tsd-legend">
+            <li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+            <li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+            <li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+          </ul>
+          <ul class="tsd-legend">
+            <li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited">
+              <span class="tsd-kind-icon">Inherited constructor</span>
+            </li>
+            <li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+              <span class="tsd-kind-icon">Inherited property</span>
+            </li>
+            <li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
+              <span class="tsd-kind-icon">Inherited method</span>
+            </li>
+          </ul>
+          <ul class="tsd-legend">
+            <li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected">
+              <span class="tsd-kind-icon">Protected property</span>
+            </li>
+            <li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected">
+              <span class="tsd-kind-icon">Protected method</span>
+            </li>
+          </ul>
+          <ul class="tsd-legend">
+            <li class="tsd-kind-property tsd-parent-kind-class tsd-is-private">
+              <span class="tsd-kind-icon">Private property</span>
+            </li>
+            <li class="tsd-kind-method tsd-parent-kind-class tsd-is-private">
+              <span class="tsd-kind-icon">Private method</span>
+            </li>
+          </ul>
+          <ul class="tsd-legend">
+            <li class="tsd-kind-property tsd-parent-kind-class tsd-is-static">
+              <span class="tsd-kind-icon">Static property</span>
+            </li>
+            <li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+          </ul>
+        </div>
+        <h2>Settings</h2>
+        <p>
+          Theme
+          <select id="theme">
+            <option value="os">OS</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </p>
+      </div>
+    </footer>
+    <div class="container tsd-generator">
+      <p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+    </div>
+    <div class="overlay"></div>
+    <script src="../assets/main.js"></script>
+  </body>
+</html>

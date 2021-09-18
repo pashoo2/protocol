@@ -4,7 +4,11 @@
     "incremental": true,
     "module": "esnext",
     "downlevelIteration": true,
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -14,7 +18,7 @@
     "moduleResolution": "node",
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "baseUrl": "./src",
     "sourceMap": true,
     "plugins": [
@@ -22,12 +26,20 @@
         "transform": "@zerollup/ts-transform-paths"
       }
     ],
-    "rootDirs": ["src/"],
-    "typeRoots": ["src/types", "**/types", "**/node_modules/types", "**/node_modules/@types"],
+    "rootDirs": [
+      "src/"
+    ],
+    "typeRoots": [
+      "src/types",
+      "**/types",
+      "**/node_modules/types",
+      "**/node_modules/@types"
+    ],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "resolveJsonModule": true,
-    "noErrorTruncation": true
+    "noErrorTruncation": true,
+    "noFallthroughCasesInSwitch": true
   },
   "include": [
     "src/**/*.ts",
