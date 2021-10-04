@@ -115,7 +115,7 @@ export const CONFIGURATION_CONNECTION_BRIDGE_STORAGE_OPTIONS_DEFAULT: IConnectio
       // operation on the database
       op?: TSwarmStoreDatabaseEntryOperation<typeof CONFIGURATION_DEFAULT_DATABASE_CONNECTOR_DEFAULT>
     ): Promise<boolean> {
-      debugger;
+      if (process.env.NODE_ENV === 'development') debugger;
       return Promise.resolve(true);
     },
   },

@@ -11,16 +11,10 @@
     "importHelpers": true,
     "outDir": "./decentralized-protocol",
     "skipLibCheck": true,
+    "noImplicitAny": true,
     "plugins": [{ "transform": "ts-transformer-imports" }]
   },
   "files": ["src/index.ts"],
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.json"],
-  "exclude": [
-    "./build",
-    "src/dev.ts",
-    "src/prod.ts",
-    "src/**/*.tsx",
-    "src/**/*.jsx",
-    "src/components"
-  ]
+  "exclude": ["./build", "src/dev.ts", "src/prod.ts", "src/**/*.tsx", "src/**/*.jsx", "src/components"]
 }

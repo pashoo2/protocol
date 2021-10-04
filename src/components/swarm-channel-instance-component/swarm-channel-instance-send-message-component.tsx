@@ -29,6 +29,7 @@ import {
   TSwarmMessageSerialized,
 } from '../../classes/swarm-message/swarm-message-constructor.types';
 import { timeout } from 'utils';
+import { TSwarmStoreDatabaseEntityAddress } from 'classes';
 
 type P = ESwarmStoreConnector.OrbitDB;
 
@@ -119,13 +120,20 @@ export function SwarmChannelInstanceSendMessageComponent<
       swarmMessageDbKey: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? string : never
     ): Promise<void> => {
       try {
-        const messageAddPendingPromise: Promise<void> = swarmMessagesChannelInstance.addMessage(
+        const messageAddPendingPromise: Promise<TSwarmStoreDatabaseEntityAddress<P>> = swarmMessagesChannelInstance.addMessage(
           swarmMessageBody,
           swarmMessageDbKey
         );
 
         setWhetherMessageIsPending(true);
-        await Promise.race([messageAddPendingPromise, timeout(2000)]);
+        const addMessageResult = await Promise.race([messageAddPendingPromise, timeout(2000)]);
+
+        if (!addMessageResult) {
+          throw new Error('There is no result got from add message');
+        }
+        if (addMessageResult instanceof Error) {
+          throw addMessageResult;
+        }
       } finally {
         setWhetherMessageIsPending(false);
       }
@@ -151,9 +159,10 @@ export function SwarmChannelInstanceSendMessageComponent<
       setErrorMessage(err.message);
     }
   }, [isChannelKeyValue, messageText, messageKey, sendMessageWithSwarmMessagesChannelInstance]);
-  const handleMessageKeyChange = useCallback((ev: React.ChangeEvent<HTMLInputElement>): void => setMessageKey(ev.target.value), [
-    setMessageKey,
-  ]);
+  const handleMessageKeyChange = useCallback(
+    (ev: React.ChangeEvent<HTMLInputElement>): void => setMessageKey(ev.target.value),
+    [setMessageKey]
+  );
   const handleMessageTextChange = useCallback(
     (ev: React.ChangeEvent<HTMLInputElement>): void => setMessageText(ev.target.value),
     [setMessageText]

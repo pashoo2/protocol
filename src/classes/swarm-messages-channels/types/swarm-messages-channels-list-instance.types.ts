@@ -25,7 +25,7 @@ import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../swarm-store-
 import { ISwarmMessageConstructorWithEncryptedCacheFabric } from '../../swarm-message-encrypted-cache/swarm-message-encrypted-cache.types';
 import { ISwarmMessagesDatabaseMessagesCollector } from '../../swarm-messages-database/swarm-messages-database.messages-collector.types';
 import { JSONSchema7 } from 'json-schema';
-import { ISwarmMessagesChannelsListNotificationEmitter } from './swarm-messages-channels-list-events.types';
+import { TSwarmMessagesChannelsListNotificationEmitter } from './swarm-messages-channels-list-events.types';
 import {
   ISwarmChannelsListClockSortedChannelsDescriptionsUpdatesCacheConstructorParams,
   ISwarmChannelsListClockSortedChannelsDescriptionsUpdatesCache,
@@ -227,7 +227,7 @@ export interface ISwarmMessagesChannelsDescriptionsList<
    * @type {ISwarmMessagesChannelsListEmitter<P, any>}
    * @memberof ISwarmMessagesChannelsDescriptionsList
    */
-  readonly emitter: ISwarmMessagesChannelsListNotificationEmitter<P, T, any>;
+  readonly emitter: TSwarmMessagesChannelsListNotificationEmitter<P, T, any>;
 
   /**
    * Whether the channels database has opened and the channels list

@@ -5,10 +5,10 @@ export const SECRET_STORAGE_PASSWORD_MIN_LENGTH = 6;
 export const SECRET_STORAGE_LOGIN_MIN_LENGTH = 4;
 
 export const SECRET_STORAGE_STATUS = {
-  STOPPED: undefined,
-  RUNNING: 'RUNNING',
-  CONNECTING: 'CONNECTING',
-  ERROR: 'ERROR',
+  STOPPED: undefined as undefined,
+  RUNNING: 'RUNNING' as const,
+  CONNECTING: 'CONNECTING' as const,
+  ERROR: 'ERROR' as const,
 };
 
 export const SECRET_STORAGE_SESSION_KEY = 'SECRET_STORAGE_SESSION_KEY';

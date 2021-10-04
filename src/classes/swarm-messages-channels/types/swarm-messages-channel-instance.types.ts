@@ -44,6 +44,7 @@ import {
   TSwarmMessageDatabaseMessagesCached,
 } from '../../swarm-messages-database/swarm-messages-database.types';
 import { TTypedEmitter } from 'classes/basic-classes/event-emitter-class-base/event-emitter-class-base.types';
+import { TSwarmStoreDatabaseEntityAddress } from '../../swarm-store-class/swarm-store-class.types';
 
 export type TSwarmMessagesChannelId = string;
 
@@ -360,7 +361,7 @@ export interface ISwarmMessagesChannel<
   addMessage(
     message: Omit<MD['bdy'], 'iss'>,
     key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined
-  ): Promise<void>;
+  ): Promise<TSwarmStoreDatabaseEntityAddress<P>>;
 
   /**
    * Delete a swarm message from the databsae.

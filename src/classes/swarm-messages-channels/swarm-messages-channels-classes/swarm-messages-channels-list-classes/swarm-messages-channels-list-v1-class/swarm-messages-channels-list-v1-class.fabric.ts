@@ -23,7 +23,7 @@ import { TSwarmMessageConstructorBodyMessage } from '../../../../swarm-message/s
 import { TSwarmStoreDatabaseEntityKey } from '../../../../swarm-store-class/swarm-store-class.types';
 import { ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric } from '../../../types/swarm-messages-channels-list-instance.types';
 import {
-  ISwarmMessagesChannelsListNotificationEmitter,
+  TSwarmMessagesChannelsListNotificationEmitter,
   ISwarmMessagesChannelsListEvents,
 } from '../../../types/swarm-messages-channels-list-events.types';
 import { getEventEmitterInstance } from '../../../../basic-classes/event-emitter-class-base/event-emitter-class-base';
@@ -60,7 +60,7 @@ export function getSwarmMessagesChannelsListVersionOneClass<
       return this._getChannelsListDescription();
     }
 
-    public get emitter(): ISwarmMessagesChannelsListNotificationEmitter<P, T, any> {
+    public get emitter(): TSwarmMessagesChannelsListNotificationEmitter<P, T, any> {
       return this.__emitterChannelsList;
     }
 

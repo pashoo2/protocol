@@ -18,10 +18,10 @@ export * from './swarm-message-store';
 
 export * from './swarm-store-class';
 
-export * from './swarm-messages-channels';
-
 export * from './swarm-messages-database';
 
 export * from './swarm-message-encrypted-cache';
+
+export * from './swarm-messages-channels';
 
 export * from './connection-helpers';
