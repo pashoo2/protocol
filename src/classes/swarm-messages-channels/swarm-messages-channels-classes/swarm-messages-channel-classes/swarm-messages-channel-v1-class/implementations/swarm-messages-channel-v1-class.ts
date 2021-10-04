@@ -57,6 +57,7 @@ import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../../../../swarm-st
 import { ISwarmMessagesChannelEvents } from '../../../../types/swarm-messages-channel-events.types';
 import { SWARM_MESSAGES_CHANNEL_VERSION } from '../../../const/swarm-messages-channel-classes-params.const';
 import { TSwarmMessageDatabaseMessagesCached } from '../../../../../swarm-messages-database/swarm-messages-database.types';
+import { TSwarmStoreDatabaseEntityAddress } from 'classes';
 import {
   TSwarmStoreDatabaseEntityKey,
   TSwarmStoreDatabaseIteratorMethodArgument,
@@ -467,8 +468,8 @@ export class SwarmMessagesChannelV1Class<
   public async addMessage(
     message: Omit<MD['bdy'], 'iss'>,
     key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : undefined
-  ): Promise<void> {
-    await this._getActiveSwarmMessagesChannelDatabaseHandlerInstance().addMessage(message, key);
+  ): Promise<TSwarmStoreDatabaseEntityAddress<P>> {
+    return await this._getActiveSwarmMessagesChannelDatabaseHandlerInstance().addMessage(message, key);
   }
 
   public async deleteMessage(messageAddressOrKey: ISwarmMessageStoreDeleteMessageArg<P, DbType>): Promise<void> {

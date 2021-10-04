@@ -238,7 +238,7 @@ export class SwarmMessagesDatabaseCache<
       return;
     }
     await this._waitTillMessagesCacheUpateBatchOver();
-    return this._removeMessageFromCachedStoreAndEmitEvent(messageUniqAddress, key);
+    return await this._removeMessageFromCachedStoreAndEmitEvent(messageUniqAddress, key);
   }
 
   protected _checkIsReady(): this is {
@@ -823,7 +823,7 @@ export class SwarmMessagesDatabaseCache<
    */
   protected async _waitForCurrentMessagesUpdate(): Promise<void> {
     if (this._pendingMessagesCacheUpdatePromise) {
-      return this._pendingMessagesCacheUpdatePromise;
+      return await this._pendingMessagesCacheUpdatePromise;
     }
   }
 
@@ -852,7 +852,7 @@ export class SwarmMessagesDatabaseCache<
       }
     }
     // if another iteration was started just waiting for results
-    return this._waitForCurrentMessagesUpdate();
+    return await this._waitForCurrentMessagesUpdate();
   }
 
   /**

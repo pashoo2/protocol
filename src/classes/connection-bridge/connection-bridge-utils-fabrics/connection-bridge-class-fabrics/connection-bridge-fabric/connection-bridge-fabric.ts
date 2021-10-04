@@ -31,6 +31,8 @@ import {
   ISwarmStoreProviderOptions,
   ISwarmStoreOptionsConnectorFabric,
 } from '../../../../swarm-store-class/swarm-store-class.types';
+import { ISensitiveDataSessionStorageOptions } from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
+import { ICentralAuthorityAuthProvidersOptions } from 'classes/central-authority-class';
 
 export const createConnectionBridgeConnection = async <
   P extends ESwarmStoreConnector,
@@ -231,6 +233,13 @@ export const createConnectionBridgeConnection = async <
       ...(options.auth ?? {}),
       credentials: undefined,
     },
+  } as CBO & {
+    auth: {
+      credentials: undefined;
+      providerUrl?: string;
+      session?: ISensitiveDataSessionStorageOptions;
+      authProvidersPool?: ICentralAuthorityAuthProvidersOptions;
+    };
   };
 
   if (useSessionIfExists) {

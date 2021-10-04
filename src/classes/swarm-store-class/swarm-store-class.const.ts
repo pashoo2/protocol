@@ -115,7 +115,7 @@ export enum ESwarmStoreDbStatus {
 }
 
 // means that there is no status found for a database
-export const SWARM_STORE_DATABASE_STATUS_ABSENT = undefined;
+export const SWARM_STORE_DATABASE_STATUS_ABSENT: undefined = undefined;
 
 export const SWARM_STORE_DATABASES_STATUSES_EMPTY: ISwarmStoreDatabasesStatuses = {};
 

@@ -132,12 +132,12 @@ export interface ISwarmMessagesChannelsListEvents<
  * status or updates of the channels existing within the list.
  *
  * @export
- * @interface ISwarmMessagesChannelsListEmitter
+ * @type TSwarmMessagesChannelsListNotificationEmitter
  * @extends {EventEmitter<ISwarmMessagesChannelsListEvents<P, DbType>>}
  * @template P
  * @template DbType
  */
-export type ISwarmMessagesChannelsListNotificationEmitter<
+export type TSwarmMessagesChannelsListNotificationEmitter<
   P extends ESwarmStoreConnector,
   T extends TSwarmMessageSerialized,
   DbType extends TSwarmStoreDatabaseType<P>

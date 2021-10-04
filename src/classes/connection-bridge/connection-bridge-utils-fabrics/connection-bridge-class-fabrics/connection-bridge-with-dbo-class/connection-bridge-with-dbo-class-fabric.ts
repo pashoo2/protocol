@@ -48,6 +48,8 @@ import { ISwarmMessageStoreConnectorDbOptionsClassFabric } from '../../../types/
 import { ConnectionBridgeWithDBOClassEntriesCount } from './connection-bridge-with-dbo-class';
 import { ISerializer } from '../../../../../types/serialization.types';
 import { ISwarmMessageInstanceEncrypted } from '../../../../swarm-message/swarm-message-constructor.types';
+import { ICentralAuthorityAuthProvidersOptions } from 'classes';
+import { ISensitiveDataSessionStorageOptions } from 'classes/sensitive-data-session-storage/sensitive-data-session-storage.types';
 
 export const createConnectionBridgeConnectionWithDBOClass = async <
   P extends ESwarmStoreConnector,
@@ -212,6 +214,13 @@ export const createConnectionBridgeConnectionWithDBOClass = async <
       ...(options.auth ?? {}),
       credentials: undefined,
     },
+  } as CBO & {
+    auth: {
+      credentials: undefined;
+      providerUrl?: string;
+      session?: ISensitiveDataSessionStorageOptions;
+      authProvidersPool?: ICentralAuthorityAuthProvidersOptions;
+    };
   };
 
   if (useSessionIfExists) {

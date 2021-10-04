@@ -53,6 +53,7 @@ import {
 } from '../../../../../swarm-message-store/types/swarm-message-store.types';
 import { isValidSwarmMessageDecryptedFormat } from '../../../../../swarm-message-store/swarm-message-store-utils/swarm-message-store-validators/swarm-message-store-validator-swarm-message';
 import { ISwarmMessageInstanceEncrypted } from '../../../../../swarm-message/swarm-message-constructor.types';
+import { TSwarmStoreDatabaseEntityAddress } from '../../../../../swarm-store-class/swarm-store-class.types';
 import {
   stopForwardEvents,
   forwardEvents,
@@ -407,11 +408,13 @@ export class SwarmMessagesChannelV1DatabaseHandler<
   public async addMessage(
     message: Omit<MD['bdy'], 'iss'>,
     key: DbType extends ESwarmStoreConnectorOrbitDbDatabaseType.KEY_VALUE ? TSwarmStoreDatabaseEntityKey<P> : never
-  ): Promise<void> {
+  ): Promise<TSwarmStoreDatabaseEntityAddress<P>> {
     if (process.env.NODE_ENV === 'development') debugger;
     const databaseConnector = await this._getActiveDatabaseConnector();
     const swarmMessageBody = await this._prepareSwarmMessageBodyBeforeSending(message);
-    await databaseConnector.addMessage(swarmMessageBody, key);
+    const messageAddress = await databaseConnector.addMessage(swarmMessageBody, key);
+
+    return messageAddress;
   }
 
   public async deleteMessage(messageAddressOrKey: ISwarmMessageStoreDeleteMessageArg<P, DbType>): Promise<void> {

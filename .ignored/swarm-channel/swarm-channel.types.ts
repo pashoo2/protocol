@@ -8,6 +8,7 @@ import {
   ISwarmMessageInstanceDecrypted,
   TSwarmMessageConstructorBodyMessage,
 } from '../../src/classes/swarm-message/swarm-message-constructor.types';
+import { TSwarmStoreDatabaseEntityAddress } from 'classes';
 
 export type TSwarmChannelId = string;
 
@@ -274,7 +275,10 @@ export interface ISwarmChannelMethodsBase {
    * @returns {Promise<void>}
    * @memberof ISwarmChannelBaseMethods
    */
-  addMessage(swarmMessage: TSwarmMessageConstructorBodyMessage, key?: string): Promise<void>;
+  addMessage<P extends ESwarmStoreConnector>(
+    swarmMessage: TSwarmMessageConstructorBodyMessage,
+    key?: string
+  ): Promise<TSwarmStoreDatabaseEntityAddress<P>>;
   /**
    * Close the channel and stop listening all of it's
    * events.

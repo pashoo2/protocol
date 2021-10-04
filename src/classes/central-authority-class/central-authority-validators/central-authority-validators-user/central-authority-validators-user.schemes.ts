@@ -22,7 +22,6 @@ export const CA_VALIDATORS_USER_PROFILE_SCHEME = {
   $id: 'https://protocol.com/ca/user/profile/01/data.json#',
   type: 'object',
   additionalProperties: false,
-  required: [],
   properties: {
     name: {
       ...CA_VALIDATORS_USER_PROFILE_SCHEME_VALUE_COMMON,
