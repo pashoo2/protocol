@@ -1,13 +1,13 @@
 {
-  "name": "@pashoo/p2p",
+  "name": "@pashoo2/p2p",
   "main": "./src/index.js",
   "typings": "./src/index.d.ts",
   "license": "Apache-2.0",
-  "author": {
-    "email": "akulich.p@gmail.com",
-    "name": "Pavel Akulich"
+  "author": "Pavel Akulich",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pashoo2/protocol.git"
   },
-  "homepage": "https://github.com/pashoo2/protocol",
   "dependencies": {
     "file-loader": "4.3.0",
     "fs-extra": "^8.1.0",
