@@ -35,6 +35,7 @@ import { TConnectionBridgeOptionsDatabaseOptions } from 'classes/connection-brid
 import { TConnectionBridgeOptionsDbType } from '../../../connection-bridge/types/connection-bridge.types-helpers/connection-bridge-options.types-helpers';
 import { ICentralAuthorityUserProfile, TCentralAuthorityUserIdentity } from 'classes/central-authority-class';
 import { TSwarmChannelsListId } from './connect-to-swarm-orbitdb-with-channels-state.types';
+import { TCAAuthProviderIdentity } from 'classes/central-authority-class/central-authority-connections';
 
 export interface IConnectionToSwarmWithChannels<
   DbType extends TSwarmStoreDatabaseType<TSwarmStoreConnectorDefault>,
@@ -45,12 +46,28 @@ export interface IConnectionToSwarmWithChannels<
   MD extends ISwarmMessageInstanceDecrypted
 > {
   /**
+   * If the instance is connected to the swarm.
+   *
+   * @type {boolean}
+   * @memberof IConnectionToSwarmWithChannels
+   */
+  readonly isConnectedToSwarm: boolean;
+  /**
    * Current connection state
    *
    * @type {Readonly<IConnectToSwarmOrbitDbWithChannelsState<DbType, T, DBO, CBO>>}
    * @memberof IConnectionToSwarmWithChannels
    */
   readonly state: Readonly<Partial<IConnectToSwarmOrbitDbWithChannelsState<DbType, T, DBO, CBO>>>;
+
+  /**
+   * This list contains identities of authorization providers
+   * supported and available to authorize through.
+   *
+   * @type {TCAAuthProviderIdentity[]}
+   * @memberof IConnectionBridge
+   */
+  readonly authProvidersIdentitiesList: TCAAuthProviderIdentity[];
 
   /**
    * Create an active connection to the swarm

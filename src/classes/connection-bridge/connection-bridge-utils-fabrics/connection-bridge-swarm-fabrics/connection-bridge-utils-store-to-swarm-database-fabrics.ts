@@ -13,7 +13,7 @@ import {
 import OrbitDB from 'orbit-db';
 import { SwarmStoreConnectorOrbitDbSubclassDatabaseQueuedItemsCounted } from '../../../swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database-classes-extended/swarm-store-connector-orbit-db-subclass-database-queued-items-counted';
 import { IConnectionBridgeSwarmConnection, TNativeConnectionType } from '../../types/connection-bridge.types';
-import { IPFS } from '../../../../types';
+import { IPFS } from 'types/ipfs.types';
 
 export const connectorBasicFabricOrbitDBDefault = <
   T extends TSwarmMessageSerialized,

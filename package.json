@@ -1,13 +1,20 @@
 {
-  "name": "@local/decentralized-protocol",
-  "version": "0.2.22",
-  "private": true,
+  "name": "@pashoo/p2p",
+  "version": "0.2.23",
+  "private": false,
+  "license": "Apache-2.0",
+  "author": {
+    "email": "akulich.p@gmail.com",
+    "name": "Pavel Akulich"
+  },
+  "homepage": "https://github.com/pashoo2/protocol",
   "scripts": {
-    "prebuild": "cp src/index.ts ../__test__.index.ts && cp src/prod.ts src/index.ts",
-    "postbuild": "cp ../__test__.index.ts src/index.ts && rm ../__test__.index.ts",
+    "prebuild": "cp src/index.ts _index.ts && cp src/prod.ts src/index.ts",
+    "postbuild": "cp _index.ts src/index.ts && rm _index.ts",
     "build:module:script": "node ./module-build",
     "build:module": "npm run prebuild && ./node_modules/.bin/ttsc -p tsconfig-build.json && npm run build:module:script && npm run postbuild",
     "build:declaration": "./node_modules/.bin/ttsc -p tsconfig-build.json --emitDeclarationOnly",
+    "check:types": "./node_modules/.bin/ttsc -p tsconfig-build.json --noEmit",
     "build:rollup": "npm run prebuild && rollup -c",
     "build:bundle": "./node_modules/.bin/cross-env-shell NODE_OPTIONS=--max_old_space_size=4096 npm run build:rollup && npm run build:declaration",
     "start": "cp src/dev.ts src/index.ts && react-scripts start",
@@ -80,9 +87,9 @@
     "mime": "^2.4.4",
     "normalize-url": "^4.5.0",
     "orbit-db": "^0.26.1",
-    "validator": "^12.1.0",
     "react": "^16.13.0",
-    "react-dom": "^16.13.0"
+    "react-dom": "^16.13.0",
+    "validator": "^12.1.0"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^11.1.0",

@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events';
+import assert from 'assert';
 
 import { createConnectionBridgeConnectionWithDBOClassByOptions } from 'classes/connection-bridge/connection-bridge-utils-fabrics/connection-bridge-class-fabrics/connection-bridge-with-dbo-class/connection-bridge-with-dbo-class-fabric';
 import {
@@ -99,13 +100,14 @@ import { TDatabaseOptionsTypeByChannelDescriptionRaw } from '../../swarm-message
 import { ESwarmMessagesChannelEventName } from 'classes/swarm-messages-channels/types/swarm-messages-channel-events.types';
 import { IConnectionToSwarmWithChannels } from './types/connect-to-swarm-orbitdb-with-channels-instance.types';
 import { TConnectionBridgeOptionsAuthCredentialsWithAuthProvider } from '../../connection-bridge/types/connection-bridge.types';
-import { decryptData, encryptDataToString } from '@pashoo2/crypto-utilities';
-import assert from 'assert';
 import {
   IQueuedEncryptionClassBase,
   IQueuedEncryptionClassBaseOptions,
   QueuedEncryptionClassBase,
 } from 'classes/basic-classes/queued-encryption-class-base';
+import { TCAAuthProviderIdentity } from 'classes/central-authority-class/central-authority-connections';
+import { IAuthProviderConnectionConfiguration } from 'classes/central-authority-class/central-authority-connections/central-authority-connections-pool';
+import { CONFIGURATION_CENTRAL_AUTHORITY_PROVIDERS } from 'classes';
 
 export class ConnectionToSwarmWithChannels<
   CBO extends IConnectionBridgeOptionsDefault<TSwarmStoreConnectorDefault, T, DbType, boolean>,
@@ -157,6 +159,32 @@ export class ConnectionToSwarmWithChannels<
   public get isConnectedToSwarm(): boolean {
     const { isConnectingToSwarm, connectionBridge } = this.__state;
     return Boolean(connectionBridge) && !isConnectingToSwarm;
+  }
+
+  public get authProvidersIdentitiesList(): TCAAuthProviderIdentity[] {
+    return (
+      this._authProvidersIdentitiesListOrUndefinedFromActiveConnectionBridgeInstance ??
+      this._authProvidersIdentitiesListOrUndefinedFromConfiguration ??
+      this._authProvidersIdentitiesListOrUndefinedFromConfigurationDefault
+    );
+  }
+
+  public get _authProvidersIdentitiesListOrUndefinedFromActiveConnectionBridgeInstance(): TCAAuthProviderIdentity[] | undefined {
+    const { connectionBridge } = this.__state;
+    return connectionBridge
+      ? this._mapAuthProvidersConfigurationListToAuthProvidersIdentitiesList(connectionBridge.authProvidersConfigurationList)
+      : undefined;
+  }
+
+  public get _authProvidersIdentitiesListOrUndefinedFromConfiguration(): TCAAuthProviderIdentity[] | undefined {
+    const { __configuration } = this;
+    return this._mapAuthProvidersConfigurationListToAuthProvidersIdentitiesList(
+      __configuration.connectionBridgeOptions.auth.authProvidersPool.providersConfigurations
+    );
+  }
+
+  public get _authProvidersIdentitiesListOrUndefinedFromConfigurationDefault(): TCAAuthProviderIdentity[] {
+    return Object.values(CONFIGURATION_CENTRAL_AUTHORITY_PROVIDERS);
   }
 
   protected _encryptionQueue: IQueuedEncryptionClassBase | undefined;
@@ -1238,5 +1266,11 @@ export class ConnectionToSwarmWithChannels<
     const encryptionQueue: IQueuedEncryptionClassBase = new QueuedEncryptionClassBase(constructorOptions);
 
     return encryptionQueue;
+  }
+
+  protected _mapAuthProvidersConfigurationListToAuthProvidersIdentitiesList(
+    authProvidersConfigurationList: IAuthProviderConnectionConfiguration[]
+  ): TCAAuthProviderIdentity[] {
+    return authProvidersConfigurationList.map((authProviderConfiguration) => authProviderConfiguration.caProviderUrl);
   }
 }

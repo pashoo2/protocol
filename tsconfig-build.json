@@ -9,10 +9,11 @@
     "isolatedModules": true,
     "removeComments": true,
     "importHelpers": true,
-    "outDir": "./decentralized-protocol",
+    "outDir": "./decentralized-protocol/src",
     "skipLibCheck": true,
     "noImplicitAny": true,
-    "plugins": [{ "transform": "ts-transformer-imports" }]
+    "plugins": [{ "transform": "ts-transformer-imports" }],
+    "incremental": false
   },
   "files": ["src/index.ts"],
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.json"],
