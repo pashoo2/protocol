@@ -6,7 +6,11 @@ import {
   TSwarmMessagesStoreGrantAccessCallback,
 } from '../../swarm-message-store/types/swarm-message-store.types';
 import { ESwarmStoreConnector } from '../../swarm-store-class/swarm-store-class.const';
-import { ICentralAuthority, ICentralAuthorityOptions } from '../../central-authority-class/central-authority-class.types';
+import {
+  ICentralAuthority,
+  ICentralAuthorityOptions,
+  ICentralAuthorityAuthProvidersOptions,
+} from '../../central-authority-class/central-authority-class.types';
 import {
   ISwarmMessageConstructor,
   TSwarmMessageInstance,
@@ -32,7 +36,7 @@ import { IPFS } from 'types/ipfs.types';
 import { ISerializer } from '../../../types/serialization.types';
 import { ISwarmMessageInstanceEncrypted } from '../../swarm-message/swarm-message-constructor.types';
 import { JSONSchema7 } from 'json-schema';
-import { ConnectorBasic } from './connection-bridge.types-helpers/connection-bridge-storage-options.types.helpers';
+import { IAuthProviderConnectionConfiguration } from '../../central-authority-class/central-authority-connections/central-authority-connections-pool/central-authority-connections-pool.types';
 import {
   ISwarmStoreConnectorDatabasesPersistentListConstructorParams,
   ISwarmStoreConnectorDatabasesPersistentList,
@@ -429,6 +433,14 @@ export interface IConnectionBridge<
    * @memberof IConnectionBridge
    */
   readonly swarmMessageStore?: SMS;
+  /**
+   * This list contains configurations of all supported
+   * authorization providers
+   *
+   * @type {IAuthProviderConnectionConfiguration[]}
+   * @memberof IConnectionBridge
+   */
+  readonly authProvidersConfigurationList: IAuthProviderConnectionConfiguration[];
   /**
    * allows to create messages, which can be stored in the swarm
    *

@@ -6,11 +6,7 @@ export * from './encryption-keys.types';
 
 export * from './helper.types';
 
-export * from './ipfs.types';
-
 export * from './main.types';
-
-export * from './orbit-db-keystore';
 
 export * from './users.types';
 

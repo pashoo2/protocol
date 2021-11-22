@@ -1,7 +1,7 @@
 import KeystoreClass, { Keystore } from 'orbit-db-keystore';
 import { IdentityProvider, IdentityProviderOptions, IdentityAsJson } from 'orbit-db-identity-provider';
-import { IOrbitDBKeystoreStoreCustom } from 'types';
 import { SWARM_STORE_CONNECTOR_ORBITDB_SUBCLASS_IDENTITY_PROVIDER_TYPE } from './swarm-store-connector-orbit-db-subclass-identity-provider.const';
+import { IOrbitDBKeystoreStoreCustom } from 'types/orbit-db-keystore';
 
 export class SwarmStoreConnectorOrbitDBSubclassIdentityProvider extends IdentityProvider {
   /**

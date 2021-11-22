@@ -8,7 +8,7 @@ if (!outDirName) {
 }
 
 const buildPath = path.resolve(__dirname, `../${outDirName}`);
-const packageJsonTargetPath = path.resolve(buildPath, './package.json');
+const packageJsonTargetPath = path.resolve(buildPath, '../package.json');
 const packageJsonOriginPath = path.resolve(__dirname, '../package.json');
 const packageJsonModulePath = path.resolve(__dirname, './package.module.json');
 
@@ -52,7 +52,6 @@ fs.stat(buildPath, (err, stat) => {
           const defaultsDeep = require('lodash.defaultsdeep');
           const resultedPackageJson = defaultsDeep(
             {
-              name: packageJsonOriginParsed.name,
               version: packageJsonOriginParsed.version,
               description: packageJsonOriginParsed.description,
               dependencies: packageJsonOriginParsed.dependencies,

@@ -7,7 +7,7 @@ import { ESwarmStoreConnector, TSwarmStoreDatabaseOptions, TSwarmStoreDatabaseTy
 import { ISwarmMessageChannelDescriptionRaw } from './swarm-messages-channel-instance.types';
 import { ISwarmMessagesChannelsListDescription } from './swarm-messages-channels-list-instance.types';
 import { TSwarmStoreDatabaseEntityKey } from '../../swarm-store-class/swarm-store-class.types';
-import { TSwarmChannelId } from '../../../../.ignored/swarm-channel/swarm-channel.types';
+import { TSwarmMessagesChannelId } from 'classes';
 
 /**
  * Interface for utility which have to return type ("typ" property)
@@ -62,7 +62,7 @@ export interface IGetDatabaseKeyForChannelDescription<P extends ESwarmStoreConne
  * @template P
  */
 export interface IGetChannelIdByDatabaseKey<P extends ESwarmStoreConnector> {
-  (databaseKey: TSwarmStoreDatabaseEntityKey<P>): TSwarmChannelId;
+  (databaseKey: TSwarmStoreDatabaseEntityKey<P>): TSwarmMessagesChannelId;
 }
 
 /**

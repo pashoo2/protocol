@@ -8,7 +8,11 @@ import {
   IConnectionBridgeOptionsAuth,
 } from './types/connection-bridge.types';
 import { ESwarmStoreConnector } from '../swarm-store-class/swarm-store-class.const';
-import { ICentralAuthorityOptions, ICentralAuthority } from '../central-authority-class/central-authority-class.types';
+import {
+  ICentralAuthorityOptions,
+  ICentralAuthority,
+  ICentralAuthorityAuthProvidersOptions,
+} from '../central-authority-class/central-authority-class.types';
 import {
   TSwarmMessageConstructorOptions,
   ISwarmMessageConstructor,
@@ -95,6 +99,7 @@ import {
   getSwarmStoreConnectionProviderOptionsForSwarmStoreConnector,
 } from './connection-bridge-utils-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-store-to-swarm-database-fabrics';
 import { getMainConnectorFabricDefault } from './connection-bridge-utils-fabrics/connection-bridge-swarm-fabrics/connection-bridge-utils-store-to-swarm-connector-fabrics';
+import { IAuthProviderConnectionConfiguration } from '../central-authority-class/central-authority-connections/central-authority-connections-pool/central-authority-connections-pool.types';
 
 /**
  * this class used if front of connection
@@ -238,6 +243,13 @@ export class ConnectionBridge<
 
   public get centralAuthorityConnection(): ICentralAuthority | undefined {
     return this._centralAuthorityConnection;
+  }
+
+  /**
+   * It returns options of all auth providers which are available to login
+   */
+  public get authProvidersConfigurationList(): IAuthProviderConnectionConfiguration[] {
+    return this.optionsCentralAuthority.authProvidersPool.providersConfigurations;
   }
 
   public messageConstructor?: PromiseResolveType<ReturnType<NonNullable<MCF>>>;

@@ -16,7 +16,7 @@ import { TCAuthProviderIdentifier } from '../../central-authority-class-user-ide
 export type TAuthProviderConnectionOptions = TCAConnectionsAuthProviderConnectionOptions;
 
 /**
- * configuration to establish connectoin
+ * configuration to establish connection
  * with an auth provider
  */
 export interface IAuthProviderConnectionConfiguration {
