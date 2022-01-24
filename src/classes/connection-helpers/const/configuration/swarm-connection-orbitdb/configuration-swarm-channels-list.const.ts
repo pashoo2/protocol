@@ -2,7 +2,7 @@ import { ISwarmMessageInstanceDecrypted, TSwarmMessageSerialized } from 'classes
 import {
   ISwarmMessagesChannelsListDescription,
   TSwarmMessagesChannelsListDbType,
-  TSwrmMessagesChannelsListDBOWithGrantAccess,
+  TSwarmMessagesChannelsListDBOWithGrantAccess,
 } from 'classes/swarm-messages-channels';
 import { ESwarmChannelsListVersion } from 'classes/swarm-messages-channels/swarm-messages-channels-classes/const/swarm-messages-channels-list-classes-params.const';
 import { TSwarmStoreDatabaseOptions } from 'classes/swarm-store-class';
@@ -15,7 +15,7 @@ export const CONFIGURATION_DEFAULT_SWARM_CHANNELS_LIST_OPTIONS: ISwarmMessagesCh
   name: 'channelsListName',
 };
 
-export const CONFIGURATION_DEFAULT_SWARM_CHANNELS_LIST_DATABASE_OPTIONS: TSwrmMessagesChannelsListDBOWithGrantAccess<
+export const CONFIGURATION_DEFAULT_SWARM_CHANNELS_LIST_DATABASE_OPTIONS: TSwarmMessagesChannelsListDBOWithGrantAccess<
   typeof CONFIGURATION_DEFAULT_DATABASE_CONNECTOR_DEFAULT,
   TSwarmMessageSerialized,
   ISwarmMessageInstanceDecrypted,
@@ -30,7 +30,7 @@ export const CONFIGURATION_DEFAULT_SWARM_CHANNELS_LIST_DATABASE_OPTIONS: TSwrmMe
   /* 
         TODO - to make it a private you should add "write: ['userAllowedToWrite1', ..., 'userAllowedToWriteN']", 
     */
-  grantAccess: function grantAccess(): Promise<boolean> {
+  grantAccess: function grantAccess(_arg: unknown): Promise<boolean> {
     return Promise.resolve(true);
   },
 };

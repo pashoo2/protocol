@@ -32,7 +32,7 @@ export const CONFIGURATION_DEFAULT_DATABASE_KEYVALUE_OPTIONS: TSwarmStoreDatabas
         and written to the database. This function will be shared
         with others.
     */
-  grantAccess: function grantAccess(): Promise<boolean> {
+  grantAccess: function grantAccess(_arg: unknown): Promise<boolean> {
     return Promise.resolve(true);
   },
 };
@@ -55,7 +55,7 @@ export const CONFIGURATION_DEFAULT_DATABASE_FEED_OPTIONS: TSwarmStoreDatabaseOpt
         and written to the database. This function will be shared
         with others.
     */
-  grantAccess: function grantAccess(): Promise<boolean> {
+  grantAccess: function grantAccess(_arg: unknown): Promise<boolean> {
     return Promise.resolve(true);
   },
 };

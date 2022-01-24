@@ -2,10 +2,12 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$ref": "#/definitions/ISwarmMessagesChannelsDescriptionsListDescription",
   "definitions": {
-    "GUID": {
+    "ID": {
       "type": "string",
-      "$comment": "GUID random - uuidv4",
-      "pattern": "^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$"
+      "$comment": "ID of a channel",
+      "maxLength": 100,
+      "minLength": 10,
+      "pattern": "^[a-zA-Z0-9%-_~!$&'()*+,;=.:@]+$"
     },
     "ISwarmMessagesChannelsDescriptionsListDescription": {
       "type": "object",
@@ -14,7 +16,7 @@
           "const": "1"
         },
         "id": {
-          "$ref": "#/definitions/GUID"
+          "$ref": "#/definitions/ID"
         },
         "name": {
           "type": "string",

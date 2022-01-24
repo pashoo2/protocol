@@ -14,7 +14,7 @@ import {
 } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-instance.types';
 import { SWARM_MESSAGES_CHANNEL_ENCRYPTION } from '../../classes/swarm-messages-channels/const/swarm-messages-channels-main.const';
 import {
-  TSwrmMessagesChannelsListDBOWithGrantAccess,
+  TSwarmMessagesChannelsListDBOWithGrantAccess,
   ISwarmMessagesChannelsDescriptionsList,
 } from '../../classes/swarm-messages-channels/types/swarm-messages-channels-list-instance.types';
 import { IUserCredentialsCommon } from '../../types/credentials.types';
@@ -263,7 +263,7 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
       T,
       MD,
       ISwarmStoreDBOGrandAccessCallbackBaseContext,
-      TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, ISwarmStoreDBOGrandAccessCallbackBaseContext>
+      TSwarmMessagesChannelsListDBOWithGrantAccess<P, T, MD, ISwarmStoreDBOGrandAccessCallbackBaseContext>
     >(optionsForDatabaseConnectionFabric as any);
     return dbConnectorByDbOptionsFabric;
   }
@@ -276,7 +276,7 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
       T,
       MD,
       ISwarmStoreDBOGrandAccessCallbackBaseContext,
-      TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, ISwarmStoreDBOGrandAccessCallbackBaseContext>,
+      TSwarmMessagesChannelsListDBOWithGrantAccess<P, T, MD, ISwarmStoreDBOGrandAccessCallbackBaseContext>,
       typeof connectorFabric,
       typeof optionsForConstructorArgumentsFabric
     >(connectorFabric, optionsForConstructorArgumentsFabric);

@@ -6,7 +6,7 @@ import {
 } from '../../../../../swarm-message/index';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 import {
-  TSwrmMessagesChannelsListDBOWithGrantAccess,
+  TSwarmMessagesChannelsListDBOWithGrantAccess,
   ISwarmMessagesChannelsDescriptionsListConstructorArguments,
 } from '../../../../types/swarm-messages-channels-list-instance.types';
 import { AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp } from './swarm-messages-channels-list-v1-class-options-setup.types';
@@ -40,7 +40,7 @@ export interface IGetVariableArgumentsWithoutExistingChannelDescriptionForGrantA
   T extends TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
+  DBO extends TSwarmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 > {
   ({
     payload,
@@ -64,7 +64,7 @@ export interface IGetArgumentsForSwarmMessageWithChannelDescriptionValidator<
   T extends TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
+  DBO extends TSwarmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 > {
   (
     constantArguments: ISwarmMessagesChannelsListV1GrantAccessConstantArguments<P, T, MD, CTX, DBO>,
@@ -87,7 +87,7 @@ export interface ICreateGrantAccessCallbackByConstantArgumentsAndMessageWithChan
   T extends TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
+  DBO extends TSwarmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 > {
   (
     params: ICreateGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidatorArguments<P, T, MD, CTX, DBO>
@@ -99,7 +99,7 @@ export interface IAdditionalUtils<
   T extends TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
+  DBO extends TSwarmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 > {
   createGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidator: ICreateGrantAccessCallbackByConstantArgumentsAndMessageWithChannelDescriptionValidator<
     P,
@@ -129,7 +129,7 @@ export interface ICreateGrantAccessCallbackByConstantArgumentsAndMessageWithChan
   T extends TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
+  DBO extends TSwarmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 > {
   constantArguments: ISwarmMessagesChannelsListV1GrantAccessConstantArguments<P, T, MD, CTX, DBO>;
   swarmChannelsListClockSortedChannelsDescriptionsUpdatesCache: ISwarmChannelsListClockSortedChannelsDescriptionsUpdatesCache<
@@ -161,7 +161,7 @@ export abstract class AbstractSwarmMessagesChannelsListVersionOneDatabaseConnect
   T extends TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
+  DBO extends TSwarmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
   CF extends ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<P, T, MD, CTX, DBO>,
   CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>
 > extends AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<P, T, MD, CTX, DBO, CF, CARGS> {
@@ -214,7 +214,7 @@ export interface IConstructorAbstractSwarmMessagesChannelsListVersionOneDatabase
   T extends TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
+  DBO extends TSwarmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
   CF extends ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<P, T, MD, CTX, DBO>,
   CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>
 > {

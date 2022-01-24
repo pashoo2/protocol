@@ -346,6 +346,7 @@ export class SwarmMessageStore<
     dbName: DBO['dbName'],
     options: TSwarmStoreDatabaseIteratorMethodArgument<P, DT>
   ): Promise<Array<MD | Error>> {
+    debugger;
     assert(dbName, 'Database name should be provided');
 
     const dbType = this._getDatabaseType(dbName);
@@ -873,6 +874,7 @@ export class SwarmMessageStore<
     rawEnties: TSwarmStoreDatabaseRequestMethodEntitiesReturnType<ESwarmStoreConnector.OrbitDB, T>, // TODO - may not be a string,
     dbType: DbType
   ): Promise<Array<MD | Error>> {
+    debugger;
     if (rawEnties instanceof Error) {
       throw rawEnties;
     }
@@ -890,8 +892,9 @@ export class SwarmMessageStore<
       }
       try {
         const messageMetadata = this.getSwarmMessageMetadata(logEntry as TSwarmMessageStoreEntryRaw<P, T>, dbType);
+        debugger;
         const message = await this.constructMessage<MD>(dbName, logEntry.payload.value as MSI, messageMetadata);
-
+        debugger;
         return message;
       } catch (err) {
         return err;

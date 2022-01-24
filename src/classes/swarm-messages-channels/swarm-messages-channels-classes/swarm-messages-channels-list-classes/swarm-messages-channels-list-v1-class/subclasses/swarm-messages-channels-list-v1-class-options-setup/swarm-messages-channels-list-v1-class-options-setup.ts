@@ -9,7 +9,7 @@ import { createImmutableObjectClone } from '../../../../../../../utils/data-immu
 import assert from 'assert';
 import {
   ISwarmMessagesChannelsDescriptionsListConnectionOptions,
-  TSwrmMessagesChannelsListDBOWithGrantAccess,
+  TSwarmMessagesChannelsListDBOWithGrantAccess,
 } from '../../../../../types/swarm-messages-channels-list-instance.types';
 import {
   ISwarmMessagesChannelsDescriptionsListConstructorArguments,
@@ -29,7 +29,7 @@ export class SwarmMessagesChannelsListVersionOneOptionsSetUp<
   T extends TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
+  DBO extends TSwarmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
   CF extends ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<P, T, MD, CTX, DBO>,
   CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>
 > extends AbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<P, T, MD, CTX, DBO, CF, CARGS> {
@@ -278,7 +278,7 @@ export function getIConstructorAbstactSwarmMessagesChannelsListVersionOneOptions
   T extends TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
+  DBO extends TSwarmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
   CF extends ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<P, T, MD, CTX, DBO>,
   CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>
 >(): IConstructorAbstactSwarmMessagesChannelsListVersionOneOptionsSetUp<P, T, MD, CTX, DBO, CF, CARGS> {

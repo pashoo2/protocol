@@ -4,7 +4,7 @@ import {
   ISwarmMessageInstanceDecrypted,
 } from '../../../../../../../swarm-message/swarm-message-constructor.types';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
-import { TSwrmMessagesChannelsListDBOWithGrantAccess } from '../../../../../../types/swarm-messages-channels-list-instance.types';
+import { TSwarmMessagesChannelsListDBOWithGrantAccess } from '../../../../../../types/swarm-messages-channels-list-instance.types';
 import { TSwarmMessageUserIdentifierSerialized } from '../../../../../../../central-authority-class/central-authority-class-user-identity/central-authority-class-user-identity-validators/central-authority-common-validator-user-identifier/central-authority-common-validator-user-identifier.types';
 import {
   TSwarmStoreDatabaseEntryOperation,
@@ -24,7 +24,7 @@ export function getVariableArgumentsWithoutExistingChannelDescriptionForGrantAcc
   T extends TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
+  DBO extends TSwarmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 >({
   payload,
   userId,
@@ -61,7 +61,7 @@ export function getArgumentsForSwarmMessageWithChannelDescriptionValidator<
   T extends TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
+  DBO extends TSwarmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 >(
   constantArguments: ISwarmMessagesChannelsListV1GrantAccessConstantArguments<P, T, MD, CTX, DBO>,
   variableArguments: Omit<
@@ -88,7 +88,7 @@ export function createGrantAccessCallbackByConstantArgumentsAndMessageWithChanne
   T extends TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
+  DBO extends TSwarmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 >({
   constantArguments,
   swarmChannelsListClockSortedChannelsDescriptionsUpdatesCache,

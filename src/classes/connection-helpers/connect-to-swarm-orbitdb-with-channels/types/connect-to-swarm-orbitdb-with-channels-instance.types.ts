@@ -18,7 +18,7 @@ import {
 import {
   ISwarmMessagesChannelsListDescription,
   TSwarmMessagesChannelsListDbType,
-  TSwrmMessagesChannelsListDBOWithGrantAccess,
+  TSwarmMessagesChannelsListDBOWithGrantAccess,
 } from 'classes/swarm-messages-channels/types/swarm-messages-channels-list-instance.types';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from 'classes/swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
 import {
@@ -96,7 +96,7 @@ export interface IConnectionToSwarmWithChannels<
    * Create connection to the swarm at first, if there is no connection so far.
    *
    * @param {ISwarmMessagesChannelsListDescription} channelsListDescription
-   * @param {TSwrmMessagesChannelsListDBOWithGrantAccess<
+   * @param {TSwarmMessagesChannelsListDBOWithGrantAccess<
    *             TSwarmStoreConnectorDefault,
    *             T,
    *             MD,
@@ -108,7 +108,7 @@ export interface IConnectionToSwarmWithChannels<
    */
   connectToSwarmChannelsList(
     channelsListDescription: ISwarmMessagesChannelsListDescription,
-    channelsListDatabaseOptions: TSwrmMessagesChannelsListDBOWithGrantAccess<
+    channelsListDatabaseOptions: TSwarmMessagesChannelsListDBOWithGrantAccess<
       TSwarmStoreConnectorDefault,
       T,
       MD,

@@ -25,7 +25,7 @@ export const CONFIGURATION_DEFAULT_SWARM_CHANNEL_OPTIONS: ISwarmMessageChannelDe
   messageEncryption: SWARM_MESSAGES_CHANNEL_ENCRYPTION.PUBLIC,
   dbOptions: {
     write: [],
-    grantAccess: function grantAccess(): Promise<boolean> {
+    grantAccess: function grantAccess(_arg: unknown): Promise<boolean> {
       return Promise.resolve(true);
     },
   },

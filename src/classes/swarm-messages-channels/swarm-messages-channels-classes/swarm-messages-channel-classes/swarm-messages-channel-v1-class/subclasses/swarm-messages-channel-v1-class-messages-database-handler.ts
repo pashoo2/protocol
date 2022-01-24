@@ -430,6 +430,7 @@ export class SwarmMessagesChannelV1DatabaseHandler<
    * @memberof ISwarmMessagesChannel
    */
   public async collect(options: TSwarmStoreDatabaseIteratorMethodArgument<P, DbType>): Promise<Array<Error | MD>> {
+    debugger;
     const databaseConnector = await this._getActiveDatabaseConnector();
     const messagesCollected = await databaseConnector.collect(options);
     const messagesCollectedFiltered = this._replaceMessagesEncryptedWithErrors(messagesCollected);

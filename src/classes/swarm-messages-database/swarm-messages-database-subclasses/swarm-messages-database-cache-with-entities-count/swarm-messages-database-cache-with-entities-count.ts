@@ -21,11 +21,13 @@ export class SwarmMessagesDatabaseCacheWithEntitiesCount<
     DCO extends ISwarmMessagesDatabaseCacheOptions<P, DbType, MD, SMC>
   >
   extends SwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMC, DCO>
-  implements ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMC> {
+  implements ISwarmMessagesDatabaseCache<P, T, DbType, DBO, MD, SMC>
+{
   protected __itemsToReadCountFault: number = SWARM_MESSAGES_DATABASE_CACHE_WITH_ENTITIES_COUNT_READ_COUNT_FAULT_DEFAULT;
 
   constructor(_options: Partial<ISwarmMessagesDatabaseCacheWithEntitiesCountOptions> & DCO) {
     super(_options);
+
     this._setReadItemsCountFault(_options);
   }
 
@@ -36,6 +38,7 @@ export class SwarmMessagesDatabaseCacheWithEntitiesCount<
   }
 
   protected async _getMessagesStoreMeta(): Promise<SMSMeta> {
+    debugger;
     const dbName = this._options?.dbName;
 
     if (!dbName) {
