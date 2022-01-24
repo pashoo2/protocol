@@ -22,7 +22,7 @@
         },
         "dbName": {
           "type": "string",
-          "maxLength": 100,
+          "maxLength": 150,
           "minLength": 10
         },
         "dbType": {

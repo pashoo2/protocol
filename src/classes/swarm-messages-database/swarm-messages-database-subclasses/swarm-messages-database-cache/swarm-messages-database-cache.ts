@@ -90,7 +90,7 @@ export class SwarmMessagesDatabaseCache<
 
   protected _options: DCO | undefined;
 
-  protected get _swarmMesssagesCollector(): SMC | undefined {
+  protected get _swarmMessagesCollector(): SMC | undefined {
     return this._options?.dbInstance;
   }
 
@@ -254,7 +254,7 @@ export class SwarmMessagesDatabaseCache<
     if (!this._dbName) {
       throw new Error('Database name should be defined');
     }
-    if (!this._swarmMesssagesCollector) {
+    if (!this._swarmMessagesCollector) {
       throw new Error('A database instance is not set');
     }
     if (!this._messagesCachedStore) {
@@ -539,12 +539,12 @@ export class SwarmMessagesDatabaseCache<
 
   protected _getSwarmMessagesCollector(): SMC {
     if (this._checkIsReady()) {
-      const swarmMesssagesCollector = this._swarmMesssagesCollector;
+      const swarmMessagesCollector = this._swarmMessagesCollector;
 
-      if (!swarmMesssagesCollector) {
+      if (!swarmMessagesCollector) {
         throw new Error('Swarm messages collector is not defined');
       }
-      return swarmMesssagesCollector;
+      return swarmMessagesCollector;
     }
     throw new Error('The store is not ready');
   }

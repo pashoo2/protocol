@@ -1,7 +1,7 @@
 import { IValidatorOfSwarmMessageWithChannelDescriptionArgument } from '../../../../types/swarm-messages-channels-validation.types';
 import { ESwarmStoreConnector } from '../../../../../swarm-store-class/swarm-store-class.const';
 import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../../../../swarm-store-class/swarm-store-connectors/swarm-store-connectors.types';
-import { TSwrmMessagesChannelsListDBOWithGrantAccess } from '../../../../types/swarm-messages-channels-list-instance.types';
+import { TSwarmMessagesChannelsListDBOWithGrantAccess } from '../../../../types/swarm-messages-channels-list-instance.types';
 import {
   TSwarmMessageSerialized,
   ISwarmMessageInstanceDecrypted,
@@ -20,7 +20,7 @@ export interface ISwarmMessagesChannelsListV1GrantAccessConstantArguments<
   T extends TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
+  DBO extends TSwarmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 > extends Omit<
     IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, MD, CTX, DBO>,
     TSwarmMessagesChannelsListV1GrantAccessVariableArgumentsPropNames
@@ -39,7 +39,7 @@ export interface ISwarmMessagesChannelsListV1GrantAccessVariableArguments<
   T extends TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
+  DBO extends TSwarmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 > extends Pick<
     IValidatorOfSwarmMessageWithChannelDescriptionArgument<P, T, MD, CTX, DBO>,
     TSwarmMessagesChannelsListV1GrantAccessVariableArgumentsPropNames

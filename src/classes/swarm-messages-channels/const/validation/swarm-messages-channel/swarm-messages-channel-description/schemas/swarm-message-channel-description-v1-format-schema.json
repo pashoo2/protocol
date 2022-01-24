@@ -4,10 +4,12 @@
   "$ref": "#/definitions/ISwarmMessageChannelDescriptionRawVersion1",
   "$comment": "TODO - reuse some parts src/classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/const/validation/schemas/orbit-db-options-shema.json",
   "definitions": {
-    "GUID": {
+    "ID": {
       "type": "string",
-      "$comment": "GUID random - uuidv4",
-      "pattern": "^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$"
+      "$comment": "ID of a channel",
+      "maxLength": 100,
+      "minLength": 10,
+      "pattern": "^[a-zA-Z0-9%-_~!$&'()*+,;=.:@]+$"
     },
     "ISwarmMessageChannelDescriptionRawVersion1": {
       "type": "object",
@@ -53,7 +55,7 @@
       "additionalProperties": false
     },
     "TSwarmMessagesChannelId": {
-      "ref": "#/definitions/GUID"
+      "ref": "#/definitions/ID"
     },
     "ESwarmStoreConnectorDatabaseType": {
       "type": "string",

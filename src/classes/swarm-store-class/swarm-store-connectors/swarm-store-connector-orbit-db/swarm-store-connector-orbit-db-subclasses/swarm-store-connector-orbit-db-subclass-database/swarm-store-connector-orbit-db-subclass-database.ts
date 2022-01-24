@@ -747,6 +747,7 @@ export class SwarmStoreConnectorOrbitDBDatabase<
     iteratorOptions: ISwarmStoreConnectorOrbitDbDatabaseIteratorOptions<DbType>,
     database: TSwarmStoreConnectorOrbitDbDatabase<ItemType>
   ): Error | Array<LogEntry<ItemType> | undefined | Error> {
+    debugger;
     const isExistsFilterByEntryAddedTime = this._isExistsFilterByEntryTimeAdded(iteratorOptions);
     const filterOperatorsList = this._getOnlyFilterIteratorOperatorsList(iteratorOptions);
     let iteratedValues: Array<LogEntry<ItemType> | undefined | Error> = [];

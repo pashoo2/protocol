@@ -17,7 +17,7 @@ import {
 } from './swarm-messages-channels-utils.types';
 import {
   ISwarmMessagesChannelsListDescription,
-  TSwrmMessagesChannelsListDBOWithGrantAccess,
+  TSwarmMessagesChannelsListDBOWithGrantAccess,
 } from './swarm-messages-channels-list-instance.types';
 
 /**
@@ -81,7 +81,7 @@ export interface IValidatorOfSwarmMessageWithChannelDescription<
   T extends TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
+  DBO extends TSwarmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 > {
   (
     /** context will be passed from the database, but should contatain specific for swarm channel validators methods */
@@ -110,7 +110,7 @@ export interface IValidatorOfSwarmMessagesChannelsListDescription {
  * @interface ISwamChannelsListDatabaseOptionsValidator
  */
 export interface ISwamChannelsListDatabaseOptionsValidator {
-  (dbOptions: unknown): dbOptions is TSwrmMessagesChannelsListDBOWithGrantAccess<any, any, any, any>;
+  (dbOptions: unknown): dbOptions is TSwarmMessagesChannelsListDBOWithGrantAccess<any, any, any, any>;
 }
 
 /**
@@ -129,7 +129,7 @@ export interface IValidatorOfSwarmMessageWithChannelDescriptionArgument<
   T extends TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
+  DBO extends TSwarmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>
 > {
   /**
    * if the databse is not ready it can not return an existing channel description

@@ -10,7 +10,7 @@ import { ISwarmStoreDBOGrandAccessCallbackBaseContext } from '../../classes/swar
 import { ESwarmStoreConnectorOrbitDbDatabaseType } from '../../classes/swarm-store-class/swarm-store-connectors/swarm-store-connector-orbit-db/swarm-store-connector-orbit-db-subclasses/swarm-store-connector-orbit-db-subclass-database/swarm-store-connector-orbit-db-subclass-database.const';
 import { ISwarmMessageChannelDescriptionRaw } from '../../classes/swarm-messages-channels/types/swarm-messages-channel-instance.types';
 import {
-  TSwrmMessagesChannelsListDBOWithGrantAccess,
+  TSwarmMessagesChannelsListDBOWithGrantAccess,
   ISwarmMessagesChannelsDescriptionsList,
   ISwarmMessagesChannelsListDescription,
   TSwarmMessagesChannelsListDbType,
@@ -70,7 +70,7 @@ export interface IConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditional
   swarmMessagesChannelsListDescription: ISwarmMessagesChannelsListDescription;
   dbo: DBO;
   userIdReceiverSwarmMessages: TSwarmMessageUserIdentifierSerialized;
-  swarmChannelsListDatabaseOptions: TSwrmMessagesChannelsListDBOWithGrantAccess<
+  swarmChannelsListDatabaseOptions: TSwarmMessagesChannelsListDBOWithGrantAccess<
     TSwarmStoreConnectorDefault,
     T,
     MD,
@@ -383,7 +383,7 @@ export class ConnectToSwarmAndCreateSwarmMessagesChannelsListWithAdditionalMetaW
     return this.props.swarmMessagesChannelsListDescription;
   }
 
-  protected _getSwarmChannelsListDatabaseOptions(): TSwrmMessagesChannelsListDBOWithGrantAccess<
+  protected _getSwarmChannelsListDatabaseOptions(): TSwarmMessagesChannelsListDBOWithGrantAccess<
     TSwarmStoreConnectorDefault,
     T,
     MD,

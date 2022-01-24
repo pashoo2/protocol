@@ -18,7 +18,7 @@ import {
 } from '../../../../../types/swarm-messages-channel-instance.types';
 import { PromiseResolveType, IPromisePendingRejectable, IPromiseRejectable } from '../../../../../../../types/promise.types';
 import {
-  TSwrmMessagesChannelsListDBOWithGrantAccess,
+  TSwarmMessagesChannelsListDBOWithGrantAccess,
   DBOFULL,
   ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric,
 } from '../../../../../types/swarm-messages-channels-list-instance.types';
@@ -87,7 +87,7 @@ export function getSwarmMessagesChannelsListVersionOneDatabaseConnectionInitiali
   T extends TSwarmMessageSerialized,
   MD extends ISwarmMessageInstanceDecrypted,
   CTX extends ISwarmStoreDBOGrandAccessCallbackBaseContext,
-  DBO extends TSwrmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
+  DBO extends TSwarmMessagesChannelsListDBOWithGrantAccess<P, T, MD, CTX>,
   CF extends ISwarmMessagesChannelsDescriptionsListConstructorArgumentsUtilsDatabaseConnectionFabric<P, T, MD, CTX, DBO>,
   CARGS extends ISwarmMessagesChannelsDescriptionsListConstructorArguments<P, T, MD, CTX, DBO, CF>
 >(

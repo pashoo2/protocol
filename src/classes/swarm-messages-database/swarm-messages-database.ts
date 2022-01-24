@@ -306,6 +306,7 @@ export class SwarmMessagesDatabase<
     if (!this._checkIsReady()) {
       throw new Error('The instance is not ready to use');
     }
+    debugger;
     return this._swarmMessageStore.collect(this._dbName, options) as ReturnType<SMS['collect']>;
   }
 

@@ -1,9 +1,9 @@
 import { IValidatorSwarmMessagesStoreGrantAccessCallback } from '../../../../../swarm-message-store/types/swarm-message-store-validation.types';
-import { TSwrmMessagesChannelsListDBOWithGrantAccess } from '../../../../types/swarm-messages-channels-list-instance.types';
+import { TSwarmMessagesChannelsListDBOWithGrantAccess } from '../../../../types/swarm-messages-channels-list-instance.types';
 
 export function validateSwamChannelsListDatabaseOptions(
   dbOptions: unknown
-): dbOptions is TSwrmMessagesChannelsListDBOWithGrantAccess<any, any, any, any> {
+): dbOptions is TSwarmMessagesChannelsListDBOWithGrantAccess<any, any, any, any> {
   if (typeof dbOptions !== 'object') {
     throw new Error('Database options should be an object');
   }
@@ -24,8 +24,8 @@ export function validateSwamChannelsListDatabaseOptions(
 
 export function getValidatorSwarmChannelsListDatabaseOptions(
   grantAccessCallbackValidator: IValidatorSwarmMessagesStoreGrantAccessCallback
-): (dbOptions: unknown) => dbOptions is TSwrmMessagesChannelsListDBOWithGrantAccess<any, any, any, any> {
-  return (dbOptions: unknown): dbOptions is TSwrmMessagesChannelsListDBOWithGrantAccess<any, any, any, any> => {
+): (dbOptions: unknown) => dbOptions is TSwarmMessagesChannelsListDBOWithGrantAccess<any, any, any, any> {
+  return (dbOptions: unknown): dbOptions is TSwarmMessagesChannelsListDBOWithGrantAccess<any, any, any, any> => {
     if (!validateSwamChannelsListDatabaseOptions(dbOptions)) {
       throw new Error('The database options is not valid');
     }

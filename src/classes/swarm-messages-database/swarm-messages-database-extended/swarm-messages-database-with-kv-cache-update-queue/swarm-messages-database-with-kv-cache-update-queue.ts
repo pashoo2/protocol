@@ -543,6 +543,7 @@ export class SwarmMessagesDatabaseWithKVCacheUpdateQueue<
   }
 
   protected async _whetherAMessageExistsForDbKey(dbKey: TSwarmStoreDatabaseEntityKey<P>): Promise<boolean> {
+    debugger;
     const databaseQueryForReadingKeys = this._getQueryParamsToReadValueForDbKeys(dbKey);
     const requestValuesWithoutMetadataForKeysResult = await this.collect(databaseQueryForReadingKeys);
 
