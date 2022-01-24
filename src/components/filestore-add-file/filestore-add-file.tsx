@@ -1,8 +1,7 @@
 import React, { MouseEvent } from 'react';
-import { downloadFile } from 'utils/files-utils';
-import { IFileStorage } from '../../classes/filestorage-class/filestorage-class.types';
-import { FILE_STORAGE_SERVICE_TYPE } from '../../classes/filestorage-class/filestorage-class.const';
+import { downloadFile } from '@pashoo2/files-utils';
 import { connectToFileStorage } from './filestore-add-file.utils';
+import { IFileStorage, FILE_STORAGE_SERVICE_TYPE } from '@pashoo2/filestorage';
 
 export class FileStoreAddFile extends React.Component {
   protected fileStorage: IFileStorage<FILE_STORAGE_SERVICE_TYPE.HTTP | FILE_STORAGE_SERVICE_TYPE.IPFS> | undefined;

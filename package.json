@@ -36,7 +36,7 @@
     "docs:generate": "typedoc --out docs src",
     "build:package": "rm -rf decentralized-protocol && npm run build:module"
   },
-  "main": "src/index.ts",
+  "main": "decentralized-protocol/src/index.ts",
   "lint-staged": {
     "src/**/*.{ts,tsx}": [
       "npm run lint:staged",
@@ -65,7 +65,8 @@
     "@pashoo2/browser-idle-time-execution-utils": "^0.0.1",
     "@pashoo2/crypto-utilities": "^0.0.5",
     "@pashoo2/data-cache-utils": "^0.0.1",
-    "@pashoo2/files-utils": "^0.0.1",
+    "@pashoo2/files-utils": "github:pashoo2/files-utils",
+    "@pashoo2/filestorage": "^0.0.1",
     "@pashoo2/http-request": "^0.0.1",
     "@pashoo2/serialization-utils": "^0.0.1",
     "@pashoo2/serializer": "0.0.3",
@@ -88,8 +89,8 @@
     "orbit-db": "^0.26.1",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
-    "validator": "^12.1.0",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "validator": "^12.1.0"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^11.1.0",
